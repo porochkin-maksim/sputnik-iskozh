@@ -1,0 +1,9 @@
+@mixin background($color, $opacity: 0.3) {
+    background: $color;
+    background: rgba($color, $opacity);
+}
+
+$color-danger     : var(--bs-danger);
+$color-primary    : var(--bs-primary);
+
+$color-light-gray : #cecece;

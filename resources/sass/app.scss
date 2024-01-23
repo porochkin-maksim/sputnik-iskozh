@@ -1,0 +1,20 @@
+@import 'variables';
+@import 'colors';
+@import 'form';
+@import 'bootstrap/scss/bootstrap';
+@import "font-awesome";
+
+@import 'components/auth.scss';
+
+body, html {
+    font-size : $font-size;
+}
+
+.nav-link {
+    cursor : pointer;
+}
+
+main {
+    padding: 0 $font-size * 2;
+}
+

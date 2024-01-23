@@ -1,0 +1,97 @@
+{
+    "home": {
+        "name": "home",
+        "method": "get",
+        "uri": "\/home",
+        "args": []
+    },
+    "index": {
+        "name": "index",
+        "method": "get",
+        "uri": "\/",
+        "args": []
+    },
+    "login": {
+        "name": "login",
+        "method": "post",
+        "uri": "\/login",
+        "args": []
+    },
+    "logout": {
+        "name": "logout",
+        "method": "get",
+        "uri": "\/logout",
+        "args": []
+    },
+    "pagesReports": {
+        "name": "pages.reports",
+        "method": "get",
+        "uri": "\/reports",
+        "args": []
+    },
+    "passwordConfirm": {
+        "name": "password.confirm",
+        "method": "get",
+        "uri": "\/password\/confirm",
+        "args": []
+    },
+    "passwordEmail": {
+        "name": "password.email",
+        "method": "post",
+        "uri": "\/password\/email",
+        "args": []
+    },
+    "passwordRequest": {
+        "name": "password.request",
+        "method": "get",
+        "uri": "\/password\/reset",
+        "args": []
+    },
+    "passwordReset": {
+        "name": "password.reset",
+        "method": "get",
+        "uri": "\/password\/reset\/{token}",
+        "args": {
+            "token": "{token}"
+        }
+    },
+    "passwordUpdate": {
+        "name": "password.update",
+        "method": "post",
+        "uri": "\/password\/reset",
+        "args": []
+    },
+    "register": {
+        "name": "register",
+        "method": "get",
+        "uri": "\/register",
+        "args": []
+    },
+    "sanctumCsrfCookie": {
+        "name": "sanctum.csrf-cookie",
+        "method": "get",
+        "uri": "\/sanctum\/csrf-cookie",
+        "args": []
+    },
+    "verificationNotice": {
+        "name": "verification.notice",
+        "method": "get",
+        "uri": "\/email\/verify",
+        "args": []
+    },
+    "verificationResend": {
+        "name": "verification.resend",
+        "method": "post",
+        "uri": "\/email\/resend",
+        "args": []
+    },
+    "verificationVerify": {
+        "name": "verification.verify",
+        "method": "get",
+        "uri": "\/email\/verify\/{id}\/{hash}",
+        "args": {
+            "id": "{id}",
+            "hash": "{hash}"
+        }
+    }
+}

@@ -1,0 +1,45 @@
+form,
+.form {
+    .form-error {
+        &:not(input) {
+            color      : $color-danger;
+            font-style : italic;
+            font-size  : 0.8em;
+        }
+
+        &:is(ul), &:is(ol) {
+            list-style-type : none;
+            margin-top      : 0.5rem;
+            padding         : 0 0.5rem;
+        }
+
+        &.form-control {
+            box-shadow : 0 0 2px $color-danger;
+        }
+    }
+
+    .form-control {
+        border-radius : 0;
+        border        : 0;
+        box-shadow    : 0 0 2px $color-light-gray;
+
+        &:focus {
+            box-shadow : 0 0 2px $color-primary;
+            outline    : none;
+        }
+
+        &:is(label) {
+            padding    : 0;
+            border     : 0;
+            box-shadow : none;
+
+            &.label-input {
+
+            }
+
+            &.label-select {
+
+            }
+        }
+    }
+}
