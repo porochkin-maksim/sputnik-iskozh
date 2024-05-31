@@ -2,8 +2,17 @@
 
 namespace Core\Enums;
 
-trait ArrayNamesTrait
+trait EnumCommonTrait
 {
+    public static function names(): array
+    {
+        return array_column(self::cases(), 'name');
+    }
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
     public static function array(): array
     {
         $result = [];

@@ -57,58 +57,57 @@ import Register   from './Register.vue';
 import Restore    from './Restore.vue';
 import ViewDialog from '../common/ViewDialog.vue';
 
-const LoginConst = 'Login';
+const LoginConst    = 'Login';
 const RegisterConst = 'Register';
-const RestoreConst = 'Restore';
+const RestoreConst  = 'Restore';
 
 export default {
-	name :       'AuthBlock',
-	components : {
-		ViewDialog,
-		Login,
-		Register,
-		Restore,
-	},
-	data() {
-		return {
-			STATES :     {
-				LoginConst,
-				RegisterConst,
-				RestoreConst,
-			},
-			showDialog : false,
-			hideDialog : false,
-			state :      LoginConst,
-		};
-	},
-	methods :  {
-		switchState(state) {
-			console.log(state);
-			this.state = state;
-		},
-	},
-	computed : {
-		title() {
-			switch (this.state) {
-				case this.STATES.LoginConst:
-					return 'Вход';
-				case this.STATES.RegisterConst:
-					return 'Регистрация';
-				case this.STATES.RestoreConst:
-					return 'Восстановление пароля';
-				default:
-					return '';
-			}
-		},
-		isLogin() {
-			return this.state === this.STATES.LoginConst;
-		},
-		isRegistry() {
-			return this.state === this.STATES.RegisterConst;
-		},
-		isRestore() {
-			return this.state === this.STATES.RestoreConst;
-		},
-	},
+    name      : 'AuthBlock',
+    components: {
+        ViewDialog,
+        Login,
+        Register,
+        Restore,
+    },
+    data () {
+        return {
+            STATES    : {
+                LoginConst,
+                RegisterConst,
+                RestoreConst,
+            },
+            showDialog: false,
+            hideDialog: false,
+            state     : LoginConst,
+        };
+    },
+    methods : {
+        switchState (state) {
+            this.state = state;
+        },
+    },
+    computed: {
+        title () {
+            switch (this.state) {
+                case this.STATES.LoginConst:
+                    return 'Вход';
+                case this.STATES.RegisterConst:
+                    return 'Регистрация';
+                case this.STATES.RestoreConst:
+                    return 'Восстановление пароля';
+                default:
+                    return '';
+            }
+        },
+        isLogin () {
+            return this.state === this.STATES.LoginConst;
+        },
+        isRegistry () {
+            return this.state === this.STATES.RegisterConst;
+        },
+        isRestore () {
+            return this.state === this.STATES.RestoreConst;
+        },
+    },
 };
 </script>

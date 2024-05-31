@@ -4,7 +4,7 @@
             {{ label }}
         </span>
         <input :value="modelValue"
-               :type="type"
+               :type="computedType"
                :required="required"
                :placeholder="placeholder"
                @change="onChange"
@@ -24,7 +24,7 @@
 
 <script>
 export default {
-    props  : [
+    props   : [
         'modelValue',
         'errors',
         'type',
@@ -32,17 +32,27 @@ export default {
         'placeholder',
         'required',
     ],
-    emits  : [
+    emits   : [
         'update:modelValue',
         'change',
     ],
-    methods: {
+    methods : {
         onChange (event) {
-            this.$emit('update:modelValue', event.target.value);
-            this.$emit('change', event.target.value);
+            if (this.type === 'file') {
+                this.$emit('update:modelValue', event.target.files[0]);
+            }
+            else {
+                this.$emit('update:modelValue', event.target.value);
+            }
         },
-        togglePassword () {
-            this.showPassword = !this.showPassword;
+    },
+    computed: {
+        computedType () {
+            if (this.type === 'money') {
+                return 'number';
+            }
+
+            return this.type;
         },
     },
 };

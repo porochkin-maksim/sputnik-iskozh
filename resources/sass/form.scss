@@ -42,4 +42,12 @@ form,
             }
         }
     }
+
+    &.alert-success {
+        box-shadow : 0 0 10px $color-success;
+    }
+
+    &.alert-danger {
+        box-shadow : 0 0 10px $color-danger;
+    }
 }

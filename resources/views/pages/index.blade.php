@@ -7,11 +7,11 @@ use Core\Resources\RouteNames;
 @extends('layouts.app')
 
 @section('content')
-    {{--    <ul>--}}
-    {{--        <li>--}}
-    {{--            <a href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>--}}
-    {{--        </li>--}}
-    {{--    </ul>--}}
+        <ul>
+            <li>
+                <a href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
+            </li>
+        </ul>
 
     {{--    <div class="card">--}}
     {{--        <div class="card-body">--}}

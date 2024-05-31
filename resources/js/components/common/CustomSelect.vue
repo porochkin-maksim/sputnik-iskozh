@@ -10,10 +10,11 @@
                 :class="[errors ? 'form-error' : '']"
         >
             <option v-for="item in items"
-                    :key="item.key"
-                    :value="item.key"
+                    :key="item.key !== undefined ? item.key : item"
+                    :value="item.key !== undefined ? item.key : item"
+                    :selected="(item.key !== undefined ? item.key : item) === modelValue"
             >
-                {{ item.value }}
+                {{ item.value !== undefined ? item.value : item }}
             </option>
         </select>
     </label>
@@ -40,9 +41,6 @@ export default {
         onChange (event) {
             this.$emit('update:modelValue', event.target.value);
             this.$emit('change', event.target.value);
-        },
-        togglePassword () {
-            this.showPassword = !this.showPassword;
         },
     },
 };

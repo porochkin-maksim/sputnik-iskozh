@@ -2,23 +2,31 @@
 
 namespace Core\Objects\Report\Enums;
 
-use Core\Enums\ArrayNamesTrait;
+use Core\Enums\EnumCommonTrait;
 
 /**
  * @method tryFrom(int|string|null $value): ?static
  */
 enum CategoryEnum: int
 {
-    use ArrayNamesTrait;
+    use EnumCommonTrait;
 
-    case UNDEFINED = 1;
-    case GARBAGE   = 2;
+    case UNDEFINED = 0;
+    case GARBAGE   = 1;
 
     public function name(): string
     {
         return match ($this) {
             self::UNDEFINED => 'Без категории',
             self::GARBAGE   => 'Мусор',
+        };
+    }
+
+    public function defaultName(): ?string
+    {
+        return match ($this) {
+            self::UNDEFINED => null,
+            self::GARBAGE   => 'Вывоз мусора',
         };
     }
 }

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
 return [
-    'accepted'             => 'Поле «:attribute» должно быть accepted.',
-    'accepted_if'          => 'Поле «:attribute» должно быть accepted when :other is :value.',
+    'accepted'             => 'Поле «:attribute» должно быть принято.',
+    'accepted_if'          => 'Поле «:attribute» должно быть принято when :other is :value.',
     'active_url'           => 'Поле «:attribute» должно быть a valid URL.',
     'after'                => 'Поле «:attribute» должно быть a date after :date.',
     'after_or_equal'       => 'Поле «:attribute» должно быть a date after or equal to :date.',
@@ -16,8 +16,8 @@ return [
     'between'              => [
         'array'   => 'Поле «:attribute» должно быть между :min и :max.',
         'file'    => 'Поле «:attribute» должно быть больше :min и меньше :max Килобайт.',
-        'numeric' => 'Поле «:attribute» должно быть between :min and :max.',
-        'string'  => 'Поле «:attribute» должно быть between :min and :max characters.',
+        'numeric' => 'Поле «:attribute» должно быть между :min and :max.',
+        'string'  => 'Поле «:attribute» должно содержать от :min до :max символов.',
     ],
     'boolean'              => 'Поле «:attribute» должно быть true or false.',
     'can'                  => 'Поле «:attribute» contains an unauthorized value.',
@@ -82,7 +82,7 @@ return [
         'array'   => 'Поле «:attribute» must not have more than :max items.',
         'file'    => 'Поле «:attribute» must not be greater than :max kilobytes.',
         'numeric' => 'Поле «:attribute» must not be greater than :max.',
-        'string'  => 'Поле «:attribute» must not be greater than :max characters.',
+        'string'  => 'Поле «:attribute» не должно содержать больше :max символов.',
     ],
     'max_digits'           => 'Поле «:attribute» must not have more than :max digits.',
     'mimes'                => 'Поле «:attribute» должно быть a file of type: :values.',
@@ -90,8 +90,8 @@ return [
     'min'                  => [
         'array'   => 'Поле «:attribute» must have at least :min items.',
         'file'    => 'Поле «:attribute» должно быть at least :min kilobytes.',
-        'numeric' => 'Поле «:attribute» должно быть at least :min.',
-        'string'  => 'Поле «:attribute» должно быть at least :min characters.',
+        'numeric' => 'Поле «:attribute» должно быть не меньше :min.',
+        'string'  => 'Поле «:attribute» должно содержать не менее :min символов.',
     ],
     'min_digits'           => 'Поле «:attribute» must have at least :min digits.',
     'missing'              => 'Поле «:attribute» должно быть missing.',
@@ -123,7 +123,7 @@ return [
     'required'             => 'Поле «:attribute» является обязательным.',
     'required_array_keys'  => 'Поле «:attribute» must contain entries for: :values.',
     'required_if'          => 'Поле «:attribute» является обязательным when :other is :value.',
-    'required_if_accepted' => 'Поле «:attribute» является обязательным when :other is accepted.',
+    'required_if_accepted' => 'Поле «:attribute» является обязательным when :other is принято.',
     'required_unless'      => 'Поле «:attribute» является обязательным unless :other is in :values.',
     'required_with'        => 'Поле «:attribute» является обязательным when :values is present.',
     'required_with_all'    => 'Поле «:attribute» является обязательным when :values are present.',

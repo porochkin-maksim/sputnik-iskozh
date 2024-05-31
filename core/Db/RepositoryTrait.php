@@ -2,8 +2,9 @@
 
 namespace Core\Db;
 
+use Core\Db\Searcher\SearcherInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
 
 trait RepositoryTrait
 {
@@ -38,7 +39,11 @@ trait RepositoryTrait
     /**
      * @param int[] $ids
      */
-    public function getByIds(array $ids, bool $cache = false): array
+    public function getByIds(
+        array             $ids,
+        SearcherInterface $searcher = null,
+        bool              $cache = false,
+    ): array
     {
         $result     = [];
         $modelClass = $this->modelClass();
@@ -52,8 +57,16 @@ trait RepositoryTrait
             }
 
             /** @var Model $model */
-            $model  = new $modelClass;
-            $result = array_merge($result, $model::whereIn('id', $ids)->get()->all());
+            $model = new $modelClass;
+            $query = $model::select($searcher?->getSelect() ? : ['*'])->whereIn('id', $ids);
+
+            if ($searcher) {
+                $query = $query->when($searcher->getWith(), function (Builder $query) use ($searcher) {
+                    $query->with($searcher->getWith());
+                })->orderBy($searcher->getSortProperty(), $searcher->getSortOrder());
+            }
+
+            $result = array_merge($result, $query->get()->all());
 
             if ($cache && $this instanceof UseCacheRepositoryInterface) {
                 foreach ($result as $item) {
@@ -66,5 +79,26 @@ trait RepositoryTrait
         }
 
         return array_values($result);
+    }
+
+    public function deleteById(int $id): bool
+    {
+        return $this->deleteByIds([$id]);
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function deleteByIds(array $ids): bool
+    {
+        $result     = false;
+        $modelClass = $this->modelClass();
+
+        if (class_exists($this->modelClass())) {
+            $model  = new $modelClass;
+            $result = $model::whereIn('id', $ids)->delete();
+        }
+
+        return (bool) $result;
     }
 }

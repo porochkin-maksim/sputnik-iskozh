@@ -3,8 +3,12 @@
 @import 'form';
 @import 'bootstrap/scss/bootstrap';
 @import "font-awesome";
+@import "media";
+@import "common";
+@import "layout";
 
-@import 'components/auth.scss';
+@import 'components/auth';
+@import 'components/reports';
 
 body, html {
     font-size : $font-size;
@@ -14,7 +18,4 @@ body, html {
     cursor : pointer;
 }
 
-main {
-    padding: 0 $font-size * 2;
-}
 

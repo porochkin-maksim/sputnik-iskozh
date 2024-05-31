@@ -16,8 +16,15 @@ Route::get('/', function () {
     // }
 })->name(RouteNames::INDEX);
 
-Route::get('/reports', function () {
-    return view(ViewNames::PAGES_REPORTS_INDEX);
-})->name(RouteNames::REPORTS);
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::group(['prefix' => 'reports'], function () {
+    Route::get('/', [App\Http\Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
+    Route::get('/create', [App\Http\Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
+    Route::get('/edit/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
+    Route::post('/save', [App\Http\Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
+    Route::delete('/delete/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
+    Route::post('/list', [App\Http\Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
+    Route::post('/file/upload/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
+    Route::post('/file/delete/{id}', [\App\Http\Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+});

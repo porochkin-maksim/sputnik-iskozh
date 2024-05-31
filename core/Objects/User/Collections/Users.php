@@ -3,18 +3,16 @@
 namespace Core\Objects\User\Collections;
 
 use App\Models\User;
-use Core\Collections\WrongClassException;
+use Core\Collections\CollectionInterface;
+use Core\Collections\CollectionTrait;
 use Illuminate\Support\Collection;
 
-class Users extends Collection
+class Users extends Collection implements CollectionInterface
 {
-    public function __construct($items = [])
+    use CollectionTrait;
+
+    public function checkItemInstance(mixed $item): bool
     {
-        foreach ($items as $item) {
-            if(!$item instanceof User) {
-                throw new WrongClassException(get_class($item));
-            }
-        }
-        parent::__construct($items);
+        return $item instanceof User;
     }
 }

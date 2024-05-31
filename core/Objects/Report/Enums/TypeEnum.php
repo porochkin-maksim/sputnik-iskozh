@@ -2,14 +2,14 @@
 
 namespace Core\Objects\Report\Enums;
 
-use Core\Enums\ArrayNamesTrait;
+use Core\Enums\EnumCommonTrait;
 
 /**
  * @method tryFrom(int|string|null $value): ?static
  */
 enum TypeEnum: int
 {
-    use ArrayNamesTrait;
+    use EnumCommonTrait;
 
     case SINGLE    = 0;
     case WEEK      = 1;

@@ -2,22 +2,41 @@
 
 namespace Core\Objects\File\Models;
 
-class FileDTO
-{
-    public ?FileCategory $category   = null;
-    public ?int          $related_id = null;
-    public ?string       $ext        = null;
-    public ?string       $name       = null;
-    public ?string       $path       = null;
+use Core\Objects\Common\Traits\TimestampsTrait;
+use Core\Objects\File\Enums\TypeEnum;
+use Illuminate\Support\Facades\Storage;
 
-    public function getCategory(): ?FileCategory
+class FileDTO implements \JsonSerializable
+{
+    use TimestampsTrait;
+
+    private ?int      $id         = null;
+    private ?TypeEnum $type       = null;
+    private ?int      $related_id = null;
+    private ?string   $ext        = null;
+    private ?string   $name       = null;
+    private ?string   $path       = null;
+
+    public function getId(): ?int
     {
-        return $this->category;
+        return $this->id;
     }
 
-    public function setCategory(?FileCategory $category): static
+    public function setId(?int $id): FileDTO
     {
-        $this->category = $category;
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getType(): ?TypeEnum
+    {
+        return $this->type;
+    }
+
+    public function setType(?TypeEnum $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -68,5 +87,15 @@ class FileDTO
         $this->path = $path;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'   => $this->id,
+            'name' => $this->name,
+            'ext'  => $this->ext,
+            'url'  => Storage::url($this->path),
+        ];
     }
 }
