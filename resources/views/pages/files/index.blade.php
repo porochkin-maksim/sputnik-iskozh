@@ -3,5 +3,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <reports-block></reports-block>
+    <files-block></files-block>
 @endsection

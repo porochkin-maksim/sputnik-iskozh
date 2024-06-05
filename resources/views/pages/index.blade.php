@@ -11,6 +11,9 @@ use Core\Resources\RouteNames;
             <li>
                 <a href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
             </li>
+            <li>
+                <a href="{{ route(RouteNames::FILES) }}">Файлы</a>
+            </li>
         </ul>
 
     {{--    <div class="card">--}}
