@@ -5,7 +5,6 @@ namespace Core\Objects\User\Repositories;
 use App\Models\User;
 use Core\Cache\CacheRepositoryInterface;
 use Core\Db\RepositoryTrait;
-use Core\Db\UseCacheRepositoryInterface;
 use Core\Objects\User\Collections\Users;
 
 class UserRepository
