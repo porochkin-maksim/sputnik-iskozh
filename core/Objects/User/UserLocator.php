@@ -6,7 +6,6 @@ use App\Models\User;
 use Core\Objects\User\Factories\UserFactory;
 use Core\Objects\User\Repositories\UserCacheRepository;
 use Core\Objects\User\Repositories\UserRepository;
-use Core\Objects\User\Repositories\UserRepositoryInterface;
 use Core\Objects\User\Services\UserDecorator;
 use Core\Objects\User\Services\UserService;
 use Core\Objects\User\Services\UserServiceInterface;
@@ -40,7 +39,7 @@ class UserLocator
         return self::$UserFactory;
     }
 
-    public static function UserRepository(): UserRepositoryInterface
+    public static function UserRepository(): UserRepository
     {
         if (!isset(self::$UserRepository)) {
             self::$UserRepository = new UserRepository(

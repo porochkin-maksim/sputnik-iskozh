@@ -13,24 +13,21 @@ trait RepositoryTrait
     {
         $result     = null;
         $modelClass = $this->modelClass();
-        $useCache   = $cache && $this instanceof UseCacheRepositoryInterface;
 
         if (class_exists($this->modelClass())) {
 
-            if ($useCache) {
+            if ($cache && $this instanceof UseCacheRepositoryInterface) {
                 /** @var ?Model $result */
-                $result = $this->cacheRepository()->getByKey($id)
-                ;
+                $result = $this->cacheRepository()->getByKey($id);
             }
 
-            if (!$result) {
+            if ( ! $result) {
                 /** @var Model $model */
                 $model  = new $modelClass;
                 $result = $model::find($id);
 
-                if ($result && $useCache) {
-                    $this->cacheRepository()->add($id, $result)
-                    ;
+                if ($result && $cache && $this instanceof UseCacheRepositoryInterface) {
+                    $this->cacheRepository()->add($id, $result);
                 }
             }
         }
@@ -45,13 +42,11 @@ trait RepositoryTrait
     {
         $result     = [];
         $modelClass = $this->modelClass();
-        $useCache   = $cache && $this instanceof UseCacheRepositoryInterface;
 
         if (class_exists($this->modelClass())) {
-            if ($useCache) {
+            if ($cache && $this instanceof UseCacheRepositoryInterface) {
                 /** @var Model[] $cachedModels */
-                $result    = $this->cacheRepository()->getByKeys($ids)
-                ;
+                $result    = $this->cacheRepository()->getByKeys($ids);
                 $cachedIds = array_map(fn($model) => $model->id, $result);
                 $ids       = array_diff($ids, $cachedIds);
             }
@@ -60,12 +55,11 @@ trait RepositoryTrait
             $model  = new $modelClass;
             $result = array_merge($result, $model::whereIn('id', $ids)->get()->all());
 
-            if ($useCache) {
+            if ($cache && $this instanceof UseCacheRepositoryInterface) {
                 foreach ($result as $item) {
                     /** @var Model $item */
-                    if (!in_array($item->id, $cachedIds)) {
-                        $this->cacheRepository()->add($item->id, $item)
-                        ;
+                    if ( ! in_array($item->id, $cachedIds)) {
+                        $this->cacheRepository()->add($item->id, $item);
                     }
                 }
             }

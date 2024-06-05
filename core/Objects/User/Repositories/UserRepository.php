@@ -8,7 +8,7 @@ use Core\Db\RepositoryTrait;
 use Core\Db\UseCacheRepositoryInterface;
 use Core\Objects\User\Collections\Users;
 
-class UserRepository implements UserRepositoryInterface, UseCacheRepositoryInterface
+class UserRepository
 {
     use RepositoryTrait {
         getById as traitGetById;
@@ -22,11 +22,6 @@ class UserRepository implements UserRepositoryInterface, UseCacheRepositoryInter
     protected function modelClass(): string
     {
         return User::class;
-    }
-
-    public function cacheRepository(): CacheRepositoryInterface
-    {
-        return $this->userCacheRepository;
     }
 
     public function getById(?int $id, bool $cache = false): ?User
@@ -45,8 +40,6 @@ class UserRepository implements UserRepositoryInterface, UseCacheRepositoryInter
     public function save(User $user): User
     {
         $user->save();
-        $this->cacheRepository()->delete($user->id);
-        $this->cacheRepository()->add($user->id, $user);
 
         return $user;
     }
