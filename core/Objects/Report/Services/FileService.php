@@ -21,7 +21,6 @@ class FileService
     {
         $dto = $this->fileService->store($file, self::FILE_DIR);
         $dto
-            ->setName($file->getClientOriginalName())
             ->setType(TypeEnum::REPORT)
             ->setRelatedId($reportId);
 

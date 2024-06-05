@@ -4,13 +4,14 @@ namespace Core\Objects\Report\Repositories;
 
 use App\Models\Report;
 use Core\Db\RepositoryTrait;
-use Core\Db\Searcher\SearcherInterface;
 use Core\Objects\Report\Collections\Reports;
 use Core\Objects\Report\Models\ReportSearcher;
 use Illuminate\Support\Facades\DB;
 
 class ReportRepository
 {
+    private const TABLE = Report::TABLE;
+
     use RepositoryTrait {
         getById as traitGetById;
         getByIds as traitGetByIds;
@@ -49,7 +50,7 @@ class ReportRepository
      */
     public function search(ReportSearcher $searcher): array
     {
-        $ids = DB::table(Report::TABLE)
+        $ids = DB::table(static::TABLE)
             ->pluck('id')
             ->toArray();
 
