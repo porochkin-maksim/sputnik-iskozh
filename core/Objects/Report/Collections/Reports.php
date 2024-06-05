@@ -7,6 +7,9 @@ use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Illuminate\Support\Collection;
 
+/**
+ * @template-extends Collection<int, Report>
+ */
 class Reports extends Collection implements CollectionInterface
 {
     use CollectionTrait;
