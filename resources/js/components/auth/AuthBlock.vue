@@ -24,7 +24,7 @@
 								<register v-if="isRegistry"/>
 								<restore v-if="isRestore"/>
 								
-								<div v-if="isLogin"
+								<div v-if="isLogin && false"
 								     class="d-flex justify-content-center align-items-center text-dark-emphasis"
 								     @click="switchState(STATES.RegisterConst)">
 									<span>Нет аккаунта?</span>

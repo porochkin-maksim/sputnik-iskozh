@@ -57,9 +57,9 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
                 <ul class="navbar-nav ms-auto">
                     <!-- Authentication Links -->
                     @guest
-{{--                        <li class="nav-item">--}}
-{{--                            <auth-block></auth-block>--}}
-{{--                        </li>--}}
+                        <li class="nav-item">
+                            <auth-block></auth-block>
+                        </li>
                     @else
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown"
