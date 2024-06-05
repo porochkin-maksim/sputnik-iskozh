@@ -63,6 +63,17 @@ trait RepositoryTrait
             if ($searcher) {
                 $query = $query->when($searcher->getWith(), function (Builder $query) use ($searcher) {
                     $query->with($searcher->getWith());
+                })->when($searcher->getWhere(), function (Builder $query) use ($searcher) {
+                    foreach ($searcher->getWhere() as $where) {
+                        switch ($where->getOperator()) {
+                            case SearcherInterface::EQUALS:
+                                $query->where($where->getField(), $where->getOperator(), $where->getValue());
+                                break;
+                            case SearcherInterface::IS_NULL:
+                                $query->whereNull($where->getField());
+                        }
+
+                    }
                 })->orderBy($searcher->getSortProperty(), $searcher->getSortOrder());
             }
 

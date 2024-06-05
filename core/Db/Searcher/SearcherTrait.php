@@ -2,15 +2,21 @@
 
 namespace Core\Db\Searcher;
 
+use Core\Db\Searcher\Collections\WhereCollection;
+use Core\Db\Searcher\Models\Where;
+
 trait SearcherTrait
 {
     private string $sortOrder;
     private string $sortOrderProperty = 'id';
 
     /** @var int[] $ids */
-    private array  $ids               = [];
-    private array  $select            = [];
-    private array  $with              = [];
+    private array $ids    = [];
+    private array $select = [];
+    private array $with   = [];
+
+    private WhereCollection $where;
+    private array           $whereIn = [];
 
     /**
      * @return int[]
@@ -69,5 +75,28 @@ trait SearcherTrait
     public function getWith(): array
     {
         return array_unique($this->with);
+    }
+
+    public function getWhere(): WhereCollection
+    {
+        if (!isset($this->where)) {
+            $this->where = new WhereCollection();
+        }
+        return $this->where;
+    }
+
+    public function addWhere(string $type, string $operator, mixed $value = null): static
+    {
+        $this->getWhere()->push(new Where($type, $operator, $value));
+
+        return $this;
+    }
+
+    /**
+     * @return Where[]
+     */
+    public function getWhereIn(): array
+    {
+        return $this->whereIn;
     }
 }
