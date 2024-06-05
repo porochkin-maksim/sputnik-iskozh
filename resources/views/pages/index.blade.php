@@ -27,7 +27,14 @@ use Core\Resources\RouteNames;
             <br><br>
         </li>
         <li>
-            <a href="{{ Storage::url('Проект_ПВР_Спутник-Искож.pdf') }}"
+            <a href="{{ Storage::url('Постановление кассационного суда.pdf') }}"
+               target="_blank">
+                Постановление кассационного суда.pdf
+            </a>
+            <br><br>
+        </li>
+        <li>
+            <a href="{{ Storage::url('Постановление кассационного суда.pdf') }}"
                target="_blank">
                 Проект правил внутреннего распорядка.pdf
             </a>
