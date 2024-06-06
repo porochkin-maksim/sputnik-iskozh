@@ -4,6 +4,7 @@
 			<custom-input v-model="email"
 			              :errors="errors.email"
 			              :type="'email'"
+                          :name="'email'"
 			              :placeholder="'Эл.почта'"
 			              :required="false"
 			/>
@@ -15,6 +16,7 @@
 			              :errors="errors.password"
 			              :type="[showPassword ? 'text' : 'password']"
 			              :placeholder="'Пароль'"
+                          :name="'password'"
 			              :required="false"
 			/>
 			<span class="toggle fa"

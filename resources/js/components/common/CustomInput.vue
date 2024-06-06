@@ -7,6 +7,7 @@
                :type="computedType"
                :required="required"
                :placeholder="placeholder"
+               :name="name"
                @change="onChange"
                @keyup="onChange"
                class="form-control"
@@ -29,6 +30,7 @@ export default {
         'errors',
         'type',
         'label',
+        'name',
         'placeholder',
         'required',
     ],
