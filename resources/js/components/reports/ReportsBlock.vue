@@ -26,35 +26,35 @@
             <div v-if="showForm">
                 <wrapper @close="showForm=false">
                     <div class="container-fluid">
-                        <item-edit :model-value="id"
-                                   @updated="createdItem" />
+                        <report-item-edit :model-value="id"
+                                          @updated="createdItem" />
                     </div>
                 </wrapper>
             </div>
-            <list :view-mode="viewMode"
-                  v-model:reloadList="reloadList"
-                  v-model:canEdit="edit"
-                  class="mt-3"
+            <report-list :view-mode="viewMode"
+                         v-model:reloadList="reloadList"
+                         v-model:canEdit="edit"
+                         class="mt-3"
             />
         </template>
     </default-page>
 </template>
 
 <script>
-import ResponseError from '../../mixin/ResponseError.js';
-import ItemEdit      from './ItemEdit.vue';
-import List          from './List.vue';
-import { ViewMode }  from './List.vue';
-import Wrapper       from '../common/Wrapper.vue';
-import DefaultPage   from '../pages/DefaultPage.vue';
+import ResponseError  from '../../mixin/ResponseError.js';
+import ReportItemEdit from './ReportItemEdit.vue';
+import ReportList     from './ReportList.vue';
+import { ViewMode }   from './ReportList.vue';
+import Wrapper        from '../common/Wrapper.vue';
+import DefaultPage    from '../pages/DefaultPage.vue';
 
 export default {
     name      : 'ReportsBlock',
     components: {
         DefaultPage,
         Wrapper,
-        ItemEdit,
-        List,
+        ReportItemEdit,
+        ReportList,
     },
     mixins    : [
         ResponseError,

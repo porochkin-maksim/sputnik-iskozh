@@ -25,7 +25,8 @@
         </div>
 
         <div class="footer">
-            <div class="btn-group btn-group-sm" v-if="edit">
+            <div class="btn-group btn-group-sm"
+                 v-if="edit">
                 <button class="btn btn-primary"
                         @click="modeEdit=1">
                     <i class="fa fa-edit"></i>&nbsp;Редактировать
@@ -46,7 +47,8 @@
                         <a :href="file.url"
                            target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
 
-                        <div class="btn-group btn-group-sm" v-if="edit">
+                        <div class="btn-group btn-group-sm"
+                             v-if="edit">
                             <button class="btn btn-danger"
                                     @click="deleteFile(file.id)">
                                 <i class="fa fa-trash"></i>
@@ -152,12 +154,12 @@ export default {
             });
         },
     },
-    watch: {
+    watch  : {
         report: {
-            handler(val){
+            handler (val) {
                 this.id = val.id;
             },
-            deep: true
+            deep: true,
         },
 
     },

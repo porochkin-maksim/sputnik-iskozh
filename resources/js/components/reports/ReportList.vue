@@ -21,7 +21,7 @@ export const ViewMode = {
 };
 
 export default {
-    name      : 'ReportList',
+    name      : 'List',
     components: {
         ReportListItem,
     },
@@ -38,7 +38,7 @@ export default {
             showForm: false,
 
             reports: [],
-            edit: false,
+            edit   : false,
         };
     },
     mounted () {
