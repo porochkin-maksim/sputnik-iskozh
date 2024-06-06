@@ -1,8 +1,6 @@
 <template>
-    <div class="row report-list"
-         :class="listClass">
+    <div class="row custom-list list report-list">
         <report-list-item v-for="report in reports"
-                          :itemClass="itemClass"
                           :report="report"
                           :edit="edit"
                           @updated="loadList"
@@ -61,21 +59,6 @@ export default {
                 this.loadList();
                 this.$emit('reloadList', false);
             }
-        },
-    },
-    computed: {
-        itemClass () {
-            if (this.viewMode === ViewMode.Plate) {
-                return 'col-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2';
-            }
-            return 'w-100 d-block';
-            // return 'w-lg-50 w-md-75 d-block';
-        },
-        listClass () {
-            if (this.viewMode === ViewMode.Plate) {
-                return 'plate';
-            }
-            return 'list d-md-block';
         },
     },
 };

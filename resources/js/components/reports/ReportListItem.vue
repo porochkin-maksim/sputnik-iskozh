@@ -7,8 +7,7 @@
             </div>
         </wrapper>
     </div>
-    <div class="report-item"
-         :class="itemClass">
+    <div class="list-item">
         <div class="body">
             <div>{{ report.id }}</div>
             <div class="d-flex justify-content-between">
@@ -79,7 +78,6 @@ export default {
     props     : [
         'report',
         'edit',
-        'itemClass',
     ],
     components: {
         CustomInput,
