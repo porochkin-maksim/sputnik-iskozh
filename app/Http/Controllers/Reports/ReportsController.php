@@ -13,6 +13,7 @@ use Core\Objects\Report\Requests\SearchRequest;
 use Core\Objects\Report\Services\FileService;
 use Core\Objects\Report\Services\ReportService;
 use Core\Resources\ViewNames;
+use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,9 +42,9 @@ class ReportsController extends Controller
         $report = $this->reportFactory->makeDefault();
 
         return response()->json([
-            'categories' => $this->getCategories(),
-            'types'      => $this->getTypes(),
-            'report'     => $report,
+            ResponsesEnum::CATEGORIES => $this->getCategories(),
+            ResponsesEnum::TYPES      => $this->getTypes(),
+            ResponsesEnum::REPORT     => $report,
         ]);
     }
 
@@ -52,9 +53,9 @@ class ReportsController extends Controller
         $report = $this->reportService->getById($id);
 
         return response()->json([
-            'categories' => $this->getCategories(),
-            'types'      => $this->getTypes(),
-            'report'     => $report,
+            ResponsesEnum::CATEGORIES => $this->getCategories(),
+            ResponsesEnum::TYPES      => $this->getTypes(),
+            ResponsesEnum::REPORT     => $report,
         ]);
     }
 
@@ -68,8 +69,8 @@ class ReportsController extends Controller
         $reports = $this->reportService->search($searcher);
 
         return response()->json([
-            'reports' => $reports,
-            'edit'    => (bool) Auth::id(),
+            ResponsesEnum::REPORTS => $reports,
+            ResponsesEnum::EDIT    => (bool) Auth::id(),
         ]);
     }
 
