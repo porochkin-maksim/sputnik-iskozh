@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Interfaces\CastsInterface;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,15 +12,18 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property int    id
- * @property string email
+ * @property int     id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ *
+ * @property string  email
  * @property ?string first_name
  * @property ?string middle_name
  * @property ?string last_name
- * @property string password
- * @property bool   remember_token
- * @property string email_verified_at
- * @property int    telegram_id
+ * @property string  password
+ * @property bool    remember_token
+ * @property string  email_verified_at
+ * @property int     telegram_id
  */
 class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {

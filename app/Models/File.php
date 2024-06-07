@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ *
  * @property int     $type
  * @property int     $related_id
  * @property ?string $ext
  * @property ?string $name
  * @property ?string $path
- * @property ?Carbon $created_at
- * @property ?Carbon $updated_at
  */
 class File extends Model
 {

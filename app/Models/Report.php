@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int     $id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ *
  * @property int     $category
  * @property int     $type
  * @property int     $year
@@ -19,8 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?float  $money
  * @property ?int    $version
  * @property ?int    $parent_id
- * @property ?Carbon $created_at
- * @property ?Carbon $updated_at
  */
 class Report extends Model
 {
