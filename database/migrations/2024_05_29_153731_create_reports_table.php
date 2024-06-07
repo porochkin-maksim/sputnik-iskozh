@@ -12,19 +12,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
-            $table->id();
-            $table->smallInteger('category')->nullable()->index();
-            $table->smallInteger('type')->nullable()->index();
-            $table->string('name')->nullable();
-            $table->integer('year')->nullable()->index();
-            $table->dateTime('start_at')->nullable()->index();
-            $table->dateTime('end_at')->nullable()->index();
-            $table->decimal('money', 16)->nullable();
-            $table->smallInteger('version');
-            $table->unsignedBigInteger('parent_id')->nullable()->index();
-            $table->timestamps();
-        });
+        if ( ! Schema::hasTable('reports')) {
+            Schema::create('reports', function (Blueprint $table) {
+                $table->id();
+                $table->smallInteger('category')->nullable()->index();
+                $table->smallInteger('type')->nullable()->index();
+                $table->string('name')->nullable();
+                $table->integer('year')->nullable()->index();
+                $table->dateTime('start_at')->nullable()->index();
+                $table->dateTime('end_at')->nullable()->index();
+                $table->decimal('money', 16)->nullable();
+                $table->smallInteger('version');
+                $table->unsignedBigInteger('parent_id')->nullable()->index();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
