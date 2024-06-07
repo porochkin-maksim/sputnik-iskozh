@@ -18,6 +18,7 @@
 			              :placeholder="'Пароль'"
                           :name="'password'"
 			              :required="false"
+                          @submit="loginAction"
 			/>
 			<span class="toggle fa"
 			      :class="[showPassword ? 'fa-eye-slash' : 'fa-eye']"

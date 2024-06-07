@@ -9,6 +9,7 @@
                :placeholder="placeholder"
                :name="name"
                @change="onChange"
+               @keyup.enter="onSubmit"
                @keyup="onChange"
                class="form-control"
                :class="[errors ? 'form-error' : '']"
@@ -37,6 +38,7 @@ export default {
     emits   : [
         'update:modelValue',
         'change',
+        'submit',
     ],
     methods : {
         onChange (event) {
@@ -47,6 +49,10 @@ export default {
                 this.$emit('update:modelValue', event.target.value);
             }
         },
+        onSubmit(event) {
+            this.onChange(event);
+            this.$emit('submit');
+        }
     },
     computed: {
         computedType () {
