@@ -33,9 +33,4 @@ class FileService
     {
         return $this->fileService->getById($id);
     }
-
-    public function deleteById(int $id): bool
-    {
-        return $this->fileService->deleteById($id);
-    }
 }

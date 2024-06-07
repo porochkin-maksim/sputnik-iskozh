@@ -4,12 +4,11 @@ namespace Core\Objects\Report\Models;
 
 use Core\Enums\DateTimeFormat;
 use Core\Objects\Report\Enums\CategoryEnum;
-use function PHPUnit\Framework\isNull;
 
-class Dossier implements \JsonSerializable
+readonly class Dossier implements \JsonSerializable
 {
     public function __construct(
-        private readonly ReportDTO $report
+        private ReportDTO $report
     )
     {
     }
