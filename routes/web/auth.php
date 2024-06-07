@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use Core\Resources\RouteNames;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
@@ -14,6 +15,7 @@ Auth::routes(
     ],
 );
 
+Route::get('/login', fn() => redirect()->route(RouteNames::INDEX));
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/logout', LogoutController::class)->name('logout');
 Route::post('/register', RegisterController::class);
