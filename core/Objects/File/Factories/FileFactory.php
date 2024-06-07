@@ -19,7 +19,7 @@ class FileFactory
         }
 
         return $result->fill([
-            File::TYPE       => $dto->getType()->value,
+            File::TYPE       => $dto->getType()?->value,
             File::RELATED_ID => $dto->getRelatedId(),
             File::EXT        => $dto->getExt(),
             File::NAME       => $dto->getName(),
@@ -33,7 +33,7 @@ class FileFactory
 
         return $result
             ->setId($file->id)
-            ->setType(TypeEnum::from($file->type))
+            ->setType($file->type ? TypeEnum::from($file->type) : null)
             ->setRelatedId($file->related_id)
             ->setExt($file->ext)
             ->setName($file->name)

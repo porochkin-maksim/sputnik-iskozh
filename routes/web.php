@@ -9,7 +9,7 @@ include __DIR__ . '/web/auth.php';
 
 Route::get('/', function () {
     // if (Auth::check() || true) {
-        return view(ViewNames::PAGES_INDEX);
+    return view(ViewNames::PAGES_INDEX);
     // }
     // else {
     //     return view(ViewNames::LAYOUTS_APP);
@@ -20,11 +20,24 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['prefix' => 'reports'], function () {
     Route::get('/', [App\Http\Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
-    Route::get('/create', [App\Http\Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
-    Route::get('/edit/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
-    Route::post('/save', [App\Http\Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
-    Route::delete('/delete/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
-    Route::post('/list', [App\Http\Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
-    Route::post('/file/upload/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
-    Route::post('/file/delete/{id}', [\App\Http\Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+    Route::group(['prefix' => 'json'], function () {
+        Route::post('/list', [App\Http\Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
+        Route::get('/create', [App\Http\Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
+        Route::post('/save', [App\Http\Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
+        Route::get('/edit/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
+        Route::delete('/delete/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
+        Route::post('/file/upload/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
+        Route::post('/file/delete/{id}', [App\Http\Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+    });
+});
+
+Route::group(['prefix' => 'files'], function () {
+    Route::get('/', [App\Http\Controllers\FileController::class, 'index'])->name(RouteNames::FILES);
+    Route::group(['prefix' => 'json'], function () {
+        Route::get('/list', [App\Http\Controllers\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
+        Route::post('/store', [App\Http\Controllers\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
+        Route::post('/save', [App\Http\Controllers\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
+        Route::get('/edit/{id}', [App\Http\Controllers\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
+        Route::delete('/delete/{id}', [App\Http\Controllers\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
+    });
 });

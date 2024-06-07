@@ -3,7 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 
+/**
+ * @method UploadedFile[] allFiles()
+ */
 abstract class AbstractRequest extends FormRequest
 {
     public function authorize(): bool

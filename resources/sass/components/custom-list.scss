@@ -32,5 +32,11 @@
     .list-item {
         margin-bottom : 2em;
         border-radius : $border-radius;
+
+        .id,
+        .date {
+            color      : $color-gray;
+            font-style : italic;
+        }
     }
 }

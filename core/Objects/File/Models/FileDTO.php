@@ -2,6 +2,7 @@
 
 namespace Core\Objects\File\Models;
 
+use Core\Enums\DateTimeFormat;
 use Core\Objects\Common\Traits\TimestampsTrait;
 use Core\Objects\File\Enums\TypeEnum;
 use Illuminate\Support\Facades\Storage;
@@ -91,11 +92,15 @@ class FileDTO implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
+        $dossier = new Dossier($this);
+
         return [
-            'id'   => $this->id,
-            'name' => $this->name,
-            'ext'  => $this->ext,
-            'url'  => Storage::url($this->path),
+            'dossier'   => $dossier,
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'ext'       => $this->ext,
+            'url'       => Storage::url($this->path),
+            'updatedAt' => $this->updatedAt?->format(DateTimeFormat::DATE_DEFAULT),
         ];
     }
 }

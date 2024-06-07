@@ -12,9 +12,6 @@ use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
-/**
- * @method UploadedFile[] allFiles()
- */
 class SaveRequest extends AbstractRequest
 {
     private const ID       = RequestArgumentsEnum::ID;

@@ -1,4 +1,44 @@
 {
+    "filesDelete": {
+        "name": "files.delete",
+        "method": "delete",
+        "uri": "\/files\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "filesEdit": {
+        "name": "files.edit",
+        "method": "get",
+        "uri": "\/files\/json\/edit\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "filesIndex": {
+        "name": "files.index",
+        "method": "get",
+        "uri": "\/files",
+        "args": []
+    },
+    "filesList": {
+        "name": "files.list",
+        "method": "get",
+        "uri": "\/files\/json\/list",
+        "args": []
+    },
+    "filesSave": {
+        "name": "files.save",
+        "method": "post",
+        "uri": "\/files\/json\/save",
+        "args": []
+    },
+    "filesStore": {
+        "name": "files.store",
+        "method": "post",
+        "uri": "\/files\/json\/store",
+        "args": []
+    },
     "home": {
         "name": "home",
         "method": "get",
@@ -64,13 +104,13 @@
     "reportsCreate": {
         "name": "reports.create",
         "method": "get",
-        "uri": "\/reports\/create",
+        "uri": "\/reports\/json\/create",
         "args": []
     },
     "reportsDelete": {
         "name": "reports.delete",
         "method": "delete",
-        "uri": "\/reports\/delete\/{id}",
+        "uri": "\/reports\/json\/delete\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -78,7 +118,7 @@
     "reportsEdit": {
         "name": "reports.edit",
         "method": "get",
-        "uri": "\/reports\/edit\/{id}",
+        "uri": "\/reports\/json\/edit\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -86,7 +126,7 @@
     "reportsFileDelete": {
         "name": "reports.file.delete",
         "method": "post",
-        "uri": "\/reports\/file\/delete\/{id}",
+        "uri": "\/reports\/json\/file\/delete\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -94,7 +134,7 @@
     "reportsFileUpload": {
         "name": "reports.file.upload",
         "method": "post",
-        "uri": "\/reports\/file\/upload\/{id}",
+        "uri": "\/reports\/json\/file\/upload\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -108,13 +148,13 @@
     "reportsList": {
         "name": "reports.list",
         "method": "post",
-        "uri": "\/reports\/list",
+        "uri": "\/reports\/json\/list",
         "args": []
     },
     "reportsSave": {
         "name": "reports.save",
         "method": "post",
-        "uri": "\/reports\/save",
+        "uri": "\/reports\/json\/save",
         "args": []
     },
     "sanctumCsrfCookie": {

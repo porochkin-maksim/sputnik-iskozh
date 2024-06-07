@@ -4,9 +4,13 @@ namespace Core\Objects\File\Repositories;
 
 use App\Models\File;
 use Core\Db\RepositoryTrait;
+use Core\Objects\File\Models\FileSearcher;
+use Illuminate\Support\Facades\DB;
 
 class FileRepository
 {
+    private const TABLE = File::TABLE;
+
     use RepositoryTrait {
         getById as traitGetById;
         getByIds as traitGetByIds;
@@ -30,5 +34,17 @@ class FileRepository
         $result = $this->traitGetById($id);
 
         return $result;
+    }
+
+    /**
+     * @return File[]
+     */
+    public function search(FileSearcher $searcher): array
+    {
+        $ids = DB::table(static::TABLE)
+            ->pluck('id')
+            ->toArray();
+
+        return $this->traitGetByIds($ids, $searcher);
     }
 }

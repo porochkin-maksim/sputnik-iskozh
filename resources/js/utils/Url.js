@@ -7,7 +7,7 @@ let Generator = {
 	 *
 	 * @returns string
 	 */
-	makeUri(routeObject, params) {
+	makeUri(routeObject, params = {}) {
 		let uri = routeObject.uri;
 		Object.keys(routeObject.args).forEach(key => {
 			uri = uri.replace(routeObject.args[key], params[key]);

@@ -20,6 +20,8 @@ class File extends Model
 {
     use HasFactory;
 
+    public const TABLE = 'files';
+
     public const ID         = 'id';
     public const TYPE       = 'type';
     public const RELATED_ID = 'related_id';

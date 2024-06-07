@@ -3,8 +3,10 @@
 namespace Core\Objects\File\Services;
 
 use App\Models\File;
+use Core\Objects\File\Collections\Files;
 use Core\Objects\File\Factories\FileFactory;
 use Core\Objects\File\Models\FileDTO;
+use Core\Objects\File\Models\FileSearcher;
 use Core\Objects\File\Repositories\FileRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -43,7 +45,13 @@ readonly class FileService
 
     public function save(FileDTO $dto): FileDTO
     {
-        $file = $this->fileFactory->makeModelFromDto($dto);
+        $file = null;
+
+        if ($dto->getId()) {
+            $file = $this->fileRepository->getById($dto->getId());
+        }
+
+        $file = $this->fileFactory->makeModelFromDto($dto, $file);
         $file = $this->fileRepository->save($file);
 
         return $this->fileFactory->makeDtoFromObject($file);
@@ -67,5 +75,17 @@ readonly class FileService
         }
 
         return false;
+    }
+
+    public function search(FileSearcher $searcher): Files
+    {
+        $reports = $this->fileRepository->search($searcher);
+
+        $result  = new Files();
+        foreach ($reports as $report) {
+            $result->add($this->fileFactory->makeDtoFromObject($report));
+        }
+
+        return $result;
     }
 }
