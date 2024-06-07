@@ -2,7 +2,7 @@
     <div v-if="registerSuccessMessage"
          class="alert alert-success"
          v-html="registerSuccessMessage" />
-    <form @submit="registerAction"
+    <form @submit.prevent="registerAction"
           v-else>
         <div>
             <custom-input v-model="login"
@@ -71,7 +71,6 @@ export default {
             this.showPassword = !this.showPassword;
         },
         registerAction (e) {
-            e.preventDefault();
             window.axios.post('/register', {
                 login                : this.login,
                 password             : this.password,
@@ -93,16 +92,6 @@ export default {
                     return true;
                 default:
                     return false;
-            }
-        },
-        confirmedTextClass () {
-            switch (this.confirmedStatus) {
-                case null:
-                    return 'text-primary';
-                case true:
-                    return 'text-success';
-                default:
-                    return 'text-danger';
             }
         },
     },
