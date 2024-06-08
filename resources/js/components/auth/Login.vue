@@ -75,6 +75,7 @@ export default {
 			window.axios[Url.Routes.login.method](Url.Routes.login.uri, {
 				email :    this.email,
 				password : this.password,
+                remember : this.remember,
 			}).then(response => {
 				location.reload();
 			}).catch(response => {
