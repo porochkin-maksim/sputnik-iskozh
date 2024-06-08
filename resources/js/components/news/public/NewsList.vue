@@ -9,11 +9,12 @@
 </template>
 
 <script>
-import Url           from '../../utils/Url.js';
-import ResponseError from '../../mixin/ResponseError.js';
-import NewsListItem  from './NewsListItem.vue';
+import Url           from '../../../utils/Url.js';
+import ResponseError from '../../../mixin/ResponseError.js';
+import NewsListItem  from './../NewsListItem.vue';
 
 export default {
+    name      : 'NewsList',
     components: {
         NewsListItem,
     },

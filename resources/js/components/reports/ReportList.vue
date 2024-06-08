@@ -19,7 +19,6 @@ export const ViewMode = {
 };
 
 export default {
-    name      : 'List',
     components: {
         ReportListItem,
     },

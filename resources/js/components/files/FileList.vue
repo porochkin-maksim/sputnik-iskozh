@@ -14,7 +14,6 @@ import ResponseError from '../../mixin/ResponseError.js';
 import FileListItem      from './FileListItem.vue';
 
 export default {
-    name      : 'List',
     components: {
         FileListItem,
     },

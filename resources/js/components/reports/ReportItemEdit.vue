@@ -76,7 +76,6 @@ import CustomSelect  from '../common/CustomSelect.vue';
 import ResponseError from '../../mixin/ResponseError.js';
 
 export default {
-    name      : 'ReportItemEdit',
     emits     : ['updated'],
     components: {
         CustomSelect,

@@ -46,7 +46,6 @@ import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
 
 export default {
-    name      : 'FileListItem',
     emits     : ['updated'],
     props     : [
         'file',

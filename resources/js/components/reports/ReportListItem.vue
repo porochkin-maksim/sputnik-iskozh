@@ -73,7 +73,6 @@ import CustomInput    from '../common/CustomInput.vue';
 import Url            from '../../utils/Url.js';
 
 export default {
-    name      : 'ReportListItem',
     emits     : ['updated'],
     props     : [
         'report',

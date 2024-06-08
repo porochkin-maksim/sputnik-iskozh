@@ -43,7 +43,6 @@ import ResponseError from '../../mixin/ResponseError.js';
 import HtmlEditor    from '../common/HtmlEditor.vue';
 
 export default {
-    name      : 'NewsItemEdit',
     emits     : ['updated'],
     components: {
         CustomSelect,
