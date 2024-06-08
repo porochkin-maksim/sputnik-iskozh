@@ -1,9 +1,9 @@
 <template>
     <div class="row custom-list list files-list">
         <file-list-item v-for="file in files"
-                   :file="file"
-                   :edit="edit"
-                   @updated="loadList"
+                        :file="file"
+                        :edit="edit"
+                        @updated="loadList"
         />
     </div>
 </template>
@@ -11,7 +11,7 @@
 <script>
 import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
-import FileListItem      from './FileListItem.vue';
+import FileListItem  from './FileListItem.vue';
 
 export default {
     components: {
@@ -30,8 +30,9 @@ export default {
         return {
             showForm: false,
 
-            files: [],
-            edit : false,
+            files : [],
+            edit  : false,
+            images: [],
         };
     },
     mounted () {
@@ -39,12 +40,19 @@ export default {
     },
     methods: {
         loadList () {
-            window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri, { params: {
+            window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri, {
+                params: {
                     limit: this.limit,
-                }
+                },
             }).then(response => {
-                this.files = response.data.files;
-                this.edit  = response.data.edit;
+                this.files  = response.data.files;
+                this.images = [];
+                this.files.forEach(file => {
+                    if (file.isImage) {
+                        this.images.push(file);
+                    }
+                });
+                this.edit = response.data.edit;
                 this.$emit('update:canEdit', this.edit);
                 this.$emit('update:count', this.files.length);
             }).catch(response => {

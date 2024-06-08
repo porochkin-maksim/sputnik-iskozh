@@ -6,6 +6,7 @@ use Core\Enums\DateTimeFormat;
 use Core\Objects\Common\Traits\TimestampsTrait;
 use Core\Objects\File\Enums\TypeEnum;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FileDTO implements \JsonSerializable
 {
@@ -61,7 +62,7 @@ class FileDTO implements \JsonSerializable
 
     public function setExt(?string $ext): static
     {
-        $this->ext = $ext;
+        $this->ext = $ext ? Str::lower($ext) : null;
 
         return $this;
     }
@@ -101,6 +102,16 @@ class FileDTO implements \JsonSerializable
             'ext'       => $this->ext,
             'url'       => Storage::url($this->path),
             'updatedAt' => $this->updatedAt?->format(DateTimeFormat::DATE_DEFAULT),
+            'isImage'   => in_array($this->ext, [
+                'jpg',
+                'jpeg',
+                'png',
+                'gif',
+                'bmp',
+                'tiff',
+                'webp',
+                'svg',
+            ]),
         ];
     }
 }
