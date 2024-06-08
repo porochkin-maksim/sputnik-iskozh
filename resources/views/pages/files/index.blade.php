@@ -2,6 +2,10 @@
 
 @extends('layouts.app')
 
+@section('title')
+    Файлы
+@endsection
+
 @section('content')
     <files-block></files-block>
 @endsection

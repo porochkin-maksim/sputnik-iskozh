@@ -2,6 +2,10 @@
 
 @extends('layouts.app')
 
+@section('title')
+    Отчёты
+@endsection
+
 @section('content')
     <reports-block></reports-block>
 @endsection
