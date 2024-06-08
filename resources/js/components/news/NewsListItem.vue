@@ -1,25 +1,26 @@
 <template>
     <div v-if="modeEdit">
-        <wrapper @close="modeEdit=false">
+        <wrapper @close="modeEdit=false"
+                 :container-class="'w-lg-75 w-md-100'">
             <div class="container-fluid">
-                <report-item-edit :model-value="id"
-                                  @updated="updatedItem" />
+                <news-item-edit :model-value="id"
+                                @updated="updatedItem()" />
             </div>
         </wrapper>
     </div>
     <div class="list-item">
         <div class="body">
-            <div>{{ report.id }}</div>
+            <div>{{ news.id }}</div>
             <div class="d-flex justify-content-between">
                 <div class="name"
-                     :class="!report.name ? 'no-name' : ''">
-                    {{ report.name ? report.name : 'Без названия' }}
+                     :class="!news.name ? 'no-name' : ''">
+                    {{ news.name ? news.name : 'Без названия' }}
                 </div>
-                <div class="date">&nbsp;<i class="fa fa-upload"></i> {{ report.dossier.updatedAt }}</div>
+                <div class="date">&nbsp;<i class="fa fa-upload"></i> {{ news.dossier.updatedAt }}</div>
             </div>
             <div class="d-flex justify-content-between">
-                <div class="category">{{ report.dossier.category }}</div>
-                <div class="period">{{ report.dossier.period }}</div>
+                <div class="category">{{ news.dossier.category }}</div>
+                <div class="period">{{ news.dossier.period }}</div>
             </div>
         </div>
 
@@ -35,12 +36,12 @@
                     <i class="fa fa-paperclip "></i>&nbsp;Файл
                 </button>
                 <button class="btn btn-danger"
-                        @click="deleteReport">
+                        @click="deleteNews">
                     <i class="fa fa-trash "></i>&nbsp;Удалить
                 </button>
             </div>
             <div class="files">
-                <div v-for="file in report.files"
+                <div v-for="file in news.files"
                      class="file">
                     <div class="d-flex justify-content-between align-items-center">
                         <a :href="file.url"
@@ -67,22 +68,22 @@
 </template>
 
 <script>
-import ReportItemEdit from './ReportItemEdit.vue';
-import Wrapper        from '../common/Wrapper.vue';
-import CustomInput    from '../common/CustomInput.vue';
-import Url            from '../../utils/Url.js';
+import NewsItemEdit from './NewsItemEdit.vue';
+import Wrapper      from '../common/Wrapper.vue';
+import CustomInput  from '../common/CustomInput.vue';
+import Url          from '../../utils/Url.js';
 
 export default {
-    name      : 'ReportListItem',
+    name      : 'NewsListItem',
     emits     : ['updated'],
     props     : [
-        'report',
+        'news',
         'edit',
     ],
     components: {
         CustomInput,
         Wrapper,
-        ReportItemEdit,
+        NewsItemEdit,
     },
     created () {
 
@@ -91,7 +92,7 @@ export default {
         return {
             modeEdit: false,
 
-            id: this.report.id,
+            id: this.news.id,
         };
     },
     methods: {
@@ -99,16 +100,16 @@ export default {
             this.$emit('updated', true);
             this.modeEdit = false;
         },
-        deleteReport () {
-            if (!confirm('Удалить отчёт?')) {
+        deleteNews () {
+            if (!confirm('Удалить новость?')) {
                 return;
             }
 
-            let uri = Url.Generator.makeUri(Url.Routes.reportsDelete, {
+            let uri = Url.Generator.makeUri(Url.Routes.newsDelete, {
                 id: this.id,
             });
 
-            window.axios[Url.Routes.reportsDelete.method](uri).then(response => {
+            window.axios[Url.Routes.newsDelete.method](uri).then(response => {
                 this.updatedItem();
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -121,11 +122,11 @@ export default {
             let form = new FormData();
             form.append('file', event.target.files[0]);
 
-            let uri = Url.Generator.makeUri(Url.Routes.reportsFileUpload, {
-                id: this.report.id,
+            let uri = Url.Generator.makeUri(Url.Routes.newsFileUpload, {
+                id: this.news.id,
             });
 
-            window.axios[Url.Routes.reportsFileUpload.method](
+            window.axios[Url.Routes.newsFileUpload.method](
                 uri,
                 form,
             ).then(response => {
@@ -141,11 +142,11 @@ export default {
                 return;
             }
 
-            let uri = Url.Generator.makeUri(Url.Routes.reportsFileDelete, {
+            let uri = Url.Generator.makeUri(Url.Routes.newsFileDelete, {
                 id: id,
             });
 
-            window.axios[Url.Routes.reportsFileDelete.method](uri).then(response => {
+            window.axios[Url.Routes.newsFileDelete.method](uri).then(response => {
                 this.updatedItem();
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -153,7 +154,7 @@ export default {
         },
     },
     watch  : {
-        report: {
+        news: {
             handler (val) {
                 this.id = val.id;
             },

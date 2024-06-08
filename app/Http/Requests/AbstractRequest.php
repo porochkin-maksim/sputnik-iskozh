@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 
@@ -23,5 +24,15 @@ abstract class AbstractRequest extends FormRequest
     public function getFloat(string $key, mixed $default = null): ?float
     {
         return is_numeric(parent::get($key, $default)) ? (float) parent::get($key, $default) : null;
+    }
+
+    public function getDateOrNull(string $key): ?Carbon
+    {
+        try {
+            return $this->get($key) ? Carbon::parse($this->get($key)) : null;
+        }
+        catch (\Exception) {
+            return null;
+        }
     }
 }

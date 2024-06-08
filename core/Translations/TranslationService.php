@@ -18,6 +18,10 @@ class TranslationService
     public function log(string $key): void
     {
         $key = trim($key);
+        if (str_contains($key, 'validation.values')) {
+            return;
+        }
+
         $line = sprintf('"%s": ""', $key);
         if ( ! exec(sprintf('grep %s %s', $line, $this->localePath()))) {
             $content      = $this->getContent();

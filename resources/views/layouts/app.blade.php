@@ -1,13 +1,14 @@
 <?php declare(strict_types=1);
 
 use Core\Objects\ObjectsLocator;
+use Core\Resources\RouteNames;
 use Illuminate\Support\Facades\Auth;
 
 $user          = Auth::user();
 $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
 
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
@@ -30,32 +31,53 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
 </head>
 <body>
 <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
             <a class="navbar-brand"
                href="{{ url('/') }}">
                 {{ config('app.name', 'Laravel') }}
             </a>
-            <button class="navbar-toggler d-none"
+            <button class="navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent"
                     aria-expanded="false"
-                    aria-label="{{ __('Toggle navigation') }}">
+                    aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse"
                  id="navbarSupportedContent">
-                <!-- Left Side Of Navbar -->
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {{--                    <li class="nav-item dropdown">--}}
+                    {{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">--}}
+                    {{--                            Выпадающий список--}}
+                    {{--                        </a>--}}
+                    {{--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--}}
+                    {{--                            <li><a class="dropdown-item" href="#">Действие</a></li>--}}
+                    {{--                            <li><a class="dropdown-item" href="#">Другое действие</a></li>--}}
+                    {{--                            <li><hr class="dropdown-divider"></li>--}}
+                    {{--                            <li><a class="dropdown-item" href="#">Что-то еще здесь</a></li>--}}
+                    {{--                        </ul>--}}
+                    {{--                    </li>--}}
 
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route(RouteNames::NEWS) }}">Новости</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route(RouteNames::FILES) }}">Файлы</a>
+                        </li>
+                    @endauth
                 </ul>
 
-                <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ms-auto">
-                    <!-- Authentication Links -->
                     @guest
                         <li class="nav-item">
                             <auth-block></auth-block>

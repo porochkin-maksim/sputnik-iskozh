@@ -31,6 +31,19 @@ Route::group(['prefix' => 'reports'], function () {
     });
 });
 
+Route::group(['prefix' => 'news'], function () {
+    Route::get('/', [App\Http\Controllers\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
+    Route::group(['prefix' => 'json'], function () {
+        Route::post('/list', [App\Http\Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
+        Route::get('/create', [App\Http\Controllers\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
+        Route::post('/save', [App\Http\Controllers\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
+        Route::get('/edit/{id}', [App\Http\Controllers\News\NewsController::class, 'edit'])->name(RouteNames::NEWS_EDIT);
+        Route::delete('/delete/{id}', [App\Http\Controllers\News\NewsController::class, 'delete'])->name(RouteNames::NEWS_DELETE);
+        Route::post('/file/upload/{id}', [App\Http\Controllers\News\NewsController::class, 'uploadFile'])->name(RouteNames::NEWS_FILE_UPLOAD);
+        Route::post('/file/delete/{id}', [App\Http\Controllers\FileController::class, 'delete'])->name(RouteNames::NEWS_FILE_DELETE);
+    });
+});
+
 Route::group(['prefix' => 'files'], function () {
     Route::get('/', [App\Http\Controllers\FileController::class, 'index'])->name(RouteNames::FILES);
     Route::group(['prefix' => 'json'], function () {

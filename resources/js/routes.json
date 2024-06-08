@@ -63,6 +63,62 @@
         "uri": "\/logout",
         "args": []
     },
+    "newsCreate": {
+        "name": "news.create",
+        "method": "get",
+        "uri": "\/news\/json\/create",
+        "args": []
+    },
+    "newsDelete": {
+        "name": "news.delete",
+        "method": "delete",
+        "uri": "\/news\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "newsEdit": {
+        "name": "news.edit",
+        "method": "get",
+        "uri": "\/news\/json\/edit\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "newsFileDelete": {
+        "name": "news.file.delete",
+        "method": "post",
+        "uri": "\/news\/json\/file\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "newsFileUpload": {
+        "name": "news.file.upload",
+        "method": "post",
+        "uri": "\/news\/json\/file\/upload\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "newsIndex": {
+        "name": "news.index",
+        "method": "get",
+        "uri": "\/news",
+        "args": []
+    },
+    "newsList": {
+        "name": "news.list",
+        "method": "post",
+        "uri": "\/news\/json\/list",
+        "args": []
+    },
+    "newsSave": {
+        "name": "news.save",
+        "method": "post",
+        "uri": "\/news\/json\/save",
+        "args": []
+    },
     "passwordConfirm": {
         "name": "password.confirm",
         "method": "get",

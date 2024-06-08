@@ -1,27 +1,12 @@
-<?php declare(strict_types=1);
-
-use Core\Resources\RouteNames;
-
-?>
+<?php declare(strict_types=1);?>
 
 @extends('layouts.app')
 
 @section('content')
-        <ul>
-            <li>
-                <a href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
-            </li>
-            <li>
-                <a href="{{ route(RouteNames::FILES) }}">Файлы</a>
-            </li>
-        </ul>
 
-    {{--    <div class="card">--}}
-    {{--        <div class="card-body">--}}
+    <index-page></index-page>
 
-    {{--        </div>--}}
-    {{--    </div>--}}
-    <ul class="p-0 m-0">
+    <ul class="p-0 m-0 mt-5 list-unstyled">
         <li>
             <a href="{{ Storage::url('Устав.pdf') }}"
                target="_blank">

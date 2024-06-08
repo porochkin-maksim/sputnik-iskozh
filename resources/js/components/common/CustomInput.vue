@@ -3,7 +3,17 @@
         <span class="label-text">
             {{ label }}
         </span>
-        <input :value="modelValue"
+<!--        <template v-if="usePrimeVue">-->
+<!--            <template v-if="type==='datetime-local'">-->
+<!--                <Calendar v-model="localValue"-->
+<!--                          showTime-->
+<!--                          hourFormat="24"-->
+<!--                          :placeholder="placeholder"-->
+<!--                />-->
+<!--            </template>-->
+<!--        </template>-->
+        <input
+               :value="modelValue"
                :type="computedType"
                :required="required"
                :placeholder="placeholder"
@@ -25,8 +35,16 @@
 </template>
 
 <script>
+/**
+ * @see https://primevue.org/
+ */
+import Calendar from 'primevue/calendar';
+
 export default {
-    props   : [
+    components: {
+        Calendar,
+    },
+    props     : [
         'modelValue',
         'errors',
         'type',
@@ -35,11 +53,16 @@ export default {
         'placeholder',
         'required',
     ],
-    emits   : [
+    emits     : [
         'update:modelValue',
         'change',
         'submit',
     ],
+    data () {
+        return {
+            localValue: null,
+        };
+    },
     methods : {
         onChange (event) {
             if (this.type === 'file') {
@@ -49,10 +72,18 @@ export default {
                 this.$emit('update:modelValue', event.target.value);
             }
         },
-        onSubmit(event) {
+        onSubmit (event) {
             this.onChange(event);
             this.$emit('submit');
-        }
+        },
+        usePrimeVue () {
+            switch (this.computedType) {
+                case 'datetime-local':
+                    return true;
+                default:
+                    return false;
+            }
+        },
     },
     computed: {
         computedType () {
