@@ -23,6 +23,8 @@ export default {
     props     : [
         'reloadList',
         'canEdit',
+        'count',
+        'limit',
     ],
     data () {
         return {
@@ -37,10 +39,14 @@ export default {
     },
     methods: {
         loadList () {
-            window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri).then(response => {
+            window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri, { params: {
+                    limit: this.limit,
+                }
+            }).then(response => {
                 this.files = response.data.files;
                 this.edit  = response.data.edit;
                 this.$emit('update:canEdit', this.edit);
+                this.$emit('update:count', this.files.length);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

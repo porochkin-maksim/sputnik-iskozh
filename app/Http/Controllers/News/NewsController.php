@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
 use Core\Objects\News\Factories\NewsFactory;
 use Core\Objects\News\NewsLocator;
 use Core\Objects\News\Requests\SaveRequest;
@@ -56,6 +57,7 @@ class NewsController extends Controller
     {
         $searcher = $request->dto();
         $searcher
+            ->setSortOrderProperty(News::PUBLISHED_AT)
             ->setSortOrderDesc()
             ->setWithFiles();
 

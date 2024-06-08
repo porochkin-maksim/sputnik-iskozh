@@ -17,6 +17,12 @@ interface SearcherInterface
 
     public function getSortProperty(): string;
 
+    public function getLimit(): ?int;
+
+    public function getOffset(): ?int;
+
+    public function getLastId(): ?int;
+
     /**
      * @return string[]
      */

@@ -14,6 +14,7 @@
     "Reset Password Notification": "Запрос на восстановление пароля",
     "Reset Password": "Сбросить пароль",
     "Send Password Reset Link": "Отправить ссылку сброса пароля",
+    "Service Unavailable": "Сервис недоступен",
     "This password reset link will expire in :count minutes.": "Срок действия ссылки для сброса пароля истекает через :count минут.",
     "Toggle navigation": "Переключить навигацию",
     "Verify Email Address": "Подтвердить адрес электронной почты",

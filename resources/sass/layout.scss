@@ -36,18 +36,38 @@ main,
     z-index         : 2;
 }
 
-.layout-main {
-    display : flex;
+@media (min-width : 992px) {
+    .layout-main {
+        display : flex;
 
-    .layout-left {
-        width         : 30%;
-        padding-right : $font-size * 2;
-        border-right  : 1px solid $border-color;
+        .layout-left {
+            width         : 30%;
+            padding-right : $font-size * 2;
+            border-right  : 1px solid $border-color;
+        }
+
+        .layout-right {
+            width        : 70%;
+            padding-left : $font-size * 2;
+        }
     }
+}
 
-    .layout-right {
-        width        : 70%;
-        padding-left : $font-size * 2;
+@media (max-width : 992px) {
+    .layout-main {
+        display : flex;
+        flex-direction: column-reverse;
+
+        .layout-left {
+            width         : 100%;
+            padding-right : unset;
+            border-right  : unset;
+        }
+
+        .layout-right {
+            width        : 100%;
+            padding-left : unset;
+        }
     }
 }
 

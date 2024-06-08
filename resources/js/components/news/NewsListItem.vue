@@ -10,21 +10,29 @@
     </div>
     <div class="list-item">
         <div class="body">
-            <div>{{ news.id }}</div>
             <div class="d-flex justify-content-between">
                 <div class="name"
-                     :class="!news.name ? 'no-name' : ''">
-                    {{ news.name ? news.name : 'Без названия' }}
+                     :class="!news.title ? 'no-name' : ''">
+                    {{ news.title ? news.title : 'Без названия' }}
                 </div>
-                <div class="date">&nbsp;<i class="fa fa-upload"></i> {{ news.dossier.updatedAt }}</div>
+                <div class="date">{{ news.dossier.publishedAt }}</div>
             </div>
-            <div class="d-flex justify-content-between">
-                <div class="category">{{ news.dossier.category }}</div>
-                <div class="period">{{ news.dossier.period }}</div>
-            </div>
+            <div class="article ql-editor"
+                 v-html="news.article"></div>
         </div>
 
         <div class="footer">
+            <div class="files">
+                <div v-for="file in news.files"
+                     class="file">
+                    <file-list-item :file="file"
+                                    :edit="edit"
+                                    :mode="FileItemMode.LINE"
+                                    @updated="updatedItem"
+                    />
+                </div>
+            </div>
+
             <div class="btn-group btn-group-sm"
                  v-if="edit">
                 <button class="btn btn-primary"
@@ -40,23 +48,6 @@
                     <i class="fa fa-trash "></i>&nbsp;Удалить
                 </button>
             </div>
-            <div class="files">
-                <div v-for="file in news.files"
-                     class="file">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a :href="file.url"
-                           target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
-
-                        <div class="btn-group btn-group-sm"
-                             v-if="edit">
-                            <button class="btn btn-danger"
-                                    @click="deleteFile(file.id)">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="d-none">
                 <input type="file"
@@ -68,10 +59,12 @@
 </template>
 
 <script>
-import NewsItemEdit from './NewsItemEdit.vue';
-import Wrapper      from '../common/Wrapper.vue';
-import CustomInput  from '../common/CustomInput.vue';
-import Url          from '../../utils/Url.js';
+import NewsItemEdit             from './NewsItemEdit.vue';
+import Wrapper                  from '../common/Wrapper.vue';
+import CustomInput              from '../common/CustomInput.vue';
+import Url                      from '../../utils/Url.js';
+import FileListItem             from '../files/FileListItem.vue';
+import { MODE as FileItemMode } from '../files/FileListItem.vue';
 
 export default {
     emits     : ['updated'],
@@ -80,6 +73,7 @@ export default {
         'edit',
     ],
     components: {
+        FileListItem,
         CustomInput,
         Wrapper,
         NewsItemEdit,
@@ -89,6 +83,7 @@ export default {
     },
     data () {
         return {
+            FileItemMode,
             modeEdit: false,
 
             id: this.news.id,

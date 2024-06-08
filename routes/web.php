@@ -21,7 +21,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['prefix' => 'reports'], function () {
     Route::get('/', [App\Http\Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
     Route::group(['prefix' => 'json'], function () {
-        Route::post('/list', [App\Http\Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
+        Route::get('/list', [App\Http\Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
         Route::get('/create', [App\Http\Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
         Route::post('/save', [App\Http\Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
         Route::get('/edit/{id}', [App\Http\Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'reports'], function () {
 Route::group(['prefix' => 'news'], function () {
     Route::get('/', [App\Http\Controllers\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
     Route::group(['prefix' => 'json'], function () {
-        Route::post('/list', [App\Http\Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
+        Route::get('/list', [App\Http\Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
         Route::get('/create', [App\Http\Controllers\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
         Route::post('/save', [App\Http\Controllers\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
         Route::get('/edit/{id}', [App\Http\Controllers\News\NewsController::class, 'edit'])->name(RouteNames::NEWS_EDIT);

@@ -10,6 +10,10 @@ trait SearcherTrait
     private string $sortOrder;
     private string $sortOrderProperty = 'id';
 
+    private ?int $limit  = null;
+    private ?int $offset = null;
+    private ?int $lastId = null;
+
     /** @var int[] $ids */
     private array $ids    = [];
     private array $select = [];
@@ -40,6 +44,8 @@ trait SearcherTrait
     {
         return $this->select;
     }
+
+    /** Сортировки */
 
     public function setSortOrderAsc(): static
     {
@@ -72,10 +78,52 @@ trait SearcherTrait
         return $this;
     }
 
+    /** Отступы и лимиты */
+
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    public function setLimit(?int $limit): static
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
+    public function setOffset(?int $offset): static
+    {
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    public function getLastId(): ?int
+    {
+        return $this->lastId;
+    }
+
+    public function setLastId(?int $lastId): static
+    {
+        $this->lastId = $lastId;
+
+        return $this;
+    }
+
+    /** Отношения */
+
     public function getWith(): array
     {
         return array_unique($this->with);
     }
+
+    /** Выборка */
 
     public function getWhere(): WhereCollection
     {

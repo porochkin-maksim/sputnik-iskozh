@@ -9,6 +9,7 @@ enum RequestArgumentsEnum: string
     public const EMAIL        = 'email';
     public const END_AT       = 'end_at';
     public const ID           = 'id';
+    public const LIMIT        = 'limit';
     public const LOGIN        = 'login';
     public const MONEY        = 'money';
     public const NAME         = 'name';

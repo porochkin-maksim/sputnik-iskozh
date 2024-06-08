@@ -1,26 +1,60 @@
 <template>
-    <div class="list-item">
+    <div :class="mode===MODE.LINE ? '' : 'list-item'">
         <div class="body">
-            <div class="d-flex justify-content-end">
-                <div class="date">&nbsp;<i class="fa fa-upload"></i> {{ file.dossier.updatedAt }}</div>
+            <div v-if="mode!==MODE.LINE"
+                 class="d-flex justify-content-end">
+                <div class="date">{{ file.dossier.updatedAt }}</div>
             </div>
-            <div v-if="modeEdit" class="form">
-                <custom-input v-model="name"
-                              :errors="errors.name"
-                              :placeholder="'Название'"
-                              :required="false"
-                              @change="clearError('name')"
-                />
+            <div v-if="modeEdit"
+                 class="form">
+                <div class="input-group">
+                    <custom-input v-model="name"
+                                  :errors="errors.name"
+                                  :placeholder="'Название'"
+                                  :required="false"
+                                  @change="clearError('name')"
+                    />
+                    <template v-if="mode===MODE.LINE">
+                        <button class="btn btn-primary"
+                                @click="save"
+                        >
+                            <i class="fa fa-save"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary"
+                                @click="clickButton"
+                        >
+                            <i class="fa fa-window-close"></i>
+                        </button>
+                    </template>
+                </div>
             </div>
             <div v-else>
-                <a :href="file.url"
-                   target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
+                <div class="d-inline-flex align-items-center">
+                    <template v-if="edit && mode===MODE.LINE">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary btn-sm"
+                                    @click="clickButton"
+                            >
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger"
+                                    @click="deleteFile"
+                            >
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                        &nbsp;
+                    </template>
+
+                    <a :href="file.url"
+                       target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
+                </div>
             </div>
         </div>
 
-        <div class="footer">
-            <div class="btn-group btn-group-sm"
-                 v-if="edit">
+        <div class="footer"
+             v-if="edit && mode!==MODE.LINE">
+            <div class="btn-group btn-group-sm">
                 <button class="btn btn-primary"
                         @click="clickButton">
                     <template v-if="modeEdit">
@@ -45,11 +79,17 @@ import CustomInput   from '../common/CustomInput.vue';
 import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
 
+export const MODE = {
+    LINE: 'line',
+    FORM: 'form',
+};
+
 export default {
     emits     : ['updated'],
     props     : [
         'file',
         'edit',
+        'mode',
     ],
     mixins    : [
         ResponseError,
@@ -62,6 +102,7 @@ export default {
     },
     data () {
         return {
+            MODE,
             modeEdit: false,
 
             id  : this.file.id,
@@ -69,14 +110,14 @@ export default {
         };
     },
     methods: {
-        getFileName() {
+        getFileName () {
             return this.file.name.replace('.' + this.file.ext, '');
         },
         updatedItem () {
             this.$emit('updated', true);
             this.modeEdit = false;
         },
-        clickButton() {
+        clickButton () {
             if (this.modeEdit) {
                 this.save();
             }
@@ -84,9 +125,9 @@ export default {
                 this.modeEdit = true;
             }
         },
-        save() {
+        save () {
             window.axios[Url.Routes.filesSave.method](Url.Routes.filesSave.uri, {
-                id: this.id,
+                id  : this.id,
                 name: this.name + '.' + this.file.ext,
             }).then(response => {
                 this.updatedItem();

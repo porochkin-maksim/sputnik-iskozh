@@ -15,7 +15,8 @@ readonly class Dossier implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'updatedAt' => $this->report->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+            'updatedAt'   => $this->report->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+            'publishedAt' => $this->report->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
         ];
     }
 }

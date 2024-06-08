@@ -21,6 +21,11 @@ abstract class AbstractRequest extends FormRequest
         return (int) parent::get($key, $default);
     }
 
+    public function getIntOrNull(string $key): ?int
+    {
+        return parent::has($key) ? $this->getInt($key) : null;
+    }
+
     public function getFloat(string $key, mixed $default = null): ?float
     {
         return is_numeric(parent::get($key, $default)) ? (float) parent::get($key, $default) : null;

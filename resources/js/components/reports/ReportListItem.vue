@@ -15,7 +15,7 @@
                      :class="!report.name ? 'no-name' : ''">
                     {{ report.name ? report.name : 'Без названия' }}
                 </div>
-                <div class="date">&nbsp;<i class="fa fa-upload"></i> {{ report.dossier.updatedAt }}</div>
+                <div class="date">{{ report.dossier.updatedAt }}</div>
             </div>
             <div class="d-flex justify-content-between">
                 <div class="category">{{ report.dossier.category }}</div>
@@ -24,6 +24,17 @@
         </div>
 
         <div class="footer">
+            <div class="files">
+                <div v-for="file in report.files"
+                     class="file">
+                    <file-list-item :file="file"
+                                    :edit="edit"
+                                    :mode="FileItemMode.LINE"
+                                    @updated="updatedItem"
+                    />
+                </div>
+            </div>
+
             <div class="btn-group btn-group-sm"
                  v-if="edit">
                 <button class="btn btn-primary"
@@ -39,23 +50,6 @@
                     <i class="fa fa-trash "></i>&nbsp;Удалить
                 </button>
             </div>
-            <div class="files">
-                <div v-for="file in report.files"
-                     class="file">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a :href="file.url"
-                           target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
-
-                        <div class="btn-group btn-group-sm"
-                             v-if="edit">
-                            <button class="btn btn-danger"
-                                    @click="deleteFile(file.id)">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="d-none">
                 <input type="file"
@@ -67,10 +61,12 @@
 </template>
 
 <script>
-import ReportItemEdit from './ReportItemEdit.vue';
-import Wrapper        from '../common/Wrapper.vue';
-import CustomInput    from '../common/CustomInput.vue';
-import Url            from '../../utils/Url.js';
+import ReportItemEdit           from './ReportItemEdit.vue';
+import Wrapper                  from '../common/Wrapper.vue';
+import CustomInput              from '../common/CustomInput.vue';
+import Url                      from '../../utils/Url.js';
+import FileListItem             from '../files/FileListItem.vue';
+import { MODE as FileItemMode } from '../files/FileListItem.vue';
 
 export default {
     emits     : ['updated'],
@@ -79,6 +75,7 @@ export default {
         'edit',
     ],
     components: {
+        FileListItem,
         CustomInput,
         Wrapper,
         ReportItemEdit,
@@ -88,6 +85,7 @@ export default {
     },
     data () {
         return {
+            FileItemMode,
             modeEdit: false,
 
             id: this.report.id,

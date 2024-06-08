@@ -68,7 +68,7 @@ export default {
     },
     watch: {
         value: function (oldVal, newVal) {
-            this.quill.root.innerHTML = this.value;
+
         },
     },
 };

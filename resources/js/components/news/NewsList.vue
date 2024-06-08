@@ -14,6 +14,7 @@ import ResponseError from '../../mixin/ResponseError.js';
 import NewsListItem  from './NewsListItem.vue';
 
 export default {
+    name      : 'NewsLists',
     components: {
         NewsListItem,
     },
@@ -24,6 +25,8 @@ export default {
         'viewMode',
         'reloadList',
         'canEdit',
+        'count',
+        'limit',
     ],
     data () {
         return {
@@ -38,10 +41,15 @@ export default {
     },
     methods: {
         loadList () {
-            window.axios[Url.Routes.newsList.method](Url.Routes.newsList.uri).then(response => {
+            window.axios[Url.Routes.newsList.method](Url.Routes.newsList.uri, {
+                params: {
+                    limit: this.limit,
+                },
+            }).then(response => {
                 this.news = response.data.news;
                 this.edit = response.data.edit;
                 this.$emit('update:canEdit', this.edit);
+                this.$emit('update:count', this.news.length);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

@@ -15,12 +15,15 @@
 
     &.list {
         .list-item {
+            .body {
+                padding-bottom: 1em;
+            }
             .footer {
-                padding : 1em 0;
+                padding-bottom : 1em;
 
                 .files {
                     .file {
-                        margin-top : 0.8em;
+                        margin : 0.4em 0;
                     }
                 }
             }

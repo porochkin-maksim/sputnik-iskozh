@@ -74,6 +74,8 @@ trait RepositoryTrait
                         }
 
                     }
+                })->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
+                    $query->limit($searcher->getLimit());
                 })->orderBy($searcher->getSortProperty(), $searcher->getSortOrder());
             }
 

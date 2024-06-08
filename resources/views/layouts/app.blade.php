@@ -61,20 +61,23 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
                     {{--                        </ul>--}}
                     {{--                    </li>--}}
 
-                    @auth
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               href="{{ route(RouteNames::NEWS) }}">Новости</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               href="{{ route(RouteNames::FILES) }}">Файлы</a>
-                        </li>
-                    @endauth
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ route(RouteNames::NEWS) }}">Новости</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ route(RouteNames::FILES) }}">Файлы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ Storage::url('Устав.pdf') }}"
+                           target="_blank">Устав</a>
+                    </li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
