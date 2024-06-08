@@ -4,6 +4,7 @@ namespace Core\Objects\Report\Models;
 
 use Carbon\Carbon;
 use Core\Enums\DateTimeFormat;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Objects\Common\Traits\TimestampsTrait;
 use Core\Objects\File\Models\FileDTO;
 use Core\Objects\Report\Enums\CategoryEnum;
@@ -94,9 +95,9 @@ class ReportDTO implements \JsonSerializable
         return $this->startAt;
     }
 
-    public function setStartAt(?Carbon $startAt): static
+    public function setStartAt(mixed $startAt): static
     {
-        $this->startAt = $startAt;
+        $this->startAt = DateTimeHelper::toCarbonOrNull($startAt);
 
         return $this;
     }
@@ -106,9 +107,9 @@ class ReportDTO implements \JsonSerializable
         return $this->endAt;
     }
 
-    public function setEndAt(?Carbon $endAt): static
+    public function setEndAt(mixed $endAt): static
     {
-        $this->endAt = $endAt;
+        $this->endAt = DateTimeHelper::toCarbonOrNull($endAt);
 
         return $this;
     }

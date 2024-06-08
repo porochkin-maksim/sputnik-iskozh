@@ -54,7 +54,7 @@ readonly class NewsFactory
             ->setId($news->id)
             ->setTitle($news->title)
             ->setArticle($news->article)
-            ->setPublishedAt($news->published_at ? Carbon::parse($news->published_at) : null)
+            ->setPublishedAt($news->published_at)
             ->setCreatedAt($news->created_at)
             ->setUpdatedAt($news->updated_at);
 

@@ -4,6 +4,7 @@ namespace Core\Objects\News\Models;
 
 use Carbon\Carbon;
 use Core\Enums\DateTimeFormat;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Objects\Common\Traits\TimestampsTrait;
 use Core\Objects\File\Models\FileDTO;
 
@@ -62,9 +63,9 @@ class NewsDTO implements \JsonSerializable
         return $this->publishedAt;
     }
 
-    public function setPublishedAt(?Carbon $publishedAt): static
+    public function setPublishedAt(mixed $publishedAt): static
     {
-        $this->publishedAt = $publishedAt;
+        $this->publishedAt = DateTimeHelper::toCarbonOrNull($publishedAt);
 
         return $this;
     }

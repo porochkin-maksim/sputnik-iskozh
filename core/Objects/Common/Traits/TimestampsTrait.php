@@ -3,6 +3,7 @@
 namespace Core\Objects\Common\Traits;
 
 use Carbon\Carbon;
+use Core\Helpers\DateTime\DateTimeHelper;
 
 trait TimestampsTrait
 {
@@ -14,9 +15,9 @@ trait TimestampsTrait
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?Carbon $createdAt): static
+    public function setCreatedAt(mixed $createdAt): static
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = DateTimeHelper::toCarbonOrNull($createdAt);
 
         return $this;
     }
@@ -26,9 +27,9 @@ trait TimestampsTrait
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?Carbon $updatedAt): static
+    public function setUpdatedAt(mixed $updatedAt): static
     {
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt = DateTimeHelper::toCarbonOrNull($updatedAt);
 
         return $this;
     }
