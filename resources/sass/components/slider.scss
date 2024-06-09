@@ -1,0 +1,23 @@
+.slider {
+    height : 50vh;
+
+    background-color: $color-gray;
+
+    .carousel {
+        height : inherit !important;
+
+        .carousel-inner {
+            height : inherit !important;
+
+            .carousel-item {
+                height : inherit !important;
+
+                img {
+                    height : inherit !important;
+                    width  : auto !important;
+                }
+            }
+        }
+
+    }
+}
