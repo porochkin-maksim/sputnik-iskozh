@@ -46,8 +46,21 @@
                         &nbsp;
                     </template>
 
-                    <a :href="file.url"
-                       target="_blank"><i class="fa fa-file"></i>&nbsp;{{ file.name }}</a>
+                    <a class="btn btn-primary btn-sm me-2"
+                       href="file.url"
+                       :download="file.name">
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <template v-if="file.isImage">
+                        <a :href="file.url"
+                           :data-lightbox="file.name"
+                           :data-title="file.name"
+                           target="_blank">{{ file.name }}</a>
+                    </template>
+                    <template v-else>
+                        <a :href="file.url"
+                           target="_blank">{{ file.name }}</a>
+                    </template>
                 </div>
             </div>
         </div>
