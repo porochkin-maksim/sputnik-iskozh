@@ -15,7 +15,7 @@ return new class extends Migration {
                 $table->id();
                 $table->smallInteger('type')->nullable();
                 $table->text('title')->fulltext();
-                $table->longText('article')->fulltext();
+                $table->longText('article')->nullable()->fulltext();
                 $table->dateTime('published_at')->nullable();
                 $table->timestamps();
             });

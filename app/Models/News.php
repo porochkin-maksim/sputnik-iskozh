@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property string  $title
- * @property string  $article
+ * @property ?string $article
  * @property ?Carbon $published_at
  */
 class News extends Model implements CastsInterface
