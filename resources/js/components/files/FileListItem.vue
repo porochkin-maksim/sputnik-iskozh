@@ -47,7 +47,7 @@
                     </template>
 
                     <a class="btn btn-primary btn-sm me-2"
-                       href="file.url"
+                       :href="file.url"
                        :download="file.name">
                         <i class="fa fa-download"></i>
                     </a>
