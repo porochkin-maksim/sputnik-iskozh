@@ -10,19 +10,21 @@
     </div>
     <div class="list-item">
         <div class="body">
-            <div class="d-flex justify-content-between">
-                <div class="name"
+            <div class="title d-flex justify-content-between align-items-center">
+                <b class="name"
                      :class="!news.title ? 'no-name' : ''">
                     {{ news.title ? news.title : 'Без названия' }}
-                </div>
+                </b>
                 <div class="date">{{ news.dossier.publishedAt }}</div>
             </div>
+
+            <bs-slider :images="images" :id="sliderId" class="mt-3"/>
+
             <div class="article ql-editor"
                  v-html="news.article"></div>
         </div>
 
         <div class="footer">
-            <bs-slider :images="images" :id="sliderId"/>
             <div class="files">
                 <div v-for="file in news.files"
                      class="file">

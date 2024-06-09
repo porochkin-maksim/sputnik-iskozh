@@ -10,10 +10,12 @@
 @import 'components/custom-list';
 @import 'components/auth';
 @import 'components/reports';
+@import 'components/news';
 @import 'components/slider';
 @import 'lightbox2/dist/css/lightbox.min.css';
 
 body, html {
+    min-height: 100vh;
     font-size : $font-size;
 }
 
