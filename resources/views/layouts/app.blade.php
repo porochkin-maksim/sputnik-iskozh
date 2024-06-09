@@ -128,10 +128,13 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
             <div class="d-flex justify-content-center py-3">
                 <div class="social">
                     <a class="social-link text-primary" target="_blank" href="https://t.me/SputnikIskozh">
-                        <i class="fa fa-telegram"></i> Telegram
+                        <i class="fa fa-telegram"></i> Канал Telegram
+                    </a>
+                    <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/ET8X52yidq0BmKq9WrKtqb">
+                        <i class="fa fa-whatsapp"></i> Группа WhatsUp
                     </a>
                     <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/Hfo9oClfdR6BX0dYs7VnG2">
-                        <i class="fa fa-whatsapp"></i> WhatsUp
+                        <i class="fa fa-whatsapp"></i> Чат WhatsUp
                     </a>
                 </div>
             </div>
