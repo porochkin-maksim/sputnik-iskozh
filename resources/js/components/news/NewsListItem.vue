@@ -22,39 +22,12 @@
         </div>
 
         <div class="footer">
-            <div class="slider" v-if="images.length">
-                <div :id="sliderId" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button v-for="(img, index) in images"
-                                type="button" :data-bs-target="'#'+sliderId"
-                                :class="index === 0 ? 'active' : ''" :aria-current="index === 0"
-                                :data-bs-slide-to="index" :aria-label="'Slide ' + index"
-                        ></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <a v-for="(img, index) in images"
-                           :href="img.url" :data-lightbox="sliderId" :data-title="img.name"
-                           class="carousel-item"
-                           :class="index === 0 ? 'active' : ''"
-                        >
-                            <img :src="img.url" class="d-block mx-auto" alt="">
-                        </a>
-                    </div>
-                    <button class="carousel-control-prev" type="button" :data-bs-target="'#'+sliderId" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" :data-bs-target="'#'+sliderId" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-
+            <bs-slider :images="images" :id="sliderId"/>
             <div class="files">
                 <div v-for="file in news.files"
                      class="file">
                     <file-list-item
+                                    v-if="!file.isImage || edit"
                                     :file="file"
                                     :edit="edit"
                                     :mode="FileItemMode.LINE"
@@ -95,6 +68,7 @@ import CustomInput              from '../common/CustomInput.vue';
 import Url                      from '../../utils/Url.js';
 import FileListItem             from '../files/FileListItem.vue';
 import { MODE as FileItemMode } from '../files/FileListItem.vue';
+import BsSlider                 from '../common/BsSlider.vue';
 
 
 export default {
@@ -104,6 +78,7 @@ export default {
         'edit',
     ],
     components: {
+        BsSlider,
         FileListItem,
         CustomInput,
         Wrapper,
@@ -197,7 +172,7 @@ export default {
             return images;
         },
         sliderId() {
-            return 'news' + this.id + this.images.length;
+            return 'news' + this.id;
         },
     },
 };
