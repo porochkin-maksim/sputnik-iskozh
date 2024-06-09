@@ -7,5 +7,8 @@
 @endsection
 
 @section('content')
+    <h1>
+        <a href="<?= route(\Core\Resources\RouteNames::NEWS) ?>">Новости</a>
+    </h1>
     <news-block></news-block>
 @endsection

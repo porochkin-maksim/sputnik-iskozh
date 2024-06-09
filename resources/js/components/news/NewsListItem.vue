@@ -10,12 +10,12 @@
     </div>
     <div class="list-item">
         <div class="body">
-            <div class="title d-flex justify-content-between align-items-center">
+            <div class="title">
+                <div class="date">{{ news.dossier.publishedAt }}</div>
                 <b class="name"
-                     :class="!news.title ? 'no-name' : ''">
+                   :class="!news.title ? 'no-name' : ''">
                     {{ news.title ? news.title : 'Без названия' }}
                 </b>
-                <div class="date">{{ news.dossier.publishedAt }}</div>
             </div>
 
             <bs-slider :images="images" :id="sliderId" class="mt-3"/>

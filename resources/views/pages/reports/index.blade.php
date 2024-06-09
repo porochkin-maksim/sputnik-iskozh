@@ -7,5 +7,8 @@
 @endsection
 
 @section('content')
+    <h1>
+        <a href="<?= route(\Core\Resources\RouteNames::REPORTS) ?>">Отчёты</a>
+    </h1>
     <reports-block></reports-block>
 @endsection

@@ -1,5 +1,5 @@
 <template>
-    <default-page>
+    <default-page :hide-left="!edit">
         <template v-slot:left
                   v-if="edit">
             <div class="d-flex justify-content-between">
