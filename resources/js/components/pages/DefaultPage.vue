@@ -1,10 +1,10 @@
 <template>
-    <div class="layout-main">
-        <div class="layout-left" v-if="slots.left">
-            <slot name="left"></slot>
+    <div class="layout-page">
+        <div class="block-sub" v-if="slots.sub">
+            <slot name="sub"></slot>
         </div>
-        <div class="layout-right" :class="slots.left ? '' : 'no-left'">
-            <slot name="right"></slot>
+        <div class="block-main" :class="slots.sub ? '' : 'no-sub'">
+            <slot name="main"></slot>
         </div>
     </div>
 </template>
@@ -18,10 +18,5 @@ const slots = useSlots()
 
 export default {
     name: 'DefaultPage',
-    methods: {
-        hasLeftSlot() {
-            return !!!this.$slots.left;
-        }
-    }
 };
 </script>

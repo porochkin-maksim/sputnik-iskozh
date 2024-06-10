@@ -1,6 +1,6 @@
 <template>
     <default-page>
-        <template v-slot:left>
+        <template v-slot:sub>
             <h5 v-if="filesCount">
                 <a :href="Url.Routes.filesIndex.uri">
                     Последние файлы
@@ -9,7 +9,7 @@
             <file-list :limit="5"
                        v-model:count="filesCount" />
         </template>
-        <template v-slot:right>
+        <template v-slot:main>
             <h1 v-if="newsCount">
                 <a :href="Url.Routes.newsIndex.uri">
                     Новости

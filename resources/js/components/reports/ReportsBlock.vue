@@ -1,6 +1,6 @@
 <template>
     <default-page>
-        <template v-slot:left
+        <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
                 <button class="btn btn-primary"
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </template>
-        <template v-slot:right>
+        <template v-slot:main>
             <div v-if="showForm">
                 <wrapper @close="showForm=false">
                     <div class="container-fluid">

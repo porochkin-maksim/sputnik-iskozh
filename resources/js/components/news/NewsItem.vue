@@ -1,6 +1,6 @@
 <template>
-    <default-page :hide-left="!edit">
-        <template v-slot:right>
+    <default-page>
+        <template v-slot:main>
             <news-list-item :news="news"
                             :edit="edit"
                             @updated="onUpdateItem"

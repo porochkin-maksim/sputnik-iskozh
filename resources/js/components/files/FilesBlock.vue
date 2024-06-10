@@ -1,6 +1,6 @@
 <template>
     <default-page>
-        <template v-slot:left
+        <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
                 <button class="btn btn-primary"
@@ -12,7 +12,7 @@
                        @change="uploadFile">
             </div>
         </template>
-        <template v-slot:right>
+        <template v-slot:main>
             <file-list class="mt-3"
                        v-model:reloadList="reloadList"
                        v-model:canEdit="edit"
