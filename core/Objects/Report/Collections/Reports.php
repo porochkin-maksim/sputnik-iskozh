@@ -2,13 +2,13 @@
 
 namespace Core\Objects\Report\Collections;
 
-use App\Models\Report;
 use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
+use Core\Objects\Report\Models\ReportDTO;
 use Illuminate\Support\Collection;
 
 /**
- * @template-extends Collection<int, Report>
+ * @template-extends Collection<int, ReportDTO>
  */
 class Reports extends Collection implements CollectionInterface
 {
@@ -16,6 +16,6 @@ class Reports extends Collection implements CollectionInterface
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof Report;
+        return $item instanceof ReportDTO;
     }
 }

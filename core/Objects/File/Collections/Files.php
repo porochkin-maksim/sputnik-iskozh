@@ -2,13 +2,13 @@
 
 namespace Core\Objects\File\Collections;
 
-use App\Models\File;
 use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
+use Core\Objects\File\Models\FileDTO;
 use Illuminate\Support\Collection;
 
 /**
- * @template-extends Collection<int, File>
+ * @template-extends Collection<int, FileDTO>
  */
 class Files extends Collection implements CollectionInterface
 {
@@ -16,6 +16,6 @@ class Files extends Collection implements CollectionInterface
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof File;
+        return $item instanceof FileDTO;
     }
 }

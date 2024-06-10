@@ -2,13 +2,13 @@
 
 namespace Core\Objects\News\Collections;
 
-use App\Models\News;
 use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
+use Core\Objects\News\Models\NewsDTO;
 use Illuminate\Support\Collection;
 
 /**
- * @template-extends Collection<int, News>
+ * @template-extends Collection<int, NewsDTO>
  */
 class NewsCollection extends Collection implements CollectionInterface
 {
@@ -16,6 +16,6 @@ class NewsCollection extends Collection implements CollectionInterface
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof News;
+        return $item instanceof NewsDTO;
     }
 }

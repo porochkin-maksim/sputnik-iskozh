@@ -15,4 +15,13 @@ trait CollectionTrait
         }
         parent::__construct($items);
     }
+
+    public function add(mixed $item): static
+    {
+        if ( ! $this->checkItemInstance($item)) {
+            throw new WrongClassException(get_class($item));
+        }
+
+        return parent::add($item);
+    }
 }
