@@ -2,10 +2,10 @@
 .news-list .list-item {
     .title {
         border-bottom : 1px solid $border-color;
-    }
 
-    .name {
-        font-size       : 1.6em;
-        text-decoration : none;
+        .name {
+            font-size       : 1.6em;
+            text-decoration : none;
+        }
     }
 }

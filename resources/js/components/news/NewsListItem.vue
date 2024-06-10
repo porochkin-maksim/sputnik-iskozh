@@ -9,18 +9,17 @@
         </wrapper>
     </div>
     <div class="list-item news-item">
+        <div class="title">
+            <div class="date">{{ news.dossier.publishedAt }}</div>
+            <a class="name"
+               :href="news.url"
+               :class="!news.title ? 'no-name' : ''">
+                {{ news.title ? news.title : 'Без названия' }}
+            </a>
+        </div>
+
         <div class="body">
-            <div class="title">
-                <div class="date">{{ news.dossier.publishedAt }}</div>
-                <a class="name"
-                   :href="news.url"
-                   :class="!news.title ? 'no-name' : ''">
-                    {{ news.title ? news.title : 'Без названия' }}
-                </a>
-            </div>
-
             <bs-slider :images="images" :id="sliderId" class="mt-3"/>
-
             <div class="article ql-editor"
                  v-html="news.article"></div>
         </div>
