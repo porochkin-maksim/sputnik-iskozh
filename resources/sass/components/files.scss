@@ -1,0 +1,13 @@
+.files-list {
+    .list-item {
+        .body {
+            white-space   : nowrap;
+            text-overflow : ellipsis;
+            overflow      : hidden;
+        }
+
+        .name {
+            text-decoration : none;
+        }
+    }
+}

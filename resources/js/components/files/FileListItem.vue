@@ -53,12 +53,14 @@
                     </a>
                     <template v-if="file.isImage">
                         <a :href="file.url"
+                           class="name"
                            :data-lightbox="file.name"
                            :data-title="file.name"
                            target="_blank">{{ file.name }}</a>
                     </template>
                     <template v-else>
                         <a :href="file.url"
+                           class="name"
                            target="_blank">{{ file.name }}</a>
                     </template>
                 </div>
