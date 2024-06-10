@@ -66,7 +66,7 @@
 <script>
 import NewsItemEdit             from './NewsItemEdit.vue';
 import Wrapper                  from '../common/Wrapper.vue';
-import CustomInput              from '../common/CustomInput.vue';
+import CustomInput              from '../common/form/CustomInput.vue';
 import Url                      from '../../utils/Url.js';
 import FileListItem             from '../files/FileListItem.vue';
 import { MODE as FileItemMode } from '../files/FileListItem.vue';

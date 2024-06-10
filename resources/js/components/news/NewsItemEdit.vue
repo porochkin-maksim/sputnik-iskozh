@@ -37,8 +37,8 @@
 
 <script>
 import Url           from '../../utils/Url.js';
-import CustomInput   from '../common/CustomInput.vue';
-import CustomSelect  from '../common/CustomSelect.vue';
+import CustomInput   from '../common/form/CustomInput.vue';
+import CustomSelect  from '../common/form/CustomSelect.vue';
 import ResponseError from '../../mixin/ResponseError.js';
 import HtmlEditor    from '../common/HtmlEditor.vue';
 

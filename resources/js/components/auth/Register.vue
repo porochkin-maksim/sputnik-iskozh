@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import CustomInput   from '../common/CustomInput.vue';
+import CustomInput   from '../common/form/CustomInput.vue';
 import ResponseError from '../../mixin/ResponseError.js';
 
 export default {

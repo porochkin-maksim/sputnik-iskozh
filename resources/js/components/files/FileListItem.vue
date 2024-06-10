@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import CustomInput   from '../common/CustomInput.vue';
+import CustomInput   from '../common/form/CustomInput.vue';
 import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
 
