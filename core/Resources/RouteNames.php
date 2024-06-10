@@ -18,6 +18,7 @@ enum RouteNames: string
     public const NEWS             = 'news.index';
     public const NEWS_LIST        = 'news.list';
     public const NEWS_CREATE      = 'news.create';
+    public const NEWS_SHOW        = 'news.show';
     public const NEWS_EDIT        = 'news.edit';
     public const NEWS_SAVE        = 'news.save';
     public const NEWS_DELETE      = 'news.delete';

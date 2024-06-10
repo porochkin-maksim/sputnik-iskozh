@@ -44,6 +44,17 @@ class NewsController extends Controller
         ]);
     }
 
+    public function show(int $id): View
+    {
+        $news = $this->newsService->getById($id);
+        $edit = Auth::id();
+
+        if (!$news) {
+            abort(404);
+        }
+        return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
+    }
+
     public function edit(int $id): JsonResponse
     {
         $news = $this->newsService->getById($id);

@@ -119,6 +119,14 @@
         "uri": "\/news\/json\/save",
         "args": []
     },
+    "newsShow": {
+        "name": "news.show",
+        "method": "get",
+        "uri": "\/news\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "passwordConfirm": {
         "name": "password.confirm",
         "method": "get",

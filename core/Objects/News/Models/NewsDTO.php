@@ -7,6 +7,7 @@ use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Objects\Common\Traits\TimestampsTrait;
 use Core\Objects\File\Models\FileDTO;
+use Core\Resources\RouteNames;
 
 class NewsDTO implements \JsonSerializable
 {
@@ -99,6 +100,7 @@ class NewsDTO implements \JsonSerializable
             'article'     => $this->article,
             'files'       => $this->getFiles(),
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
+            'url'         => route(RouteNames::NEWS_SHOW, $this->id),
         ];
     }
 }

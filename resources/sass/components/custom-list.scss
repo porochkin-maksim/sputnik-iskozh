@@ -1,29 +1,15 @@
 .custom-list {
-    &.plate {
-        .list-item {
-            .body {
-                border  : 1px solid $border-color;
-                padding : 0.5em;
-
-                &:hover {
-                    background-color : $color-light-gray-hover;
-                    cursor           : pointer;
-                }
-            }
-        }
-    }
-
     &.list {
-        .list-item {
-            .body {
+        >.list-item {
+            >.body {
                 padding-bottom: 1em;
             }
-            .footer {
+            >.footer {
                 padding-bottom : 1em;
 
                 .files {
                     .file {
-                        margin : 0.4em 0;
+
                     }
                 }
             }

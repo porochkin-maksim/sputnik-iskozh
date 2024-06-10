@@ -33,6 +33,7 @@ Route::group(['prefix' => 'reports'], function () {
 
 Route::group(['prefix' => 'news'], function () {
     Route::get('/', [App\Http\Controllers\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
+    Route::get('/{id}', [App\Http\Controllers\News\NewsController::class, 'show'])->name(RouteNames::NEWS_SHOW);
     Route::group(['prefix' => 'json'], function () {
         Route::get('/list', [App\Http\Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
         Route::get('/create', [App\Http\Controllers\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);

@@ -8,14 +8,15 @@
             </div>
         </wrapper>
     </div>
-    <div class="list-item">
+    <div class="list-item news-item">
         <div class="body">
             <div class="title">
                 <div class="date">{{ news.dossier.publishedAt }}</div>
-                <b class="name"
+                <a class="name"
+                   :href="news.url"
                    :class="!news.title ? 'no-name' : ''">
                     {{ news.title ? news.title : 'Без названия' }}
-                </b>
+                </a>
             </div>
 
             <bs-slider :images="images" :id="sliderId" class="mt-3"/>
@@ -27,13 +28,13 @@
         <div class="footer">
             <div class="files">
                 <div v-for="file in news.files"
-                     class="file">
+                     class="file my-2">
                     <file-list-item
                                     v-if="!file.isImage || edit"
                                     :file="file"
                                     :edit="edit"
                                     :mode="FileItemMode.LINE"
-                                    @updated="updatedItem"
+                                    @updated="onUpdatedFile"
                     />
                 </div>
             </div>
@@ -64,10 +65,10 @@
 </template>
 
 <script>
+import Url                      from '../../utils/Url.js';
 import NewsItemEdit             from './NewsItemEdit.vue';
 import Wrapper                  from '../common/Wrapper.vue';
 import CustomInput              from '../common/form/CustomInput.vue';
-import Url                      from '../../utils/Url.js';
 import FileListItem             from '../files/FileListItem.vue';
 import { MODE as FileItemMode } from '../files/FileListItem.vue';
 import BsSlider                 from '../common/BsSlider.vue';
@@ -95,8 +96,8 @@ export default {
         };
     },
     methods: {
-        updatedItem () {
-            this.$emit('updated', true);
+        updatedItem (isDeleted = false) {
+            this.$emit('updated', isDeleted);
             this.modeEdit = false;
         },
         deleteNews () {
@@ -136,6 +137,9 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
+        onUpdatedFile() {
+            this.updatedItem();
+        },
         deleteFile (id) {
             if (!confirm('Удалить файл?')) {
                 return;
@@ -146,7 +150,7 @@ export default {
             });
 
             window.axios[Url.Routes.newsFileDelete.method](uri).then(response => {
-                this.updatedItem();
+                this.updatedItem(true);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

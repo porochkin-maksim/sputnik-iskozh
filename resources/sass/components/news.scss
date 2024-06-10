@@ -1,11 +1,11 @@
-.news-list {
-    .list-item {
-        .title {
-            border-bottom : 1px solid $border-color;
-        }
+.news-item,
+.news-list .list-item {
+    .title {
+        border-bottom : 1px solid $border-color;
+    }
 
-        .name {
-            font-size : 1.6em;
-        }
+    .name {
+        font-size       : 1.6em;
+        text-decoration : none;
     }
 }

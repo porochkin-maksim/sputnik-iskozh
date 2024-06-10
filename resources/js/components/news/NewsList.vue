@@ -14,7 +14,6 @@ import ResponseError from '../../mixin/ResponseError.js';
 import NewsListItem  from './NewsListItem.vue';
 
 export default {
-    name      : 'NewsLists',
     components: {
         NewsListItem,
     },
