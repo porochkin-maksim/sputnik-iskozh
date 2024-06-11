@@ -12,6 +12,10 @@ interface SearcherInterface
 
     public const EQUALS  = '=';
     public const IS_NULL = 'IS NULL';
+    public const GT      = '>';
+    public const GTE     = '>=';
+    public const LT      = '<';
+    public const LTE     = '<=';
 
     public function getSortOrder(): string;
 

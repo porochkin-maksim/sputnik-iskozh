@@ -100,7 +100,7 @@ class NewsDTO implements \JsonSerializable
             'article'     => $this->article,
             'files'       => $this->getFiles(),
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
-            'url'         => route(RouteNames::NEWS_SHOW, $this->id),
+            'url'         => $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null,
         ];
     }
 }

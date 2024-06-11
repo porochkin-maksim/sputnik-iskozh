@@ -20,6 +20,7 @@
             </div>
             <news-list v-model:reloadList="reloadList"
                        v-model:canEdit="edit"
+                       :showPagination="true"
                        class="mt-3"
             />
         </template>

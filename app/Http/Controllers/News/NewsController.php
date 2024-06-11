@@ -75,8 +75,9 @@ class NewsController extends Controller
         $news = $this->newsService->search($searcher);
 
         return response()->json([
-            ResponsesEnum::NEWS => $news,
-            ResponsesEnum::EDIT => (bool) Auth::id(),
+            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::TOTAL => $news->getTotal(),
+            ResponsesEnum::EDIT  => (bool) Auth::id(),
         ]);
     }
 

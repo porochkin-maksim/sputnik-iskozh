@@ -5,8 +5,6 @@ namespace Core\Objects\News\Repositories;
 use App\Models\News;
 use Core\Db\RepositoryTrait;
 use Core\Objects\News\Collections\NewsCollection;
-use Core\Objects\News\Models\NewsSearcher;
-use Illuminate\Support\Facades\DB;
 
 class NewsRepository
 {
@@ -40,17 +38,5 @@ class NewsRepository
         $report->save();
 
         return $report;
-    }
-
-    /**
-     * @return News[]
-     */
-    public function search(NewsSearcher $searcher): array
-    {
-        $ids = DB::table(static::TABLE)
-            ->pluck('id')
-            ->toArray();
-
-        return $this->traitGetByIds($ids, $searcher);
     }
 }

@@ -9,5 +9,6 @@ enum ResponsesEnum: string
     public const NEWS       = 'news';
     public const REPORT     = 'report';
     public const REPORTS    = 'reports';
+    public const TOTAL      = 'total';
     public const TYPES      = 'types';
 }

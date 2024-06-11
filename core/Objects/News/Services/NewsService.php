@@ -7,6 +7,7 @@ use Core\Objects\News\Factories\NewsFactory;
 use Core\Objects\News\Models\NewsDTO;
 use Core\Objects\News\Models\NewsSearcher;
 use Core\Objects\News\Repositories\NewsRepository;
+use Core\Objects\News\Responses\SearchResponse;
 
 readonly class NewsService
 {
@@ -35,16 +36,19 @@ readonly class NewsService
         return $this->newsFactory->makeDtoFromObject($report);
     }
 
-    public function search(NewsSearcher $searcher): NewsCollection
+    public function search(NewsSearcher $searcher): SearchResponse
     {
-        $reports = $this->newsRepository->search($searcher);
+        $response = $this->newsRepository->search($searcher);
 
-        $result = new NewsCollection();
-        foreach ($reports as $report) {
-            $result->add($this->newsFactory->makeDtoFromObject($report));
+        $result = new SearchResponse();
+        $result->setTotal($response->getTotal());
+
+        $collection = new NewsCollection();
+        foreach ($response->getItems() as $report) {
+            $collection->add($this->newsFactory->makeDtoFromObject($report));
         }
 
-        return $result;
+        return $result->setItems($collection);
     }
 
     public function getById(int $id): ?NewsDTO

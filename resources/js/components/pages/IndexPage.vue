@@ -16,7 +16,7 @@
                 </a>
             </h1>
             <news-list :limit="3"
-                       v-model:count="newsCount" />
+                       v-model:items-count="newsCount" />
         </template>
     </default-page>
 </template>

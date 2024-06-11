@@ -16,6 +16,7 @@ enum RequestArgumentsEnum: string
     public const PASSWORD     = 'password';
     public const PUBLISHED_AT = 'published_at';
     public const REMEMBER     = 'remember';
+    public const SKIP         = 'skip';
     public const START_AT     = 'start_at';
     public const TITLE        = 'title';
     public const TYPE         = 'type';
