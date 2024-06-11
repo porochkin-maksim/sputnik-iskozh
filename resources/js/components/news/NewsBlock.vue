@@ -1,5 +1,5 @@
 <template>
-    <default-page>
+    <page-template>
         <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
@@ -24,20 +24,20 @@
                        class="mt-3"
             />
         </template>
-    </default-page>
+    </page-template>
 </template>
 
 <script>
 import ResponseError from '../../mixin/ResponseError.js';
 import NewsItemEdit  from './NewsItemEdit.vue';
 import NewsList      from './NewsList.vue';
-import Wrapper       from '../common/Wrapper.vue';
-import DefaultPage   from '../pages/DefaultPage.vue';
+import Wrapper     from '../common/Wrapper.vue';
+import PageTemplate from '../pages/TwoColumnsPage.vue';
 
 export default {
     name      : 'NewsBlock',
     components: {
-        DefaultPage,
+        PageTemplate,
         Wrapper,
         NewsItemEdit,
         NewsList,

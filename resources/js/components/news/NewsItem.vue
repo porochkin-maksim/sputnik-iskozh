@@ -1,18 +1,18 @@
 <template>
-    <default-page>
+    <page-template>
         <template v-slot:main>
             <news-list-item :news="news"
                             :edit="edit"
                             @updated="onUpdateItem"
             />
         </template>
-    </default-page>
+    </page-template>
 </template>
 
 <script>
 import Url          from '../../utils/Url.js';
 import NewsListItem from './NewsListItem.vue';
-import DefaultPage  from '../pages/DefaultPage.vue';
+import PageTemplate  from '../pages/TwoColumnsPage.vue';
 
 export default {
     name      : 'NewsItem',
@@ -23,7 +23,7 @@ export default {
     ],
     components: {
         NewsListItem,
-        DefaultPage,
+        PageTemplate,
     },
     methods   : {
         onUpdateItem (isDeleted) {

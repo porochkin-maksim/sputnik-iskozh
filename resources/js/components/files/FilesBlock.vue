@@ -1,5 +1,5 @@
 <template>
-    <default-page>
+    <page-template>
         <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
@@ -18,19 +18,19 @@
                        v-model:canEdit="edit"
             />
         </template>
-    </default-page>
+    </page-template>
 </template>
 
 <script>
 import ResponseError from '../../mixin/ResponseError.js';
-import FileList      from './FileList.vue';
-import DefaultPage   from '../pages/DefaultPage.vue';
-import Url           from '../../utils/Url.js';
+import FileList    from './FileList.vue';
+import PageTemplate from '../pages/TwoColumnsPage.vue';
+import Url         from '../../utils/Url.js';
 
 export default {
     name      : 'FilesBlock',
     components: {
-        DefaultPage,
+        PageTemplate,
         FileList,
     },
     mixins    : [

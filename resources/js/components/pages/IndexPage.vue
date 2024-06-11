@@ -1,5 +1,5 @@
 <template>
-    <default-page>
+    <page-template>
         <template v-slot:sub>
             <h5 v-if="filesCount">
                 <a :href="Url.Routes.filesIndex.uri">
@@ -18,19 +18,19 @@
             <news-list :limit="3"
                        v-model:items-count="newsCount" />
         </template>
-    </default-page>
+    </page-template>
 </template>
 
 <script>
 import Url         from '../../utils/Url.js';
-import DefaultPage from '../pages/DefaultPage.vue';
+import PageTemplate from './TwoColumnsPage.vue';
 import NewsList    from '../news/NewsList.vue';
 import FileList    from '../files/FileList.vue';
 
 export default {
     name      : 'IndexPage',
     components: {
-        DefaultPage,
+        PageTemplate,
         FileList,
         NewsList,
     },

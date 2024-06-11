@@ -1,5 +1,5 @@
 <template>
-    <default-page>
+    <page-template>
         <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
@@ -37,7 +37,7 @@
                          class="mt-3"
             />
         </template>
-    </default-page>
+    </page-template>
 </template>
 
 <script>
@@ -45,13 +45,13 @@ import ResponseError  from '../../mixin/ResponseError.js';
 import ReportItemEdit from './ReportItemEdit.vue';
 import ReportList     from './ReportList.vue';
 import { ViewMode }   from './ReportList.vue';
-import Wrapper        from '../common/Wrapper.vue';
-import DefaultPage    from '../pages/DefaultPage.vue';
+import Wrapper     from '../common/Wrapper.vue';
+import PageTemplate from '../pages/TwoColumnsPage.vue';
 
 export default {
     name      : 'ReportsBlock',
     components: {
-        DefaultPage,
+        PageTemplate,
         Wrapper,
         ReportItemEdit,
         ReportList,
