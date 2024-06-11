@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class MinifyMiddleware
 {
@@ -24,28 +25,30 @@ class MinifyMiddleware
 
     private function minifyHTML($response)
     {
-        $buffer  = $response->getContent();
-        $replace = [
-            '/<!--[^\[](.*?)[^\]]-->/s' => '',
-            "/<\?php/"                  => '<?php ',
-            "/\n([\S])/"                => '$1',
-            "/\r/"                      => '',
-            "/\n/"                      => '',
-            "/\t/"                      => '',
-            '/ +/'                      => ' ',
-        ];
-        if (str_contains($buffer, '<pre>')) {
+        if (App::isProduction()) {
+            $buffer  = $response->getContent();
             $replace = [
                 '/<!--[^\[](.*?)[^\]]-->/s' => '',
                 "/<\?php/"                  => '<?php ',
+                "/\n([\S])/"                => '$1',
                 "/\r/"                      => '',
-                "/>\n</"                    => '><',
-                "/>\s+\n</"                 => '><',
-                "/>\n\s+</"                 => '><',
+                "/\n/"                      => '',
+                "/\t/"                      => '',
+                '/ +/'                      => ' ',
             ];
+            if (str_contains($buffer, '<pre>')) {
+                $replace = [
+                    '/<!--[^\[](.*?)[^\]]-->/s' => '',
+                    "/<\?php/"                  => '<?php ',
+                    "/\r/"                      => '',
+                    "/>\n</"                    => '><',
+                    "/>\s+\n</"                 => '><',
+                    "/>\n\s+</"                 => '><',
+                ];
+            }
+            $buffer = preg_replace(array_keys($replace), array_values($replace), $buffer);
+            $response->setContent($buffer);
         }
-        $buffer = preg_replace(array_keys($replace), array_values($replace), $buffer);
-        $response->setContent($buffer);
 
         return $response;
     }
