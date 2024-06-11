@@ -37,6 +37,7 @@ class SaveRequest extends AbstractRequest
     public function dto(): NewsDTO
     {
         $dto = new NewsDTO();
+
         $dto->setId($this->getInt(self::ID))
             ->setTitle($this->get(self::TITLE))
             ->setArticle($this->get(self::ARTICLE))

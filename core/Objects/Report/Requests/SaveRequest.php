@@ -69,6 +69,7 @@ class SaveRequest extends AbstractRequest
     public function dto(): ReportDTO
     {
         $dto = new ReportDTO();
+
         $dto->setId($this->getInt(self::ID))
             ->setName($this->get(self::NAME))
             ->setYear($this->getInt(self::YEAR))
