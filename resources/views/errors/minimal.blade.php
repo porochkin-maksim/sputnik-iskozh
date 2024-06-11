@@ -37,7 +37,7 @@
 
 @section('content')
     <div class="errors">
-        <div class="d-flex flex-column justify-content-center align-items-center w-100 h-lg-100 h-md-50 h-xs-25">
+        <div class="d-flex flex-column justify-content-center align-items-center w-100">
             <div class="error-code">
                 @yield('code')
             </div>
