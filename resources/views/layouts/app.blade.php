@@ -66,10 +66,10 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
                                 <a class="nav-link"
                                    href="{{ route(RouteNames::NEWS) }}">Новости</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>
-                            </li>
+{{--                            <li class="nav-item">--}}
+{{--                                <a class="nav-link"--}}
+{{--                                   href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>--}}
+{{--                            </li>--}}
                             <li class="nav-item">
                                 <a class="nav-link"
                                    href="{{ route(RouteNames::FILES) }}">Файлы</a>
