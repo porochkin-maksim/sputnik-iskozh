@@ -31,9 +31,9 @@ class UserRepository
         return $result;
     }
 
-    public function getByIds(array $ids, bool $cache = false): Users
+    public function getByIds(array $ids): Users
     {
-        return new Users($this->traitGetByIds($ids, $cache));
+        return new Users($this->traitGetByIds($ids));
     }
 
     public function save(User $user): User
