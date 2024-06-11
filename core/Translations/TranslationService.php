@@ -29,7 +29,7 @@ class TranslationService
 
             $translationExists = false;
             foreach ($readyContent as $item) {
-                if (str_contains($item, '"$key"')) {
+                if (str_contains(trim($item), sprintf('"%s"', trim($key)))) {
                     $content[]         = $item;
                     $translationExists = true;
                     break;
@@ -38,7 +38,7 @@ class TranslationService
 
             if ( ! $translationExists) {
                 $content[] = "    $line";
-                $user = new User([User::EMAIL => env('ADMIN_EMAIL')]);
+                $user      = new User([User::EMAIL => env('ADMIN_EMAIL')]);
                 $user->notify(new TranslationRequired($key));
             }
 
