@@ -10,4 +10,6 @@ enum ViewNames: string
     public const PAGES_NEWS_INDEX    = 'pages.news.index';
     public const PAGES_NEWS_SHOW     = 'pages.news.show';
     public const PAGES_REPORTS_INDEX = 'pages.reports.index';
+
+    public const PAGES_HOME = 'pages.home.index';
 }

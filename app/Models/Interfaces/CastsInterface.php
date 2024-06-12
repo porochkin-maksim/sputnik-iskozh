@@ -10,4 +10,5 @@ interface CastsInterface
     const CAST_DATE     = 'date';
     const CAST_DATETIME = 'datetime';
     const CAST_HASHED   = 'hashed';
+    const CAST_FLOAT    = 'float';
 }

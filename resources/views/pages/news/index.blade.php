@@ -1,4 +1,8 @@
-<?php declare(strict_types=1); ?>
+<?php declare(strict_types=1);
+
+use Core\Resources\RouteNames;
+
+?>
 
 @extends('layouts.app')
 
@@ -8,7 +12,7 @@
 
 @section('content')
     <h1>
-        <a href="<?= route(\Core\Resources\RouteNames::NEWS) ?>">Новости</a>
+        <a href="<?= route(RouteNames::NEWS) ?>">Новости</a>
     </h1>
     <news-block></news-block>
 @endsection

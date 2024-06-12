@@ -1,4 +1,10 @@
 {
+    "accountRegister": {
+        "name": "account.register",
+        "method": "post",
+        "uri": "\/home\/register",
+        "args": []
+    },
     "filesDelete": {
         "name": "files.delete",
         "method": "delete",

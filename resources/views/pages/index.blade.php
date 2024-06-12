@@ -1,6 +1,10 @@
-<?php declare(strict_types=1);?>
+<?php declare(strict_types=1);
 
-@extends('layouts.app')
+use Core\Resources\ViewNames;
+
+?>
+
+@extends(ViewNames::LAYOUTS_APP)
 
 @section('content')
     <index-page></index-page>

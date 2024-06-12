@@ -16,6 +16,19 @@ trait CollectionTrait
         parent::__construct($items);
     }
 
+    /**
+     * @return int[]
+     */
+    public function getIds(): array
+    {
+        $result = [];
+        foreach ($this->items as $item) {
+            $result[] = $item->getId();
+        }
+
+        return $result;
+    }
+
     public function add(mixed $item): static
     {
         if ( ! $this->checkItemInstance($item)) {

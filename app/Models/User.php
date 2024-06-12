@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Account\Account;
+use App\Models\Account\AccountToUser;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -72,4 +75,14 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
         self::EMAIL_VERIFIED_AT => self::CAST_DATETIME,
         self::PASSWORD          => self::CAST_HASHED,
     ];
+
+    public function account(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Account::class,
+            AccountToUser::TABLE,
+            AccountToUser::USER,
+            AccountToUser::ACCOUNT,
+        );
+    }
 }

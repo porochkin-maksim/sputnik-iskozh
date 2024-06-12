@@ -4,6 +4,7 @@ namespace Core\Responses;
 
 enum ResponsesEnum: string
 {
+    public const ACCOUNT    = 'account';
     public const CATEGORIES = 'categories';
     public const EDIT       = 'edit';
     public const NEWS       = 'news';

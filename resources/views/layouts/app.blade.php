@@ -94,7 +94,7 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
 
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="{{ route(RouteNames::HOME) }}">
-                                            {{ 'Профиль' }}
+                                            {{ 'Личный кабинет' }}
                                         </a>
                                         <a class="dropdown-item" href="{{ route(RouteNames::LOGOUT) }}">
                                             {{ 'Выйти' }}
