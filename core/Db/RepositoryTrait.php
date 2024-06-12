@@ -16,7 +16,7 @@ trait RepositoryTrait
         $result     = null;
         $modelClass = $this->modelClass();
 
-        if (class_exists($this->modelClass())) {
+        if ($id && class_exists($this->modelClass())) {
 
             if ($cache && $this instanceof UseCacheRepositoryInterface) {
                 /** @var ?Model $result */

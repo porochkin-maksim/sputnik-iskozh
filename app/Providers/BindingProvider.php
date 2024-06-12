@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Core\Objects\User\Services\UserServiceInterface;
-use Core\Objects\User\UserLocator;
 use Illuminate\Support\ServiceProvider;
 
 class BindingProvider extends ServiceProvider

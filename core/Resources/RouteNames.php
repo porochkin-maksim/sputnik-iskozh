@@ -27,12 +27,14 @@ enum RouteNames: string
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
 
-    public const FILES            = 'files.index';
-    public const FILES_LIST       = 'files.list';
-    public const FILES_SAVE       = 'files.save';
-    public const FILES_EDIT       = 'files.edit';
-    public const FILES_DELETE     = 'files.delete';
-    public const FILES_STORE      = 'files.store';
+    public const FILES        = 'files.index';
+    public const FILES_LIST   = 'files.list';
+    public const FILES_SAVE   = 'files.save';
+    public const FILES_EDIT   = 'files.edit';
+    public const FILES_DELETE = 'files.delete';
+    public const FILES_STORE  = 'files.store';
 
     public const ACCOUNT_REGISTER = 'account.register';
+    public const PROFILE_SHOW     = 'profile.show';
+    public const PROFILE_SAVE     = 'profile.save';
 }

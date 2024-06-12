@@ -6,7 +6,7 @@ use Core\Objects\File\FileLocator;
 use Core\Objects\File\Requests\SaveRequest;
 use Core\Objects\File\Requests\SearchRequest;
 use Core\Objects\File\Services\FileService;
-use Core\Resources\ViewNames;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

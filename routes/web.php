@@ -3,7 +3,7 @@
 use App\Http\Controllers;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
-use Core\Resources\ViewNames;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Support\Facades\Route;
 
 include __DIR__ . '/web/auth.php';
@@ -21,6 +21,8 @@ Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
         Route::get('/', [Controllers\Account\AccountsController::class, 'index'])->name(RouteNames::HOME);
         Route::post('/register', Controllers\Account\RegisterController::class)->name(RouteNames::ACCOUNT_REGISTER);
+        Route::get('/profile', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE_SHOW);
+        Route::post('/profile', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
     });
 });
 

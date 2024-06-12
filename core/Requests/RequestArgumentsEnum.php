@@ -8,10 +8,13 @@ enum RequestArgumentsEnum: string
     public const CATEGORY        = 'category';
     public const EMAIL           = 'email';
     public const END_AT          = 'end_at';
+    public const FIRST_NAME      = 'first_name';
     public const ID              = 'id';
     public const IS_MEMBER       = 'is_member';
+    public const LAST_NAME       = 'last_name';
     public const LIMIT           = 'limit';
     public const LOGIN           = 'login';
+    public const MIDDLE_NAME     = 'middle_name';
     public const MONEY           = 'money';
     public const NUMBER          = 'number';
     public const NAME            = 'name';

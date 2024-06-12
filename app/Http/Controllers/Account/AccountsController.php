@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Core\Objects\Account\AccountLocator;
 use Core\Objects\Account\Requests\SaveRequest;
 use Core\Objects\Account\Services\AccountService;
-use Core\Resources\ViewNames;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +25,10 @@ class AccountsController extends Controller
     {
         $account = $this->accountService->getByUserId(Auth::id());
 
-        return view(ViewNames::PAGES_HOME, compact('account'));
+        if ($account) {
+            return view(ViewNames::PAGES_HOME, compact('account'));
+        }
+        return view(ViewNames::PAGES_PROFILE);
     }
 
     public function show(int $id): JsonResponse

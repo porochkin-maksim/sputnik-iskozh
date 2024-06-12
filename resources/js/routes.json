@@ -165,6 +165,18 @@
         "uri": "\/password\/reset",
         "args": []
     },
+    "profileSave": {
+        "name": "profile.save",
+        "method": "post",
+        "uri": "\/home\/profile",
+        "args": []
+    },
+    "profileShow": {
+        "name": "profile.show",
+        "method": "get",
+        "uri": "\/home\/profile",
+        "args": []
+    },
     "register": {
         "name": "register",
         "method": "get",

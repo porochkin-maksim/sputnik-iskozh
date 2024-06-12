@@ -10,7 +10,7 @@ use Core\Objects\News\Requests\SaveRequest;
 use Core\Objects\News\Requests\SearchRequest;
 use Core\Objects\News\Services\FileService;
 use Core\Objects\News\Services\NewsService;
-use Core\Resources\ViewNames;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;

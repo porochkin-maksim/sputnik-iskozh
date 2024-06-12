@@ -13,24 +13,32 @@ class UserFactory
         return Hash::make($password);
     }
 
-    public function makeModelFromDto(UserDTO $dto): User
+    public function makeModelFromDto(UserDTO $dto, ?User $user): User
     {
-        $result = new User([
-            User::ID             => $dto->getId(),
-            User::EMAIL          => $dto->getEmail(),
-            User::REMEMBER_TOKEN => $dto->getRememberToken(),
-        ]);
+        if ($user) {
+            $result = $user;
+        }
+        else {
+            $result = User::make();
+        }
 
         if ($dto->getPassword()) {
             $result->setAttribute(User::PASSWORD, $this->encryptPassword($dto->getPassword()));
         }
 
-        return $result;
+        return $result->fill([
+            User::ID             => $dto->getId(),
+            User::EMAIL          => $dto->getEmail(),
+            User::LAST_NAME      => $dto->getLastName(),
+            User::FIRST_NAME     => $dto->getFirstName(),
+            User::MIDDLE_NAME    => $dto->getMiddleName(),
+            User::REMEMBER_TOKEN => $dto->getRememberToken(),
+        ]);
     }
 
     public function makeDtoFromObject(?User $user): UserDTO
     {
-        $result = new UserDTO();
+        $result = new UserDTO($user);
 
         $result
             ->setId($user->id)

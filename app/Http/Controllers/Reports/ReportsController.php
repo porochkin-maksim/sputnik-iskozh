@@ -12,7 +12,7 @@ use Core\Objects\Report\Requests\SaveRequest;
 use Core\Objects\Report\Requests\SearchRequest;
 use Core\Objects\Report\Services\FileService;
 use Core\Objects\Report\Services\ReportService;
-use Core\Resources\ViewNames;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;

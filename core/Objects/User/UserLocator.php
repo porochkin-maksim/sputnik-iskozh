@@ -8,7 +8,6 @@ use Core\Objects\User\Repositories\UserCacheRepository;
 use Core\Objects\User\Repositories\UserRepository;
 use Core\Objects\User\Services\UserDecorator;
 use Core\Objects\User\Services\UserService;
-use Core\Objects\User\Services\UserServiceInterface;
 
 class UserLocator
 {
@@ -18,7 +17,7 @@ class UserLocator
     private static UserService         $UserService;
     private static UserDecorator       $UserDecorator;
 
-    public static function UserService(): UserServiceInterface
+    public static function UserService(): UserService
     {
         if (!isset(self::$UserService)) {
             self::$UserService = new UserService(

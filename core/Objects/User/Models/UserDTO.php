@@ -2,7 +2,9 @@
 
 namespace Core\Objects\User\Models;
 
-class UserDTO
+use App\Models\User;
+
+class UserDTO implements \JsonSerializable
 {
     private ?int    $id            = null;
     private ?string $firstName     = null;
@@ -11,6 +13,17 @@ class UserDTO
     private ?string $email         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
+
+    public function __construct(
+        private readonly ?User $user = null,
+    )
+    {
+    }
+
+    public function getModel(): ?User
+    {
+        return $this->user;
+    }
 
     public function getId(): ?int
     {
@@ -94,5 +107,16 @@ class UserDTO
         $this->rememberToken = $rememberToken;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'         => $this->getId(),
+            'firstName'  => $this->getFirstName(),
+            'middleName' => $this->getMiddleName(),
+            'lastName'   => $this->getLastName(),
+            'email'      => $this->getEmail(),
+        ];
     }
 }

@@ -18,4 +18,15 @@ class Users extends Collection implements CollectionInterface
     {
         return $item instanceof UserDTO;
     }
+
+    public function getById(?int $id): ?UserDTO
+    {
+        foreach ($this as $user) {
+            if ($user->getId() === $id) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
 }
