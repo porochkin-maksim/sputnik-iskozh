@@ -1,16 +1,18 @@
 <?php declare(strict_types=1);
 
 use Core\Resources\RouteNames;
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
 
 ?>
 
-@extends('layouts.app')
+@extends(ViewNames::LAYOUTS_APP)
 
-@section('title')
+@section(SectionNames::TITLE)
     Новости
 @endsection
 
-@section('content')
+@section(SectionNames::CONTENT)
     <h1>
         <a href="<?= route(RouteNames::NEWS) ?>">Новости</a>
     </h1>

@@ -1,10 +1,11 @@
 <?php
 
-namespace Core\Resources;
+namespace Core\Resources\Views;
 
 enum ViewNames: string
 {
     public const LAYOUTS_APP         = 'layouts.app';
+
     public const PAGES_INDEX         = 'pages.index';
     public const PAGES_FILES_INDEX   = 'pages.files.index';
     public const PAGES_NEWS_INDEX    = 'pages.news.index';

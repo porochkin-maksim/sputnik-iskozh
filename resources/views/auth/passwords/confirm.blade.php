@@ -1,6 +1,13 @@
-@extends('layouts.app')
+<?php declare(strict_types=1);
 
-@section('content')
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
+
+?>
+
+@extends(ViewNames::LAYOUTS_APP)
+
+@section(SectionNames::CONTENT)
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

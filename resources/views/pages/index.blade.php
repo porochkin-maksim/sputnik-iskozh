@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\ViewNames;
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@section('content')
+@section(SectionNames::CONTENT)
     <index-page></index-page>
 @endsection

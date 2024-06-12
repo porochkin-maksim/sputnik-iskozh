@@ -2,13 +2,14 @@
 
 use Core\Objects\ObjectsLocator;
 use Core\Resources\RouteNames;
+use Core\Resources\Views\SectionNames;
 use Illuminate\Support\Facades\Auth;
 
 $user          = Auth::user();
 $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
 
 ?>
-        <!doctype html>
+<!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
@@ -22,12 +23,12 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
     <meta name="csrf-token"
           content="{{ csrf_token() }}">
 
-    <title>@yield('title', env('APP_NAME'))</title>
+    <title>@yield(SectionNames::TITLE, env('APP_NAME'))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
-    @stack('styles')
-    @stack('scripts')
+    @stack(SectionNames::STYLES)
+    @stack(SectionNames::SCRIPTS)
 </head>
 <body>
 <div id="app">
@@ -66,10 +67,10 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
                                 <a class="nav-link"
                                    href="{{ route(RouteNames::NEWS) }}">Новости</a>
                             </li>
-{{--                            <li class="nav-item">--}}
-{{--                                <a class="nav-link"--}}
-{{--                                   href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>--}}
-{{--                            </li>--}}
+                            {{--                            <li class="nav-item">--}}
+                            {{--                                <a class="nav-link"--}}
+                            {{--                                   href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>--}}
+                            {{--                            </li>--}}
                             <li class="nav-item">
                                 <a class="nav-link"
                                    href="{{ route(RouteNames::FILES) }}">Файлы</a>
@@ -88,15 +89,25 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
                                 </li>
                             @else
                                 <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <a id="navbarDropdown"
+                                       class="nav-link dropdown-toggle"
+                                       href="#"
+                                       role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-haspopup="true"
+                                       aria-expanded="false"
+                                       v-pre>
                                         {{ $userDecorator->getDisplayName() }}
                                     </a>
 
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route(RouteNames::HOME) }}">
+                                    <div class="dropdown-menu dropdown-menu-end"
+                                         aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item"
+                                           href="{{ route(RouteNames::HOME) }}">
                                             {{ 'Личный кабинет' }}
                                         </a>
-                                        <a class="dropdown-item" href="{{ route(RouteNames::LOGOUT) }}">
+                                        <a class="dropdown-item"
+                                           href="{{ route(RouteNames::LOGOUT) }}">
                                             {{ 'Выйти' }}
                                         </a>
 
@@ -115,19 +126,25 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
             </nav>
 
             <main class="p-4">
-                @yield('content')
+                @yield(SectionNames::CONTENT)
             </main>
         </div>
         <footer class="border-top bg-light">
             <div class="d-flex justify-content-center py-3">
                 <div class="social">
-                    <a class="social-link text-primary" target="_blank" href="https://t.me/SputnikIskozh">
+                    <a class="social-link text-primary"
+                       target="_blank"
+                       href="https://t.me/SputnikIskozh">
                         <i class="fa fa-telegram"></i> Канал Telegram
                     </a>
-                    <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/ET8X52yidq0BmKq9WrKtqb">
+                    <a class="social-link text-success"
+                       target="_blank"
+                       href="https://chat.whatsapp.com/ET8X52yidq0BmKq9WrKtqb">
                         <i class="fa fa-whatsapp"></i> Группа WhatsUp
                     </a>
-                    <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/Hfo9oClfdR6BX0dYs7VnG2">
+                    <a class="social-link text-success"
+                       target="_blank"
+                       href="https://chat.whatsapp.com/Hfo9oClfdR6BX0dYs7VnG2">
                         <i class="fa fa-whatsapp"></i> Чат WhatsUp
                     </a>
                 </div>

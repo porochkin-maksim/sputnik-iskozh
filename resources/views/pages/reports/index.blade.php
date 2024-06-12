@@ -1,14 +1,20 @@
-<?php declare(strict_types=1); ?>
+<?php declare(strict_types=1);
 
-@extends('layouts.app')
+use Core\Resources\RouteNames;
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
 
-@section('title')
+?>
+
+@extends(ViewNames::LAYOUTS_APP)
+
+@section(SectionNames::TITLE)
     Отчёты
 @endsection
 
-@section('content')
+@section(SectionNames::CONTENT)
     <h1>
-        <a href="<?= route(\Core\Resources\RouteNames::REPORTS) ?>">Отчёты</a>
+        <a href="<?= route(RouteNames::REPORTS) ?>">Отчёты</a>
     </h1>
     <reports-block></reports-block>
 @endsection

@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\ViewNames;
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
 
 ?>
 

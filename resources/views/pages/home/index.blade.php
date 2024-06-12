@@ -1,19 +1,21 @@
 <?php declare(strict_types=1);
 
 use Core\Objects\Account\Models\AccountDTO;
+use Core\Resources\Views\SectionNames;
+use Core\Resources\Views\ViewNames;
 
 /**
  * @var ?AccountDTO $account
  */
 ?>
 
-@extends('layouts.app')
+@extends(ViewNames::LAYOUTS_APP)
 
-@section('title')
+@section(SectionNames::TITLE)
     Личный кабинет
 @endsection
 
-@section('content')
+@section(SectionNames::CONTENT)
     @if($account)
         у вас есть аккаунт
     @else
