@@ -84,6 +84,8 @@ main,
         .block-main {
             width        : 100%;
             padding-left : unset;
+            display: flex;
+            justify-content: center;
         }
     }
 }

@@ -61,7 +61,7 @@ export default {
             window.axios[Url.Routes.newsList.method](Url.Routes.newsList.uri, {
                 params: {
                     limit: this.perPage,
-                    skip: this.skip,
+                    skip : this.skip,
                 },
             }).then(response => {
                 this.total = response.data.total;
@@ -88,9 +88,9 @@ export default {
         },
     },
     computed: {
-        perPage() {
+        perPage () {
             return this.limit ? this.limit : 10;
         },
-    }
+    },
 };
 </script>
