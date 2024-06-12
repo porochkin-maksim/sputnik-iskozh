@@ -8,7 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserFactory
 {
-    public function makeFromDto(UserDTO $dto): User
+    private function encryptPassword(?string $password): ?string
+    {
+        return Hash::make($password);
+    }
+
+    public function makeModelFromDto(UserDTO $dto): User
     {
         $result = new User([
             User::ID             => $dto->getId(),
@@ -23,8 +28,17 @@ class UserFactory
         return $result;
     }
 
-    private function encryptPassword(?string $password): ?string
+    public function makeDtoFromObject(?User $user): UserDTO
     {
-        return Hash::make($password);
+        $result = new UserDTO();
+
+        $result
+            ->setId($user->id)
+            ->setEmail($user->email)
+            ->setFirstName($user->first_name)
+            ->setMiddleName($user->middle_name)
+            ->setLastName($user->last_name);
+
+        return $result;
     }
 }

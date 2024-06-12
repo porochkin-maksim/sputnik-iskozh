@@ -16,6 +16,6 @@ class Users extends Collection implements CollectionInterface
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof User;
+        return $item instanceof UserDTO;
     }
 }

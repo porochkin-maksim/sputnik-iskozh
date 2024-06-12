@@ -27,7 +27,7 @@ class UserService implements UserServiceInterface
 
     public function save(UserDTO $dto): User
     {
-        $user = $this->userFactory->makeFromDto($dto);
+        $user = $this->userFactory->makeModelFromDto($dto);
         $user = $this->userRepository->save($user);
 
         return $user;

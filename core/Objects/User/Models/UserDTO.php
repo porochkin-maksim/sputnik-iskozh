@@ -5,8 +5,10 @@ namespace Core\Objects\User\Models;
 class UserDTO
 {
     private ?int    $id            = null;
-    private ?string $name          = '';
-    private ?string $email         = '';
+    private ?string $firstName     = null;
+    private ?string $middleName    = null;
+    private ?string $lastName      = null;
+    private ?string $email         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
 
@@ -22,14 +24,38 @@ class UserDTO
         return $this;
     }
 
-    public function getName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->name;
+        return $this->firstName;
     }
 
-    public function setName(?string $name): static
+    public function setFirstName(?string $firstName): static
     {
-        $this->name = $name;
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    public function setMiddleName(?string $middleName): static
+    {
+        $this->middleName = $middleName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
 
         return $this;
     }
