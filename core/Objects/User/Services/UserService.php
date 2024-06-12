@@ -22,7 +22,7 @@ class UserService implements UserServiceInterface
 
     public function getByIds(array $ids, bool $cache = false): Users
     {
-        return $this->userRepository->getByIds($ids, cache: $cache);
+        return $this->userRepository->getByIds($ids);
     }
 
     public function save(UserDTO $dto): User
