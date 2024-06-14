@@ -32,7 +32,7 @@ class UserDecorator
 
     public function getMiddleName(): string
     {
-        return (string) $this->user->getLastName();
+        return (string) $this->user->getMiddleName();
     }
 
     public function getFullName(): string
