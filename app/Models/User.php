@@ -32,6 +32,8 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    public const TABLE = 'users';
+
     public const ID                = 'id';
     public const EMAIL             = 'email';
     public const FIRST_NAME        = 'first_name';

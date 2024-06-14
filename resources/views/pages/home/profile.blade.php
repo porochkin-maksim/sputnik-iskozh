@@ -5,7 +5,6 @@ use Core\Objects\User\Models\UserDTO;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 
-
 /**
  * @var AccountDTO $account
  * @var UserDTO    $user
@@ -15,9 +14,9 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::CONTENT)
-    <profile-show :account='@json($account)'
-                  :user='@json($user)'
-    ></profile-show>
+    <profile-block :account='@json($account)'
+                   :user='@json($user)'
+    ></profile-block>
 @endsection
 
 @section(SectionNames::SUB)

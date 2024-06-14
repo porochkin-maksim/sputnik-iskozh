@@ -19,6 +19,7 @@ class RegisterRequest extends AbstractRequest
                 'required',
                 'string',
                 'min:3',
+                'regex:/^(\d+)\/(\d)$/',
                 Rule::unique(Account::TABLE, Account::NUMBER),
             ],
         ];

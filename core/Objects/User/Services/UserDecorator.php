@@ -2,37 +2,37 @@
 
 namespace Core\Objects\User\Services;
 
-use App\Models\User;
+use Core\Objects\User\Models\UserDTO;
 
 class UserDecorator
 {
     public function __construct(
-        private ?User $user,
+        private ?UserDTO $user,
     )
     {
         if (!$this->user) {
-            $this->user = new User();
+            $this->user = new UserDTO();
         }
     }
 
     public function getEmail(): string
     {
-        return $this->user->email;
+        return (string) $this->user->getEmail();
     }
 
     public function getLastName(): string
     {
-        return (string) $this->user->last_name;
+        return (string) $this->user->getLastName();
     }
 
     public function getFirstName(): string
     {
-        return (string) $this->user->first_name;
+        return (string) $this->user->getFirstName();
     }
 
     public function getMiddleName(): string
     {
-        return (string) $this->user->middle_name;
+        return (string) $this->user->getLastName();
     }
 
     public function getFullName(): string

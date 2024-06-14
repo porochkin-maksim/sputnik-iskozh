@@ -20,7 +20,7 @@
                :name="name"
                @change="onChange"
                @keyup.enter="onSubmit"
-               @keyup="onChange"
+               @keyup="onKeyup"
                class="form-control"
                :class="[errors ? 'form-error' : '']"
         />
@@ -57,6 +57,7 @@ export default {
         'update:modelValue',
         'change',
         'submit',
+        'keyup',
     ],
     data () {
         return {
@@ -71,10 +72,15 @@ export default {
             else {
                 this.$emit('update:modelValue', event.target.value);
             }
+            this.$emit('change', event);
         },
         onSubmit (event) {
             this.onChange(event);
-            this.$emit('submit');
+            this.$emit('submit', event);
+        },
+        onKeyup (event) {
+            this.onChange(event);
+            this.$emit('keyup', event);
         },
         usePrimeVue () {
             switch (this.computedType) {

@@ -2,8 +2,8 @@
 
 namespace Core\Objects\User;
 
-use App\Models\User;
 use Core\Objects\User\Factories\UserFactory;
+use Core\Objects\User\Models\UserDTO;
 use Core\Objects\User\Repositories\UserCacheRepository;
 use Core\Objects\User\Repositories\UserRepository;
 use Core\Objects\User\Services\UserDecorator;
@@ -58,7 +58,7 @@ class UserLocator
         return self::$UserCacheRepository;
     }
 
-    public static function UserDecorator(?User $user): UserDecorator
+    public static function UserDecorator(?UserDTO $user): UserDecorator
     {
         if (!isset(self::$UserDecorator)) {
             self::$UserDecorator = new UserDecorator($user);

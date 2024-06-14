@@ -8,7 +8,11 @@ use Core\Objects\Account\Requests\RegisterRequest;
 use Core\Objects\Account\Services\AccountService;
 use Core\Objects\User\Factories\UserFactory;
 use Core\Objects\User\UserLocator;
+use Core\Resources\RouteNames;
+use Core\Resources\Views\ViewNames;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
@@ -21,7 +25,16 @@ class RegisterController extends Controller
         $this->userFactory    = UserLocator::UserFactory();
     }
 
-    public function __invoke(RegisterRequest $request): void
+    public function index(): RedirectResponse|View
+    {
+        if ($this->accountService->getByUserId(Auth::id())) {
+            return redirect()->route(RouteNames::PROFILE);
+        }
+
+        return view(ViewNames::PAGES_ACCOUNT_REGISTER);
+    }
+
+    public function register(RegisterRequest $request): void
     {
         $account = $request->dto();
         $account->setPrimaryUserId(Auth::id());

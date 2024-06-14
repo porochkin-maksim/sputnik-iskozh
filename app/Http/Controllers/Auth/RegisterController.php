@@ -30,7 +30,7 @@ class RegisterController extends AbstractAuthController
 
             $user = $this->userService->save($request->dto());
 
-            $this->guard()->login($user);
+            $this->guard()->login($user->getModel());
 
             if ($response = $this->registered($request, $user)) {
                 return $response;
@@ -39,10 +39,10 @@ class RegisterController extends AbstractAuthController
             $message = <<<HTML
 Регистрация успешна!
 <br>
-Проверьте почту <b>{$user->email}</b>
+Проверьте почту <b>{$user->getEmail()}</b>
 HTML;
 
-            event(new Registered($user));
+            event(new Registered($user->getModel()));
             
             DB::commit();
 

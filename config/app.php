@@ -174,8 +174,9 @@ return [
             /**
              * project providers
              */
+            App\Providers\ObserverServiceProvider::class,
             App\Providers\TranslationServiceProvider::class,
-            App\Providers\BladeServiceProvider::class,
+            App\Providers\ViewServiceProvider::class,
         ],
     )->toArray(),
 

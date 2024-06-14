@@ -4,13 +4,14 @@
             <div class="w-100 d-flex justify-content-center">
                 <div class="col-lg-4 col-md-6 col-sm-8 col-12">
                     <div class="alert alert-info text-center">
-                        Для пользования личным кабинетом необходимо зарегистрировать свой участок
+                        Для полного доступа к личному кабинету необходимо зарегистрировать свой участок
                     </div>
                     <div class="form d-inline">
                         <custom-input v-model="number"
                                       :errors="errors.number"
-                                      :placeholder="'Номер участка'"
+                                      :placeholder="'Номер дома/номер участка'"
                                       :required="true"
+                                      @keyup.enter="register"
                                       @change="clearError('number')"
                         />
                     </div>
@@ -47,7 +48,7 @@ export default {
     },
     methods: {
         register () {
-            window.axios[Url.Routes.accountRegister.method](Url.Routes.accountRegister.uri, {
+            window.axios[Url.Routes.accountRegisterSave.method](Url.Routes.accountRegisterSave.uri, {
                 number  : this.number,
             }).then(response => {
                 location.reload();

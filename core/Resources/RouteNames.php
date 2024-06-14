@@ -34,26 +34,30 @@ abstract class RouteNames
     public const FILES_DELETE = 'files.delete';
     public const FILES_STORE  = 'files.store';
 
-    public const ACCOUNT_REGISTER = 'account.register';
-    public const PROFILE          = 'profile.show';
-    public const PROFILE_SAVE     = 'profile.save';
-    public const COUNTERS         = 'counters.index';
-    public const BILLING          = 'billing.index';
+    public const ACCOUNT_REGISTER      = 'account.register';
+    public const ACCOUNT_REGISTER_SAVE = 'account.register.save';
+    public const PROFILE               = 'profile.show';
+    public const PROFILE_SAVE          = 'profile.save';
+    public const PROFILE_SAVE_EMAIL    = 'profile.save.email';
+    public const PROFILE_SAVE_PASSWORD = 'profile.save.password';
+
+    public const COUNTERS = 'counters.index';
+    public const BILLING  = 'billing.index';
 
     public static function name(string $key, string $default = ''): string
     {
         return match ($key) {
-            self::HOME    => 'Личный кабинет',
-            self::PROFILE => 'Профиль',
-            self::LOGOUT  => 'Выйти',
+            self::HOME     => 'Личный кабинет',
+            self::PROFILE  => 'Профиль',
+            self::LOGOUT   => 'Выйти',
 
             self::COUNTERS => 'Счётчики',
             self::BILLING  => 'Финансы',
 
-            self::FILES   => 'Файлы',
-            self::NEWS    => 'Новости',
-            self::REPORTS => 'Отчёты',
-            default       => $default,
+            self::FILES    => 'Файлы',
+            self::NEWS     => 'Новости',
+            self::REPORTS  => 'Отчёты',
+            default        => $default,
         };
     }
 }

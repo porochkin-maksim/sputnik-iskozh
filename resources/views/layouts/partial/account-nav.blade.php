@@ -1,23 +1,22 @@
 <?php declare(strict_types=1);
 
+use Core\Objects\Account\Models\AccountDTO;
+use Core\Resources\RouteNames;
+
 /**
  * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
+ * @var ?AccountDTO $account
  */
 
-use Core\Objects\Account\AccountLocator;
-use Core\Resources\RouteNames;
-use Illuminate\Support\Facades\Auth;
-
-$account = AccountLocator::AccountService()->getByUserId(Auth::id());
-
 $routes = $account ? [
-    RouteNames::COUNTERS,
-    RouteNames::BILLING,
+    // RouteNames::COUNTERS,
+    // RouteNames::BILLING,
 ] : [];
 ?>
 
 @foreach($routes as $r)
     <li class="nav-item">
-        <a class="nav-link" href="{{ route($r) }}">{{ RouteNames::name($r) }}</a>
+        <a class="nav-link"
+           href="{{ route($r) }}">{{ RouteNames::name($r) }}</a>
     </li>
 @endforeach

@@ -1,8 +1,26 @@
 {
     "accountRegister": {
         "name": "account.register",
+        "method": "get",
+        "uri": "\/home\/register",
+        "args": []
+    },
+    "accountRegisterSave": {
+        "name": "account.register.save",
         "method": "post",
         "uri": "\/home\/register",
+        "args": []
+    },
+    "billingIndex": {
+        "name": "billing.index",
+        "method": "get",
+        "uri": "\/home\/BILLING",
+        "args": []
+    },
+    "countersIndex": {
+        "name": "counters.index",
+        "method": "get",
+        "uri": "\/home\/COUNTERS",
         "args": []
     },
     "filesDelete": {
@@ -169,6 +187,18 @@
         "name": "profile.save",
         "method": "post",
         "uri": "\/home\/profile",
+        "args": []
+    },
+    "profileSaveEmail": {
+        "name": "profile.save.email",
+        "method": "post",
+        "uri": "\/home\/profile\/email",
+        "args": []
+    },
+    "profileSavePassword": {
+        "name": "profile.save.password",
+        "method": "post",
+        "uri": "\/home\/profile\/password",
         "args": []
     },
     "profileShow": {

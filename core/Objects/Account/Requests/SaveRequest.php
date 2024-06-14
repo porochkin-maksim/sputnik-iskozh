@@ -20,7 +20,8 @@ class SaveRequest extends AbstractRequest
                 'required',
                 'string',
                 'min:3',
-                Rule::unique(Account::TABLE, Account::NUMBER),
+                'regex:/^(\d+)\/(\d)$/',
+                Rule::unique(Account::TABLE, Account::NUMBER)->ignore($this->get(self::ID)),
             ],
         ];
     }
@@ -29,6 +30,8 @@ class SaveRequest extends AbstractRequest
     {
         return [
             self::NUMBER . '.required' => 'Укажите номер участка',
+            self::NUMBER . '.string'   => 'Поле должно быть строкой',
+            self::NUMBER . '.min'      => 'Поле должно быть не менее :min символов',
             self::NUMBER . '.unique'   => 'Такой участок уже зарегистрирован',
         ];
     }

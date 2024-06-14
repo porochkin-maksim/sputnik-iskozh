@@ -1,21 +1,9 @@
 <?php declare(strict_types=1);
 
-use Core\Objects\Account\AccountLocator;
-use Core\Objects\ObjectsLocator;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
-use Illuminate\Support\Facades\Auth;
-
-$user          = Auth::user();
-$userDecorator = ObjectsLocator::Users()->UserDecorator($user);
-$account       = AccountLocator::AccountService()->getByUserId(Auth::id());
-
-$routes  = [
-    RouteNames::FILES,
-    RouteNames::NEWS,
-];
 ?>
-        <!doctype html>
+<!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
@@ -55,7 +43,8 @@ $routes  = [
                             aria-label="Переключатель навигации">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="topMenuNavContent">
+                    <div class="collapse navbar-collapse"
+                         id="topMenuNavContent">
                         @include('layouts.partial.nav')
                     </div>
                 </div>
@@ -65,7 +54,7 @@ $routes  = [
                     @include('layouts.partial.sub-nav')
                 </div>
             </nav>
-            <main class="py-lg-4 p-2">
+            <main class="p-2">
                 @yield(SectionNames::CONTENT)
             </main>
         </div>

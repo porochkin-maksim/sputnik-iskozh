@@ -9,21 +9,23 @@ use Illuminate\Support\Facades\Route;
 include __DIR__ . '/web/auth.php';
 
 Route::get('/', function () {
-    // if (Auth::check() || true) {
     return view(ViewNames::PAGES_INDEX);
-    // }
-    // else {
-    //     return view(ViewNames::LAYOUTS_APP);
-    // }
 })->name(RouteNames::INDEX);
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {
+        Route::get('/', [Controllers\Account\AccountsController::class, 'index'])->name(RouteNames::HOME);
+
+        Route::group(['prefix' => 'profile'], function () {
+            Route::get('/', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
+            Route::post('/', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
+            Route::post('/email', [Controllers\Account\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
+            Route::post('/password', [Controllers\Account\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
+        });
+
         Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
-            Route::get('/', [Controllers\Account\AccountsController::class, 'index'])->name(RouteNames::HOME);
-            Route::post('/register', Controllers\Account\RegisterController::class)->name(RouteNames::ACCOUNT_REGISTER);
-            Route::get('/profile', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
-            Route::post('/profile', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
+            Route::get('/register', [Controllers\Account\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
+            Route::post('/register', [Controllers\Account\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
             Route::get('/COUNTERS', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::COUNTERS);
             Route::get('/BILLING', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::BILLING);
         });

@@ -26,7 +26,7 @@ class AccountsController extends Controller
         $account = $this->accountService->getByUserId(Auth::id());
 
         if ($account) {
-            return view(ViewNames::PAGES_HOME, compact('account'));
+            return view(ViewNames::PAGES_HOME);
         }
         return view(ViewNames::PAGES_PROFILE);
     }

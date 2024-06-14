@@ -18,7 +18,7 @@ class TranslationService
     public function log(string $key): void
     {
         $key = trim($key);
-        if (str_contains($key, 'validation.values')) {
+        if (str_contains($key, 'validation.')) {
             return;
         }
 

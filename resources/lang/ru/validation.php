@@ -119,7 +119,7 @@ return [
     'prohibited_if'        => 'Поле «:attribute» is prohibited when :other is :value.',
     'prohibited_unless'    => 'Поле «:attribute» is prohibited unless :other is in :values.',
     'prohibits'            => 'Поле «:attribute» prohibits :other from being present.',
-    'regex'                => 'Поле «:attribute» format is invalid.',
+    'regex'                => 'Поле «:attribute» неверного формата.',
     'required'             => 'Поле «:attribute» является обязательным.',
     'required_array_keys'  => 'Поле «:attribute» must contain entries for: :values.',
     'required_if'          => 'Поле «:attribute» является обязательным when :other is :value.',
