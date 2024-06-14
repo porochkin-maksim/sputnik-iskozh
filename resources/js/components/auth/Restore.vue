@@ -35,7 +35,7 @@ export default {
         return {
             registerSuccessMessage: null,
 
-            login: 'porochkinmi@mail.ru',
+            login: null,
         };
     },
     methods: {

@@ -48,8 +48,7 @@ class RegisterRequest extends AbstractRequest
     public function dto(): UserDTO
     {
         $dto = new UserDTO();
-        $dto->setName($this->get(self::LOGIN))
-            ->setEmail($this->get(self::LOGIN))
+        $dto->setEmail($this->get(self::LOGIN))
             ->setPassword($this->get(self::PASSWORD));
 
         return $dto;
