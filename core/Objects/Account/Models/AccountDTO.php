@@ -22,7 +22,7 @@ class AccountDTO implements \JsonSerializable
         $this->users = new Users();
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -2,6 +2,8 @@
 
 namespace Core\Objects\User;
 
+use Core\Objects\Access\RoleLocator;
+use Core\Objects\Account\AccountLocator;
 use Core\Objects\User\Factories\UserFactory;
 use Core\Objects\User\Models\UserDTO;
 use Core\Objects\User\Repositories\UserCacheRepository;
@@ -32,7 +34,10 @@ class UserLocator
     public static function UserFactory(): UserFactory
     {
         if (!isset(self::$UserFactory)) {
-            self::$UserFactory = new UserFactory();
+            self::$UserFactory = new UserFactory(
+                AccountLocator::AccountFactory(),
+                RoleLocator::RoleFactory(),
+            );
         }
 
         return self::$UserFactory;

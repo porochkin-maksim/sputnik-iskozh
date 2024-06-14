@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Core\Objects\Access\Enums\Permission;
+use Core\Objects\Access\RoleLocator;
+use Core\Objects\Access\Services\RoleService;
 use Core\Objects\File\FileLocator;
 use Core\Objects\File\Requests\SaveRequest;
 use Core\Objects\File\Requests\SearchRequest;
 use Core\Objects\File\Services\FileService;
 use Core\Resources\Views\ViewNames;
+use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,10 +19,12 @@ use Illuminate\Support\Facades\Auth;
 class FileController extends Controller
 {
     private FileService $fileService;
+    private RoleService $roleService;
 
     public function __construct()
     {
         $this->fileService = FileLocator::FileService();
+        $this->roleService = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -36,8 +42,8 @@ class FileController extends Controller
         $files = $this->fileService->search($searcher);
 
         return response()->json([
-            'files' => $files,
-            'edit'  => (bool) Auth::id(),
+            ResponsesEnum::FILES => $files,
+            ResponsesEnum::EDIT  => $this->canEdit(),
         ]);
     }
 
@@ -57,6 +63,7 @@ class FileController extends Controller
         if ($file) {
             $file->setName($request->getName());
             $this->fileService->save($file);
+
             return response()->json(true);
         }
 
@@ -66,5 +73,12 @@ class FileController extends Controller
     public function delete(int $id): JsonResponse
     {
         return response()->json($this->fileService->deleteById($id));
+    }
+
+    private function canEdit(): bool
+    {
+        $role = $this->roleService->getByUserId(Auth::id());
+
+        return Permission::canEditFiles($role);
     }
 }

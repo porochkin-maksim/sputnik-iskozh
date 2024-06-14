@@ -9,8 +9,6 @@ class ReportSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
-    private bool $withFiles = false;
-
     public function setWithFiles(): static
     {
         $this->with[] = 'files';

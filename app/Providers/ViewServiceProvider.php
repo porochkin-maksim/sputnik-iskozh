@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Core\Objects\Account\AccountLocator;
 use Core\Objects\User\Models\UserDTO;
 use Core\Objects\User\UserLocator;
 use Illuminate\Support\Facades\Auth;
@@ -27,10 +26,10 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         view()->composer('*', function ($view) {
-            $this->user = $this->user ?? UserLocator::UserService()->getById(Auth::id());
+            $this->user = $this->user ?? UserLocator::UserService()->searchById(Auth::id());
 
             $userDecorator = UserLocator::UserDecorator($this->user);
-            $account       = AccountLocator::AccountService()->getByUserId(Auth::id());
+            $account       = $this->user?->getAccount();
 
             $view
                 ->with('user', $this->user)

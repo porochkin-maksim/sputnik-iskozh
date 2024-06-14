@@ -6,7 +6,6 @@ use Core\Objects\Account\Factories\AccountFactory;
 use Core\Objects\Account\Repositories\AccountRepository;
 use Core\Objects\Account\Repositories\AccountToUserRepository;
 use Core\Objects\Account\Services\AccountService;
-use Core\Objects\User\UserLocator;
 
 class AccountLocator
 {
@@ -30,9 +29,7 @@ class AccountLocator
     public static function AccountFactory(): AccountFactory
     {
         if ( ! isset(self::$accountFactory)) {
-            self::$accountFactory = new AccountFactory(
-                UserLocator::UserFactory(),
-            );
+            self::$accountFactory = new AccountFactory();
         }
 
         return self::$accountFactory;

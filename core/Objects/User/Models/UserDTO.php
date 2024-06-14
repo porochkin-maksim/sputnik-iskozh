@@ -3,6 +3,8 @@
 namespace Core\Objects\User\Models;
 
 use App\Models\User;
+use Core\Objects\Access\Models\RoleDTO;
+use Core\Objects\Account\Models\AccountDTO;
 
 class UserDTO implements \JsonSerializable
 {
@@ -13,6 +15,9 @@ class UserDTO implements \JsonSerializable
     private ?string $email         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
+
+    private ?AccountDTO $account = null;
+    private ?RoleDTO    $role    = null;
 
     public function __construct(
         private readonly ?User $user = null,
@@ -107,6 +112,30 @@ class UserDTO implements \JsonSerializable
         $this->rememberToken = $rememberToken;
 
         return $this;
+    }
+
+    public function setAccount(?AccountDTO $account): static
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    public function getAccount(): ?AccountDTO
+    {
+        return $this->account;
+    }
+
+    public function setRole(?RoleDTO $role): static
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getRole(): ?RoleDTO
+    {
+        return $this->role;
     }
 
     public function jsonSerialize(): array

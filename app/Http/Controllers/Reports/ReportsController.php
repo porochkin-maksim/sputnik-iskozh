@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
+use Core\Objects\Access\Enums\Permission;
+use Core\Objects\Access\RoleLocator;
+use Core\Objects\Access\Services\RoleService;
 use Core\Objects\Report\Enums\CategoryEnum;
 use Core\Objects\Report\Enums\TypeEnum;
 use Core\Objects\Report\Factories\ReportFactory;
-use Core\Objects\Report\Models\ReportSearcher;
 use Core\Objects\Report\ReportLocator;
 use Core\Objects\Report\Requests\SaveRequest;
 use Core\Objects\Report\Requests\SearchRequest;
@@ -24,12 +26,14 @@ class ReportsController extends Controller
     private ReportService $reportService;
     private ReportFactory $reportFactory;
     private FileService   $fileService;
+    private RoleService   $roleService;
 
     public function __construct()
     {
         $this->reportService = ReportLocator::ReportService();
         $this->reportFactory = ReportLocator::ReportFactory();
         $this->fileService   = ReportLocator::FileService();
+        $this->roleService   = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -70,7 +74,7 @@ class ReportsController extends Controller
 
         return response()->json([
             ResponsesEnum::REPORTS => $reports,
-            ResponsesEnum::EDIT    => (bool) Auth::id(),
+            ResponsesEnum::EDIT    => $this->canEdit(),
         ]);
     }
 
@@ -104,5 +108,12 @@ class ReportsController extends Controller
     private function getTypes(): array
     {
         return TypeEnum::json();
+    }
+
+    private function canEdit(): bool
+    {
+        $role = $this->roleService->getByUserId(Auth::id());
+
+        return Permission::canEditReports($role);
     }
 }

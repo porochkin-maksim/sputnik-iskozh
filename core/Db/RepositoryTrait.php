@@ -67,6 +67,8 @@ trait RepositoryTrait
             $query->offset($searcher->getOffset());
         })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
             $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+        })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
+            $query->whereIn('id', $searcher->getIds());
         })->get();
 
         $result->setItems($items);

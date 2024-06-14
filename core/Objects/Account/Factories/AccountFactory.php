@@ -4,16 +4,10 @@ namespace Core\Objects\Account\Factories;
 
 use App\Models\Account\Account;
 use Core\Objects\Account\Models\AccountDTO;
-use Core\Objects\User\Factories\UserFactory;
+use Core\Objects\User\UserLocator;
 
 readonly class AccountFactory
 {
-    public function __construct(
-        private UserFactory $userFactory,
-    )
-    {
-    }
-
     public function makeModelFromDto(AccountDTO $dto, ?Account $account = null): Account
     {
         if ($account) {
@@ -45,7 +39,7 @@ readonly class AccountFactory
             ->setUpdatedAt($account->updated_at);
 
         foreach ($account->users ?? [] as $user) {
-            $result->addUser($this->userFactory->makeDtoFromObject($user));
+            $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
         }
 
         return $result;

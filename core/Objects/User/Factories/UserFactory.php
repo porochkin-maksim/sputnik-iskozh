@@ -3,11 +3,20 @@
 namespace Core\Objects\User\Factories;
 
 use App\Models\User;
+use Core\Objects\Access\Factories\RoleFactory;
+use Core\Objects\Account\Factories\AccountFactory;
 use Core\Objects\User\Models\UserDTO;
 use Illuminate\Support\Facades\Hash;
 
-class UserFactory
+readonly class UserFactory
 {
+    public function __construct(
+        public AccountFactory $accountFactory,
+        public RoleFactory    $roleFactory,
+    )
+    {
+    }
+
     private function encryptPassword(?string $password): ?string
     {
         return Hash::make($password);
@@ -46,6 +55,23 @@ class UserFactory
             ->setFirstName($user->first_name)
             ->setMiddleName($user->middle_name)
             ->setLastName($user->last_name);
+
+        if (isset($user->getRelations()[User::ACCOUNTS])) {
+            $account = $user->getRelation(User::ACCOUNTS)->first();
+            if ($account) {
+                $result->setAccount($this->accountFactory->makeDtoFromObject($account));
+            }
+        }
+
+        $role = $this->roleFactory->makeForUserId($user->id);
+
+        if ($role) {
+            $result->setRole($role);
+        }
+        elseif (isset($user->getRelations()[User::ROLES])) {
+            $role = $user->getRelation(User::ROLES)->first();
+            $result->setRole($this->roleFactory->makeDtoFromObject($role));
+        }
 
         return $result;
     }

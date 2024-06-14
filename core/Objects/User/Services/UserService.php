@@ -5,6 +5,7 @@ namespace Core\Objects\User\Services;
 use Core\Objects\User\Collections\Users;
 use Core\Objects\User\Factories\UserFactory;
 use Core\Objects\User\Models\UserDTO;
+use Core\Objects\User\Models\UserSearcher;
 use Core\Objects\User\Repositories\UserRepository;
 
 readonly class UserService
@@ -40,5 +41,28 @@ readonly class UserService
         $user = $this->userRepository->save($user);
 
         return $this->userFactory->makeDtoFromObject($user);
+    }
+
+    public function search(UserSearcher $searcher): Users
+    {
+        $users = $this->userRepository->search($searcher);
+
+        $result  = new Users();
+        foreach ($users->getItems() as $user) {
+            $result->add($this->userFactory->makeDtoFromObject($user));
+        }
+
+        return $result;
+    }
+
+    public function searchById(int|string|null $id)
+    {
+        $userSearcher = new UserSearcher();
+        $userSearcher
+            ->setId($id)
+            ->setWithAccounts()
+            ->setWithRoles();
+
+        return $this->search($userSearcher)->first();
     }
 }

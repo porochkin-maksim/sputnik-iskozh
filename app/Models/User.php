@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Access\Role;
+use App\Models\Access\RoleToUser;
 use App\Models\Account\Account;
 use App\Models\Account\AccountToUser;
 use App\Models\Interfaces\CastsInterface;
@@ -44,6 +46,9 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
     public const EMAIL_VERIFIED_AT = 'email_verified_at';
     public const TELEGRAM_ID       = 'telegram_id';
 
+    public const ACCOUNTS = 'accounts';
+    public const ROLES    = 'roles';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -78,13 +83,24 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
         self::PASSWORD          => self::CAST_HASHED,
     ];
 
-    public function account(): BelongsToMany
+    public function accounts(): BelongsToMany
     {
         return $this->belongsToMany(
             Account::class,
             AccountToUser::TABLE,
             AccountToUser::USER,
             AccountToUser::ACCOUNT,
+        );
+    }
+
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Role::class,
+            RoleToUser::TABLE,
+            RoleToUser::USER,
+            RoleToUser::ROLE,
         );
     }
 }
