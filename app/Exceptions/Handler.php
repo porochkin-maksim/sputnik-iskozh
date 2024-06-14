@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Mail\ExceptionMail;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -24,7 +27,26 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            $a = 1;
+            $this->sendEmail($e);
         });
+    }
+
+    public function sendEmail(Throwable $exception): void
+    {
+        try {
+            $content['message'] = $exception->getMessage();
+            $content['file']    = $exception->getFile();
+            $content['line']    = $exception->getLine();
+            $content['trace']   = $exception->getTrace();
+            $content['url']     = request()->url();
+            $content['body']    = request()->all();
+            $content['ip']      = request()->ip();
+            $content['user']    = request()->user()?->id ?? null;
+
+            Mail::to(env('ADMIN_EMAIL'))->send(new ExceptionMail($content));
+        }
+        catch (Throwable $exception) {
+            Log::error($exception);
+        }
     }
 }
