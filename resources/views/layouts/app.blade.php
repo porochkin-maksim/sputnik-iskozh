@@ -54,7 +54,7 @@ use Core\Resources\Views\SectionNames;
                     @include('layouts.partial.sub-nav')
                 </div>
             </nav>
-            <main class="p-2">
+            <main class="px-3 py-2">
                 @yield(SectionNames::CONTENT)
             </main>
         </div>
