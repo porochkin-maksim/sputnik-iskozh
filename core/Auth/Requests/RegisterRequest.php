@@ -3,7 +3,7 @@
 namespace Core\Auth\Requests;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Objects\User\Models\UserDTO;
+use Core\Domains\User\Models\UserDTO;
 use Core\Requests\RequestArgumentsEnum;
 use Core\Requests\Rules;
 

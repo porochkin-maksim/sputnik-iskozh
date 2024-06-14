@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-use Core\Objects\Account\Models\AccountDTO;
-use Core\Objects\User\Services\UserDecorator;
+use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\User\Services\UserDecorator;
 use Core\Resources\RouteNames;
 
 /**

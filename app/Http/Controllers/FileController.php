@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Core\Objects\Access\Enums\Permission;
-use Core\Objects\Access\RoleLocator;
-use Core\Objects\Access\Services\RoleService;
-use Core\Objects\File\FileLocator;
-use Core\Objects\File\Requests\SaveRequest;
-use Core\Objects\File\Requests\SearchRequest;
-use Core\Objects\File\Services\FileService;
+use Core\Domains\Access\Enums\Permission;
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\Access\Services\RoleService;
+use Core\Domains\File\FileLocator;
+use Core\Domains\File\Requests\SaveRequest;
+use Core\Domains\File\Requests\SearchRequest;
+use Core\Domains\File\Services\FileService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;

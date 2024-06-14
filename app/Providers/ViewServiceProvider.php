@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Core\Objects\User\Models\UserDTO;
-use Core\Objects\User\UserLocator;
+use Core\Domains\User\Models\UserDTO;
+use Core\Domains\User\UserLocator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;

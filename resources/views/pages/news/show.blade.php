@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Core\Objects\News\Models\NewsDTO;
+use Core\Domains\News\Models\NewsDTO;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 

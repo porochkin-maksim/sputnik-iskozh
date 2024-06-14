@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use Core\Objects\Account\AccountLocator;
-use Core\Objects\Account\Requests\SaveRequest;
-use Core\Objects\Account\Services\AccountService;
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Requests\SaveRequest;
+use Core\Domains\Account\Services\AccountService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
