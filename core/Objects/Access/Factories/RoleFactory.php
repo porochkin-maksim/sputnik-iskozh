@@ -18,7 +18,7 @@ readonly class RoleFactory
         return $result;
     }
 
-    public function makeForUserId(int $userId): ?RoleDTO
+    public function makeForUserId(?int $userId): ?RoleDTO
     {
         $roleEnum = UserToRole::getForUser($userId);
         return $roleEnum ? $this->make($roleEnum) : null;
