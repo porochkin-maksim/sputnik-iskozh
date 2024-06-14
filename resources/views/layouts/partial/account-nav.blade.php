@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Core\Objects\Account\Models\AccountDTO;
+use Core\Domains\Account\Models\AccountDTO;
 use Core\Resources\RouteNames;
 
 /**

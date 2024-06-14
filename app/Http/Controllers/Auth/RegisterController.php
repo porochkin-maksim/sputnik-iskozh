@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Core\Objects\ObjectsLocator;
+use Core\Domains\User\UserLocator;
 use Illuminate\Support\Facades\DB;
 use Core\Auth\Requests\RegisterRequest;
-use Core\Objects\User\Services\UserService;
+use Core\Domains\User\Services\UserService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -18,7 +18,7 @@ class RegisterController extends AbstractAuthController
 
     public function __construct()
     {
-        $this->userService = ObjectsLocator::Users()->UserService();
+        $this->userService = UserLocator::UserService();
 
         $this->middleware('guest');
     }

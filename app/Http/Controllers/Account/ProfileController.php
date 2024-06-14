@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use Core\Objects\User\Requests\SaveProfileEmailRequest;
-use Core\Objects\User\Requests\SaveProfilePasswordRequest;
-use Core\Objects\User\Requests\SaveProfileRequest;
-use Core\Objects\User\Services\UserService;
-use Core\Objects\User\UserLocator;
+use Core\Domains\User\Requests\SaveProfileEmailRequest;
+use Core\Domains\User\Requests\SaveProfilePasswordRequest;
+use Core\Domains\User\Requests\SaveProfileRequest;
+use Core\Domains\User\Services\UserService;
+use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;

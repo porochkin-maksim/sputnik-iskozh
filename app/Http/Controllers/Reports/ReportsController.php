@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
-use Core\Objects\Report\Enums\CategoryEnum;
-use Core\Objects\Report\Enums\TypeEnum;
-use Core\Objects\Report\Factories\ReportFactory;
-use Core\Objects\Report\Models\ReportSearcher;
-use Core\Objects\Report\ReportLocator;
-use Core\Objects\Report\Requests\SaveRequest;
-use Core\Objects\Report\Requests\SearchRequest;
-use Core\Objects\Report\Services\FileService;
-use Core\Objects\Report\Services\ReportService;
+use Core\Domains\Access\Enums\Permission;
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\Access\Services\RoleService;
+use Core\Domains\Report\Enums\CategoryEnum;
+use Core\Domains\Report\Enums\TypeEnum;
+use Core\Domains\Report\Factories\ReportFactory;
+use Core\Domains\Report\ReportLocator;
+use Core\Domains\Report\Requests\SaveRequest;
+use Core\Domains\Report\Requests\SearchRequest;
+use Core\Domains\Report\Services\FileService;
+use Core\Domains\Report\Services\ReportService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
@@ -24,12 +26,14 @@ class ReportsController extends Controller
     private ReportService $reportService;
     private ReportFactory $reportFactory;
     private FileService   $fileService;
+    private RoleService   $roleService;
 
     public function __construct()
     {
         $this->reportService = ReportLocator::ReportService();
         $this->reportFactory = ReportLocator::ReportFactory();
         $this->fileService   = ReportLocator::FileService();
+        $this->roleService   = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -70,7 +74,7 @@ class ReportsController extends Controller
 
         return response()->json([
             ResponsesEnum::REPORTS => $reports,
-            ResponsesEnum::EDIT    => (bool) Auth::id(),
+            ResponsesEnum::EDIT    => $this->canEdit(),
         ]);
     }
 
@@ -104,5 +108,12 @@ class ReportsController extends Controller
     private function getTypes(): array
     {
         return TypeEnum::json();
+    }
+
+    private function canEdit(): bool
+    {
+        $role = $this->roleService->getByUserId(Auth::id());
+
+        return Permission::canEditReports($role);
     }
 }

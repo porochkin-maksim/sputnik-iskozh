@@ -3,7 +3,6 @@
 namespace Core\Db\Searcher;
 
 use Core\Db\Searcher\Collections\WhereCollection;
-use Core\Db\Searcher\Models\Where;
 
 interface SearcherInterface
 {
@@ -16,6 +15,8 @@ interface SearcherInterface
     public const GTE     = '>=';
     public const LT      = '<';
     public const LTE     = '<=';
+
+    public function getIds(): ?array;
 
     public function getSortOrder(): string;
 

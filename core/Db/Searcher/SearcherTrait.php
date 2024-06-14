@@ -15,17 +15,17 @@ trait SearcherTrait
     private ?int $lastId = null;
 
     /** @var int[] $ids */
-    private array $ids    = [];
-    private array $select = [];
-    private array $with   = [];
+    private ?array $ids    = null;
+    private array  $select = [];
+    private array  $with   = [];
 
     private WhereCollection $where;
     private array           $whereIn = [];
 
     /**
-     * @return int[]
+     * @return null|int[]
      */
-    public function getIds(): array
+    public function getIds(): ?array
     {
         return $this->ids;
     }
@@ -36,6 +36,13 @@ trait SearcherTrait
     public function setIds(array $ids): static
     {
         $this->ids = $ids;
+
+        return $this;
+    }
+
+    public function setId(int|string|null $id): static
+    {
+        $this->ids = [(int) $id];
 
         return $this;
     }
@@ -127,9 +134,10 @@ trait SearcherTrait
 
     public function getWhere(): WhereCollection
     {
-        if (!isset($this->where)) {
+        if ( ! isset($this->where)) {
             $this->where = new WhereCollection();
         }
+
         return $this->where;
     }
 

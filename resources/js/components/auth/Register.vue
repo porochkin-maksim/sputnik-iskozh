@@ -72,7 +72,7 @@ export default {
         },
         registerAction (e) {
             window.axios.post('/register', {
-                login                : this.login,
+                email                : this.login,
                 password             : this.password,
                 password_confirmation: this.passwordConfirm,
             }).then(response => {

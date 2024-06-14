@@ -3,7 +3,7 @@
 namespace Core\Auth\Requests;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Objects\User\Models\UserDTO;
+use Core\Domains\User\Models\UserDTO;
 use Core\Requests\RequestArgumentsEnum;
 use Core\Requests\Rules;
 
@@ -48,8 +48,7 @@ class RegisterRequest extends AbstractRequest
     public function dto(): UserDTO
     {
         $dto = new UserDTO();
-        $dto->setName($this->get(self::LOGIN))
-            ->setEmail($this->get(self::LOGIN))
+        $dto->setEmail($this->get(self::LOGIN))
             ->setPassword($this->get(self::PASSWORD));
 
         return $dto;

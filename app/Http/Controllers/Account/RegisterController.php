@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use Core\Objects\Account\AccountLocator;
-use Core\Objects\Account\Requests\RegisterRequest;
-use Core\Objects\Account\Services\AccountService;
-use Core\Objects\User\Factories\UserFactory;
-use Core\Objects\User\UserLocator;
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Requests\RegisterRequest;
+use Core\Domains\Account\Services\AccountService;
+use Core\Domains\User\Factories\UserFactory;
+use Core\Domains\User\UserLocator;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Http\RedirectResponse;

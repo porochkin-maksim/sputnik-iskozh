@@ -15,15 +15,10 @@ return new class extends Migration {
                 $table->id();
             });
         }
-        if ( ! Schema::hasTable('permissions')) {
-            Schema::create('permissions', function (Blueprint $table) {
-                $table->id();
-            });
-        }
-        if ( ! Schema::hasTable('roles_to_permissions')) {
-            Schema::create('roles_to_permissions', function (Blueprint $table) {
-                $table->foreignId('role_id')->references('id')->on('roles')->cascadeOnDelete();
-                $table->foreignId('permission_id')->references('id')->on('permissions')->cascadeOnDelete();
+        if ( ! Schema::hasTable('roles_to_users')) {
+            Schema::create('roles_to_users', function (Blueprint $table) {
+                $table->foreignId('role')->references('id')->on('roles')->cascadeOnDelete();
+                $table->foreignId('user')->references('id')->on('users')->cascadeOnDelete();
             });
         }
     }
@@ -33,8 +28,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles_to_permissions');
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('roles_to_users');
         Schema::dropIfExists('roles');
     }
 };
