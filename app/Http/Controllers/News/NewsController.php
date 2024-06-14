@@ -13,7 +13,6 @@ use Core\Domains\News\Requests\SaveRequest;
 use Core\Domains\News\Requests\SearchRequest;
 use Core\Domains\News\Services\FileService;
 use Core\Domains\News\Services\NewsService;
-use Core\Domains\User\Models\UserSearcher;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
