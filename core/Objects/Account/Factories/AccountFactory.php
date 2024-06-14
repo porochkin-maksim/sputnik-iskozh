@@ -36,6 +36,7 @@ readonly class AccountFactory
         $result = new AccountDTO();
 
         $result
+            ->setId($account->id)
             ->setNumber($account->number)
             ->setPrimaryUserId($account->primary_user_id)
             ->setIsMember($account->is_member)
