@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Core\Resources;
 
-enum RouteNames: string
+abstract class RouteNames
 {
     public const INDEX  = 'index';
     public const LOGOUT = 'logout';
@@ -35,6 +35,25 @@ enum RouteNames: string
     public const FILES_STORE  = 'files.store';
 
     public const ACCOUNT_REGISTER = 'account.register';
-    public const PROFILE_SHOW     = 'profile.show';
+    public const PROFILE          = 'profile.show';
     public const PROFILE_SAVE     = 'profile.save';
+    public const COUNTERS         = 'counters.index';
+    public const BILLING          = 'billing.index';
+
+    public static function name(string $key, string $default = ''): string
+    {
+        return match ($key) {
+            self::HOME    => 'Личный кабинет',
+            self::PROFILE => 'Профиль',
+            self::LOGOUT  => 'Выйти',
+
+            self::COUNTERS => 'Счётчики',
+            self::BILLING  => 'Финансы',
+
+            self::FILES   => 'Файлы',
+            self::NEWS    => 'Новости',
+            self::REPORTS => 'Отчёты',
+            default       => $default,
+        };
+    }
 }

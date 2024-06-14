@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use Core\Objects\Account\AccountLocator;
 use Core\Objects\ObjectsLocator;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
@@ -7,9 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 $user          = Auth::user();
 $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
+$account       = AccountLocator::AccountService()->getByUserId(Auth::id());
 
+$routes  = [
+    RouteNames::FILES,
+    RouteNames::NEWS,
+];
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +29,7 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
     <meta name="csrf-token"
           content="{{ csrf_token() }}">
 
-    <title>@yield(SectionNames::TITLE, env('APP_NAME'))</title>
+    <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()->getName(), env('APP_NAME')))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
@@ -34,98 +40,32 @@ $userDecorator = ObjectsLocator::Users()->UserDecorator($user);
 <div id="app">
     <div class="d-flex justify-content-between flex-column min-vh-100">
         <div>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <div class="container-fluid px-4 main">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+                <div class="container-fluid main">
                     <a class="navbar-brand"
                        href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        {{ env('APP_NAME') }}
                     </a>
                     <button class="navbar-toggler"
                             type="button"
                             data-bs-toggle="collapse"
-                            data-bs-target="#navbarSupportedContent"
-                            aria-controls="navbarSupportedContent"
+                            data-bs-target="#topMenuNavContent"
+                            aria-controls="topMenuNavContent"
                             aria-expanded="false"
                             aria-label="Переключатель навигации">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse"
-                         id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            {{--                    <li class="nav-item dropdown">--}}
-                            {{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">--}}
-                            {{--                            Выпадающий список--}}
-                            {{--                        </a>--}}
-                            {{--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">--}}
-                            {{--                            <li><a class="dropdown-item" href="#">Действие</a></li>--}}
-                            {{--                            <li><a class="dropdown-item" href="#">Другое действие</a></li>--}}
-                            {{--                            <li><hr class="dropdown-divider"></li>--}}
-                            {{--                            <li><a class="dropdown-item" href="#">Что-то еще здесь</a></li>--}}
-                            {{--                        </ul>--}}
-                            {{--                    </li>--}}
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ route(RouteNames::NEWS) }}">Новости</a>
-                            </li>
-                            {{--                            <li class="nav-item">--}}
-                            {{--                                <a class="nav-link"--}}
-                            {{--                                   href="{{ route(RouteNames::REPORTS) }}">Отчёты</a>--}}
-                            {{--                            </li>--}}
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ route(RouteNames::FILES) }}">Файлы</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ Storage::url('Устав.pdf') }}"
-                                   target="_blank">Устав</a>
-                            </li>
-                        </ul>
-
-                        <ul class="navbar-nav ms-auto">
-                            @guest
-                                <li class="nav-item">
-                                    <auth-block></auth-block>
-                                </li>
-                            @else
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown"
-                                       class="nav-link dropdown-toggle"
-                                       href="#"
-                                       role="button"
-                                       data-bs-toggle="dropdown"
-                                       aria-haspopup="true"
-                                       aria-expanded="false"
-                                       v-pre>
-                                        {{ $userDecorator->getDisplayName() }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end"
-                                         aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item"
-                                           href="{{ route(RouteNames::HOME) }}">
-                                            {{ 'Личный кабинет' }}
-                                        </a>
-                                        <a class="dropdown-item"
-                                           href="{{ route(RouteNames::LOGOUT) }}">
-                                            {{ 'Выйти' }}
-                                        </a>
-
-                                        <form id="logout-form"
-                                              action="{{ route(RouteNames::LOGOUT) }}"
-                                              method="POST"
-                                              class="d-none">
-                                            @csrf
-                                        </form>
-                                    </div>
-                                </li>
-                            @endguest
-                        </ul>
+                    <div class="collapse navbar-collapse" id="topMenuNavContent">
+                        @include('layouts.partial.nav')
                     </div>
                 </div>
             </nav>
-
-            <main class="p-4">
+            <nav class="navbar sub-nav navbar-expand-lg navbar-light border-bottom d-lg-flex d-none">
+                <div class="container-fluid main">
+                    @include('layouts.partial.sub-nav')
+                </div>
+            </nav>
+            <main class="py-lg-4 p-2">
                 @yield(SectionNames::CONTENT)
             </main>
         </div>

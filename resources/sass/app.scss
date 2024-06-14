@@ -6,6 +6,7 @@
 @import "media";
 @import "common";
 @import "layout";
+@import "nav";
 
 @import 'components/custom-list';
 @import 'components/errors';
@@ -16,6 +17,7 @@
 @import 'components/files';
 
 @import 'components/slider';
+@import 'components/menus/vertical-menu';
 @import 'lightbox2/dist/css/lightbox.min.css';
 
 body, html {

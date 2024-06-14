@@ -72,8 +72,10 @@ main,
 
 @media (max-width : 992px) {
     .layout-page {
-        display        : flex;
-        flex-direction : column-reverse;
+        &:not(.no-reverse) {
+            display        : flex;
+            flex-direction : column-reverse;
+        }
 
         .block-sub {
             width         : 100%;

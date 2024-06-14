@@ -1,4 +1,6 @@
 import './bootstrap';
+import './utils/menus/vertical-menu.js';
+
 import { createApp } from 'vue';
 
 import PrimeVue from 'primevue/config';

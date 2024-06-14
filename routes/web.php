@@ -22,8 +22,10 @@ Route::group(['prefix' => 'home'], function () {
         Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
             Route::get('/', [Controllers\Account\AccountsController::class, 'index'])->name(RouteNames::HOME);
             Route::post('/register', Controllers\Account\RegisterController::class)->name(RouteNames::ACCOUNT_REGISTER);
-            Route::get('/profile', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE_SHOW);
+            Route::get('/profile', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
             Route::post('/profile', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
+            Route::get('/COUNTERS', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::COUNTERS);
+            Route::get('/BILLING', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::BILLING);
         });
     });
 });

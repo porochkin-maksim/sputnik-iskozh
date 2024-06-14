@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 use Core\Objects\Account\Models\AccountDTO;
-use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 
@@ -10,8 +9,4 @@ use Core\Resources\Views\ViewNames;
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
-
-@section(SectionNames::MAIN)
-
-@endsection
+@extends(ViewNames::LAYOUTS_TWO_COLUMN)

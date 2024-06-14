@@ -9,6 +9,6 @@ enum SectionNames: string
     public const STYLES  = 'styles';
     public const SCRIPTS = 'scripts';
 
-    public const SUB     = 'sub';
-    public const MAIN    = 'main';
+    public const SUB  = 'sub';
+    public const MAIN = 'main';
 }

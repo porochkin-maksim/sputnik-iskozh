@@ -5,24 +5,21 @@ use Core\Objects\User\Models\UserDTO;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 
+
 /**
  * @var AccountDTO $account
  * @var UserDTO    $user
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_TWO_COLUMN)
+@extends(ViewNames::LAYOUTS_APP)
 
-@section(SectionNames::TITLE)
-    Профиль
+@section(SectionNames::CONTENT)
+    <profile-show :account='@json($account)'
+                  :user='@json($user)'
+    ></profile-show>
 @endsection
 
 @section(SectionNames::SUB)
-    @relativeInclude('partial.nav')
-@endsection
 
-@section(SectionNames::MAIN)
-    <profile-show :account='<?= json_encode($account) ?>'
-                  :user='<?= json_encode($user) ?>'
-    ></profile-show>
 @endsection

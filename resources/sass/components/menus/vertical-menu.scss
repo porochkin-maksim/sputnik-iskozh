@@ -1,0 +1,107 @@
+$vertical-menu-icon-width:              2rem !default;
+$vertical-menu-line-height:             2.5rem !default;
+$vertical-menu-padding-x:               2rem !default;
+
+$vertical-menu-arrow-content-right:     "\f105" !default;
+$vertical-menu-arrow-content-down:      "\f107" !default;
+$vertical-menu-arrow-font-family:       FontAwesome !default;
+
+$vertical-menu-light-bg:                white !default;
+$vertical-menu-light-link-color:        rgba(117,117,117,.9) !default;
+$vertical-menu-light-link-hover-bg:     rgba(33,33,33,.05) !default;
+$vertical-menu-light-link-hover-color:  #424242 !default;
+$vertical-menu-light-active-color:      black !default;
+$vertical-menu-light-active-bg:         rgba(33,33,33,.03) !default;
+
+$vertical-menu-dark-bg:                 black !default;
+$vertical-menu-dark-link-color:         rgba(158,158,158,.9) !default;
+$vertical-menu-dark-link-hover-bg:      rgba(255,255,255,.05) !default;
+$vertical-menu-dark-link-hover-color:   rgba(255,255,255,.8) !default;
+$vertical-menu-dark-active-color:       white !default;
+$vertical-menu-dark-active-bg:          rgba(255,255,255,.03) !default;
+
+.vertical-menu{
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        &:before{
+            content: "";
+            display: block;
+            height: .7rem;
+        }
+
+        &:after{
+            content: "";
+            display: block;
+            height: .7rem;
+        }
+
+        ul{
+            display:none;
+        }
+    }
+
+    a {
+        display: block;
+        padding: 0 $vertical-menu-padding-x;
+        line-height: $vertical-menu-line-height;
+        white-space: nowrap;
+        text-decoration: none;
+
+        > i:first-child{
+            width: $vertical-menu-icon-width;
+            display: inline-block;
+        }
+    }
+
+    li{
+        &.show{
+            > ul{
+                display: block;
+            }
+        }
+    }
+}
+
+.vertical-menu-parent{
+    > a{
+        &:before{
+            content: $vertical-menu-arrow-content-right;
+            font-family: $vertical-menu-arrow-font-family;
+            float: right;
+        }
+    }
+
+    &.show{
+        > a{
+            &:before{
+                content: $vertical-menu-arrow-content-down;
+            }
+        }
+    }
+}
+
+
+.vertical-menu-light{
+    li{
+        &.show,
+        &.active{
+            background: $vertical-menu-light-active-bg;
+            > a{
+                color: $vertical-menu-light-active-color;
+            }
+        }
+    }
+
+    a{
+        color: $vertical-menu-light-link-color;
+
+        &:hover,
+        &:focus{
+            color: $vertical-menu-light-link-hover-color;
+            background: $vertical-menu-light-link-hover-bg;
+        }
+    }
+}

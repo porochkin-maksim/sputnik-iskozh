@@ -1,0 +1,10 @@
+.sub-nav {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    ul:first-child {
+        .nav-link {
+            padding-left : 0;
+        }
+    }
+}

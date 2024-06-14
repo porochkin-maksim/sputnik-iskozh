@@ -175,6 +175,7 @@ return [
              * project providers
              */
             App\Providers\TranslationServiceProvider::class,
+            App\Providers\BladeServiceProvider::class,
         ],
     )->toArray(),
 
