@@ -49,14 +49,14 @@
       "assets/Inter-italic.var-4Q_raY2J.woff2"
     ],
     "css": [
-      "assets/app-TRaXc0qG.css"
+      "assets/app-IZTR-44M.css"
     ],
-    "file": "assets/app-5OlMnKCu.js",
+    "file": "assets/app-KXiDB3e4.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-YwcPw6MT.css",
+    "file": "assets/app-8DCtJ6dY.css",
     "isEntry": true,
     "src": "resources/sass/app.scss"
   }
