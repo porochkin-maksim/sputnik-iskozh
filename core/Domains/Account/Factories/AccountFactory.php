@@ -19,6 +19,7 @@ readonly class AccountFactory
 
         return $result->fill([
             Account::NUMBER          => $dto->getNumber(),
+            Account::SIZE            => $dto->getSize(),
             Account::PRIMARY_USER_ID => $dto->getPrimaryUserId(),
             Account::IS_MEMBER       => $dto->getIsMember(),
             Account::IS_MANAGER      => $dto->getIsManager(),
@@ -32,6 +33,7 @@ readonly class AccountFactory
         $result
             ->setId($account->id)
             ->setNumber($account->number)
+            ->setSize($account->size)
             ->setPrimaryUserId($account->primary_user_id)
             ->setIsMember($account->is_member)
             ->setIsManager($account->is_manager)

@@ -1,5 +1,5 @@
 <template>
-    <label class="form-control label-input">
+    <label class="form-control label-input" :class="class">
         <span class="label-text">
             {{ label }}
         </span>
@@ -45,6 +45,7 @@ export default {
         Calendar,
     },
     props     : [
+        'class',
         'modelValue',
         'errors',
         'type',

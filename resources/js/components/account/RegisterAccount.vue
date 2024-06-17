@@ -14,9 +14,18 @@
                                       @keyup.enter="register"
                                       @change="clearError('number')"
                         />
+                        <custom-input v-model="size"
+                                      class="mt-2"
+                                      :errors="errors.size"
+                                      :type="'number'"
+                                      :placeholder="'площадь (м2)'"
+                                      :required="true"
+                                      @change="clearError('size')"
+                        />
                     </div>
                     <div class="d-flex justify-content-center my-3">
-                        <button class="btn btn-primary" @click="register">
+                        <button class="btn btn-primary"
+                                @click="register">
                             Зарегистрировать
                         </button>
                     </div>
@@ -44,12 +53,14 @@ export default {
     data () {
         return {
             number: null,
+            size  : null,
         };
     },
     methods: {
         register () {
             window.axios[Url.Routes.accountRegisterSave.method](Url.Routes.accountRegisterSave.uri, {
-                number  : this.number,
+                number: this.number,
+                size  : this.size,
             }).then(response => {
                 location.reload();
             }).catch(response => {
