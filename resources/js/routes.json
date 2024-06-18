@@ -151,6 +151,32 @@
             "id": "{id}"
         }
     },
+    "optionsEdit": {
+        "name": "options.edit",
+        "method": "get",
+        "uri": "\/options\/json\/edit\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "optionsIndex": {
+        "name": "options.index",
+        "method": "get",
+        "uri": "\/options",
+        "args": []
+    },
+    "optionsList": {
+        "name": "options.list",
+        "method": "get",
+        "uri": "\/options\/json\/list",
+        "args": []
+    },
+    "optionsSave": {
+        "name": "options.save",
+        "method": "post",
+        "uri": "\/options\/json\/save",
+        "args": []
+    },
     "passwordConfirm": {
         "name": "password.confirm",
         "method": "get",

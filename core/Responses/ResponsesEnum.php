@@ -9,6 +9,8 @@ enum ResponsesEnum: string
     public const EDIT       = 'edit';
     public const FILES      = 'files';
     public const NEWS       = 'news';
+    public const OPTION     = 'option';
+    public const OPTIONS    = 'options';
     public const REPORT     = 'report';
     public const REPORTS    = 'reports';
     public const TOTAL      = 'total';

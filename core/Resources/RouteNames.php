@@ -34,6 +34,11 @@ abstract class RouteNames
     public const FILES_DELETE = 'files.delete';
     public const FILES_STORE  = 'files.store';
 
+    public const OPTIONS      = 'options.index';
+    public const OPTIONS_LIST = 'options.list';
+    public const OPTIONS_SAVE = 'options.save';
+    public const OPTIONS_EDIT = 'options.edit';
+
     public const ACCOUNT_REGISTER      = 'account.register';
     public const ACCOUNT_REGISTER_SAVE = 'account.register.save';
     public const PROFILE               = 'profile.show';
@@ -44,7 +49,7 @@ abstract class RouteNames
     public const COUNTERS = 'counters.index';
     public const BILLING  = 'billing.index';
 
-    public static function name(string $key, string $default = ''): string
+    public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
             self::HOME     => 'Личный кабинет',
@@ -53,6 +58,8 @@ abstract class RouteNames
 
             self::COUNTERS => 'Счётчики',
             self::BILLING  => 'Финансы',
+
+            self::OPTIONS  => 'Опции',
 
             self::FILES    => 'Файлы',
             self::NEWS     => 'Новости',

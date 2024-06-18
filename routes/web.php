@@ -32,6 +32,15 @@ Route::group(['prefix' => 'home'], function () {
     });
 });
 
+Route::group(['prefix' => 'options'], function () {
+    Route::get('/', [Controllers\Options\OptionsController::class, 'index'])->name(RouteNames::OPTIONS);
+    Route::group(['prefix' => 'json'], function () {
+        Route::get('/list', [Controllers\Options\OptionsController::class, 'list'])->name(RouteNames::OPTIONS_LIST);
+        Route::post('/save', [Controllers\Options\OptionsController::class, 'save'])->name(RouteNames::OPTIONS_SAVE);
+        Route::get('/edit/{id}', [Controllers\Options\OptionsController::class, 'edit'])->name(RouteNames::OPTIONS_EDIT);
+    });
+});
+
 Route::group(['prefix' => 'reports'], function () {
     Route::get('/', [Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
     Route::group(['prefix' => 'json'], function () {
