@@ -115,7 +115,7 @@ export default {
                 this.categories = response.data.categories;
                 this.types      = response.data.types;
 
-                this.mapResponseReport(response.data.report);
+                this.mapResponse(response.data.report);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -128,7 +128,7 @@ export default {
                 this.categories = response.data.categories;
                 this.types      = response.data.types;
 
-                this.mapResponseReport(response.data.report);
+                this.mapResponse(response.data.report);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -150,7 +150,7 @@ export default {
                 form,
             ).then(response => {
                 if (response.data) {
-                    this.mapResponseReport(response.data);
+                    this.mapResponse(response.data);
                     this.eventSuccess();
                     this.$emit('updated');
                 }
@@ -158,7 +158,7 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
-        mapResponseReport (report) {
+        mapResponse (report) {
             this.id       = report.id;
             this.name     = report.name;
             this.category = report.category;
