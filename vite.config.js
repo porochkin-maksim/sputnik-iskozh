@@ -11,7 +11,7 @@ export default ({ mode }) => {
             host      : true,
             port      : process.env.VITE_PORT,
             strictPort: true,
-            hmr       : { host: 'localhost', protocol: 'ws' },
+            hmr       : { host: process.env.APP_HOST, protocol: 'ws' },
             watch     : {
                 usePolling: true,
             },
