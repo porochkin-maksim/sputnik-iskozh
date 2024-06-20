@@ -59,6 +59,12 @@
         "uri": "\/files\/json\/list",
         "args": []
     },
+    "filesSave": {
+        "name": "files.save",
+        "method": "post",
+        "uri": "\/files\/json\/save",
+        "args": []
+    },
     "filesStore": {
         "name": "files.store",
         "method": "post",

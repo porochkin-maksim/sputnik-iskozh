@@ -40,7 +40,7 @@ class FileController extends Controller
             ->setSortOrderDesc()
             ->setType(null);
 
-        $files = $this->fileService->search($searcher);
+        $files = $this->fileService->search($searcher)->getItems();
 
         return response()->json([
             ResponsesEnum::FILES => $files,

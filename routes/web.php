@@ -73,6 +73,7 @@ Route::group(['prefix' => 'files'], function () {
     Route::group(['prefix' => 'json'], function () {
         Route::get('/list', [Controllers\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
         Route::post('/store', [Controllers\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
+        Route::post('/save', [Controllers\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
         Route::post('/up/{id}', [Controllers\FileController::class, 'up'])->name(RouteNames::FILES_UP);
         Route::post('/down/{id}', [Controllers\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
         Route::get('/edit/{id}', [Controllers\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);

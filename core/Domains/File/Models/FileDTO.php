@@ -56,9 +56,9 @@ class FileDTO implements \JsonSerializable
         return $this;
     }
 
-    public function getOrder(): ?int
+    public function getOrder(): int
     {
-        return $this->order;
+        return (int) $this->order;
     }
 
     public function setOrder(?int $order): FileDTO

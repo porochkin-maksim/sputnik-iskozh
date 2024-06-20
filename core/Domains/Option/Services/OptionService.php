@@ -27,8 +27,8 @@ readonly class OptionService
         $result->setTotal($response->getTotal());
 
         $collection = new Options();
-        foreach ($response->getItems() as $report) {
-            $collection->add($this->optionFactory->makeDtoFromObject($report));
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->optionFactory->makeDtoFromObject($item));
         }
 
         foreach (array_diff($searcher->getIds(), $collection->getIds()) as $id) {

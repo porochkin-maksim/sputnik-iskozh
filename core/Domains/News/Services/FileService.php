@@ -20,17 +20,11 @@ class FileService
     public function save(UploadedFile $file, int $newsId): FileDTO
     {
         $dto = $this->fileService->store($file, self::FILE_DIR);
-        $dto
-            ->setType(TypeEnum::NEWS)
+        $dto->setType(TypeEnum::NEWS)
             ->setRelatedId($newsId);
 
         $this->fileService->save($dto);
 
         return $dto;
-    }
-
-    public function getById(int $id): ?FileDTO
-    {
-        return $this->fileService->getById($id);
     }
 }

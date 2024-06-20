@@ -44,8 +44,8 @@ readonly class NewsService
         $result->setTotal($response->getTotal());
 
         $collection = new NewsCollection();
-        foreach ($response->getItems() as $report) {
-            $collection->add($this->newsFactory->makeDtoFromObject($report));
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->newsFactory->makeDtoFromObject($item));
         }
 
         return $result->setItems($collection);
