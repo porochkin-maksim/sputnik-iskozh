@@ -88,4 +88,33 @@ readonly class FileService
 
         return $result;
     }
+
+    public function saveFileOrderIndex(FileDTO $file, int $newIndex): void
+    {
+        $searcher = new FileSearcher();
+        $searcher->setType($file->getType())
+            ->setSortOrderAsc()
+            ->setSortOrderProperty(File::ORDER)
+            ->setRelatedId($file->getRelatedId());
+
+        $files = $this->search($searcher);
+        $index = 0;
+        $files->map(function (FileDTO $f) use (&$index, $newIndex, $file) {
+            if ($f->getId() === $file->getId()) {
+                $f->setOrder($newIndex);
+            }
+            else {
+                if ($index === $newIndex) {
+                    $index++;
+                }
+                $f->setOrder($index);
+                $index++;
+            }
+            return $file;
+        });
+
+        foreach ($files as $f) {
+            $this->save($f);
+        }
+    }
 }

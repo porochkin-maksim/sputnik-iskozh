@@ -26,12 +26,15 @@
 
         <div class="footer">
             <div class="files">
-                <div v-for="file in news.files"
+                <div v-for="(file, index) in news.files"
                      class="file my-2">
                     <file-list-item
                                     v-if="!file.isImage || edit"
                                     :file="file"
                                     :edit="edit"
+                                    :index="index"
+                                    :use-up-sort="index!==0"
+                                    :use-down-sort="index!==news.files.length-1"
                                     :mode="FileItemMode.LINE"
                                     @updated="onUpdatedFile"
                     />
@@ -45,8 +48,8 @@
                     <i class="fa fa-edit"></i>&nbsp;Редактировать
                 </button>
                 <button class="btn btn-info"
-                        @click="chooseFile">
-                    <i class="fa fa-paperclip "></i>&nbsp;Файл
+                        @click="chooseFiles">
+                    <i class="fa fa-paperclip "></i>&nbsp;Файлы
                 </button>
                 <button class="btn btn-danger"
                         @click="deleteNews">
@@ -57,7 +60,8 @@
             <div class="d-none">
                 <input type="file"
                        ref="fileElem"
-                       @change="uploadFile">
+                       multiple
+                       @change="uploadFiles">
             </div>
         </div>
     </div>
@@ -114,12 +118,14 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
-        chooseFile () {
+        chooseFiles () {
             this.$refs.fileElem.click();
         },
-        uploadFile (event) {
+        uploadFiles (event) {
             let form = new FormData();
-            form.append('file', event.target.files[0]);
+            for (let i = 0; i < event.target.files.length; i++) {
+                form.append(event.target.files[i].name, event.target.files[i])
+            }
 
             let uri = Url.Generator.makeUri(Url.Routes.newsFileUpload, {
                 id: this.news.id,

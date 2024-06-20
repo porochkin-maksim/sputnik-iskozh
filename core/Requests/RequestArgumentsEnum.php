@@ -12,6 +12,7 @@ enum RequestArgumentsEnum: string
     public const END_AT          = 'end_at';
     public const FIRST_NAME      = 'first_name';
     public const ID              = 'id';
+    public const INDEX           = 'index';
     public const IS_MEMBER       = 'is_member';
     public const LAST_NAME       = 'last_name';
     public const LIMIT           = 'limit';

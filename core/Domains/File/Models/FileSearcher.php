@@ -22,4 +22,16 @@ class FileSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setRelatedId(?int $relatedId): static
+    {
+        if ($relatedId) {
+            $this->addWhere(File::RELATED_ID, SearcherInterface::EQUALS, $relatedId);
+        }
+        else {
+            $this->addWhere(File::RELATED_ID, SearcherInterface::IS_NULL);
+        }
+
+        return $this;
+    }
 }

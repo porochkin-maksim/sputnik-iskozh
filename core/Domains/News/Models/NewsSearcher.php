@@ -2,6 +2,7 @@
 
 namespace Core\Domains\News\Models;
 
+use App\Models\News;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
 
@@ -11,7 +12,7 @@ class NewsSearcher implements SearcherInterface
 
     public function setWithFiles(): static
     {
-        $this->with[] = 'files';
+        $this->with[] = News::FILES;
 
         return $this;
     }

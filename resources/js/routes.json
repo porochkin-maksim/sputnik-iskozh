@@ -31,6 +31,14 @@
             "id": "{id}"
         }
     },
+    "filesDown": {
+        "name": "files.down",
+        "method": "post",
+        "uri": "\/files\/json\/down\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "filesEdit": {
         "name": "files.edit",
         "method": "get",
@@ -51,17 +59,19 @@
         "uri": "\/files\/json\/list",
         "args": []
     },
-    "filesSave": {
-        "name": "files.save",
-        "method": "post",
-        "uri": "\/files\/json\/save",
-        "args": []
-    },
     "filesStore": {
         "name": "files.store",
         "method": "post",
         "uri": "\/files\/json\/store",
         "args": []
+    },
+    "filesUp": {
+        "name": "files.up",
+        "method": "post",
+        "uri": "\/files\/json\/up\/{id}",
+        "args": {
+            "id": "{id}"
+        }
     },
     "home": {
         "name": "home",

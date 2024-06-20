@@ -6,6 +6,7 @@ use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
+use Core\Domains\File\Requests\ChangeOrderRequest;
 use Core\Domains\File\Requests\SaveRequest;
 use Core\Domains\File\Requests\SearchRequest;
 use Core\Domains\File\Services\FileService;
@@ -73,6 +74,22 @@ class FileController extends Controller
     public function delete(int $id): JsonResponse
     {
         return response()->json($this->fileService->deleteById($id));
+    }
+
+    public function up(int $id, ChangeOrderRequest $request): void
+    {
+        $file = $this->fileService->getById($id);
+        if ($file) {
+            $this->fileService->saveFileOrderIndex($file, $request->getIndex() - 1);
+        }
+    }
+
+    public function down(int $id, ChangeOrderRequest $request): void
+    {
+        $file = $this->fileService->getById($id);
+        if ($file) {
+            $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);
+        }
     }
 
     private function canEdit(): bool

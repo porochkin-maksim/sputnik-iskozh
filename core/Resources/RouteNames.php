@@ -33,6 +33,8 @@ abstract class RouteNames
     public const FILES_EDIT   = 'files.edit';
     public const FILES_DELETE = 'files.delete';
     public const FILES_STORE  = 'files.store';
+    public const FILES_UP     = 'files.up';
+    public const FILES_DOWN   = 'files.down';
 
     public const OPTIONS      = 'options.index';
     public const OPTIONS_LIST = 'options.list';

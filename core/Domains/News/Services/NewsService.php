@@ -53,7 +53,10 @@ readonly class NewsService
 
     public function getById(int $id): ?NewsDTO
     {
-        $result = $this->newsRepository->getById($id);
+        $searcher = new NewsSearcher();
+        $searcher->setId($id)
+            ->setWithFiles();
+        $result = $this->newsRepository->search($searcher)->getItems()->first();
 
         return $result ? $this->newsFactory->makeDtoFromObject($result) : null;
     }
