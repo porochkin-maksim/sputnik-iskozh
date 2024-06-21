@@ -15,7 +15,7 @@
                     Новости
                 </a>
             </h1>
-            <news-list :limit="3"
+            <news-list :limit="5"
                        v-model:items-count="newsCount" />
         </template>
     </page-template>

@@ -30,7 +30,7 @@ readonly class NewsService
             $dto->setPublishedAt(now());
         }
 
-        if (!strip_tags($dto->getArticle())) {
+        if ( ! strip_tags((string) $dto->getArticle())) {
             $dto->setArticle('');
         }
 

@@ -97,6 +97,10 @@ trait RepositoryTrait
             })->when($searcher->getWhere(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getWhere() as $where) {
                     switch ($where->getOperator()) {
+                        case SearcherInterface::GT:
+                        case SearcherInterface::GTE:
+                        case SearcherInterface::LT:
+                        case SearcherInterface::LTE:
                         case SearcherInterface::EQUALS:
                             $query->where($where->getField(), $where->getOperator(), $where->getValue());
                             break;

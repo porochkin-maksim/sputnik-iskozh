@@ -4,6 +4,7 @@ namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
@@ -15,6 +16,7 @@ use Core\Domains\News\Requests\SaveRequest;
 use Core\Domains\News\Requests\SearchRequest;
 use Core\Domains\News\Services\FileService;
 use Core\Domains\News\Services\NewsService;
+use Core\Enums\DateTimeFormat;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
@@ -78,18 +80,24 @@ class NewsController extends Controller
 
     public function list(SearchRequest $request): JsonResponse
     {
+        $canEdit = $this->canEdit();
+
         $searcher = $request->dto();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT)
             ->setSortOrderDesc()
             ->setWithFiles();
 
+        if ( ! $canEdit) {
+            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
+        }
+
         $news = $this->newsService->search($searcher);
 
         return response()->json([
             ResponsesEnum::NEWS  => $news->getItems(),
             ResponsesEnum::TOTAL => $news->getTotal(),
-            ResponsesEnum::EDIT  => $this->canEdit(),
+            ResponsesEnum::EDIT  => $canEdit,
         ]);
     }
 
