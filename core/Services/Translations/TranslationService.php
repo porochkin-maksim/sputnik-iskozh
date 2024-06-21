@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Core\Translations;
+namespace Core\Services\Translations;
 
 use App\Models\User;
 use Core\Log\LogChannel;
-use Core\Translations\Notifications\TranslationRequired;
+use Core\Services\Translations\Notifications\TranslationRequired;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 
