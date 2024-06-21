@@ -70,7 +70,7 @@ $routes = [
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
-                    {{ $userDecorator->getDisplayName() }} {{ $account ? sprintf('(%s)',$account->getNumber()) : '' }}
+                    {{ $userDecorator->getDisplayName() }} {!! $account ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)',$account->getNumber()) : '' !!}
                 </a>
             </li>
             <li class="nav-item">

@@ -1,22 +1,14 @@
 <template>
-    <label class="form-control label-input" :class="class">
+    <label class="form-control label-input" :class="classes">
         <span class="label-text">
             {{ label }}
         </span>
-<!--        <template v-if="usePrimeVue">-->
-<!--            <template v-if="type==='datetime-local'">-->
-<!--                <Calendar v-model="localValue"-->
-<!--                          showTime-->
-<!--                          hourFormat="24"-->
-<!--                          :placeholder="placeholder"-->
-<!--                />-->
-<!--            </template>-->
-<!--        </template>-->
         <input
                :value="modelValue"
                :type="computedType"
                :required="required"
                :placeholder="placeholder"
+               :disabled="disabled"
                :name="name"
                @change="onChange"
                @keyup.enter="onSubmit"
@@ -45,7 +37,7 @@ export default {
         Calendar,
     },
     props     : [
-        'class',
+        'classes',
         'modelValue',
         'errors',
         'type',
@@ -53,6 +45,7 @@ export default {
         'name',
         'placeholder',
         'required',
+        'disabled',
     ],
     emits     : [
         'update:modelValue',

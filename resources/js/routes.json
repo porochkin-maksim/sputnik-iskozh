@@ -231,6 +231,18 @@
         "uri": "\/password\/reset",
         "args": []
     },
+    "profileCounterList": {
+        "name": "profile.counter.list",
+        "method": "get",
+        "uri": "\/home\/counter\/list",
+        "args": []
+    },
+    "profileCounterSave": {
+        "name": "profile.counter.save",
+        "method": "post",
+        "uri": "\/home\/counter",
+        "args": []
+    },
     "profileSave": {
         "name": "profile.save",
         "method": "post",

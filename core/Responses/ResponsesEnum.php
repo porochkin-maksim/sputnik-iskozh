@@ -6,6 +6,8 @@ enum ResponsesEnum: string
 {
     public const ACCOUNT    = 'account';
     public const CATEGORIES = 'categories';
+    public const COUNTER    = 'counter';
+    public const COUNTERS   = 'counters';
     public const EDIT       = 'edit';
     public const FILES      = 'files';
     public const NEWS       = 'news';

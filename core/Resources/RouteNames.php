@@ -49,6 +49,9 @@ abstract class RouteNames
     public const PROFILE_SAVE_EMAIL    = 'profile.save.email';
     public const PROFILE_SAVE_PASSWORD = 'profile.save.password';
 
+    public const PROFILE_COUNTERS_LIST = 'profile.counter.list';
+    public const PROFILE_COUNTER_SAVE  = 'profile.counter.save';
+
     public const COUNTERS = 'counters.index';
     public const BILLING  = 'billing.index';
 
