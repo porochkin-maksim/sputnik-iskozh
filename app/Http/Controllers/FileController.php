@@ -50,6 +50,9 @@ class FileController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         foreach ($request->allFiles() as $file) {
             $dto = $this->fileService->store($file, date('Y-m'));
             $this->fileService->save($dto);
@@ -60,6 +63,9 @@ class FileController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $file = $this->fileService->getById($request->getId());
         if ($file) {
             $file->setName($request->getName());
@@ -73,11 +79,17 @@ class FileController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         return response()->json($this->fileService->deleteById($id));
     }
 
     public function up(int $id, ChangeOrderRequest $request): void
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $file = $this->fileService->getById($id);
         if ($file) {
             $this->fileService->saveFileOrderIndex($file, $request->getIndex() - 1);
@@ -86,6 +98,9 @@ class FileController extends Controller
 
     public function down(int $id, ChangeOrderRequest $request): void
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $file = $this->fileService->getById($id);
         if ($file) {
             $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);

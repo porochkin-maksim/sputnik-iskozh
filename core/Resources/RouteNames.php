@@ -24,6 +24,7 @@ abstract class RouteNames
     public const NEWS_EDIT        = 'news.edit';
     public const NEWS_SAVE        = 'news.save';
     public const NEWS_DELETE      = 'news.delete';
+    public const NEWS_FILE_SAVE   = 'news.file.save';
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
 

@@ -5,12 +5,14 @@
                     @update="onPaginationUpdate"
         />
     </template>
-    <div class="row custom-list list news-list">
-        <news-list-item v-for="item in news"
-                        :news="item"
-                        :edit="edit"
-                        @updated="loadList"
-        />
+    <div class="news-list w-100">
+        <template v-for="(item, index) in news">
+            <hr v-if="index"/>
+            <news-list-item :news="item"
+                            :edit="edit"
+                            @updated="loadList"
+            />
+        </template>
     </div>
     <template v-if="showPagination && news.length > 3">
         <pagination :total="total"
@@ -22,9 +24,9 @@
 
 <script>
 import Url           from '../../utils/Url.js';
-import Pagination    from '../common/pagination/Pagination.vue';
 import ResponseError from '../../mixin/ResponseError.js';
-import NewsListItem  from './NewsListItem.vue';
+import Pagination    from '../common/pagination/Pagination.vue';
+import NewsListItem  from './NewsItem.vue';
 
 export default {
     components: {
@@ -35,9 +37,8 @@ export default {
         ResponseError,
     ],
     props     : [
-        'viewMode',
-        'reloadList',
         'canEdit',
+        'reloadList',
         'itemsCount',
         'showPagination',
         'limit',

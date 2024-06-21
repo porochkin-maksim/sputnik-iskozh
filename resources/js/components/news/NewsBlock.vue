@@ -1,7 +1,6 @@
 <template>
     <page-template>
-        <template v-slot:sub
-                  v-if="edit">
+        <template v-slot:sub v-if="edit">
             <div class="d-flex justify-content-between">
                 <button class="btn btn-primary"
                         v-on:click="showFormAction">Добавить новость
@@ -10,11 +9,9 @@
         </template>
         <template v-slot:main>
             <div v-if="showForm">
-                <wrapper @close="showForm=false"
-                         :container-class="'w-lg-75 w-md-100'">
+                <wrapper @close="showForm=false" :container-class="'w-lg-75 w-md-100'">
                     <div class="container-fluid">
-                        <news-item-edit :model-value="id"
-                                        @updated="createdItem" />
+                        <news-item-edit :model-value="id" @updated="createdItem"/>
                     </div>
                 </wrapper>
             </div>

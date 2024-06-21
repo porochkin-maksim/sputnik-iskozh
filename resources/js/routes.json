@@ -127,11 +127,17 @@
     },
     "newsFileDelete": {
         "name": "news.file.delete",
-        "method": "post",
+        "method": "delete",
         "uri": "\/news\/json\/file\/delete\/{id}",
         "args": {
             "id": "{id}"
         }
+    },
+    "newsFileSave": {
+        "name": "news.file.save",
+        "method": "post",
+        "uri": "\/news\/json\/file\/save",
+        "args": []
     },
     "newsFileUpload": {
         "name": "news.file.upload",

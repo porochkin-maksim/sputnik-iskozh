@@ -127,4 +127,9 @@ class FileDTO implements \JsonSerializable
             ]),
         ];
     }
+
+    public function getOnlyName(): string
+    {
+        return Str::replace('.' . $this->getExt(), '', $this->getName());
+    }
 }

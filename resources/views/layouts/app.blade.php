@@ -64,7 +64,7 @@ use Illuminate\Support\Facades\App;
     <div class="d-flex justify-content-between flex-column min-vh-100">
         <div>
             <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
-                <div class="container-fluid main">
+                <div class="container-fluid main px-3">
                     <a class="navbar-brand"
                        href="{{ url('/') }}">
                         {{ env('APP_NAME') }}
@@ -85,7 +85,7 @@ use Illuminate\Support\Facades\App;
                 </div>
             </nav>
             <nav class="navbar sub-nav navbar-expand-lg navbar-light border-bottom d-lg-flex d-none">
-                <div class="container-fluid main">
+                <div class="container-fluid main px-3">
                     @include('layouts.partial.sub-nav')
                 </div>
             </nav>

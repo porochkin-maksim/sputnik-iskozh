@@ -7,6 +7,8 @@ use App\Models\News;
 use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
+use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Requests\SaveRequest as SaveFileRequest;
 use Core\Domains\News\Factories\NewsFactory;
 use Core\Domains\News\NewsLocator;
 use Core\Domains\News\Requests\SaveRequest;
@@ -63,10 +65,14 @@ class NewsController extends Controller
 
     public function edit(int $id): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $news = $this->newsService->getById($id);
 
         return response()->json([
             ResponsesEnum::NEWS => $news,
+            ResponsesEnum::EDIT => $this->canEdit(),
         ]);
     }
 
@@ -89,6 +95,9 @@ class NewsController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $news = $request->dto();
         $news = $this->newsService->save($news);
 
@@ -97,16 +106,53 @@ class NewsController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         return response()->json($this->newsService->deleteById($id));
     }
 
+    /** Работа с файлами */
+
     public function uploadFile(int $id, Request $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         foreach ($request->allFiles() as $file) {
-            $this->fileService->save($file, $id);
+            $this->fileService->store($file, $id);
         }
 
         return response()->json(true);
+    }
+
+    public function saveFile(SaveFileRequest $request): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $file = $this->fileService->getById($request->getId());
+        if ($file && $file->getType() === TypeEnum::NEWS) {
+            $file->setName($request->getName());
+            $this->fileService->save($file);
+
+            return response()->json(true);
+        }
+
+        return response()->json(false);
+    }
+
+    public function deleteFile(int $id): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $file = $this->fileService->getById($id);
+        if ($file?->getType() !== TypeEnum::NEWS) {
+            abort(403);
+        }
+
+        return response()->json($this->fileService->deleteById($id));
     }
 
     private function canEdit(): bool

@@ -20,20 +20,24 @@ readonly class NewsService
 
     public function save(NewsDTO $dto): NewsDTO
     {
-        $report = null;
+        $news = null;
 
         if ($dto->getId()) {
-            $report = $this->newsRepository->getById($dto->getId());
+            $news = $this->newsRepository->getById($dto->getId());
         }
 
         if ( ! $dto->getPublishedAt()) {
             $dto->setPublishedAt(now());
         }
 
-        $report = $this->newsFactory->makeModelFromDto($dto, $report);
-        $report = $this->newsRepository->save($report);
+        if (!strip_tags($dto->getArticle())) {
+            $dto->setArticle('');
+        }
 
-        return $this->newsFactory->makeDtoFromObject($report);
+        $news = $this->newsFactory->makeModelFromDto($dto, $news);
+        $news = $this->newsRepository->save($news);
+
+        return $this->newsFactory->makeDtoFromObject($news);
     }
 
     public function search(NewsSearcher $searcher): SearchResponse
