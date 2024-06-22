@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-lg-6 col-md-9 col-12">
+        <div class="col-lg-5 col-md-7 col-12">
             <div v-if="!account"
                  class="alert alert-warning text-center mb-2">
                 <i class="fa fa-warning"></i> <a :href="Url.Routes.accountRegister.uri">Зарегистрировать участок</a>
@@ -15,7 +15,7 @@
                 <profile-password :user="user" />
             </div>
         </div>
-        <div class="col-lg-6 col-md-3 col-12" v-if="account">
+        <div class="col-lg-7 col-md-5 col-12" v-if="account">
             <div class="row mt-lg-0 mt-2">
                 <div class="col-lg-6 col-md-12">
                     <account-block :account="account" />

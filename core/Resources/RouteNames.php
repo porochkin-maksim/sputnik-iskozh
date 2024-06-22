@@ -67,7 +67,7 @@ abstract class RouteNames
             self::COUNTERS => 'Счётчики',
             self::BILLING  => 'Финансы',
 
-            self::OPTIONS  => 'Опции',
+            self::OPTIONS  => 'Настройки',
 
             self::FILES    => 'Файлы',
             self::NEWS     => 'Новости',
