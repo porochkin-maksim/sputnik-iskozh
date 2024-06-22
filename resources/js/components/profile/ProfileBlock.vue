@@ -16,7 +16,16 @@
             </div>
         </div>
         <div class="col-lg-6 col-md-3 col-12" v-if="account">
-            <counter-block />
+            <div class="row mt-lg-0 mt-2">
+                <div class="col-lg-6 col-md-12">
+                    <account-block :account="account" />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-lg-6 col-md-12">
+                    <counter-block :account="account" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -30,10 +39,12 @@ import ProfileShow     from './ProfileShow.vue';
 import ProfileEmail    from './ProfileEmail.vue';
 import ProfilePassword from './ProfilePassword.vue';
 import CounterBlock    from './counters/CounterBlock.vue';
+import AccountBlock    from './account/AccountBlock.vue';
 
 export default {
     name      : 'ProfileBlock',
     components: {
+        AccountBlock,
         CounterBlock,
         ProfilePassword,
         ProfileEmail,

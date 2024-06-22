@@ -23,35 +23,31 @@
             </div>
         </wrapper>
     </div>
-    <div class="row mt-lg-0 mt-2">
-        <div class="col-lg-6 col-md-12">
-            <div class="border">
-                <table class="table table-responsive align-middle m-0">
-                    <tbody>
-                    <tr>
-                        <th class="d-flex justify-content-between align-items-center bg-light">
-                            <span>Cчётчики</span>
-                            <button class="btn btn-sm btn-light border"
-                                    v-if="showAddButton"
-                                    @click="showForm=true">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </th>
+    <div class="border">
+        <table class="table table-responsive align-middle m-0">
+            <tbody>
+            <tr>
+                <th class="d-flex justify-content-between align-items-center bg-light">
+                    <span>Cчётчики</span>
+                    <button class="btn btn-sm btn-light border"
+                            v-if="showAddButton"
+                            @click="showForm=true">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </th>
+            </tr>
+            <tr v-if="primaryCounter">
+                <th>{{ primaryCounter.number }}</th>
+            </tr>
+            <template v-if="counters && counters.length">
+                <template v-for="item in counters">
+                    <tr v-if="item.id !== primaryCounter?.id">
+                        <td>{{ item.number }}</td>
                     </tr>
-                    <tr v-if="primaryCounter">
-                        <th>{{ primaryCounter.number }}</th>
-                    </tr>
-                    <template v-if="counters && counters.length">
-                        <template v-for="item in counters">
-                            <tr v-if="item.id !== primaryCounter?.id">
-                                <td>{{ item.number }}</td>
-                            </tr>
-                        </template>
-                    </template>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                </template>
+            </template>
+            </tbody>
+        </table>
     </div>
 </template>
 

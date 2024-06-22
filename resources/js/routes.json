@@ -1,4 +1,10 @@
 {
+    "accountInfo": {
+        "name": "account.info",
+        "method": "get",
+        "uri": "\/home\/json\/account-info",
+        "args": []
+    },
     "accountRegister": {
         "name": "account.register",
         "method": "get",
@@ -8,19 +14,19 @@
     "accountRegisterSave": {
         "name": "account.register.save",
         "method": "post",
-        "uri": "\/home\/register",
+        "uri": "\/home\/json\/register",
         "args": []
     },
     "billingIndex": {
         "name": "billing.index",
         "method": "get",
-        "uri": "\/home\/BILLING",
+        "uri": "\/home\/json\/BILLING",
         "args": []
     },
     "countersIndex": {
         "name": "counters.index",
         "method": "get",
-        "uri": "\/home\/COUNTERS",
+        "uri": "\/home\/json\/COUNTERS",
         "args": []
     },
     "filesDelete": {
@@ -234,13 +240,13 @@
     "profileCounterList": {
         "name": "profile.counter.list",
         "method": "get",
-        "uri": "\/home\/counter\/list",
+        "uri": "\/home\/json\/counter\/list",
         "args": []
     },
     "profileCounterSave": {
         "name": "profile.counter.save",
         "method": "post",
-        "uri": "\/home\/counter",
+        "uri": "\/home\/json\/counter",
         "args": []
     },
     "profileSave": {

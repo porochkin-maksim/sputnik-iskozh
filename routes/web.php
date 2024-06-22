@@ -25,12 +25,15 @@ Route::group(['prefix' => 'home'], function () {
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
             Route::get('/register', [Controllers\Account\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
-            Route::post('/register', [Controllers\Account\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
-            Route::get('/counter/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
-            Route::post('/counter', [Controllers\Account\CounterController::class, 'save'])->name(RouteNames::PROFILE_COUNTER_SAVE);
+            Route::group(['prefix' => 'json'], function () {
+                Route::post('/register', [Controllers\Account\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
+                Route::get('/account-info', [Controllers\Account\AccountsController::class, 'info'])->name(RouteNames::ACCOUNT_INFO);
+                Route::get('/counter/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
+                Route::post('/counter', [Controllers\Account\CounterController::class, 'save'])->name(RouteNames::PROFILE_COUNTER_SAVE);
 
-            Route::get('/COUNTERS', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::COUNTERS);
-            Route::get('/BILLING', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::BILLING);
+                Route::get('/COUNTERS', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::COUNTERS);
+                Route::get('/BILLING', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::BILLING);
+            });
         });
     });
 });

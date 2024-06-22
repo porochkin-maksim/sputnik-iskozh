@@ -6,6 +6,7 @@ use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Account\Repositories\AccountToUserRepository;
 use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Option\OptionLocator;
 
 class AccountLocator
 {
@@ -20,6 +21,7 @@ class AccountLocator
             self::$accountService = new AccountService(
                 self::AccountFactory(),
                 self::AccountRepository(),
+                OptionLocator::OptionService(),
             );
         }
 

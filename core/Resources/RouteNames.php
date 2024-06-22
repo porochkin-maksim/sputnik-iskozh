@@ -44,6 +44,8 @@ abstract class RouteNames
 
     public const ACCOUNT_REGISTER      = 'account.register';
     public const ACCOUNT_REGISTER_SAVE = 'account.register.save';
+    public const ACCOUNT_INFO          = 'account.info';
+
     public const PROFILE               = 'profile.show';
     public const PROFILE_SAVE          = 'profile.save';
     public const PROFILE_SAVE_EMAIL    = 'profile.save.email';
