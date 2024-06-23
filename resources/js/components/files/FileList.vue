@@ -64,7 +64,7 @@ export default {
         reloadList () {
             if (this.reloadList) {
                 this.loadList();
-                this.$emit('reloadList', false);
+                this.$emit('update:reloadList', false);
             }
         },
     },
