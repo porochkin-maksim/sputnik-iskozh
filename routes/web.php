@@ -30,20 +30,21 @@ Route::group(['prefix' => 'home'], function () {
                 Route::get('/account-info', [Controllers\Account\AccountsController::class, 'info'])->name(RouteNames::ACCOUNT_INFO);
                 Route::get('/counter/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
                 Route::post('/counter', [Controllers\Account\CounterController::class, 'save'])->name(RouteNames::PROFILE_COUNTER_SAVE);
-
-                Route::get('/COUNTERS', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::COUNTERS);
-                Route::get('/BILLING', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::BILLING);
             });
         });
     });
 });
 
-Route::group(['prefix' => 'options'], function () {
-    Route::get('/', [Controllers\Options\OptionsController::class, 'index'])->name(RouteNames::OPTIONS);
-    Route::group(['prefix' => 'json'], function () {
-        Route::get('/list', [Controllers\Options\OptionsController::class, 'list'])->name(RouteNames::OPTIONS_LIST);
-        Route::post('/save', [Controllers\Options\OptionsController::class, 'save'])->name(RouteNames::OPTIONS_SAVE);
-        Route::get('/edit/{id}', [Controllers\Options\OptionsController::class, 'edit'])->name(RouteNames::OPTIONS_EDIT);
+Route::group(['middleware' => MiddlewareNames::AUTH], function () {
+    Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
+        Route::group(['prefix' => 'options'], function () {
+            Route::get('/', [Controllers\Options\OptionsController::class, 'index'])->name(RouteNames::OPTIONS);
+            Route::group(['prefix' => 'json'], function () {
+                Route::get('/list', [Controllers\Options\OptionsController::class, 'list'])->name(RouteNames::OPTIONS_LIST);
+                Route::post('/save', [Controllers\Options\OptionsController::class, 'save'])->name(RouteNames::OPTIONS_SAVE);
+                Route::get('/edit/{id}', [Controllers\Options\OptionsController::class, 'edit'])->name(RouteNames::OPTIONS_EDIT);
+            });
+        });
     });
 });
 

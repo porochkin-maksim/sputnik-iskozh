@@ -54,18 +54,12 @@ abstract class RouteNames
     public const PROFILE_COUNTERS_LIST = 'profile.counter.list';
     public const PROFILE_COUNTER_SAVE  = 'profile.counter.save';
 
-    public const COUNTERS = 'counters.index';
-    public const BILLING  = 'billing.index';
-
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
             self::HOME     => 'Личный кабинет',
             self::PROFILE  => 'Профиль',
             self::LOGOUT   => 'Выйти',
-
-            self::COUNTERS => 'Счётчики',
-            self::BILLING  => 'Финансы',
 
             self::OPTIONS  => 'Настройки',
 

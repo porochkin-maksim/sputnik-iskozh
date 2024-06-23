@@ -17,18 +17,6 @@
         "uri": "\/home\/json\/register",
         "args": []
     },
-    "billingIndex": {
-        "name": "billing.index",
-        "method": "get",
-        "uri": "\/home\/json\/BILLING",
-        "args": []
-    },
-    "countersIndex": {
-        "name": "counters.index",
-        "method": "get",
-        "uri": "\/home\/json\/COUNTERS",
-        "args": []
-    },
     "filesDelete": {
         "name": "files.delete",
         "method": "delete",
