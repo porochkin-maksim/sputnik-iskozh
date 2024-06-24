@@ -1,11 +1,6 @@
 <template>
     <page-template>
         <template v-slot:sub>
-            <h5 v-if="filesCount">
-                <a :href="Url.Routes.filesIndex.uri">
-                    Последние файлы
-                </a>
-            </h5>
             <file-list :limit="5"
                        v-model:count="filesCount" />
         </template>
@@ -15,7 +10,7 @@
                     Новости
                 </a>
             </h1>
-            <news-list :limit="3"
+            <news-list :limit="5"
                        v-model:items-count="newsCount" />
         </template>
     </page-template>

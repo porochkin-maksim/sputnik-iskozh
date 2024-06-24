@@ -67,8 +67,8 @@ yarn-watch: ## прослушивать фронт
 
 .PHONY: yarn-build
 yarn-build: ## собрать фронт
-	@./vendor/bin/sail yarn run build
 	@./vendor/bin/sail artisan front:export-route-list-command
+	@./vendor/bin/sail yarn run build
 
 .PHONY: routes
 routes: ## Выгрузить маршруты с бэка

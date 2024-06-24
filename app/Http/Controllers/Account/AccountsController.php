@@ -28,6 +28,7 @@ class AccountsController extends Controller
         if ($account) {
             return view(ViewNames::PAGES_HOME);
         }
+
         return view(ViewNames::PAGES_PROFILE);
     }
 
@@ -44,6 +45,18 @@ class AccountsController extends Controller
     {
         $account = $request->dto();
         $account = $this->accountService->register($account);
+
+        return response()->json($account);
+    }
+
+    public function info(): JsonResponse
+    {
+        $account = $this->accountService->getByUserId(Auth::id());
+        if ($account) {
+            $info = $this->accountService->getAccountInfo($account);
+
+            return response()->json($info);
+        }
 
         return response()->json($account);
     }

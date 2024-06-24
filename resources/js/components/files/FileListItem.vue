@@ -21,7 +21,7 @@
                             <i class="fa fa-save"></i>
                         </button>
                         <button class="btn btn-outline-secondary"
-                                @click="clickButton"
+                                @click="toggleMode"
                         >
                             <i class="fa fa-window-close"></i>
                         </button>
@@ -33,10 +33,24 @@
                     <template v-if="edit && mode===MODE.LINE">
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-primary btn-sm"
-                                    @click="clickButton"
+                                    @click="toggleMode"
                             >
                                 <i class="fa fa-edit"></i>
                             </button>
+                            <template v-if="showUpDownButtons">
+                                <button class="btn btn-secondary btn-sm"
+                                        :disabled="!useUpSort"
+                                        @click="sortUp(index)"
+                                >
+                                    <i class="fa fa-arrow-up"></i>
+                                </button>
+                                <button class="btn btn-secondary btn-sm"
+                                        :disabled="!useDownSort"
+                                        @click="sortDown(index)"
+                                >
+                                    <i class="fa fa-arrow-down"></i>
+                                </button>
+                            </template>
                             <button class="btn btn-danger"
                                     @click="deleteFile"
                             >
@@ -71,7 +85,7 @@
              v-if="edit && mode!==MODE.LINE">
             <div class="btn-group btn-group-sm">
                 <button class="btn btn-primary"
-                        @click="clickButton">
+                        @click="toggleMode">
                     <template v-if="modeEdit">
                         <i class="fa fa-save"></i>&nbsp;Сохранить
                     </template>
@@ -105,6 +119,9 @@ export default {
         'file',
         'edit',
         'mode',
+        'index',
+        'useUpSort',
+        'useDownSort',
     ],
     mixins    : [
         ResponseError,
@@ -132,7 +149,7 @@ export default {
             this.$emit('updated', true);
             this.modeEdit = false;
         },
-        clickButton () {
+        toggleMode () {
             if (this.modeEdit) {
                 this.save();
             }
@@ -165,6 +182,28 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
+        sortUp(index) {
+            let uri = Url.Generator.makeUri(Url.Routes.filesUp, {
+                id: this.id,
+            });
+
+            window.axios[Url.Routes.filesUp.method](uri, {index: index}).then(response => {
+                this.updatedItem();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        sortDown(index) {
+            let uri = Url.Generator.makeUri(Url.Routes.filesDown, {
+                id: this.id,
+            });
+
+            window.axios[Url.Routes.filesDown.method](uri, {index: index}).then(response => {
+                this.updatedItem();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
     },
     watch  : {
         file: {
@@ -175,6 +214,11 @@ export default {
             deep: true,
         },
 
+    },
+    computed: {
+        showUpDownButtons() {
+            return this.useUpSort || this.useDownSort;
+        },
     },
 };
 </script>

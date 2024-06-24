@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 class RegisterRequest extends AbstractRequest
 {
     private const NUMBER = RequestArgumentsEnum::NUMBER;
+    private const SIZE   = 'size';
 
     public function rules(): array
     {
@@ -22,6 +23,10 @@ class RegisterRequest extends AbstractRequest
                 'regex:/^(\d+)\/(\d)$/',
                 Rule::unique(Account::TABLE, Account::NUMBER),
             ],
+            self::SIZE   => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 
@@ -30,6 +35,8 @@ class RegisterRequest extends AbstractRequest
         return [
             self::NUMBER . '.required' => 'Укажите номер участка',
             self::NUMBER . '.unique'   => 'Такой участок уже зарегистрирован',
+            self::SIZE . '.required'   => 'Укажите площадь участка',
+            self::SIZE . '.numeric'    => 'Площадь участка должна быть числом',
         ];
     }
 
@@ -45,7 +52,8 @@ class RegisterRequest extends AbstractRequest
     {
         $dto = new AccountDTO();
 
-        $dto->setNumber($this->get(self::NUMBER));
+        $dto->setNumber($this->get(self::NUMBER))
+            ->setSize($this->getInt(self::SIZE ));
 
         return $dto;
     }

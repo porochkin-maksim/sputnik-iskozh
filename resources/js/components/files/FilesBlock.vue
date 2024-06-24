@@ -22,10 +22,10 @@
 </template>
 
 <script>
+import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
-import FileList    from './FileList.vue';
-import PageTemplate from '../pages/TwoColumnsPage.vue';
-import Url         from '../../utils/Url.js';
+import PageTemplate  from '../pages/TwoColumnsPage.vue';
+import FileList      from './FileList.vue';
 
 export default {
     name      : 'FilesBlock',

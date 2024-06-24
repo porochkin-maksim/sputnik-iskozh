@@ -32,4 +32,13 @@ abstract class Permission
 
         return false;
     }
+
+    public static function canEditOptions(?RoleDTO $role): bool
+    {
+        if ($role?->is(RoleIdEnum::ADMIN)) {
+            return true;
+        }
+
+        return false;
+    }
 }

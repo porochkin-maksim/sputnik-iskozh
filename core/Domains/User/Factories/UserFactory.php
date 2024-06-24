@@ -70,7 +70,7 @@ readonly class UserFactory
         }
         elseif (isset($user->getRelations()[User::ROLES])) {
             $role = $user->getRelation(User::ROLES)->first();
-            $result->setRole($this->roleFactory->makeDtoFromObject($role));
+            $result->setRole($role ? $this->roleFactory->makeDtoFromObject($role) : null);
         }
 
         return $result;

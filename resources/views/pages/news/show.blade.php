@@ -17,7 +17,7 @@ use Core\Resources\Views\ViewNames;
 @endsection
 
 @section(SectionNames::CONTENT)
-    <news-item :news='@json($news)'
+    <news-show :news='@json($news)'
                :edit='@json($edit)'
-    ></news-item>
+    ></news-show>
 @endsection

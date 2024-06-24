@@ -8,6 +8,8 @@ enum SectionNames: string
     public const TITLE   = 'title';
     public const STYLES  = 'styles';
     public const SCRIPTS = 'scripts';
+    public const METRICS = 'metrics';
+    public const META    = 'meta';
 
     public const SUB  = 'sub';
     public const MAIN = 'main';

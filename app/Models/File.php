@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int     $type
  * @property int     $related_id
+ * @property int     $order
  * @property ?string $ext
  * @property ?string $name
  * @property ?string $path
@@ -26,6 +27,7 @@ class File extends Model
     public const ID         = 'id';
     public const TYPE       = 'type';
     public const RELATED_ID = 'related_id';
+    public const ORDER      = 'order';
     public const EXT        = 'ext';
     public const NAME       = 'name';
     public const PATH       = 'path';
@@ -33,6 +35,7 @@ class File extends Model
     protected $fillable = [
         self::TYPE,
         self::RELATED_ID,
+        self::ORDER,
         self::EXT,
         self::NAME,
         self::PATH,

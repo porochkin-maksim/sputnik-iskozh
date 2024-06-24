@@ -43,6 +43,8 @@ class News extends Model implements CastsInterface
 
     public function files(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)->where(File::TYPE, TypeEnum::NEWS->value);
+        return $this->hasMany(File::class, File::RELATED_ID)
+            ->where(File::TYPE, TypeEnum::NEWS->value)
+            ->orderBy(FILE::ORDER);
     }
 }

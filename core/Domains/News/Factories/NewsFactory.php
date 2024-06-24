@@ -58,8 +58,8 @@ readonly class NewsFactory
             ->setCreatedAt($news->created_at)
             ->setUpdatedAt($news->updated_at);
 
-        if ($news->{News::FILES}) {
-            $result->setFiles($this->fileFactory->makeDtoFromObjects($news->{News::FILES}));
+        if (isset($news->getRelations()[News::FILES])) {
+            $result->setFiles($this->fileFactory->makeDtoFromObjects($news->getRelation(News::FILES)));
         }
 
         return $result;

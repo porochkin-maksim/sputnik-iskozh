@@ -4895,6 +4895,11 @@ vue-loader@^17.3.1:
     hash-sum "^2.0.0"
     watchpack "^2.4.0"
 
+vue-uid@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/vue-uid/-/vue-uid-0.4.5.tgz#7e44ff7669c6043e19e32e9fc6caea0ad3f8be15"
+  integrity sha512-Rtb2MLRDkPM5VEmYSDcH2oSmcoGsQ/YQDya1j1TlaJyK5MMZntjfQtlNOyTp7yPIWkwVfPBUb19FyQ//ytNHxw==
+
 vue@^3.4.15:
   version "3.4.15"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.4.15.tgz#91f979844ffca9239dff622ba4c79c5d5524b88c"

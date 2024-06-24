@@ -8,6 +8,7 @@ use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Repositories\FileRepository;
+use Core\Domains\File\Responses\SearchResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,6 +51,18 @@ readonly class FileService
         if ($dto->getId()) {
             $file = $this->fileRepository->getById($dto->getId());
         }
+        else {
+            $searcher = new FileSearcher();
+            $searcher->setType($dto->getType())
+                ->setSortOrderProperty(File::ORDER)
+                ->setSortOrderDesc()
+                ->setLimit(1);
+
+            $lastFile = $this->search($searcher)->getItems()->first();
+            if ($lastFile->getId() !== $dto->getId()) {
+                $dto->setOrder($lastFile->getOrder() + 1);
+            }
+        }
 
         $file = $this->fileFactory->makeModelFromDto($dto, $file);
         $file = $this->fileRepository->save($file);
@@ -77,15 +90,47 @@ readonly class FileService
         return false;
     }
 
-    public function search(FileSearcher $searcher): Files
+    public function search(FileSearcher $searcher): SearchResponse
     {
-        $reports = $this->fileRepository->search($searcher);
+        $response = $this->fileRepository->search($searcher);
 
-        $result  = new Files();
-        foreach ($reports as $report) {
-            $result->add($this->fileFactory->makeDtoFromObject($report));
+        $result = new SearchResponse();
+        $result->setTotal($response->getTotal());
+
+        $collection  = new Files();
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->fileFactory->makeDtoFromObject($item));
         }
 
-        return $result;
+        return $result->setItems($collection);
+    }
+
+    public function saveFileOrderIndex(FileDTO $file, int $newIndex): void
+    {
+        $searcher = new FileSearcher();
+        $searcher->setType($file->getType())
+            ->setSortOrderAsc()
+            ->setSortOrderProperty(File::ORDER)
+            ->setRelatedId($file->getRelatedId());
+
+        $files = $this->search($searcher)->getItems();
+        $index = 0;
+        $files->map(function (FileDTO $f) use (&$index, $newIndex, $file) {
+            if ($f->getId() === $file->getId()) {
+                $f->setOrder($newIndex);
+            }
+            else {
+                if ($index === $newIndex) {
+                    $index++;
+                }
+                $f->setOrder($index);
+                $index++;
+            }
+            return $file;
+        });
+
+        foreach ($files as $f) {
+            $this->save($f);
+        }
     }
 }

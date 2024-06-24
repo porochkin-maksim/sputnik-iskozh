@@ -15,6 +15,7 @@ class FileDTO implements \JsonSerializable
     private ?int      $id         = null;
     private ?TypeEnum $type       = null;
     private ?int      $related_id = null;
+    private ?int      $order      = null;
     private ?string   $ext        = null;
     private ?string   $name       = null;
     private ?string   $path       = null;
@@ -51,6 +52,18 @@ class FileDTO implements \JsonSerializable
     public function setRelatedId(?int $related_id): static
     {
         $this->related_id = $related_id;
+
+        return $this;
+    }
+
+    public function getOrder(): int
+    {
+        return (int) $this->order;
+    }
+
+    public function setOrder(?int $order): FileDTO
+    {
+        $this->order = $order;
 
         return $this;
     }
@@ -113,5 +126,10 @@ class FileDTO implements \JsonSerializable
                 'svg',
             ]),
         ];
+    }
+
+    public function getOnlyName(): string
+    {
+        return Str::replace('.' . $this->getExt(), '', $this->getName());
     }
 }

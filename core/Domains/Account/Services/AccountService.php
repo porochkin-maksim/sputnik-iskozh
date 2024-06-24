@@ -5,14 +5,17 @@ namespace Core\Domains\Account\Services;
 use Core\Domains\Account\Collections\Accounts;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Account\Models\AccountInfo;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
+use Core\Domains\Option\Services\OptionService;
 
 readonly class AccountService
 {
     public function __construct(
         private AccountFactory    $accountFactory,
         private AccountRepository $accountRepository,
+        private OptionService     $optionService,
     )
     {
     }
@@ -37,7 +40,7 @@ readonly class AccountService
     {
         $accounts = $this->accountRepository->search($searcher);
 
-        $result  = new Accounts();
+        $result = new Accounts();
         foreach ($accounts as $account) {
             $result->add($this->accountFactory->makeDtoFromObject($account));
         }
@@ -50,5 +53,26 @@ readonly class AccountService
         $result = $this->accountRepository->getById($id);
 
         return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
+    }
+
+    public function getAccountInfo(AccountDTO $account): AccountInfo
+    {
+        $electricTariff       = $this->optionService->getElectricTariff();
+        $membershipFee        = $this->optionService->getMembershipFee();
+        $garbageCollectionFee = $this->optionService->getGarbageCollectionFee();
+        $roadCollectionFee    = $this->optionService->getRoadCollectionFee();
+
+        $membershipFee        = $membershipFee->getMoney();
+        $electricTariff       = $electricTariff->getMoney();
+        $garbageCollectionFee = $garbageCollectionFee->getMoney();
+        $roadCollectionFee    = $roadCollectionFee->getMoney();
+
+        return new AccountInfo(
+            $account,
+            $membershipFee,
+            $electricTariff,
+            $garbageCollectionFee,
+            $roadCollectionFee,
+        );
     }
 }

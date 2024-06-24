@@ -74,7 +74,7 @@ export default {
     methods: {
         makeAction () {
             window.axios[Url.Routes.newsCreate.method](Url.Routes.newsCreate.uri).then(response => {
-                this.mapResponseNews(response.data.news);
+                this.mapResponse(response.data.news);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -84,7 +84,7 @@ export default {
                 id: this.modelValue,
             });
             window.axios[Url.Routes.newsEdit.method](uri).then(response => {
-                this.mapResponseNews(response.data.news);
+                this.mapResponse(response.data.news);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -102,7 +102,7 @@ export default {
                 form,
             ).then(response => {
                 if (response.data) {
-                    this.mapResponseNews(response.data);
+                    this.mapResponse(response.data);
                     this.eventSuccess();
                     this.$emit('updated');
                 }
@@ -110,7 +110,7 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
-        mapResponseNews (news) {
+        mapResponse (news) {
             this.id           = news.id;
             this.title        = news.title;
             this.article      = news.article;

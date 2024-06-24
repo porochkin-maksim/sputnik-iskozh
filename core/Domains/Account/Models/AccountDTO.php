@@ -11,6 +11,7 @@ class AccountDTO implements \JsonSerializable
     use TimestampsTrait;
 
     private ?int    $id            = null;
+    private ?int    $size            = null;
     private ?string $number        = null;
     private ?int    $primaryUserId = null;
     private ?bool   $isMember      = null;
@@ -27,7 +28,7 @@ class AccountDTO implements \JsonSerializable
         return $this->id;
     }
 
-    public function setId(?int $id): AccountDTO
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
@@ -39,9 +40,21 @@ class AccountDTO implements \JsonSerializable
         return $this->number;
     }
 
-    public function setNumber(?string $number): AccountDTO
+    public function setNumber(?string $number): static
     {
         $this->number = $number;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }
@@ -51,7 +64,7 @@ class AccountDTO implements \JsonSerializable
         return $this->primaryUserId;
     }
 
-    public function setPrimaryUserId(?int $primaryUserId): AccountDTO
+    public function setPrimaryUserId(?int $primaryUserId): static
     {
         $this->primaryUserId = $primaryUserId;
 
@@ -63,7 +76,7 @@ class AccountDTO implements \JsonSerializable
         return (bool) $this->isMember;
     }
 
-    public function setIsMember(?bool $isMember): AccountDTO
+    public function setIsMember(?bool $isMember): static
     {
         $this->isMember = $isMember;
 
@@ -75,7 +88,7 @@ class AccountDTO implements \JsonSerializable
         return (bool) $this->isManager;
     }
 
-    public function setIsManager(?bool $isManager): AccountDTO
+    public function setIsManager(?bool $isManager): static
     {
         $this->isManager = $isManager;
 
@@ -112,6 +125,7 @@ class AccountDTO implements \JsonSerializable
             'dossier'         => $dossier,
             'id'              => $this->id,
             'number'          => $this->number,
+            'size'            => $this->size,
             'primary_user_id' => $this->primaryUserId,
             'is_member'       => $this->isMember,
             'is_manager'      => $this->isManager,

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Core\LangEnum;
-use Core\Translations\TranslationService;
+use Core\Services\Translations\TranslationService;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\ServiceProvider;
 

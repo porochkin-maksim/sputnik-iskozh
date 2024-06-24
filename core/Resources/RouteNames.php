@@ -4,9 +4,11 @@ namespace Core\Resources;
 
 abstract class RouteNames
 {
-    public const INDEX  = 'index';
-    public const LOGOUT = 'logout';
-    public const HOME   = 'home';
+    public const INDEX    = 'index';
+    public const CONTACTS = 'contacts';
+    public const PRIVACY  = 'privacy';
+    public const LOGOUT   = 'logout';
+    public const HOME     = 'home';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
@@ -24,6 +26,7 @@ abstract class RouteNames
     public const NEWS_EDIT        = 'news.edit';
     public const NEWS_SAVE        = 'news.save';
     public const NEWS_DELETE      = 'news.delete';
+    public const NEWS_FILE_SAVE   = 'news.file.save';
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
 
@@ -33,26 +36,37 @@ abstract class RouteNames
     public const FILES_EDIT   = 'files.edit';
     public const FILES_DELETE = 'files.delete';
     public const FILES_STORE  = 'files.store';
+    public const FILES_UP     = 'files.up';
+    public const FILES_DOWN   = 'files.down';
+
+    public const OPTIONS      = 'options.index';
+    public const OPTIONS_LIST = 'options.list';
+    public const OPTIONS_SAVE = 'options.save';
+    public const OPTIONS_EDIT = 'options.edit';
 
     public const ACCOUNT_REGISTER      = 'account.register';
     public const ACCOUNT_REGISTER_SAVE = 'account.register.save';
+    public const ACCOUNT_INFO          = 'account.info';
+
     public const PROFILE               = 'profile.show';
     public const PROFILE_SAVE          = 'profile.save';
     public const PROFILE_SAVE_EMAIL    = 'profile.save.email';
     public const PROFILE_SAVE_PASSWORD = 'profile.save.password';
 
-    public const COUNTERS = 'counters.index';
-    public const BILLING  = 'billing.index';
+    public const PROFILE_COUNTERS_LIST = 'profile.counter.list';
+    public const PROFILE_COUNTER_SAVE  = 'profile.counter.save';
 
-    public static function name(string $key, string $default = ''): string
+    public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
+            self::CONTACTS => 'Контакты',
+            self::PRIVACY  => 'Политика обработки персональных данных',
+
             self::HOME     => 'Личный кабинет',
             self::PROFILE  => 'Профиль',
             self::LOGOUT   => 'Выйти',
 
-            self::COUNTERS => 'Счётчики',
-            self::BILLING  => 'Финансы',
+            self::OPTIONS  => 'Настройки',
 
             self::FILES    => 'Файлы',
             self::NEWS     => 'Новости',

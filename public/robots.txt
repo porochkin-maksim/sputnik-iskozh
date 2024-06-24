@@ -1,2 +1,11 @@
+# https://yandex.ru/support/webmaster/robot-workings/allow-disallow.html?lang=ru
+
 User-agent: *
+Allow: /$
+Allow: /contacts
+Allow: /news/*
+Allow: /files/*
+Allow: /build/*
+Allow: /robots.txt
 Disallow: /
+sitemap: https://sputnik-iskozh.ru/sitemap.xml

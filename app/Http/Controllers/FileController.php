@@ -6,6 +6,7 @@ use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
+use Core\Domains\File\Requests\ChangeOrderRequest;
 use Core\Domains\File\Requests\SaveRequest;
 use Core\Domains\File\Requests\SearchRequest;
 use Core\Domains\File\Services\FileService;
@@ -39,7 +40,7 @@ class FileController extends Controller
             ->setSortOrderDesc()
             ->setType(null);
 
-        $files = $this->fileService->search($searcher);
+        $files = $this->fileService->search($searcher)->getItems();
 
         return response()->json([
             ResponsesEnum::FILES => $files,
@@ -49,6 +50,9 @@ class FileController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         foreach ($request->allFiles() as $file) {
             $dto = $this->fileService->store($file, date('Y-m'));
             $this->fileService->save($dto);
@@ -59,6 +63,9 @@ class FileController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         $file = $this->fileService->getById($request->getId());
         if ($file) {
             $file->setName($request->getName());
@@ -72,7 +79,32 @@ class FileController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
         return response()->json($this->fileService->deleteById($id));
+    }
+
+    public function up(int $id, ChangeOrderRequest $request): void
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $file = $this->fileService->getById($id);
+        if ($file) {
+            $this->fileService->saveFileOrderIndex($file, $request->getIndex() - 1);
+        }
+    }
+
+    public function down(int $id, ChangeOrderRequest $request): void
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $file = $this->fileService->getById($id);
+        if ($file) {
+            $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);
+        }
     }
 
     private function canEdit(): bool

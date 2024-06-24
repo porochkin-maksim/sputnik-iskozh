@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Core\Translations\TranslationService;
+use Core\Services\Translations\TranslationService;
 use Illuminate\Console\Command;
 
 class SortTranslations extends Command
