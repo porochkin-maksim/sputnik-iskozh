@@ -9,7 +9,6 @@ use Core\Domains\Account\Models\AccountInfo;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Option\Services\OptionService;
-use Core\Services\Money\MoneyService;
 
 readonly class AccountService
 {
@@ -63,10 +62,10 @@ readonly class AccountService
         $garbageCollectionFee = $this->optionService->getGarbageCollectionFee();
         $roadCollectionFee    = $this->optionService->getRoadCollectionFee();
 
-        $membershipFee        = MoneyService::parse($membershipFee->getData());
-        $electricTariff       = MoneyService::parse($electricTariff->getData());
-        $garbageCollectionFee = MoneyService::parse($garbageCollectionFee->getData());
-        $roadCollectionFee    = MoneyService::parse($roadCollectionFee->getData());
+        $membershipFee        = $membershipFee->getMoney();
+        $electricTariff       = $electricTariff->getMoney();
+        $garbageCollectionFee = $garbageCollectionFee->getMoney();
+        $roadCollectionFee    = $roadCollectionFee->getMoney();
 
         return new AccountInfo(
             $account,
