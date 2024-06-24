@@ -3,17 +3,13 @@
 use App\Http\Controllers;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
-use Core\Resources\Views\ViewNames;
 use Illuminate\Support\Facades\Route;
 
 include __DIR__ . '/web/auth.php';
 
-Route::get('/', function () {
-    return view(ViewNames::PAGES_INDEX);
-})->name(RouteNames::INDEX);
-Route::get('/contacts', function () {
-    return view(ViewNames::PAGES_CONTACTS);
-})->name(RouteNames::CONTACTS);
+Route::get('/', [Controllers\PagesController::class, 'index'])->name(RouteNames::INDEX);
+Route::get('/contacts', [Controllers\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
+Route::get('/privacy', [Controllers\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {
@@ -51,16 +47,18 @@ Route::group(['middleware' => MiddlewareNames::AUTH], function () {
     });
 });
 
-Route::group(['prefix' => 'reports'], function () {
-    Route::get('/', [Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
-    Route::group(['prefix' => 'json'], function () {
-        Route::get('/list', [Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
-        Route::get('/create', [Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
-        Route::post('/save', [Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
-        Route::get('/edit/{id}', [Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
-        Route::delete('/delete/{id}', [Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
-        Route::post('/file/upload/{id}', [Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
-        Route::post('/file/delete/{id}', [Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
+    Route::group(['prefix' => 'reports'], function () {
+        Route::get('/', [Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
+        Route::group(['prefix' => 'json'], function () {
+            Route::get('/list', [Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
+            Route::get('/create', [Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
+            Route::post('/save', [Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
+            Route::get('/edit/{id}', [Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
+            Route::delete('/delete/{id}', [Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
+            Route::post('/file/upload/{id}', [Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
+            Route::post('/file/delete/{id}', [Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+        });
     });
 });
 

@@ -1,15 +1,16 @@
 <?php declare(strict_types=1);
 
+use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
-use Illuminate\Support\Facades\URL;
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
-    <link rel="canonical" href="{{ URL::current() }}" />
+    <link rel="canonical"
+          href="{{ route(RouteNames::INDEX) }}" />
 @endpush
 
 @section(SectionNames::METRICS)
