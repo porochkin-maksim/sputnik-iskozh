@@ -19,3 +19,6 @@ Route::get('/login', fn() => redirect()->route(RouteNames::INDEX));
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/logout', LogoutController::class)->name('logout');
 Route::post('/register', RegisterController::class);
+Route::get('/register', function () {
+    abort(404);
+});
