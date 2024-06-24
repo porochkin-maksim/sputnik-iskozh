@@ -3,7 +3,6 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\App;
 
 ?>
 <!doctype html>
@@ -19,45 +18,17 @@ use Illuminate\Support\Facades\App;
         <meta name="robots" content="noindex">
     @endif
 
-    @if (App::isProduction())
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript">
-       (function (m, e, t, r, i, k, a) {
-           m[i]   = m[i] || function () {
-               (m[i].a = m[i].a || []).push(arguments);
-           };
-           m[i].l = 1 * new Date();
-           for (var j = 0; j < document.scripts.length; j++) {
-               if (document.scripts[j].src === r) {
-                   return;
-               }
-           }
-           k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a);
-       })
-       (window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
-
-       ym(97578808, 'init', {
-           clickmap           : true,
-           trackLinks         : true,
-           accurateTrackBounce: true,
-       });
-    </script>
-    <noscript>
-        <div><img src="https://mc.yandex.ru/watch/97578808" style="position:absolute; left:-9999px;" alt="" /></div>
-    </noscript>
-    <!-- /Yandex.Metrika counter -->
-    @endif
-
-    <meta name="description" content="Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь">
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь">
 
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), env('APP_NAME')))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
+    @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
+    @yield(SectionNames::METRICS)
 </head>
 <body>
 <div id="app">
