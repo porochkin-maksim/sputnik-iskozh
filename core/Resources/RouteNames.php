@@ -4,9 +4,10 @@ namespace Core\Resources;
 
 abstract class RouteNames
 {
-    public const INDEX  = 'index';
-    public const LOGOUT = 'logout';
-    public const HOME   = 'home';
+    public const INDEX    = 'index';
+    public const CONTACTS = 'contacts';
+    public const LOGOUT   = 'logout';
+    public const HOME     = 'home';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
@@ -57,6 +58,8 @@ abstract class RouteNames
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
+            self::CONTACTS => 'Контакты',
+
             self::HOME     => 'Личный кабинет',
             self::PROFILE  => 'Профиль',
             self::LOGOUT   => 'Выйти',

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    @if (Route::is(RouteNames::INDEX))
+    @if (Route::is(RouteNames::INDEX) || Route::is(RouteNames::CONTACTS))
         <meta name="robots" content="index, nofollow, noarchive">
     @else
         <meta name="robots" content="noindex">

@@ -11,6 +11,9 @@ include __DIR__ . '/web/auth.php';
 Route::get('/', function () {
     return view(ViewNames::PAGES_INDEX);
 })->name(RouteNames::INDEX);
+Route::get('/contacts', function () {
+    return view(ViewNames::PAGES_CONTACTS);
+})->name(RouteNames::CONTACTS);
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {

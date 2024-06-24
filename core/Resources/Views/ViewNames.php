@@ -6,8 +6,12 @@ enum ViewNames: string
 {
     public const LAYOUTS_APP        = 'layouts.app';
     public const LAYOUTS_TWO_COLUMN = 'layouts.pages.two-columns-page';
+    public const LAYOUTS_ONE_COLUMN = 'layouts.pages.single-column-page';
+
+    public const METRICS = 'layouts.partial.metrics';
 
     public const PAGES_INDEX         = 'pages.index';
+    public const PAGES_CONTACTS      = 'pages.contacts';
     public const PAGES_FILES_INDEX   = 'pages.files.index';
     public const PAGES_NEWS_INDEX    = 'pages.news.index';
     public const PAGES_NEWS_SHOW     = 'pages.news.show';

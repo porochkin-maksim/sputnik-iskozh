@@ -17,6 +17,12 @@
         "uri": "\/home\/json\/register",
         "args": []
     },
+    "contacts": {
+        "name": "contacts",
+        "method": "get",
+        "uri": "\/contacts",
+        "args": []
+    },
     "filesDelete": {
         "name": "files.delete",
         "method": "delete",

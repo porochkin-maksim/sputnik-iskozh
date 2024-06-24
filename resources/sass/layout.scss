@@ -50,6 +50,18 @@ main,
     z-index         : 101;
 }
 
+.layout-page {
+    &.single-column-page {
+        display        : flex !important;
+        flex-direction : column !important;
+
+        .block-main {
+            width           : 100%;
+            padding-left    : unset;
+        }
+    }
+}
+
 @media (min-width : 992px) {
     .layout-page {
         display : flex;
@@ -86,20 +98,7 @@ main,
         .block-main {
             width        : 100%;
             padding-left : unset;
-            display: flex;
             justify-content: center;
-        }
-    }
-}
-
-.layout-page {
-    &.single-column-page {
-        display        : flex !important;
-        flex-direction : column !important;
-
-        .block-main {
-            width           : 100%;
-            padding-left    : unset;
         }
     }
 }

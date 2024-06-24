@@ -11,8 +11,9 @@ use Core\Resources\RouteNames;
  */
 
 $routes = [
-    RouteNames::FILES,
+    RouteNames::CONTACTS,
     RouteNames::NEWS,
+    RouteNames::FILES,
 ];
 ?>
 
