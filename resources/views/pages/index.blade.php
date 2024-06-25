@@ -9,8 +9,8 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ route(RouteNames::INDEX) }}" />
+    <meta name="keywords" content="снт спутник-искож тверь сайт">
+    <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
 @endpush
 
 @section(SectionNames::METRICS)
