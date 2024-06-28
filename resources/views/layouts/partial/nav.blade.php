@@ -57,7 +57,7 @@ $routes = [
         @endforeach
         <li class="nav-item">
             <a class="nav-link"
-               href="{{ Storage::url('Устав.pdf') }}"
+               href="{{ Storage::url('устав.pdf?202406') }}"
                target="_blank">Устав</a>
         </li>
     </ul>
