@@ -3,14 +3,24 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\OpenGraph\Enums\OpenGraphType;
+use Core\Services\OpenGraph\Models\OpenGraph;
+use Illuminate\Support\Facades\Route;
+
+$openGraph = new OpenGraph();
+$openGraph->setType(OpenGraphType::WEBSITE)
+    ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
+    ->setUrl(route(RouteNames::CONTACTS))
+    ->setImage(url('logo-snt.jpg'))
+    ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
 
 ?>
 
 @extends(ViewNames::LAYOUTS_ONE_COLUMN)
 
 @push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ route(RouteNames::INDEX) }}" />
+    <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
+    {!! $openGraph->toMetaTags() !!}
 @endpush
 
 @section(SectionNames::METRICS)
@@ -43,11 +53,16 @@ use Core\Resources\Views\ViewNames;
     </table>
 
     <div class="my-2">
-        <a class="btn btn-link px-1" href="https://egrp365.org/map/?kadnum=69:10:0205201:521" target="_blank">
+        <a class="btn btn-link px-1"
+           href="https://egrp365.org/map/?kadnum=69:10:0205201:521"
+           target="_blank">
             <i class="fa fa-external-link"></i> Кадастровая карта
         </a>
     </div>
     {{-- https://yandex.ru/map-constructor/?um=constructor:604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a --}}
     {{-- <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;width=100%25&amp;height=547&amp;lang=ru_RU&amp;scroll=true"></script> --}}
-    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;source=constructor" width="100%" height="570" frameborder="0"></iframe>
+    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;source=constructor"
+            width="100%"
+            height="570"
+            frameborder="0"></iframe>
 @endsection
