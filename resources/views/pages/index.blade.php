@@ -3,6 +3,16 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\OpenGraph\Enums\OpenGraphType;
+use Core\Services\OpenGraph\Models\OpenGraph;
+use Illuminate\Support\Facades\Route;
+
+$openGraph = new OpenGraph();
+$openGraph->setType(OpenGraphType::WEBSITE)
+    ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
+    ->setUrl(route(RouteNames::INDEX))
+    ->setImage(url('logo-snt.jpg'))
+    ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
 
 ?>
 
@@ -11,6 +21,7 @@ use Core\Resources\Views\ViewNames;
 @push(SectionNames::META)
     <meta name="keywords" content="снт спутник-искож тверь сайт">
     <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
+    {!! $openGraph->toMetaTags() !!}
 @endpush
 
 @section(SectionNames::METRICS)
