@@ -113,19 +113,29 @@ class FileDTO implements \JsonSerializable
             'id'        => $this->id,
             'name'      => $this->name,
             'ext'       => $this->ext,
-            'url'       => Storage::url($this->path),
+            'url'       => $this->url(),
             'updatedAt' => $this->updatedAt?->format(DateTimeFormat::DATE_DEFAULT),
-            'isImage'   => in_array($this->ext, [
-                'jpg',
-                'jpeg',
-                'png',
-                'gif',
-                'bmp',
-                'tiff',
-                'webp',
-                'svg',
-            ]),
+            'isImage'   => $this->isImage(),
         ];
+    }
+
+    public function url(): ?string
+    {
+        return $this->path ? url(Storage::url($this->path)) : null;
+    }
+
+    public function isImage(): bool
+    {
+        return in_array($this->ext, [
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'tiff',
+            'webp',
+            'svg',
+        ]);
     }
 
     public function getOnlyName(): string

@@ -3,6 +3,7 @@
 namespace Core\Domains\News\Models;
 
 use Carbon\Carbon;
+use Core\Domains\File\Collections\Files;
 use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Domains\Common\Traits\TimestampsTrait;
@@ -71,12 +72,9 @@ class NewsDTO implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return FileDTO[]
-     */
-    public function getFiles(): array
+    public function getFiles(): Files
     {
-        return $this->files ?? [];
+        return new Files($this->files ?? []);
     }
 
     /**
@@ -102,5 +100,27 @@ class NewsDTO implements \JsonSerializable
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
             'url'         => $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null,
         ];
+    }
+
+    public function url(): ?string
+    {
+        return $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null;
+    }
+
+    public function getImages(): Files
+    {
+        $result = [];
+        foreach ($this->getFiles() as $file) {
+            if ($file->isImage()) {
+                $result[] = $file;
+            }
+        }
+
+        return new Files($result);
+    }
+
+    public function getArticleAsText(): string
+    {
+        return strip_tags((string) $this->getArticle());
     }
 }
