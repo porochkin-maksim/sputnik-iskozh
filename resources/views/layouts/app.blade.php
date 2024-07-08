@@ -82,6 +82,11 @@ use Illuminate\Support\Facades\Route;
                        href="https://chat.whatsapp.com/Hfo9oClfdR6BX0dYs7VnG2">
                         <i class="fa fa-whatsapp"></i> Чат WhatsUp
                     </a>
+                    <a class="social-link text-primary"
+                       target="_blank"
+                       href="https://vk.com/sputnik.iskozh">
+                        <i class="fa fa-vk"></i> Группа ВК
+                    </a>
                 </div>
             </div>
         </footer>
