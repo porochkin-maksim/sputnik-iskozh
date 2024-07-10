@@ -1,11 +1,21 @@
 .news-item,
-.news-list .list-item {
+.news-list .news-item {
+    &:not(:last-child) {
+        margin-bottom : 10px;
+    }
+
     .title {
-        border-bottom : 1px solid $border-color;
+        h1 {
+            margin : 0;
+        }
 
         .name {
             text-decoration : none;
-            color        : $color-primary;
+            color           : $color-primary;
+        }
+
+        .date {
+            padding-left : 4px;
         }
     }
 }

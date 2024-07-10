@@ -9,7 +9,6 @@
     </template>
     <div class="news-list w-100">
         <template v-for="(item, index) in news">
-            <hr v-if="index"/>
             <news-list-item :news="item"
                             :edit="edit"
                             @updated="loadList"

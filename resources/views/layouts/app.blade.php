@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Route;
 <div id="app">
     <div class="d-flex justify-content-between flex-column min-vh-100">
         <div>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" id="topNavBar">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top border-bottom" id="topNavBar">
                 <div class="container-fluid main px-3">
                     <a class="navbar-brand"
                        href="{{ url('/') }}">
@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Route;
                     </div>
                 </div>
             </nav>
-            <nav class="navbar sub-nav navbar-expand-lg navbar-light border-bottom border-top d-lg-flex d-none">
+            <nav class="navbar sub-nav navbar-expand-lg navbar-light border-bottom d-lg-flex d-none" style="top:-1px;">
                 <div class="container-fluid main px-3">
                     @include('layouts.partial.sub-nav')
                 </div>

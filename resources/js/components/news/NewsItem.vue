@@ -15,7 +15,7 @@
                     {{ news.title ? news.title : 'Без названия' }}
                 </a>
             </h1>
-            <div class="date text-end">{{ news.dossier.publishedAt }}</div>
+            <div class="date">{{ news.dossier.publishedAt }}</div>
         </div>
 
         <div class="body">

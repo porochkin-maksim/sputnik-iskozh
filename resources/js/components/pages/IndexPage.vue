@@ -1,7 +1,7 @@
 <template>
     <page-template>
         <template v-slot:sub>
-            <file-list :limit="5"
+            <file-list :limit="10"
                        v-model:count="filesCount" />
         </template>
         <template v-slot:main>
