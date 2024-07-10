@@ -3,17 +3,10 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
-use Core\Services\Images\StaticFileLocator;
-use Core\Services\OpenGraph\Enums\OpenGraphType;
-use Core\Services\OpenGraph\Models\OpenGraph;
+use Core\Services\OpenGraph\OpenGraphLocator;
 use Illuminate\Support\Facades\Route;
 
-$openGraph = new OpenGraph();
-$openGraph->setType(OpenGraphType::WEBSITE)
-    ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
-    ->setUrl(route(RouteNames::CONTACTS))
-    ->setImage(StaticFileLocator::StaticFileService()->logoSnt()->getUrl())
-    ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
+$openGraph = OpenGraphLocator::OpenGraphFactory()->default()->setUrl(route(RouteNames::GARBAGE));
 
 ?>
 
@@ -34,7 +27,7 @@ $openGraph->setType(OpenGraphType::WEBSITE)
     <div>
         <div>
             <p>
-                Официальное место сбора для вывоза мусора для {{ env('APP_NAME') }} находится справа от дороги по пути ко 2 участку.<br/>
+                Официальное место сбора для вывоза мусора для {{ env('APP_NAME') }} находится справа от дороги по пути ко 2 участку.<br />
                 Там установлены специальные контейнеры для складирования мусора.
             </p>
             <p>
@@ -46,7 +39,8 @@ $openGraph->setType(OpenGraphType::WEBSITE)
             <i class="fa fa-info-circle"></i> У ТСАХ нет услуги подбора мусора. Все мешки надо выбрасывать в контейнер.
         </div>
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> Место предназначено для сбора мусора <b class="text-danger">только</b> {{ env('APP_NAME') }}
+            <i class="fa fa-warning"></i> Место предназначено для сбора мусора
+            <b class="text-danger">только</b> {{ env('APP_NAME') }}
         </div>
     </div>
 

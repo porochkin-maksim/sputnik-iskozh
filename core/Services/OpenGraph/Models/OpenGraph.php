@@ -52,10 +52,10 @@ class OpenGraph
     {
         $result = '';
 
-        $result .= $this->title ? sprintf('<meta property="og:title" content="%s"/>', $this->title) : '';
-        $result .= $this->type ? sprintf('<meta property="og:type" content="%s"/>', $this->type->value) : '';
-        $result .= $this->url ? sprintf('<meta property="og:url" content="%s"/>', $this->url) : '';
-        $result .= $this->image ? sprintf('<meta property="og:image" content="%s"/>', $this->image) : '';
+        $result .= $this->title       ? sprintf('<meta property="og:title" content="%s"/>',       $this->title)       : '';
+        $result .= $this->type        ? sprintf('<meta property="og:type" content="%s"/>',        $this->type->value) : '';
+        $result .= $this->url         ? sprintf('<meta property="og:url" content="%s"/>',         $this->url)         : '';
+        $result .= $this->image       ? sprintf('<meta property="og:image" content="%s"/>',       $this->image)       : '';
         $result .= $this->description ? sprintf('<meta property="og:description" content="%s"/>', $this->description) : '';
 
         return $result;

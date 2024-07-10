@@ -4,13 +4,13 @@ use Core\Domains\News\Models\NewsDTO;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\Enums\OpenGraphType;
-use Core\Services\OpenGraph\Models\OpenGraph;
+use Core\Services\OpenGraph\OpenGraphLocator;
 
 /**
  * @var NewsDTO $news
  * @var bool    $edit
  */
-$openGraph = new OpenGraph();
+$openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setType(OpenGraphType::ARTICLE)
     ->setTitle($news->getTitle())
     ->setUrl($news->url())
