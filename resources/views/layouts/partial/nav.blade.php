@@ -6,6 +6,7 @@ use Core\Resources\RouteNames;
 
 /**
  * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
+ *
  * @var UserDecorator $userDecorator
  * @var AccountDTO    $account
  */
@@ -15,6 +16,7 @@ $routes = [
     RouteNames::NEWS,
     RouteNames::GARBAGE,
     RouteNames::FILES,
+    RouteNames::REGULATION,
 ];
 ?>
 
@@ -32,11 +34,6 @@ $routes = [
             </li>
         @else
             @relativeInclude('account-nav')
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ Storage::url('устав.pdf?202406') }}"
-                       target="_blank">Устав</a>
-                </li>
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
@@ -61,11 +58,6 @@ $routes = [
                    href="{{ route($r) }}">{{ RouteNames::name($r) }}</a>
             </li>
         @endforeach
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ Storage::url('устав.pdf?202406') }}"
-               target="_blank">Устав</a>
-        </li>
     </ul>
 
     <ul class="navbar-nav ms-auto">

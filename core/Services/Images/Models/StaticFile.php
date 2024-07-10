@@ -2,6 +2,8 @@
 
 namespace Core\Services\Images\Models;
 
+use Illuminate\Support\Facades\Storage;
+
 readonly class StaticFile
 {
     public function __construct(
@@ -26,6 +28,11 @@ readonly class StaticFile
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    public function getStoragePath(): string
+    {
+        return Storage::path($this->getPath());
     }
 
     public function getUrl(): string

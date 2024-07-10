@@ -12,7 +12,7 @@ $openGraph = new OpenGraph();
 $openGraph->setType(OpenGraphType::WEBSITE)
     ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
     ->setUrl(route(RouteNames::CONTACTS))
-    ->setImage(StaticFileLocator::StaticFilesService()->logoSnt()->getUrl())
+    ->setImage(StaticFileLocator::StaticFileService()->logoSnt()->getUrl())
     ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
 
 ?>

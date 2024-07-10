@@ -14,6 +14,11 @@ readonly class StaticFileService
     {
     }
 
+    public function regulation(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::REGULATION);
+    }
+
     public function logoSnt(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::LOGO_SNT);

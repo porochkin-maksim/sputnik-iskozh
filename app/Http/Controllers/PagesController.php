@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\Services\StaticFileService;
+use Core\Services\Images\StaticFileLocator;
 use Illuminate\Contracts\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PagesController extends Controller
 {
+    private StaticFileService $staticFilesService;
+
+    public function __construct()
+    {
+        $this->staticFilesService = StaticFileLocator::StaticFileService();
+    }
+
     public function index(): View
     {
         return view(ViewNames::PAGES_INDEX);
@@ -25,5 +35,10 @@ class PagesController extends Controller
     public function garbage(): View
     {
         return view(ViewNames::PAGES_GARBAGE);
+    }
+
+    public function regulation(): BinaryFileResponse
+    {
+        return response()->file($this->staticFilesService->regulation()->getStoragePath());
     }
 }

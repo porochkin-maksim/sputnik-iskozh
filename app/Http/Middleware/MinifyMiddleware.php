@@ -47,7 +47,10 @@ class MinifyMiddleware
                 ];
             }
             $buffer = preg_replace(array_keys($replace), array_values($replace), $buffer);
-            $response->setContent($buffer);
+            try {
+                $response->setContent($buffer);
+            }
+            catch (\Exception) {}
         }
 
         return $response;

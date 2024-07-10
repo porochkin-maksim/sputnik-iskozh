@@ -6,8 +6,6 @@ use Core\Domains\User\Models\UserDTO;
 use Core\Resources\RouteNames;
 
 /**
- * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
- *
  * @var ?AccountDTO $account
  * @var ?UserDTO    $user
  */

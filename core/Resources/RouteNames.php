@@ -4,12 +4,13 @@ namespace Core\Resources;
 
 abstract class RouteNames
 {
-    public const INDEX    = 'index';
-    public const CONTACTS = 'contacts';
-    public const GARBAGE  = 'garbage';
-    public const PRIVACY  = 'privacy';
-    public const LOGOUT   = 'logout';
-    public const HOME     = 'home';
+    public const INDEX      = 'index';
+    public const CONTACTS   = 'contacts';
+    public const GARBAGE    = 'garbage';
+    public const PRIVACY    = 'privacy';
+    public const LOGOUT     = 'logout';
+    public const HOME       = 'home';
+    public const REGULATION = 'regulation';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
@@ -60,9 +61,10 @@ abstract class RouteNames
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS => 'Контакты',
-            self::GARBAGE  => 'Вывоз мусора',
-            self::PRIVACY  => 'Политика обработки персональных данных',
+            self::CONTACTS   => 'Контакты',
+            self::GARBAGE    => 'Вывоз мусора',
+            self::PRIVACY    => 'Политика обработки персональных данных',
+            self::REGULATION => 'Устав',
 
             self::HOME     => 'Личный кабинет',
             self::PROFILE  => 'Профиль',

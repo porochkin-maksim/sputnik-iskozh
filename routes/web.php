@@ -11,6 +11,7 @@ Route::get('/', [Controllers\PagesController::class, 'index'])->name(RouteNames:
 Route::get('/contacts', [Controllers\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
 Route::get('/garbage', [Controllers\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
 Route::get('/privacy', [Controllers\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
+Route::get('/regulation', [Controllers\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {

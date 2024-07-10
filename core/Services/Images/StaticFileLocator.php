@@ -10,7 +10,7 @@ abstract class StaticFileLocator
     private static StaticFileService $staticFilesService;
     private static StaticFileFactory $staticFileFactory;
 
-    public static function StaticFilesService(): StaticFileService
+    public static function StaticFileService(): StaticFileService
     {
         if ( ! isset(self::$staticFilesService)) {
             self::$staticFilesService = new StaticFileService(
