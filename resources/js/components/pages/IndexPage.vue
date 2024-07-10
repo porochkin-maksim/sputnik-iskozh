@@ -5,11 +5,6 @@
                        v-model:count="filesCount" />
         </template>
         <template v-slot:main>
-            <h1 v-if="newsCount">
-                <a :href="Url.Routes.newsIndex.uri">
-                    Новости
-                </a>
-            </h1>
             <news-list :limit="5"
                        v-model:items-count="newsCount" />
         </template>
