@@ -1,6 +1,14 @@
+#topMenuNavContent {
+    .horizontal-menu {
+        .nav-item:not(:last-child) {
+            border-right : 1px solid $border-color;
+        }
+    }
+}
+
 .sub-nav {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top    : 0;
+    padding-bottom : 0;
 
     ul:first-child {
         .nav-link {

@@ -4,8 +4,8 @@
         border-bottom : 1px solid $border-color;
 
         .name {
-            font-size       : 1.6em;
             text-decoration : none;
+            color           : unset;
         }
     }
 }

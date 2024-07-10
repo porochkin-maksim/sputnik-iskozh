@@ -10,7 +10,7 @@
     <div class="news-item w-100">
         <div class="title">
             <a class="name" :href="news.url">
-                {{ news.title ? news.title : 'Без названия' }}
+                <h1>{{ news.title ? news.title : 'Без названия' }}</h1>
             </a>
             <div class="date text-end">{{ news.dossier.publishedAt }}</div>
         </div>

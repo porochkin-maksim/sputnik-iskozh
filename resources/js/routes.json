@@ -79,6 +79,12 @@
             "id": "{id}"
         }
     },
+    "garbage": {
+        "name": "garbage",
+        "method": "get",
+        "uri": "\/garbage",
+        "args": []
+    },
     "home": {
         "name": "home",
         "method": "get",
@@ -229,6 +235,12 @@
         "name": "password.update",
         "method": "post",
         "uri": "\/password\/reset",
+        "args": []
+    },
+    "privacy": {
+        "name": "privacy",
+        "method": "get",
+        "uri": "\/privacy",
         "args": []
     },
     "profileCounterList": {

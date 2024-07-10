@@ -21,4 +21,9 @@ class PagesController extends Controller
     {
         return view(ViewNames::PAGES_PRIVACY);
     }
+
+    public function garbage(): View
+    {
+        return view(ViewNames::PAGES_GARBAGE);
+    }
 }

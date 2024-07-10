@@ -22,12 +22,19 @@
 @import 'lightbox2/dist/css/lightbox.min.css';
 
 body, html {
-    min-height: 100vh;
-    font-size : $font-size;
+    min-height : 100vh;
+    font-size  : $font-size;
 }
 
 .nav-link {
     cursor : pointer;
+}
+
+h1 {
+    a {
+        color           : unset;
+        text-decoration : none;
+    }
 }
 
 

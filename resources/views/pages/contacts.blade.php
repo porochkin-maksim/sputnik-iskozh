@@ -3,6 +3,7 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\StaticFileLocator;
 use Core\Services\OpenGraph\Enums\OpenGraphType;
 use Core\Services\OpenGraph\Models\OpenGraph;
 use Illuminate\Support\Facades\Route;
@@ -11,7 +12,7 @@ $openGraph = new OpenGraph();
 $openGraph->setType(OpenGraphType::WEBSITE)
     ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
     ->setUrl(route(RouteNames::CONTACTS))
-    ->setImage(url('logo-snt.jpg'))
+    ->setImage(StaticFileLocator::StaticFilesService()->logoSnt()->getUrl())
     ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
 
 ?>
@@ -19,7 +20,8 @@ $openGraph->setType(OpenGraphType::WEBSITE)
 @extends(ViewNames::LAYOUTS_ONE_COLUMN)
 
 @push(SectionNames::META)
-    <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
+    <link rel="canonical"
+          href="{{ route(RouteNames::INDEX) }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
 

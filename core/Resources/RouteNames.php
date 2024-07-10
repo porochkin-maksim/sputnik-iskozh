@@ -6,6 +6,7 @@ abstract class RouteNames
 {
     public const INDEX    = 'index';
     public const CONTACTS = 'contacts';
+    public const GARBAGE  = 'garbage';
     public const PRIVACY  = 'privacy';
     public const LOGOUT   = 'logout';
     public const HOME     = 'home';
@@ -60,6 +61,7 @@ abstract class RouteNames
     {
         return match ($key) {
             self::CONTACTS => 'Контакты',
+            self::GARBAGE  => 'Вывоз мусора',
             self::PRIVACY  => 'Политика обработки персональных данных',
 
             self::HOME     => 'Личный кабинет',

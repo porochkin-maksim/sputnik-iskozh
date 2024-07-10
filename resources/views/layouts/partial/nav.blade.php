@@ -14,6 +14,7 @@ $routes = [
     RouteNames::CONTACTS,
     RouteNames::NEWS,
     RouteNames::FILES,
+    RouteNames::GARBAGE,
 ];
 ?>
 
@@ -31,6 +32,11 @@ $routes = [
             </li>
         @else
             @relativeInclude('account-nav')
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ Storage::url('устав.pdf?202406') }}"
+                       target="_blank">Устав</a>
+                </li>
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
@@ -47,7 +53,7 @@ $routes = [
         @endguest
     </ul>
 </div>
-<div class="d-none d-lg-flex justify-content-between w-100">
+<div class="horizontal-menu d-none d-lg-flex justify-content-between w-100">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         @foreach($routes as $r)
             <li class="nav-item">
