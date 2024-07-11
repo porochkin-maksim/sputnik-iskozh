@@ -1,30 +1,23 @@
 <template>
     <div class="file-item">
         <div class="body">
-            <div v-if="modeEdit"
-                 class="form">
-                <div class="input-group">
+            <template v-if="modeEdit">
+                <div class="form input-group input-group-sm">
+                    <button class="btn btn-primary" @click="save">
+                        <i class="fa fa-save"></i>
+                    </button>
+                    <button class="btn btn-light border" @click="toggleMode">
+                        <i class="fa fa-window-close"></i>
+                    </button>
                     <custom-input v-model="name"
                                   :errors="errors.name"
                                   :placeholder="'Название'"
                                   :required="false"
                                   @change="clearError('name')"
                     />
-                    <template>
-                        <button class="btn btn-primary"
-                                @click="save"
-                        >
-                            <i class="fa fa-save"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary"
-                                @click="toggleMode"
-                        >
-                            <i class="fa fa-window-close"></i>
-                        </button>
-                    </template>
                 </div>
-            </div>
-            <div v-else>
+            </template>
+            <template v-else>
                 <div class="d-inline-flex align-items-center">
                     <template v-if="edit">
                         <div class="btn-group btn-group-sm">
@@ -74,7 +67,7 @@
                            target="_blank">{{ file.name }}</a>
                     </template>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </template>
