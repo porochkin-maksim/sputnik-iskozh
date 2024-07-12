@@ -2,9 +2,10 @@
 
 namespace Core\Domains\File\Models;
 
-use Core\Enums\DateTimeFormat;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Models\File\Dossier;
+use Core\Enums\DateTimeFormat;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 

@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File\Models;
+namespace Core\Domains\File\Models\File;
 
+use Core\Domains\File\Models\FileDTO;
 use Core\Enums\DateTimeFormat;
 use Illuminate\Support\Str;
 

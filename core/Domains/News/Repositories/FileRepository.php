@@ -2,7 +2,7 @@
 
 namespace Core\Domains\News\Repositories;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Db\RepositoryTrait;
 use Core\Domains\File\Repositories\FileRepository as BaseFileRepository;
 

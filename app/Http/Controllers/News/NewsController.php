@@ -9,7 +9,7 @@ use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\Enums\TypeEnum;
-use Core\Domains\File\Requests\SaveRequest as SaveFileRequest;
+use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
 use Core\Domains\News\Factories\NewsFactory;
 use Core\Domains\News\NewsLocator;
 use Core\Domains\News\Requests\SaveRequest;

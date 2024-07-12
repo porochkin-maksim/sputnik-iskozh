@@ -1,14 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Files;
 
+use App\Http\Controllers\Controller;
 use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
-use Core\Domains\File\Requests\ChangeOrderRequest;
-use Core\Domains\File\Requests\SaveRequest;
-use Core\Domains\File\Requests\SearchRequest;
+use Core\Domains\File\Requests\File\ChangeOrderRequest;
+use Core\Domains\File\Requests\File\SaveRequest;
+use Core\Domains\File\Requests\File\SearchRequest;
 use Core\Domains\File\Services\FileService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;

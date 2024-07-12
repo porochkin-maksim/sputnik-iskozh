@@ -59,7 +59,7 @@ Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
             Route::get('/edit/{id}', [Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
             Route::delete('/delete/{id}', [Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
             Route::post('/file/upload/{id}', [Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
-            Route::post('/file/delete/{id}', [Controllers\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+            Route::post('/file/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
         });
     });
 });
@@ -80,14 +80,14 @@ Route::group(['prefix' => 'news'], function () {
 });
 
 Route::group(['prefix' => 'files'], function () {
-    Route::get('/', [Controllers\FileController::class, 'index'])->name(RouteNames::FILES);
+    Route::get('/', [Controllers\Files\FileController::class, 'index'])->name(RouteNames::FILES);
     Route::group(['prefix' => 'json'], function () {
-        Route::get('/list', [Controllers\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
-        Route::post('/store', [Controllers\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
-        Route::post('/save', [Controllers\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
-        Route::post('/up/{id}', [Controllers\FileController::class, 'up'])->name(RouteNames::FILES_UP);
-        Route::post('/down/{id}', [Controllers\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
-        Route::get('/edit/{id}', [Controllers\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
-        Route::delete('/delete/{id}', [Controllers\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
+        Route::get('/list', [Controllers\Files\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
+        Route::post('/store', [Controllers\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
+        Route::post('/save', [Controllers\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
+        Route::post('/up/{id}', [Controllers\Files\FileController::class, 'up'])->name(RouteNames::FILES_UP);
+        Route::post('/down/{id}', [Controllers\Files\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
+        Route::get('/edit/{id}', [Controllers\Files\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
+        Route::delete('/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
     });
 });

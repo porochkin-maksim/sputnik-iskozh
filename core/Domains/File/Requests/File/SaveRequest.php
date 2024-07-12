@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File\Requests;
+namespace Core\Domains\File\Requests\File;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Requests\RequestArgumentsEnum;

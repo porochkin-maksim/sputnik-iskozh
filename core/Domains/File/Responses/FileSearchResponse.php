@@ -2,13 +2,13 @@
 
 namespace Core\Domains\File\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\SearchResponse;
 use Core\Domains\File\Collections\Files;
 
 /**
  * @method Files getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class FileSearchResponse extends SearchResponse
 {
 
 }

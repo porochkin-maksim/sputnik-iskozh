@@ -2,13 +2,13 @@
 
 namespace Core\Domains\File\Services;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Domains\File\Collections\Files;
 use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Repositories\FileRepository;
-use Core\Domains\File\Responses\SearchResponse;
+use Core\Domains\File\Responses\FileSearchResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -90,11 +90,11 @@ readonly class FileService
         return false;
     }
 
-    public function search(FileSearcher $searcher): SearchResponse
+    public function search(FileSearcher $searcher): FileSearchResponse
     {
         $response = $this->fileRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new FileSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection  = new Files();

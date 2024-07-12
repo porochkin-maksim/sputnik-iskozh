@@ -2,7 +2,7 @@
 
 namespace Core\Domains\File\Models;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
 use Core\Domains\File\Enums\TypeEnum;

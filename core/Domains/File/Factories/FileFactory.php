@@ -2,7 +2,7 @@
 
 namespace Core\Domains\File\Factories;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Domains\File\Enums\TypeEnum;
 use Core\Domains\File\Models\FileDTO;
 use Illuminate\Database\Eloquent\Collection;

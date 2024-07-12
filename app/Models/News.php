@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\File\Enums\TypeEnum;
