@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Route;
         <meta name="robots" content="noindex">
     @endif
 
+    <link type="image/x-icon" rel="shortcut icon" href="{{ url('/favicon.ico') }}">
+    <link type="image/png" sizes="16x16" rel="icon" href="{{ url('/favicon16.png') }}">
+    <link type="image/png" sizes="32x32" rel="icon" href="{{ url('/favicon32.png') }}">
+    <link type="image/png" sizes="96x96" rel="icon" href="{{ url('/favicon96.png') }}">
+    <link type="image/png" sizes="120x120" rel="icon" href="{{ url('/favicon120.png') }}">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь">
 
