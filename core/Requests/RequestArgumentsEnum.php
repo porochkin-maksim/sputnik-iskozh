@@ -22,13 +22,16 @@ enum RequestArgumentsEnum: string
     public const NUMBER          = 'number';
     public const NAME            = 'name';
     public const PASSWORD        = 'password';
+    public const PARENT_ID       = 'parent_id';
     public const PRIMARY_USER_ID = 'primary_user_id';
     public const PUBLISHED_AT    = 'published_at';
     public const REMEMBER        = 'remember';
     public const SKIP            = 'skip';
+    public const SORT_BY         = 'sort_by';
+    public const SORT_DESC       = 'sort_desc';
     public const START_AT        = 'start_at';
     public const TITLE           = 'title';
     public const TYPE            = 'type';
+    public const UID             = 'uid';
     public const YEAR            = 'year';
-
 }

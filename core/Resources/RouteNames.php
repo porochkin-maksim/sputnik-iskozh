@@ -41,6 +41,11 @@ abstract class RouteNames
     public const FILES_UP     = 'files.up';
     public const FILES_DOWN   = 'files.down';
 
+    public const FOLDERS_LIST   = 'folders.list';
+    public const FOLDERS_SAVE   = 'folders.save';
+    public const FOLDERS_SHOW   = 'folders.show';
+    public const FOLDERS_DELETE = 'folders.delete';
+
     public const OPTIONS      = 'options.index';
     public const OPTIONS_LIST = 'options.list';
     public const OPTIONS_SAVE = 'options.save';
@@ -66,16 +71,16 @@ abstract class RouteNames
             self::PRIVACY    => 'Политика обработки персональных данных',
             self::REGULATION => 'Устав',
 
-            self::HOME     => 'Личный кабинет',
-            self::PROFILE  => 'Профиль',
-            self::LOGOUT   => 'Выйти',
+            self::HOME       => 'Личный кабинет',
+            self::PROFILE    => 'Профиль',
+            self::LOGOUT     => 'Выйти',
 
-            self::OPTIONS  => 'Настройки',
+            self::OPTIONS    => 'Настройки',
 
-            self::FILES    => 'Файлы',
-            self::NEWS     => 'Новости',
-            self::REPORTS  => 'Отчёты',
-            default        => $default,
+            self::FILES      => 'Файлы',
+            self::NEWS       => 'Новости',
+            self::REPORTS    => 'Отчёты',
+            default          => $default,
         };
     }
 }

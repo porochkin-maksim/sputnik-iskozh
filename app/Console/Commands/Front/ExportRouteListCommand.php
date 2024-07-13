@@ -15,7 +15,8 @@ class ExportRouteListCommand extends Command
 {
     public function __construct(
         private readonly Router $router,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -39,6 +40,7 @@ class ExportRouteListCommand extends Command
     private function filterMethod(array $methods): string
     {
         $array = array_filter($methods, fn($method) => in_array($method, Methods::AVAILABLE_METHODS));
+
         return array_pop($array);
     }
 
@@ -47,7 +49,7 @@ class ExportRouteListCommand extends Command
         return Arr::sort(
             $this->sortRoutes(
                 collect($this->router->getRoutes())->reject(function (Route $route) {
-                    return str_starts_with($route->uri(), '_') || !$route->getName();
+                    return str_starts_with($route->uri(), '_') || ! $route->getName();
                 })->map(function (Route $route) {
                     return $this->getRouteInformation($route);
                 })->all(),
@@ -60,7 +62,7 @@ class ExportRouteListCommand extends Command
         return [
             'name'   => $route->getName(),
             'method' => strtolower($this->filterMethod($route->methods())),
-            'uri'    => sprintf('/%s', $route->uri() === '/' ? '' : $route->uri()),
+            'uri'    => sprintf('/%s', $route->uri() === '/' ? '' : Str::replace('?', '', $route->uri())),
             'args'   => $this->getUriParams($route->uri()),
         ];
     }
@@ -87,7 +89,7 @@ class ExportRouteListCommand extends Command
         preg_match_all('/{(.*?)}/', $uri, $params);
         if (isset($params[0]) && isset($params[1])) {
             foreach ($params[1] as $key => $value) {
-                $result[$value] = $params[0][$key];
+                $result[Str::replace('?', '', $value)] = Str::replace('?', '', $params[0][$key]);
             }
         }
 

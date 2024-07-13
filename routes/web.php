@@ -80,14 +80,30 @@ Route::group(['prefix' => 'news'], function () {
 });
 
 Route::group(['prefix' => 'files'], function () {
-    Route::get('/', [Controllers\Files\FileController::class, 'index'])->name(RouteNames::FILES);
+    Route::get('/{folder?}', [Controllers\Files\FolderController::class, 'index'])->name(RouteNames::FILES);
+
     Route::group(['prefix' => 'json'], function () {
         Route::get('/list', [Controllers\Files\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
-        Route::post('/store', [Controllers\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
-        Route::post('/save', [Controllers\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
-        Route::post('/up/{id}', [Controllers\Files\FileController::class, 'up'])->name(RouteNames::FILES_UP);
-        Route::post('/down/{id}', [Controllers\Files\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
-        Route::get('/edit/{id}', [Controllers\Files\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
-        Route::delete('/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
+
+        Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
+            Route::post('/store', [Controllers\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
+            Route::post('/save', [Controllers\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
+            Route::post('/up/{id}', [Controllers\Files\FileController::class, 'up'])->name(RouteNames::FILES_UP);
+            Route::post('/down/{id}', [Controllers\Files\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
+            Route::get('/edit/{id}', [Controllers\Files\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
+            Route::delete('/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
+        });
+    });
+});
+
+Route::group(['prefix' => 'folders'], function () {
+    Route::group(['prefix' => 'json'], function () {
+        Route::get('/list', [Controllers\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
+        Route::get('/show/{id}', [Controllers\Files\FolderController::class, 'show'])->name(RouteNames::FOLDERS_SHOW);
+
+        Route::group(['middleware' => MiddlewareNames::VERIFIED], function () {
+            Route::post('/save', [Controllers\Files\FolderController::class, 'save'])->name(RouteNames::FOLDERS_SAVE);
+            Route::delete('/delete/{id}', [Controllers\Files\FolderController::class, 'delete'])->name(RouteNames::FOLDERS_DELETE);
+        });
     });
 });

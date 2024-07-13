@@ -10,6 +10,7 @@ use Core\Domains\File\FileLocator;
 use Core\Domains\File\Requests\File\ChangeOrderRequest;
 use Core\Domains\File\Requests\File\SaveRequest;
 use Core\Domains\File\Requests\File\SearchRequest;
+use Core\Domains\File\Requests\File\StoreRequest;
 use Core\Domains\File\Services\FileService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
@@ -37,9 +38,7 @@ class FileController extends Controller
     public function list(SearchRequest $request): JsonResponse
     {
         $searcher = $request->dto();
-        $searcher
-            ->setSortOrderDesc()
-            ->setType(null);
+        $searcher->setType(null);
 
         $files = $this->fileService->search($searcher)->getItems();
 
@@ -49,13 +48,14 @@ class FileController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
         foreach ($request->allFiles() as $file) {
             $dto = $this->fileService->store($file, date('Y-m'));
+            $dto->setParentId($request->getParentId());
             $this->fileService->save($dto);
         }
 

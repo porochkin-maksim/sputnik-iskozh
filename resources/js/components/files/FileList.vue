@@ -42,7 +42,8 @@ export default {
         loadList () {
             window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri, {
                 params: {
-                    limit: this.limit,
+                    sort_desc: true,
+                    limit    : this.limit,
                 },
             }).then(response => {
                 this.files  = response.data.files;

@@ -1,0 +1,45 @@
+
+.folder-item {
+    position        : relative;
+    width           : 134px;
+    padding         : 5px;
+    margin-bottom   : 5px;
+
+    display         : flex;
+    flex-direction  : column;
+    justify-content : start;
+    align-items     : center;
+
+    &:hover {
+        background-color : #e8e8e8;
+        border-radius    : 10px;
+    }
+
+    .dropdown {
+        position : absolute;
+        top      : 0;
+        right    : 0;
+    }
+
+    .folder-image {
+        display             : block;
+        height              : 80px;
+        width               : 100%;
+        cursor              : pointer;
+        background-size     : contain;
+        background-position : center center;
+        background-repeat   : no-repeat;
+        margin-bottom       : 10px;
+    }
+
+    .name {
+        cursor     : pointer;
+        text-align : center;
+    }
+
+    .date {
+        color      : $color-gray;
+        font-style : italic;
+        padding    : 0 4px;
+    }
+}

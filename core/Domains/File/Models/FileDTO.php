@@ -13,13 +13,14 @@ class FileDTO implements \JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int      $id         = null;
-    private ?TypeEnum $type       = null;
-    private ?int      $related_id = null;
-    private ?int      $order      = null;
-    private ?string   $ext        = null;
-    private ?string   $name       = null;
-    private ?string   $path       = null;
+    private ?int      $id        = null;
+    private ?TypeEnum $type      = null;
+    private ?int      $relatedId = null;
+    private ?int      $parentId  = null;
+    private ?int      $order     = null;
+    private ?string   $ext       = null;
+    private ?string   $name      = null;
+    private ?string   $path      = null;
 
     public function getId(): ?int
     {
@@ -47,12 +48,24 @@ class FileDTO implements \JsonSerializable
 
     public function getRelatedId(): ?int
     {
-        return $this->related_id;
+        return $this->relatedId;
     }
 
-    public function setRelatedId(?int $related_id): static
+    public function setRelatedId(?int $relatedId): static
     {
-        $this->related_id = $related_id;
+        $this->relatedId = $relatedId;
+
+        return $this;
+    }
+
+    public function getParentId(): ?int
+    {
+        return $this->parentId;
+    }
+
+    public function setParentId(?int $parentId): static
+    {
+        $this->parentId = $parentId;
 
         return $this;
     }

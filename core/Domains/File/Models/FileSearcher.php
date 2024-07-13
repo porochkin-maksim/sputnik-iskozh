@@ -34,4 +34,16 @@ class FileSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setParentId(?int $parentId): static
+    {
+        if ($parentId) {
+            $this->addWhere(File::PARENT_ID, SearcherInterface::EQUALS, $parentId);
+        }
+        else {
+            $this->addWhere(File::PARENT_ID, SearcherInterface::IS_NULL);
+        }
+
+        return $this;
+    }
 }

@@ -10,6 +10,8 @@ enum ResponsesEnum: string
     public const COUNTERS   = 'counters';
     public const EDIT       = 'edit';
     public const FILES      = 'files';
+    public const FOLDER     = 'folder';
+    public const FOLDERS    = 'folders';
     public const NEWS       = 'news';
     public const OPTION     = 'option';
     public const OPTIONS    = 'options';

@@ -72,9 +72,10 @@ readonly class FileService
 
     public function getById(int $id): ?FileDTO
     {
-        $file = $this->fileRepository->getById($id);
+        $searcher = new FileSearcher();
+        $searcher->setId($id);
 
-        return $file ? $this->fileFactory->makeDtoFromObject($file) : null;
+        return $this->search($searcher)->getItems()->first();
     }
 
     public function deleteById(int $id): bool
@@ -83,6 +84,7 @@ readonly class FileService
         if ($file) {
             if ($this->fileRepository->deleteById($id)) {
                 $this->removeFromStore($file->getPath());
+
                 return true;
             }
         }
@@ -97,7 +99,7 @@ readonly class FileService
         $result = new FileSearchResponse();
         $result->setTotal($response->getTotal());
 
-        $collection  = new Files();
+        $collection = new Files();
         foreach ($response->getItems() as $item) {
             $collection->add($this->fileFactory->makeDtoFromObject($item));
         }
@@ -126,6 +128,7 @@ readonly class FileService
                 $f->setOrder($index);
                 $index++;
             }
+
             return $file;
         });
 

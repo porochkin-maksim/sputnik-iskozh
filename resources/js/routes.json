@@ -50,8 +50,10 @@
     "filesIndex": {
         "name": "files.index",
         "method": "get",
-        "uri": "\/files",
-        "args": []
+        "uri": "\/files\/{folder}",
+        "args": {
+            "folder": "{folder}"
+        }
     },
     "filesList": {
         "name": "files.list",
@@ -75,6 +77,34 @@
         "name": "files.up",
         "method": "post",
         "uri": "\/files\/json\/up\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "foldersDelete": {
+        "name": "folders.delete",
+        "method": "delete",
+        "uri": "\/folders\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "foldersList": {
+        "name": "folders.list",
+        "method": "get",
+        "uri": "\/folders\/json\/list",
+        "args": []
+    },
+    "foldersSave": {
+        "name": "folders.save",
+        "method": "post",
+        "uri": "\/folders\/json\/save",
+        "args": []
+    },
+    "foldersShow": {
+        "name": "folders.show",
+        "method": "get",
+        "uri": "\/folders\/json\/show\/{id}",
         "args": {
             "id": "{id}"
         }
