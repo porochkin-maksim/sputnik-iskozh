@@ -106,10 +106,10 @@
                                 </ul>
                             </div>
                         </template>
-                        <div @click="enterFolder(folder)">
+                        <div class="w-100">
                             <div class="folder-image"
-                                 :style="{backgroundImage: 'url('+Img.Folder+')'}">
-
+                                 :style="{backgroundImage: 'url('+Img.Folder+')'}"
+                                 @click="enterFolder(folder)">
                             </div>
                             <div class="name">
                                 {{ folder.name }}
