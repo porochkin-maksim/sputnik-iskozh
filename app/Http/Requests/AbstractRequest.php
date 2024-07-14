@@ -29,7 +29,7 @@ abstract class AbstractRequest extends FormRequest
     public function getIntOrNull(string $key): ?int
     {
         if (parent::has($key)) {
-            if ($this->get($key) === null) {
+            if ($this->get($key) === null || $this->get($key) === 'null') {
                 return null;
             }
 

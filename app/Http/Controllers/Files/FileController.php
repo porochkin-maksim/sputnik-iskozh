@@ -54,7 +54,7 @@ class FileController extends Controller
             abort(403);
         }
         foreach ($request->allFiles() as $file) {
-            $dto = $this->fileService->store($file, date('Y-m'));
+            $dto = $this->fileService->store($file, 'uploads');
             $dto->setParentId($request->getParentId());
             $this->fileService->save($dto);
         }
