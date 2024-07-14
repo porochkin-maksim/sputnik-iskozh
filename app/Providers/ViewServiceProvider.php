@@ -10,8 +10,6 @@ use Illuminate\Support\ServiceProvider;
 
 class ViewServiceProvider extends ServiceProvider
 {
-    private ?UserDTO $user;
-
     /**
      * Register any application services.
      */
@@ -25,18 +23,6 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        view()->composer('*', function ($view) {
-            $this->user = $this->user ?? UserLocator::UserService()->searchById(Auth::id());
-
-            $userDecorator = UserLocator::UserDecorator($this->user);
-            $account       = $this->user?->getAccount();
-
-            $view
-                ->with('user', $this->user)
-                ->with('userDecorator', $userDecorator)
-                ->with('account', $account);
-        });
-
         Blade::directive('relativeInclude', function ($args) {
             $args = Blade::stripParentheses($args);
 

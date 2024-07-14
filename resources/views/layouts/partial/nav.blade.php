@@ -1,14 +1,9 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Account\Models\AccountDTO;
-use Core\Domains\User\Services\UserDecorator;
 use Core\Resources\RouteNames;
 
 /**
  * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
- *
- * @var UserDecorator $userDecorator
- * @var AccountDTO    $account
  */
 
 $routes = [
@@ -37,7 +32,7 @@ $routes = [
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
-                    {{ $userDecorator->getDisplayName() }}
+                    {{ \app::userDecorator()->getDisplayName() }}
                 </a>
             </li>
             <li class="nav-item">
@@ -69,7 +64,7 @@ $routes = [
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
-                    {{ $userDecorator->getDisplayName() }} {!! $account ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)',$account->getNumber()) : '' !!}
+                    {{ \app::userDecorator()->getDisplayName() }} {!! \app::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \app::account()->getNumber()) : '' !!}
                 </a>
             </li>
             <li class="nav-item">

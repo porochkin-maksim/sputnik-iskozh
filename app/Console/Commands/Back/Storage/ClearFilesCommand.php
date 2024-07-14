@@ -7,7 +7,6 @@ use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Models\FileSearcher;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class ClearFilesCommand extends Command
 {

@@ -19,9 +19,13 @@ readonly class UserService
 
     public function getById(?int $id): ?UserDTO
     {
-        $result = $this->userRepository->getById($id);
+        $userSearcher = new UserSearcher();
+        $userSearcher
+            ->setId($id)
+            ->setWithAccounts()
+            ->setWithRoles();
 
-        return $result ? $this->userFactory->makeDtoFromObject($result) : null;
+        return $this->search($userSearcher)->first();
     }
 
     public function getByIds(array $ids): Users
@@ -53,16 +57,5 @@ readonly class UserService
         }
 
         return $result;
-    }
-
-    public function searchById(int|string|null $id)
-    {
-        $userSearcher = new UserSearcher();
-        $userSearcher
-            ->setId($id)
-            ->setWithAccounts()
-            ->setWithRoles();
-
-        return $this->search($userSearcher)->first();
     }
 }
