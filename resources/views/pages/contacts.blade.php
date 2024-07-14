@@ -5,14 +5,15 @@ use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
-$openGraph = OpenGraphLocator::OpenGraphFactory()->default()->setUrl(route(RouteNames::CONTACTS));
+$openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setUrl(route(RouteNames::CONTACTS));
 
 ?>
 
 @extends(ViewNames::LAYOUTS_ONE_COLUMN)
 
 @push(SectionNames::META)
-    <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
+    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
 

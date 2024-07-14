@@ -6,14 +6,15 @@ use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 use Illuminate\Support\Facades\Route;
 
-$openGraph = OpenGraphLocator::OpenGraphFactory()->default()->setUrl(route(RouteNames::GARBAGE));
+$openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setUrl(route(RouteNames::GARBAGE));
 
 ?>
 
 @extends(ViewNames::LAYOUTS_ONE_COLUMN)
 
 @push(SectionNames::META)
-    <link rel="canonical" href="{{ route(RouteNames::GARBAGE) }}" />
+    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
 
@@ -22,8 +23,11 @@ $openGraph = OpenGraphLocator::OpenGraphFactory()->default()->setUrl(route(Route
 @endsection
 
 @section(SectionNames::MAIN)
-    <h1>{{ RouteNames::name(Route::current()?->getName(), env('APP_NAME')) }}</h1>
-
+    <h1>
+        <a href="<?= $openGraph->getUrl() ?>">
+            {{ RouteNames::name(Route::current()?->getName()) }}
+        </a>
+    </h1>
     <div>
         <div>
             <p>

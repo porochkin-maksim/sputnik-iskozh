@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
@@ -13,7 +12,7 @@ $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 
 @push(SectionNames::META)
     <meta name="keywords" content="снт спутник-искож тверь сайт">
-    <link rel="canonical" href="{{ route(RouteNames::INDEX) }}" />
+    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
 

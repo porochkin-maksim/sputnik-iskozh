@@ -22,8 +22,13 @@ $openGraph->setType(OpenGraphType::ARTICLE)
 @extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
+    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
+
+@section(SectionNames::METRICS)
+    @include(ViewNames::METRICS)
+@endsection
 
 @section(SectionNames::TITLE)
     {{ $news->getTitle() }}

@@ -3,6 +3,7 @@
 namespace Core\Services\OpenGraph\Models;
 
 use Core\Services\OpenGraph\Enums\OpenGraphType;
+use Illuminate\Support\Str;
 
 class OpenGraph
 {
@@ -34,6 +35,11 @@ class OpenGraph
         return $this;
     }
 
+    public function getUrl(): string
+    {
+        return (string) $this->url;
+    }
+
     public function setImage(?string $image): self
     {
         $this->image = $image;
@@ -43,7 +49,7 @@ class OpenGraph
 
     public function setDescription(?string $description): self
     {
-        $this->description = $description;
+        $this->description = Str::substr(strip_tags($description), 0, 255);
 
         return $this;
     }

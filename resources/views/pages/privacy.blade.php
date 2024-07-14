@@ -9,8 +9,7 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_ONE_COLUMN)
 
 @push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ route(RouteNames::PRIVACY) }}" />
+    <link rel="canonical" href="{{ route(RouteNames::PRIVACY) }}" />
 @endpush
 
 @section(SectionNames::MAIN)
