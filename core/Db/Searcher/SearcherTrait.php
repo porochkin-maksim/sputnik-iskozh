@@ -42,7 +42,7 @@ trait SearcherTrait
 
     public function setId(int|string|null $id): static
     {
-        $this->ids = [(int) $id];
+        $this->ids = $id ? [(int) $id] : [-1];
 
         return $this;
     }

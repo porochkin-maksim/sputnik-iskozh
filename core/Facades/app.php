@@ -14,7 +14,7 @@ abstract class app
     public static function user(): UserDTO
     {
         if ( ! isset(self::$user)) {
-            $user = UserLocator::UserService()->getById(Auth::id());
+            $user = Auth::id() ? UserLocator::UserService()->getById(Auth::id()) : null;
             if ( ! $user) {
                 $user = UserLocator::UserFactory()->makeUndefined();
             }

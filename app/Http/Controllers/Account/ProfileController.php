@@ -10,7 +10,6 @@ use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
