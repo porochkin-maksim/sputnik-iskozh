@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Core\Resources\RouteNames;
+use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
@@ -53,10 +54,6 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
             <i class="fa fa-external-link"></i> Кадастровая карта
         </a>
     </div>
-    {{-- https://yandex.ru/map-constructor/?um=constructor:604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a --}}
-    {{-- <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;width=100%25&amp;height=547&amp;lang=ru_RU&amp;scroll=true"></script> --}}
-    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;source=constructor"
-            width="100%"
-            height="570"
-            frameborder="0"></iframe>
+
+    {!! Iframes::map() !!}
 @endsection

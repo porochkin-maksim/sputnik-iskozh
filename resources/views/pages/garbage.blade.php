@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Core\Resources\RouteNames;
+use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
@@ -48,8 +49,5 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
         </div>
     </div>
 
-    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A604bc906b7b7a8a4780c38eb81e9d38d066280cd260fe0139c348e4c74c4602a&amp;source=constructor"
-            width="100%"
-            height="570"
-            frameborder="0"></iframe>
+    {!! Iframes::garbagePlace() !!}
 @endsection
