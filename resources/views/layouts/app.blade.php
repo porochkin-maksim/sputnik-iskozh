@@ -4,6 +4,12 @@ use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Illuminate\Support\Facades\Route;
 
+$allowRobots = Route::is(RouteNames::INDEX) 
+    || Route::is(RouteNames::CONTACTS) 
+    || Route::is(RouteNames::GARBAGE)
+    || Route::is(RouteNames::FILES)
+;
+
 ?>
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -12,7 +18,7 @@ use Illuminate\Support\Facades\Route;
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    @if (Route::is(RouteNames::INDEX) || Route::is(RouteNames::CONTACTS) || Route::is(RouteNames::GARBAGE))
+    @if ($allowRobots)
         <meta name="robots" content="index, nofollow, noarchive">
     @else
         <meta name="robots" content="noindex">
