@@ -8,6 +8,7 @@ use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
 use Core\Domains\File\Requests\File\ChangeOrderRequest;
+use Core\Domains\File\Requests\File\MoveRequest;
 use Core\Domains\File\Requests\File\SaveRequest;
 use Core\Domains\File\Requests\File\SearchRequest;
 use Core\Domains\File\Requests\File\StoreRequest;
@@ -16,8 +17,8 @@ use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Js;
 
 class FileController extends Controller
 {
@@ -106,6 +107,19 @@ class FileController extends Controller
         if ($file) {
             $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);
         }
+    }
+
+    public function move(MoveRequest $request): JsonResponse
+    {
+        $file = $this->fileService->getById($request->getFileId());
+        if ($file->getType()) {
+            return response()->json(false);
+        }
+
+        $file->setParentId($request->getFolderId());
+        $this->fileService->save($file);
+
+        return response()->json(true);
     }
 
     private function canEdit(): bool

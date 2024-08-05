@@ -61,6 +61,12 @@
         "uri": "\/files\/json\/list",
         "args": []
     },
+    "filesMove": {
+        "name": "files.move",
+        "method": "post",
+        "uri": "\/files\/json\/move",
+        "args": []
+    },
     "filesSave": {
         "name": "files.save",
         "method": "post",

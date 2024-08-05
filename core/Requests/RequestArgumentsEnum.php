@@ -11,6 +11,8 @@ enum RequestArgumentsEnum: string
     public const EMAIL           = 'email';
     public const END_AT          = 'end_at';
     public const FIRST_NAME      = 'first_name';
+    public const FOLDER          = 'folder';
+    public const FILE            = 'file';
     public const ID              = 'id';
     public const INDEX           = 'index';
     public const IS_MEMBER       = 'is_member';

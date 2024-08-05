@@ -18,6 +18,13 @@
                     >
                         + <i class="fa fa-file-o"></i>
                     </button>
+                    <template v-if="movedFileId">
+                        <button class="btn btn-light border"
+                                @click="pasteFile()"
+                        >
+                            <i class="fa fa-clipboard"></i>
+                        </button>
+                    </template>
                     <input class="d-none"
                            type="file"
                            ref="fileElem"
@@ -140,6 +147,14 @@
                                            href="#"
                                            @click="deleteFile(file.id)"><i class="fa fa-trash"></i>&nbsp;Удалить</a>
                                     </li>
+<!--                                    <li><a class="dropdown-item"-->
+<!--                                           href="#"-->
+<!--                                           @click="copyFile(file.id)"><i class="fa fa-copy"></i>&nbsp;Скопировать</a>-->
+<!--                                    </li>-->
+                                    <li><a class="dropdown-item"
+                                           href="#"
+                                           @click="cutFile(file.id)"><i class="fa fa-cut"></i>&nbsp;Вырезать</a>
+                                    </li>
                                     <li><a class="dropdown-item"
                                            :href="file.url"
                                            :download="file.name"><i class="fa fa-download"></i>&nbsp;Скачать</a></li>
@@ -239,6 +254,9 @@ export default {
 
             folders: [],
             files  : [],
+
+            copiedFileId: null,
+            cutedFileId: null,
         };
     },
     methods: {
@@ -425,6 +443,37 @@ export default {
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
+        },
+        copyFile (id) {
+            this.cutedFileId  = null;
+            this.copiedFileId = id;
+        },
+        cutFile (id) {
+            this.copiedFileId = null;
+            this.cutedFileId  = id;
+        },
+        pasteFile () {
+            window.axios[Url.Routes.filesMove.method](Url.Routes.filesMove.uri, {
+                file  : this.movedFileId,
+                folder: this.parentId,
+                type  : this.moveType,
+            }).then(response => {
+                this.loadFilesList();
+                if (response.data) {
+                    this.copiedFileId = null;
+                    this.cutedFileId  = null;
+                }
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+    },
+    computed: {
+        movedFileId () {
+            return this.copiedFileId ? this.copiedFileId : this.cutedFileId;
+        },
+        moveType () {
+            return this.copiedFileId ? 'copy' : 'cut';
         },
     },
 };

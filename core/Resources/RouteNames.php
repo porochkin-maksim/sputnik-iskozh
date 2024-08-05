@@ -40,6 +40,7 @@ abstract class RouteNames
     public const FILES_STORE  = 'files.store';
     public const FILES_UP     = 'files.up';
     public const FILES_DOWN   = 'files.down';
+    public const FILES_MOVE   = 'files.move';
 
     public const FOLDERS_LIST   = 'folders.list';
     public const FOLDERS_SAVE   = 'folders.save';
