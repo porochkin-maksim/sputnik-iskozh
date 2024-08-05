@@ -369,7 +369,10 @@ export default {
                     return this.Img.PDF;
                 case 'doc':
                 case 'docx':
-                    return this.Img.Default;
+                    return this.Img.Word;
+                case 'xls':
+                case 'xlsx':
+                    return this.Img.Excel;
                 default:
                     return this.Img.Default;
             }
