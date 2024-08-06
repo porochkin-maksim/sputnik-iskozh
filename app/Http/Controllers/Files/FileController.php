@@ -18,7 +18,6 @@ use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Js;
 
 class FileController extends Controller
 {
@@ -54,6 +53,7 @@ class FileController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         foreach ($request->allFiles() as $file) {
             $dto = $this->fileService->store($file, 'uploads/' . date('Y-m'));
             $dto->setParentId($request->getParentId());
@@ -68,6 +68,7 @@ class FileController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         $file = $this->fileService->getById($request->getId());
         if ($file) {
             $file->setName($request->getName());
@@ -84,6 +85,7 @@ class FileController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         return response()->json($this->fileService->deleteById($id));
     }
 
@@ -92,6 +94,7 @@ class FileController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         $file = $this->fileService->getById($id);
         if ($file) {
             $this->fileService->saveFileOrderIndex($file, $request->getIndex() - 1);
@@ -103,6 +106,7 @@ class FileController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         $file = $this->fileService->getById($id);
         if ($file) {
             $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);
@@ -111,9 +115,17 @@ class FileController extends Controller
 
     public function move(MoveRequest $request): JsonResponse
     {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
         $file = $this->fileService->getById($request->getFileId());
         if ($file->getType()) {
             return response()->json(false);
+        }
+
+        if ($request->isCopyType()) {
+            $file = $this->fileService->copy($file);
         }
 
         $file->setParentId($request->getFolderId());

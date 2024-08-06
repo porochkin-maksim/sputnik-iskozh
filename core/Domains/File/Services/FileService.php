@@ -11,6 +11,7 @@ use Core\Domains\File\Repositories\FileRepository;
 use Core\Domains\File\Responses\FileSearchResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 readonly class FileService
 {
@@ -37,6 +38,21 @@ readonly class FileService
             ->setPath($path);
 
         return $dto;
+    }
+
+    public function copy(?FileDTO $file): FileDTO
+    {
+        $newFile = clone $file;
+
+        $pureName = $file->getTrueFileName(false);
+        $newName  = Str::random(Str::length($pureName)) . '.' . $file->getExt();
+        $newPath  = Str::replace($pureName, $newName, $newFile->getPath());
+
+        Storage::copy($file->getPath(), $newPath);
+        $newFile->setId(null)
+            ->setPath($newPath);
+
+        return $newFile;
     }
 
     public function removeFromStore(string $path): bool

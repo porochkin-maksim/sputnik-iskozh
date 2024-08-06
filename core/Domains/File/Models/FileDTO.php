@@ -118,6 +118,25 @@ class FileDTO implements \JsonSerializable
         return $this;
     }
 
+    public function getDir(): ?string
+    {
+        $path = Str::replace('.' . $this->getExt(), '', $this->getPath());
+        $dirs = explode('/', $path);
+        $dirs = array_slice($dirs, 0, count($dirs) - 1);
+
+        return implode('/', $dirs);
+    }
+
+    public function getTrueFileName(bool $withExt = true): ?string
+    {
+        $result = Str::replace($this->getDir(), '', $this->getPath());
+        if (!$withExt) {
+            $result = Str::replace('.' . $this->getExt(), '', $result);
+        }
+
+        return Str::replace('/', '', $result);
+    }
+
     public function jsonSerialize(): array
     {
         $dossier = new Dossier($this);

@@ -46,4 +46,9 @@ class MoveRequest extends AbstractRequest
     {
         return $this->get(self::TYPE);
     }
+
+    public function isCopyType(): bool
+    {
+        return $this->getType() === 'copy';
+    }
 }

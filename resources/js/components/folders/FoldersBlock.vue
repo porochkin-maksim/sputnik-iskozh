@@ -2,7 +2,7 @@
     <page-template>
         <template v-slot:main>
             <div class="btn-group mb-2">
-                <a class="btn"
+                <a class="btn border"
                    v-if="selectedFolder"
                    @click="exitFolder(selectedFolder)">
                     <i class="fa fa-arrow-left"></i>&nbsp;{{ selectedFolder.name }}
@@ -25,13 +25,13 @@
                             <i class="fa fa-clipboard"></i>
                         </button>
                     </template>
-                    <input class="d-none"
-                           type="file"
-                           ref="fileElem"
-                           multiple
-                           @change="uploadFile">
                 </template>
             </div>
+            <input class="d-none"
+                   type="file"
+                   ref="fileElem"
+                   multiple
+                   @change="uploadFile">
 
             <template v-if="edit">
                 <div v-if="showFolderForm">
@@ -147,10 +147,10 @@
                                            href="#"
                                            @click="deleteFile(file.id)"><i class="fa fa-trash"></i>&nbsp;Удалить</a>
                                     </li>
-<!--                                    <li><a class="dropdown-item"-->
-<!--                                           href="#"-->
-<!--                                           @click="copyFile(file.id)"><i class="fa fa-copy"></i>&nbsp;Скопировать</a>-->
-<!--                                    </li>-->
+                                    <li><a class="dropdown-item"
+                                           href="#"
+                                           @click="copyFile(file.id)"><i class="fa fa-copy"></i>&nbsp;Скопировать</a>
+                                    </li>
                                     <li><a class="dropdown-item"
                                            href="#"
                                            @click="cutFile(file.id)"><i class="fa fa-cut"></i>&nbsp;Вырезать</a>
