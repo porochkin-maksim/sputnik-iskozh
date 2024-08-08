@@ -10,7 +10,9 @@ use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\Enums\TypeEnum;
 use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
+use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\Factories\NewsFactory;
+use Core\Domains\News\Models\NewsDTO;
 use Core\Domains\News\NewsLocator;
 use Core\Domains\News\Requests\SaveRequest;
 use Core\Domains\News\Requests\SearchRequest;
@@ -49,7 +51,8 @@ class NewsController extends Controller
         $news = $this->newsFactory->makeDefault();
 
         return response()->json([
-            ResponsesEnum::NEWS => $news,
+            ResponsesEnum::NEWS       => $news,
+            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
         ]);
     }
 
@@ -73,8 +76,9 @@ class NewsController extends Controller
         $news = $this->newsService->getById($id);
 
         return response()->json([
-            ResponsesEnum::NEWS => $news,
-            ResponsesEnum::EDIT => $this->canEdit(),
+            ResponsesEnum::NEWS       => $news,
+            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
+            ResponsesEnum::EDIT       => $this->canEdit(),
         ]);
     }
 
@@ -106,7 +110,15 @@ class NewsController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
-        $news = $request->dto();
+
+        $news = $this->newsFactory->makeDefault()
+            ->setId($request->getId())
+            ->setTitle($request->getTitle())
+            ->setArticle($request->getArticle())
+            ->setCategory($request->getCategory())
+            ->setIsLock($request->isLock())
+            ->setPublishedAt($request->getPublishedAt());
+
         $news = $this->newsService->save($news);
 
         return response()->json($news);
@@ -117,6 +129,7 @@ class NewsController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         return response()->json($this->newsService->deleteById($id));
     }
 

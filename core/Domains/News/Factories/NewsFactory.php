@@ -4,6 +4,7 @@ namespace Core\Domains\News\Factories;
 
 use App\Models\News;
 use Carbon\Carbon;
+use Core\Domains\News\Enums\CategoryEnum;
 use Core\Enums\DateTimeFormat;
 use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\News\Models\NewsDTO;
@@ -23,7 +24,9 @@ readonly class NewsFactory
         return $result
             ->setId(null)
             ->setTitle('')
-            ->setArticle('');
+            ->setCategory(CategoryEnum::DEFAULT)
+            ->setArticle('')
+            ->setIsLock(false);
     }
 
     public function makeModelFromDto(NewsDTO $dto, ?News $news = null): News
@@ -40,8 +43,10 @@ readonly class NewsFactory
             : Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT);
 
         return $result->fill([
+            News::CATEGORY     => $dto->getCategory()->value,
             News::TITLE        => $dto->getTitle(),
             News::ARTICLE      => $dto->getArticle(),
+            News::IS_LOCK      => $dto->isLock(),
             News::PUBLISHED_AT => $publishedAt,
         ]);
     }
@@ -54,7 +59,9 @@ readonly class NewsFactory
             ->setId($news->id)
             ->setTitle($news->title)
             ->setArticle($news->article)
+            ->setIsLock($news->is_lock)
             ->setPublishedAt($news->published_at)
+            ->setCategory(CategoryEnum::tryFrom($news->category))
             ->setCreatedAt($news->created_at)
             ->setUpdatedAt($news->updated_at);
 

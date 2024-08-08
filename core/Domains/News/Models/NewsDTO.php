@@ -4,6 +4,7 @@ namespace Core\Domains\News\Models;
 
 use Carbon\Carbon;
 use Core\Domains\File\Collections\Files;
+use Core\Domains\News\Enums\CategoryEnum;
 use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Domains\Common\Traits\TimestampsTrait;
@@ -14,10 +15,12 @@ class NewsDTO implements \JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int    $id          = null;
-    private ?string $title       = null;
-    private ?string $article     = null;
-    private ?Carbon $publishedAt = null;
+    private ?int          $id          = null;
+    private ?string       $title       = null;
+    private ?string       $article     = null;
+    private ?bool         $isLock      = null;
+    private ?CategoryEnum $category    = null;
+    private ?Carbon       $publishedAt = null;
 
     /**
      * @var FileDTO[]
@@ -72,6 +75,30 @@ class NewsDTO implements \JsonSerializable
         return $this;
     }
 
+    public function isLock(): bool
+    {
+        return (bool) $this->isLock;
+    }
+
+    public function setIsLock(?bool $isLock): static
+    {
+        $this->isLock = $isLock;
+
+        return $this;
+    }
+
+    public function getCategory(): ?CategoryEnum
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?CategoryEnum $category): NewsDTO
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
     public function getFiles(): Files
     {
         return new Files($this->files ?? []);
@@ -96,7 +123,9 @@ class NewsDTO implements \JsonSerializable
             'id'          => $this->id,
             'title'       => $this->title,
             'article'     => $this->article,
+            'category'    => $this->getCategory()->value,
             'files'       => $this->getFiles(),
+            'isLock'      => $this->isLock(),
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
             'url'         => $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null,
         ];

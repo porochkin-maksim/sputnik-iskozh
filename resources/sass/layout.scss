@@ -105,4 +105,8 @@ main,
 
 .html-editor {
     height : calc(100% - $font-size * 4);
+
+    &:is(textarea) {
+        height : calc(100% - $font-size);
+    }
 }

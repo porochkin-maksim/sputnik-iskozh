@@ -15,6 +15,7 @@ enum RequestArgumentsEnum: string
     public const FILE            = 'file';
     public const ID              = 'id';
     public const INDEX           = 'index';
+    public const IS_LOCK         = 'is_lock';
     public const IS_MEMBER       = 'is_member';
     public const LAST_NAME       = 'last_name';
     public const LIMIT           = 'limit';

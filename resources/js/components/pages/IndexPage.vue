@@ -5,17 +5,20 @@
                        v-model:count="filesCount" />
         </template>
         <template v-slot:main>
-            <news-list :limit="5"
-                       v-model:items-count="newsCount" />
+            <div class="mb-lg-0 mb-5">
+                <news-list :limit="5"
+                           v-model:items-count="newsCount" />
+                <hr class="d-block d-lg-none">
+            </div>
         </template>
     </page-template>
 </template>
 
 <script>
-import Url         from '../../utils/Url.js';
+import Url          from '../../utils/Url.js';
 import PageTemplate from './TwoColumnsPage.vue';
-import NewsList    from '../news/NewsList.vue';
-import FileList    from '../files/FileList.vue';
+import NewsList     from '../news/NewsList.vue';
+import FileList     from '../files/FileList.vue';
 
 export default {
     name      : 'IndexPage',

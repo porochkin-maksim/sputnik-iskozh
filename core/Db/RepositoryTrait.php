@@ -6,21 +6,26 @@ use Core\Db\Searcher\Models\SearchResponse;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 trait RepositoryTrait
 {
+    private static array $localCache = [];
     abstract protected function modelClass(): string;
 
-    public function getById(?int $id, bool $cache = false): ?Model
+    public function getById(?int $id): ?Model
     {
         $result     = null;
         $modelClass = $this->modelClass();
+        $cacheKey   = Hash::make($modelClass . $id);
 
         if ($id && class_exists($this->modelClass())) {
 
-            if ($cache && $this instanceof UseCacheRepositoryInterface) {
-                /** @var ?Model $result */
-                $result = $this->cacheRepository()->getByKey($id);
+            if ($this instanceof UseCacheRepositoryInterface) {
+                /** @var null|Model $result */
+                if (isset($this->localCache[$cacheKey])) {
+                    $result = $this->localCache[$cacheKey];
+                }
             }
 
             if ( ! $result) {
@@ -28,8 +33,8 @@ trait RepositoryTrait
                 $model  = new $modelClass;
                 $result = $model::find($id);
 
-                if ($result && $cache && $this instanceof UseCacheRepositoryInterface) {
-                    $this->cacheRepository()->add($id, $result);
+                if ($result && $this instanceof UseCacheRepositoryInterface) {
+                    $this->localCache[$cacheKey] = $result;
                 }
             }
         }

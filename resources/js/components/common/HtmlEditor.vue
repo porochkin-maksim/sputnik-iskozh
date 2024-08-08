@@ -82,7 +82,7 @@ export default {
             }
         },
         switchMode () {
-            this.showCode = !this.showCode;
+            this.showCode             = !this.showCode;
             this.quill.root.innerHTML = this.content;
         },
     },

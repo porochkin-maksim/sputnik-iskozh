@@ -1,7 +1,7 @@
 <template>
     <div v-if="modeEdit">
         <wrapper @close="modeEdit=false"
-                 :container-class="'w-lg-75 w-md-100'">
+                 :container-class="'w-100'">
             <div class="container-fluid">
                 <news-item-edit :model-value="id" @updated="updatedItem()"/>
             </div>

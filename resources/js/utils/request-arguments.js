@@ -10,6 +10,7 @@ export default {
     file         : 'file',
     id           : 'id',
     index        : 'index',
+    isLock       : 'is_lock',
     isMember     : 'is_member',
     lastName     : 'last_name',
     limit        : 'limit',

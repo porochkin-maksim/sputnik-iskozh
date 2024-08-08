@@ -2,6 +2,9 @@
 
 namespace Core\Enums;
 
+/**
+ * @method static tryFrom(int|string|null $value): ?static
+ */
 trait EnumCommonTrait
 {
     public static function names(): array
