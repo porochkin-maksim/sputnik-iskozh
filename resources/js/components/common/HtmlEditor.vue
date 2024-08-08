@@ -1,10 +1,20 @@
 <template>
-    <div class="html-editor">
-        <quill-editor :toolbar="toolbar"
-                      v-model:content="content"
-                      contentType="html"
-                      @update:content="update"
-                      @ready="readyEvent" />
+    <div class="h-100 position-relative">
+        <div class="html-editor"
+             :class="[showCode ? 'd-none' : '']">
+            <quill-editor :toolbar="toolbar"
+                          v-model:content="content"
+                          contentType="html"
+                          @update:content="update"
+                          @ready="readyEvent" />
+        </div>
+        <textarea class="html-editor form-control"
+                  :class="[!showCode ? 'd-none' : '']"
+                  @change="update"
+                  v-model="content"></textarea>
+        <button class="badge bg-secondary d-flex justify-content-center mb-3 position-absolute right-0 bottom-0 z-1"
+                @click="switchMode">{{ switchModeText }}
+        </button>
     </div>
 </template>
 
@@ -30,15 +40,21 @@ export default {
             editor     : null,
             content    : '',
             toolbar    : [
-                [{ header: [1, false] }],
-                ['bold', 'italic', 'strike'],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
                 [{ align: [] }],
                 [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
                 [{ color: [] }, { background: [] }],
                 ['link', 'image', 'video'],
+                ['blockquote', 'code-block'],
+                ['clean'],
             ],
             quill      : null,
             readyToSync: false,
+
+            showCode: false,
         };
     },
     mounted () {
@@ -48,7 +64,7 @@ export default {
     created () {
         this.content = this.value;
     },
-    methods: {
+    methods : {
         update () {
             this.$emit('update:value', this.content);
         },
@@ -65,10 +81,14 @@ export default {
                 }, 100);
             }
         },
+        switchMode () {
+            this.showCode = !this.showCode;
+            this.quill.root.innerHTML = this.content;
+        },
     },
-    watch: {
-        value: function (oldVal, newVal) {
-
+    computed: {
+        switchModeText () {
+            return this.showCode ? 'Скрыть код' : 'Показать код';
         },
     },
 };

@@ -377,6 +377,12 @@
         "uri": "\/reports\/json\/save",
         "args": []
     },
+    "rubrics": {
+        "name": "rubrics",
+        "method": "get",
+        "uri": "\/rubrics",
+        "args": []
+    },
     "sanctumCsrfCookie": {
         "name": "sanctum.csrf-cookie",
         "method": "get",
