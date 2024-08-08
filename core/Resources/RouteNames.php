@@ -11,6 +11,7 @@ abstract class RouteNames
     public const LOGOUT     = 'logout';
     public const HOME       = 'home';
     public const REGULATION = 'regulation';
+    public const RUBRICS    = 'rubrics';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
@@ -71,6 +72,7 @@ abstract class RouteNames
             self::GARBAGE    => 'Вывоз мусора',
             self::PRIVACY    => 'Политика обработки персональных данных',
             self::REGULATION => 'Устав',
+            self::RUBRICS    => 'Рубрикатор',
 
             self::HOME       => 'Личный кабинет',
             self::PROFILE    => 'Профиль',

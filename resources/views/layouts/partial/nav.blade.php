@@ -11,6 +11,7 @@ $routes = [
     RouteNames::NEWS,
     RouteNames::GARBAGE,
     RouteNames::FILES,
+    RouteNames::RUBRICS,
     RouteNames::REGULATION,
 ];
 ?>

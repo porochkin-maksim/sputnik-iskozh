@@ -41,4 +41,9 @@ class PagesController extends Controller
     {
         return response()->file($this->staticFilesService->regulation()->getStoragePath());
     }
+
+    public function rubrics(): View
+    {
+        return view(ViewNames::PAGES_RUBRICS);
+    }
 }

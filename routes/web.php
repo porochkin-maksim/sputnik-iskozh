@@ -12,6 +12,7 @@ Route::get('/contacts', [Controllers\PagesController::class, 'contacts'])->name(
 Route::get('/garbage', [Controllers\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
 Route::get('/privacy', [Controllers\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
 Route::get('/regulation', [Controllers\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
+Route::get('/rubrics', [Controllers\PagesController::class, 'rubrics'])->name(RouteNames::RUBRICS);
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {
