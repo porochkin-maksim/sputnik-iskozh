@@ -33,15 +33,16 @@ abstract class RouteNames
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
 
-    public const FILES        = 'files.index';
-    public const FILES_LIST   = 'files.list';
-    public const FILES_SAVE   = 'files.save';
-    public const FILES_EDIT   = 'files.edit';
-    public const FILES_DELETE = 'files.delete';
-    public const FILES_STORE  = 'files.store';
-    public const FILES_UP     = 'files.up';
-    public const FILES_DOWN   = 'files.down';
-    public const FILES_MOVE   = 'files.move';
+    public const FILES         = 'files.index';
+    public const FILES_LIST    = 'files.list';
+    public const FILES_SAVE    = 'files.save';
+    public const FILES_REPLACE = 'files.replace';
+    public const FILES_EDIT    = 'files.edit';
+    public const FILES_DELETE  = 'files.delete';
+    public const FILES_STORE   = 'files.store';
+    public const FILES_UP      = 'files.up';
+    public const FILES_DOWN    = 'files.down';
+    public const FILES_MOVE    = 'files.move';
 
     public const FOLDERS_LIST   = 'folders.list';
     public const FOLDERS_SAVE   = 'folders.save';

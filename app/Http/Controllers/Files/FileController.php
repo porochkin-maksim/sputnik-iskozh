@@ -9,6 +9,7 @@ use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
 use Core\Domains\File\Requests\File\ChangeOrderRequest;
 use Core\Domains\File\Requests\File\MoveRequest;
+use Core\Domains\File\Requests\File\ReplaceRequest;
 use Core\Domains\File\Requests\File\SaveRequest;
 use Core\Domains\File\Requests\File\SearchRequest;
 use Core\Domains\File\Requests\File\StoreRequest;
@@ -58,6 +59,22 @@ class FileController extends Controller
             $dto = $this->fileService->store($file, 'uploads/' . date('Y-m'));
             $dto->setParentId($request->getParentId());
             $this->fileService->save($dto);
+        }
+
+        return response()->json(true);
+    }
+
+    public function replace(ReplaceRequest $request): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        $file = $this->fileService->getById($request->getFileId());
+
+        if ($file) {
+            $newFile = $this->fileService->store($request->getFile(), 'uploads/' . date('Y-m'));
+            $this->fileService->replace($file, $newFile);
         }
 
         return response()->json(true);

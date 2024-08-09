@@ -67,6 +67,12 @@
         "uri": "\/files\/json\/move",
         "args": []
     },
+    "filesReplace": {
+        "name": "files.replace",
+        "method": "post",
+        "uri": "\/files\/json\/replace",
+        "args": []
+    },
     "filesSave": {
         "name": "files.save",
         "method": "post",

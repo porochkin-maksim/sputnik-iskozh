@@ -147,7 +147,7 @@ class FileDTO implements \JsonSerializable
             'name'      => $this->name,
             'ext'       => $this->ext,
             'url'       => $this->url(),
-            'updatedAt' => $this->updatedAt?->format(DateTimeFormat::DATE_DEFAULT),
+            'createdAt' => $this->createdAt?->format(DateTimeFormat::DATE_DEFAULT),
             'isImage'   => $this->isImage(),
         ];
     }

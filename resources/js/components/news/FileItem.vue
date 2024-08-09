@@ -5,6 +5,9 @@
                 <button class="btn btn-primary" @click="save">
                     <i class="fa fa-save"></i>
                 </button>
+                <button class="btn btn-primary" @click="$refs.fileElem.click">
+                    <i class="fa fa-upload"></i>
+                </button>
                 <button class="btn btn-light border" @click="toggleMode">
                     <i class="fa fa-window-close"></i>
                 </button>
@@ -14,6 +17,11 @@
                               :required="false"
                               @change="clearError('name')"
                 />
+            </div>
+            <div class="d-none">
+                <input type="file"
+                       ref="fileElem"
+                       @change="uploadReplacedFile">
             </div>
         </template>
         <template v-else>
@@ -109,6 +117,20 @@ export default {
                 id  : this.id,
                 name: this.name + '.' + this.file.ext,
             }).then(response => {
+                this.updatedItem();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        uploadReplacedFile(event) {
+            let form = new FormData();
+            form.append('file', event.target.files[0]);
+            form.append('id', this.id);
+
+            window.axios[Url.Routes.filesReplace.method](
+                Url.Routes.filesReplace.uri,
+                form
+            ).then(response => {
                 this.updatedItem();
             }).catch(response => {
                 this.parseResponseErrors(response);

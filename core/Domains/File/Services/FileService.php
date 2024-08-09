@@ -10,6 +10,7 @@ use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Repositories\FileRepository;
 use Core\Domains\File\Responses\FileSearchResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -151,5 +152,15 @@ readonly class FileService
         foreach ($files as $f) {
             $this->save($f);
         }
+    }
+
+    public function replace(FileDTO $file, FileDTO $replaceFile): FileDTO
+    {
+        if ($file->getExt() === $replaceFile->getExt()) {
+            Storage::put($file->getPath(), Storage::get($replaceFile->getPath()));
+        }
+        $this->removeFromStore($replaceFile->getPath());
+
+        return $file;
     }
 }

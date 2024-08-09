@@ -18,7 +18,7 @@ readonly class Dossier implements \JsonSerializable
     {
         return [
             'shortName' => $this->getShortName(),
-            'updatedAt' => $this->file->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+            'createdAt' => $this->file->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
         ];
     }
 

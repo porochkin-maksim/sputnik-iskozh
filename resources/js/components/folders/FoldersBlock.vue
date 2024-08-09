@@ -32,6 +32,11 @@
                    ref="fileElem"
                    multiple
                    @change="uploadFile">
+            <input class="d-none"
+                   type="file"
+                   ref="replaceFileElem"
+                   multiple
+                   @change="uploadReplacedFile">
 
             <template v-if="edit">
                 <div v-if="showFolderForm">
@@ -153,6 +158,10 @@
                                     </li>
                                     <li><a class="dropdown-item"
                                            href="#"
+                                           @click="replaceFile(file.id)"><i class="fa fa-refresh"></i>&nbsp;Заменить</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                           href="#"
                                            @click="cutFile(file.id)"><i class="fa fa-cut"></i>&nbsp;Вырезать</a>
                                     </li>
                                     <li><a class="dropdown-item"
@@ -190,9 +199,9 @@
                         </a>
                         <div class="w-100">
                             <div class="date">
-                                {{ file.dossier.updatedAt }}
+                                {{ file.dossier.createdAt }}
                             </div>
-                            <div class="name overflow-x-hidden">
+                            <div class="name">
                                 {{ file.name }}
                             </div>
                         </div>
@@ -255,11 +264,12 @@ export default {
             folders: [],
             files  : [],
 
-            copiedFileId: null,
-            cutedFileId: null,
+            copiedFileId : null,
+            cutedFileId  : null,
+            replaceFileId: null,
         };
     },
-    methods: {
+    methods : {
         /**
          * папки
          */
@@ -357,7 +367,7 @@ export default {
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
             this.folders = [];
-            this.files = [];
+            this.files   = [];
             this.loadFoldersList();
             this.loadFilesList();
         },
@@ -404,7 +414,7 @@ export default {
         uploadFile (event) {
             let form = new FormData();
             for (let i = 0; i < event.target.files.length; i++) {
-                form.append(event.target.files[i].name, event.target.files[i])
+                form.append(event.target.files[i].name, event.target.files[i]);
             }
             form.append('parent_id', this.parentId);
 
@@ -439,6 +449,24 @@ export default {
             });
 
             window.axios[Url.Routes.filesDelete.method](uri).then(response => {
+                this.loadFilesList();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        replaceFile (id) {
+            this.replaceFileId = id;
+            this.$refs.replaceFileElem.click();
+        },
+        uploadReplacedFile (event) {
+            let form = new FormData();
+            form.append('file', event.target.files[0]);
+            form.append('id', this.replaceFileId);
+
+            window.axios[Url.Routes.filesReplace.method](
+                Url.Routes.filesReplace.uri,
+                form,
+            ).then(response => {
                 this.loadFilesList();
             }).catch(response => {
                 this.parseResponseErrors(response);
