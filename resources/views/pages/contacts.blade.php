@@ -55,6 +55,10 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         </tbody>
     </table>
 
+    <div class="social d-flex flex-column py-3">
+        @include(ViewNames::PARTIAL_SOCIAL)
+    </div>
+
     <div class="my-2">
         <a class="btn btn-link px-1"
            href="https://egrp365.org/map/?kadnum=69:10:0205201:521"

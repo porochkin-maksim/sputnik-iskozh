@@ -8,6 +8,8 @@ enum ViewNames: string
     public const LAYOUTS_TWO_COLUMN = 'layouts.pages.two-columns-page';
     public const LAYOUTS_ONE_COLUMN = 'layouts.pages.single-column-page';
 
+    public const PARTIAL_SOCIAL = 'layouts.partial.social';
+
     public const METRICS = 'layouts.partial.metrics';
 
     public const PAGES_INDEX         = 'pages.index';
