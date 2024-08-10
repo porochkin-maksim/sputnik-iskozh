@@ -24,6 +24,7 @@ abstract class RouteNames
 
     public const NEWS             = 'news.index';
     public const NEWS_LIST        = 'news.list';
+    public const NEWS_LIST_ALL    = 'news.list.all';
     public const NEWS_CREATE      = 'news.create';
     public const NEWS_SHOW        = 'news.show';
     public const NEWS_EDIT        = 'news.edit';
@@ -32,6 +33,10 @@ abstract class RouteNames
     public const NEWS_FILE_SAVE   = 'news.file.save';
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
+
+    public const ANNOUNCEMENTS      = 'announcements.index';
+    public const ANNOUNCEMENTS_LIST = 'announcements.list';
+    public const ANNOUNCEMENTS_SHOW = 'announcements.show';
 
     public const FILES         = 'files.index';
     public const FILES_LIST    = 'files.list';
@@ -69,22 +74,23 @@ abstract class RouteNames
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS   => 'Контакты',
-            self::GARBAGE    => 'Вывоз мусора',
-            self::PRIVACY    => 'Политика обработки персональных данных',
-            self::REGULATION => 'Устав',
-            self::RUBRICS    => 'Рубрикатор',
+            self::CONTACTS      => 'Контакты',
+            self::GARBAGE       => 'Вывоз мусора',
+            self::PRIVACY       => 'Политика обработки персональных данных',
+            self::REGULATION    => 'Устав',
+            self::RUBRICS       => 'Рубрикатор',
 
-            self::HOME       => 'Личный кабинет',
-            self::PROFILE    => 'Профиль',
-            self::LOGOUT     => 'Выйти',
+            self::HOME          => 'Личный кабинет',
+            self::PROFILE       => 'Профиль',
+            self::LOGOUT        => 'Выйти',
 
-            self::OPTIONS    => 'Настройки',
+            self::OPTIONS       => 'Настройки',
 
-            self::FILES      => 'Файлы',
-            self::NEWS       => 'Новости',
-            self::REPORTS    => 'Отчёты',
-            default          => $default,
+            self::FILES         => 'Файлы',
+            self::NEWS          => 'Новости',
+            self::ANNOUNCEMENTS => 'Объявления',
+            self::REPORTS       => 'Отчёты',
+            default             => $default,
         };
     }
 }

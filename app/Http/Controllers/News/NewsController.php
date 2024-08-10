@@ -56,13 +56,17 @@ class NewsController extends Controller
         ]);
     }
 
-    public function show(int $id): View
+    public function show(int $id): mixed
     {
         $news = $this->newsService->getById($id);
         $edit = Auth::id();
 
         if ( ! $news) {
             abort(404);
+        }
+
+        if ($news->getCategory() !== CategoryEnum::DEFAULT) {
+            return redirect($news->url());
         }
 
         return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
@@ -90,6 +94,7 @@ class NewsController extends Controller
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT)
             ->setSortOrderDesc()
+            ->setCategory(CategoryEnum::DEFAULT)
             ->setWithFiles();
 
         if ( ! $canEdit) {
@@ -102,6 +107,27 @@ class NewsController extends Controller
             ResponsesEnum::NEWS  => $news->getItems(),
             ResponsesEnum::TOTAL => $news->getTotal(),
             ResponsesEnum::EDIT  => $canEdit,
+        ]);
+    }
+
+    public function listAll(SearchRequest $request): JsonResponse
+    {
+        $searcher = $request->dto();
+        $searcher
+            ->setSortOrderProperty(News::PUBLISHED_AT)
+            ->setSortOrderDesc()
+            ->setWithFiles();
+
+        if ( ! $this->canEdit()) {
+            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
+        }
+
+        $news = $this->newsService->search($searcher);
+
+        return response()->json([
+            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::TOTAL => $news->getTotal(),
+            ResponsesEnum::EDIT  => false,
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace Core\Domains\News\Models;
 use Carbon\Carbon;
 use Core\Domains\File\Collections\Files;
 use Core\Domains\News\Enums\CategoryEnum;
+use Core\Domains\News\NewsLocator;
 use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Domains\Common\Traits\TimestampsTrait;
@@ -127,13 +128,13 @@ class NewsDTO implements \JsonSerializable
             'files'       => $this->getFiles(),
             'isLock'      => $this->isLock(),
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
-            'url'         => $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null,
+            'url'         => $this->url(),
         ];
     }
 
     public function url(): ?string
     {
-        return $this->id ? route(RouteNames::NEWS_SHOW, $this->id) : null;
+        return NewsLocator::UrlFactory()->makeUrl($this);
     }
 
     public function getImages(): Files

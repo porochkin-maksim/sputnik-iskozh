@@ -9,13 +9,13 @@ enum CategoryEnum: int
     use EnumCommonTrait;
 
     case DEFAULT      = 0;
-    case NOTIFICATION = 1;
+    case ANNOUNCEMENT = 1;
 
     public function name(): string
     {
         return match ($this) {
             self::DEFAULT      => 'Разное',
-            self::NOTIFICATION => 'Объявление',
+            self::ANNOUNCEMENT => 'Объявление',
         };
     }
 }

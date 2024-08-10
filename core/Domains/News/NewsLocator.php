@@ -4,6 +4,7 @@ namespace Core\Domains\News;
 
 use Core\Domains\File\FileLocator;
 use Core\Domains\News\Factories\NewsFactory;
+use Core\Domains\News\Factories\UrlFactory;
 use Core\Domains\News\Repositories\FileRepository;
 use Core\Domains\News\Repositories\NewsRepository;
 use Core\Domains\News\Services\FileService;
@@ -11,11 +12,12 @@ use Core\Domains\News\Services\NewsService;
 
 class NewsLocator
 {
-    private static NewsService      $reportService;
+    private static NewsService    $reportService;
     private static NewsFactory    $reportFactory;
     private static NewsRepository $reportRepository;
     private static FileService    $fileService;
-    private static FileRepository   $fileRepository;
+    private static FileRepository $fileRepository;
+    private static UrlFactory     $urlFactory;
 
     public static function NewsService(): NewsService
     {
@@ -69,5 +71,14 @@ class NewsLocator
         }
 
         return self::$fileRepository;
+    }
+
+    public static function UrlFactory(): UrlFactory
+    {
+        if ( ! isset(self::$urlFactory)) {
+            self::$urlFactory = new UrlFactory();
+        }
+
+        return self::$urlFactory;
     }
 }

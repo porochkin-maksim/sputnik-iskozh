@@ -8,6 +8,7 @@ use Core\Resources\RouteNames;
 
 $routes = [
     RouteNames::CONTACTS,
+    RouteNames::ANNOUNCEMENTS,
     RouteNames::NEWS,
     RouteNames::GARBAGE,
     RouteNames::FILES,

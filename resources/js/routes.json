@@ -17,6 +17,26 @@
         "uri": "\/home\/json\/register",
         "args": []
     },
+    "announcementsIndex": {
+        "name": "announcements.index",
+        "method": "get",
+        "uri": "\/announcements",
+        "args": []
+    },
+    "announcementsList": {
+        "name": "announcements.list",
+        "method": "get",
+        "uri": "\/announcements\/json\/list",
+        "args": []
+    },
+    "announcementsShow": {
+        "name": "announcements.show",
+        "method": "get",
+        "uri": "\/announcements\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "contacts": {
         "name": "contacts",
         "method": "get",
@@ -205,6 +225,12 @@
         "name": "news.list",
         "method": "get",
         "uri": "\/news\/json\/list",
+        "args": []
+    },
+    "newsListAll": {
+        "name": "news.list.all",
+        "method": "get",
+        "uri": "\/news\/json\/list\/all",
         "args": []
     },
     "newsSave": {

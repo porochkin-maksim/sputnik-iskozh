@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import Url           from '../../utils/Url.js';
-import ResponseError from '../../mixin/ResponseError.js';
-import Pagination    from '../common/pagination/Pagination.vue';
-import NewsListItem  from './NewsItem.vue';
+import Url           from '../../../utils/Url.js';
+import ResponseError from '../../../mixin/ResponseError.js';
+import Pagination    from '../../common/pagination/Pagination.vue';
+import NewsListItem  from './../NewsItem.vue';
 
 export default {
     components: {
@@ -63,7 +63,7 @@ export default {
     },
     methods : {
         loadList () {
-            window.axios[Url.Routes.newsList.method](Url.Routes.newsList.uri, {
+            window.axios[Url.Routes.newsList.method](Url.Routes.announcementsList.uri, {
                 params: {
                     limit: this.perPage,
                     skip : this.skip,

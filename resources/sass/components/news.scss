@@ -6,11 +6,13 @@
 
     .title {
         h1 {
-            margin : 0;
+            line-height : 0.8em;
+            margin      : 0;
         }
 
         .name {
             text-decoration : none;
+            font-size       : 0.8em;
             color           : $color-primary;
         }
 

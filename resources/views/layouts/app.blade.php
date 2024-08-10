@@ -42,7 +42,7 @@ $allowRobots = Route::is(RouteNames::INDEX)
     @stack(SectionNames::SCRIPTS)
     @yield(SectionNames::METRICS)
 </head>
-<body>
+<body class="overflow-x-hidden">
 <div id="app">
     <div class="d-flex justify-content-between flex-column min-vh-100">
         <div>
