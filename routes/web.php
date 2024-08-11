@@ -6,6 +6,7 @@ use Core\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 
 include __DIR__ . '/web/auth.php';
+include __DIR__ . '/web/session.php';
 
 Route::get('/', [Controllers\PagesController::class, 'index'])->name(RouteNames::INDEX);
 Route::get('/contacts', [Controllers\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);

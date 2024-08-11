@@ -421,6 +421,12 @@
         "uri": "\/sanctum\/csrf-cookie",
         "args": []
     },
+    "sessionStore": {
+        "name": "session.store",
+        "method": "post",
+        "uri": "\/session",
+        "args": []
+    },
     "verificationNotice": {
         "name": "verification.notice",
         "method": "get",
