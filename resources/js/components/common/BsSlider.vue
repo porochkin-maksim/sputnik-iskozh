@@ -14,7 +14,9 @@
                    class="carousel-item"
                    :class="index === 0 ? 'active' : ''"
                 >
-                    <img :src="img.url" class="d-block mx-auto" alt="">
+                    <div class="carousel-img-container">
+                        <img :src="img.url" alt="">
+                    </div>
                 </a>
             </div>
             <button class="carousel-control-prev" type="button" :data-bs-target="'#'+id" data-bs-slide="prev">
