@@ -1,8 +1,10 @@
 .slider {
     height           : 50vh;
+    border-radius    : 15px;
+    overflow: hidden;
 
     background-color : $light-green;
-    border : 1px solid $light-green;
+    border           : 1px solid $light-green;
 
     .carousel {
         height : inherit !important;

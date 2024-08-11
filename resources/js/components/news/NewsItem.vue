@@ -8,7 +8,8 @@
             </div>
         </wrapper>
     </div>
-    <div :style="[articleStyle]" class="position-relative">
+    <div :style="[articleStyle]"
+         class="position-relative">
         <div class="news-item w-100"
              :ref="(el) => (newsElementRef = el)">
             <div class="title">
@@ -22,9 +23,11 @@
             </div>
 
             <div class="body">
-                <bs-slider :images="images"
-                           :id="sliderId"
-                           class="mt-3" />
+                <div class="news-slider">
+                    <bs-slider :images="images"
+                               :id="sliderId"
+                               class="mt-3" />
+                </div>
                 <div class="article ql-editor px-0"
                      v-html="news.article"
                      v-if="news.article"
@@ -109,7 +112,7 @@ export default {
             newsElementRef    : null,
             forceExpandArticle: false,
 
-            id: this.news.id,
+            id              : this.news.id,
             maxArticleHeight: 680,
         };
     },
