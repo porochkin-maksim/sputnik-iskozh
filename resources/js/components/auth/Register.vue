@@ -38,7 +38,7 @@
 
         <div class="d-grid my-3">
             <button type="submit"
-                    class="btn btn-primary">Зарегистрироваться
+                    class="btn btn-success">Зарегистрироваться
             </button>
         </div>
     </form>

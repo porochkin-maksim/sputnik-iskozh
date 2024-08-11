@@ -2,7 +2,7 @@
     <page-template>
         <template v-slot:sub v-if="edit">
             <div class="d-flex justify-content-between">
-                <button class="btn btn-primary"
+                <button class="btn btn-success"
                         v-on:click="showFormAction">Добавить новость
                 </button>
             </div>

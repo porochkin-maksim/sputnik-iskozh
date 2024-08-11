@@ -54,7 +54,7 @@
                                     />
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <button class="btn btn-sm btn-primary"
+                                    <button class="btn btn-sm btn-success"
                                             @click="createNewFolder"
                                             :disabled="!folderName"
                                     >
@@ -80,7 +80,7 @@
                                     />
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <button class="btn btn-sm btn-primary"
+                                    <button class="btn btn-sm btn-success"
                                             @click="saveFile"
                                             :disabled="!fileName"
                                     >

@@ -2,10 +2,10 @@
     <div class="file">
         <template v-if="modeEdit" class="form">
             <div class="form input-group input-group-sm">
-                <button class="btn btn-primary" @click="save">
+                <button class="btn btn-success" @click="save">
                     <i class="fa fa-save"></i>
                 </button>
-                <button class="btn btn-primary" @click="$refs.fileElem.click">
+                <button class="btn btn-success" @click="$refs.fileElem.click">
                     <i class="fa fa-upload"></i>
                 </button>
                 <button class="btn btn-light border" @click="toggleMode">
@@ -28,7 +28,7 @@
             <div class="d-inline-flex align-items-center">
                 <template v-if="edit">
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-primary" @click="toggleMode">
+                        <button class="btn btn-success" @click="toggleMode">
                             <i class="fa fa-edit"></i>
                         </button>
                         <template v-if="showUpDownButtons">
@@ -45,7 +45,7 @@
                     </div>
                 </template>
 
-                <a class="btn btn-primary btn-sm mx-2" :href="file.url" :download="file.name">
+                <a class="btn btn-success btn-sm mx-2" :href="file.url" :download="file.name">
                     <i class="fa fa-download"></i>
                 </a>
 

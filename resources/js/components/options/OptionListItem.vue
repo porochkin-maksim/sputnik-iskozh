@@ -20,7 +20,7 @@
         <div class="footer">
             <div class="btn-group btn-group-sm"
                  v-if="edit">
-                <button class="btn btn-primary"
+                <button class="btn btn-success"
                         @click="modeEdit=1">
                     <i class="fa fa-edit"></i>&nbsp;Редактировать
                 </button>

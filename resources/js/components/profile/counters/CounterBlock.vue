@@ -15,7 +15,7 @@
                         />
                     </div>
                     <div class="card-footer d-flex justify-content-center">
-                        <button class="btn btn-primary" @click="saveAction" :disabled="!number">
+                        <button class="btn btn-success" @click="saveAction" :disabled="!number">
                             Добавить
                         </button>
                     </div>

@@ -3,7 +3,7 @@
         <div class="body">
             <template v-if="modeEdit">
                 <div class="form input-group input-group-sm">
-                    <button class="btn btn-primary" @click="save">
+                    <button class="btn btn-success" @click="save">
                         <i class="fa fa-save"></i>
                     </button>
                     <button class="btn btn-light border" @click="toggleMode">
@@ -21,7 +21,7 @@
                 <div class="d-inline-flex align-items-center">
                     <template v-if="edit">
                         <div class="btn-group btn-group-sm">
-                            <button class="btn btn-primary btn-sm"
+                            <button class="btn btn-success btn-sm"
                                     @click="toggleMode"
                             >
                                 <i class="fa fa-edit"></i>
@@ -49,7 +49,7 @@
                         &nbsp;
                     </template>
 
-                    <a class="btn btn-primary btn-sm me-2"
+                    <a class="btn btn-success btn-sm me-2"
                        :href="file.url"
                        :download="file.name">
                         <i class="fa fa-download"></i>

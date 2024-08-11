@@ -49,7 +49,7 @@
 
                 <div class="btn-group btn-group-sm mt-2"
                      v-if="edit">
-                    <button class="btn btn-primary"
+                    <button class="btn btn-success"
                             @click="modeEdit=1">
                         <i class="fa fa-edit"></i>&nbsp;Редактировать
                     </button>
