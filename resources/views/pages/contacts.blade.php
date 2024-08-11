@@ -11,7 +11,7 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
 
 ?>
 
-@extends(ViewNames::LAYOUTS_ONE_COLUMN)
+@extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
     <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
@@ -22,7 +22,12 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
     @include(ViewNames::METRICS)
 @endsection
 
-@section(SectionNames::MAIN)
+@section(SectionNames::CONTENT)
+    <h1 class="border-bottom">
+        <a href="<?= $openGraph->getUrl() ?>">
+            {{ RouteNames::name(Route::current()?->getName()) }}
+        </a>
+    </h1>
     <table class="table mb-0">
         <tbody>
         <tr>

@@ -3,6 +3,7 @@
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\StaticFileLocator;
 use Illuminate\Support\Facades\Route;
 
 $allowRobots = Route::is(RouteNames::INDEX)
@@ -66,11 +67,13 @@ $allowRobots = Route::is(RouteNames::INDEX)
 <div id="app">
     <div class="d-flex justify-content-between flex-column min-vh-100">
         <div>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top border-bottom"
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"
                  id="topNavBar">
                 <div class="container-fluid main px-3">
                     <a class="navbar-brand"
                        href="{{ url('/') }}">
+                        <div class="logo"
+                             style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
                         {{ env('APP_NAME') }}
                     </a>
                     <button class="navbar-toggler"
@@ -98,7 +101,7 @@ $allowRobots = Route::is(RouteNames::INDEX)
                 @yield(SectionNames::CONTENT)
             </main>
         </div>
-        <footer class="border-top bg-light">
+        <footer class="border-top">
             <div class="d-flex justify-content-center py-3">
                 <div class="social d-flex flex-column align-items-center">
                     @include(ViewNames::PARTIAL_SOCIAL)

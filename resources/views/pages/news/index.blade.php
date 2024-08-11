@@ -22,7 +22,7 @@ $openGraph->setUrl(route(RouteNames::NEWS));
 @endsection
 
 @section(SectionNames::CONTENT)
-    <h1>
+    <h1 class="border-bottom">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}
         </a>

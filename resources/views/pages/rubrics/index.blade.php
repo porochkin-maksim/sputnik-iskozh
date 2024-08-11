@@ -23,7 +23,11 @@ $openGraph->setUrl(route(RouteNames::RUBRICS));
 @endsection
 
 @section(SectionNames::CONTENT)
-    <h1>Рубрикатор</h1>
+    <h1 class="border-bottom">
+        <a href="<?= $openGraph->getUrl() ?>">
+            {{ RouteNames::name(Route::current()?->getName()) }}
+        </a>
+    </h1>
 
     <h3 class="text-center">Рейдерский захват СНТ: теория и практика</h3>
     <div class="d-flex justify-content-center w-100 mb-2">

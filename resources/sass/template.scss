@@ -1,0 +1,42 @@
+#topNavBar {
+    background-color : #019F83 !important;
+
+    .nav-link {
+        color : #FFF !important;
+    }
+
+    .navbar-brand {
+        display     : flex;
+        align-items : center;
+
+        .logo {
+            margin-right    : 10px;
+            height          : 30px;
+            width           : 30px;
+            background-size : contain;
+            border-radius   : 50%;
+        }
+    }
+}
+
+main {
+    h1, h2, h3, h4, h5, h6,
+    .btn-link,
+    a:not(.btn) {
+        color : $default-green;
+    }
+}
+
+footer {
+    background-color : $light-green;
+}
+
+hr {
+    border-color : $default-green;
+}
+
+.border-top,
+.border-bottom {
+    border-color : $default-green !important;
+}
+
