@@ -11,6 +11,7 @@
         <template v-for="(item, index) in news">
             <news-list-item :news="item"
                             :edit="edit"
+                            :is-list="true"
                             @updated="loadList"
             />
             <hr>

@@ -5,6 +5,7 @@
                 <div class="news-list w-100" v-if="news.length">
                     <template v-for="(item, index) in news">
                         <news-list-item :news="item"
+                                        :is-list="true"
                                         :edit="false"
                         />
                         <hr>
