@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Counter;
 
 use App\Http\Controllers\Controller;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Counter\CounterLocator;
@@ -57,7 +58,7 @@ class CounterController extends Controller
 
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderDesc()
+            ->setSortOrderProperty('id', SearcherInterface::SORT_ORDER_DESC)
             ->setAccountId($account->getId());
 
         $counter = $this->counterService->search($searcher);

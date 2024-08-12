@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
@@ -67,7 +68,7 @@ class ReportsController extends Controller
     {
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderDesc()
+            ->setSortOrderProperty('id', SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
 
         $reports = $this->reportService->search($searcher);

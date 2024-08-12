@@ -92,8 +92,7 @@ class NewsController extends Controller
 
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT)
-            ->setSortOrderDesc()
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::DEFAULT)
             ->setWithFiles();
 
@@ -114,8 +113,8 @@ class NewsController extends Controller
     {
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT)
-            ->setSortOrderDesc()
+            ->setSortOrderProperty(News::IS_LOCK, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
 
         if ( ! $this->canEdit()) {

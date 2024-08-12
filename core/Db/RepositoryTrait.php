@@ -2,6 +2,7 @@
 
 namespace Core\Db;
 
+use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\SearchResponse;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -114,7 +115,12 @@ trait RepositoryTrait
                     }
 
                 }
-            })->orderBy($searcher->getSortProperty(), $searcher->getSortOrder());
+            })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
+                foreach ($searcher->getSortProperties() as $sort) {
+                    /** @var Order $sort*/
+                    $query->orderBy($sort->getField(), $sort->getValue());
+                }
+            });
         }
 
         return $query;

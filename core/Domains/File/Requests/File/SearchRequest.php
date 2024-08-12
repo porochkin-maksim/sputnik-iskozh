@@ -29,12 +29,8 @@ class SearchRequest extends AbstractRequest
             }
         }
 
-        if ($this->getBool(self::SORT_DESC)) {
-            $result->setSortOrderDesc();
-        }
-
         if ($this->get(self::SORT_BY)) {
-            $result->setSortOrderProperty($this->get(self::SORT_BY));
+            $result->setSortOrderProperty($this->get(self::SORT_BY), $this->getBool(self::SORT_DESC) ? SearcherInterface::SORT_ORDER_DESC : SearcherInterface::SORT_ORDER_ASC);
         }
 
         return $result;

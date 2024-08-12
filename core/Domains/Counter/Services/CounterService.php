@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Counter\Services;
 
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Counter\Collections\Counters;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Models\CounterDTO;
@@ -62,7 +63,7 @@ readonly class CounterService
         $searcher = new CounterSearcher();
         $searcher
             ->setAccountId($id)
-            ->setSortOrderDesc();
+            ->setSortOrderProperty('id', SearcherInterface::SORT_ORDER_DESC);
 
         return $this->search($searcher)->getItems();
     }

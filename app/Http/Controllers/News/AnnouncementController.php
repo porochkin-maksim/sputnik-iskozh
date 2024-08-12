@@ -77,8 +77,7 @@ class AnnouncementController extends Controller
 
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT)
-            ->setSortOrderDesc()
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::ANNOUNCEMENT)
             ->setWithFiles();
 

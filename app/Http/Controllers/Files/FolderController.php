@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Files;
 
 use App\Http\Controllers\Controller;
 use App\Models\File\Folder;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
@@ -40,7 +41,7 @@ class FolderController extends Controller
     public function list(SearchRequest $request): JsonResponse
     {
         $searcher = $request->dto();
-        $searcher->setSortOrderProperty(Folder::NAME);
+        $searcher->setSortOrderProperty(Folder::NAME, SearcherInterface::SORT_ORDER_ASC);
 
         $folders = $this->folderService->search($searcher)->getItems();
 

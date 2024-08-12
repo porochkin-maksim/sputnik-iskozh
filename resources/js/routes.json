@@ -43,6 +43,12 @@
         "uri": "\/contacts",
         "args": []
     },
+    "cookieAgreement": {
+        "name": "cookie_agreement",
+        "method": "post",
+        "uri": "\/cookie-agreement",
+        "args": []
+    },
     "filesDelete": {
         "name": "files.delete",
         "method": "delete",

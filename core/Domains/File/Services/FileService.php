@@ -3,6 +3,7 @@
 namespace Core\Domains\File\Services;
 
 use App\Models\File\File;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\File\Collections\Files;
 use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\File\Models\FileDTO;
@@ -71,8 +72,7 @@ readonly class FileService
         else {
             $searcher = new FileSearcher();
             $searcher->setType($dto->getType())
-                ->setSortOrderProperty(File::ORDER)
-                ->setSortOrderDesc()
+                ->setSortOrderProperty(File::ORDER, SearcherInterface::SORT_ORDER_DESC)
                 ->setLimit(1);
 
             $lastFile = $this->search($searcher)->getItems()->first();
@@ -128,8 +128,7 @@ readonly class FileService
     {
         $searcher = new FileSearcher();
         $searcher->setType($file->getType())
-            ->setSortOrderAsc()
-            ->setSortOrderProperty(File::ORDER)
+            ->setSortOrderProperty(File::ORDER, SearcherInterface::SORT_ORDER_ASC)
             ->setRelatedId($file->getRelatedId());
 
         $files = $this->search($searcher)->getItems();

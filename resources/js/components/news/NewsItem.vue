@@ -16,6 +16,9 @@
                 <h1>
                     <a class="name"
                        :href="news.url">
+                        <template v-if="news.isLock">
+                            <i class="fa fa-bolt text-warning"></i>&nbsp;
+                        </template>
                         {{ news.title ? news.title : 'Без названия' }}
                     </a>
                 </h1>
