@@ -1,27 +1,4 @@
-.news-item,
-.news-list .news-item {
-    overflow-x : hidden;
-
-    &:not(:last-child) {
-        margin-bottom : 10px;
-    }
-
-    .title {
-        h1 {
-            line-height : 0.8em;
-            margin      : 0;
-        }
-
-        .name {
-            text-decoration : none;
-            font-size       : 0.8em;
-        }
-
-        .date {
-            padding-left : 4px;
-        }
-    }
-
+.news-item {
     .news-item-wrapper {
         position         : absolute;
         height           : 100px;

@@ -1,31 +1,24 @@
-.custom-list {
-    &.list {
-        >.list-item {
-            >.body {
-                padding-bottom: 1em;
-            }
-            >.footer {
-                padding-bottom : 1em;
+.custom-item {
+    overflow-x : hidden;
 
-                .files {
-                    .file {
-
-                    }
-                }
-            }
-
-            border-bottom : 1px solid $border-color;
-        }
+    &:not(:last-child) {
+        margin-bottom : 10px;
     }
 
-    .list-item {
-        margin-bottom : 2em;
-        border-radius : $border-radius;
+    .title {
+        h1 {
+            line-height : 0.8em;
+            margin      : 0;
+            overflow    : hidden;
+        }
 
-        .id,
+        .name {
+            text-decoration : none;
+            font-size       : 0.8em;
+        }
+
         .date {
-            color      : $color-gray;
-            font-style : italic;
+            padding-left : 4px;
         }
     }
 }

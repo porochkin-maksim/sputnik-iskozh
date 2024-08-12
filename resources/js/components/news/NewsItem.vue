@@ -10,7 +10,7 @@
     </div>
     <div :style="[articleStyle]"
          class="position-relative">
-        <div class="news-item w-100"
+        <div class="custom-item news-item w-100"
              :ref="(el) => (newsElementRef = el)">
             <div class="title">
                 <h1>

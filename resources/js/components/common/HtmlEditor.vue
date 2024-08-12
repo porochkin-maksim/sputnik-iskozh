@@ -1,5 +1,5 @@
 <template>
-    <div class="h-100 position-relative">
+    <div class="h-100 position-relative overflow-y-hidden border-bottom">
         <div class="html-editor"
              :class="[showCode ? 'd-none' : '']">
             <quill-editor :toolbar="toolbar"
@@ -12,9 +12,9 @@
                   :class="[!showCode ? 'd-none' : '']"
                   @change="update"
                   v-model="content"></textarea>
-        <button class="badge bg-secondary d-flex justify-content-center mb-3 position-absolute right-0 bottom-0 z-1"
-                @click="switchMode">{{ switchModeText }}
-        </button>
+<!--        <button class="badge bg-secondary d-flex justify-content-center mb-3 position-absolute right-0 bottom-0 z-1"-->
+<!--                @click="switchMode">{{ switchModeText }}-->
+<!--        </button>-->
     </div>
 </template>
 
