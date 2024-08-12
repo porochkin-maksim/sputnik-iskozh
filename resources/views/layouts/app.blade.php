@@ -4,9 +4,9 @@ use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\Images\StaticFileLocator;
-use Core\Session\SessionNames;
+use Core\Session\CookieNames;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 
 $allowRobots = Route::is(RouteNames::INDEX)
     || Route::is(RouteNames::CONTACTS)
@@ -112,13 +112,13 @@ $allowRobots = Route::is(RouteNames::INDEX)
         </footer>
     </div>
 </div>
-@if (!Session::has(SessionNames::COOKIE_AGREEMENT))
+@if (!Cookie::has(CookieNames::COOKIE_AGREEMENT))
     <div class="d-block alert alert-info w-100 sticky-bottom text-center m-0"
          id="cookie">
         Сайт использует cookie, потому что без них не работает ни один сайт в интернете
         <button class="btn btn-success ms-2"
                 type="submit"
-                onclick="event.preventDefault();axios.post('<?= route(RouteNames::SESSION_STORE) ?>', {key: '<?= SessionNames::COOKIE_AGREEMENT ?>', value: true}, $('#cookie').remove())">
+                onclick="event.preventDefault();axios.post('<?= route(RouteNames::COOKIE_AGREEMENT) ?>', {}, $('#cookie').remove())">
             Прекрасно
         </button>
     </div>

@@ -13,7 +13,8 @@ abstract class RouteNames
     public const REGULATION = 'regulation';
     public const RUBRICS    = 'rubrics';
 
-    public const SESSION_STORE = 'session.store';
+    public const SESSION_STORE    = 'session.store';
+    public const COOKIE_AGREEMENT = 'cookie_agreement';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
