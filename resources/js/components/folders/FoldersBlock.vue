@@ -1,7 +1,7 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <div class="btn-group mb-2">
+            <div class="btn-group mb-3">
                 <a class="btn border"
                    v-if="selectedFolder"
                    @click="exitFolder(selectedFolder)">
@@ -11,12 +11,12 @@
                     <button class="btn btn-light border"
                             @click="toggleFolderFormAction(null)"
                     >
-                        + <i class="fa fa-folder-o"></i>
+                        добавить папку <i class="fa fa-folder-o"></i>
                     </button>
                     <button class="btn btn-light border"
                             @click="chooseFile()"
                     >
-                        + <i class="fa fa-file-o"></i>
+                        загрузить файл <i class="fa fa-file-o"></i>
                     </button>
                     <template v-if="movedFileId">
                         <button class="btn btn-light border"

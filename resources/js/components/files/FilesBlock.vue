@@ -1,18 +1,17 @@
 <template>
     <page-template>
-        <template v-slot:sub
-                  v-if="edit">
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-success"
-                        @click="chooseFile">Загрузить файл
-                </button>
-                <input class="d-none"
-                       type="file"
-                       ref="fileElem"
-                       @change="uploadFile">
-            </div>
-        </template>
         <template v-slot:main>
+            <template v-if="edit">
+                <div class="d-flex justify-content-between mb-2">
+                    <button class="btn btn-success"
+                            @click="chooseFile">Загрузить файл
+                    </button>
+                    <input class="d-none"
+                           type="file"
+                           ref="fileElem"
+                           @change="uploadFile">
+                </div>
+            </template>
             <file-list class="mt-3"
                        v-model:reloadList="reloadList"
                        v-model:canEdit="edit"
@@ -24,7 +23,7 @@
 <script>
 import Url           from '../../utils/Url.js';
 import ResponseError from '../../mixin/ResponseError.js';
-import PageTemplate  from '../pages/TwoColumnsPage.vue';
+import PageTemplate  from '../pages/SingleColumnPage.vue';
 import FileList      from './FileList.vue';
 
 export default {
