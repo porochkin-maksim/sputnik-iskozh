@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Files;
 use App\Http\Controllers\Controller;
 use App\Models\File\Folder;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\Permission;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FolderLocator;
 use Core\Domains\File\Requests\Folder\SaveRequest;
 use Core\Domains\File\Requests\Folder\SearchRequest;
@@ -16,17 +13,14 @@ use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class FolderController extends Controller
 {
     private FolderService $folderService;
-    private RoleService   $roleService;
 
     public function __construct()
     {
         $this->folderService = FolderLocator::FolderService();
-        $this->roleService   = RoleLocator::RoleService();
     }
 
     public function index(?string $folderUid = null): View
@@ -85,8 +79,6 @@ class FolderController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditFiles($role);
+        return \app::roleDecorator()->canEditFiles();
     }
 }

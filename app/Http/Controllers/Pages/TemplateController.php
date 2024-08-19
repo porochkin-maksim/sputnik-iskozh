@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\Permission;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -56,8 +54,6 @@ class TemplateController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditTemplates($role);
+        return \app::roleDecorator()->canEditTemplates();
     }
 }

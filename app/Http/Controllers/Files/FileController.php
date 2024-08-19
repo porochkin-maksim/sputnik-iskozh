@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Files;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\Permission;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\FileLocator;
 use Core\Domains\File\Requests\File\ChangeOrderRequest;
 use Core\Domains\File\Requests\File\MoveRequest;
@@ -18,17 +15,14 @@ use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class FileController extends Controller
 {
     private FileService $fileService;
-    private RoleService $roleService;
 
     public function __construct()
     {
         $this->fileService = FileLocator::FileService();
-        $this->roleService = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -153,8 +147,6 @@ class FileController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditFiles($role);
+        return \app::roleDecorator()->canEditFiles();
     }
 }

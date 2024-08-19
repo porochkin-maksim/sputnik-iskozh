@@ -5,9 +5,6 @@ namespace App\Http\Controllers\News;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\Permission;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\Enums\TypeEnum;
 use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
 use Core\Domains\News\Enums\CategoryEnum;
@@ -30,14 +27,12 @@ class NewsController extends Controller
     private NewsService $newsService;
     private NewsFactory $newsFactory;
     private FileService $fileService;
-    private RoleService $roleService;
 
     public function __construct()
     {
         $this->newsService = NewsLocator::NewsService();
         $this->newsFactory = NewsLocator::NewsFactory();
         $this->fileService = NewsLocator::FileService();
-        $this->roleService = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -202,8 +197,6 @@ class NewsController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditNews($role);
+        return \app::roleDecorator()->canEditNews();
     }
 }
