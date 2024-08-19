@@ -27,6 +27,13 @@ a:not(.btn) {
     color : $default-green;
 }
 
+.active {
+    .page-link {
+        background-color : $default-green;
+        border-color     : $default-green;
+    }
+}
+
 .form-check-input {
     &:checked {
         background-color : $default-green;
