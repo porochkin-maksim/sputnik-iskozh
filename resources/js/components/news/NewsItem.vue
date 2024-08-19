@@ -31,7 +31,7 @@
                                :id="sliderId"
                                class="mt-3" />
                 </div>
-                <div class="article ql-editor px-0"
+                <div class="article px-0"
                      v-html="news.article"
                      v-if="news.article"
                 ></div>
