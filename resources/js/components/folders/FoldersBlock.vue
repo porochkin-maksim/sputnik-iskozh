@@ -11,18 +11,18 @@
                     <button class="btn btn-light border"
                             @click="toggleFolderFormAction(null)"
                     >
-                        добавить папку <i class="fa fa-folder-o"></i>
+                        добавить папку
                     </button>
                     <button class="btn btn-light border"
                             @click="chooseFile()"
                     >
-                        загрузить файл <i class="fa fa-file-o"></i>
+                        загрузить файл
                     </button>
                     <template v-if="movedFileId">
                         <button class="btn btn-light border"
                                 @click="pasteFile()"
                         >
-                            <i class="fa fa-clipboard"></i>
+                            <i class="fa fa-clipboard"></i>&nbsp;Вставить
                         </button>
                     </template>
                 </template>
