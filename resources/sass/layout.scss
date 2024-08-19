@@ -47,8 +47,8 @@ main,
         flex-direction : column !important;
 
         .block-main {
-            width           : 100%;
-            padding-left    : unset;
+            width        : 100%;
+            padding-left : unset;
         }
     }
 }
@@ -87,17 +87,15 @@ main,
         }
 
         .block-main {
-            width        : 100%;
-            padding-left : unset;
-            justify-content: center;
+            width           : 100%;
+            padding-left    : unset;
+            justify-content : center;
         }
     }
 }
 
 .html-editor {
-    height : calc(100% - $font-size * 4);
-
-    &:is(textarea) {
-        height : calc(100% - $font-size);
+    div[role=application] {
+        height : 100% !important;
     }
 }

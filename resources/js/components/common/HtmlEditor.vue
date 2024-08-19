@@ -1,94 +1,50 @@
 <template>
     <div class="h-100 position-relative overflow-y-hidden border-bottom">
-        <div class="html-editor"
-             :class="[showCode ? 'd-none' : '']">
-            <quill-editor :toolbar="toolbar"
-                          v-model:content="content"
-                          contentType="html"
-                          @update:content="update"
-                          @ready="readyEvent" />
+        <div class="html-editor h-100 overflow-y-auto">
+            <Editor
+                v-model="content"
+                height="100%"
+                @change="onChange"
+                api-key="l8vjolgctraqq0x8nxujokup1bcd9x0u7knkh9cl9o08smty"
+                :init="{
+        toolbar_mode: 'sliding',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        }"
+            />
         </div>
-        <textarea class="html-editor form-control"
-                  :class="[!showCode ? 'd-none' : '']"
-                  @change="update"
-                  v-model="content"></textarea>
-<!--        <button class="badge bg-secondary d-flex justify-content-center mb-3 position-absolute right-0 bottom-0 z-1"-->
-<!--                @click="switchMode">{{ switchModeText }}-->
-<!--        </button>-->
     </div>
 </template>
 
 <script>
 /**
- * @see https://stackoverflow.com/questions/71468563/quill-editor-wont-display-v-model-in-input-field-vue-3
- * @see https://stackforgeeks.com/blog/how-to-configure-vuequilleditor-rich-editor-using-html-css-in-vue-js-3-framework
- * @see https://www.vuescript.com/quill-editor-3/
+ * @see https://www.tiny.cloud/my-account/integrate/#more
  */
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import Editor from '@tinymce/tinymce-vue';
 
 export default {
     name      : 'HtmlEditor',
     components: {
-        QuillEditor,
+        Editor,
     },
     props     : {
-        value: { type: String, default: '' },
+        value: String,
     },
     data () {
         return {
-            editor     : null,
-            content    : '',
-            toolbar    : [
-                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ align: [] }],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ 'script': 'sub' }, { 'script': 'super' }],
-                [{ 'indent': '-1' }, { 'indent': '+1' }],
-                [{ color: [] }, { background: [] }],
-                ['link', 'image', 'video'],
-                ['blockquote', 'code-block'],
-                ['clean'],
-            ],
-            quill      : null,
-            readyToSync: false,
-
-            showCode: false,
+            content: null,
         };
     },
     mounted () {
-        this.readyToSync = true;
-        this.content     = this.value;
+        this.content = this.value;
     },
     created () {
         this.content = this.value;
     },
-    methods : {
-        update () {
+    methods: {
+        onChange () {
+            console.log('onChange');
             this.$emit('update:value', this.content);
-        },
-        readyEvent (quill) {
-            if (!this.readyToSync) {
-                setTimeout(() => {
-                    this.readyEvent(quill);
-                }, 100);
-            }
-            else {
-                this.quill = quill;
-                setTimeout(() => {
-                    this.quill.root.innerHTML = this.value;
-                }, 100);
-            }
-        },
-        switchMode () {
-            this.showCode             = !this.showCode;
-            this.quill.root.innerHTML = this.content;
-        },
-    },
-    computed: {
-        switchModeText () {
-            return this.showCode ? 'Скрыть код' : 'Показать код';
         },
     },
 };

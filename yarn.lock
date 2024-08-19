@@ -229,6 +229,13 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
+"@tinymce/tinymce-vue@^5":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-vue/-/tinymce-vue-5.1.1.tgz#0879787e07833a4316b2eaf0417c7c6a2abce86b"
+  integrity sha512-iO57HOWesFOhsaqjA5Ea6sDvQBmJJH3/dq00Uvg7metlct2kLF+ctRgoDsetLt6gmeZ7COPftr814/XzqnJ/dg==
+  dependencies:
+    tinymce "^6.0.0 || ^5.5.1"
+
 "@types/cacheable-request@^6.0.1":
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/@types/cacheable-request/-/cacheable-request-6.0.3.tgz#a430b3260466ca7b5ca5bfd735693b36e7a9d183"
@@ -4624,6 +4631,11 @@ timers-browserify@^1.0.1:
   integrity sha512-PIxwAupJZiYU4JmVZYwXp9FKsHMXb5h0ZEFyuXTAn8WLHOlcij+FEcbrvDsom1o5dr1YggEtFbECvGCW2sT53Q==
   dependencies:
     process "~0.11.0"
+
+"tinymce@^6.0.0 || ^5.5.1":
+  version "6.8.4"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-6.8.4.tgz#53e1313ebfe5524b24c0fa45937d51fda058632d"
+  integrity sha512-okoJyxuPv1gzASxQDNgQbnUXOdAIyoOSXcXcZZu7tiW0PSKEdf3SdASxPBupRj+64/E3elHwVRnzSdo82Emqbg==
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"
