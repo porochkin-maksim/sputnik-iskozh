@@ -8,12 +8,19 @@ use Illuminate\Support\Facades\Route;
 include __DIR__ . '/web/auth.php';
 include __DIR__ . '/web/session.php';
 
-Route::get('/', [Controllers\PagesController::class, 'index'])->name(RouteNames::INDEX);
-Route::get('/contacts', [Controllers\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
-Route::get('/garbage', [Controllers\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
-Route::get('/privacy', [Controllers\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
-Route::get('/regulation', [Controllers\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
-Route::get('/rubrics', [Controllers\PagesController::class, 'rubrics'])->name(RouteNames::RUBRICS);
+Route::get('/', [Controllers\Pages\PagesController::class, 'index'])->name(RouteNames::INDEX);
+Route::get('/contacts', [Controllers\Pages\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
+Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
+Route::get('/privacy', [Controllers\Pages\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
+Route::get('/regulation', [Controllers\Pages\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
+Route::get('/rubrics', [Controllers\Pages\PagesController::class, 'rubrics'])->name(RouteNames::RUBRICS);
+
+Route::group(['prefix' => 'pages'], function () {
+    Route::group(['prefix' => 'json'], function () {
+        Route::post('/edit', [Controllers\Pages\TemplateController::class, 'get'])->name(RouteNames::TEMPLATE_GET);
+        Route::patch('/edit', [Controllers\Pages\TemplateController::class, 'update'])->name(RouteNames::TEMPLATE_UPDATE);
+    });
+});
 
 Route::group(['prefix' => 'home'], function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], function () {

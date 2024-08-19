@@ -13,6 +13,9 @@ abstract class RouteNames
     public const REGULATION = 'regulation';
     public const RUBRICS    = 'rubrics';
 
+    public const TEMPLATE_GET    = 'template.get';
+    public const TEMPLATE_UPDATE = 'template.update';
+
     public const SESSION_STORE    = 'session.store';
     public const COOKIE_AGREEMENT = 'cookie_agreement';
 

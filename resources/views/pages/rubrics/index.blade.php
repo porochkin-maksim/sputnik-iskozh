@@ -23,6 +23,9 @@ $openGraph->setUrl(route(RouteNames::RUBRICS));
 @endsection
 
 @section(SectionNames::CONTENT)
+    @if(app::roleDecorator()->canEditTemplates())
+        <page-editor :template="'{{ ViewNames::PAGES_RUBRICS }}'"></page-editor>
+    @endif
     <h1 class="border-bottom">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}

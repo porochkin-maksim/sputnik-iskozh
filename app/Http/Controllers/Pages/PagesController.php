@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pages;
 
+use App\Http\Controllers\Controller;
 use Core\Resources\Views\ViewNames;
 use Core\Services\Images\Services\StaticFileService;
 use Core\Services\Images\StaticFileLocator;

@@ -14,6 +14,9 @@ use Core\Resources\Views\ViewNames;
 @endpush
 
 @section(SectionNames::CONTENT)
+    @if(app::roleDecorator()->canEditTemplates())
+        <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>
+    @endif
     <h1 class="border-bottom">Политика в&nbsp;отношении обработки персональных данных</h1>
     <div id="inputResult">
         <div class="row mb-4">

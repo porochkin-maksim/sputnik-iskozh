@@ -12,7 +12,6 @@ use Core\Domains\File\Enums\TypeEnum;
 use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
 use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\Factories\NewsFactory;
-use Core\Domains\News\Models\NewsDTO;
 use Core\Domains\News\NewsLocator;
 use Core\Domains\News\Requests\SaveRequest;
 use Core\Domains\News\Requests\SearchRequest;

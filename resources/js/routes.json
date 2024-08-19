@@ -433,6 +433,18 @@
         "uri": "\/session",
         "args": []
     },
+    "templateGet": {
+        "name": "template.get",
+        "method": "post",
+        "uri": "\/pages\/json\/edit",
+        "args": []
+    },
+    "templateUpdate": {
+        "name": "template.update",
+        "method": "patch",
+        "uri": "\/pages\/json\/edit",
+        "args": []
+    },
     "verificationNotice": {
         "name": "verification.notice",
         "method": "get",
