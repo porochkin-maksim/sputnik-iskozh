@@ -1,7 +1,7 @@
 <template>
     <div class="card form"
          :class="alertClass">
-        <div class="card-body">
+        <div class="card-body" v-if="loaded">
             <div class="row">
                 <div class="col-lg-9">
                     <div class="">
@@ -94,6 +94,7 @@ export default {
             lock        : null,
             category    : null,
             categories  : [],
+            loaded      : false,
         };
     },
     methods: {
@@ -146,6 +147,8 @@ export default {
             this.published_at = news.publishedAt;
             this.lock         = news.isLock;
             this.category     = news.category;
+
+            this.loaded = true;
         },
     },
 };
