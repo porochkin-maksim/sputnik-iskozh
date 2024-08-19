@@ -12,9 +12,6 @@
                   :class="[!showCode ? 'd-none' : '']"
                   @change="update"
                   v-model="content"></textarea>
-        <!--        <button class="badge bg-secondary d-flex justify-content-center mb-3 position-absolute right-0 bottom-0 z-1"-->
-        <!--                @click="switchMode">{{ switchModeText }}-->
-        <!--        </button>-->
     </div>
 </template>
 
@@ -28,7 +25,6 @@ import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
-    name      : 'HtmlEditor',
     components: {
         QuillEditor,
     },
@@ -80,15 +76,6 @@ export default {
                     this.quill.root.innerHTML = this.value;
                 }, 100);
             }
-        },
-        switchMode () {
-            this.showCode             = !this.showCode;
-            this.quill.root.innerHTML = this.content;
-        },
-    },
-    computed: {
-        switchModeText () {
-            return this.showCode ? 'Скрыть код' : 'Показать код';
         },
     },
 };

@@ -42,7 +42,6 @@ export default {
     },
     methods: {
         onChange () {
-            console.log('onChange');
             this.$emit('update:value', this.content);
         },
     },
