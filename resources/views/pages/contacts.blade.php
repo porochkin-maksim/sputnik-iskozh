@@ -14,7 +14,8 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
 @extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
-    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
+    <link rel="canonical"
+          href="{{ $openGraph->getUrl() }}" />
     {!! $openGraph->toMetaTags() !!}
 @endpush
 
@@ -38,7 +39,28 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         </tr>
         <tr>
             <th>Председатель</th>
-            <td>Крылов Алексей Владимирович</td>
+            <td>
+                <div>
+                    Крылов Алексей Владимирович
+                </div>
+                <div>
+                    <a href="tel:+79001128403"><i class="fa fa-phone"></i> +7(900)112-84-03</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>Электрик</th>
+            <td>
+                <div>
+                    Дмитрий
+                </div>
+                <div>
+                    <a href="tel:+79105330631"><i class="fa fa-phone"></i> +7(910)533-06-31</a>
+                </div>
+                <div>
+                    <a href="tel:+79607150046"><i class="fa fa-phone"></i> +7(960)715-00-46</a>
+                </div>
+            </td>
         </tr>
         <tr>
             <th colspan="2">&nbsp;</th>
