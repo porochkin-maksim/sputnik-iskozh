@@ -148,8 +148,12 @@ readonly class FileService
             return $file;
         });
 
-        foreach ($files as $f) {
-            $this->save($f);
+
+        $models = collect($this->fileRepository->getByIds($files->getIds()));
+        foreach ($files as $file) {
+            $model = $models->where('id', $file->getId())->first();
+            $model = $this->fileFactory->makeModelFromDto($file, $model);
+            $this->fileRepository->save($model);
         }
     }
 
