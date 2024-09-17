@@ -8,6 +8,7 @@ enum RequestArgumentsEnum: string
     public const ALL             = 'all';
     public const CATEGORY        = 'category';
     public const DATA            = 'data';
+    public const DESCRIPTION     = 'description';
     public const EMAIL           = 'email';
     public const END_AT          = 'end_at';
     public const FIRST_NAME      = 'first_name';

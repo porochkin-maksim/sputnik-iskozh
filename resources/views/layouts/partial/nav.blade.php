@@ -13,6 +13,7 @@ $routes = [
     RouteNames::GARBAGE,
     RouteNames::FILES,
     RouteNames::RUBRICS,
+    RouteNames::POLLS,
     RouteNames::REGULATION,
 ];
 ?>

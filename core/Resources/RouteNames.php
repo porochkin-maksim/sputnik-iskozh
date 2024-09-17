@@ -44,6 +44,14 @@ abstract class RouteNames
     public const ANNOUNCEMENTS_LIST = 'announcements.list';
     public const ANNOUNCEMENTS_SHOW = 'announcements.show';
 
+    public const POLLS        = 'polls.index';
+    public const POLLS_LIST   = 'polls.list';
+    public const POLLS_CREATE = 'polls.create';
+    public const POLLS_SHOW   = 'polls.show';
+    public const POLLS_EDIT   = 'polls.edit';
+    public const POLLS_SAVE   = 'polls.save';
+    public const POLLS_DELETE = 'polls.delete';
+
     public const FILES         = 'files.index';
     public const FILES_LIST    = 'files.list';
     public const FILES_SAVE    = 'files.save';
@@ -85,6 +93,7 @@ abstract class RouteNames
             self::PRIVACY       => 'Политика обработки персональных данных',
             self::REGULATION    => 'Устав',
             self::RUBRICS       => 'Рубрикатор',
+            self::POLLS         => 'Опросы',
 
             self::HOME          => 'Личный кабинет',
             self::PROFILE       => 'Профиль',

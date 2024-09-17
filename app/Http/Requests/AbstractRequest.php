@@ -21,6 +21,11 @@ abstract class AbstractRequest extends FormRequest
         return (int) parent::get($key, $default);
     }
 
+    public function getString(string $key, mixed $default = null): string
+    {
+        return (string) parent::get($key, $default);
+    }
+
     public function getBool(string $key): bool
     {
         if (parent::has($key)) {

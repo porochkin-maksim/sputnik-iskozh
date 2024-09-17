@@ -126,3 +126,15 @@ Route::group(['prefix' => 'folders'], function () {
         });
     });
 });
+
+Route::group(['prefix' => 'polls'], function () {
+    Route::get('/', [Controllers\Polls\PollController::class, 'index'])->name(RouteNames::POLLS);
+    Route::get('/{id}', [Controllers\Polls\PollController::class, 'show'])->name(RouteNames::POLLS_SHOW);
+    Route::group(['prefix' => 'json'], function () {
+        Route::get('/list', [Controllers\Polls\PollController::class, 'list'])->name(RouteNames::POLLS_LIST);
+        Route::get('/create', [Controllers\Polls\PollController::class, 'create'])->name(RouteNames::POLLS_CREATE);
+        Route::post('/save', [Controllers\Polls\PollController::class, 'save'])->name(RouteNames::POLLS_SAVE);
+        Route::get('/edit/{id}', [Controllers\Polls\PollController::class, 'edit'])->name(RouteNames::POLLS_EDIT);
+        Route::delete('/delete/{id}', [Controllers\Polls\PollController::class, 'delete'])->name(RouteNames::POLLS_DELETE);
+    });
+});

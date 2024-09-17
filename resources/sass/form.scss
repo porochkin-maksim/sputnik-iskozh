@@ -33,6 +33,11 @@ form,
             border     : 0;
             box-shadow : none;
 
+            .label-text {
+                display    : block;
+                margin-top : 2px;
+            }
+
             &.label-input {
 
             }
@@ -53,5 +58,5 @@ form,
 }
 
 .label-checkbox {
-    cursor: pointer;
+    cursor : pointer;
 }

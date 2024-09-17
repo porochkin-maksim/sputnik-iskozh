@@ -50,4 +50,13 @@ abstract class Permission
 
         return false;
     }
+
+    public static function canEditPoll(?RoleDTO $role): bool
+    {
+        if ($role?->is(RoleIdEnum::ADMIN)) {
+            return true;
+        }
+
+        return false;
+    }
 }

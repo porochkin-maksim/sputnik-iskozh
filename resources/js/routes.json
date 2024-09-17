@@ -311,6 +311,54 @@
         "uri": "\/password\/reset",
         "args": []
     },
+    "pollsCreate": {
+        "name": "polls.create",
+        "method": "get",
+        "uri": "\/polls\/json\/create",
+        "args": []
+    },
+    "pollsDelete": {
+        "name": "polls.delete",
+        "method": "delete",
+        "uri": "\/polls\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "pollsEdit": {
+        "name": "polls.edit",
+        "method": "get",
+        "uri": "\/polls\/json\/edit\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "pollsIndex": {
+        "name": "polls.index",
+        "method": "get",
+        "uri": "\/polls",
+        "args": []
+    },
+    "pollsList": {
+        "name": "polls.list",
+        "method": "get",
+        "uri": "\/polls\/json\/list",
+        "args": []
+    },
+    "pollsSave": {
+        "name": "polls.save",
+        "method": "post",
+        "uri": "\/polls\/json\/save",
+        "args": []
+    },
+    "pollsShow": {
+        "name": "polls.show",
+        "method": "get",
+        "uri": "\/polls\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "privacy": {
         "name": "privacy",
         "method": "get",

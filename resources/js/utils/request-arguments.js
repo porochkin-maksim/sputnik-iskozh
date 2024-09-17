@@ -3,6 +3,7 @@ export default {
     all          : 'all',
     category     : 'category',
     data         : 'data',
+    description  : 'description',
     email        : 'email',
     endAt        : 'end_at',
     firstName    : 'first_name',
