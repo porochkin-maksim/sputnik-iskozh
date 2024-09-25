@@ -33,7 +33,7 @@ up: ## запуск приложения
 .PHONY: down
 down: ## остановка приложения
 	@./vendor/bin/sail stop
-	@docker-compose down -v
+	@docker compose down -v
 
 .PHONY: restart
 restart: ## перезапуск приложения
@@ -162,15 +162,15 @@ volume-rm: ## удалить "docker volumes" проекта
 #	@printf '\033[36mПроверка и создание сетей Docker \033[0m\n'
 #	@make create-docker-networks
 #	@printf '\033[36mЗапуск контейнеров\033[0m\n'
-#	@docker-compose up -d
+#	@docker compose up -d
 #	@printf '\033[36mИнициализация локального s3\033[0m\n'
 #	@docker run --rm -it "registry.bronevik.space/library/minio-bronevik:latest" sh -c "mc config host add bronevik http://s3.me.bronevik.space ${FILE_STORAGE_S3_KEY} ${FILE_STORAGE_S3_SECRET} && mc mb --ignore-existing bronevik/${FILE_STORAGE_S3_BUCKET_DOCUMENTS} bronevik/${FILE_STORAGE_S3_BUCKET_UPLOADS} bronevik/${FILE_STORAGE_S3_BUCKET_CACHE} bronevik/${FILE_STORAGE_S3_BUCKET_COMMON_CACHE} bronevik/${FILE_STORAGE_S3_BUCKET_FIN_INVOICE} bronevik/${FILE_STORAGE_S3_BUCKET_HBA_HOTEL_DUMPS}"
 #	@printf '\033[36mСборка приложения\033[0m\n'
 #	@./scripts/build-php8.sh "composer --working-dir=/srv install && composer --working-dir=/srv/api/supplier install && composer --working-dir=/srv/api/monolith install && composer --working-dir=/srv/api/monolith_v2 install && composer --working-dir=/srv/api/service/offers install && composer --working-dir=/srv/api/hotels/ install && composer --working-dir=/srv/app/bronevik/ install && composer --working-dir=/srv/app/avrora/ install && composer --working-dir=/web/bronevik/app/secure/ install && cd /srv && yarn install && yarn compile-text && yarn run development"
 #	@printf '\033[36mИнициализация тестовой базы\033[0m\n'
-#	@docker-compose exec php ./scripts/init-test-db.sh
+#	@docker compose exec php ./scripts/init-test-db.sh
 #	@printf '\033[36mВыполнение миграций\033[0m\n'
-#	@docker-compose exec php ./scripts/migrate.sh
+#	@docker compose exec php ./scripts/migrate.sh
 #	@printf '\033[36mКомпиляция файлов переводов\033[0m\n'
 #	@./scripts/build-php8.sh "/srv/config/CI/translate/lang_update_mo.sh"
 #	@printf '\033[36mВыдаю необходимые права\033[0m\n'
@@ -200,25 +200,25 @@ volume-rm: ## удалить "docker volumes" проекта
 #		--target=dev \
 #		.
 #	@printf '\033[36mЗапуск контейнеров\033[0m\n'
-#	@docker-compose up -d
+#	@docker compose up -d
 #
 #.PHONY: start
 #start: ## запуск приложения
-#	@docker-compose start
+#	@docker compose start
 #
 #.PHONY: stop
 #stop: ## остановка приложения
-#	@docker-compose stop
+#	@docker compose stop
 #
 #.PHONY: restart
 #restart: ## перезапуск приложения
-#	@docker-compose stop
-#	@docker-compose start
+#	@docker compose stop
+#	@docker compose start
 #
 #.PHONY: migrate
 #migrate: ## выполнение миграций
 #	@printf '\033[36mВыполнение миграций\033[0m\n'
-#	@docker-compose exec php ./scripts/migrate.sh
+#	@docker compose exec php ./scripts/migrate.sh
 #
 #.PHONY: migration-create
 #migration-create: ## Создание новой миграции (пример: migration-create db=finfin AlterSomeTable)
@@ -240,45 +240,45 @@ volume-rm: ## удалить "docker volumes" проекта
 #
 #.PHONY: mc
 #mc:
-#	@docker-compose exec minio mc $(filter-out $@,$(MAKECMDGOALS))
+#	@docker compose exec minio mc $(filter-out $@,$(MAKECMDGOALS))
 #
 #.PHONY: mc-init
 #mc-init:
-#	@docker-compose exec minio mc config host add bronevik http://s3.${LOCAL_BASE_DOMAIN} ${FILE_STORAGE_S3_KEY} ${FILE_STORAGE_S3_SECRET}
+#	@docker compose exec minio mc config host add bronevik http://s3.${LOCAL_BASE_DOMAIN} ${FILE_STORAGE_S3_KEY} ${FILE_STORAGE_S3_SECRET}
 #	@for bucket in "${FILE_STORAGE_S3_BUCKET_DOCUMENTS}" "${FILE_STORAGE_S3_BUCKET_UPLOADS}" "${FILE_STORAGE_S3_BUCKET_CACHE}" "${FILE_STORAGE_S3_BUCKET_COMMON_CACHE}" "${FILE_STORAGE_S3_BUCKET_FIN_INVOICE}" "${FILE_STORAGE_S3_BUCKET_HBA_HOTEL_DUMPS}" ; do \
-#		if ! [ -d ./var/s3/$${bucket} ] ; then docker-compose exec minio mc mb bronevik/$${bucket} ; fi \
+#		if ! [ -d ./var/s3/$${bucket} ] ; then docker compose exec minio mc mb bronevik/$${bucket} ; fi \
 #	done
 #
 #.PHONY: tests
 #tests: ## запуск тестов
-#	@docker-compose exec php bash -c "echo 'Tests in progress, please wait...'"
-#	@docker-compose exec php bash -c 'result=$$(cd /srv && ./vendor/bin/phpunit); \
+#	@docker compose exec php bash -c "echo 'Tests in progress, please wait...'"
+#	@docker compose exec php bash -c 'result=$$(cd /srv && ./vendor/bin/phpunit); \
 #		 echo "$$result"; \
 #		 echo $$result | grep -q "Notice:\|error\|errors\|failure\|failures" && echo "Errors found in test code (Notices, Warnings). Break." && exit 1 || exit 0'
 #
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/monolith/tests -c ./api/monolith/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/monolith_v2/tests -c ./api/monolith_v2/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/service/offers/tests -c ./api/service/offers/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./app/bronevik/core/tests -c ./app/bronevik/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./app/avrora/core/tests -c ./app/avrora/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /web/bronevik/ && ./vendor/bin/phpunit ./app/secure/core/tests -c ./app/secure/phpunit.xml"
-#	@docker-compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/hotels/core/tests -c ./api/hotels/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/monolith/tests -c ./api/monolith/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/monolith_v2/tests -c ./api/monolith_v2/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/service/offers/tests -c ./api/service/offers/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./app/bronevik/core/tests -c ./app/bronevik/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./app/avrora/core/tests -c ./app/avrora/phpunit.xml"
+#	@docker compose exec php bash -c "cd /web/bronevik/ && ./vendor/bin/phpunit ./app/secure/core/tests -c ./app/secure/phpunit.xml"
+#	@docker compose exec php bash -c "cd /srv && ./vendor/bin/phpunit ./api/hotels/core/tests -c ./api/hotels/phpunit.xml"
 #
 #.PHONY: bash-php
 #bash-php: ## запуск шелла в php контейнере
-#	@docker-compose exec php bash
+#	@docker compose exec php bash
 #
 #.PHONY: bash-nginx
 #bash-nginx: ## запуск шелла в nginx контейнере
-#	@docker-compose exec nginx bash
+#	@docker compose exec nginx bash
 #
 #.PHONY: logs-php
 #logs-php: ## просмотр логов php контейнера
-#	@docker-compose logs -f php
+#	@docker compose logs -f php
 #
 #.PHONY: logs-nginx
 #logs-nginx: ## просмотр логов nginx контейнера
-#	@docker-compose logs -f nginx
+#	@docker compose logs -f nginx
 #
 #.PHONY: translate
 #translate: ## генерация переводов
@@ -287,27 +287,27 @@ volume-rm: ## удалить "docker volumes" проекта
 #.PHONY: debug-enable
 #debug-enable: ## включение дебага (xdebug и pcov)
 #ifeq ($(OS_NAME), linux)
-#	@docker-compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "debug"
+#	@docker compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "debug"
 #endif
 #
 #ifeq ($(OS_NAME), darwin)
-#	@docker-compose exec -u root php ./scripts/xdebug/xdebug-switch-mac.sh "debug"
+#	@docker compose exec -u root php ./scripts/xdebug/xdebug-switch-mac.sh "debug"
 #endif
 #	@make restart
 #
 #.PHONY: debug-disable
 #debug-disable: ## выключение дебага (xdebug и pcov)
-#	@docker-compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "disable"
+#	@docker compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "disable"
 #	@make restart
 #
 #.PHONY: profile-enable
 #profile-enable: ## включение дебага (xdebug и pcov)
-#	@docker-compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "profile"
+#	@docker compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "profile"
 #	@make restart
 #
 #.PHONY: profile-disable
 #profile-disable: ## выключение дебага (xdebug и pcov)
-#	@docker-compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "disable"
+#	@docker compose exec -u root php ./scripts/xdebug/xdebug-switch.sh "disable"
 #	@make restart
 #
 #.PHONY: print-url
@@ -324,9 +324,9 @@ volume-rm: ## удалить "docker volumes" проекта
 #
 #.PHONY: prepare-before-run-hba-tests
 #prepare-before-run-hba-tests: ## подготовка к запуску HBA тестов локально
-#	@docker-compose exec php bash -c "/srv/scripts/init-test-db.sh && /srv/database/phinx_all migrate -e test"
-#	@docker cp ./config/CI/tests/hba-vat/dump.sql $$(docker-compose ps -q dbtest):/tmp
-#	@docker-compose exec dbtest bash -c "mysql -u ${TEST_DB_USER} -p${TEST_DB_PASSWORD} < /tmp/dump.sql"
+#	@docker compose exec php bash -c "/srv/scripts/init-test-db.sh && /srv/database/phinx_all migrate -e test"
+#	@docker cp ./config/CI/tests/hba-vat/dump.sql $$(docker compose ps -q dbtest):/tmp
+#	@docker compose exec dbtest bash -c "mysql -u ${TEST_DB_USER} -p${TEST_DB_PASSWORD} < /tmp/dump.sql"
 #	@echo "change DB_USER=${TEST_DB_USER} and DB_PASSWORD=${TEST_DB_PASSWORD} in your .env file"
 #
 #.PHONY: generate-api-diagrams
