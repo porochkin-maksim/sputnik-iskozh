@@ -19,12 +19,10 @@ else
 	@./scripts/install-docker-linux.sh
 endif
 
-#.PHONY: build
-#build: ## сборка приложения
-#	@chmod -R u+x ./scripts/
-#	@./scripts/install.sh
-#	@./vendor/bin/sail composer install
-#	@make up
+.PHONY: build
+build: ## собрать контейнеры
+	@docker compose build --no-cache
+	@./vendor/bin/sail up -d
 
 .PHONY: up
 up: ## запуск приложения
@@ -72,11 +70,11 @@ yarn-build: ## собрать фронт
 	@./vendor/bin/sail artisan front:export-request-arguments-command
 	@./vendor/bin/sail yarn run build
 
-.PHONY: routes
+.PHONY: js-routes
 routes: ## Выгрузить маршруты с бэка
 	@./vendor/bin/sail artisan front:export-route-list-command
 
-.PHONY: request-arguments
+.PHONY: js-arguments
 request-arguments: ## Выгрузить названия аргументов для фронта
 	@./vendor/bin/sail artisan front:export-request-arguments-command
 
