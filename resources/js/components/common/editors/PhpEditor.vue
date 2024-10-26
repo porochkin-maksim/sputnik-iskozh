@@ -32,7 +32,7 @@ export default {
         return {
             content: null,
             cmOptions: {
-                mode: "text/javascript",
+                mode: "text/html",
             },
         };
     },
