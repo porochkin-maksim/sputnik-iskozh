@@ -7,54 +7,14 @@ use Core\Services\Images\StaticFileLocator;
 use Core\Session\CookieNames;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
-
-$allowRobots = Route::is(RouteNames::INDEX)
-    || Route::is(RouteNames::CONTACTS)
-    || Route::is(RouteNames::GARBAGE)
-    || Route::is(RouteNames::FILES);
-
 ?>
-        <!doctype html>
+<!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible"
-          content="ie=edge">
+    @include('layouts.partial.meta')
+    @include('layouts.partial.favicon')
 
-    @if ($allowRobots)
-        <meta name="robots"
-              content="index, nofollow, noarchive">
-    @else
-        <meta name="robots"
-              content="noindex">
-    @endif
-
-    <link type="image/x-icon"
-          rel="shortcut icon"
-          href="{{ url('/favicon.ico') }}">
-    <link type="image/png"
-          sizes="16x16"
-          rel="icon"
-          href="{{ url('/favicon16.png') }}">
-    <link type="image/png"
-          sizes="32x32"
-          rel="icon"
-          href="{{ url('/favicon32.png') }}">
-    <link type="image/png"
-          sizes="96x96"
-          rel="icon"
-          href="{{ url('/favicon96.png') }}">
-    <link type="image/png"
-          sizes="120x120"
-          rel="icon"
-          href="{{ url('/favicon120.png') }}">
-
-    <meta name="csrf-token"
-          content="{{ csrf_token() }}">
-    <meta name="description"
-          content="Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь">
+    <meta name="description" content="Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь">
 
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), env('APP_NAME')))</title>
 
