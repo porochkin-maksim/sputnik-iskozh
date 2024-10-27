@@ -5,29 +5,24 @@
         :classes="classes"
         :id="id"
     >
-        <input
+        <textarea
             :value="modelValue"
             :type="computedType"
             :required="required"
             :placeholder="placeholder"
             :disabled="disabled"
             :name="name"
-            :id="id"
             @change="onChange"
-            @keyup.enter="onSubmit"
             @keyup="onKeyup"
             class="form-control"
+            :style="{minHeight: (height ? height : 200) + 'px'}"
             :class="[errors ? 'form-error' : '']"
-        />
+        ></textarea>
     </element-wrapper>
     <errors-list :errors="errors" />
 </template>
 
 <script>
-/**
- * @see https://primevue.org/
- */
-import Calendar       from 'primevue/calendar';
 import ErrorsList     from './partial/ErrorsList.vue';
 import ElementWrapper from './partial/ElementWrapper.vue';
 
@@ -35,7 +30,6 @@ export default {
     components: {
         ElementWrapper,
         ErrorsList,
-        Calendar,
     },
     props     : [
         'classes',
@@ -47,6 +41,7 @@ export default {
         'placeholder',
         'required',
         'disabled',
+        'height',
     ],
     emits     : [
         'update:modelValue',
@@ -55,7 +50,7 @@ export default {
         'keyup',
     ],
     mounted () {
-        this.id = 'input-' + this.$_uid;
+        this.id = 'textarea-' + this.$_uid;
     },
     data () {
         return {

@@ -15,22 +15,15 @@
                    :for="id">{{ label }}</label>
         </div>
     </div>
-    <ul v-if="errors"
-        class="form-error"
-    >
-        <li v-for="error in errors">
-            {{ error }}
-        </li>
-    </ul>
+    <errors-list :errors="errors" />
 </template>
 
 <script>
-/**
- * @see https://primevue.org/
- */
+import ErrorsList from './partial/ErrorsList.vue';
 
 export default {
     components: {
+        ErrorsList,
     },
     props     : [
         'classes',

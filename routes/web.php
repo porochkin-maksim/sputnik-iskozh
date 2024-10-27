@@ -9,7 +9,11 @@ include __DIR__ . '/web/auth.php';
 include __DIR__ . '/web/session.php';
 
 Route::get('/', [Controllers\Pages\PagesController::class, 'index'])->name(RouteNames::INDEX);
+
 Route::get('/contacts', [Controllers\Pages\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
+Route::get('/contacts/proposal', [Controllers\Pages\PagesController::class, 'proposal'])->name(RouteNames::PROPOSAL);
+Route::post('/contacts/proposal', [Controllers\Proposal\ProposalController::class, 'create'])->name(RouteNames::PROPOSAL_CREATE);
+
 Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
 Route::get('/privacy', [Controllers\Pages\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
 Route::get('/regulation', [Controllers\Pages\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);

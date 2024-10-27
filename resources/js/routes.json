@@ -353,6 +353,18 @@
         "uri": "\/home\/profile",
         "args": []
     },
+    "proposal": {
+        "name": "proposal",
+        "method": "get",
+        "uri": "\/contacts\/proposal",
+        "args": []
+    },
+    "proposalCreate": {
+        "name": "proposal.create",
+        "method": "post",
+        "uri": "\/contacts\/proposal",
+        "args": []
+    },
     "regulation": {
         "name": "regulation",
         "method": "get",

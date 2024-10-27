@@ -47,4 +47,9 @@ class PagesController extends Controller
     {
         return view(ViewNames::PAGES_RUBRICS);
     }
+
+    public function proposal(): View
+    {
+        return view(ViewNames::PAGES_PROPOSAL);
+    }
 }

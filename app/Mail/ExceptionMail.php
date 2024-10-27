@@ -3,13 +3,14 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ExceptionMail extends Mailable
+class ExceptionMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -20,6 +21,7 @@ class ExceptionMail extends Mailable
         private readonly array $content,
     )
     {
+        $this->onQueue('high');
     }
 
     /**

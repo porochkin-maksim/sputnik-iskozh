@@ -13,6 +13,9 @@ abstract class RouteNames
     public const REGULATION = 'regulation';
     public const RUBRICS    = 'rubrics';
 
+    public const PROPOSAL        = 'proposal';
+    public const PROPOSAL_CREATE = 'proposal.create';
+
     public const TEMPLATE_GET    = 'template.get';
     public const TEMPLATE_UPDATE = 'template.update';
 
@@ -85,6 +88,7 @@ abstract class RouteNames
             self::PRIVACY       => 'Политика обработки персональных данных',
             self::REGULATION    => 'Устав',
             self::RUBRICS       => 'Рубрикатор',
+            self::PROPOSAL      => 'Предложения',
 
             self::HOME          => 'Личный кабинет',
             self::PROFILE       => 'Профиль',

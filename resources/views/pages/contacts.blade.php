@@ -98,7 +98,11 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         </tbody>
     </table>
 
-    <div class="social d-flex flex-column py-3">
+    <h3>
+        <a href="{{ route(RouteNames::PROPOSAL) }}">Написать предложение</a>
+    </h3>
+    <h3 class="border-bottom mt-3 pb-0 d-inline-block">Мы в соцсетях</h3>
+    <div class="social d-flex flex-column pb-3">
         @include(ViewNames::PARTIAL_SOCIAL)
     </div>
 
