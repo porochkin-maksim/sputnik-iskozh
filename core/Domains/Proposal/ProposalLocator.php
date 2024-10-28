@@ -3,6 +3,7 @@
 namespace Core\Domains\Proposal;
 
 use Core\Domains\Proposal\Services\ProposalService;
+use Core\Services\Files\FileLocator;
 
 abstract class ProposalLocator
 {
@@ -11,7 +12,9 @@ abstract class ProposalLocator
     public static function proposalService(): ProposalService
     {
         if ( ! isset(self::$proposalService)) {
-            self::$proposalService = new ProposalService();
+            self::$proposalService = new ProposalService(
+                FileLocator::TmpFileService(),
+            );
         }
 
         return self::$proposalService;

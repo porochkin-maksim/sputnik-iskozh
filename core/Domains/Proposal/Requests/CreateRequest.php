@@ -23,7 +23,7 @@ class CreateRequest extends AbstractRequest
         return [
             self::EMAIL => [
                 'nullable',
-                'email',
+                'string',
             ],
             self::PHONE => [
                 'nullable',
@@ -43,34 +43,64 @@ class CreateRequest extends AbstractRequest
 
     public function getFullText(): string
     {
-        return sprintf("%s%s%s%s", $this->getName(), $this->getEmail(), $this->getPhone(), $this->getText());
+        return sprintf("%s%s%s%s%s",
+            $this->getFormattedName(),
+            $this->getFormattedEmail(),
+            $this->getFormattedPhone(),
+            $this->getFormattedAttachmentsList(),
+            $this->getFormattedText(),
+        );
     }
 
-    private function getText(): string
+    public function getName(): string
     {
-        $text = $this->get(self::TEXT);
-
-        return sprintf("Обращение:\n%s", $text);
+        return (string) $this->getStringOrNull(self::NAME);
     }
 
-    private function getEmail(): string
+    public function getEmail(): string
     {
-        $email = $this->get(self::EMAIL);
-
-        return $email ? sprintf("Почта для связи: %s\n", $email) : '';
+        return (string) $this->getStringOrNull(self::EMAIL);
     }
 
-    private function getName(): string
+    public function getPhone(): string
     {
-        $name = $this->get(self::NAME);
-
-        return $name ? sprintf("Обращение от: %s\n", $name) : '';
+        return (string) $this->getStringOrNull(self::PHONE);
     }
 
-    private function getPhone(): string
+    public function getText(): string
     {
-        $phone = $this->get(self::PHONE);
+        return (string) $this->getStringOrNull(self::TEXT);
+    }
 
-        return $phone ? sprintf("Телефон для связи: %s\n", $phone) : '';
+    private function getFormattedText(): string
+    {
+        return sprintf("Текст обращения:\n%s", $this->getText());
+    }
+
+    private function getFormattedEmail(): string
+    {
+        return $this->getEmail() ? sprintf("Почта для связи: %s\n", $this->getEmail()) : '';
+    }
+
+    private function getFormattedName(): string
+    {
+        return $this->getName() ? sprintf("Обращение от: %s\n", $this->getName()) : '';
+    }
+
+    private function getFormattedPhone(): string
+    {
+        return $this->getPhone() ? sprintf("Телефон для связи: %s\n", $this->getPhone()) : '';
+    }
+
+    private function getFormattedAttachmentsList(): string
+    {
+        $files  = $this->allFiles();
+        $result = [];
+        $i      = 1;
+        foreach ($files as $file) {
+            $result[] = sprintf('%d. %s', $i++, $file->getClientOriginalName());
+        }
+
+        return $result ? sprintf("Вложения: \n%s\n", implode("\n", $result)) : '';
     }
 }
