@@ -11,7 +11,6 @@ use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Repositories\FileRepository;
 use Core\Domains\File\Responses\FileSearchResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -31,13 +30,20 @@ readonly class FileService
     ): FileDTO
     {
         $baseDir = $public ? 'public/' : '';
-        $path    = $file->storePublicly(sprintf('%s%s', $baseDir, $directory));
+        $dir     = $this->normalizePath(sprintf('%s/%s/', $baseDir, $directory));
+        $path    = $file->storePubliclyAs(
+            $dir,
+            $this->generateName(
+                storage_path($dir),
+                $file->getClientOriginalExtension()
+            )
+        );
 
         $dto = new FileDto();
         $dto
             ->setName($file->getClientOriginalName())
             ->setExt($file->getClientOriginalExtension())
-            ->setPath($path);
+            ->setPath($this->normalizePath($path));
 
         return $dto;
     }
@@ -47,17 +53,36 @@ readonly class FileService
         $newFile = clone $file;
 
         $pureName = $file->getTrueFileName(false);
-        $newName  = Str::random(Str::length($pureName)) . '.' . $file->getExt();
-        $newPath  = Str::replace($pureName, $newName, $newFile->getPath());
+        $newName  = $this->generateName($file->getDir(), $file->getExt());
+        $newPath  = Str::replace(sprintf('%s.%s', $pureName, $file->getExt()), $newName, $newFile->getPath());
 
         Storage::copy($file->getPath(), $newPath);
         $newFile->setId(null)
-            ->setPath($newPath);
+            ->setPath($this->normalizePath($newPath));
 
         return $newFile;
     }
 
-    public function removeFromStore(string $path): bool
+    public function normalizePath(string $path): string
+    {
+        return Str::replace('//', '/', $path);
+    }
+
+    public function generateName(string $fullDirPath, string $ext): string
+    {
+        do {
+            $fileName = sprintf('%s.%s', Str::random(8), $ext);
+        } while ($this->fileExists($this->normalizePath(sprintf('%s%s', $fullDirPath, $fileName))));
+
+        return $fileName;
+    }
+
+    public function fileExists(string $fullPath): bool
+    {
+        return \Illuminate\Support\Facades\File::exists($fullPath);
+    }
+
+    public function removeFromStorage(string $path): bool
     {
         return Storage::delete($path);
     }
@@ -100,7 +125,7 @@ readonly class FileService
         $file = $this->getById($id);
         if ($file) {
             if ($this->fileRepository->deleteById($id)) {
-                $this->removeFromStore($file->getPath());
+                $this->removeFromStorage($file->getPath());
 
                 return true;
             }
@@ -162,8 +187,18 @@ readonly class FileService
         if ($file->getExt() === $replaceFile->getExt()) {
             Storage::put($file->getPath(), Storage::get($replaceFile->getPath()));
         }
-        $this->removeFromStore($replaceFile->getPath());
+        $this->removeFromStorage($replaceFile->getPath());
 
         return $file;
+    }
+
+    public function move(FileDTO $file, string $path): FileDTO
+    {
+        Storage::put($this->normalizePath($path), Storage::get($file->getPath()));
+        $this->removeFromStorage($file->getPath());
+
+        $file->setPath($path);
+
+        return $this->save($file);
     }
 }

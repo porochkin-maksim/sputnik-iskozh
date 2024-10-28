@@ -50,7 +50,7 @@ class FileController extends Controller
         }
 
         foreach ($request->allFiles() as $file) {
-            $dto = $this->fileService->store($file, 'uploads/' . date('Y-m'));
+            $dto = $this->fileService->store($file, 'uploads');
             $dto->setParentId($request->getParentId());
             $this->fileService->save($dto);
         }
@@ -67,7 +67,7 @@ class FileController extends Controller
         $file = $this->fileService->getById($request->getFileId());
 
         if ($file) {
-            $newFile = $this->fileService->store($request->getFile(), 'uploads/' . date('Y-m'));
+            $newFile = $this->fileService->store($request->getFile(), 'uploads');
             $this->fileService->replace($file, $newFile);
         }
 

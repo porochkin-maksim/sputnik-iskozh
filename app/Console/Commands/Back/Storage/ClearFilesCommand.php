@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ClearFilesCommand extends Command
 {
     protected const EXCLUDED = [
-        'static',
+        'public/static',
     ];
 
     protected $signature   = 'storage:clear-unused-files';
@@ -19,32 +19,30 @@ class ClearFilesCommand extends Command
 
     public function handle(): void
     {
+        $fileService = FileLocator::FileService();
+
         $searcher = new FileSearcher();
-        $files    = FileLocator::FileService()->search($searcher)->getItems()->collect()->map(function (FileDTO $file) {
+        $files    = $fileService->search($searcher)->getItems()->collect()->map(function (FileDTO $file) {
             return $file->getPath();
         });
 
-        $dirs = Storage::disk('public')->directories();
-        foreach ($dirs as $dir) {
+        foreach (Storage::directories('public') as $dir) {
             if (in_array($dir, self::EXCLUDED)) {
                 continue;
             }
-            $this->output->info(Storage::disk('public')->path($dir));
+            $this->output->info(Storage::path($dir));
 
-            $paths = Storage::disk('public')->files($dir);
+            $paths = Storage::files($dir);
             foreach ($paths as $path) {
-                $contains = $files->contains('public/' . $path);
-                $message = Storage::disk('public')->path($path);
+                $contains = $files->contains($path);
+                $message  = Storage::path($path);
                 if ( ! $contains) {
-                    Storage::disk('public')->delete($path);
+                    Storage::delete($path);
                     $this->error($message);
                 }
-                else {
-                    $this->info($message);
-                }
             }
-            if ( ! Storage::disk('public')->files($dir)) {
-                Storage::disk('public')->deleteDirectory($dir);
+            if ( ! Storage::files($dir)) {
+                Storage::deleteDirectory($dir);
             }
         }
     }

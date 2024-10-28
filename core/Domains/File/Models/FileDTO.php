@@ -120,17 +120,13 @@ class FileDTO implements \JsonSerializable
 
     public function getDir(): ?string
     {
-        $path = Str::replace('.' . $this->getExt(), '', $this->getPath());
-        $dirs = explode('/', $path);
-        $dirs = array_slice($dirs, 0, count($dirs) - 1);
-
-        return implode('/', $dirs);
+        return dirname($this->getPath());
     }
 
     public function getTrueFileName(bool $withExt = true): ?string
     {
         $result = Str::replace($this->getDir(), '', $this->getPath());
-        if (!$withExt) {
+        if ( ! $withExt) {
             $result = Str::replace('.' . $this->getExt(), '', $result);
         }
 
