@@ -13,6 +13,7 @@
         <div class="custom-item news-item w-100"
              :ref="(el) => (newsElementRef = el)">
             <div class="title">
+                <div class="date">{{ news.dossier.publishedAt }}</div>
                 <h1>
                     <a class="name"
                        :href="news.url">
@@ -22,7 +23,6 @@
                         {{ news.title ? news.title : 'Без названия' }}
                     </a>
                 </h1>
-                <div class="date">{{ news.dossier.publishedAt }}</div>
             </div>
 
             <div class="body">

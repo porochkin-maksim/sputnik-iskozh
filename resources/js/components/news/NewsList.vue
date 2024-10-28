@@ -1,6 +1,6 @@
 <template>
     <template v-if="showPagination">
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-center">
             <pagination :total="total"
                         :perPage="perPage"
                         @update="onPaginationUpdate"
@@ -18,7 +18,7 @@
         </template>
     </div>
     <template v-if="showPagination && news.length > 3">
-        <div class="mt-3 d-flex justify-content-end">
+        <div class="mt-3 d-flex justify-content-center">
             <pagination :total="total"
                         :perPage="perPage"
                         @update="onPaginationUpdate"
