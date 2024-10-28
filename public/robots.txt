@@ -4,8 +4,9 @@ User-agent: *
 Allow: /$
 Allow: /contacts
 Allow: /news/*
-Allow: /files/*
-Allow: /build/*
+Allow: /garbage
+Allow: /files
 Allow: /robots.txt
+Allow: /build/*
 Disallow: /
 sitemap: https://sputnik-iskozh.ru/sitemap.xml

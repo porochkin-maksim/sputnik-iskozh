@@ -17,10 +17,36 @@
         "uri": "\/home\/json\/register",
         "args": []
     },
+    "announcementsIndex": {
+        "name": "announcements.index",
+        "method": "get",
+        "uri": "\/announcements",
+        "args": []
+    },
+    "announcementsList": {
+        "name": "announcements.list",
+        "method": "get",
+        "uri": "\/announcements\/json\/list",
+        "args": []
+    },
+    "announcementsShow": {
+        "name": "announcements.show",
+        "method": "get",
+        "uri": "\/announcements\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "contacts": {
         "name": "contacts",
         "method": "get",
         "uri": "\/contacts",
+        "args": []
+    },
+    "cookieAgreement": {
+        "name": "cookie_agreement",
+        "method": "post",
+        "uri": "\/cookie-agreement",
         "args": []
     },
     "filesDelete": {
@@ -50,13 +76,27 @@
     "filesIndex": {
         "name": "files.index",
         "method": "get",
-        "uri": "\/files",
-        "args": []
+        "uri": "\/files\/{folder}",
+        "args": {
+            "folder": "{folder}"
+        }
     },
     "filesList": {
         "name": "files.list",
         "method": "get",
         "uri": "\/files\/json\/list",
+        "args": []
+    },
+    "filesMove": {
+        "name": "files.move",
+        "method": "post",
+        "uri": "\/files\/json\/move",
+        "args": []
+    },
+    "filesReplace": {
+        "name": "files.replace",
+        "method": "post",
+        "uri": "\/files\/json\/replace",
         "args": []
     },
     "filesSave": {
@@ -78,6 +118,40 @@
         "args": {
             "id": "{id}"
         }
+    },
+    "foldersDelete": {
+        "name": "folders.delete",
+        "method": "delete",
+        "uri": "\/folders\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "foldersList": {
+        "name": "folders.list",
+        "method": "get",
+        "uri": "\/folders\/json\/list",
+        "args": []
+    },
+    "foldersSave": {
+        "name": "folders.save",
+        "method": "post",
+        "uri": "\/folders\/json\/save",
+        "args": []
+    },
+    "foldersShow": {
+        "name": "folders.show",
+        "method": "get",
+        "uri": "\/folders\/json\/show\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "garbage": {
+        "name": "garbage",
+        "method": "get",
+        "uri": "\/garbage",
+        "args": []
     },
     "home": {
         "name": "home",
@@ -159,6 +233,12 @@
         "uri": "\/news\/json\/list",
         "args": []
     },
+    "newsListAll": {
+        "name": "news.list.all",
+        "method": "get",
+        "uri": "\/news\/json\/list\/all",
+        "args": []
+    },
     "newsSave": {
         "name": "news.save",
         "method": "post",
@@ -231,6 +311,12 @@
         "uri": "\/password\/reset",
         "args": []
     },
+    "privacy": {
+        "name": "privacy",
+        "method": "get",
+        "uri": "\/privacy",
+        "args": []
+    },
     "profileCounterList": {
         "name": "profile.counter.list",
         "method": "get",
@@ -265,6 +351,24 @@
         "name": "profile.show",
         "method": "get",
         "uri": "\/home\/profile",
+        "args": []
+    },
+    "proposal": {
+        "name": "proposal",
+        "method": "get",
+        "uri": "\/contacts\/proposal",
+        "args": []
+    },
+    "proposalCreate": {
+        "name": "proposal.create",
+        "method": "post",
+        "uri": "\/contacts\/proposal",
+        "args": []
+    },
+    "regulation": {
+        "name": "regulation",
+        "method": "get",
+        "uri": "\/regulation",
         "args": []
     },
     "reportsCreate": {
@@ -323,10 +427,34 @@
         "uri": "\/reports\/json\/save",
         "args": []
     },
+    "rubrics": {
+        "name": "rubrics",
+        "method": "get",
+        "uri": "\/rubrics",
+        "args": []
+    },
     "sanctumCsrfCookie": {
         "name": "sanctum.csrf-cookie",
         "method": "get",
         "uri": "\/sanctum\/csrf-cookie",
+        "args": []
+    },
+    "sessionStore": {
+        "name": "session.store",
+        "method": "post",
+        "uri": "\/session",
+        "args": []
+    },
+    "templateGet": {
+        "name": "template.get",
+        "method": "post",
+        "uri": "\/pages\/json\/edit",
+        "args": []
+    },
+    "templateUpdate": {
+        "name": "template.update",
+        "method": "patch",
+        "uri": "\/pages\/json\/edit",
         "args": []
     },
     "verificationNotice": {

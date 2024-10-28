@@ -2,7 +2,7 @@
 
 namespace Core\Domains\File\Models;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
 use Core\Domains\File\Enums\TypeEnum;
@@ -30,6 +30,18 @@ class FileSearcher implements SearcherInterface
         }
         else {
             $this->addWhere(File::RELATED_ID, SearcherInterface::IS_NULL);
+        }
+
+        return $this;
+    }
+
+    public function setParentId(?int $parentId): static
+    {
+        if ($parentId) {
+            $this->addWhere(File::PARENT_ID, SearcherInterface::EQUALS, $parentId);
+        }
+        else {
+            $this->addWhere(File::PARENT_ID, SearcherInterface::IS_NULL);
         }
 
         return $this;

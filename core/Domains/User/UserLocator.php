@@ -17,11 +17,10 @@ class UserLocator
     private static UserFactory         $UserFactory;
     private static UserRepository      $UserRepository;
     private static UserService         $UserService;
-    private static UserDecorator       $UserDecorator;
 
     public static function UserService(): UserService
     {
-        if (!isset(self::$UserService)) {
+        if ( ! isset(self::$UserService)) {
             self::$UserService = new UserService(
                 self::UserFactory(),
                 self::UserRepository(),
@@ -33,7 +32,7 @@ class UserLocator
 
     public static function UserFactory(): UserFactory
     {
-        if (!isset(self::$UserFactory)) {
+        if ( ! isset(self::$UserFactory)) {
             self::$UserFactory = new UserFactory(
                 AccountLocator::AccountFactory(),
                 RoleLocator::RoleFactory(),
@@ -45,7 +44,7 @@ class UserLocator
 
     public static function UserRepository(): UserRepository
     {
-        if (!isset(self::$UserRepository)) {
+        if ( ! isset(self::$UserRepository)) {
             self::$UserRepository = new UserRepository(
                 self::UserCacheRepository(),
             );
@@ -56,19 +55,10 @@ class UserLocator
 
     public static function UserCacheRepository(): UserCacheRepository
     {
-        if (!isset(self::$UserCacheRepository)) {
+        if ( ! isset(self::$UserCacheRepository)) {
             self::$UserCacheRepository = new UserCacheRepository();
         }
 
         return self::$UserCacheRepository;
-    }
-
-    public static function UserDecorator(?UserDTO $user): UserDecorator
-    {
-        if (!isset(self::$UserDecorator)) {
-            self::$UserDecorator = new UserDecorator($user);
-        }
-
-        return self::$UserDecorator;
     }
 }

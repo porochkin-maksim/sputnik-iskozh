@@ -40,7 +40,7 @@
 		<div class="d-grid my-3">
 			<button type="submit"
 			        @click="loginAction"
-			        class="btn btn-primary">Войти
+			        class="btn btn-success">Войти
 			</button>
 		</div>
 	</div>

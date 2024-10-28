@@ -33,10 +33,15 @@ class NewsRepository
         return new NewsCollection($this->traitGetByIds($ids));
     }
 
-    public function save(News $report): News
+    public function save(News $news): News
     {
-        $report->save();
+        $news->save();
 
-        return $report;
+        return $news;
+    }
+
+    public function unlockNews(): void
+    {
+        News::where(News::IS_LOCK, true)->update([News::IS_LOCK => false]);
     }
 }

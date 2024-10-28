@@ -24,7 +24,7 @@
                         />
                     </div>
                     <div class="d-flex justify-content-center my-3">
-                        <button class="btn btn-primary"
+                        <button class="btn btn-success"
                                 @click="register">
                             Зарегистрировать
                         </button>

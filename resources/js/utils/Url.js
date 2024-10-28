@@ -10,7 +10,7 @@ let Generator = {
 	makeUri(routeObject, params = {}) {
 		let uri = routeObject.uri;
 		Object.keys(routeObject.args).forEach(key => {
-			uri = uri.replace(routeObject.args[key], params[key]);
+			uri = uri.replace(routeObject.args[key], params[key] ? params[key] : '');
 		});
 		return uri;
 	},

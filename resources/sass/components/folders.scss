@@ -1,0 +1,47 @@
+
+.folder-item {
+    position        : relative;
+    width           : 120px;
+    padding         : 5px;
+    margin-bottom   : 5px;
+
+    display         : flex;
+    flex-direction  : column;
+    justify-content : start;
+    align-items     : center;
+
+    .dropdown {
+        position : absolute;
+        top      : 0;
+        right    : 0;
+    }
+
+    .folder-image {
+        display             : block;
+        height              : 80px;
+        width               : 100%;
+        cursor              : pointer;
+        background-size     : contain;
+        background-position : center center;
+        background-repeat   : no-repeat;
+        margin-bottom       : 10px;
+
+        &:hover {
+            background-color : #e8e8e8;
+        }
+    }
+
+    .name {
+        text-align  : center;
+        line-height : 1.15rem;
+        overflow    : clip;
+    }
+
+    .date {
+        color      : $color-gray;
+        font-style : italic;
+        padding    : 0 4px;
+        text-align : center;
+        font-size  : 0.8em;
+    }
+}

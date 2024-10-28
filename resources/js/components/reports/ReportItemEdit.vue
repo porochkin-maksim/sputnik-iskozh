@@ -59,7 +59,7 @@
             </div>
             <div class="row mt-2">
                 <div class="col-5">
-                    <button class="btn btn-primary"
+                    <button class="btn btn-success"
                             @click="saveAction">
                         {{ id ? 'Сохранить' : 'Создать' }}
                     </button>

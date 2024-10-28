@@ -3,6 +3,7 @@
 namespace Core\Db\Searcher;
 
 use Core\Db\Searcher\Collections\WhereCollection;
+use Core\Db\Searcher\Models\Order;
 
 interface SearcherInterface
 {
@@ -18,9 +19,10 @@ interface SearcherInterface
 
     public function getIds(): ?array;
 
-    public function getSortOrder(): string;
-
-    public function getSortProperty(): string;
+    /**
+     * @return Order[]
+     */
+    public function getSortProperties(): array;
 
     public function getLimit(): ?int;
 

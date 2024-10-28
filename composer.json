@@ -11,9 +11,11 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.4"
+        "laravel/ui": "^4.4",
+        "niklasravnsborg/laravel-pdf": "^4.1"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
@@ -26,6 +28,7 @@
         "psr-4": {
             "App\\": "app/",
             "Core\\": "core/",
+            "": "core/Facades",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

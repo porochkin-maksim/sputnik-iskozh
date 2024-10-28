@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 class SearchResponse
 {
     private Collection $items;
-    private int  $total;
+    private int        $total;
 
     public function __construct()
     {
@@ -24,6 +24,23 @@ class SearchResponse
         $this->items = $items;
 
         return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getIds(): array
+    {
+        $result = [];
+        try {
+            foreach ($this->items as $item) {
+                $result[] = $item->getId();
+            }
+        }
+        catch (\Exception) {
+        }
+
+        return $result;
     }
 
     public function getTotal(): int

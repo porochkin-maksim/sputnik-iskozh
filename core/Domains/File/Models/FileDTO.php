@@ -2,9 +2,10 @@
 
 namespace Core\Domains\File\Models;
 
-use Core\Enums\DateTimeFormat;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Models\File\Dossier;
+use Core\Enums\DateTimeFormat;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -12,13 +13,14 @@ class FileDTO implements \JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int      $id         = null;
-    private ?TypeEnum $type       = null;
-    private ?int      $related_id = null;
-    private ?int      $order      = null;
-    private ?string   $ext        = null;
-    private ?string   $name       = null;
-    private ?string   $path       = null;
+    private ?int      $id        = null;
+    private ?TypeEnum $type      = null;
+    private ?int      $relatedId = null;
+    private ?int      $parentId  = null;
+    private ?int      $order     = null;
+    private ?string   $ext       = null;
+    private ?string   $name      = null;
+    private ?string   $path      = null;
 
     public function getId(): ?int
     {
@@ -46,12 +48,24 @@ class FileDTO implements \JsonSerializable
 
     public function getRelatedId(): ?int
     {
-        return $this->related_id;
+        return $this->relatedId;
     }
 
-    public function setRelatedId(?int $related_id): static
+    public function setRelatedId(?int $relatedId): static
     {
-        $this->related_id = $related_id;
+        $this->relatedId = $relatedId;
+
+        return $this;
+    }
+
+    public function getParentId(): ?int
+    {
+        return $this->parentId;
+    }
+
+    public function setParentId(?int $parentId): static
+    {
+        $this->parentId = $parentId;
 
         return $this;
     }
@@ -104,6 +118,21 @@ class FileDTO implements \JsonSerializable
         return $this;
     }
 
+    public function getDir(): ?string
+    {
+        return dirname($this->getPath());
+    }
+
+    public function getTrueFileName(bool $withExt = true): ?string
+    {
+        $result = Str::replace($this->getDir(), '', $this->getPath());
+        if ( ! $withExt) {
+            $result = Str::replace('.' . $this->getExt(), '', $result);
+        }
+
+        return Str::replace('/', '', $result);
+    }
+
     public function jsonSerialize(): array
     {
         $dossier = new Dossier($this);
@@ -113,19 +142,29 @@ class FileDTO implements \JsonSerializable
             'id'        => $this->id,
             'name'      => $this->name,
             'ext'       => $this->ext,
-            'url'       => Storage::url($this->path),
-            'updatedAt' => $this->updatedAt?->format(DateTimeFormat::DATE_DEFAULT),
-            'isImage'   => in_array($this->ext, [
-                'jpg',
-                'jpeg',
-                'png',
-                'gif',
-                'bmp',
-                'tiff',
-                'webp',
-                'svg',
-            ]),
+            'url'       => $this->url(),
+            'createdAt' => $this->createdAt?->format(DateTimeFormat::DATE_DEFAULT),
+            'isImage'   => $this->isImage(),
         ];
+    }
+
+    public function url(): ?string
+    {
+        return $this->path ? url(Storage::url($this->path)) : null;
+    }
+
+    public function isImage(): bool
+    {
+        return in_array($this->ext, [
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'tiff',
+            'webp',
+            'svg',
+        ]);
     }
 
     public function getOnlyName(): string

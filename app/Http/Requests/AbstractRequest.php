@@ -21,14 +21,41 @@ abstract class AbstractRequest extends FormRequest
         return (int) parent::get($key, $default);
     }
 
-    public function getBool(string $key, mixed $default = false): bool
+    public function getBool(string $key): bool
     {
-        return (bool) parent::get($key, $default);
+        if (parent::has($key)) {
+            if ($this->get($key) === true || $this->get($key) === 'true') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getIntOrNull(string $key): ?int
     {
-        return parent::has($key) ? $this->getInt($key) : null;
+        if (parent::has($key)) {
+            if ($this->get($key) === null || $this->get($key) === 'null') {
+                return null;
+            }
+
+            return $this->getInt($key);
+        }
+
+        return null;
+    }
+
+    public function getStringOrNull(string $key): ?string
+    {
+        if (parent::has($key)) {
+            if ($this->get($key) === null || $this->get($key) === 'null') {
+                return null;
+            }
+
+            return $this->get($key);
+        }
+
+        return null;
     }
 
     public function getFloat(string $key, mixed $default = null): ?float

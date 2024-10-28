@@ -1,6 +1,7 @@
 <template>
     <div class="form-control">
-        <div class="form-check form-switch" :class="classes">
+        <div class="form-check form-switch"
+             :class="classes">
             <input class="form-check-input"
                    type="checkbox"
                    :id="id"
@@ -10,25 +11,19 @@
                    :name="name"
                    @change="onChange"
             >
-            <label class="form-check-label label-checkbox" :for="id">{{ label }}</label>
+            <label class="form-check-label label-checkbox"
+                   :for="id">{{ label }}</label>
         </div>
     </div>
-    <ul v-if="errors"
-        class="form-error"
-    >
-        <li v-for="error in errors">
-            {{ error }}
-        </li>
-    </ul>
+    <errors-list :errors="errors" />
 </template>
 
 <script>
-/**
- * @see https://primevue.org/
- */
+import ErrorsList from './partial/ErrorsList.vue';
 
 export default {
     components: {
+        ErrorsList,
     },
     props     : [
         'classes',
@@ -49,12 +44,12 @@ export default {
     data () {
         return {
             localValue: null,
-
-            id: null,
+            id        : null,
         };
     },
     mounted () {
-        this.id = 'checkbox-' + this.$_uid;
+        this.id         = 'checkbox-' + this.$_uid;
+        this.localValue = this.modelValue;
     },
     created () {
         this.localValue = this.modelValue;
@@ -63,6 +58,11 @@ export default {
         onChange (event) {
             this.$emit('update:modelValue', this.localValue);
             this.$emit('change', event);
+        },
+    },
+    watch: {
+        modelValue: function () {
+            this.localValue = this.modelValue;
         },
     },
     computed: {

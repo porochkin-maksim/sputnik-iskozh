@@ -4,11 +4,23 @@ namespace Core\Resources;
 
 abstract class RouteNames
 {
-    public const INDEX    = 'index';
-    public const CONTACTS = 'contacts';
-    public const PRIVACY  = 'privacy';
-    public const LOGOUT   = 'logout';
-    public const HOME     = 'home';
+    public const INDEX      = 'index';
+    public const CONTACTS   = 'contacts';
+    public const GARBAGE    = 'garbage';
+    public const PRIVACY    = 'privacy';
+    public const LOGOUT     = 'logout';
+    public const HOME       = 'home';
+    public const REGULATION = 'regulation';
+    public const RUBRICS    = 'rubrics';
+
+    public const PROPOSAL        = 'proposal';
+    public const PROPOSAL_CREATE = 'proposal.create';
+
+    public const TEMPLATE_GET    = 'template.get';
+    public const TEMPLATE_UPDATE = 'template.update';
+
+    public const SESSION_STORE    = 'session.store';
+    public const COOKIE_AGREEMENT = 'cookie_agreement';
 
     public const REPORTS             = 'reports.index';
     public const REPORTS_LIST        = 'reports.list';
@@ -21,6 +33,7 @@ abstract class RouteNames
 
     public const NEWS             = 'news.index';
     public const NEWS_LIST        = 'news.list';
+    public const NEWS_LIST_ALL    = 'news.list.all';
     public const NEWS_CREATE      = 'news.create';
     public const NEWS_SHOW        = 'news.show';
     public const NEWS_EDIT        = 'news.edit';
@@ -30,14 +43,25 @@ abstract class RouteNames
     public const NEWS_FILE_UPLOAD = 'news.file.upload';
     public const NEWS_FILE_DELETE = 'news.file.delete';
 
-    public const FILES        = 'files.index';
-    public const FILES_LIST   = 'files.list';
-    public const FILES_SAVE   = 'files.save';
-    public const FILES_EDIT   = 'files.edit';
-    public const FILES_DELETE = 'files.delete';
-    public const FILES_STORE  = 'files.store';
-    public const FILES_UP     = 'files.up';
-    public const FILES_DOWN   = 'files.down';
+    public const ANNOUNCEMENTS      = 'announcements.index';
+    public const ANNOUNCEMENTS_LIST = 'announcements.list';
+    public const ANNOUNCEMENTS_SHOW = 'announcements.show';
+
+    public const FILES         = 'files.index';
+    public const FILES_LIST    = 'files.list';
+    public const FILES_SAVE    = 'files.save';
+    public const FILES_REPLACE = 'files.replace';
+    public const FILES_EDIT    = 'files.edit';
+    public const FILES_DELETE  = 'files.delete';
+    public const FILES_STORE   = 'files.store';
+    public const FILES_UP      = 'files.up';
+    public const FILES_DOWN    = 'files.down';
+    public const FILES_MOVE    = 'files.move';
+
+    public const FOLDERS_LIST   = 'folders.list';
+    public const FOLDERS_SAVE   = 'folders.save';
+    public const FOLDERS_SHOW   = 'folders.show';
+    public const FOLDERS_DELETE = 'folders.delete';
 
     public const OPTIONS      = 'options.index';
     public const OPTIONS_LIST = 'options.list';
@@ -59,19 +83,24 @@ abstract class RouteNames
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS => 'Контакты',
-            self::PRIVACY  => 'Политика обработки персональных данных',
+            self::CONTACTS      => 'Контакты',
+            self::GARBAGE       => 'Вывоз мусора',
+            self::PRIVACY       => 'Политика обработки персональных данных',
+            self::REGULATION    => 'Устав',
+            self::RUBRICS       => 'Рубрикатор',
+            self::PROPOSAL      => 'Предложения',
 
-            self::HOME     => 'Личный кабинет',
-            self::PROFILE  => 'Профиль',
-            self::LOGOUT   => 'Выйти',
+            self::HOME          => 'Личный кабинет',
+            self::PROFILE       => 'Профиль',
+            self::LOGOUT        => 'Выйти',
 
-            self::OPTIONS  => 'Настройки',
+            self::OPTIONS       => 'Настройки',
 
-            self::FILES    => 'Файлы',
-            self::NEWS     => 'Новости',
-            self::REPORTS  => 'Отчёты',
-            default        => $default,
+            self::FILES         => 'Файлы',
+            self::NEWS          => 'Новости',
+            self::ANNOUNCEMENTS => 'Объявления',
+            self::REPORTS       => 'Отчёты',
+            default             => $default,
         };
     }
 }

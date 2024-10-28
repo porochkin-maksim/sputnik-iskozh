@@ -2,10 +2,8 @@
 
 namespace Core\Domains\File\Repositories;
 
-use App\Models\File;
+use App\Models\File\File;
 use Core\Db\RepositoryTrait;
-use Core\Domains\File\Models\FileSearcher;
-use Illuminate\Support\Facades\DB;
 
 class FileRepository
 {

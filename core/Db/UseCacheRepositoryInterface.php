@@ -6,5 +6,5 @@ use Core\Cache\CacheRepositoryInterface;
 
 interface UseCacheRepositoryInterface
 {
-    public function cacheRepository(): CacheRepositoryInterface;
+    // public function cacheRepository(): CacheRepositoryInterface;
 }

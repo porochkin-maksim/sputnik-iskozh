@@ -1,7 +1,10 @@
 .slider {
-    height : 50vh;
+    height           : 50vh;
+    border-radius    : 15px;
+    overflow: hidden;
 
-    background-color: $color-gray;
+    background-color : $light-green;
+    border           : 1px solid $light-green;
 
     .carousel {
         height : inherit !important;
@@ -12,9 +15,19 @@
             .carousel-item {
                 height : inherit !important;
 
-                img {
-                    height : inherit !important;
-                    width  : auto !important;
+                .carousel-img-container {
+                    height          : inherit !important;
+                    width           : 100% !important;
+                    display         : flex;
+                    justify-content : center;
+                    align-items     : center;
+
+                    img {
+                        max-height : 100%;
+                        max-width  : 100%;
+                        margin     : auto;
+                        display    : block;
+                    }
                 }
             }
         }

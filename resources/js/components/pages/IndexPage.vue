@@ -1,41 +1,54 @@
 <template>
     <page-template>
-        <template v-slot:sub>
-            <file-list :limit="5"
-                       v-model:count="filesCount" />
-        </template>
         <template v-slot:main>
-            <h1 v-if="newsCount">
-                <a :href="Url.Routes.newsIndex.uri">
-                    Новости
-                </a>
-            </h1>
-            <news-list :limit="5"
-                       v-model:items-count="newsCount" />
+            <div class="mb-lg-0 mb-5">
+                <div class="news-list w-100" v-if="news.length">
+                    <template v-for="(item, index) in news">
+                        <news-list-item :news="item"
+                                        :is-list="true"
+                                        :edit="false"
+                        />
+                        <hr>
+                    </template>
+                </div>
+            </div>
         </template>
     </page-template>
 </template>
 
 <script>
-import Url         from '../../utils/Url.js';
+import Url          from '../../utils/Url.js';
 import PageTemplate from './TwoColumnsPage.vue';
-import NewsList    from '../news/NewsList.vue';
-import FileList    from '../files/FileList.vue';
+import NewsListItem from '../news/NewsItem.vue';
 
 export default {
     name      : 'IndexPage',
     components: {
+        NewsListItem,
         PageTemplate,
-        FileList,
-        NewsList,
+    },
+    created () {
+        this.loadNews();
     },
     data () {
         return {
             Url,
-            newsCount : 0,
-            filesCount: 0,
+            news: [],
         };
     },
-    methods: {},
+    methods: {
+        loadNews () {
+            window.axios[Url.Routes.newsList.method](Url.Routes.newsListAll.uri, {
+                params: {
+                    limit: 5,
+                    skip : 0,
+                },
+            }).then(response => {
+                this.news = response.data.news;
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+    },
 };
 </script>

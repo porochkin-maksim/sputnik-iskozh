@@ -18,14 +18,14 @@
             </option>
         </select>
     </label>
-    <ul v-if="errors"
-        class="form-error">
-        <li v-for="error in errors">{{ error }}</li>
-    </ul>
+    <errors-list :errors="errors" />
 </template>
 
 <script>
+import ErrorsList from './partial/ErrorsList.vue';
+
 export default {
+    components: { ErrorsList },
     props  : [
         'modelValue',
         'errors',

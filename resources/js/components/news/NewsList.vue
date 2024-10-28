@@ -1,24 +1,29 @@
 <template>
     <template v-if="showPagination">
-        <pagination :total="total"
-                    :perPage="perPage"
-                    @update="onPaginationUpdate"
-        />
+        <div class="d-flex justify-content-center">
+            <pagination :total="total"
+                        :perPage="perPage"
+                        @update="onPaginationUpdate"
+            />
+        </div>
     </template>
     <div class="news-list w-100">
         <template v-for="(item, index) in news">
-            <hr v-if="index"/>
             <news-list-item :news="item"
                             :edit="edit"
+                            :is-list="true"
                             @updated="loadList"
             />
+            <hr>
         </template>
     </div>
     <template v-if="showPagination && news.length > 3">
-        <pagination :total="total"
-                    :perPage="perPage"
-                    @update="onPaginationUpdate"
-        />
+        <div class="mt-3 d-flex justify-content-center">
+            <pagination :total="total"
+                        :perPage="perPage"
+                        @update="onPaginationUpdate"
+            />
+        </div>
     </template>
 </template>
 

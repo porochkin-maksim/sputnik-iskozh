@@ -3,12 +3,13 @@
 namespace Core\Db\Searcher;
 
 use Core\Db\Searcher\Collections\WhereCollection;
+use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\Where;
 
 trait SearcherTrait
 {
-    private string $sortOrder;
-    private string $sortOrderProperty = 'id';
+    /** @var Order[] */
+    private array $sortOrderProperties = [];
 
     private ?int $limit  = null;
     private ?int $offset = null;
@@ -42,7 +43,7 @@ trait SearcherTrait
 
     public function setId(int|string|null $id): static
     {
-        $this->ids = [(int) $id];
+        $this->ids = $id ? [(int) $id] : [-1];
 
         return $this;
     }
@@ -54,33 +55,17 @@ trait SearcherTrait
 
     /** Сортировки */
 
-    public function setSortOrderAsc(): static
+    /**
+     * @return Order[]
+     */
+    public function getSortProperties(): array
     {
-        $this->sortOrder = SearcherInterface::SORT_ORDER_ASC;
-
-        return $this;
+        return $this->sortOrderProperties;
     }
 
-    public function setSortOrderDesc(): static
+    public function setSortOrderProperty(string $sortOrderProperty, string $order): static
     {
-        $this->sortOrder = SearcherInterface::SORT_ORDER_DESC;
-
-        return $this;
-    }
-
-    public function getSortOrder(): string
-    {
-        return $this->sortOrder ?? SearcherInterface::SORT_ORDER_ASC;
-    }
-
-    public function getSortProperty(): string
-    {
-        return $this->sortOrderProperty;
-    }
-
-    public function setSortOrderProperty(string $sortOrderProperty): static
-    {
-        $this->sortOrderProperty = $sortOrderProperty;
+        $this->sortOrderProperties[] = new Order($sortOrderProperty, $order);
 
         return $this;
     }

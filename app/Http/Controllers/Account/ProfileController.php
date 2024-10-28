@@ -10,7 +10,6 @@ use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
@@ -29,7 +28,7 @@ class ProfileController extends Controller
 
     public function save(SaveProfileRequest $request): void
     {
-        $user = $request->dto($this->userService->getById(Auth::id()));
+        $user = $request->dto(\app::user());
 
         $this->userService->save($user);
     }
@@ -39,7 +38,7 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto($this->userService->getById(Auth::id()));
+            $user = $request->dto(\app::user());
 
             $this->userService->save($user);
 
@@ -58,7 +57,7 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto($this->userService->getById(Auth::id()));
+            $user = $request->dto(\app::user());
 
             $this->userService->save($user);
 

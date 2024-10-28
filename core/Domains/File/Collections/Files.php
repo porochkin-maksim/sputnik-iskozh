@@ -18,4 +18,15 @@ class Files extends Collection implements CollectionInterface
     {
         return $item instanceof FileDTO;
     }
+
+    public function findByPath(string $path): ?FileDTO
+    {
+        foreach ($this->items as $item) {
+            if ($item->getPath() === $path) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
 }

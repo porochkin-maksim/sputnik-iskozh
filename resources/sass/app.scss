@@ -16,18 +16,28 @@
 @import 'components/reports';
 @import 'components/news';
 @import 'components/files';
+@import 'components/folders';
 
 @import 'components/slider';
 @import 'components/menus/vertical-menu';
 @import 'lightbox2/dist/css/lightbox.min.css';
 
+@import 'template';
+
 body, html {
-    min-height: 100vh;
-    font-size : $font-size;
+    min-height : 100vh;
+    font-size  : $font-size;
 }
 
 .nav-link {
     cursor : pointer;
+}
+
+h1 {
+    a {
+        color           : unset;
+        text-decoration : none;
+    }
 }
 
 

@@ -2,15 +2,17 @@
 
 namespace Core\Domains\File\Services;
 
-use App\Models\File;
+use App\Models\File\File;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\File\Collections\Files;
 use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Repositories\FileRepository;
-use Core\Domains\File\Responses\SearchResponse;
+use Core\Domains\File\Responses\FileSearchResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 readonly class FileService
 {
@@ -28,18 +30,59 @@ readonly class FileService
     ): FileDTO
     {
         $baseDir = $public ? 'public/' : '';
-        $path    = $file->storePublicly(sprintf('%s%s', $baseDir, $directory));
+        $dir     = $this->normalizePath(sprintf('%s/%s/', $baseDir, $directory));
+        $path    = $file->storePubliclyAs(
+            $dir,
+            $this->generateName(
+                storage_path($dir),
+                $file->getClientOriginalExtension()
+            )
+        );
 
         $dto = new FileDto();
         $dto
             ->setName($file->getClientOriginalName())
             ->setExt($file->getClientOriginalExtension())
-            ->setPath($path);
+            ->setPath($this->normalizePath($path));
 
         return $dto;
     }
 
-    public function removeFromStore(string $path): bool
+    public function copy(?FileDTO $file): FileDTO
+    {
+        $newFile = clone $file;
+
+        $pureName = $file->getTrueFileName(false);
+        $newName  = $this->generateName($file->getDir(), $file->getExt());
+        $newPath  = Str::replace(sprintf('%s.%s', $pureName, $file->getExt()), $newName, $newFile->getPath());
+
+        Storage::copy($file->getPath(), $newPath);
+        $newFile->setId(null)
+            ->setPath($this->normalizePath($newPath));
+
+        return $newFile;
+    }
+
+    public function normalizePath(string $path): string
+    {
+        return Str::replace('//', '/', $path);
+    }
+
+    public function generateName(string $fullDirPath, string $ext): string
+    {
+        do {
+            $fileName = sprintf('%s.%s', Str::random(8), $ext);
+        } while ($this->fileExists($this->normalizePath(sprintf('%s%s', $fullDirPath, $fileName))));
+
+        return $fileName;
+    }
+
+    public function fileExists(string $fullPath): bool
+    {
+        return \Illuminate\Support\Facades\File::exists($fullPath);
+    }
+
+    public function removeFromStorage(string $path): bool
     {
         return Storage::delete($path);
     }
@@ -54,8 +97,7 @@ readonly class FileService
         else {
             $searcher = new FileSearcher();
             $searcher->setType($dto->getType())
-                ->setSortOrderProperty(File::ORDER)
-                ->setSortOrderDesc()
+                ->setSortOrderProperty(File::ORDER, SearcherInterface::SORT_ORDER_DESC)
                 ->setLimit(1);
 
             $lastFile = $this->search($searcher)->getItems()->first();
@@ -72,9 +114,10 @@ readonly class FileService
 
     public function getById(int $id): ?FileDTO
     {
-        $file = $this->fileRepository->getById($id);
+        $searcher = new FileSearcher();
+        $searcher->setId($id);
 
-        return $file ? $this->fileFactory->makeDtoFromObject($file) : null;
+        return $this->search($searcher)->getItems()->first();
     }
 
     public function deleteById(int $id): bool
@@ -82,7 +125,8 @@ readonly class FileService
         $file = $this->getById($id);
         if ($file) {
             if ($this->fileRepository->deleteById($id)) {
-                $this->removeFromStore($file->getPath());
+                $this->removeFromStorage($file->getPath());
+
                 return true;
             }
         }
@@ -90,14 +134,14 @@ readonly class FileService
         return false;
     }
 
-    public function search(FileSearcher $searcher): SearchResponse
+    public function search(FileSearcher $searcher): FileSearchResponse
     {
         $response = $this->fileRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new FileSearchResponse();
         $result->setTotal($response->getTotal());
 
-        $collection  = new Files();
+        $collection = new Files();
         foreach ($response->getItems() as $item) {
             $collection->add($this->fileFactory->makeDtoFromObject($item));
         }
@@ -109,8 +153,7 @@ readonly class FileService
     {
         $searcher = new FileSearcher();
         $searcher->setType($file->getType())
-            ->setSortOrderAsc()
-            ->setSortOrderProperty(File::ORDER)
+            ->setSortOrderProperty(File::ORDER, SearcherInterface::SORT_ORDER_ASC)
             ->setRelatedId($file->getRelatedId());
 
         $files = $this->search($searcher)->getItems();
@@ -126,11 +169,36 @@ readonly class FileService
                 $f->setOrder($index);
                 $index++;
             }
+
             return $file;
         });
 
-        foreach ($files as $f) {
-            $this->save($f);
+
+        $models = collect($this->fileRepository->getByIds($files->getIds()));
+        foreach ($files as $file) {
+            $model = $models->where('id', $file->getId())->first();
+            $model = $this->fileFactory->makeModelFromDto($file, $model);
+            $this->fileRepository->save($model);
         }
+    }
+
+    public function replace(FileDTO $file, FileDTO $replaceFile): FileDTO
+    {
+        if ($file->getExt() === $replaceFile->getExt()) {
+            Storage::put($file->getPath(), Storage::get($replaceFile->getPath()));
+        }
+        $this->removeFromStorage($replaceFile->getPath());
+
+        return $file;
+    }
+
+    public function move(FileDTO $file, string $path): FileDTO
+    {
+        Storage::put($this->normalizePath($path), Storage::get($file->getPath()));
+        $this->removeFromStorage($file->getPath());
+
+        $file->setPath($path);
+
+        return $this->save($file);
     }
 }

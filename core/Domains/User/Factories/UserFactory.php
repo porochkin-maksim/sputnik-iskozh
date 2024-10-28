@@ -75,4 +75,9 @@ readonly class UserFactory
 
         return $result;
     }
+
+    public function makeUndefined(): UserDTO
+    {
+        return new UserDTO();
+    }
 }

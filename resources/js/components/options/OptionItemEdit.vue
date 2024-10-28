@@ -14,7 +14,7 @@
             </div>
 
             <div class="d-flex justify-content-center pt-3">
-                <button class="btn btn-primary w-lg-25 w-md-50 w-100"
+                <button class="btn btn-success w-lg-25 w-md-50 w-100"
                         @click="saveAction">
                     {{ id ? 'Сохранить' : 'Создать' }}
                 </button>
@@ -28,14 +28,12 @@ import Url           from '../../utils/Url.js';
 import CustomInput   from '../common/form/CustomInput.vue';
 import CustomSelect  from '../common/form/CustomSelect.vue';
 import ResponseError from '../../mixin/ResponseError.js';
-import HtmlEditor    from '../common/HtmlEditor.vue';
 
 export default {
     emits     : ['updated'],
     components: {
         CustomSelect,
         CustomInput,
-        HtmlEditor,
     },
     mixins    : [
         ResponseError,

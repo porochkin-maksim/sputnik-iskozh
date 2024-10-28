@@ -1,11 +1,14 @@
-.news-item,
-.news-list .list-item {
-    .title {
-        border-bottom : 1px solid $border-color;
-
-        .name {
-            font-size       : 1.6em;
-            text-decoration : none;
-        }
+.news-item {
+    .news-item-wrapper {
+        position         : absolute;
+        height           : 100px;
+        width            : 100%;
+        bottom           : 0;
+        z-index          : 1;
+        background-image : linear-gradient(180deg, hsla(0, 0%, 100%, 0), #fff 75%, #fff);
+        display          : flex;
+        justify-content  : center;
+        align-items      : end;
+        cursor           : pointer;
     }
 }

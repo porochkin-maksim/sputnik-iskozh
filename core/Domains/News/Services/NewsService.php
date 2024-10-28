@@ -8,6 +8,7 @@ use Core\Domains\News\Models\NewsDTO;
 use Core\Domains\News\Models\NewsSearcher;
 use Core\Domains\News\Repositories\NewsRepository;
 use Core\Domains\News\Responses\SearchResponse;
+use Illuminate\Support\Facades\DB;
 
 readonly class NewsService
 {
@@ -18,26 +19,34 @@ readonly class NewsService
     {
     }
 
-    public function save(NewsDTO $dto): NewsDTO
+    public function save(NewsDTO $news): NewsDTO
     {
-        $news = null;
+        $model = $this->newsRepository->getById($news->getId());
 
-        if ($dto->getId()) {
-            $news = $this->newsRepository->getById($dto->getId());
+        if ( ! $news->getPublishedAt()) {
+            $news->setPublishedAt(now());
         }
 
-        if ( ! $dto->getPublishedAt()) {
-            $dto->setPublishedAt(now());
+        if ( ! trim(strip_tags((string) $news->getArticle()))) {
+            $news->setArticle('');
         }
 
-        if ( ! strip_tags((string) $dto->getArticle())) {
-            $dto->setArticle('');
+        DB::beginTransaction();
+        try {
+            if ( ! $model?->is_lock && $news->isLock()) {
+                $this->newsRepository->unlockNews();
+            }
+
+            $model = $this->newsRepository->save($this->newsFactory->makeModelFromDto($news, $model));
+
+            DB::commit();
+
+            return $this->newsFactory->makeDtoFromObject($model);
         }
-
-        $news = $this->newsFactory->makeModelFromDto($dto, $news);
-        $news = $this->newsRepository->save($news);
-
-        return $this->newsFactory->makeDtoFromObject($news);
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function search(NewsSearcher $searcher): SearchResponse
@@ -55,8 +64,12 @@ readonly class NewsService
         return $result->setItems($collection);
     }
 
-    public function getById(int $id): ?NewsDTO
+    public function getById(?int $id): ?NewsDTO
     {
+        if ( ! $id) {
+            return null;
+        }
+
         $searcher = new NewsSearcher();
         $searcher->setId($id)
             ->setWithFiles();

@@ -33,7 +33,7 @@
         </table>
     </div>
     <div class="d-flex justify-content-center mb-3">
-        <button class="btn btn-primary"
+        <button class="btn btn-success"
                 @click="updatePassword">
             <i class="fa fa-save"></i> Обновить
         </button>

@@ -6,20 +6,19 @@ use Core\Resources\Views\ViewNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_ONE_COLUMN)
+@extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
     <link rel="canonical"
           href="{{ route(RouteNames::PRIVACY) }}" />
 @endpush
 
-@section(SectionNames::MAIN)
+@section(SectionNames::CONTENT)
+    @if(app::roleDecorator()->canEditTemplates())
+        <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>
+    @endif
+    <h1 class="border-bottom">Политика в&nbsp;отношении обработки персональных данных</h1>
     <div id="inputResult">
-        <div class="row mb-4">
-            <div class="col">
-                <h4><strong>Политика в&nbsp;отношении обработки персональных данных</strong></h4>
-            </div>
-        </div>
         <div class="row mb-4">
             <div class="col">
                 <h5>1. Общие положения</h5>
@@ -31,7 +30,7 @@ use Core\Resources\Views\ViewNames;
                     персональных данных и&nbsp;меры по&nbsp;обеспечению безопасности персональных
                     данных, предпринимаемые <span class="link mark owner-name-field"
                                                   id="owner-name-value"
-                                                  data-scroll-to="#owner-name-field">{{ env('APP_NAME') }}</span> (далее&nbsp;— Оператор).
+                                                  data-scroll-to="#owner-name-field">Порочкиным Максимом Игоревичем</span> (далее&nbsp;— Оператор).
                 </div>
                 <div class="ol">
                     <div class="li">
@@ -45,7 +44,7 @@ use Core\Resources\Views\ViewNames;
                         данных (далее&nbsp;— Политика) применяется ко&nbsp;всей информации,
                         которую Оператор может получить о&nbsp;посетителях веб-сайта
                         <span class="link mark owner-site-url-field"
-                              data-scroll-to="#owner-site-url-field">{{ env('APP_URL') }}</span>.
+                              data-scroll-to="#owner-site-url-field">https://sputnik-iskozh.ru/</span>.
                     </div>
                 </div>
             </div>
@@ -69,7 +68,7 @@ use Core\Resources\Views\ViewNames;
                         материалов, а&nbsp;также программ для ЭВМ и&nbsp;баз данных, обеспечивающих
                         их&nbsp;доступность в&nbsp;сети интернет по&nbsp;сетевому адресу
                         <span class="link mark owner-site-url-field"
-                              data-scroll-to="#owner-site-url-field">{{ env('APP_URL') }}</span>.
+                              data-scroll-to="#owner-site-url-field">https://sputnik-iskozh.ru/</span>.
                     </div>
                     <div class="li">
                         2.4. Информационная система персональных данных&nbsp;— совокупность
@@ -102,7 +101,7 @@ use Core\Resources\Views\ViewNames;
                     <div class="li">2.8. Персональные данные&nbsp;— любая информация,
                                     относящаяся прямо или косвенно к&nbsp;определенному или определяемому
                                     Пользователю веб-сайта <span class="link mark owner-site-url-field"
-                                                                 data-scroll-to="#owner-site-url-field">{{ env('APP_URL') }}</span>.
+                                                                 data-scroll-to="#owner-site-url-field">https://sputnik-iskozh.ru/</span>.
                     </div>
                     <div class="li">
                         2.9. Персональные данные, разрешенные субъектом персональных данных для
@@ -116,7 +115,7 @@ use Core\Resources\Views\ViewNames;
                     <div class="li">
                         2.10. Пользователь&nbsp;— любой посетитель веб-сайта
                         <span class="link mark owner-site-url-field"
-                              data-scroll-to="#owner-site-url-field">{{ env('APP_URL') }}</span>.
+                              data-scroll-to="#owner-site-url-field">https://sputnik-iskozh.ru/</span>.
                     </div>
                     <div class="li">
                         2.11. Предоставление персональных данных&nbsp;— действия, направленные
@@ -329,13 +328,17 @@ use Core\Resources\Views\ViewNames;
                 <h5>6. Цели обработки персональных данных</h5>
                 <div class="ol">
                     <div class="li"
-                         id="vQGsuC6ZL">
-                        <table class="purpose-table">
+                         id="8RpUKbH">
+                        <table class="table">
                             <tbody>
                             <tr>
                                 <th>Цель обработки</th>
                                 <td class="purpose-field">
-                                    <span class="mark link">предоставление доступа Пользователю к&nbsp;сервисам, информации и/или&nbsp;материалам, содержащимся на&nbsp;веб-сайте</span>
+                                    <ul>
+                                        <li>
+                                            <span class="mark link">предоставление доступа Пользователю к&nbsp;сервисам, информации и/или&nbsp;материалам, содержащимся на&nbsp;веб-сайте</span>
+                                        </li>
+                                    </ul>
                                 </td>
                             </tr>
                             <tr>
@@ -345,6 +348,8 @@ use Core\Resources\Views\ViewNames;
                                         <li><span class="mark link">фамилия, имя, отчество</span></li>
                                         <li><span class="mark link">электронный адрес</span></li>
                                         <li><span class="mark link">номера телефонов</span></li>
+                                        <li><span class="mark link">год, месяц, дата и&nbsp;место рождения</span></li>
+                                        <li><span class="mark link">фотографии</span></li>
                                     </ul>
                                 </td>
                             </tr>
@@ -479,7 +484,7 @@ use Core\Resources\Views\ViewNames;
                         Пользователь может актуализировать их&nbsp;самостоятельно, путем направления
                         Оператору уведомление на&nbsp;адрес электронной почты Оператора
                         <span class="link mark owner-email-field"
-                              data-scroll-to="#owner-email-field">{{ env('MAIL_SUPPORT') }}</span>
+                              data-scroll-to="#owner-email-field">support@sputnik-iskozh.ru</span>
                         с&nbsp;пометкой «Актуализация персональных данных».
                     </div>
                     <div class="li">
@@ -492,7 +497,7 @@ use Core\Resources\Views\ViewNames;
                         на&nbsp;обработку персональных данных, направив Оператору уведомление
                         посредством электронной почты на&nbsp;электронный адрес Оператора
                         <span class="link mark owner-email-field"
-                              data-scroll-to="#owner-email-field">{{ env('MAIL_SUPPORT') }}</span>
+                              data-scroll-to="#owner-email-field">support@sputnik-iskozh.ru</span>
                         с&nbsp;пометкой «Отзыв согласия на&nbsp;обработку персональных
                         данных».
                     </div>
@@ -597,7 +602,7 @@ use Core\Resources\Views\ViewNames;
                         12.1. Пользователь может получить любые разъяснения по&nbsp;интересующим
                         вопросам, касающимся обработки его персональных данных, обратившись
                         к&nbsp;Оператору с&nbsp;помощью электронной почты <span class="link mark owner-email-field"
-                                                                                data-scroll-to="#owner-email-field">{{ env('MAIL_SUPPORT') }}</span>.
+                                                                                data-scroll-to="#owner-email-field">support@sputnik-iskozh.ru</span>.
                     </div>
                     <div class="li">
                         12.2. В&nbsp;данном документе будут отражены любые изменения политики
@@ -608,7 +613,7 @@ use Core\Resources\Views\ViewNames;
                         12.3. Актуальная версия Политики в&nbsp;свободном доступе расположена
                         в&nbsp;сети Интернет по&nbsp;адресу <span id="owner-privacy-url-value"
                                                                   class="link mark owner-privacy-url-field"
-                                                                  data-scroll-to="#owner-privacy-url-field">{{ env('APP_URL') }}/privacy</span>.
+                                                                  data-scroll-to="#owner-privacy-url-field">https://sputnik-iskozh.ru/privacy</span>.
                     </div>
                 </div>
             </div>

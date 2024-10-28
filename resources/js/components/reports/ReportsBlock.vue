@@ -3,18 +3,18 @@
         <template v-slot:sub
                   v-if="edit">
             <div class="d-flex justify-content-between">
-                <button class="btn btn-primary"
+                <button class="btn btn-success"
                         v-on:click="showFormAction">Добавить отчёт
                 </button>
                 <div class="btn-group d-none">
                     <button class="btn"
-                            :class="viewMode === ViewMode.Row ? 'btn-primary' : 'btn-outline-secondary'"
+                            :class="viewMode === ViewMode.Row ? 'btn-success' : 'btn-outline-secondary'"
                             @click="viewMode = ViewMode.Row"
                     >
                         <i class="fa fa-reorder"></i>
                     </button>
                     <button class="btn"
-                            :class="viewMode === ViewMode.Plate ? 'btn-primary' : 'btn-outline-secondary'"
+                            :class="viewMode === ViewMode.Plate ? 'btn-success' : 'btn-outline-secondary'"
                             @click="viewMode = ViewMode.Plate"
                     >
                         <i class="fa fa-cubes"></i>

@@ -1,0 +1,63 @@
+#topNavBar {
+    background-color : #019F83 !important;
+
+    .nav-link {
+        color : #FFF !important;
+    }
+
+    .navbar-brand {
+        display     : flex;
+        align-items : center;
+        color       : #ffffff;
+        padding     : 0 0 3px 0;
+
+        .logo {
+            margin-right    : 10px;
+            height          : 30px;
+            width           : 30px;
+            background-size : contain;
+            border-radius   : 50%;
+        }
+    }
+}
+
+
+h1, h2, h3, h4, h5, h6,
+.btn-link,
+a:not(.btn) {
+    color : $default-green;
+}
+
+.active {
+    .page-link {
+        background-color : $default-green;
+        border-color     : $default-green;
+    }
+}
+
+.form-check-input {
+    &:checked {
+        background-color : $default-green;
+        border-color     : $default-green;
+    }
+
+    &:focus {
+        border-color : $light-green;
+        box-shadow   : 0 0 0 0.25rem $light-green;
+    }
+}
+
+
+footer {
+    background-color : $light-green;
+}
+
+hr {
+    border-color : $default-green;
+}
+
+.border-top,
+.border-bottom {
+    border-color : $default-green !important;
+}
+

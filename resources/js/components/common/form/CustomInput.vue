@@ -1,39 +1,40 @@
 <template>
-    <label class="form-control label-input" :class="classes">
-        <span class="label-text">
-            {{ label }}
-        </span>
-        <input
-               :value="modelValue"
-               :type="computedType"
-               :required="required"
-               :placeholder="placeholder"
-               :disabled="disabled"
-               :name="name"
-               @change="onChange"
-               @keyup.enter="onSubmit"
-               @keyup="onKeyup"
-               class="form-control"
-               :class="[errors ? 'form-error' : '']"
-        />
-    </label>
-    <ul v-if="errors"
-        class="form-error"
+    <element-wrapper
+        :label="label"
+        :required="required"
+        :classes="classes"
+        :id="id"
     >
-        <li v-for="error in errors">
-            {{ error }}
-        </li>
-    </ul>
+        <input
+            :value="modelValue"
+            :type="computedType"
+            :required="required"
+            :placeholder="placeholder"
+            :disabled="disabled"
+            :name="name"
+            :id="id"
+            @change="onChange"
+            @keyup.enter="onSubmit"
+            @keyup="onKeyup"
+            class="form-control"
+            :class="[errors ? 'form-error' : '']"
+        />
+    </element-wrapper>
+    <errors-list :errors="errors" />
 </template>
 
 <script>
 /**
  * @see https://primevue.org/
  */
-import Calendar from 'primevue/calendar';
+import Calendar       from 'primevue/calendar';
+import ErrorsList     from './partial/ErrorsList.vue';
+import ElementWrapper from './partial/ElementWrapper.vue';
 
 export default {
     components: {
+        ElementWrapper,
+        ErrorsList,
         Calendar,
     },
     props     : [
@@ -53,8 +54,12 @@ export default {
         'submit',
         'keyup',
     ],
+    mounted () {
+        this.id = 'input-' + this.$_uid;
+    },
     data () {
         return {
+            id        : null,
             localValue: null,
         };
     },

@@ -37,7 +37,7 @@
 
             <div class="btn-group btn-group-sm"
                  v-if="edit">
-                <button class="btn btn-primary"
+                <button class="btn btn-success"
                         @click="modeEdit=1">
                     <i class="fa fa-edit"></i>&nbsp;Редактировать
                 </button>
@@ -66,7 +66,6 @@ import Wrapper                  from '../common/Wrapper.vue';
 import CustomInput              from '../common/form/CustomInput.vue';
 import Url                      from '../../utils/Url.js';
 import FileListItem             from '../files/FileListItem.vue';
-import { MODE as FileItemMode } from '../files/FileListItem.vue';
 
 export default {
     emits     : ['updated'],

@@ -5,11 +5,9 @@ namespace App\Http\Controllers\News;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\Permission;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
 use Core\Domains\File\Enums\TypeEnum;
-use Core\Domains\File\Requests\SaveRequest as SaveFileRequest;
+use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
+use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\Factories\NewsFactory;
 use Core\Domains\News\NewsLocator;
 use Core\Domains\News\Requests\SaveRequest;
@@ -29,14 +27,12 @@ class NewsController extends Controller
     private NewsService $newsService;
     private NewsFactory $newsFactory;
     private FileService $fileService;
-    private RoleService $roleService;
 
     public function __construct()
     {
         $this->newsService = NewsLocator::NewsService();
         $this->newsFactory = NewsLocator::NewsFactory();
         $this->fileService = NewsLocator::FileService();
-        $this->roleService = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -49,17 +45,22 @@ class NewsController extends Controller
         $news = $this->newsFactory->makeDefault();
 
         return response()->json([
-            ResponsesEnum::NEWS => $news,
+            ResponsesEnum::NEWS       => $news,
+            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
         ]);
     }
 
-    public function show(int $id): View
+    public function show(int $id): mixed
     {
         $news = $this->newsService->getById($id);
         $edit = Auth::id();
 
         if ( ! $news) {
             abort(404);
+        }
+
+        if ($news->getCategory() !== CategoryEnum::DEFAULT) {
+            return redirect($news->url());
         }
 
         return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
@@ -73,8 +74,9 @@ class NewsController extends Controller
         $news = $this->newsService->getById($id);
 
         return response()->json([
-            ResponsesEnum::NEWS => $news,
-            ResponsesEnum::EDIT => $this->canEdit(),
+            ResponsesEnum::NEWS       => $news,
+            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
+            ResponsesEnum::EDIT       => $this->canEdit(),
         ]);
     }
 
@@ -84,8 +86,8 @@ class NewsController extends Controller
 
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT)
-            ->setSortOrderDesc()
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
+            ->setCategory(CategoryEnum::DEFAULT)
             ->setWithFiles();
 
         if ( ! $canEdit) {
@@ -101,12 +103,41 @@ class NewsController extends Controller
         ]);
     }
 
+    public function listAll(SearchRequest $request): JsonResponse
+    {
+        $searcher = $request->dto();
+        $searcher
+            ->setSortOrderProperty(News::IS_LOCK, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
+            ->setWithFiles();
+
+        if ( ! $this->canEdit()) {
+            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
+        }
+
+        $news = $this->newsService->search($searcher);
+
+        return response()->json([
+            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::TOTAL => $news->getTotal(),
+            ResponsesEnum::EDIT  => false,
+        ]);
+    }
+
     public function save(SaveRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
-        $news = $request->dto();
+
+        $news = $this->newsFactory->makeDefault()
+            ->setId($request->getId())
+            ->setTitle($request->getTitle())
+            ->setArticle($request->getArticle())
+            ->setCategory($request->getCategory())
+            ->setIsLock($request->isLock())
+            ->setPublishedAt($request->getPublishedAt());
+
         $news = $this->newsService->save($news);
 
         return response()->json($news);
@@ -117,6 +148,7 @@ class NewsController extends Controller
         if ( ! $this->canEdit()) {
             abort(403);
         }
+
         return response()->json($this->newsService->deleteById($id));
     }
 
@@ -165,8 +197,6 @@ class NewsController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditNews($role);
+        return \app::roleDecorator()->canEditNews();
     }
 }

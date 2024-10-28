@@ -12,7 +12,7 @@
         />
         <div class="d-grid mt-3">
             <button type="submit"
-                    class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Восстановить
+                    class="btn btn-success btn-block text-uppercase mb-2 rounded-pill shadow-sm">Восстановить
             </button>
         </div>
     </form>

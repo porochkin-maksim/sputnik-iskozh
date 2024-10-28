@@ -1,13 +1,13 @@
 <template>
     <page-template>
-        <template v-slot:sub v-if="edit">
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-primary"
-                        v-on:click="showFormAction">Добавить новость
-                </button>
-            </div>
-        </template>
         <template v-slot:main>
+            <template v-if="edit">
+                <div class="d-flex justify-content-between mb-2">
+                    <button class="btn btn-success"
+                            v-on:click="showFormAction">Добавить новость
+                    </button>
+                </div>
+            </template>
             <div v-if="showForm">
                 <wrapper @close="showForm=false" :container-class="'w-lg-75 w-md-100'">
                     <div class="container-fluid">
@@ -29,7 +29,7 @@ import ResponseError from '../../mixin/ResponseError.js';
 import NewsItemEdit  from './NewsItemEdit.vue';
 import NewsList      from './NewsList.vue';
 import Wrapper     from '../common/Wrapper.vue';
-import PageTemplate from '../pages/TwoColumnsPage.vue';
+import PageTemplate from '../pages/SingleColumnPage.vue';
 
 export default {
     name      : 'NewsBlock',

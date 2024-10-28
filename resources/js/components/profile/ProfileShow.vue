@@ -39,12 +39,12 @@
         </table>
     </div>
     <div class="d-flex justify-content-center mb-3">
-        <button class="btn btn-primary"
+        <button class="btn btn-success"
                 v-if="editMode"
                 @click="register">
             <i class="fa fa-save"></i> Обновить
         </button>
-        <button class="btn btn-primary"
+        <button class="btn btn-success"
                 v-else
                 @click="editMode=true">
             Редактировать

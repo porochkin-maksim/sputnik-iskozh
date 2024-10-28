@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\Permission;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Report\Enums\CategoryEnum;
 use Core\Domains\Report\Enums\TypeEnum;
 use Core\Domains\Report\Factories\ReportFactory;
@@ -19,21 +17,18 @@ use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends Controller
 {
     private ReportService $reportService;
     private ReportFactory $reportFactory;
     private FileService   $fileService;
-    private RoleService   $roleService;
 
     public function __construct()
     {
         $this->reportService = ReportLocator::ReportService();
         $this->reportFactory = ReportLocator::ReportFactory();
         $this->fileService   = ReportLocator::FileService();
-        $this->roleService   = RoleLocator::RoleService();
     }
 
     public function index(): View
@@ -67,7 +62,7 @@ class ReportsController extends Controller
     {
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderDesc()
+            ->setSortOrderProperty('id', SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
 
         $reports = $this->reportService->search($searcher);
@@ -112,8 +107,6 @@ class ReportsController extends Controller
 
     private function canEdit(): bool
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        return Permission::canEditReports($role);
+        return \app::roleDecorator()->canEditReports();
     }
 }
