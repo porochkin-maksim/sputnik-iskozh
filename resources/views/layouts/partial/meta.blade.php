@@ -9,6 +9,7 @@ $allowRobots = Route::is(RouteNames::INDEX)
     || Route::is(RouteNames::NEWS)
     || Route::is(RouteNames::GARBAGE)
     || Route::is(RouteNames::FILES)
+    || Route::is(RouteNames::PROPOSAL)
 ;
 
 ?>
