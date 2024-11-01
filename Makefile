@@ -98,6 +98,10 @@ migrate-refresh: ## откатить миграции
 volume-rm: ## удалить "docker volumes" проекта
 	@docker volume rm laravel_sail-meilisearch laravel_sail-mysql laravel_sail-redis
 
+.PHONY: remove
+remove-all: ## Удалить все контейнеры и образы
+	@docker compose down -v --rmi all
+
 # empty action
 %:
 	@:
