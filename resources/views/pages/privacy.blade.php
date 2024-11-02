@@ -8,11 +8,6 @@ use Core\Resources\Views\ViewNames;
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ route(RouteNames::PRIVACY) }}" />
-@endpush
-
 @section(SectionNames::CONTENT)
     @if(app::roleDecorator()->canEditTemplates())
         <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>

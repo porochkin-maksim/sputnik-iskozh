@@ -45,6 +45,7 @@ readonly class NewsFactory
         return $result->fill([
             News::CATEGORY     => $dto->getCategory()->value,
             News::TITLE        => $dto->getTitle(),
+            News::DESCRIPTION  => $dto->getDescription(),
             News::ARTICLE      => $dto->getArticle(),
             News::IS_LOCK      => $dto->isLock(),
             News::PUBLISHED_AT => $publishedAt,
@@ -58,6 +59,7 @@ readonly class NewsFactory
         $result
             ->setId($news->id)
             ->setTitle($news->title)
+            ->setDescription($news->description)
             ->setArticle($news->article)
             ->setIsLock($news->is_lock)
             ->setPublishedAt($news->published_at)

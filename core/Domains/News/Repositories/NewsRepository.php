@@ -5,6 +5,7 @@ namespace Core\Domains\News\Repositories;
 use App\Models\News;
 use Core\Db\RepositoryTrait;
 use Core\Domains\News\Collections\NewsCollection;
+use Core\Domains\News\Models\NewsSearcher;
 
 class NewsRepository
 {
@@ -43,5 +44,20 @@ class NewsRepository
     public function unlockNews(): void
     {
         News::where(News::IS_LOCK, true)->update([News::IS_LOCK => false]);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getIdsByFullTextSearch(string $search): array
+    {
+        return News::select('id')->whereRaw(
+            sprintf("MATCH(%s) AGAINST(? IN BOOLEAN MODE)",
+                implode(',', [News::TITLE, News::DESCRIPTION, News::ARTICLE]),
+            ),
+            $search
+        )->get()->map(function (News $news) {
+            return $news->id;
+        })->unique()->toArray();
     }
 }

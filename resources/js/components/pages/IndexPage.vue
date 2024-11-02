@@ -3,7 +3,8 @@
         <template v-slot:main>
             <div v-if="news.length">
                 <h1 class="title">
-                    <a :href="Url.Routes.newsIndex.uri" class="text-decoration-none">Новости</a>
+                    <a :href="Url.Routes.newsIndex.uri"
+                       class="text-decoration-none">Новости</a>
                 </h1>
                 <div class="custom-list news-list w-100">
                     <template v-for="(item, index) in news">
@@ -17,6 +18,18 @@
             </div>
         </template>
         <template v-slot:sub>
+            <form :action="Url.Routes.search.uri" method="get">
+                <div class="input-group">
+                    <button class="btn btn-light border" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <input class="form-control" v-model="search" name="q" placeholder="Поиск по сайту" ref="search">
+                    <button class="btn btn-light border" type="button" @click="search = null">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </form>
+            <hr>
             <template v-if="lockedNews && lockedNews.length">
                 <h1 class="title">
                     Важное
@@ -55,6 +68,7 @@
                 </tr>
                 </tbody>
             </table>
+            <hr>
             <h4>
                 <a :href="Url.Routes.proposal.uri"
                    class="btn btn-sm btn-success w-lg-100">
@@ -85,6 +99,7 @@ export default {
             Url,
             news      : [],
             lockedNews: [],
+            search    : null,
         };
     },
     methods : {

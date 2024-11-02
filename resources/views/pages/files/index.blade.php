@@ -11,16 +11,12 @@ use Core\Services\OpenGraph\OpenGraphLocator;
  */
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setDescription('Файлы и документация');
 $openGraph->setUrl(route(RouteNames::FILES));
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
-
-@push(SectionNames::META)
-    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
 
 @section(SectionNames::METRICS)
     @include(ViewNames::METRICS)

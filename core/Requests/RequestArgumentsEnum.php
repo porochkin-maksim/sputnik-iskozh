@@ -8,6 +8,7 @@ enum RequestArgumentsEnum: string
     public const ALL             = 'all';
     public const CATEGORY        = 'category';
     public const DATA            = 'data';
+    public const DESCRIPTION     = 'description';
     public const EMAIL           = 'email';
     public const END_AT          = 'end_at';
     public const FIRST_NAME      = 'first_name';
@@ -29,6 +30,7 @@ enum RequestArgumentsEnum: string
     public const PRIMARY_USER_ID = 'primary_user_id';
     public const PUBLISHED_AT    = 'published_at';
     public const REMEMBER        = 'remember';
+    public const SEARCH          = 'search';
     public const SKIP            = 'skip';
     public const SORT_BY         = 'sort_by';
     public const SORT_DESC       = 'sort_desc';

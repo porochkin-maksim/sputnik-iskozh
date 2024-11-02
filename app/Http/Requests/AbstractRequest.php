@@ -45,6 +45,19 @@ abstract class AbstractRequest extends FormRequest
         return null;
     }
 
+    public function getString(string $key): string
+    {
+        if (parent::has($key)) {
+            if ($this->get($key) === null || $this->get($key) === 'null') {
+                return '';
+            }
+
+            return (string) $this->get($key);
+        }
+
+        return '';
+    }
+
     public function getStringOrNull(string $key): ?string
     {
         if (parent::has($key)) {

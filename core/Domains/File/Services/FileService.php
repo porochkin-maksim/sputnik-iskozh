@@ -149,6 +149,18 @@ readonly class FileService
         return $result->setItems($collection);
     }
 
+    /**
+     * @return int[]
+     */
+    public function getIdsByFullTextSearch(FileSearcher $searcher): array
+    {
+        if ($searcher->getSearch()) {
+            return $this->fileRepository->getIdsByFullTextSearch($searcher->getSearch());
+        }
+
+        return [];
+    }
+
     public function saveFileOrderIndex(FileDTO $file, int $newIndex): void
     {
         $searcher = new FileSearcher();

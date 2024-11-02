@@ -10,7 +10,6 @@ use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\File\Models\FileDTO;
-use Core\Resources\RouteNames;
 
 class NewsDTO implements \JsonSerializable
 {
@@ -18,6 +17,7 @@ class NewsDTO implements \JsonSerializable
 
     private ?int          $id          = null;
     private ?string       $title       = null;
+    private ?string       $description = null;
     private ?string       $article     = null;
     private ?bool         $isLock      = null;
     private ?CategoryEnum $category    = null;
@@ -48,6 +48,18 @@ class NewsDTO implements \JsonSerializable
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): NewsDTO
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -123,6 +135,7 @@ class NewsDTO implements \JsonSerializable
             'dossier'     => $dossier,
             'id'          => $this->id,
             'title'       => $this->title,
+            'description' => $this->description,
             'article'     => $this->article,
             'category'    => $this->getCategory()->value,
             'files'       => $this->getFiles(),

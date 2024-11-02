@@ -42,6 +42,14 @@
                                          @change="clearError('lock')"
                         />
                     </div>
+                    <div class="">
+                        <custom-textarea v-model="description"
+                                         :errors="errors.description"
+                                         :placeholder="'Описание'"
+                                         :required="false"
+                                         @change="clearError('description')"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -62,10 +70,12 @@ import CustomSelect   from '../common/form/CustomSelect.vue';
 import ResponseError  from '../../mixin/ResponseError.js';
 import HtmlEditor     from '../common/editors/HtmlEditor.vue';
 import CustomCheckbox from '../common/form/CustomCheckbox.vue';
+import CustomTextarea from '../common/form/CustomTextarea.vue';
 
 export default {
     emits     : ['updated'],
     components: {
+        CustomTextarea,
         CustomCheckbox,
         CustomSelect,
         CustomInput,
@@ -89,6 +99,7 @@ export default {
         return {
             id          : this.modelValue,
             title       : null,
+            description : null,
             article     : null,
             published_at: null,
             lock        : null,
@@ -121,6 +132,7 @@ export default {
             let form = new FormData();
             form.append('id', this.id);
             form.append('title', this.title);
+            form.append('description', this.description);
             form.append('article', this.article);
             form.append('published_at', this.published_at);
             form.append('is_lock', this.lock);
@@ -143,6 +155,7 @@ export default {
         mapResponse (news) {
             this.id           = news.id;
             this.title        = news.title;
+            this.description  = news.description;
             this.article      = news.article;
             this.published_at = news.publishedAt;
             this.lock         = news.isLock;

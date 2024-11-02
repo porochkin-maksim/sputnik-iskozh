@@ -12,6 +12,7 @@ class SearchResponse
     public function __construct()
     {
         $this->items = new Collection();
+        $this->total = 0;
     }
 
     public function getItems(): Collection

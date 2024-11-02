@@ -12,12 +12,6 @@ $openGraph->setUrl(route(RouteNames::PROPOSAL));
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
-
 @section(SectionNames::METRICS)
     @include(ViewNames::METRICS)
 @endsection

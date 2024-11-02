@@ -8,6 +8,7 @@ use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setDescription('Контакты, режим работы');
 $openGraph->setUrl(route(RouteNames::CONTACTS));
 
 $month    = Carbon::now()->month;
@@ -15,12 +16,6 @@ $isWinter = $month >= 11 || $month <= 3;
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
-
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
 
 @section(SectionNames::METRICS)
     @include(ViewNames::METRICS)

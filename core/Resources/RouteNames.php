@@ -4,14 +4,16 @@ namespace Core\Resources;
 
 abstract class RouteNames
 {
-    public const INDEX      = 'index';
-    public const CONTACTS   = 'contacts';
-    public const GARBAGE    = 'garbage';
-    public const PRIVACY    = 'privacy';
-    public const LOGOUT     = 'logout';
-    public const HOME       = 'home';
-    public const REGULATION = 'regulation';
-    public const RUBRICS    = 'rubrics';
+    public const INDEX       = 'index';
+    public const CONTACTS    = 'contacts';
+    public const GARBAGE     = 'garbage';
+    public const PRIVACY     = 'privacy';
+    public const LOGOUT      = 'logout';
+    public const HOME        = 'home';
+    public const REGULATION  = 'regulation';
+    public const RUBRICS     = 'rubrics';
+    public const SEARCH      = 'search';
+    public const SITE_SEARCH = 'search.site';
 
     public const PROPOSAL        = 'proposal';
     public const PROPOSAL_CREATE = 'proposal.create';
@@ -90,6 +92,7 @@ abstract class RouteNames
             self::REGULATION    => 'Устав',
             self::RUBRICS       => 'Рубрикатор',
             self::PROPOSAL      => 'Предложения',
+            self::SEARCH        => 'Поиск по сайту',
 
             self::HOME          => 'Личный кабинет',
             self::PROFILE       => 'Профиль',

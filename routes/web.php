@@ -18,11 +18,18 @@ Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->n
 Route::get('/privacy', [Controllers\Pages\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
 Route::get('/regulation', [Controllers\Pages\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
 Route::get('/rubrics', [Controllers\Pages\PagesController::class, 'rubrics'])->name(RouteNames::RUBRICS);
+Route::get('/search', [Controllers\Pages\PagesController::class, 'search'])->name(RouteNames::SEARCH);
 
 Route::group(['prefix' => 'pages'], function () {
     Route::group(['prefix' => 'json'], function () {
         Route::post('/edit', [Controllers\Pages\TemplateController::class, 'get'])->name(RouteNames::TEMPLATE_GET);
         Route::patch('/edit', [Controllers\Pages\TemplateController::class, 'update'])->name(RouteNames::TEMPLATE_UPDATE);
+    });
+});
+
+Route::group(['prefix' => 'search'], function () {
+    Route::group(['prefix' => 'json'], function () {
+        Route::post('/search', [Controllers\Pages\SearchController::class, 'search'])->name(RouteNames::SITE_SEARCH);
     });
 });
 

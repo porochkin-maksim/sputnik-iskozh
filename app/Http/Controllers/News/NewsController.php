@@ -84,7 +84,7 @@ class NewsController extends Controller
     {
         $canEdit = $this->canEdit();
 
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::DEFAULT)
@@ -105,7 +105,7 @@ class NewsController extends Controller
 
     public function lockedNews(SearchRequest $request): JsonResponse
     {
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
             ->setSelect([News::TITLE, News::ID, News::CATEGORY, News::PUBLISHED_AT,])
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
@@ -127,7 +127,7 @@ class NewsController extends Controller
 
     public function listAll(SearchRequest $request): JsonResponse
     {
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
@@ -154,6 +154,7 @@ class NewsController extends Controller
         $news = $this->newsFactory->makeDefault()
             ->setId($request->getId())
             ->setTitle($request->getTitle())
+            ->setDescription($request->getDescription())
             ->setArticle($request->getArticle())
             ->setCategory($request->getCategory())
             ->setIsLock($request->isLock())

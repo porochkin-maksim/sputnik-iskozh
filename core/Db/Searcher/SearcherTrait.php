@@ -23,6 +23,8 @@ trait SearcherTrait
     private WhereCollection $where;
     private array           $whereIn = [];
 
+    private ?string $search = null;
+
     /**
      * @return null|int[]
      */
@@ -56,6 +58,18 @@ trait SearcherTrait
     public function setSelect(array $select): static
     {
         $this->select = $select;
+
+        return $this;
+    }
+
+    public function getSearch(): ?string
+    {
+        return $this->search;
+    }
+
+    public function setSearch(?string $search): static
+    {
+        $this->search = $search;
 
         return $this;
     }

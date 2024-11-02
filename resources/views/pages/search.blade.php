@@ -1,17 +1,20 @@
 <?php declare(strict_types=1);
 
+use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setUrl(route(RouteNames::SEARCH));
+$openGraph->setDescription('Поиск по сайту');
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
 
 @push(SectionNames::META)
-    <meta name="keywords" content="снт спутник-искож тверь сайт">
+    {!! $openGraph->toMetaTags() !!}
 @endpush
 
 @section(SectionNames::METRICS)
@@ -19,5 +22,5 @@ $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 @endsection
 
 @section(SectionNames::CONTENT)
-    <index-page></index-page>
+    <search-block></search-block>
 @endsection

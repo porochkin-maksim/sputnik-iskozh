@@ -11,6 +11,7 @@ class SaveRequest extends AbstractRequest
 {
     private const ID           = RequestArgumentsEnum::ID;
     private const TITLE        = RequestArgumentsEnum::TITLE;
+    private const DESCRIPTION  = RequestArgumentsEnum::DESCRIPTION;
     private const ARTICLE      = RequestArgumentsEnum::ARTICLE;
     private const PUBLISHED_AT = RequestArgumentsEnum::PUBLISHED_AT;
     private const IS_LOCK      = RequestArgumentsEnum::IS_LOCK;
@@ -46,7 +47,12 @@ class SaveRequest extends AbstractRequest
 
     public function getTitle(): string
     {
-        return $this->get(self::TITLE);
+        return $this->getString(self::TITLE);
+    }
+
+    public function getDescription(): string
+    {
+        return $this->getStringOrNull(self::DESCRIPTION);
     }
 
     public function getArticle(): ?string
@@ -75,6 +81,7 @@ class SaveRequest extends AbstractRequest
 
         $dto->setId($this->getInt(self::ID))
             ->setTitle($this->get(self::TITLE))
+            ->setDescription($this->get(self::DESCRIPTION))
             ->setArticle($this->get(self::ARTICLE))
             ->setCategory(CategoryEnum::tryFrom($this->get(self::CATEGORY)))
             ->setIsLock($this->getBool(self::IS_LOCK))

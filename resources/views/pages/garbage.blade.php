@@ -8,16 +8,12 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 use Illuminate\Support\Facades\Route;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setDescription('Об организации вывоза мусора');
 $openGraph->setUrl(route(RouteNames::GARBAGE));
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
-
-@push(SectionNames::META)
-    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
 
 @section(SectionNames::METRICS)
     @include(ViewNames::METRICS)

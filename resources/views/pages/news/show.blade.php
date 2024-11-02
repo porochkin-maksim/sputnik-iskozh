@@ -15,16 +15,11 @@ $openGraph->setType(OpenGraphType::ARTICLE)
     ->setTitle($news->getTitle())
     ->setUrl($news->url())
     ->setImage($news->getImages()->first()?->url())
-    ->setDescription($news->getArticleAsText());
+    ->setDescription($news->getDescription() ?: $news->getArticleAsText());
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
-
-@push(SectionNames::META)
-    <link rel="canonical" href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
 
 @section(SectionNames::METRICS)
     @include(ViewNames::METRICS)

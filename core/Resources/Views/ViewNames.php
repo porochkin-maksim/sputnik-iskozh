@@ -17,6 +17,7 @@ enum ViewNames: string
     public const PAGES_PROPOSAL      = 'pages.contacts.proposal';
     public const PAGES_GARBAGE       = 'pages.garbage';
     public const PAGES_PRIVACY       = 'pages.privacy';
+    public const PAGES_SEARCH        = 'pages.search';
     public const PAGES_FILES_INDEX   = 'pages.files.index';
     public const PAGES_NEWS_INDEX    = 'pages.news.index';
     public const PAGES_NEWS_SHOW     = 'pages.news.show';

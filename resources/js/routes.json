@@ -445,6 +445,18 @@
         "uri": "\/sanctum\/csrf-cookie",
         "args": []
     },
+    "search": {
+        "name": "search",
+        "method": "get",
+        "uri": "\/search",
+        "args": []
+    },
+    "searchSite": {
+        "name": "search.site",
+        "method": "post",
+        "uri": "\/search\/json\/search",
+        "args": []
+    },
     "sessionStore": {
         "name": "session.store",
         "method": "post",

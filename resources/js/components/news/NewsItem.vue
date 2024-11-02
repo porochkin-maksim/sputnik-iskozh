@@ -113,7 +113,7 @@ export default {
             forceExpandArticle: false,
 
             id              : this.news.id,
-            maxArticleHeight: 680,
+            maxArticleHeight: 200,
         };
     },
     methods : {
