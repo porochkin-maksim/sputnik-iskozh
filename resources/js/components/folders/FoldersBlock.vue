@@ -93,7 +93,7 @@
                 </div>
             </template>
 
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-column flex-wrap">
                 <template v-for="folder in folders">
                     <div class="folder-item">
                         <template v-if="edit">
@@ -118,19 +118,22 @@
                                 </ul>
                             </div>
                         </template>
-                        <div class="w-100">
-                            <div class="folder-image"
-                                 :style="{backgroundImage: 'url('+Img.Folder+')'}"
-                                 @click="enterFolder(folder)">
+                        <template v-else>
+                            <div class="dropdown opacity-0">
+                                <button class="btn btn-sm">...</button>
                             </div>
-                            <div class="name">
-                                {{ folder.name }}
-                            </div>
+                        </template>
+                        <div class="folder-image"
+                             :style="{backgroundImage: 'url('+Img.Folder+')'}"
+                             @click="enterFolder(folder)">
+                        </div>
+                        <div class="name" @click="enterFolder(folder)">
+                            {{ folder.name }}
                         </div>
                     </div>
                 </template>
             </div>
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-column flex-wrap">
                 <template v-for="file in files">
                     <div class="folder-item">
                         <template v-if="edit">
@@ -180,31 +183,39 @@
                             </div>
                         </template>
 
-                        <a v-if="file.isImage"
-                           class="folder-image"
-                           data-lightbox="files"
-                           target="_blank"
-                           :style="{backgroundImage: 'url('+getImgByFile(file)+')'}"
-                           :href="file.url"
-                           :data-title="file.name"
-                        >
-                        </a>
-                        <a v-else
-                           class="folder-image"
-                           target="_blank"
-                           :style="{backgroundImage: 'url('+getImgByFile(file)+')'}"
-                           :href="file.url"
-                           :data-title="file.name"
-                        >
-                        </a>
-                        <div class="w-100">
-                            <div class="date">
-                                {{ file.dossier.createdAt }}
-                            </div>
-                            <div class="name">
+                        <template v-if="file.isImage">
+                            <a class="folder-image"
+                               data-lightbox="files"
+                               target="_blank"
+                               :style="{backgroundImage: 'url('+getImgByFile(file)+')'}"
+                               :href="file.url"
+                               :data-title="file.name"
+                            >
+                            </a>
+                            <a class="name"
+                               data-lightbox="files"
+                               target="_blank"
+                               :href="file.url"
+                               :data-title="file.name"
+                            >
                                 {{ file.name }}
-                            </div>
-                        </div>
+                            </a>
+                        </template>
+                        <template v-else>
+                            <a class="folder-image"
+                               target="_blank"
+                               :style="{backgroundImage: 'url('+getImgByFile(file)+')'}"
+                               :href="file.url"
+                               :data-title="file.name"
+                            >
+                            </a>
+                            <a class="name"
+                               target="_blank"
+                               :href="file.url"
+                               :data-title="file.name">
+                                {{ file.name }}
+                            </a>
+                        </template>
                     </div>
                 </template>
             </div>

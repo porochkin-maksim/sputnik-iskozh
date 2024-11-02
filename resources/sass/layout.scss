@@ -1,6 +1,22 @@
-.main,
+#app {
+    background-attachment : fixed;
+    background-repeat     : no-repeat;
+    background-size       : cover;
+
+    main {
+        background-color : white;
+        flex: 1;
+    }
+
+    footer {
+        border-top: 5px solid $default-primary;
+    }
+}
+
 main,
+footer,
 .wrapper-container {
+    width     : 100%;
     max-width : 1200px;
     margin    : 0 auto;
 }
@@ -39,63 +55,4 @@ main,
     justify-content : center;
     margin-top      : $font-size * 5;
     z-index         : 101;
-}
-
-.layout-page {
-    &.single-column-page {
-        display        : flex !important;
-        flex-direction : column !important;
-
-        .block-main {
-            width        : 100%;
-            padding-left : unset;
-        }
-    }
-}
-
-@media (min-width : 992px) {
-    .layout-page {
-        display : flex;
-
-        .block-sub {
-            width         : 30%;
-            padding-right : $font-size * 2;
-            border-right  : 1px solid $border-color;
-        }
-
-        .block-main {
-            width : 70%;
-
-            &:not(.no-sub) {
-                padding-left : $font-size * 2;
-            }
-        }
-    }
-}
-
-@media (max-width : 992px) {
-    .layout-page {
-        &:not(.no-reverse) {
-            display        : flex;
-            flex-direction : column-reverse;
-        }
-
-        .block-sub {
-            width         : 100%;
-            padding-right : unset;
-            border-right  : unset;
-        }
-
-        .block-main {
-            width           : 100%;
-            padding-left    : unset;
-            justify-content : center;
-        }
-    }
-}
-
-.html-editor {
-    div[role=application] {
-        height : 100% !important;
-    }
 }

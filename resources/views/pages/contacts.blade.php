@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use Carbon\Carbon;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
@@ -9,6 +10,8 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setUrl(route(RouteNames::CONTACTS));
 
+$month    = Carbon::now()->month;
+$isWinter = $month >= 11 || $month <= 3;
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -27,7 +30,7 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
     @if(app::roleDecorator()->canEditTemplates())
         <page-editor :template="'{{ ViewNames::PAGES_CONTACTS }}'"></page-editor>
     @endif
-    <h1 class="border-bottom">
+    <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}
         </a>
@@ -68,11 +71,11 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         <tr>
             <th colspan="2">График работы</th>
         </tr>
-        <tr>
+        <tr @if(!$isWinter) class="table-info" @endif>
             <th>01 апреля - 31 октября</th>
             <td>Каждые четверг и воскресенье 12:00-14:00</td>
         </tr>
-        <tr>
+        <tr @if($isWinter) class="table-info" @endif>
             <th>01 ноября - 31 марта</th>
             <td>Каждые 1-ое и 3-е воскресенье месяца 12:00-14:00</td>
         </tr>
@@ -99,7 +102,10 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
     </table>
 
     <h3>
-        <a href="{{ route(RouteNames::PROPOSAL) }}">Написать предложение</a>
+        <a href="{{ route(RouteNames::PROPOSAL) }}"
+           class="btn btn-sm btn-success">
+            <i class="fa fa-envelope"></i>&nbsp;Написать&nbsp;предложение
+        </a>
     </h3>
     <h3 class="border-bottom mt-3 pb-0 d-inline-block">Мы в соцсетях</h3>
     <div class="social d-flex flex-column pb-3">

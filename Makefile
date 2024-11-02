@@ -71,7 +71,7 @@ yarn-build: ## собрать фронт
 	@./vendor/bin/sail yarn run build
 
 .PHONY: js-routes
-routes: ## Выгрузить маршруты с бэка
+js-routes: ## Выгрузить маршруты с бэка
 	@./vendor/bin/sail artisan front:export-route-list-command
 
 .PHONY: js-arguments

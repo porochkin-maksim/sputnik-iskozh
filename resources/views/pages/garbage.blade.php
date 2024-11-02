@@ -27,7 +27,7 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
     @if(app::roleDecorator()->canEditTemplates())
         <page-editor :template="'{{ ViewNames::PAGES_GARBAGE }}'"></page-editor>
     @endif
-    <h1 class="border-bottom">
+    <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}
         </a>

@@ -1,5 +1,5 @@
 #topNavBar {
-    background-color : #019F83 !important;
+    background-color : $default-primary !important;
 
     .nav-link {
         color : #FFF !important;
@@ -25,39 +25,83 @@
 h1, h2, h3, h4, h5, h6,
 .btn-link,
 a:not(.btn) {
-    color : $default-green;
+    color : $default-primary;
 }
 
 .active {
     .page-link {
-        background-color : $default-green;
-        border-color     : $default-green;
+        background-color : $default-primary;
+        border-color     : $default-primary;
     }
+}
+
+.dropdown-item:active {
+    background-color : $default-primary;
+    color            : white;
 }
 
 .form-check-input {
     &:checked {
-        background-color : $default-green;
-        border-color     : $default-green;
+        background-color : $default-primary;
+        border-color     : $default-primary;
     }
 
     &:focus {
-        border-color : $light-green;
-        box-shadow   : 0 0 0 0.25rem $light-green;
+        border-color : $default-light;
+        box-shadow   : 0 0 0 0.25rem $default-light;
     }
 }
 
 
 footer {
-    background-color : $light-green;
+    background-color : #ffffff;
 }
 
 hr {
-    border-color : $default-green;
+    border-color : $default-primary;
 }
 
 .border-top,
 .border-bottom {
-    border-color : $default-green !important;
+    border-color : $default-primary !important;
+}
+
+.page-title {
+    font-weight   : bold;
+    border-bottom : 2px solid $default-primary;
+}
+
+.layout-page {
+    display : flex;
+
+    .block-main.no-sub {
+        width : 100%;
+    }
+
+    .block-sub {
+        width         : 30%;
+        padding-right : $font-size;
+    }
+
+    .block-main {
+        width : 70%;
+    }
+
+    @media (max-width : $lg) {
+        & {
+            flex-direction : column;
+        }
+
+        .block-sub,
+        .block-main {
+            width : 100%;
+        }
+
+        .block-sub {
+            margin-bottom  : 5px;
+            padding-bottom : 5px;
+            border-bottom  : 5px solid $default-primary;
+        }
+    }
 }
 

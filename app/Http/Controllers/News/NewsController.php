@@ -103,11 +103,32 @@ class NewsController extends Controller
         ]);
     }
 
+    public function lockedNews(SearchRequest $request): JsonResponse
+    {
+        $searcher = $request->dto();
+        $searcher
+            ->setSelect([News::TITLE, News::ID, News::CATEGORY, News::PUBLISHED_AT,])
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
+            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true);
+
+        if ( ! $this->canEdit()) {
+            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
+        }
+
+        $news = $this->newsService->search($searcher);
+
+        return response()->json([
+            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::TOTAL => $news->getTotal(),
+            ResponsesEnum::EDIT  => false,
+        ]);
+
+    }
+
     public function listAll(SearchRequest $request): JsonResponse
     {
         $searcher = $request->dto();
         $searcher
-            ->setSortOrderProperty(News::IS_LOCK, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
 

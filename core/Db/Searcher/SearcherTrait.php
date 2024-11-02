@@ -53,6 +53,13 @@ trait SearcherTrait
         return $this->select;
     }
 
+    public function setSelect(array $select): static
+    {
+        $this->select = $select;
+
+        return $this;
+    }
+
     /** Сортировки */
 
     /**

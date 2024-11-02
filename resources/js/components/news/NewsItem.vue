@@ -14,24 +14,21 @@
              :ref="(el) => (newsElementRef = el)">
             <div class="title">
                 <div class="date">{{ news.dossier.publishedAt }}</div>
-                <h1>
-                    <a class="name"
-                       :href="news.url">
-                        <template v-if="news.isLock">
-                            <i class="fa fa-bolt text-warning"></i>&nbsp;
-                        </template>
-                        {{ news.title ? news.title : 'Без названия' }}
-                    </a>
-                </h1>
+                <a class="name"
+                   :href="news.url">
+                    <template v-if="news.isLock">
+                        <i class="fa fa-bolt text-warning"></i>&nbsp;
+                    </template>
+                    {{ news.title ? news.title : 'Без названия' }}
+                </a>
             </div>
 
             <div class="body">
-                <div class="news-slider">
+                <div class="news-slider py-2" v-if="images && images.length">
                     <bs-slider :images="images"
-                               :id="sliderId"
-                               class="mt-3" />
+                               :id="sliderId"/>
                 </div>
-                <div class="article px-0"
+                <div class="article py-2"
                      v-html="news.article"
                      v-if="news.article"
                 ></div>

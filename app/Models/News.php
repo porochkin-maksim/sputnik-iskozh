@@ -26,6 +26,7 @@ class News extends Model implements CastsInterface
 
     const TABLE = 'news';
 
+    public const ID           = 'id';
     public const TYPE         = 'type';
     public const TITLE        = 'title';
     public const ARTICLE      = 'article';

@@ -34,6 +34,7 @@ abstract class RouteNames
     public const NEWS             = 'news.index';
     public const NEWS_LIST        = 'news.list';
     public const NEWS_LIST_ALL    = 'news.list.all';
+    public const NEWS_LIST_LOCKED = 'news.list.locked';
     public const NEWS_CREATE      = 'news.create';
     public const NEWS_SHOW        = 'news.show';
     public const NEWS_EDIT        = 'news.edit';

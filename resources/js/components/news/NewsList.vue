@@ -7,17 +7,17 @@
             />
         </div>
     </template>
-    <div class="news-list w-100">
+    <div class="custom-list w-100">
         <template v-for="(item, index) in news">
             <news-list-item :news="item"
                             :edit="edit"
                             :is-list="true"
                             @updated="loadList"
             />
-            <hr>
+            <hr v-if="index !== news.length - 1 || showPagination">
         </template>
     </div>
-    <template v-if="showPagination && news.length > 3">
+    <template v-if="showPagination">
         <div class="mt-3 d-flex justify-content-center">
             <pagination :total="total"
                         :perPage="perPage"

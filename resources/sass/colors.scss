@@ -6,9 +6,14 @@
 $color-danger           : var(--bs-danger);
 $color-primary          : var(--bs-primary);
 $color-success          : var(--bs-success);
+$color-warning          : var(--bs-warning);
+$color-secondary        : var(--bs-secondary);
 
-$light-green            : #d4fde3;
-$default-green          : #117833;
+$default-light          : #e1ffed;
+$default-primary        : #117833;
+
+//$default-light          : #fffdd8;
+//$default-primary        : #937500;
 
 $color-light-gray       : #cecece;
 $color-light-gray-hover : #e6e6e6;

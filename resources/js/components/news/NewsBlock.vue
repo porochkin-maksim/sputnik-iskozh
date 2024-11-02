@@ -9,9 +9,11 @@
                 </div>
             </template>
             <div v-if="showForm">
-                <wrapper @close="showForm=false" :container-class="'w-lg-75 w-md-100'">
+                <wrapper @close="showForm=false"
+                         :container-class="'w-lg-75 w-md-100'">
                     <div class="container-fluid">
-                        <news-item-edit :model-value="id" @updated="createdItem"/>
+                        <news-item-edit :model-value="id"
+                                        @updated="createdItem" />
                     </div>
                 </wrapper>
             </div>
@@ -28,8 +30,8 @@
 import ResponseError from '../../mixin/ResponseError.js';
 import NewsItemEdit  from './NewsItemEdit.vue';
 import NewsList      from './NewsList.vue';
-import Wrapper     from '../common/Wrapper.vue';
-import PageTemplate from '../pages/SingleColumnPage.vue';
+import Wrapper       from '../common/Wrapper.vue';
+import PageTemplate  from '../pages/SingleColumnPage.vue';
 
 export default {
     name      : 'NewsBlock',

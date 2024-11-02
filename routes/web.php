@@ -83,6 +83,7 @@ Route::group(['prefix' => 'news'], function () {
     Route::group(['prefix' => 'json'], function () {
         Route::get('/list', [Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
         Route::get('/list/all', [Controllers\News\NewsController::class, 'listAll'])->name(RouteNames::NEWS_LIST_ALL);
+        Route::get('/list/locked', [Controllers\News\NewsController::class, 'lockedNews'])->name(RouteNames::NEWS_LIST_LOCKED);
         Route::get('/create', [Controllers\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
         Route::post('/save', [Controllers\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
         Route::get('/edit/{id}', [Controllers\News\NewsController::class, 'edit'])->name(RouteNames::NEWS_EDIT);

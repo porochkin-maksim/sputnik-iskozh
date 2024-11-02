@@ -10,5 +10,17 @@
         justify-content  : center;
         align-items      : end;
         cursor           : pointer;
+
+        .btn-link {
+            text-decoration : none;
+        }
+    }
+}
+
+.side-news {
+    .news-item {
+        .name {
+            font-size : $font-size;
+        }
     }
 }

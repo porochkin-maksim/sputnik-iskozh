@@ -239,6 +239,12 @@
         "uri": "\/news\/json\/list\/all",
         "args": []
     },
+    "newsListLocked": {
+        "name": "news.list.locked",
+        "method": "get",
+        "uri": "\/news\/json\/list\/locked",
+        "args": []
+    },
     "newsSave": {
         "name": "news.save",
         "method": "post",
