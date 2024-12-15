@@ -1,4 +1,5 @@
 import './bootstrap';
+import './utils/common.js';
 import './utils/menus/vertical-menu.js';
 
 import { createApp } from 'vue';

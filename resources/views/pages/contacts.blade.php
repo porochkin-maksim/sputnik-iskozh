@@ -5,6 +5,7 @@ use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\StaticFileLocator;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
@@ -79,19 +80,84 @@ $isWinter = $month >= 11 || $month <= 3;
         </tr>
         <tr>
             <th>ОГРН</th>
-            <td>1026900580057</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="1026900580057">
+                    1026900580057
+                </a>
+            </td>
         </tr>
         <tr>
             <th>ИНН</th>
-            <td>6924004223</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="6924004223">
+                    6924004223
+                </a>
+            </td>
         </tr>
         <tr>
             <th>КПП</th>
-            <td>694901001</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="694901001">
+                    694901001
+                </a>
+            </td>
         </tr>
         <tr>
             <th>Юридический адрес</th>
             <td>170533, Тверская область, Калининский район, деревня Пищалкино, тер. снт Спутник-Искож</td>
+        </tr>
+        <tr>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+        <tr>
+            <th colspan="2">Банковские реквизиты</th>
+        </tr>
+        <tr>
+            <th>Банк</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy='ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)'>
+                    ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Счёт</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="40703810017762000022">
+                    40703810017762000022
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Корр.счёт</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="30101810145250000411">
+                    30101810145250000411
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>БИК</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none" data-copy="044525411">
+                    044525411
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="alert alert-info d-inline-block">
+                    В назначении платежа указывайте <strong class="text-danger">номер дачи</strong> и <strong class="text-danger">участок</strong>
+                </div>
+                <div>
+                    <a href="{{ StaticFileLocator::StaticFileService()->qrPayment()->getUrl() }}"
+                       data-lightbox="qr_payment">
+                        <img src="{{ StaticFileLocator::StaticFileService()->qrPayment()->getUrl() }}"
+                             style="width:200px;height:200px"
+                             alt="QR код">
+                    </a>
+                </div>
+            </td>
         </tr>
         <tr>
             <th colspan="2">&nbsp;</th>

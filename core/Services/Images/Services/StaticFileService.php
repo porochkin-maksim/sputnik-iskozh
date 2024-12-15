@@ -25,6 +25,11 @@ readonly class StaticFileService
         return $this->staticFileFactory->make(StaticFileName::LOGO_SNT);
     }
 
+    public function qrPayment(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::QR_PAYMENT);
+    }
+
     public function seasonBgImage(): StaticFile
     {
         return match (Carbon::now()->month) {

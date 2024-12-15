@@ -69,6 +69,17 @@
                 </tbody>
             </table>
             <hr>
+            <template v-if="qrPayment && qrPayment.url">
+                <a :href="qrPayment.url"
+                   class="d-flex flex-column justify-content-center align-items-center"
+                   data-lightbox="qr_payment">
+                    <b>QR-код для оплат</b>
+                    <img :src="qrPayment.url"
+                         style="width:200px;height:200px"
+                         alt="QR код">
+                </a>
+                <hr>
+            </template>
             <h4>
                 <a :href="Url.Routes.proposal.uri"
                    class="btn btn-sm btn-success w-lg-100">
@@ -89,6 +100,9 @@ export default {
     components: {
         NewsListItem,
         PageTemplate,
+    },
+    props: {
+        qrPayment: null,
     },
     created () {
         this.loadLockedNews();

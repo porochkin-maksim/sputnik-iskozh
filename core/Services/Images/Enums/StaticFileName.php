@@ -5,6 +5,7 @@ namespace Core\Services\Images\Enums;
 enum StaticFileName: string
 {
     case LOGO_SNT   = 'logo-snt.jpg';
+    case QR_PAYMENT = 'qr-payment.png';
     case REGULATION = 'устав.pdf';
 
     case BG_SPRING = 'bg/spring.jpeg';

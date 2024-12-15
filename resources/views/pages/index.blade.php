@@ -2,10 +2,12 @@
 
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\StaticFileLocator;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 
+$qrPaymentFile = StaticFileLocator::StaticFileService()->qrPayment();
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -19,5 +21,5 @@ $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 @endsection
 
 @section(SectionNames::CONTENT)
-    <index-page></index-page>
+    <index-page :qr-payment='@json($qrPaymentFile)'></index-page>
 @endsection
