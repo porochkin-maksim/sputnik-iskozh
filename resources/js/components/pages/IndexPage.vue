@@ -78,6 +78,12 @@
                          style="width:200px;height:200px"
                          alt="QR код">
                 </a>
+                <br>
+                <div class="text-center">
+                    <a :href="Url.Routes.contacts.uri">
+                        Подробнее в разделе <b>"{{ Url.Routes.contacts.displayName }}"</b>
+                    </a>
+                </div>
                 <hr>
             </template>
             <h4>

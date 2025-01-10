@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Front;
 
 use Core\Methods;
+use Core\Resources\RouteNames;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
@@ -60,10 +61,11 @@ class ExportRouteListCommand extends Command
     private function getRouteInformation(Route $route): array
     {
         return [
-            'name'   => $route->getName(),
-            'method' => strtolower($this->filterMethod($route->methods())),
-            'uri'    => sprintf('/%s', $route->uri() === '/' ? '' : Str::replace('?', '', $route->uri())),
-            'args'   => $this->getUriParams($route->uri()),
+            'name'        => $route->getName(),
+            'displayName' => RouteNames::name($route->getName()),
+            'method'      => strtolower($this->filterMethod($route->methods())),
+            'uri'         => sprintf('/%s', $route->uri() === '/' ? '' : Str::replace('?', '', $route->uri())),
+            'args'        => $this->getUriParams($route->uri()),
         ];
     }
 

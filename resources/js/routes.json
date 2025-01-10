@@ -1,36 +1,42 @@
 {
     "accountInfo": {
         "name": "account.info",
+        "displayName": "",
         "method": "get",
         "uri": "\/home\/json\/account-info",
         "args": []
     },
     "accountRegister": {
         "name": "account.register",
+        "displayName": "",
         "method": "get",
         "uri": "\/home\/register",
         "args": []
     },
     "accountRegisterSave": {
         "name": "account.register.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/json\/register",
         "args": []
     },
     "announcementsIndex": {
         "name": "announcements.index",
+        "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",
         "method": "get",
         "uri": "\/announcements",
         "args": []
     },
     "announcementsList": {
         "name": "announcements.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/announcements\/json\/list",
         "args": []
     },
     "announcementsShow": {
         "name": "announcements.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/announcements\/{id}",
         "args": {
@@ -39,18 +45,21 @@
     },
     "contacts": {
         "name": "contacts",
+        "displayName": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b",
         "method": "get",
         "uri": "\/contacts",
         "args": []
     },
     "cookieAgreement": {
         "name": "cookie_agreement",
+        "displayName": "",
         "method": "post",
         "uri": "\/cookie-agreement",
         "args": []
     },
     "filesDelete": {
         "name": "files.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/files\/json\/delete\/{id}",
         "args": {
@@ -59,6 +68,7 @@
     },
     "filesDown": {
         "name": "files.down",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/down\/{id}",
         "args": {
@@ -67,6 +77,7 @@
     },
     "filesEdit": {
         "name": "files.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/files\/json\/edit\/{id}",
         "args": {
@@ -75,6 +86,7 @@
     },
     "filesIndex": {
         "name": "files.index",
+        "displayName": "\u0424\u0430\u0439\u043b\u044b",
         "method": "get",
         "uri": "\/files\/{folder}",
         "args": {
@@ -83,36 +95,42 @@
     },
     "filesList": {
         "name": "files.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/files\/json\/list",
         "args": []
     },
     "filesMove": {
         "name": "files.move",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/move",
         "args": []
     },
     "filesReplace": {
         "name": "files.replace",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/replace",
         "args": []
     },
     "filesSave": {
         "name": "files.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/save",
         "args": []
     },
     "filesStore": {
         "name": "files.store",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/store",
         "args": []
     },
     "filesUp": {
         "name": "files.up",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/up\/{id}",
         "args": {
@@ -121,6 +139,7 @@
     },
     "foldersDelete": {
         "name": "folders.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/folders\/json\/delete\/{id}",
         "args": {
@@ -129,18 +148,21 @@
     },
     "foldersList": {
         "name": "folders.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/folders\/json\/list",
         "args": []
     },
     "foldersSave": {
         "name": "folders.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/folders\/json\/save",
         "args": []
     },
     "foldersShow": {
         "name": "folders.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/folders\/json\/show\/{id}",
         "args": {
@@ -149,42 +171,49 @@
     },
     "garbage": {
         "name": "garbage",
+        "displayName": "\u0412\u044b\u0432\u043e\u0437 \u043c\u0443\u0441\u043e\u0440\u0430",
         "method": "get",
         "uri": "\/garbage",
         "args": []
     },
     "home": {
         "name": "home",
+        "displayName": "\u041b\u0438\u0447\u043d\u044b\u0439 \u043a\u0430\u0431\u0438\u043d\u0435\u0442",
         "method": "get",
         "uri": "\/home",
         "args": []
     },
     "index": {
         "name": "index",
+        "displayName": "",
         "method": "get",
         "uri": "\/",
         "args": []
     },
     "login": {
         "name": "login",
+        "displayName": "",
         "method": "post",
         "uri": "\/login",
         "args": []
     },
     "logout": {
         "name": "logout",
+        "displayName": "\u0412\u044b\u0439\u0442\u0438",
         "method": "get",
         "uri": "\/logout",
         "args": []
     },
     "newsCreate": {
         "name": "news.create",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/create",
         "args": []
     },
     "newsDelete": {
         "name": "news.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/news\/json\/delete\/{id}",
         "args": {
@@ -193,6 +222,7 @@
     },
     "newsEdit": {
         "name": "news.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/edit\/{id}",
         "args": {
@@ -201,6 +231,7 @@
     },
     "newsFileDelete": {
         "name": "news.file.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/news\/json\/file\/delete\/{id}",
         "args": {
@@ -209,12 +240,14 @@
     },
     "newsFileSave": {
         "name": "news.file.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/file\/save",
         "args": []
     },
     "newsFileUpload": {
         "name": "news.file.upload",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/file\/upload\/{id}",
         "args": {
@@ -223,36 +256,42 @@
     },
     "newsIndex": {
         "name": "news.index",
+        "displayName": "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
         "method": "get",
         "uri": "\/news",
         "args": []
     },
     "newsList": {
         "name": "news.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/list",
         "args": []
     },
     "newsListAll": {
         "name": "news.list.all",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/list\/all",
         "args": []
     },
     "newsListLocked": {
         "name": "news.list.locked",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/list\/locked",
         "args": []
     },
     "newsSave": {
         "name": "news.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/save",
         "args": []
     },
     "newsShow": {
         "name": "news.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/{id}",
         "args": {
@@ -261,6 +300,7 @@
     },
     "optionsEdit": {
         "name": "options.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/options\/json\/edit\/{id}",
         "args": {
@@ -269,42 +309,49 @@
     },
     "optionsIndex": {
         "name": "options.index",
+        "displayName": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
         "method": "get",
         "uri": "\/options",
         "args": []
     },
     "optionsList": {
         "name": "options.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/options\/json\/list",
         "args": []
     },
     "optionsSave": {
         "name": "options.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/options\/json\/save",
         "args": []
     },
     "passwordConfirm": {
         "name": "password.confirm",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/confirm",
         "args": []
     },
     "passwordEmail": {
         "name": "password.email",
+        "displayName": "",
         "method": "post",
         "uri": "\/password\/email",
         "args": []
     },
     "passwordRequest": {
         "name": "password.request",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/reset",
         "args": []
     },
     "passwordReset": {
         "name": "password.reset",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/reset\/{token}",
         "args": {
@@ -313,78 +360,91 @@
     },
     "passwordUpdate": {
         "name": "password.update",
+        "displayName": "",
         "method": "post",
         "uri": "\/password\/reset",
         "args": []
     },
     "privacy": {
         "name": "privacy",
+        "displayName": "\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445",
         "method": "get",
         "uri": "\/privacy",
         "args": []
     },
     "profileCounterList": {
         "name": "profile.counter.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/home\/json\/counter\/list",
         "args": []
     },
     "profileCounterSave": {
         "name": "profile.counter.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/json\/counter",
         "args": []
     },
     "profileSave": {
         "name": "profile.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile",
         "args": []
     },
     "profileSaveEmail": {
         "name": "profile.save.email",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/email",
         "args": []
     },
     "profileSavePassword": {
         "name": "profile.save.password",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/password",
         "args": []
     },
     "profileShow": {
         "name": "profile.show",
+        "displayName": "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
         "method": "get",
         "uri": "\/home\/profile",
         "args": []
     },
     "proposal": {
         "name": "proposal",
+        "displayName": "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
         "method": "get",
         "uri": "\/contacts\/proposal",
         "args": []
     },
     "proposalCreate": {
         "name": "proposal.create",
+        "displayName": "",
         "method": "post",
         "uri": "\/contacts\/proposal",
         "args": []
     },
     "regulation": {
         "name": "regulation",
+        "displayName": "\u0423\u0441\u0442\u0430\u0432",
         "method": "get",
         "uri": "\/regulation",
         "args": []
     },
     "reportsCreate": {
         "name": "reports.create",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/create",
         "args": []
     },
     "reportsDelete": {
         "name": "reports.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/reports\/json\/delete\/{id}",
         "args": {
@@ -393,6 +453,7 @@
     },
     "reportsEdit": {
         "name": "reports.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/edit\/{id}",
         "args": {
@@ -401,6 +462,7 @@
     },
     "reportsFileDelete": {
         "name": "reports.file.delete",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/file\/delete\/{id}",
         "args": {
@@ -409,6 +471,7 @@
     },
     "reportsFileUpload": {
         "name": "reports.file.upload",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/file\/upload\/{id}",
         "args": {
@@ -417,78 +480,91 @@
     },
     "reportsIndex": {
         "name": "reports.index",
+        "displayName": "\u041e\u0442\u0447\u0451\u0442\u044b",
         "method": "get",
         "uri": "\/reports",
         "args": []
     },
     "reportsList": {
         "name": "reports.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/list",
         "args": []
     },
     "reportsSave": {
         "name": "reports.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/save",
         "args": []
     },
     "rubrics": {
         "name": "rubrics",
+        "displayName": "\u0420\u0443\u0431\u0440\u0438\u043a\u0430\u0442\u043e\u0440",
         "method": "get",
         "uri": "\/rubrics",
         "args": []
     },
     "sanctumCsrfCookie": {
         "name": "sanctum.csrf-cookie",
+        "displayName": "",
         "method": "get",
         "uri": "\/sanctum\/csrf-cookie",
         "args": []
     },
     "search": {
         "name": "search",
+        "displayName": "\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u0441\u0430\u0439\u0442\u0443",
         "method": "get",
         "uri": "\/search",
         "args": []
     },
     "searchSite": {
         "name": "search.site",
+        "displayName": "",
         "method": "post",
         "uri": "\/search\/json\/search",
         "args": []
     },
     "sessionStore": {
         "name": "session.store",
+        "displayName": "",
         "method": "post",
         "uri": "\/session",
         "args": []
     },
     "templateGet": {
         "name": "template.get",
+        "displayName": "",
         "method": "post",
         "uri": "\/pages\/json\/edit",
         "args": []
     },
     "templateUpdate": {
         "name": "template.update",
+        "displayName": "",
         "method": "patch",
         "uri": "\/pages\/json\/edit",
         "args": []
     },
     "verificationNotice": {
         "name": "verification.notice",
+        "displayName": "",
         "method": "get",
         "uri": "\/email\/verify",
         "args": []
     },
     "verificationResend": {
         "name": "verification.resend",
+        "displayName": "",
         "method": "post",
         "uri": "\/email\/resend",
         "args": []
     },
     "verificationVerify": {
         "name": "verification.verify",
+        "displayName": "",
         "method": "get",
         "uri": "\/email\/verify\/{id}\/{hash}",
         "args": {

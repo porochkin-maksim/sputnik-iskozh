@@ -178,10 +178,6 @@ $isWinter = $month >= 11 || $month <= 3;
             <i class="fa fa-envelope"></i>&nbsp;Написать&nbsp;предложение
         </a>
     </h3>
-    <h3 class="border-bottom mt-3 pb-0 d-inline-block">Мы в соцсетях</h3>
-    <div class="social d-flex flex-column pb-3">
-        @include(ViewNames::PARTIAL_SOCIAL)
-    </div>
 
     <div class="my-2">
         <a class="btn btn-link px-1"

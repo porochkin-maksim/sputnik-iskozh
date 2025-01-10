@@ -25,6 +25,16 @@ readonly class StaticFileService
         return $this->staticFileFactory->make(StaticFileName::LOGO_SNT);
     }
 
+    public function logoSntOrange(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::LOGO_SNT_ORANGE);
+    }
+
+    public function logoSntRed(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::LOGO_SNT_RED);
+    }
+
     public function qrPayment(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::QR_PAYMENT);
