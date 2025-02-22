@@ -50,7 +50,7 @@ class SaveRequest extends AbstractRequest
         return $this->getString(self::TITLE);
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->getStringOrNull(self::DESCRIPTION);
     }
