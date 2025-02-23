@@ -74,19 +74,4 @@ class SaveRequest extends AbstractRequest
     {
         return CategoryEnum::tryFrom($this->getInt(self::CATEGORY));
     }
-
-    public function dto(): NewsDTO
-    {
-        $dto = new NewsDTO();
-
-        $dto->setId($this->getInt(self::ID))
-            ->setTitle($this->get(self::TITLE))
-            ->setDescription($this->get(self::DESCRIPTION))
-            ->setArticle($this->get(self::ARTICLE))
-            ->setCategory(CategoryEnum::tryFrom($this->get(self::CATEGORY)))
-            ->setIsLock($this->getBool(self::IS_LOCK))
-            ->setPublishedAt($this->getDateOrNull(self::PUBLISHED_AT));
-
-        return $dto;
-    }
 }
