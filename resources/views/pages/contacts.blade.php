@@ -19,7 +19,7 @@ $isWinter = $month >= 11 || $month <= 3;
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::CONTENT)
@@ -81,7 +81,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>ОГРН</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="1026900580057">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="1026900580057">
                     1026900580057
                 </a>
             </td>
@@ -89,7 +90,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>ИНН</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="6924004223">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="6924004223">
                     6924004223
                 </a>
             </td>
@@ -97,7 +99,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>КПП</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="694901001">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="694901001">
                     694901001
                 </a>
             </td>
@@ -115,7 +118,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>Банк</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy='ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)'>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy='ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)'>
                     ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)
                 </a>
             </td>
@@ -123,7 +127,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>Счёт</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="40703810017762000022">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="40703810017762000022">
                     40703810017762000022
                 </a>
             </td>
@@ -131,7 +136,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>Корр.счёт</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="30101810145250000411">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="30101810145250000411">
                     30101810145250000411
                 </a>
             </td>
@@ -139,7 +145,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <th>БИК</th>
             <td>
-                <a class="link cursor-pointer text-decoration-none" data-copy="044525411">
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="044525411">
                     044525411
                 </a>
             </td>
@@ -147,7 +154,8 @@ $isWinter = $month >= 11 || $month <= 3;
         <tr>
             <td colspan="2">
                 <div class="alert alert-info d-inline-block">
-                    В назначении платежа указывайте <strong class="text-danger">номер дачи</strong> и <strong class="text-danger">участок</strong>
+                    В назначении платежа указывайте <strong class="text-danger">номер дачи</strong> и
+                    <strong class="text-danger">участок</strong>
                 </div>
                 <div>
                     <a href="{{ StaticFileLocator::StaticFileService()->qrPayment()->getUrl() }}"

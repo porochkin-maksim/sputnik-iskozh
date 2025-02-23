@@ -18,12 +18,9 @@ $season = match (Carbon::now()->month) {
     default   => 'winter',
 };
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    @include('layouts.partial.meta')
-    @include('layouts.partial.favicon')
-
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), env('APP_NAME')))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -31,7 +28,6 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
-    @yield(SectionNames::METRICS)
 </head>
 <body class="d-flex flex-column h-100 {{ $season }}"
       id="app"
@@ -60,32 +56,13 @@ $season = match (Carbon::now()->month) {
         </div>
     </div>
 </nav>
-{{--            <nav class="navbar sub-nav navbar-expand-lg navbar-light border-bottom d-lg-flex d-none"--}}
-{{--                 style="top:-1px;">--}}
-{{--                <div class="container-fluid main px-3">--}}
-{{--                    @include('layouts.partial.sub-nav')--}}
-{{--                </div>--}}
-{{--            </nav>--}}
-<main class="px-3 py-2">
+<main class="px-3 py-2 w-100">
     @yield(SectionNames::CONTENT)
 </main>
-<footer>
+<footer class="w-100">
     <div class="d-flex justify-content-center py-3">
-        <div class="social d-flex flex-column align-items-center">
-            @include(ViewNames::PARTIAL_SOCIAL)
-        </div>
+
     </div>
 </footer>
-@if (!Cookie::has(CookieNames::COOKIE_AGREEMENT))
-    <div class="d-block alert alert-info w-100 sticky-bottom text-center m-0"
-         id="cookie">
-        Сайт использует cookie, потому что без них не работает ни один сайт в интернете
-        <button class="btn btn-success ms-2"
-                type="submit"
-                onclick="event.preventDefault();axios.post('<?= route(RouteNames::COOKIE_AGREEMENT) ?>', {}, $('#cookie').remove())">
-            Прекрасно
-        </button>
-    </div>
-@endif
 </body>
 </html>

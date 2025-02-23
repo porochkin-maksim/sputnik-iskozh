@@ -13,7 +13,7 @@ $openGraph->setUrl(route(RouteNames::ANNOUNCEMENTS));
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::CONTENT)

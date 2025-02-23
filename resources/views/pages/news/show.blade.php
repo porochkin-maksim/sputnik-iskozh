@@ -15,14 +15,14 @@ $openGraph->setType(OpenGraphType::ARTICLE)
     ->setTitle($news->getTitle())
     ->setUrl($news->url())
     ->setImage($news->getImages()->first()?->url())
-    ->setDescription($news->getDescription() ?: $news->getArticleAsText());
+    ->setDescription($news->getDescription() ? : $news->getArticleAsText());
 
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::TITLE)

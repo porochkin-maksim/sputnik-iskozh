@@ -18,7 +18,7 @@ $openGraph->setDescription('Поиск по сайту');
 @endpush
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::CONTENT)

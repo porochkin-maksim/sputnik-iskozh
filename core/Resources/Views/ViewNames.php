@@ -4,13 +4,14 @@ namespace Core\Resources\Views;
 
 enum ViewNames: string
 {
-    public const LAYOUTS_APP        = 'layouts.app';
+    public const LAYOUTS_APP        = 'layouts.app.layout';
+    public const LAYOUTS_ADMIN      = 'layouts.admin.layout';
     public const LAYOUTS_TWO_COLUMN = 'layouts.pages.two-columns-page';
     public const LAYOUTS_ONE_COLUMN = 'layouts.pages.single-column-page';
 
-    public const PARTIAL_SOCIAL = 'layouts.partial.social';
-
-    public const METRICS = 'layouts.partial.metrics';
+    public const PARTIAL_SOCIAL  = 'layouts.partial.social';
+    public const PARTIAL_METRICS = 'layouts.partial.metrics';
+    public const PARTIAL_FOOTER  = 'layouts.partial.social';
 
     public const PAGES_INDEX         = 'pages.index';
     public const PAGES_CONTACTS      = 'pages.contacts';
@@ -27,7 +28,6 @@ enum ViewNames: string
 
     public const PAGES_OPTIONS_INDEX = 'pages.options.index';
 
-    public const HOME_LAYOUT            = 'pages.home.layouts.layout';
     public const PAGES_HOME             = 'pages.home.index';
     public const PAGES_ACCOUNT_REGISTER = 'pages.home.register';
     public const PAGES_PROFILE          = 'pages.home.profile';
