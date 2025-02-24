@@ -30,7 +30,7 @@
 <script>
 import Url           from '../../../../utils/Url.js';
 import ResponseError from '../../../../mixin/ResponseError.js';
-import Pagination    from '../../common/pagination/Pagination.vue';
+import Pagination    from '../../../common/pagination/Pagination.vue';
 import NewsListItem  from '../NewsItem.vue';
 
 export default {

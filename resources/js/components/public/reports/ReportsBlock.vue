@@ -45,7 +45,7 @@ import ResponseError  from '../../../mixin/ResponseError.js';
 import ReportItemEdit from './ReportItemEdit.vue';
 import ReportList     from './ReportList.vue';
 import { ViewMode }   from './ReportList.vue';
-import Wrapper        from '../common/Wrapper.vue';
+import Wrapper        from '../../common/Wrapper.vue';
 import PageTemplate   from '../pages/TwoColumnsPage.vue';
 
 export default {

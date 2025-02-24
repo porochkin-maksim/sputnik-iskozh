@@ -86,10 +86,10 @@
 
 <script>
 import Url          from '../../../utils/Url.js';
-import Wrapper      from '../common/Wrapper.vue';
-import CustomInput  from '../common/form/CustomInput.vue';
+import Wrapper      from '../../common/Wrapper.vue';
+import CustomInput  from '../../common/form/CustomInput.vue';
 import NewsItemEdit from './NewsItemEdit.vue';
-import BsSlider     from '../common/BsSlider.vue';
+import BsSlider     from '../../common/BsSlider.vue';
 import FileItem     from './FileItem.vue';
 
 export default {

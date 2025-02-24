@@ -30,9 +30,9 @@
 <script>
 import Url            from '../../../../utils/Url.js';
 import ResponseError  from '../../../../mixin/ResponseError.js';
-import Wrapper        from '../../common/Wrapper.vue';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
+import Wrapper        from '../../../common/Wrapper.vue';
+import CustomInput    from '../../../common/form/CustomInput.vue';
+import CustomCheckbox from '../../../common/form/CustomCheckbox.vue';
 
 export default {
     components: {

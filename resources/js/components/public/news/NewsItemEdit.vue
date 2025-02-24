@@ -65,12 +65,12 @@
 
 <script>
 import Url            from '../../../utils/Url.js';
-import CustomInput    from '../common/form/CustomInput.vue';
-import CustomSelect   from '../common/form/CustomSelect.vue';
+import CustomInput    from '../../common/form/CustomInput.vue';
+import CustomSelect   from '../../common/form/CustomSelect.vue';
 import ResponseError  from '../../../mixin/ResponseError.js';
-import HtmlEditor     from '../common/editors/HtmlEditor.vue';
-import CustomCheckbox from '../common/form/CustomCheckbox.vue';
-import CustomTextarea from '../common/form/CustomTextarea.vue';
+import HtmlEditor     from '../../common/editors/HtmlEditor.vue';
+import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
+import CustomTextarea from '../../common/form/CustomTextarea.vue';
 
 export default {
     emits     : ['updated'],

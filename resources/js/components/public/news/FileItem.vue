@@ -66,7 +66,7 @@
 
 <script>
 import Url           from '../../../utils/Url.js';
-import CustomInput   from '../common/form/CustomInput.vue';
+import CustomInput   from '../../common/form/CustomInput.vue';
 import ResponseError from '../../../mixin/ResponseError.js';
 
 export default {

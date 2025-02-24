@@ -23,7 +23,7 @@
 import ResponseError  from '../../../mixin/ResponseError.js';
 import OptionItemEdit from './OptionItemEdit.vue';
 import OptionList     from './OptionList.vue';
-import Wrapper        from '../common/Wrapper.vue';
+import Wrapper        from '../../common/Wrapper.vue';
 import PageTemplate   from '../pages/TwoColumnsPage.vue';
 
 export default {

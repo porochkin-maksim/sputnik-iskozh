@@ -30,7 +30,7 @@
 import ResponseError     from '../../../../mixin/ResponseError.js';
 import NewsItemEdit      from '../NewsItemEdit.vue';
 import AnnouncementsList from './AnnouncementsList.vue';
-import Wrapper           from '../../common/Wrapper.vue';
+import Wrapper           from '../../../common/Wrapper.vue';
 import PageTemplate      from '../../pages/SingleColumnPage.vue';
 
 export default {

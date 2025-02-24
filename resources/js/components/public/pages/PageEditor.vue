@@ -25,9 +25,9 @@
 
 <script>
 import Url        from '../../../utils/Url.js';
-import Wrapper    from '../common/Wrapper.vue';
-import PhpEditor  from '../common/editors/PhpEditor.vue';
-import HtmlEditor from '../common/editors/HtmlEditor.vue';
+import Wrapper    from '../../common/Wrapper.vue';
+import PhpEditor  from '../../common/editors/PhpEditor.vue';
+import HtmlEditor from '../../common/editors/HtmlEditor.vue';
 
 export default {
     name      : 'PageEditor',

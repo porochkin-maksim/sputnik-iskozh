@@ -31,8 +31,8 @@
 
 <script>
 import OptionItemEdit from './OptionItemEdit.vue';
-import Wrapper        from '../common/Wrapper.vue';
-import CustomInput    from '../common/form/CustomInput.vue';
+import Wrapper        from '../../common/Wrapper.vue';
+import CustomInput    from '../../common/form/CustomInput.vue';
 
 
 export default {

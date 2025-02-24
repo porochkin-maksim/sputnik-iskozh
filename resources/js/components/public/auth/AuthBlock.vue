@@ -53,7 +53,7 @@
 import Login      from './Login.vue';
 import Register   from './Register.vue';
 import Restore    from './Restore.vue';
-import ViewDialog from '../common/ViewDialog.vue';
+import ViewDialog from '../../common/ViewDialog.vue';
 
 const LoginConst    = 'Login';
 const RegisterConst = 'Register';

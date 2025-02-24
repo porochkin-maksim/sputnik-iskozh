@@ -82,8 +82,8 @@
 <script>
 import Url            from '../../../utils/Url.js';
 import ResponseError  from '../../../mixin/ResponseError.js';
-import CustomInput    from '../common/form/CustomInput.vue';
-import CustomTextarea from '../common/form/CustomTextarea.vue';
+import CustomInput    from '../../common/form/CustomInput.vue';
+import CustomTextarea from '../../common/form/CustomTextarea.vue';
 
 export default {
     name      : 'ProposalForm',
