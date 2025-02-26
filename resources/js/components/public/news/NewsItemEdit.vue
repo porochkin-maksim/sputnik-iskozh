@@ -34,7 +34,7 @@
                                        @change="clearError('category')"
                         />
                     </div>
-                    <div class="">
+                    <div class="form-control">
                         <custom-checkbox v-model="lock"
                                          :errors="errors.lock"
                                          :label="'Закрепить на главной'"
