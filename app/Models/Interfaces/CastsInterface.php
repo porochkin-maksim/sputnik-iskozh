@@ -4,11 +4,12 @@ namespace App\Models\Interfaces;
 
 interface CastsInterface
 {
-    const CAST_INTEGER  = 'integer';
-    const CAST_STRING   = 'string';
-    const CAST_BOOLEAN  = 'boolean';
-    const CAST_DATE     = 'date';
-    const CAST_DATETIME = 'datetime';
-    const CAST_HASHED   = 'hashed';
-    const CAST_FLOAT    = 'float';
+    public const CAST_INTEGER  = 'integer';
+    public const CAST_STRING   = 'string';
+    public const CAST_BOOLEAN  = 'boolean';
+    public const CAST_DATE     = 'date';
+    public const CAST_DATETIME = 'datetime';
+    public const CAST_HASHED   = 'hashed';
+    public const CAST_FLOAT    = 'float';
+    public const CAST_JSON     = 'json';
 }

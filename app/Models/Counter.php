@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Counter extends Model implements CastsInterface
 {
-    use HasFactory;
-
     public const TABLE = 'counters';
+
+    protected $table = self::TABLE;
 
     public const ID         = 'id';
     public const TYPE       = 'type';

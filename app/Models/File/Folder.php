@@ -18,12 +18,12 @@ class Folder extends Model
 {
     public const TABLE = 'file_folders';
 
+    protected $table = self::TABLE;
+
     public const ID        = 'id';
     public const PARENT_ID = 'parent_id';
     public const UID       = 'uid';
     public const NAME      = 'name';
-
-    protected $table = self::TABLE;
 
     protected $fillable = [
         self::PARENT_ID,

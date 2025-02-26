@@ -21,9 +21,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class File extends Model
 {
-    use HasFactory;
-
     public const TABLE = 'files';
+
+    protected $table = self::TABLE;
 
     public const ID         = 'id';
     public const TYPE       = 'type';

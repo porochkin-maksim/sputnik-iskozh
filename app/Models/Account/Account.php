@@ -23,8 +23,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Account extends Model implements CastsInterface
 {
-    use HasFactory;
-
     public const TABLE = 'accounts';
 
     public const ID              = 'id';

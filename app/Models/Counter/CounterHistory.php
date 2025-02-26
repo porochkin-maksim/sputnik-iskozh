@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CounterHistory extends Model implements CastsInterface
 {
-    use HasFactory;
-
     public const TABLE = 'counter_history';
+
+    protected $table = self::TABLE;
 
     public const ID         = 'id';
     public const COUNTER_ID = 'counter_id';

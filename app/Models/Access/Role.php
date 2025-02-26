@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Role extends Model
 {
-    use HasFactory;
-
     public const TABLE = 'roles';
+
+    protected $table = self::TABLE;
 
     public const ID = 'id';
 
