@@ -5,9 +5,9 @@ namespace App\Models\Account;
 use App\Models\Interfaces\CastsInterface;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -23,7 +23,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Account extends Model implements CastsInterface
 {
+    use SoftDeletes;
+
     public const TABLE = 'accounts';
+
+    protected $table = self::TABLE;
 
     public const ID              = 'id';
     public const NUMBER          = 'number';

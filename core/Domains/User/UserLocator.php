@@ -61,4 +61,9 @@ class UserLocator
 
         return self::$UserCacheRepository;
     }
+
+    public static function UserDecorator(UserDTO $user): UserDecorator
+    {
+        return new UserDecorator($user);
+    }
 }

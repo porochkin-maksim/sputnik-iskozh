@@ -1,17 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Account\Requests;
+namespace App\Http\Requests\Accounts;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
 use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Enums\Regexp;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
-class SaveRequest extends AbstractRequest
+class RegisterRequest extends AbstractRequest
 {
-    private const ID     = RequestArgumentsEnum::ID;
+    private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
+
     private const NUMBER = RequestArgumentsEnum::NUMBER;
+    private const SIZE   = 'size';
 
     public function rules(): array
     {
@@ -20,8 +23,12 @@ class SaveRequest extends AbstractRequest
                 'required',
                 'string',
                 'min:3',
-                'regex:/^(\d+)\/(\d)$/',
-                Rule::unique(Account::TABLE, Account::NUMBER)->ignore($this->get(self::ID)),
+                'regex:' . self::ACCOUNT_REGEXP,
+                Rule::unique(Account::TABLE, Account::NUMBER),
+            ],
+            self::SIZE   => [
+                'required',
+                'numeric',
             ],
         ];
     }
@@ -30,18 +37,26 @@ class SaveRequest extends AbstractRequest
     {
         return [
             self::NUMBER . '.required' => 'Укажите номер участка',
-            self::NUMBER . '.string'   => 'Поле должно быть строкой',
-            self::NUMBER . '.min'      => 'Поле должно быть не менее :min символов',
             self::NUMBER . '.unique'   => 'Такой участок уже зарегистрирован',
+            self::SIZE . '.required'   => 'Укажите площадь участка',
+            self::SIZE . '.numeric'    => 'Площадь участка должна быть числом',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            self::NUMBER => 'Номер участка',
+        ];
+    }
+
 
     public function dto(): AccountDTO
     {
         $dto = new AccountDTO();
 
-        $dto->setId($this->getInt(self::ID))
-            ->setNumber($this->get(self::NUMBER));
+        $dto->setNumber($this->get(self::NUMBER))
+            ->setSize($this->getInt(self::SIZE ));
 
         return $dto;
     }

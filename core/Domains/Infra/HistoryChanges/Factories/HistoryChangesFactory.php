@@ -29,10 +29,10 @@ readonly class HistoryChangesFactory
             ->setLog(null);
     }
 
-    public function makeModelFromDto(HistoryChangesDTO $dto, ?HistoryChanges $historyChanges = null): HistoryChanges
+    public function makeModelFromDto(HistoryChangesDTO $dto, ?HistoryChanges $model = null): HistoryChanges
     {
-        if ($historyChanges) {
-            $result = $historyChanges;
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = HistoryChanges::make();
@@ -47,23 +47,23 @@ readonly class HistoryChangesFactory
         ]);
     }
 
-    public function makeDtoFromObject(HistoryChanges $historyChanges): HistoryChangesDTO
+    public function makeDtoFromObject(HistoryChanges $model): HistoryChangesDTO
     {
         $result = new HistoryChangesDTO();
 
-        $logData = LogData::fromArray($historyChanges->description);
+        $logData = LogData::fromArray($model->description);
         $result
-            ->setId($historyChanges->id)
-            ->setType(Type::tryFrom($historyChanges->type))
-            ->setUserId($historyChanges->user_id)
-            ->setPrimaryId($historyChanges->primary_id)
-            ->setReferenceId($historyChanges->reference_id)
+            ->setId($model->id)
+            ->setType(Type::tryFrom($model->type))
+            ->setUserId($model->user_id)
+            ->setPrimaryId($model->primary_id)
+            ->setReferenceId($model->reference_id)
             ->setLog($logData)
-            ->setCreatedAt($historyChanges->created_at)
-            ->setUpdatedAt($historyChanges->updated_at);
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
 
-        if (isset($historyChanges->getRelations()[HistoryChanges::USER])) {
-            $result->setUser($this->userFactory->makeDtoFromObject($historyChanges->getRelation(HistoryChanges::USER)));
+        if (isset($model->getRelations()[HistoryChanges::USER])) {
+            $result->setUser($this->userFactory->makeDtoFromObject($model->getRelation(HistoryChanges::USER)));
         }
         else {
             $result->setUser($this->userFactory->makeUndefined());

@@ -5,9 +5,12 @@ namespace Core\Domains\User\Models;
 use App\Models\User;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Common\Traits\TimestampsTrait;
 
 class UserDTO implements \JsonSerializable
 {
+    use TimestampsTrait;
+
     private ?int    $id            = null;
     private ?string $firstName     = null;
     private ?string $middleName    = null;

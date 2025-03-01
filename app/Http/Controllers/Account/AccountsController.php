@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Accounts\SaveRequest;
 use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Requests\SaveRequest;
 use Core\Domains\Account\Services\AccountService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
@@ -23,9 +23,7 @@ class AccountsController extends Controller
 
     public function index(): View
     {
-        $account = $this->accountService->getByUserId(Auth::id());
-
-        if ($account) {
+        if ($this->accountService->getByUserId(Auth::id())) {
             return view(ViewNames::PAGES_HOME);
         }
 

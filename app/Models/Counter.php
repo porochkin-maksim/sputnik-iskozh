@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**

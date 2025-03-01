@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -21,7 +22,7 @@ class ExceptionMail extends Mailable implements ShouldQueue
         private readonly array $content,
     )
     {
-        $this->onQueue('high');
+        $this->onQueue(QueueEnum::HIGH->value);
     }
 
     /**

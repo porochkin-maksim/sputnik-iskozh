@@ -5,18 +5,19 @@ namespace Core\Domains\Account\Models;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\Users;
 use Core\Domains\User\Models\UserDTO;
+use JsonSerializable;
 
-class AccountDTO implements \JsonSerializable
+class AccountDTO implements JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int    $id            = null;
+    private ?int    $id              = null;
     private ?int    $size            = null;
-    private ?string $number        = null;
-    private ?int    $primaryUserId = null;
-    private ?bool   $isMember      = null;
-    private ?bool   $isManager     = null;
-    private ?Users   $users = null;
+    private ?string $number          = null;
+    private ?int    $primary_user_id = null;
+    private ?bool   $is_member       = null;
+    private ?bool   $is_manager      = null;
+    private ?Users  $users           = null;
 
     public function __construct()
     {
@@ -61,36 +62,36 @@ class AccountDTO implements \JsonSerializable
 
     public function getPrimaryUserId(): ?int
     {
-        return $this->primaryUserId;
+        return $this->primary_user_id;
     }
 
     public function setPrimaryUserId(?int $primaryUserId): static
     {
-        $this->primaryUserId = $primaryUserId;
+        $this->primary_user_id = $primaryUserId;
 
         return $this;
     }
 
     public function getIsMember(): bool
     {
-        return (bool) $this->isMember;
+        return (bool) $this->is_member;
     }
 
     public function setIsMember(?bool $isMember): static
     {
-        $this->isMember = $isMember;
+        $this->is_member = $isMember;
 
         return $this;
     }
 
     public function getIsManager(): bool
     {
-        return (bool) $this->isManager;
+        return (bool) $this->is_manager;
     }
 
-    public function setIsManager(?bool $isManager): static
+    public function setIsManager(?bool $is_manager): static
     {
-        $this->isManager = $isManager;
+        $this->is_manager = $is_manager;
 
         return $this;
     }
@@ -110,13 +111,6 @@ class AccountDTO implements \JsonSerializable
         return $this->users;
     }
 
-    public function setUsers(?Users $users): static
-    {
-        $this->users = $users;
-
-        return $this;
-    }
-
     public function jsonSerialize(): array
     {
         $dossier = new Dossier($this);
@@ -126,9 +120,9 @@ class AccountDTO implements \JsonSerializable
             'id'              => $this->id,
             'number'          => $this->number,
             'size'            => $this->size,
-            'primary_user_id' => $this->primaryUserId,
-            'is_member'       => $this->isMember,
-            'is_manager'      => $this->isManager,
+            'primary_user_id' => $this->primary_user_id,
+            'is_member'       => $this->is_member,
+            'is_manager'      => $this->is_manager,
         ];
     }
 }

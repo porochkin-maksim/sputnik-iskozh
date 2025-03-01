@@ -26,8 +26,8 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            $this->sendEmail($e);
+        $this->reportable(function (Throwable $exception) {
+            $this->sendEmail($exception);
         });
     }
 
@@ -38,10 +38,10 @@ class Handler extends ExceptionHandler
             $content['file']    = $exception->getFile();
             $content['line']    = $exception->getLine();
             $content['trace']   = $exception->getTrace();
-            $content['url']     = request()->url();
-            $content['body']    = request()->all();
-            $content['ip']      = request()->ip();
-            $content['user']    = request()->user()?->id ?? null;
+            $content['url']     = request()?->url();
+            $content['body']    = request()?->all();
+            $content['ip']      = request()?->ip();
+            $content['user']    = request()?->user()?->id ?? null;
 
             Mail::to(env('ADMIN_EMAIL'))->send(new ExceptionMail($content));
         }

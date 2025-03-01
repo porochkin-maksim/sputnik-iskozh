@@ -83,28 +83,71 @@ abstract class RouteNames
     public const PROFILE_COUNTERS_LIST = 'profile.counter.list';
     public const PROFILE_COUNTER_SAVE  = 'profile.counter.save';
 
+    public const HISTORY_CHANGES = 'infra.history-changes';
+
+    public const ADMIN = 'admin.index';
+
+    public const ADMIN_SERVICE_INDEX  = 'admin.service.index';
+    public const ADMIN_SERVICE_CREATE = 'admin.service.create';
+    public const ADMIN_SERVICE_SAVE   = 'admin.service.save';
+    public const ADMIN_SERVICE_LIST   = 'admin.service.list';
+    public const ADMIN_SERVICE_DELETE = 'admin.service.delete';
+
+    public const ADMIN_PERIOD_INDEX  = 'admin.period.index';
+    public const ADMIN_PERIOD_CREATE = 'admin.period.create';
+    public const ADMIN_PERIOD_SAVE   = 'admin.period.save';
+    public const ADMIN_PERIOD_LIST   = 'admin.period.list';
+    public const ADMIN_PERIOD_DELETE = 'admin.period.delete';
+
+    public const ADMIN_ACCOUNT_INDEX  = 'admin.account.index';
+    public const ADMIN_ACCOUNT_CREATE = 'admin.account.create';
+    public const ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
+    public const ADMIN_ACCOUNT_LIST   = 'admin.account.list';
+    public const ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
+
+    public const ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
+    public const ADMIN_INVOICE_CREATE = 'admin.invoice.create';
+    public const ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
+    public const ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
+    public const ADMIN_INVOICE_LIST   = 'admin.invoice.list';
+    public const ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
+
+    public const ADMIN_TRANSACTION_VIEW   = 'admin.transaction.view';
+    public const ADMIN_TRANSACTION_CREATE = 'admin.transaction.create';
+    public const ADMIN_TRANSACTION_SAVE   = 'admin.transaction.save';
+    public const ADMIN_TRANSACTION_LIST   = 'admin.transaction.list';
+    public const ADMIN_TRANSACTION_DELETE = 'admin.transaction.delete';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS      => 'Контакты',
-            self::GARBAGE       => 'Вывоз мусора',
-            self::PRIVACY       => 'Политика обработки персональных данных',
-            self::REGULATION    => 'Устав',
-            self::RUBRICS       => 'Рубрикатор',
-            self::PROPOSAL      => 'Предложения',
-            self::SEARCH        => 'Поиск по сайту',
+            self::CONTACTS            => 'Контакты',
+            self::GARBAGE             => 'Вывоз мусора',
+            self::PRIVACY             => 'Политика обработки персональных данных',
+            self::REGULATION          => 'Устав',
+            self::RUBRICS             => 'Рубрикатор',
+            self::PROPOSAL            => 'Предложения',
+            self::SEARCH              => 'Поиск по сайту',
 
-            self::HOME          => 'Личный кабинет',
-            self::PROFILE       => 'Профиль',
-            self::LOGOUT        => 'Выйти',
+            self::HOME                => 'Личный кабинет',
+            self::PROFILE             => 'Профиль',
+            self::LOGOUT              => 'Выйти',
 
-            self::OPTIONS       => 'Настройки',
+            self::OPTIONS             => 'Настройки',
 
-            self::FILES         => 'Файлы',
-            self::NEWS          => 'Новости',
-            self::ANNOUNCEMENTS => 'Объявления',
-            self::REPORTS       => 'Отчёты',
-            default             => $default,
+            self::FILES               => 'Файлы',
+            self::NEWS                => 'Новости',
+            self::ANNOUNCEMENTS       => 'Объявления',
+            self::REPORTS             => 'Отчёты',
+
+            // админка
+            self::ADMIN               => 'О системе',
+            self::ADMIN_SERVICE_INDEX => 'Услуги',
+            self::ADMIN_PERIOD_INDEX  => 'Периоды',
+            self::ADMIN_ACCOUNT_INDEX => 'Участки',
+            self::ADMIN_INVOICE_INDEX => 'Счета',
+
+            default                   => $default,
         };
     }
 }

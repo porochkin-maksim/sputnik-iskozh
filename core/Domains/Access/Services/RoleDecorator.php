@@ -13,48 +13,53 @@ readonly class RoleDecorator
     {
     }
 
+    private function isAdmin(): bool
+    {
+        return $this->role?->is(RoleIdEnum::ADMIN);
+    }
+
     public function canEditNews(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->isAdmin();
     }
 
     public function canEditFiles(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->isAdmin();
     }
 
     public function canEditReports(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->isAdmin();
     }
 
     public function canEditOptions(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->isAdmin();
     }
 
     public function canEditTemplates(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
+        return $this->isAdmin();
+    }
 
-        return false;
+    public function canEditServices(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canEditPeriods(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canEditAccounts(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canEditInvoices(): bool
+    {
+        return $this->isAdmin();
     }
 }

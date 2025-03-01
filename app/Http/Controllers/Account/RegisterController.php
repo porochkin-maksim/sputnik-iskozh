@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Accounts\RegisterRequest;
 use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Requests\RegisterRequest;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\UserLocator;

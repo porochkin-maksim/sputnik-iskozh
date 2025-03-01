@@ -4,7 +4,6 @@ namespace Core\Domains\News\Requests;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\News\Enums\CategoryEnum;
-use Core\Domains\News\Models\NewsDTO;
 use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest

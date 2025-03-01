@@ -4,6 +4,7 @@ namespace Core\Requests;
 
 enum RequestArgumentsEnum: string
 {
+    public const ACTIVE          = 'active';
     public const ARTICLE         = 'article';
     public const ALL             = 'all';
     public const CATEGORY        = 'category';
@@ -31,6 +32,7 @@ enum RequestArgumentsEnum: string
     public const PUBLISHED_AT    = 'published_at';
     public const REMEMBER        = 'remember';
     public const SEARCH          = 'search';
+    public const SIZE            = 'size';
     public const SKIP            = 'skip';
     public const SORT_BY         = 'sort_by';
     public const SORT_DESC       = 'sort_desc';
@@ -39,4 +41,11 @@ enum RequestArgumentsEnum: string
     public const TYPE            = 'type';
     public const UID             = 'uid';
     public const YEAR            = 'year';
+    public const COST            = 'cost';
+    public const PAYED           = 'payed';
+    public const PERIOD_ID       = 'period_id';
+    public const INVOICE_ID      = 'invoice_id';
+    public const SERVICE_ID      = 'service_id';
+    public const ACCOUNT_ID      = 'account_id';
+    public const TARIFF          = 'tariff';
 }

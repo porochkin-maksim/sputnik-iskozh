@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FolderFactory
 {
-    public function makeModelFromDto(FolderDTO $dto, ?Folder $folder = null): Folder
+    public function makeModelFromDto(FolderDTO $dto, ?Folder $model = null): Folder
     {
-        if ( ! $folder) {
+        if ( ! $model) {
             $result = Folder::make();
         }
         else {
-            $result = $folder;
+            $result = $model;
         }
 
         if ($dto->getUid()) {
@@ -29,27 +29,25 @@ class FolderFactory
         ]);
     }
 
-    public function makeDtoFromObject(Folder $folder): FolderDTO
+    public function makeDtoFromObject(Folder $model): FolderDTO
     {
-        $result = new FolderDTO();
-
-        return $result
-            ->setId($folder->id)
-            ->setName($folder->name)
-            ->setUid($folder->uid)
-            ->setParentId($folder->parent_id)
-            ->setCreatedAt($folder->created_at)
-            ->setUpdatedAt($folder->updated_at);
+        return (new FolderDTO())
+            ->setId($model->id)
+            ->setName($model->name)
+            ->setUid($model->uid)
+            ->setParentId($model->parent_id)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
     }
 
     /**
-     * @param Folder[] $folders
+     * @param Folder[] $models
      */
-    public function makeDtoFromObjects(array|Collection $folders): array
+    public function makeDtoFromObjects(array|Collection $models): array
     {
         $result = [];
-        foreach ($folders as $folder) {
-            $result[] = $this->makeDtoFromObject($folder);
+        foreach ($models as $model) {
+            $result[] = $this->makeDtoFromObject($model);
         }
 
         return $result;

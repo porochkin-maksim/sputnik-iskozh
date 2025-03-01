@@ -8,10 +8,10 @@ use Core\Domains\Counter\Models\CounterDTO;
 
 readonly class CounterFactory
 {
-    public function makeModelFromDto(CounterDTO $dto, ?Counter $counter = null): Counter
+    public function makeModelFromDto(CounterDTO $dto, ?Counter $model = null): Counter
     {
-        if ($counter) {
-            $result = $counter;
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Counter::make();
@@ -29,16 +29,18 @@ readonly class CounterFactory
         ]);
     }
 
-    public function makeDtoFromObject(Counter $counter): CounterDTO
+    public function makeDtoFromObject(Counter $model): CounterDTO
     {
         $result = new CounterDTO();
 
         $result
-            ->setId($counter->id)
-            ->setType(TypeEnum::tryFrom($counter->type))
-            ->setAccountId($counter->account_id)
-            ->setNumber($counter->number)
-            ->setIsPrimary($counter->is_primary);
+            ->setId($model->id)
+            ->setType(TypeEnum::tryFrom($model->type))
+            ->setAccountId($model->account_id)
+            ->setNumber($model->number)
+            ->setIsPrimary($model->is_primary)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
 
         return $result;
     }

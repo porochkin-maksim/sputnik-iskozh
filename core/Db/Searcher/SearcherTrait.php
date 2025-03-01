@@ -20,10 +20,30 @@ trait SearcherTrait
     private array  $select = [];
     private array  $with   = [];
 
-    private WhereCollection $where;
-    private array           $whereIn = [];
+    private ?WhereCollection $where   = null;
+    private array            $whereIn = [];
 
     private ?string $search = null;
+
+    public function __serialize(): array
+    {
+        return [
+            'sortOrderProperties' => $this->sortOrderProperties,
+
+            'limit'  => $this->limit,
+            'offset' => $this->offset,
+            'lastId' => $this->lastId,
+
+            'ids'    => $this->ids,
+            'select' => $this->select,
+            'with'   => $this->with,
+
+            'where'   => $this->where,
+            'whereIn' => $this->whereIn,
+
+            'search' => $this->search,
+        ];
+    }
 
     /**
      * @return null|int[]

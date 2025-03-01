@@ -8,10 +8,10 @@ use Core\Domains\Option\Models\OptionDTO;
 
 readonly class OptionFactory
 {
-    public function makeModelFromDto(OptionDTO $dto, ?Option $option = null): Option
+    public function makeModelFromDto(OptionDTO $dto, ?Option $model = null): Option
     {
-        if ($option) {
-            $result = $option;
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Option::make();
@@ -27,25 +27,25 @@ readonly class OptionFactory
         ]);
     }
 
-    public function makeDtoFromObject(Option $option): OptionDTO
+    public function makeDtoFromObject(Option $model): OptionDTO
     {
         $result = new OptionDTO();
 
         $result
-            ->setId($option->id)
-            ->setType(OptionEnum::tryFrom($option->type))
-            ->setData($option->data);
+            ->setId($model->id)
+            ->setType(OptionEnum::tryFrom($model->type))
+            ->setData($model->data);
 
         return $result;
     }
 
-    public function make(OptionEnum $option): OptionDTO
+    public function make(OptionEnum $model): OptionDTO
     {
         $result = new OptionDTO();
         $result
-            ->setId($option->value)
-            ->setType($option)
-            ->setData($option->default());
+            ->setId($model->value)
+            ->setType($model)
+            ->setData($model->default());
 
         return $result;
     }

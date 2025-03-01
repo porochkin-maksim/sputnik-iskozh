@@ -8,13 +8,13 @@ use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID = RequestArgumentsEnum::ID;
+    private const ID   = RequestArgumentsEnum::ID;
     private const DATA = RequestArgumentsEnum::DATA;
 
     public function rules(): array
     {
         return [
-            self::ID => [
+            self::ID   => [
                 'required',
                 'numeric',
             ],

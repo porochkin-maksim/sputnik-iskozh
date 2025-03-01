@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Infra\HistoryChanges\Enums;
 
+use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Billing\Period\Models\PeriodComparator;
 use Core\Domains\Billing\Service\Models\ServiceComparator;
 use Core\Enums\EnumCommonTrait;
@@ -18,8 +19,9 @@ enum Type: int
     public static function makeTypeByClass(string $class): self
     {
         return match ($class) {
-            ServiceComparator::class => self::SERVICE,
+            AccountComparator::class => self::ACCOUNT,
             PeriodComparator::class  => self::PERIOD,
+            ServiceComparator::class => self::SERVICE,
             default                  => self::UNDEFINED,
         };
     }

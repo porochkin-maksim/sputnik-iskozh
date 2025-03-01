@@ -8,10 +8,15 @@ use Core\Domains\User\UserLocator;
 
 readonly class AccountFactory
 {
-    public function makeModelFromDto(AccountDTO $dto, ?Account $account = null): Account
+    public function makeDefault(): AccountDTO
     {
-        if ($account) {
-            $result = $account;
+        return new AccountDTO();
+    }
+
+    public function makeModelFromDto(AccountDTO $dto, ?Account $model = null): Account
+    {
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Account::make();
@@ -26,21 +31,21 @@ readonly class AccountFactory
         ]);
     }
 
-    public function makeDtoFromObject(Account $account): AccountDTO
+    public function makeDtoFromObject(Account $model): AccountDTO
     {
         $result = new AccountDTO();
 
         $result
-            ->setId($account->id)
-            ->setNumber($account->number)
-            ->setSize($account->size)
-            ->setPrimaryUserId($account->primary_user_id)
-            ->setIsMember($account->is_member)
-            ->setIsManager($account->is_manager)
-            ->setCreatedAt($account->created_at)
-            ->setUpdatedAt($account->updated_at);
+            ->setId($model->id)
+            ->setNumber($model->number)
+            ->setSize($model->size)
+            ->setPrimaryUserId($model->primary_user_id)
+            ->setIsMember($model->is_member)
+            ->setIsManager($model->is_manager)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
 
-        foreach ($account->users ?? [] as $user) {
+        foreach ($model->users ?? [] as $user) {
             $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
         }
 

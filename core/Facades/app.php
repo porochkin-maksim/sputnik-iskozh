@@ -59,7 +59,7 @@ abstract class app
     public static function userDecorator(): UserDecorator
     {
         if ( ! isset(self::$userDecorator)) {
-            self::$userDecorator = new UserDecorator(self::user());
+            self::$userDecorator = UserLocator::UserDecorator(self::user());
         }
 
         return self::$userDecorator;

@@ -18,13 +18,13 @@ abstract class AbstractRequest extends FormRequest
 
     public function getInt(string $key, mixed $default = null): int
     {
-        return (int) parent::get($key, $default);
+        return (int) $this->get($key, $default);
     }
 
     public function getBool(string $key): bool
     {
-        if (parent::has($key)) {
-            if ($this->get($key) === true || $this->get($key) === 'true') {
+        if ($this->has($key)) {
+            if (in_array($this->get($key), [true, 'true'], true)) {
                 return true;
             }
         }
@@ -34,8 +34,8 @@ abstract class AbstractRequest extends FormRequest
 
     public function getIntOrNull(string $key): ?int
     {
-        if (parent::has($key)) {
-            if ($this->get($key) === null || $this->get($key) === 'null') {
+        if ($this->has($key)) {
+            if (in_array($this->get($key), [null, 'null'], true)) {
                 return null;
             }
 
@@ -47,8 +47,8 @@ abstract class AbstractRequest extends FormRequest
 
     public function getString(string $key): string
     {
-        if (parent::has($key)) {
-            if ($this->get($key) === null || $this->get($key) === 'null') {
+        if ($this->has($key)) {
+            if (in_array($this->get($key), [null, 'null'], true)) {
                 return '';
             }
 
@@ -60,8 +60,8 @@ abstract class AbstractRequest extends FormRequest
 
     public function getStringOrNull(string $key): ?string
     {
-        if (parent::has($key)) {
-            if ($this->get($key) === null || $this->get($key) === 'null') {
+        if ($this->has($key)) {
+            if (in_array($this->get($key), [null, 'null'], true)) {
                 return null;
             }
 
@@ -73,7 +73,7 @@ abstract class AbstractRequest extends FormRequest
 
     public function getFloat(string $key, mixed $default = null): ?float
     {
-        return is_numeric(parent::get($key, $default)) ? (float) parent::get($key, $default) : null;
+        return is_numeric($this->get($key, $default)) ? (float) $this->get($key, $default) : null;
     }
 
     public function getDateOrNull(string $key): ?Carbon

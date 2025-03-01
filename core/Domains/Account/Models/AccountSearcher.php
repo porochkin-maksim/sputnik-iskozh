@@ -13,5 +13,14 @@ class AccountSearcher implements SearcherInterface
     public function setPrimaryUserId(int $id): static
     {
         $this->addWhere(Account::PRIMARY_USER_ID, SearcherInterface::EQUALS, $id);
+
+        return $this;
+    }
+
+    public function setNumber(string $number): static
+    {
+        $this->addWhere(Account::NUMBER, SearcherInterface::EQUALS, $number);
+
+        return $this;
     }
 }

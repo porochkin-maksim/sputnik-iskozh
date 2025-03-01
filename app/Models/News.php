@@ -6,7 +6,6 @@ use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\File\Enums\TypeEnum;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -23,9 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class News extends Model implements CastsInterface
 {
-    use HasFactory;
-
-    const TABLE = 'news';
+    public const TABLE = 'news';
 
     public const ID           = 'id';
     public const TYPE         = 'type';

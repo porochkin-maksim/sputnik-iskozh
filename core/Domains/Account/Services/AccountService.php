@@ -11,6 +11,7 @@ use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Account\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\Option\Services\OptionService;
 
@@ -40,6 +41,10 @@ readonly class AccountService
 
         $this->historyChangesService->writeToHistory(
             $service->getId() ? Event::UPDATE : Event::CREATE,
+            HistoryType::ACCOUNT,
+            $current->getId(),
+            null,
+            null,
             new AccountComparator($current),
             new AccountComparator($before),
         );
@@ -116,7 +121,8 @@ readonly class AccountService
 
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
-            new AccountComparator($account),
+            HistoryType::ACCOUNT,
+            $account->getId(),
         );
 
         return $this->accountRepository->deleteById($id);
