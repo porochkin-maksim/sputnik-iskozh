@@ -1,0 +1,106 @@
+<?php declare(strict_types=1);
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Services\SaveRequest;
+use App\Http\Resources\Admin\Periods\ServicesListResource;
+use App\Http\Resources\Admin\Services\ServiceResource;
+use App\Models\Billing\Period;
+use App\Models\Billing\Service;
+use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Billing\Period\Models\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
+use Core\Domains\Billing\Service\Factories\ServiceFactory;
+use Core\Domains\Billing\Service\Models\ServiceSearcher;
+use Core\Domains\Billing\Service\ServiceLocator;
+use Core\Domains\Billing\Service\Services\ServiceService;
+use Core\Responses\ResponsesEnum;
+use Illuminate\Http\JsonResponse;
+
+class ServicesController extends Controller
+{
+    private ServiceFactory $serviceFactory;
+    private ServiceService $serviceService;
+    private PeriodService  $periodService;
+
+    public function __construct()
+    {
+        $this->serviceFactory = ServiceLocator::ServiceFactory();
+        $this->serviceService = ServiceLocator::ServiceService();
+        $this->periodService  = PeriodLocator::PeriodService();
+    }
+
+    public function create(): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        return response()->json([
+            ResponsesEnum::SERVICE => new ServiceResource($this->serviceFactory->makeDefault()),
+        ]);
+    }
+
+    public function list(): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        $searcher = new ServiceSearcher();
+        $searcher
+            ->exludeType(ServiceTypeEnum::OTHER)
+            ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC);
+        $services = $this->serviceService->search($searcher);
+
+        $periodSearcher = new PeriodSearcher();
+        $periodSearcher->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC);
+
+        $periods = $this->periodService->search($periodSearcher);
+
+        return response()->json(new ServicesListResource(
+            $services->getItems(),
+            $periods->getItems(),
+        ));
+    }
+
+    public function save(SaveRequest $request): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        $service = $this->serviceFactory->makeDefault()
+            ->setId($request->getId())
+            ->setPeriodId($request->getPeriodId())
+            ->setName($request->getName())
+            ->setIsActive($request->getIsActive())
+            ->setType(ServiceTypeEnum::tryFrom($request->getType()))
+            ->setCost($request->getCost());
+
+        $service = $this->serviceService->save($service);
+
+        return response()->json([
+            ResponsesEnum::SERVICE => new ServiceResource($service),
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        return $this->serviceService->deleteById($id);
+    }
+
+    private function canEdit(): bool
+    {
+        return \app::roleDecorator()->canEditServices();
+    }
+}

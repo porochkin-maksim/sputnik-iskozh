@@ -5,9 +5,7 @@ namespace Core\Domains\Account\Repositories;
 use App\Models\Account\Account;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Account\Collections\Accounts;
-use Core\Domains\Account\Models\AccountSearcher;
-use Illuminate\Support\Facades\DB;
+use Core\Domains\Account\Collections\AccountCollection;
 
 class AccountRepository
 {
@@ -37,9 +35,9 @@ class AccountRepository
         return $result;
     }
 
-    public function getByIds(array $ids): Accounts
+    public function getByIds(array $ids): AccountCollection
     {
-        return new Accounts($this->traitGetByIds($ids));
+        return new AccountCollection($this->traitGetByIds($ids));
     }
 
     public function save(Account $report): Account
@@ -47,18 +45,6 @@ class AccountRepository
         $report->save();
 
         return $report;
-    }
-
-    /**
-     * @return Account[]
-     */
-    public function search(AccountSearcher $searcher): array
-    {
-        $ids = DB::table(static::TABLE)
-            ->pluck('id')
-            ->toArray();
-
-        return $this->traitGetByIds($ids, $searcher);
     }
 
     public function getByUserId(int $id): ?Account

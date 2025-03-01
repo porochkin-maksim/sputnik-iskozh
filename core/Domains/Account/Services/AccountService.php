@@ -2,22 +2,49 @@
 
 namespace Core\Domains\Account\Services;
 
-use Core\Domains\Account\Collections\Accounts;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Factories\AccountFactory;
+use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Account\Models\AccountInfo;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
+use Core\Domains\Account\Responses\SearchResponse;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\Option\Services\OptionService;
 
 readonly class AccountService
 {
     public function __construct(
-        private AccountFactory    $accountFactory,
-        private AccountRepository $accountRepository,
-        private OptionService     $optionService,
+        private AccountFactory        $accountFactory,
+        private AccountRepository     $accountRepository,
+        private OptionService         $optionService,
+        private HistoryChangesService $historyChangesService,
     )
     {
+    }
+
+    public function save(AccountDTO $service): AccountDTO
+    {
+        $model = $this->accountRepository->getById($service->getId());
+        if ($model) {
+            $before = $this->accountFactory->makeDtoFromObject($model);
+        }
+        else {
+            $before = new AccountDTO();
+        }
+
+        $model   = $this->accountRepository->save($this->accountFactory->makeModelFromDto($service, $model));
+        $current = $this->accountFactory->makeDtoFromObject($model);
+
+        $this->historyChangesService->writeToHistory(
+            $service->getId() ? Event::UPDATE : Event::CREATE,
+            new AccountComparator($current),
+            new AccountComparator($before),
+        );
+
+        return $current;
     }
 
     public function getByUserId(int|string|null $id): ?AccountDTO
@@ -31,21 +58,24 @@ readonly class AccountService
     {
         $account = $this->accountFactory->makeModelFromDto($dto);
         $account = $this->accountRepository->save($account);
-        $account->users()->sync($dto->getUsers()->getIds());
+        $account->users()->sync($dto->getUsers()?->getIds());
 
         return $this->accountFactory->makeDtoFromObject($account);
     }
 
-    public function search(AccountSearcher $searcher): Accounts
+    public function search(AccountSearcher $searcher): SearchResponse
     {
-        $accounts = $this->accountRepository->search($searcher);
+        $response = $this->accountRepository->search($searcher);
 
-        $result = new Accounts();
-        foreach ($accounts as $account) {
-            $result->add($this->accountFactory->makeDtoFromObject($account));
+        $result = new SearchResponse();
+        $result->setTotal($response->getTotal());
+
+        $collection = new AccountCollection();
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->accountFactory->makeDtoFromObject($item));
         }
 
-        return $result;
+        return $result->setItems($collection);
     }
 
     public function getById(int $id): ?AccountDTO
@@ -74,5 +104,21 @@ readonly class AccountService
             $garbageCollectionFee,
             $roadCollectionFee,
         );
+    }
+
+    public function deleteById(int $id): bool
+    {
+        $account = $this->getById($id);
+
+        if ( ! $account) {
+            return false;
+        }
+
+        $this->historyChangesService->writeToHistory(
+            Event::DELETE,
+            new AccountComparator($account),
+        );
+
+        return $this->accountRepository->deleteById($id);
     }
 }
