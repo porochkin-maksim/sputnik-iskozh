@@ -5,7 +5,7 @@ namespace Core\Domains\Infra\HistoryChanges\Models;
 use App\Models\Infra\HistoryChanges;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
-use Core\Domains\Infra\HistoryChanges\Enums\Type;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 
 class HistorySearcher implements SearcherInterface
 {
@@ -16,13 +16,17 @@ class HistorySearcher implements SearcherInterface
         $this->with[] = HistoryChanges::USER;
     }
 
-    public function setMainFilters(Type|int $type, int $primaryId, ?int $referenceId): static
+    public function setMainFilters(HistoryType|int $type, ?int $primaryId, ?int $referenceId): static
     {
-        $this
-            ->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type)
-            ->addWhere(HistoryChanges::PRIMARY_ID, SearcherInterface::EQUALS, $primaryId)
-            ->addWhere(HistoryChanges::REFERENCE_ID, SearcherInterface::EQUALS, $referenceId)
-        ;
+        $this->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type);
+
+        if ($primaryId) {
+            $this->addWhere(HistoryChanges::PRIMARY_ID, SearcherInterface::EQUALS, $primaryId);
+        }
+
+        if ($referenceId) {
+            $this->addWhere(HistoryChanges::REFERENCE_ID, SearcherInterface::EQUALS, $referenceId);
+        }
 
         return $this;
     }

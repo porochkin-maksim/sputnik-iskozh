@@ -4,14 +4,18 @@ namespace Core\Domains\Infra\HistoryChanges\Decorator;
 
 use Core\Domains\Infra\Comparator\DTO\Changes;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
 
-readonly class LogDataDecorator
+readonly class HistoryChangesDecorator
 {
+    private LogData $logData;
+
     public function __construct(
-        private LogData $logData,
+        private HistoryChangesDTO $historyChanges,
     )
     {
+        $this->logData = $this->historyChanges->getLog();
     }
 
     /**
@@ -36,12 +40,20 @@ readonly class LogDataDecorator
         return $result;
     }
 
-    public function getActionEvent(): string
+    public function getEvent(): Event
     {
+        return $this->logData->getEvent();
+    }
+
+    public function getActionEventText(): string
+    {
+        $type = $this->historyChanges->getReferenceType()?->name() ? : $this->historyChanges->getType()?->name();
+        $id   = $this->historyChanges->getReferenceId() ? : $this->historyChanges->getPrimaryId();
+
         return match ($this->logData->getEvent()) {
-            Event::CREATE => 'Создана запись',
-            Event::UPDATE => 'Обновлена запись',
-            Event::DELETE => 'Удалена запись',
+            Event::CREATE => sprintf('Создана запись «%s» id:%s', $type, $id),
+            Event::UPDATE => sprintf('Обновлена запись «%s» id:%s', $type, $id),
+            Event::DELETE => sprintf('Удалена запись «%s» id:%s', $type, $id),
         };
     }
 

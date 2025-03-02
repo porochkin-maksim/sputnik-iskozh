@@ -5,7 +5,7 @@ namespace Core\Domains\Infra\HistoryChanges\Factories;
 use app;
 use App\Models\Infra\HistoryChanges;
 use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\Type;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Domains\User\Factories\UserFactory;
@@ -23,6 +23,7 @@ readonly class HistoryChangesFactory
         return (new HistoryChangesDTO())
             ->setId(null)
             ->setType(null)
+            ->setReferenceType(null)
             ->setUserId(app::user()->getId())
             ->setPrimaryId(null)
             ->setReferenceId(null)
@@ -39,11 +40,12 @@ readonly class HistoryChangesFactory
         }
 
         return $result->fill([
-            HistoryChanges::TYPE         => $dto->getType()?->value,
-            HistoryChanges::USER_ID      => $dto->getUserId(),
-            HistoryChanges::PRIMARY_ID   => $dto->getPrimaryId(),
-            HistoryChanges::REFERENCE_ID => $dto->getReferenceId(),
-            HistoryChanges::DESCRIPTION  => $dto->getLog()?->toArray() ?: [],
+            HistoryChanges::TYPE           => $dto->getType()?->value,
+            HistoryChanges::REFERENCE_TYPE => $dto->getReferenceType()?->value,
+            HistoryChanges::USER_ID        => $dto->getUserId(),
+            HistoryChanges::PRIMARY_ID     => $dto->getPrimaryId(),
+            HistoryChanges::REFERENCE_ID   => $dto->getReferenceId(),
+            HistoryChanges::DESCRIPTION    => $dto->getLog()?->toArray() ? : [],
         ]);
     }
 
@@ -54,7 +56,8 @@ readonly class HistoryChangesFactory
         $logData = LogData::fromArray($model->description);
         $result
             ->setId($model->id)
-            ->setType(Type::tryFrom($model->type))
+            ->setType(HistoryType::tryFrom($model->type))
+            ->setReferenceType($model->reference_type ?HistoryType::tryFrom($model->reference_type) : null)
             ->setUserId($model->user_id)
             ->setPrimaryId($model->primary_id)
             ->setReferenceId($model->reference_id)

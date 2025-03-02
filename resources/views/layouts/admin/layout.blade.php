@@ -17,6 +17,22 @@ $season = match (Carbon::now()->month) {
     9, 10, 11 => 'autumn',
     default   => 'winter',
 };
+
+$authRole  = \app::roleDecorator();
+$navRoutes = [RouteNames::ADMIN];
+
+if ($authRole->canEditAccounts()) {
+    $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
+}
+if ($authRole->canEditPeriods()) {
+    $navRoutes[] = RouteNames::ADMIN_PERIOD_INDEX;
+}
+if ($authRole->canEditServices()) {
+    $navRoutes[] = RouteNames::ADMIN_SERVICE_INDEX;
+}
+if ($authRole->canEditInvoices()) {
+    $navRoutes[] = RouteNames::ADMIN_INVOICE_INDEX;
+}
 ?>
         <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -29,7 +45,7 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
 </head>
-<body class="d-flex flex-column h-100 {{ $season }}"
+<body class="d-flex flex-column h-100 {{ $season }} admin"
       id="app"
       style="background-image: url('{{ $bgImage->getUrl() }}')">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"
@@ -57,12 +73,27 @@ $season = match (Carbon::now()->month) {
     </div>
 </nav>
 <main class="px-3 py-2 w-100">
-    @yield(SectionNames::CONTENT)
+    <div class="row admin-content-body">
+        <div class="col-2 admin-side-panel border-end">
+            <div class="side-menu">
+                @foreach($navRoutes as $routeCode)
+                    <a class="@if(Route::is($routeCode)) active-link @endif"
+                       href="{{ route($routeCode) }}">
+                        {{ RouteNames::name($routeCode) }}
+                    </a>
+                @endforeach
+            </div>
+        </div>
+        <div class="col-10">
+            @yield(SectionNames::CONTENT)
+        </div>
+    </div>
 </main>
 <footer class="w-100">
     <div class="d-flex justify-content-center py-3">
 
     </div>
 </footer>
+<alerts-block></alerts-block>
 </body>
 </html>

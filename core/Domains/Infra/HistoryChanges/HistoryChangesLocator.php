@@ -3,10 +3,9 @@
 namespace Core\Domains\Infra\HistoryChanges;
 
 use Core\Domains\Infra\Comparator\ComparatorLocator;
-use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
-use Core\Domains\Infra\HistoryChanges\Decorator\LogDataDecorator;
+use Core\Domains\Infra\HistoryChanges\Decorator\HistoryChangesDecorator;
 use Core\Domains\Infra\HistoryChanges\Factories\HistoryChangesFactory;
-use Core\Domains\Infra\HistoryChanges\Models\LogData;
+use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\User\UserLocator;
@@ -30,7 +29,7 @@ abstract class HistoryChangesLocator
         return self::$historyChangesService;
     }
 
-    public static function HistoryChangesFactory(): HistoryChangesFactory
+    private static function HistoryChangesFactory(): HistoryChangesFactory
     {
         if ( ! isset(self::$historyChangesFactory)) {
             self::$historyChangesFactory = new HistoryChangesFactory(
@@ -41,7 +40,7 @@ abstract class HistoryChangesLocator
         return self::$historyChangesFactory;
     }
 
-    public static function HistoryChangesRepository(): HistoryChangesRepository
+    private static function HistoryChangesRepository(): HistoryChangesRepository
     {
         if ( ! isset(self::$historyChangesRepository)) {
             self::$historyChangesRepository = new HistoryChangesRepository();
@@ -50,8 +49,8 @@ abstract class HistoryChangesLocator
         return self::$historyChangesRepository;
     }
 
-    public static function LogDataDecorator(LogData $logData): LogDataDecorator
+    public static function HistoryChangesDecorator(HistoryChangesDTO $historyChanges): HistoryChangesDecorator
     {
-        return new LogDataDecorator($logData);
+        return new HistoryChangesDecorator($historyChanges);
     }
 }

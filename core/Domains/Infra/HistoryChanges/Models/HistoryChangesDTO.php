@@ -3,19 +3,20 @@
 namespace Core\Domains\Infra\HistoryChanges\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\Infra\HistoryChanges\Enums\Type;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\User\Models\UserDTO;
 
 class HistoryChangesDTO
 {
     use TimestampsTrait;
 
-    private ?int     $id           = null;
-    private ?Type    $type         = null;
-    private ?int     $user_id      = null;
-    private ?int     $primary_id   = null;
-    private ?int     $reference_id = null;
-    private ?LogData $log          = null;
+    private ?int         $id             = null;
+    private ?HistoryType $type           = null;
+    private ?HistoryType $reference_type = null;
+    private ?int         $user_id        = null;
+    private ?int         $primary_id     = null;
+    private ?int         $reference_id   = null;
+    private ?LogData     $log            = null;
 
     private ?UserDTO $user = null;
 
@@ -31,14 +32,26 @@ class HistoryChangesDTO
         return $this;
     }
 
-    public function getType(): ?Type
+    public function getType(): ?HistoryType
     {
         return $this->type;
     }
 
-    public function setType(?Type $type): static
+    public function setType(?HistoryType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getReferenceType(): ?HistoryType
+    {
+        return $this->reference_type;
+    }
+
+    public function setReferenceType(?HistoryType $type): static
+    {
+        $this->reference_type = $type;
 
         return $this;
     }
