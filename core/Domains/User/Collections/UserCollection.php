@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, UserDTO>
  */
-class Users extends Collection implements CollectionInterface
+class UserCollection extends Collection implements CollectionInterface
 {
     use CollectionTrait;
 

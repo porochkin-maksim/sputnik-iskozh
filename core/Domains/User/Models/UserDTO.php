@@ -7,7 +7,7 @@ use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 
-class UserDTO implements \JsonSerializable
+class UserDTO
 {
     use TimestampsTrait;
 
@@ -139,16 +139,5 @@ class UserDTO implements \JsonSerializable
     public function getRole(): ?RoleDTO
     {
         return $this->role;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'id'         => $this->getId(),
-            'firstName'  => $this->getFirstName(),
-            'middleName' => $this->getMiddleName(),
-            'lastName'   => $this->getLastName(),
-            'email'      => $this->getEmail(),
-        ];
     }
 }

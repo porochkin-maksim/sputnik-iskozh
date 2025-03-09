@@ -3,17 +3,17 @@
 namespace Core\Domains\Access\Models;
 
 use Core\Domains\Access\Enums\RoleIdEnum;
-use Core\Domains\User\Collections\Users;
+use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
 
 class RoleDTO implements \JsonSerializable
 {
-    private ?int   $id    = null;
-    private ?Users $users = null;
+    private ?int            $id    = null;
+    private ?UserCollection $users = null;
 
     public function __construct()
     {
-        $this->users = new Users();
+        $this->users = new UserCollection();
     }
 
     public function getId(): ?int
@@ -41,19 +41,19 @@ class RoleDTO implements \JsonSerializable
     public function addUser(UserDTO $user): static
     {
         if ( ! $this->users) {
-            $this->users = new Users();
+            $this->users = new UserCollection();
         }
         $this->users->add($user);
 
         return $this;
     }
 
-    public function getUsers(): ?Users
+    public function getUsers(): ?UserCollection
     {
         return $this->users;
     }
 
-    public function setUsers(?Users $users): static
+    public function setUsers(?UserCollection $users): static
     {
         $this->users = $users;
 

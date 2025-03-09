@@ -4,16 +4,15 @@ namespace Core\Domains\User;
 
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserDTO;
-use Core\Domains\User\Repositories\UserCacheRepository;
 use Core\Domains\User\Repositories\UserRepository;
 use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\Services\UserService;
 
 class UserLocator
 {
-    private static UserCacheRepository $UserCacheRepository;
     private static UserFactory         $UserFactory;
     private static UserRepository      $UserRepository;
     private static UserService         $UserService;
@@ -24,6 +23,7 @@ class UserLocator
             self::$UserService = new UserService(
                 self::UserFactory(),
                 self::UserRepository(),
+                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -45,21 +45,10 @@ class UserLocator
     public static function UserRepository(): UserRepository
     {
         if ( ! isset(self::$UserRepository)) {
-            self::$UserRepository = new UserRepository(
-                self::UserCacheRepository(),
-            );
+            self::$UserRepository = new UserRepository();
         }
 
         return self::$UserRepository;
-    }
-
-    public static function UserCacheRepository(): UserCacheRepository
-    {
-        if ( ! isset(self::$UserCacheRepository)) {
-            self::$UserCacheRepository = new UserCacheRepository();
-        }
-
-        return self::$UserCacheRepository;
     }
 
     public static function UserDecorator(UserDTO $user): UserDecorator

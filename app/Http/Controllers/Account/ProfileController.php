@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\User\Requests\SaveProfileEmailRequest;
-use Core\Domains\User\Requests\SaveProfilePasswordRequest;
-use Core\Domains\User\Requests\SaveProfileRequest;
+use App\Http\Requests\Users\SaveProfileEmailRequest;
+use App\Http\Requests\Users\SaveProfilePasswordRequest;
+use App\Http\Requests\Users\SaveProfileRequest;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;

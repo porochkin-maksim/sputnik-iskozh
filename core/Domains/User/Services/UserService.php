@@ -2,60 +2,99 @@
 
 namespace Core\Domains\User\Services;
 
-use Core\Domains\User\Collections\Users;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Factories\UserFactory;
+use Core\Domains\User\Models\UserComparator;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Repositories\UserRepository;
+use Core\Domains\User\Responses\SearchResponse;
 
 readonly class UserService
 {
     public function __construct(
-        private UserFactory    $userFactory,
-        private UserRepository $userRepository,
+        private UserFactory           $userFactory,
+        private UserRepository        $userRepository,
+        private HistoryChangesService $historyChangesService,
     )
     {
     }
 
+    public function save(UserDTO $user): UserDTO
+    {
+        $model = $this->userRepository->getById($user->getId());
+        if ($model) {
+            $before = $this->userFactory->makeDtoFromObject($model);
+        }
+        else {
+            $before = new UserDTO();
+        }
+
+        $model   = $this->userRepository->save($this->userFactory->makeModelFromDto($user, $model));
+        $current = $this->userFactory->makeDtoFromObject($model);
+
+        $this->historyChangesService->writeToHistory(
+            $user->getId() ? Event::UPDATE : Event::CREATE,
+            HistoryType::INVOICE,
+            $current->getId(),
+            null,
+            null,
+            new UserComparator($current),
+            new UserComparator($before),
+        );
+
+        return $current;
+    }
+
+    public function search(UserSearcher $searcher): SearchResponse
+    {
+        $response = $this->userRepository->search($searcher);
+
+        $result = new SearchResponse();
+        $result->setTotal($response->getTotal());
+
+        $collection = new UserCollection();
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->userFactory->makeDtoFromObject($item));
+        }
+
+        return $result->setItems($collection);
+    }
+
     public function getById(?int $id): ?UserDTO
     {
-        $userSearcher = new UserSearcher();
-        $userSearcher
+        if ( ! $id) {
+            return null;
+        }
+
+        $searcher = new UserSearcher();
+        $searcher
             ->setId($id)
             ->setWithAccounts()
-            ->setWithRoles();
+            ->setWithRoles()
+        ;
+        $result = $this->userRepository->search($searcher)->getItems()->first();
 
-        return $this->search($userSearcher)->first();
+        return $result ? $this->userFactory->makeDtoFromObject($result) : null;
     }
 
-    public function getByIds(array $ids): Users
+    public function deleteById(int $id): bool
     {
-        return $this->userRepository->getByIds($ids);
-    }
-
-    public function save(UserDTO $dto): UserDTO
-    {
-        $user = $dto->getModel();
+        $user = $this->getById($id);
 
         if ( ! $user) {
-            $user = $this->userRepository->getById($dto->getId());
+            return false;
         }
 
-        $user = $this->userFactory->makeModelFromDto($dto, $user);
-        $user = $this->userRepository->save($user);
+        $this->historyChangesService->writeToHistory(
+            Event::DELETE,
+            HistoryType::USER,
+            $user->getId(),
+        );
 
-        return $this->userFactory->makeDtoFromObject($user);
-    }
-
-    public function search(UserSearcher $searcher): Users
-    {
-        $users = $this->userRepository->search($searcher);
-
-        $result  = new Users();
-        foreach ($users->getItems() as $user) {
-            $result->add($this->userFactory->makeDtoFromObject($user));
-        }
-
-        return $result;
+        return $this->userRepository->deleteById($id);
     }
 }

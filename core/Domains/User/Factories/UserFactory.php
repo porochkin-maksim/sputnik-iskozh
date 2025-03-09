@@ -3,7 +3,8 @@
 namespace Core\Domains\User\Factories;
 
 use App\Models\User;
-use Core\Domains\Access\Factories\RoleFactory;
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Models\UserDTO;
@@ -13,7 +14,6 @@ readonly class UserFactory
 {
     public function __construct(
         public AccountFactory $accountFactory,
-        public RoleFactory    $roleFactory,
     )
     {
     }
@@ -51,7 +51,7 @@ readonly class UserFactory
         if ( ! $model) {
             $model = User::make();
         }
-        $result = new UserDTO($model);
+        $result = new UserDTO();
 
         $result
             ->setId($model->id)
@@ -60,23 +60,21 @@ readonly class UserFactory
             ->setMiddleName($model->middle_name)
             ->setLastName($model->last_name)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+        ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {
-            $account = $model->getRelation(User::ACCOUNTS)->first();
-            if ($account) {
-                $result->setAccount($this->accountFactory->makeDtoFromObject($account));
-            }
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(User::ACCOUNTS)->first()));
         }
 
-        $role = $this->roleFactory->makeForUserId($model->id);
+        $role = RoleLocator::RoleFactory()->makeForUserId($model->id);
 
         if ($role) {
             $result->setRole($role);
         }
         elseif (isset($model->getRelations()[User::ROLES])) {
             $role = $model->getRelation(User::ROLES)->first();
-            $result->setRole($role ? $this->roleFactory->makeDtoFromObject($role) : null);
+            $result->setRole($role ? RoleLocator::RoleFactory()->makeDtoFromObject($role) : null);
         }
 
         return $result;
@@ -87,7 +85,8 @@ readonly class UserFactory
         $result = new UserDTO();
         $result
             ->setId(UserIdEnum::UNDEFINED)
-            ->setLastName('Робот');
+            ->setLastName('Робот')
+        ;
 
         return $result;
     }

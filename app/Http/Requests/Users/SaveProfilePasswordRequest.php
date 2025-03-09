@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\User\Requests;
+namespace App\Http\Requests\Users;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\User\Models\UserDTO;
