@@ -3,11 +3,10 @@
 namespace Core\Domains\Account\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\User\Collections\Users;
+use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
-use JsonSerializable;
 
-class AccountDTO implements JsonSerializable
+class AccountDTO
 {
     use TimestampsTrait;
 
@@ -18,12 +17,12 @@ class AccountDTO implements JsonSerializable
     private ?string $number          = null;
     private ?int    $primary_user_id = null;
     private ?bool   $is_member       = null;
-    private ?bool   $is_manager      = null;
-    private ?Users  $users           = null;
+    private ?bool           $is_manager = null;
+    private ?UserCollection $users      = null;
 
     public function __construct()
     {
-        $this->users = new Users();
+        $this->users = new UserCollection();
     }
 
     public function getId(): ?int
@@ -110,7 +109,7 @@ class AccountDTO implements JsonSerializable
         return $this;
     }
 
-    public function getIsManager(): bool
+    public function isManager(): bool
     {
         return (bool) $this->is_manager;
     }
@@ -125,30 +124,15 @@ class AccountDTO implements JsonSerializable
     public function addUser(UserDTO $user): static
     {
         if ( ! $this->users) {
-            $this->users = new Users();
+            $this->users = new UserCollection();
         }
         $this->users->add($user);
 
         return $this;
     }
 
-    public function getUsers(): ?Users
+    public function getUsers(): ?UserCollection
     {
         return $this->users;
-    }
-
-    public function jsonSerialize(): array
-    {
-        $dossier = new Dossier($this);
-
-        return [
-            'dossier'         => $dossier,
-            'id'              => $this->id,
-            'number'          => $this->number,
-            'size'            => $this->size,
-            'primary_user_id' => $this->primary_user_id,
-            'is_member'       => $this->is_member,
-            'is_manager'      => $this->is_manager,
-        ];
     }
 }

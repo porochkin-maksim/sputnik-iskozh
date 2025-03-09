@@ -31,7 +31,7 @@ readonly class AccountFactory
             Account::IS_VERIFIED     => $dto->isVerified(),
             Account::PRIMARY_USER_ID => $dto->getPrimaryUserId(),
             Account::IS_MEMBER       => $dto->isMember(),
-            Account::IS_MANAGER      => $dto->getIsManager(),
+            Account::IS_MANAGER      => $dto->isManager(),
         ]);
     }
 
@@ -51,8 +51,10 @@ readonly class AccountFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        foreach ($model->users ?? [] as $user) {
-            $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
+        if (isset($model->getRelations()[Account::USERS])) {
+            foreach ($model->getRelation(Account::USERS) as $user) {
+                $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
+            }
         }
 
         return $result;

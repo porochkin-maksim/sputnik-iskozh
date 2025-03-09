@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounts\SaveRequest;
+use App\Http\Resources\Accounts\AccountResource;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Resources\Views\ViewNames;
@@ -35,7 +36,7 @@ class AccountsController extends Controller
         $account = $this->accountService->getById($id);
 
         return response()->json([
-            ResponsesEnum::ACCOUNT => $account,
+            ResponsesEnum::ACCOUNT => new AccountResource($account),
         ]);
     }
 
@@ -43,18 +44,6 @@ class AccountsController extends Controller
     {
         $account = $request->dto();
         $account = $this->accountService->register($account);
-
-        return response()->json($account);
-    }
-
-    public function info(): JsonResponse
-    {
-        $account = $this->accountService->getByUserId(Auth::id());
-        if ($account) {
-            $info = $this->accountService->getAccountInfo($account);
-
-            return response()->json($info);
-        }
 
         return response()->json($account);
     }

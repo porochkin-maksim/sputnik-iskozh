@@ -40,6 +40,8 @@ class Account extends Model implements CastsInterface
     public const IS_MEMBER       = 'is_member';
     public const IS_MANAGER      = 'is_manager';
 
+    public const USERS = 'users';
+
     protected $guarded = [];
 
     protected $casts = [
