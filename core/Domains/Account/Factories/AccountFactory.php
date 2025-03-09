@@ -10,7 +10,9 @@ readonly class AccountFactory
 {
     public function makeDefault(): AccountDTO
     {
-        return new AccountDTO();
+        return (new AccountDTO())
+            ->setBalance(0.00)
+            ->setIsVerified(false);
     }
 
     public function makeModelFromDto(AccountDTO $dto, ?Account $model = null): Account
@@ -25,8 +27,10 @@ readonly class AccountFactory
         return $result->fill([
             Account::NUMBER          => $dto->getNumber(),
             Account::SIZE            => $dto->getSize(),
+            Account::BALANCE         => $dto->getBalance(),
+            Account::IS_VERIFIED     => $dto->isVerified(),
             Account::PRIMARY_USER_ID => $dto->getPrimaryUserId(),
-            Account::IS_MEMBER       => $dto->getIsMember(),
+            Account::IS_MEMBER       => $dto->isMember(),
             Account::IS_MANAGER      => $dto->getIsManager(),
         ]);
     }
@@ -39,6 +43,8 @@ readonly class AccountFactory
             ->setId($model->id)
             ->setNumber($model->number)
             ->setSize($model->size)
+            ->setBalance($model->balance)
+            ->setIsVerified($model->is_verified)
             ->setPrimaryUserId($model->primary_user_id)
             ->setIsMember($model->is_member)
             ->setIsManager($model->is_manager)

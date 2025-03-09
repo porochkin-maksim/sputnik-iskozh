@@ -25,15 +25,13 @@ class Kernel extends ConsoleKernel
     private function scheduleQueues(Schedule $schedule): void
     {
         $schedule->command('queue:restart')
-            ->everyFiveMinutes()
+            ->hourly()
             ->name('queue.restart')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/queue/restart.log'));
+            ->withoutOverlapping();
 
-        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --stop-when-empty', implode(',', QueueEnum::values())))
-            ->everyFifteenSeconds()
+        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --stop-when-empty --verbose', implode(',', QueueEnum::values())))
+            ->everyFiveSeconds()
             ->name('queue.work-normal')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/queue/work-normal.log'));
+            ->withoutOverlapping();
     }
 }

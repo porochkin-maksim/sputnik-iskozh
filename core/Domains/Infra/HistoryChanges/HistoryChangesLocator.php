@@ -4,11 +4,14 @@ namespace Core\Domains\Infra\HistoryChanges;
 
 use Core\Domains\Infra\Comparator\ComparatorLocator;
 use Core\Domains\Infra\HistoryChanges\Decorator\HistoryChangesDecorator;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Factories\HistoryChangesFactory;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\User\UserLocator;
+use Core\Requests\RequestArgumentsEnum;
+use Core\Resources\RouteNames;
 
 abstract class HistoryChangesLocator
 {
@@ -52,5 +55,20 @@ abstract class HistoryChangesLocator
     public static function HistoryChangesDecorator(HistoryChangesDTO $historyChanges): HistoryChangesDecorator
     {
         return new HistoryChangesDecorator($historyChanges);
+    }
+
+    public static function route(
+        ?HistoryType $type = null,
+        ?int         $primaryId = null,
+        ?HistoryType $referenceType = null,
+        ?int         $referenceId = null,
+    ): string
+    {
+        return route(RouteNames::HISTORY_CHANGES, [
+            RequestArgumentsEnum::TYPE           => $type?->value,
+            RequestArgumentsEnum::PRIMARY_ID     => $primaryId,
+            RequestArgumentsEnum::REFERENCE_TYPE => $referenceType?->value,
+            RequestArgumentsEnum::REFERENCE_ID   => $referenceId,
+        ]);
     }
 }

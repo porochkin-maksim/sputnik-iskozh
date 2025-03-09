@@ -9,7 +9,7 @@ use Core\Domains\Billing\Period\Collections\PeriodCollection;
 use Core\Domains\Billing\Service\Collections\ServiceCollection;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Resources\RouteNames;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Responses\ResponsesEnum;
 
 readonly class ServicesListResource extends AbstractResource
@@ -30,9 +30,9 @@ readonly class ServicesListResource extends AbstractResource
             'types'      => [
                 'all' => new SelectResource($types),
             ],
-            'historyUrl' => route(RouteNames::HISTORY_CHANGES, [
-                'type' => HistoryType::SERVICE,
-            ]),
+            'historyUrl' => HistoryChangesLocator::route(
+                type: HistoryType::SERVICE,
+            ),
         ];
 
         $periods = [];

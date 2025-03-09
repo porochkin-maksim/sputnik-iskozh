@@ -5,6 +5,7 @@ namespace Core\Domains\Account\Models;
 use App\Models\Account\Account;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
+use Core\Domains\Account\Enums\AccountIdEnum;
 
 class AccountSearcher implements SearcherInterface
 {
@@ -20,6 +21,13 @@ class AccountSearcher implements SearcherInterface
     public function setNumber(string $number): static
     {
         $this->addWhere(Account::NUMBER, SearcherInterface::EQUALS, $number);
+
+        return $this;
+    }
+
+    public function setWithoutSntAccount(): static
+    {
+        $this->addWhere(Account::ID, SearcherInterface::IS_NOT, AccountIdEnum::SNT->value);
 
         return $this;
     }

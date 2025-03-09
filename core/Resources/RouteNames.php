@@ -109,6 +109,7 @@ abstract class RouteNames
     public const ADMIN_INVOICE_CREATE = 'admin.invoice.create';
     public const ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
     public const ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
+    public const ADMIN_INVOICE_GET    = 'admin.invoice.get';
     public const ADMIN_INVOICE_LIST   = 'admin.invoice.list';
     public const ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
 
@@ -117,6 +118,12 @@ abstract class RouteNames
     public const ADMIN_TRANSACTION_SAVE   = 'admin.transaction.save';
     public const ADMIN_TRANSACTION_LIST   = 'admin.transaction.list';
     public const ADMIN_TRANSACTION_DELETE = 'admin.transaction.delete';
+
+    public const ADMIN_PAYMENT_VIEW   = 'admin.payment.view';
+    public const ADMIN_PAYMENT_CREATE = 'admin.payment.create';
+    public const ADMIN_PAYMENT_SAVE   = 'admin.payment.save';
+    public const ADMIN_PAYMENT_LIST   = 'admin.payment.list';
+    public const ADMIN_PAYMENT_DELETE = 'admin.payment.delete';
 
     public static function name(mixed $key, string $default = ''): string
     {

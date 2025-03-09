@@ -128,6 +128,10 @@ use Core\Enums\DateTimeFormat;
                             {{ $decorator->getActionEventText() }}
                         </div>
                         @break
+                    @default
+                        <div class="alert">
+                            {{ $decorator->getActionEventText() }}
+                        </div>
                 @endswitch
                 @if ($decorator->getChanges())
                     <table style="width: 100%">

@@ -13,6 +13,8 @@ class AccountDTO implements JsonSerializable
 
     private ?int    $id              = null;
     private ?int    $size            = null;
+    private ?float  $balance         = null;
+    private ?bool   $is_verified     = null;
     private ?string $number          = null;
     private ?int    $primary_user_id = null;
     private ?bool   $is_member       = null;
@@ -60,6 +62,30 @@ class AccountDTO implements JsonSerializable
         return $this;
     }
 
+    public function getBalance(): ?float
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(?float $balance): static
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->is_verified;
+    }
+
+    public function setIsVerified(?bool $isVerified): static
+    {
+        $this->is_verified = $isVerified;
+
+        return $this;
+    }
+
     public function getPrimaryUserId(): ?int
     {
         return $this->primary_user_id;
@@ -72,7 +98,7 @@ class AccountDTO implements JsonSerializable
         return $this;
     }
 
-    public function getIsMember(): bool
+    public function isMember(): bool
     {
         return (bool) $this->is_member;
     }

@@ -21,8 +21,13 @@ endif
 
 .PHONY: build
 build: ## собрать контейнеры
-	@docker compose build --no-cache
+	@./scripts/install.sh
+	@docker compose build
+	@#docker compose build --no-cache
 	@./vendor/bin/sail up -d
+	@./vendor/bin/sail composer install
+	@./vendor/bin/sail yarn -i
+	@./vendor/bin/sail yarn build
 
 .PHONY: up
 up: ## запуск приложения

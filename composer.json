@@ -12,9 +12,11 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.4",
-        "niklasravnsborg/laravel-pdf": "^4.1"
+        "niklasravnsborg/laravel-pdf": "^4.1",
+        "ext-intl": "*"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",

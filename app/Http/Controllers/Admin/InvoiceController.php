@@ -1,0 +1,169 @@
+<?php declare(strict_types=1);
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Invoices\ListRequest;
+use App\Http\Requests\Admin\Invoices\SaveRequest;
+use App\Http\Resources\Admin\Invoices\InvoiceResource;
+use App\Http\Resources\Admin\Invoices\InvoicesListResource;
+use App\Models\Account\Account;
+use App\Models\Billing\Invoice;
+use App\Models\Billing\Period;
+use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Models\AccountSearcher;
+use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
+use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
+use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Domains\Billing\Period\Models\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Period\Services\PeriodService;
+use Illuminate\Http\JsonResponse;
+
+class InvoiceController extends Controller
+{
+    private InvoiceFactory $invoiceFactory;
+    private InvoiceService $invoiceService;
+    private PeriodService  $periodService;
+    private AccountService $accountService;
+
+    public function __construct()
+    {
+        $this->invoiceFactory = InvoiceLocator::InvoiceFactory();
+        $this->invoiceService = InvoiceLocator::InvoiceService();
+        $this->periodService  = PeriodLocator::PeriodService();
+        $this->accountService = AccountLocator::AccountService();
+    }
+
+    public function view(int $id)
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $invoice = $this->invoiceService->getById($id);
+        if ( ! $invoice) {
+            abort(404);
+        }
+
+        $account = $this->accountService->getById($invoice->getAccountId());
+        $invoice->setAccount($account);
+        $invoice = new InvoiceResource($invoice);
+
+        return view('admin.pages.invoices.view', compact('invoice'));
+    }
+
+    public function create(): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        return response()->json(new InvoiceResource($this->invoiceFactory->makeDefault()));
+    }
+
+    public function get(int $id): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+        $invoice = $this->invoiceService->getById($id);
+        if ( ! $invoice) {
+            abort(404);
+        }
+
+        $account = $this->accountService->getById($invoice->getAccountId());
+        $invoice->setAccount($account);
+
+        return response()->json(new InvoiceResource($invoice));
+    }
+
+    public function list(ListRequest $request): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        $searcher = new InvoiceSearcher();
+        $searcher
+            ->setLimit($request->getLimit())
+            ->setOffset($request->getOffset())
+            ->setWithPeriod()
+            ->setWithAccount()
+            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
+
+        if ($request->getPeriodId()) {
+            $searcher->setPeriodId($request->getPeriodId());
+        }
+        if ($request->getAccountId()) {
+            $searcher->setAccountId($request->getAccountId());
+        }
+        if ($request->getType()) {
+            $searcher->setType($request->getType());
+        }
+
+        $invoices = $this->invoiceService->search($searcher);
+
+        $periodSearcher = new PeriodSearcher();
+        $periodSearcher
+            ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC);
+        $periods = $this->periodService->search($periodSearcher);
+
+        $accountSearcher = new AccountSearcher();
+        $accountSearcher->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+        $accounts = $this->accountService->search($accountSearcher);
+
+        return response()->json(new InvoicesListResource(
+            $invoices->getItems(),
+            $invoices->getTotal(),
+            $periods->getItems(),
+            $accounts->getItems(),
+        ));
+    }
+
+    public function save(SaveRequest $request): JsonResponse
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        $invoice = $request->getId()
+            ? $this->invoiceService->getById($request->getId())
+            : $this->invoiceFactory->makeDefault()
+                ->setType(InvoiceTypeEnum::tryFrom($request->getType()))
+                ->setPeriodId($request->getPeriodId())
+                ->setAccountId($request->getAccountId());
+
+        if ( ! $invoice) {
+            abort(404);
+        }
+
+        $invoice = $this->invoiceService->save($invoice);
+
+        return response()->json([
+            'invoice' => new InvoiceResource($invoice),
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        return $this->invoiceService->deleteById($id);
+    }
+
+    private function canEdit(): bool
+    {
+        return \app::roleDecorator()->canEditInvoices();
+    }
+}

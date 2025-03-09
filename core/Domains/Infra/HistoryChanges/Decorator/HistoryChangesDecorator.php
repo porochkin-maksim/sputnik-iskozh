@@ -54,6 +54,7 @@ readonly class HistoryChangesDecorator
             Event::CREATE => sprintf('Создана запись «%s» id:%s', $type, $id),
             Event::UPDATE => sprintf('Обновлена запись «%s» id:%s', $type, $id),
             Event::DELETE => sprintf('Удалена запись «%s» id:%s', $type, $id),
+            Event::COMMON => (string) $this->logData->getText(),
         };
     }
 

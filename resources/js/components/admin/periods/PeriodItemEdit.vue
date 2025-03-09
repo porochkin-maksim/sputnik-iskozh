@@ -107,7 +107,7 @@ export default {
                 Url.Routes.adminPeriodSave.uri,
                 form,
             ).then((response) => {
-                let text = this.id ? 'Период обновлён' : 'Период создан';
+                let text = this.id ? 'Период обновлён' : 'Период ' + response.data.period.id + ' создан';
                 this.showInfo(text);
 
                 this.id      = response.data.period.id;

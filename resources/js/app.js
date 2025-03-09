@@ -2,29 +2,16 @@ import './bootstrap';
 import './utils/common.js';
 import './utils/menus/vertical-menu.js';
 
+import 'primevue/resources/themes/aura-light-noir/theme.css';
+
 import { createApp } from 'vue';
 
 import PrimeVue     from 'primevue/config';
-import 'primevue/resources/themes/aura-light-noir/theme.css';
 import VueUidPlugin from 'vue-uid';
-
-import store from './store/index.js';
+import Vuex         from 'vuex';
+import store        from './store/index.js';
 
 const app = createApp({
-    // provide () {
-    //     let alert = {
-    //         status: true,
-    //         text  : '',
-    //         show  : false,
-    //     };
-    //     Object.defineProperty(alert, 'type', { enumerable: true, get: () => this.alert });
-    //     return { alert };
-    // },
-    // data () {
-    //     return {
-    //         alert: {},
-    //     };
-    // },
     mounted () {
         // Включить Popover Bootstrap
         setTimeout(() => {
@@ -37,16 +24,30 @@ const app = createApp({
     },
 });
 
+
 Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
     if (definition.default.name) {
+        // console.log(definition.default.name);
         app.component(definition.default.name, definition.default);
     }
     // app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
 });
 
-app.mount('#app');
+function formatMoney (amount, currency = '₽') {
+    const formattedAmount = amount.toLocaleString('ru-RU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
+    return `${formattedAmount} ${currency}`;
+}
+
+app.config.globalProperties.$formatMoney = formatMoney;
+app.config.devtools = import.meta.env.DEV;
+
 app.use(PrimeVue);
-// app.use(store);
+app.use(Vuex);
+app.use(store);
 app.use(VueUidPlugin);
 
-app.config.devtools = import.meta.env.DEV;
+app.mount('#app');

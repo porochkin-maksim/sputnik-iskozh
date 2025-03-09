@@ -16,12 +16,25 @@ class HistorySearcher implements SearcherInterface
         $this->with[] = HistoryChanges::USER;
     }
 
-    public function setMainFilters(HistoryType|int $type, ?int $primaryId, ?int $referenceId): static
+    public function setMainFilters(
+        HistoryType|int|null $type,
+        ?int                 $primaryId,
+        HistoryType|int|null $referenceType,
+        ?int                 $referenceId,
+    ): static
     {
         $this->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type);
 
+        if ($type) {
+            $this->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type);
+        }
+
         if ($primaryId) {
             $this->addWhere(HistoryChanges::PRIMARY_ID, SearcherInterface::EQUALS, $primaryId);
+        }
+
+        if ($referenceType) {
+            $this->addWhere(HistoryChanges::REFERENCE_TYPE, SearcherInterface::EQUALS, $referenceType);
         }
 
         if ($referenceId) {

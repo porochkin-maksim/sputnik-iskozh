@@ -1,8 +1,10 @@
 <template>
-    <label class="form-control label-select">
-        <span class="label-text">
-            {{ label }}
-        </span>
+    <element-wrapper
+        :label="label"
+        :required="required"
+        :classes="classes"
+        :id="id"
+    >
         <select :required="required"
                 @change="onChange"
                 @keyup="onChange"
@@ -17,27 +19,42 @@
                 {{ item.value !== undefined ? item.value : item }}
             </option>
         </select>
-    </label>
+    </element-wrapper>
     <errors-list :errors="errors" />
 </template>
 
 <script>
-import ErrorsList from './partial/ErrorsList.vue';
+import ErrorsList     from './partial/ErrorsList.vue';
+import ElementWrapper from './partial/ElementWrapper.vue';
 
 export default {
-    components: { ErrorsList },
-    props  : [
+    components: { ElementWrapper, ErrorsList },
+    props     : [
+        'classes',
         'modelValue',
         'errors',
-        'required',
-        'items',
+        'type',
         'label',
+        'name',
+        'placeholder',
+        'required',
+        'disabled',
+        'items',
     ],
-    emits  : [
+    emits     : [
         'update:modelValue',
         'change',
     ],
-    methods: {
+    mounted () {
+        this.id = 'input-' + this.$_uid;
+    },
+    data () {
+        return {
+            id        : null,
+            localValue: null,
+        };
+    },
+    methods   : {
         onChange (event) {
             this.$emit('update:modelValue', event.target.value);
             this.$emit('change', event.target.value);

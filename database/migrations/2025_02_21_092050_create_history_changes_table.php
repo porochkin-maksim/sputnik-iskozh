@@ -19,7 +19,7 @@ return new class extends Migration
             $table->smallInteger('type', unsigned: true)->index();
             $table->smallInteger('reference_type')->nullable()->index();
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('primary_id')->index();
+            $table->unsignedBigInteger('primary_id')->nullable()->index();
             $table->unsignedBigInteger('reference_id')->nullable()->index();
             $table->json('description');
             $table->timestamps();

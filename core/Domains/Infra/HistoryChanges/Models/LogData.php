@@ -10,10 +10,12 @@ class LogData implements Arrayable
 {
     private const EVENT   = 'event';
     private const CHANGES = 'changes';
+    private const TEXT    = 'text';
 
     public function __construct(
         private readonly Event              $event,
         private readonly ?ChangesCollection $changes,
+        private readonly ?string            $text,
     )
     {
     }
@@ -28,10 +30,16 @@ class LogData implements Arrayable
         return $this->changes;
     }
 
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
     public function toArray(): array
     {
         $result = [
             self::EVENT => $this->event,
+            self::TEXT  => $this->text,
         ];
 
         if ($this->changes) {
@@ -43,10 +51,10 @@ class LogData implements Arrayable
 
     public static function fromArray(array $data): static
     {
-        $event = Event::tryFrom($data[self::EVENT]);
-
+        $event   = Event::tryFrom($data[self::EVENT]);
         $changes = array_key_exists(self::CHANGES, $data) ? ChangesCollection::makeFromArray($data[self::CHANGES]) : null;
+        $text    = $data[self::TEXT] ?? null;
 
-        return new static($event, $changes);
+        return new static($event, $changes, $text);
     }
 }

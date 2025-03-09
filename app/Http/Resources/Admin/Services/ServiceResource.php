@@ -6,6 +6,7 @@ use App\Http\Resources\AbstractResource;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Resources\RouteNames;
 
 readonly class ServiceResource extends AbstractResource
@@ -30,10 +31,11 @@ readonly class ServiceResource extends AbstractResource
                 'active' => $this->service->getType()->value === ServiceTypeEnum::TARGET_FEE->value,
                 'drop'   => $this->service->getType()->value === ServiceTypeEnum::TARGET_FEE->value,
             ],
-            'historyUrl' => $this->service->getId() ? route(RouteNames::HISTORY_CHANGES, [
-                'type'      => HistoryType::SERVICE,
-                'primaryId' => $this->service->getId(),
-            ]) : null,
+            'historyUrl' => $this->service->getId()
+                ? HistoryChangesLocator::route(
+                    type: HistoryType::SERVICE,
+                    primaryId: $this->service->getId(),
+                ) : null,
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 /**
  * @method UploadedFile[] allFiles()
@@ -48,7 +49,7 @@ abstract class AbstractRequest extends FormRequest
     public function getString(string $key): string
     {
         if ($this->has($key)) {
-            if (in_array($this->get($key), [null, 'null'], true)) {
+            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
                 return '';
             }
 
@@ -61,7 +62,7 @@ abstract class AbstractRequest extends FormRequest
     public function getStringOrNull(string $key): ?string
     {
         if ($this->has($key)) {
-            if (in_array($this->get($key), [null, 'null'], true)) {
+            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
                 return null;
             }
 

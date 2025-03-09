@@ -20,6 +20,273 @@
         "uri": "\/home\/json\/register",
         "args": []
     },
+    "adminAccountCreate": {
+        "name": "admin.account.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/create",
+        "args": []
+    },
+    "adminAccountDelete": {
+        "name": "admin.account.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/accounts\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminAccountIndex": {
+        "name": "admin.account.index",
+        "displayName": "\u0423\u0447\u0430\u0441\u0442\u043a\u0438",
+        "method": "get",
+        "uri": "\/admin\/accounts",
+        "args": []
+    },
+    "adminAccountList": {
+        "name": "admin.account.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/list",
+        "args": []
+    },
+    "adminAccountSave": {
+        "name": "admin.account.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/save",
+        "args": []
+    },
+    "adminIndex": {
+        "name": "admin.index",
+        "displayName": "\u041e \u0441\u0438\u0441\u0442\u0435\u043c\u0435",
+        "method": "get",
+        "uri": "\/admin",
+        "args": []
+    },
+    "adminInvoiceCreate": {
+        "name": "admin.invoice.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/create",
+        "args": []
+    },
+    "adminInvoiceDelete": {
+        "name": "admin.invoice.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminInvoiceGet": {
+        "name": "admin.invoice.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/get\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminInvoiceIndex": {
+        "name": "admin.invoice.index",
+        "displayName": "\u0421\u0447\u0435\u0442\u0430",
+        "method": "get",
+        "uri": "\/admin\/invoices",
+        "args": []
+    },
+    "adminInvoiceList": {
+        "name": "admin.invoice.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/list",
+        "args": []
+    },
+    "adminInvoiceSave": {
+        "name": "admin.invoice.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/save",
+        "args": []
+    },
+    "adminInvoiceView": {
+        "name": "admin.invoice.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminPaymentCreate": {
+        "name": "admin.payment.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentDelete": {
+        "name": "admin.payment.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/delete\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
+    "adminPaymentList": {
+        "name": "admin.payment.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/list",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentSave": {
+        "name": "admin.payment.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/save",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentView": {
+        "name": "admin.payment.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/get\/{paymentId}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "paymentId": "{paymentId}"
+        }
+    },
+    "adminPeriodCreate": {
+        "name": "admin.period.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/periods\/create",
+        "args": []
+    },
+    "adminPeriodDelete": {
+        "name": "admin.period.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/periods\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminPeriodIndex": {
+        "name": "admin.period.index",
+        "displayName": "\u041f\u0435\u0440\u0438\u043e\u0434\u044b",
+        "method": "get",
+        "uri": "\/admin\/periods",
+        "args": []
+    },
+    "adminPeriodList": {
+        "name": "admin.period.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/periods\/list",
+        "args": []
+    },
+    "adminPeriodSave": {
+        "name": "admin.period.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/periods\/save",
+        "args": []
+    },
+    "adminServiceCreate": {
+        "name": "admin.service.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/services\/create",
+        "args": []
+    },
+    "adminServiceDelete": {
+        "name": "admin.service.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/services\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminServiceIndex": {
+        "name": "admin.service.index",
+        "displayName": "\u0423\u0441\u043b\u0443\u0433\u0438",
+        "method": "get",
+        "uri": "\/admin\/services",
+        "args": []
+    },
+    "adminServiceList": {
+        "name": "admin.service.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/services\/list",
+        "args": []
+    },
+    "adminServiceSave": {
+        "name": "admin.service.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/services\/save",
+        "args": []
+    },
+    "adminTransactionCreate": {
+        "name": "admin.transaction.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionDelete": {
+        "name": "admin.transaction.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/delete\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
+    "adminTransactionList": {
+        "name": "admin.transaction.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/list",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionSave": {
+        "name": "admin.transaction.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/save",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionView": {
+        "name": "admin.transaction.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/get\/{transactionId}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "transactionId": "{transactionId}"
+        }
+    },
     "announcementsIndex": {
         "name": "announcements.index",
         "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",
@@ -188,6 +455,13 @@
         "displayName": "",
         "method": "get",
         "uri": "\/",
+        "args": []
+    },
+    "infraHistoryChanges": {
+        "name": "infra.history-changes",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/history\/changes",
         "args": []
     },
     "login": {

@@ -138,3 +138,59 @@ Route::group(['prefix' => 'folders'], function () {
         });
     });
 });
+
+Route::get('/history/changes', Controllers\Infra\HistoryChangesViewController::class)->name(RouteNames::HISTORY_CHANGES);
+
+Route::group(['prefix' => 'admin'], static function () {
+    Route::get('/', [Controllers\Admin\PagesController::class, 'index'])->name(RouteNames::ADMIN);
+    Route::group(['prefix' => 'periods'], static function () {
+        Route::get('/', [Controllers\Admin\PagesController::class, 'periods'])->name(RouteNames::ADMIN_PERIOD_INDEX);
+        Route::get('/create', [Controllers\Admin\PeriodsController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);
+        Route::get('/list', [Controllers\Admin\PeriodsController::class, 'list'])->name(RouteNames::ADMIN_PERIOD_LIST);
+        Route::post('/save', [Controllers\Admin\PeriodsController::class, 'save'])->name(RouteNames::ADMIN_PERIOD_SAVE);
+        Route::delete('/{id}', [Controllers\Admin\PeriodsController::class, 'delete'])->name(RouteNames::ADMIN_PERIOD_DELETE);
+    });
+    Route::group(['prefix' => 'accounts'], static function () {
+        Route::get('/', [Controllers\Admin\PagesController::class, 'accounts'])->name(RouteNames::ADMIN_ACCOUNT_INDEX);
+        Route::get('/create', [Controllers\Admin\AccountsController::class, 'create'])->name(RouteNames::ADMIN_ACCOUNT_CREATE);
+        Route::get('/list', [Controllers\Admin\AccountsController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_LIST);
+        Route::post('/save', [Controllers\Admin\AccountsController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_SAVE);
+        Route::delete('/{id}', [Controllers\Admin\AccountsController::class, 'delete'])->name(RouteNames::ADMIN_ACCOUNT_DELETE);
+    });
+    Route::group(['prefix' => 'services'], static function () {
+        Route::get('/', [Controllers\Admin\PagesController::class, 'services'])->name(RouteNames::ADMIN_SERVICE_INDEX);
+        Route::get('/create', [Controllers\Admin\ServicesController::class, 'create'])->name(RouteNames::ADMIN_SERVICE_CREATE);
+        Route::get('/list', [Controllers\Admin\ServicesController::class, 'list'])->name(RouteNames::ADMIN_SERVICE_LIST);
+        Route::post('/save', [Controllers\Admin\ServicesController::class, 'save'])->name(RouteNames::ADMIN_SERVICE_SAVE);
+        Route::delete('/{id}', [Controllers\Admin\ServicesController::class, 'delete'])->name(RouteNames::ADMIN_SERVICE_DELETE);
+    });
+
+    Route::group(['prefix' => 'invoices'], static function () {
+        Route::get('/', [Controllers\Admin\PagesController::class, 'invoices'])->name(RouteNames::ADMIN_INVOICE_INDEX);
+        Route::get('/view/{id}', [Controllers\Admin\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
+        Route::group(['prefix' => 'json'], static function () {
+            Route::get('/create', [Controllers\Admin\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
+            Route::get('/list', [Controllers\Admin\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
+            Route::post('/save', [Controllers\Admin\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);
+            Route::delete('/delete/{id}', [Controllers\Admin\InvoiceController::class, 'delete'])->name(RouteNames::ADMIN_INVOICE_DELETE);
+            Route::get('/get/{id}', [Controllers\Admin\InvoiceController::class, 'get'])->name(RouteNames::ADMIN_INVOICE_GET);
+
+            Route::group(['prefix' => '{invoiceId}'], static function () {
+                Route::group(['prefix' => 'transactions'], static function () {
+                    Route::get('/create', [Controllers\Admin\TransactionController::class, 'create'])->name(RouteNames::ADMIN_TRANSACTION_CREATE);
+                    Route::get('/list', [Controllers\Admin\TransactionController::class, 'list'])->name(RouteNames::ADMIN_TRANSACTION_LIST);
+                    Route::post('/save', [Controllers\Admin\TransactionController::class, 'save'])->name(RouteNames::ADMIN_TRANSACTION_SAVE);
+                    Route::delete('/delete/{id}', [Controllers\Admin\TransactionController::class, 'delete'])->name(RouteNames::ADMIN_TRANSACTION_DELETE);
+                    Route::get('/get/{transactionId}', [Controllers\Admin\TransactionController::class, 'get'])->name(RouteNames::ADMIN_TRANSACTION_VIEW);
+                });
+                Route::group(['prefix' => 'payments'], static function () {
+                    Route::get('/create', [Controllers\Admin\PaymentController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_CREATE);
+                    Route::get('/list', [Controllers\Admin\PaymentController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_LIST);
+                    Route::post('/save', [Controllers\Admin\PaymentController::class, 'save'])->name(RouteNames::ADMIN_PAYMENT_SAVE);
+                    Route::delete('/delete/{id}', [Controllers\Admin\PaymentController::class, 'delete'])->name(RouteNames::ADMIN_PAYMENT_DELETE);
+                    Route::get('/get/{paymentId}', [Controllers\Admin\PaymentController::class, 'get'])->name(RouteNames::ADMIN_PAYMENT_VIEW);
+                });
+            });
+        });
+    });
+});

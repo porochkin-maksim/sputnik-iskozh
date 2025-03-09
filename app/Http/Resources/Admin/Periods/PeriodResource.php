@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin\Periods;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Resources\RouteNames;
 
 readonly class PeriodResource extends AbstractResource
@@ -25,10 +26,11 @@ readonly class PeriodResource extends AbstractResource
             'actions'    => [
                 'drop' => true,
             ],
-            'historyUrl' => $this->period->getId() ? route(RouteNames::HISTORY_CHANGES, [
-                'type'       => HistoryType::PERIOD,
-                'primaryId' => $this->period->getId(),
-            ]) : null,
+            'historyUrl' => $this->period->getId()
+                ? HistoryChangesLocator::route(
+                    type: HistoryType::PERIOD,
+                    primaryId: $this->period->getId(),
+                ) : null,
         ];
     }
 }

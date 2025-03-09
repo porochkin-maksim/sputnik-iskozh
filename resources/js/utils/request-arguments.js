@@ -1,4 +1,5 @@
 export default {
+    active       : 'active',
     article      : 'article',
     all          : 'all',
     category     : 'category',
@@ -26,6 +27,7 @@ export default {
     publishedAt  : 'published_at',
     remember     : 'remember',
     search       : 'search',
+    size         : 'size',
     skip         : 'skip',
     sortBy       : 'sort_by',
     sortDesc     : 'sort_desc',
@@ -33,5 +35,18 @@ export default {
     title        : 'title',
     type         : 'type',
     uid          : 'uid',
-    year         : 'year'
+    year         : 'year',
+    cost         : 'cost',
+    payed        : 'payed',
+    periodId     : 'period_id',
+    invoiceId    : 'invoice_id',
+    serviceId    : 'service_id',
+    accountId    : 'account_id',
+    tariff       : 'tariff',
+    moderated    : 'moderated',
+    verified     : 'verified',
+    comment      : 'comment',
+    primaryId    : 'primary_id',
+    referenceType: 'reference_type',
+    referenceId  : 'reference_id'
 }

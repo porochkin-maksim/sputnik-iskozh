@@ -56,8 +56,15 @@ class PeriodsController extends Controller
             abort(403);
         }
 
-        $period = $this->periodFactory->makeDefault()
-            ->setId($request->getId())
+        $period = $request->getId()
+            ? $this->periodService->getById($request->getId())
+            : $this->periodFactory->makeDefault();
+
+        if ( ! $period) {
+            abort(404);
+        }
+
+        $period
             ->setName($request->getName())
             ->setStartAt($request->getStartAt())
             ->setEndAt($request->getEndAt());

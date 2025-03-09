@@ -75,12 +75,19 @@ class ServicesController extends Controller
             abort(403);
         }
 
-        $service = $this->serviceFactory->makeDefault()
-            ->setId($request->getId())
-            ->setPeriodId($request->getPeriodId())
+        $service = $request->getId()
+            ? $this->serviceService->getById($request->getId())
+            : $this->serviceFactory->makeDefault()
+                ->setPeriodId($request->getPeriodId())
+                ->setType(ServiceTypeEnum::tryFrom($request->getType()));
+
+        if ( ! $service) {
+            abort(404);
+        }
+
+        $service
             ->setName($request->getName())
             ->setIsActive($request->getIsActive())
-            ->setType(ServiceTypeEnum::tryFrom($request->getType()))
             ->setCost($request->getCost());
 
         $service = $this->serviceService->save($service);

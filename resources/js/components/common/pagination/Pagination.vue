@@ -1,6 +1,6 @@
 <template>
     <nav aria-label="..." v-if="pagesCount > 1">
-        <ul class="pagination">
+        <ul class="pagination" :class="propClasses">
             <li class="page-item" :class="current === 1 ? 'disabled' : ''" @click.prevent="setCurrent(current-1)">
                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Назад</a>
             </li>
@@ -32,6 +32,10 @@ export default {
         perPage: {
             type   : Number,
             default: 0,
+        },
+        propClasses: {
+            type   : String,
+            default: '',
         },
     },
     data () {

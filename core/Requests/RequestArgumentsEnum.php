@@ -48,4 +48,10 @@ enum RequestArgumentsEnum: string
     public const SERVICE_ID      = 'service_id';
     public const ACCOUNT_ID      = 'account_id';
     public const TARIFF          = 'tariff';
+    public const MODERATED       = 'moderated';
+    public const VERIFIED        = 'verified';
+    public const COMMENT         = 'comment';
+    public const PRIMARY_ID      = 'primary_id';
+    public const REFERENCE_TYPE  = 'reference_type';
+    public const REFERENCE_ID    = 'reference_id';
 }

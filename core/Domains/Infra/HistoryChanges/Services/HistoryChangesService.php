@@ -30,11 +30,12 @@ readonly class HistoryChangesService
     public function writeToHistory(
         Event                  $event,
         HistoryType            $type,
-        int                    $primaryId,
+        ?int                   $primaryId,
         ?HistoryType           $referenceType = null,
         ?int                   $referenceId = null,
         ?AbstractComparatorDTO $current = null,
         ?AbstractComparatorDTO $before = null,
+        ?string                $text = null,
     ): void
     {
         if ($current && $before) {
@@ -48,7 +49,7 @@ readonly class HistoryChangesService
             return;
         }
 
-        $logData = new LogData($event, $changes ?? null);
+        $logData = new LogData($event, $changes ?? null, $text);
 
         $historyChanges = $this->historyChangesFactory->makeDefault();
         $historyChanges
@@ -70,11 +71,11 @@ readonly class HistoryChangesService
         return $this->historyChangesFactory->makeDtoFromObject($model);
     }
 
-    public function search(int $type, ?int $primaryId, ?int $referenceId): SearchResponse
+    public function search(?int $type, ?int $primaryId, ?int $referenceType, ?int $referenceId): SearchResponse
     {
         $searcher = new HistorySearcher();
         $searcher
-            ->setMainFilters($type, $primaryId, $referenceId)
+            ->setMainFilters($type, $primaryId, $referenceType, $referenceId)
             ->setSortOrderProperty(HistoryChanges::ID, SearcherInterface::SORT_ORDER_DESC);
 
         $response = $this->historyChangesRepository->search($searcher);

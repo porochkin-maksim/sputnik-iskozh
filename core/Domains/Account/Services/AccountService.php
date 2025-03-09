@@ -3,6 +3,7 @@
 namespace Core\Domains\Account\Services;
 
 use Core\Domains\Account\Collections\AccountCollection;
+use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Account\Models\AccountDTO;
@@ -80,7 +81,7 @@ readonly class AccountService
             $collection->add($this->accountFactory->makeDtoFromObject($item));
         }
 
-        return $result->setItems($collection);
+        return $result->setItems($collection->sortDefault());
     }
 
     public function getById(int $id): ?AccountDTO
@@ -88,6 +89,11 @@ readonly class AccountService
         $result = $this->accountRepository->getById($id);
 
         return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
+    }
+
+    public function getSntAccount(): ?AccountDTO
+    {
+        return $this->getById(AccountIdEnum::SNT->value);
     }
 
     public function getAccountInfo(AccountDTO $account): AccountInfo

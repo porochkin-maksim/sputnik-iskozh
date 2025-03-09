@@ -130,7 +130,7 @@ export default {
                 Url.Routes.adminServiceSave.uri,
                 form,
             ).then((response) => {
-                let text = this.id ? 'Услуга обновлена' : 'Услуга создана';
+                let text = this.id ? 'Услуга обновлена' : 'Услуга ' + response.data.service.id + ' создана';
                 this.showInfo(text);
 
                 this.id     = response.data.service.id;

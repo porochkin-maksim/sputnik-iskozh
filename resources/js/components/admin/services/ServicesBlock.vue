@@ -1,13 +1,21 @@
 <template>
-    <div class="d-flex align-items-center mb-2">
-        <button class="btn btn-success"
-                v-on:click="makeAction">Добавить услугу
-        </button>
-        <history-btn
-            class="btn-link underline-none"
-            :url="historyUrl" />
+    <div v-if="loaded && (!periods || !periods.length)">
+        <div class="alert alert-warning">
+            <p><i class="fa fa-warning"></i> Не найдено ни одного периода</p>
+            <a :href="Url.Routes.adminPeriodIndex.uri">
+                Создайте период
+            </a>
+        </div>
     </div>
-    <div>
+    <div v-if="periods && periods.length">
+        <div class="d-flex align-items-center mb-2">
+            <button class="btn btn-success"
+                    v-on:click="makeAction">Добавить услугу
+            </button>
+            <history-btn
+                class="btn-link underline-none"
+                :url="historyUrl" />
+        </div>
         <div v-for="period in periods">
             <div class="fw-bold mb-2">
                 Период «{{ period.value }}»
@@ -42,6 +50,8 @@ export default {
             periods   : [],
             types     : [],
             historyUrl: null,
+            Url       : Url,
+            loaded    : false,
         };
     },
     created () {
@@ -55,7 +65,7 @@ export default {
                 this.services.push(service);
             }).catch(response => {
                 this.parseResponseErrors(response);
-            });
+            })
         },
         listAction () {
             window.axios[Url.Routes.adminServiceList.method](Url.Routes.adminServiceList.uri).then(response => {
@@ -75,6 +85,8 @@ export default {
                 this.historyUrl = response.data.historyUrl;
             }).catch(response => {
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loaded = true;
             });
         },
     },

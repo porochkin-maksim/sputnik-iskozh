@@ -5,7 +5,7 @@ namespace App\Http\Resources\Admin\Services;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Billing\Service\Collections\ServiceCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Resources\RouteNames;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 readonly class ServicesListResource extends AbstractResource
 {
@@ -18,9 +18,9 @@ readonly class ServicesListResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $result = [
-            'historyUrl' => route(RouteNames::HISTORY_CHANGES, [
-                'type' => HistoryType::SERVICE,
-            ]),
+            'historyUrl' => HistoryChangesLocator::route(
+                type: HistoryType::SERVICE,
+            ),
         ];
 
         foreach ($this->serviceCollection as $service) {

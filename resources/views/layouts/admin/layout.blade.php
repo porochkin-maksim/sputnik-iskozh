@@ -82,6 +82,9 @@ if ($authRole->canEditInvoices()) {
                         {{ RouteNames::name($routeCode) }}
                     </a>
                 @endforeach
+                <a>
+                    Пользователи
+                </a>
             </div>
         </div>
         <div class="col-10">
