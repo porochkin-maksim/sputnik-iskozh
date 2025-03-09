@@ -8,46 +8,26 @@ abstract class Permission
 {
     public static function canEditNews(?RoleDTO $role): bool
     {
-        if ($role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $role?->is(RoleIdEnum::ADMIN);
     }
 
     public static function canEditFiles(?RoleDTO $role): bool
     {
-        if ($role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $role?->is(RoleIdEnum::ADMIN);
     }
 
     public static function canEditReports(?RoleDTO $role): bool
     {
-        if ($role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $role?->is(RoleIdEnum::ADMIN);
     }
 
     public static function canEditOptions(?RoleDTO $role): bool
     {
-        if ($role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $role?->is(RoleIdEnum::ADMIN);
     }
 
     public static function canEditTemplates(?RoleDTO $role): bool
     {
-        if ($role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $role?->is(RoleIdEnum::ADMIN);
     }
 }

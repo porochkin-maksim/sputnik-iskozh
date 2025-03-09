@@ -1,11 +1,4 @@
 {
-    "accountInfo": {
-        "name": "account.info",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/home\/json\/account-info",
-        "args": []
-    },
     "accountRegister": {
         "name": "account.register",
         "displayName": "",

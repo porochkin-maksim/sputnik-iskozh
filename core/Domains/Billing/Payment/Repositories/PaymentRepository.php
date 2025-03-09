@@ -28,11 +28,6 @@ class PaymentRepository
         return $result;
     }
 
-    public function getByIds(array $ids): PaymentCollection
-    {
-        return new PaymentCollection($this->traitGetByIds($ids));
-    }
-
     public function save(Payment $payment): Payment
     {
         $payment->save();

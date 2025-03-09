@@ -32,9 +32,9 @@ class OptionsController extends Controller
     {
         $role = $this->roleService->getByUserId(Auth::id());
 
-        if ( ! Permission::canEditOptions($role)) {
-            abort(403);
-        }
+        // if ( ! Permission::canEditOptions($role)) {
+        //     abort(403);
+        // }
     }
 
     public function index(): View

@@ -46,7 +46,7 @@ class LocalCache
         return self::$cacheEnabled;
     }
 
-    public static function setCacheEnabled(bool $cacheEnabled): void
+    public static function switchCacheEnabled(bool $cacheEnabled): void
     {
         self::$cacheEnabled = $cacheEnabled;
     }

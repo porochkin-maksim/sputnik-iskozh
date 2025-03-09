@@ -67,7 +67,6 @@ $routes = [
                 <auth-block></auth-block>
             </li>
         @else
-            @relativeInclude('account-nav')
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
@@ -143,6 +142,12 @@ $routes = [
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
                     {{ \app::userDecorator()->getDisplayName() }} {!! \app::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \app::account()->getNumber()) : '' !!}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{{ route(RouteNames::ADMIN) }}">
+                    <i class="fa fa-gear"></i>
                 </a>
             </li>
             <li class="nav-item">

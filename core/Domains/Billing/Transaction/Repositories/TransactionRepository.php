@@ -28,11 +28,6 @@ class TransactionRepository
         return $result;
     }
 
-    public function getByIds(array $ids): TransactionCollection
-    {
-        return new TransactionCollection($this->traitGetByIds($ids));
-    }
-
     public function save(Transaction $transaction): Transaction
     {
         $transaction->save();

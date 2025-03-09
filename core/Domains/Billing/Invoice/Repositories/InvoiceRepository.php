@@ -28,11 +28,6 @@ class InvoiceRepository
         return $result;
     }
 
-    public function getByIds(array $ids): InvoiceCollection
-    {
-        return new InvoiceCollection($this->traitGetByIds($ids));
-    }
-
     public function save(Invoice $invoice): Invoice
     {
         $invoice->save();

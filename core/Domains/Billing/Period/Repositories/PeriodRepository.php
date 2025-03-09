@@ -28,11 +28,6 @@ class PeriodRepository
         return $result;
     }
 
-    public function getByIds(array $ids): PeriodCollection
-    {
-        return new PeriodCollection($this->traitGetByIds($ids));
-    }
-
     public function save(Period $period): Period
     {
         $period->save();

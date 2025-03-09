@@ -28,11 +28,6 @@ class ServiceRepository
         return $result;
     }
 
-    public function getByIds(array $ids): ServiceCollection
-    {
-        return new ServiceCollection($this->traitGetByIds($ids));
-    }
-
     public function save(Service $service): Service
     {
         $service->save();
