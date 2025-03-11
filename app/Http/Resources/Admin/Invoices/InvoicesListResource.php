@@ -27,6 +27,8 @@ readonly class InvoicesListResource extends AbstractResource
     {
         $result = [
             'invoices'   => [],
+            'periods'    => [],
+            'accounts'   => [],
             'total'      => $this->totalInvoicesCount,
             'types'      => new SelectResource(InvoiceTypeEnum::array()),
             'historyUrl' => HistoryChangesLocator::route(

@@ -21,6 +21,10 @@ $season = match (Carbon::now()->month) {
 $authRole  = \app::roleDecorator();
 $navRoutes = [RouteNames::ADMIN];
 
+if ($authRole->canEditRoles()) {
+    $navRoutes[] = RouteNames::ADMIN_ROLE_INDEX;
+}
+
 if ($authRole->canEditAccounts()) {
     $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
 }

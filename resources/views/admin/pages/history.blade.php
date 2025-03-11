@@ -99,7 +99,7 @@ use Core\Enums\DateTimeFormat;
             <td style="text-align: center; vertical-align: top; width:70px;">
                 {{ $historyChange->getCreatedAt()->format(DateTimeFormat::TIME_FULL) }}
             </td>
-            <td style="text-align: center; vertical-align: top">
+            <td style="text-align: center; vertical-align: top; white-space: nowrap;">
                 {{ UserLocator::UserDecorator($historyChange->getUser())->getDisplayName() }}
             </td>
             <td style="text-align: center; vertical-align: top;">

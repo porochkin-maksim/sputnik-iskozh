@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Options;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\Permission;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Option\Enums\OptionEnum;

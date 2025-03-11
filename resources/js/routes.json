@@ -196,6 +196,43 @@
         "uri": "\/admin\/periods\/save",
         "args": []
     },
+    "adminRoleCreate": {
+        "name": "admin.role.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/roles\/create",
+        "args": []
+    },
+    "adminRoleDelete": {
+        "name": "admin.role.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/roles\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminRoleIndex": {
+        "name": "admin.role.index",
+        "displayName": "\u0420\u043e\u043b\u0438",
+        "method": "get",
+        "uri": "\/admin\/roles",
+        "args": []
+    },
+    "adminRoleList": {
+        "name": "admin.role.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/roles\/list",
+        "args": []
+    },
+    "adminRoleSave": {
+        "name": "admin.role.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/roles\/save",
+        "args": []
+    },
     "adminServiceCreate": {
         "name": "admin.service.create",
         "displayName": "",

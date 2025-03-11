@@ -86,4 +86,13 @@ abstract class AbstractRequest extends FormRequest
             return null;
         }
     }
+
+    public function getArray(string $key, array $default = []): array
+    {
+        if ( ! is_array($this->get($key))) {
+            return $default;
+        }
+
+        return $this->get($key, $default);
+    }
 }

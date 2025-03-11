@@ -2,14 +2,25 @@
 
 namespace Core\Domains\Access\Models;
 
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Enums\RoleIdEnum;
+use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
+use Throwable;
 
-class RoleDTO implements \JsonSerializable
+class RoleDTO
 {
+    use TimestampsTrait;
+
     private ?int            $id    = null;
+    private ?string         $name  = null;
     private ?UserCollection $users = null;
+
+    /**
+     * @var PermissionEnum[]
+     */
+    private array $permissions = [];
 
     public function __construct()
     {
@@ -21,16 +32,23 @@ class RoleDTO implements \JsonSerializable
         return $this->id;
     }
 
-    public function setId(?int $id): RoleDTO
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function getName(): ?string
     {
-        return $this->getId() ? RoleIdEnum::from($this->getId())->name() : null;
+        return $this->name;
     }
 
     public function is(?RoleIdEnum $roleId): bool
@@ -60,10 +78,34 @@ class RoleDTO implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function getPermissions(): array
     {
-        return [
-            'id' => $this->id,
-        ];
+        return $this->permissions;
+    }
+
+    /**
+     * @param int[] $codes
+     */
+    public function setPermissions(?array $codes): static
+    {
+        $permissions = [];
+        foreach ($codes as $code) {
+            try {
+                $permission = PermissionEnum::tryFrom((int) $code);
+                if ($permission) {
+                    $permissions[] = $permission;
+                }
+            }
+            catch (Throwable) {
+            }
+        }
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function hasPermission(PermissionEnum $permission): bool
+    {
+        return in_array($permission, $this->permissions, true);
     }
 }

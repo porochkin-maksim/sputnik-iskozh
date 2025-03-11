@@ -5,7 +5,7 @@ namespace Core\Domains\Access\Models;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
 
-class RolesSearcher implements SearcherInterface
+class RoleSearcher implements SearcherInterface
 {
     use SearcherTrait;
 }

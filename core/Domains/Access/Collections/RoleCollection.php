@@ -2,20 +2,20 @@
 
 namespace Core\Domains\Access\Collections;
 
-use App\Models\Access\Role;
 use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
+use Core\Domains\Access\Models\RoleDTO;
 use Illuminate\Support\Collection;
 
 /**
- * @template-extends Collection<int, Role>
+ * @template-extends Collection<int, RoleDTO>
  */
-class Roles extends Collection implements CollectionInterface
+class RoleCollection extends Collection implements CollectionInterface
 {
     use CollectionTrait;
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof Role;
+        return $item instanceof RoleDTO;
     }
 }

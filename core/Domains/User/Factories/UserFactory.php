@@ -67,12 +67,7 @@ readonly class UserFactory
             $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(User::ACCOUNTS)->first()));
         }
 
-        $role = RoleLocator::RoleFactory()->makeForUserId($model->id);
-
-        if ($role) {
-            $result->setRole($role);
-        }
-        elseif (isset($model->getRelations()[User::ROLES])) {
+        if (isset($model->getRelations()[User::ROLES])) {
             $role = $model->getRelation(User::ROLES)->first();
             $result->setRole($role ? RoleLocator::RoleFactory()->makeDtoFromObject($role) : null);
         }

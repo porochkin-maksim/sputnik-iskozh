@@ -23,6 +23,7 @@ abstract class app
             if ( ! $user) {
                 $user = UserLocator::UserFactory()->makeUndefined();
             }
+            $user->setRole(self::role());
             self::$user = $user;
         }
 

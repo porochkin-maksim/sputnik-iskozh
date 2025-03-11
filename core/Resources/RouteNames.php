@@ -86,6 +86,12 @@ abstract class RouteNames
 
     public const ADMIN = 'admin.index';
 
+    public const ADMIN_ROLE_INDEX  = 'admin.role.index';
+    public const ADMIN_ROLE_CREATE = 'admin.role.create';
+    public const ADMIN_ROLE_SAVE   = 'admin.role.save';
+    public const ADMIN_ROLE_LIST   = 'admin.role.list';
+    public const ADMIN_ROLE_DELETE = 'admin.role.delete';
+
     public const ADMIN_SERVICE_INDEX  = 'admin.service.index';
     public const ADMIN_SERVICE_CREATE = 'admin.service.create';
     public const ADMIN_SERVICE_SAVE   = 'admin.service.save';
@@ -148,6 +154,7 @@ abstract class RouteNames
 
             // админка
             self::ADMIN               => 'О системе',
+            self::ADMIN_ROLE_INDEX    => 'Роли',
             self::ADMIN_SERVICE_INDEX => 'Услуги',
             self::ADMIN_PERIOD_INDEX  => 'Периоды',
             self::ADMIN_ACCOUNT_INDEX => 'Участки',

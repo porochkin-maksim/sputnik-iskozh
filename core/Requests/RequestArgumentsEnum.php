@@ -54,4 +54,5 @@ enum RequestArgumentsEnum: string
     public const PRIMARY_ID      = 'primary_id';
     public const REFERENCE_TYPE  = 'reference_type';
     public const REFERENCE_ID    = 'reference_id';
+    public const PERMISSIONS     = 'permissions';
 }

@@ -8,7 +8,10 @@ enum ResponsesEnum: string
     public const CATEGORIES = 'categories';
     public const COUNTER    = 'counter';
     public const COUNTERS   = 'counters';
+    public const CREATE     = 'create';
     public const EDIT       = 'edit';
+    public const VIEW       = 'view';
+    public const DROP       = 'drop';
     public const FILES      = 'files';
     public const FOLDER     = 'folder';
     public const FOLDERS    = 'folders';
@@ -24,4 +27,5 @@ enum ResponsesEnum: string
     public const TOTAL      = 'total';
     public const TYPES      = 'types';
     public const MESSAGE    = 'message';
+    public const ROLE       = 'role';
 }

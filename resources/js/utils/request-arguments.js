@@ -48,5 +48,6 @@ export default {
     comment      : 'comment',
     primaryId    : 'primary_id',
     referenceType: 'reference_type',
-    referenceId  : 'reference_id'
+    referenceId  : 'reference_id',
+    permissions  : 'permissions'
 }

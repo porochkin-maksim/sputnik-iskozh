@@ -1,5 +1,14 @@
 <template>
-    <div class="d-flex justify-content-between align-items-center mb-2">
+    <div v-if="loaded && (!periods || !periods.length)">
+        <div class="alert alert-warning">
+            <p><i class="fa fa-warning"></i> Не найдено ни одного периода</p>
+            <a :href="Url.Routes.adminPeriodIndex.uri">
+                Создайте период
+            </a>
+        </div>
+    </div>
+    <div v-if="periods && periods.length"
+         class="d-flex justify-content-between align-items-center mb-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
                     v-on:click="makeAction">Добавить счёт
@@ -78,6 +87,7 @@ export default {
             types     : [],
             historyUrl: null,
 
+            loaded    : false,
             total     : null,
             perPage   : 25,
             skip      : 0,
@@ -85,6 +95,7 @@ export default {
             type      : 0,
             periodId  : 0,
             accountId : 0,
+            Url       : Url,
         };
     },
     created () {
@@ -145,6 +156,8 @@ export default {
                 this.historyUrl = response.data.historyUrl;
             }).catch(response => {
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loaded = true;
             });
         },
         onPaginationUpdate (skip) {

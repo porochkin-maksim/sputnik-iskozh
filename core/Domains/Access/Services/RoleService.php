@@ -2,17 +2,23 @@
 
 namespace Core\Domains\Access\Services;
 
-use Core\Domains\Access\Collections\Roles;
+use Core\Domains\Access\Collections\RoleCollection;
 use Core\Domains\Access\Factories\RoleFactory;
+use Core\Domains\Access\Models\RoleComparator;
 use Core\Domains\Access\Models\RoleDTO;
-use Core\Domains\Access\Models\RolesSearcher;
+use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\Repositories\RoleRepository;
+use Core\Domains\Access\Responses\SearchResponse;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 
 readonly class RoleService
 {
     public function __construct(
-        private RoleFactory    $roleFactory,
-        private RoleRepository $roleRepository,
+        private RoleFactory           $roleFactory,
+        private RoleRepository        $roleRepository,
+        private HistoryChangesService $historyChangesService,
     )
     {
     }
@@ -30,16 +36,45 @@ readonly class RoleService
         return $result ? $this->roleFactory->makeDtoFromObject($result) : null;
     }
 
-    public function search(RolesSearcher $searcher): Roles
+    public function save(RoleDTO $role)
     {
-        $roles = $this->roleRepository->search($searcher);
-
-        $result  = new Roles();
-        foreach ($roles as $role) {
-            $result->add($this->roleFactory->makeDtoFromObject($role));
+        $model = $this->roleRepository->getById($role->getId());
+        if ($model) {
+            $before = $this->roleFactory->makeDtoFromObject($model);
+        }
+        else {
+            $before = new RoleDTO();
         }
 
-        return $result;
+        $model   = $this->roleRepository->save($this->roleFactory->makeModelFromDto($role, $model));
+        $current = $this->roleFactory->makeDtoFromObject($model);
+
+        $this->historyChangesService->writeToHistory(
+            $role->getId() ? Event::UPDATE : Event::CREATE,
+            HistoryType::ROLE,
+            $current->getId(),
+            null,
+            null,
+            new RoleComparator($current),
+            new RoleComparator($before),
+        );
+
+        return $current;
+    }
+
+    public function search(RoleSearcher $searcher): SearchResponse
+    {
+        $response = $this->roleRepository->search($searcher);
+
+        $result = new SearchResponse();
+        $result->setTotal($response->getTotal());
+
+        $collection = new RoleCollection();
+        foreach ($response->getItems() as $item) {
+            $collection->add($this->roleFactory->makeDtoFromObject($item));
+        }
+
+        return $result->setItems($collection);
     }
 
     public function getById(int $id): ?RoleDTO
@@ -47,5 +82,22 @@ readonly class RoleService
         $result = $this->roleRepository->getById($id);
 
         return $result ? $this->roleFactory->makeDtoFromObject($result) : null;
+    }
+
+    public function deleteById(int $id): bool
+    {
+        $user = $this->getById($id);
+
+        if ( ! $user) {
+            return false;
+        }
+
+        $this->historyChangesService->writeToHistory(
+            Event::DELETE,
+            HistoryType::ROLE,
+            $user->getId(),
+        );
+
+        return $this->roleRepository->deleteById($id);
     }
 }

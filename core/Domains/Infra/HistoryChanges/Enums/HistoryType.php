@@ -16,6 +16,7 @@ enum HistoryType: int
     case TRANSACTION = 5;
     case PAYMENT     = 6;
     case USER        = 7;
+    case ROLE        = 8;
 
     public function name(): string
     {
@@ -28,6 +29,7 @@ enum HistoryType: int
             self::TRANSACTION => 'Транзакция',
             self::PAYMENT     => 'Платёж',
             self::USER        => 'Пользователь',
+            self::ROLE        => 'Роль',
         };
     }
 }

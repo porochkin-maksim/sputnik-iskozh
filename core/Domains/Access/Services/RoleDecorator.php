@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Access\Services;
 
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Enums\RoleIdEnum;
 use Core\Domains\Access\Models\RoleDTO;
 
@@ -61,5 +62,15 @@ readonly class RoleDecorator
     public function canEditInvoices(): bool
     {
         return $this->isAdmin();
+    }
+
+    public function canEditRoles(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canRoles(PermissionEnum $permission): bool
+    {
+        return $this->isAdmin() || $this->role?->hasPermission($permission);
     }
 }

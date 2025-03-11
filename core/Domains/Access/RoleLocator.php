@@ -4,8 +4,10 @@ namespace Core\Domains\Access;
 
 use Core\Domains\Access\Factories\RoleFactory;
 use Core\Domains\Access\Repositories\RoleRepository;
+use Core\Domains\Access\Repositories\RoleToPermissionRepository;
 use Core\Domains\Access\Repositories\RoleToUserRepository;
 use Core\Domains\Access\Services\RoleService;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 class RoleLocator
 {
@@ -13,6 +15,7 @@ class RoleLocator
     private static RoleFactory          $roleFactory;
     private static RoleRepository       $roleRepository;
     private static RoleToUserRepository $roleToUserRepository;
+    private static RoleToPermissionRepository $roleToPermissionRepository;
 
     public static function RoleService(): RoleService
     {
@@ -20,6 +23,7 @@ class RoleLocator
             self::$roleService = new RoleService(
                 self::RoleFactory(),
                 self::RoleRepository(),
+                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -40,6 +44,7 @@ class RoleLocator
         if ( ! isset(self::$roleRepository)) {
             self::$roleRepository = new RoleRepository(
                 self::RoleToUserRepository(),
+                self::RoleToPermissionRepository(),
             );
         }
 
@@ -53,5 +58,14 @@ class RoleLocator
         }
 
         return self::$roleToUserRepository;
+    }
+
+    public static function RoleToPermissionRepository(): RoleToPermissionRepository
+    {
+        if ( ! isset(self::$roleToPermissionRepository)) {
+            self::$roleToPermissionRepository = new RoleToPermissionRepository();
+        }
+
+        return self::$roleToPermissionRepository;
     }
 }

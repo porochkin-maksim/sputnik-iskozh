@@ -3,6 +3,7 @@
 namespace Core\Domains\Access\Factories;
 
 use App\Models\Access\Role;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Enums\RoleIdEnum;
 use Core\Domains\Access\Enums\UserToRole;
 use Core\Domains\Access\Models\RoleDTO;
@@ -10,6 +11,11 @@ use Core\Domains\User\UserLocator;
 
 readonly class RoleFactory
 {
+    public function makeDefault(): RoleDTO
+    {
+        return new RoleDTO();
+    }
+
     public function make(RoleIdEnum $roleIdEnum): RoleDTO
     {
         $result = new RoleDTO();
@@ -21,30 +27,42 @@ readonly class RoleFactory
     public function makeForUserId(?int $userId): ?RoleDTO
     {
         $roleEnum = UserToRole::getForUser($userId);
+
         return $roleEnum ? $this->make($roleEnum) : null;
     }
 
-    public function makeModelFromDto(RoleDTO $dto, ?Role $role = null): Role
+    public function makeModelFromDto(RoleDTO $dto, ?Role $model = null): Role
     {
-        if ($role) {
-            $result = $role;
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Role::make();
         }
-        $role->fill([Role::ID => $dto->getId(),]);
 
-        return $result;
+        $result->permissions = array_map(static fn(PermissionEnum $permission) => $permission->value, $dto->getPermissions());
+
+        return $result->fill([
+            Role::NAME => $dto->getName(),
+        ]);
     }
 
-    public function makeDtoFromObject(Role $role): RoleDTO
+    public function makeDtoFromObject(Role $model): RoleDTO
     {
         $result = new RoleDTO();
 
-        $result->setId($role->id);
+        $result
+            ->setId($model->id)
+            ->setName($model->name)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at)
+            ->setPermissions($model->permissions)
+        ;
 
-        foreach ($role->users ?? [] as $user) {
-            $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
+        if (isset($model->getRelations()[Role::USERS])) {
+            foreach ($model->getRelation(Role::USERS) as $user) {
+                $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
+            }
         }
 
         return $result;
