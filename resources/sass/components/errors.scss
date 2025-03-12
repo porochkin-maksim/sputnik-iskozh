@@ -28,8 +28,9 @@
     left             : 50%;
     transform        : translateX(-50%);
     max-width        : 80vw;
-    padding          : 10px;
-    background-color : #f7dccb;
+    padding          : 0 10px;
+    border           : 1px solid var(--bs-danger);
+    background-color : var(--bs-danger-bg-subtle);
     border-radius    : 6px;
     box-shadow       : 0 2px 12px rgba(0, 0, 0, 0.08);
     z-index          : 2000;
@@ -69,12 +70,14 @@
     z-index  : 1000;
 
     .message {
-        margin-top    : 10px;
-        padding       : 15px;
-        border-radius : 6px;
-        overflow      : hidden;
-        box-shadow    : 0 2px 12px rgba(0, 0, 0, 0.08);
-        transition    : all 0.3s ease-in-out;
+        margin-top  : 10px;
+        padding     : 15px;
+        border      : 1px solid;
+        border-left : 10px solid;
+        overflow    : hidden;
+        background  : #ffffff;
+        box-shadow  : 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition  : all 0.3s ease-in-out;
     }
 
     .message-text {

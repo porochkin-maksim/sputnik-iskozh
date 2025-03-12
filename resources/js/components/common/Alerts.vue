@@ -1,7 +1,7 @@
 <template>
     <!-- Контейнер для вывода ошибок -->
     <div class="error-container" v-if="errors && errors.length">
-        <ul class="error-list">
+        <ul class="error-list cursor-pointer" @click="removeErrors">
             <li v-for="value in errors" :key="value.id" class="error-item">
                 <span class="error-text">{{ value.text }}</span>
             </li>
@@ -11,7 +11,7 @@
     <!-- Контейнер для уведомлений -->
     <div class="notification-container" v-if="messages && messages.length">
         <transition-group name="slide-fade">
-            <div v-for="value in messages" :key="value.id" class="message" :class="['alert', 'alert-' + value.type]" @click="removeMessage(value.id)">
+            <div v-for="value in messages" :key="value.id" class="message" :class="['', 'border-' + value.type]" @click="removeMessage(value.id)">
                 <span class="message-text">{{ value.text }}</span>
             </div>
         </transition-group>
