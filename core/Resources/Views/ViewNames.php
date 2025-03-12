@@ -36,6 +36,7 @@ enum ViewNames: string
 
     public const ADMIN_PAGES_INDEX    = 'admin.pages.index';
     public const ADMIN_PAGES_ROLES    = 'admin.pages.roles';
+    public const ADMIN_PAGES_USERS    = 'admin.pages.users';
     public const ADMIN_PAGES_SERVICES = 'admin.pages.services';
     public const ADMIN_PAGES_PERIODS  = 'admin.pages.periods';
     public const ADMIN_PAGES_ACCOUNTS = 'admin.pages.accounts';

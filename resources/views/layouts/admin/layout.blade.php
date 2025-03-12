@@ -21,20 +21,22 @@ $season = match (Carbon::now()->month) {
 $authRole  = \app::roleDecorator();
 $navRoutes = [RouteNames::ADMIN];
 
-if ($authRole->canEditRoles()) {
+if ($authRole->canRoles()) {
     $navRoutes[] = RouteNames::ADMIN_ROLE_INDEX;
 }
-
-if ($authRole->canEditAccounts()) {
+if ($authRole->canUsers()) {
+    $navRoutes[] = RouteNames::ADMIN_USER_INDEX;
+}
+if ($authRole->canAccounts()) {
     $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
 }
-if ($authRole->canEditPeriods()) {
+if ($authRole->canPeriods()) {
     $navRoutes[] = RouteNames::ADMIN_PERIOD_INDEX;
 }
-if ($authRole->canEditServices()) {
+if ($authRole->canServices()) {
     $navRoutes[] = RouteNames::ADMIN_SERVICE_INDEX;
 }
-if ($authRole->canEditInvoices()) {
+if ($authRole->canInvoices()) {
     $navRoutes[] = RouteNames::ADMIN_INVOICE_INDEX;
 }
 ?>
@@ -86,9 +88,6 @@ if ($authRole->canEditInvoices()) {
                         {{ RouteNames::name($routeCode) }}
                     </a>
                 @endforeach
-                <a>
-                    Пользователи
-                </a>
             </div>
         </div>
         <div class="col-10">

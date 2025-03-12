@@ -46,7 +46,7 @@ class SearchController extends Controller
 
     private function searchNews(string $searching): \Core\Domains\News\Responses\SearchResponse
     {
-        $canEdit = \app::roleDecorator()->canEditNews();
+        $canEdit = \app::roleDecorator()->canNews();
 
         $searcher = new NewsSearcher();
         $searcher->setLimit(self::LIMIT);

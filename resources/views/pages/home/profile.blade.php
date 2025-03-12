@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Accounts\AccountResource;
-use App\Http\Resources\Users\UserResource;
+use App\Http\Resources\Admin\Users\UserResource;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 

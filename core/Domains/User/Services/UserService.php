@@ -2,6 +2,8 @@
 
 namespace Core\Domains\User\Services;
 
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
@@ -25,7 +27,14 @@ readonly class UserService
 
     public function save(UserDTO $user): UserDTO
     {
-        $model = $this->userRepository->getById($user->getId());
+        $searcher = new UserSearcher();
+        $searcher
+            ->setId($user->getId())
+            ->setWithAccounts()
+            ->setWithRoles()
+        ;
+        $model = $this->userRepository->search($searcher)->getItems()->first();
+
         if ($model) {
             $before = $this->userFactory->makeDtoFromObject($model);
         }
@@ -36,9 +45,14 @@ readonly class UserService
         $model   = $this->userRepository->save($this->userFactory->makeModelFromDto($user, $model));
         $current = $this->userFactory->makeDtoFromObject($model);
 
+        $model->roles()->sync($user->getRole() ? [$user->getRole()?->getId()] : []);
+        $model->accounts()->sync($user->getAccount() ? [$user->getAccount()?->getId()] : []);
+
+        $current = $this->getById($current->getId());
+
         $this->historyChangesService->writeToHistory(
             $user->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::INVOICE,
+            HistoryType::USER,
             $current->getId(),
             null,
             null,

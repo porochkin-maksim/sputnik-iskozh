@@ -79,6 +79,6 @@ class RolesController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditRoles();
+        return \app::roleDecorator()->canRoles();
     }
 }

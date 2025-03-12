@@ -71,6 +71,7 @@ export default {
     },
     methods: {
         onModalClick (event) {
+            return;
             const dialogElement = event.target.closest('.modal-dialog');
             if (!dialogElement) {
                 this.modal.hide();

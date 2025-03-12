@@ -12,9 +12,9 @@ class UserDTO
     use TimestampsTrait;
 
     private ?int    $id            = null;
-    private ?string $firstName     = null;
-    private ?string $middleName    = null;
-    private ?string $lastName      = null;
+    private ?string $first_name    = null;
+    private ?string $middle_name   = null;
+    private ?string $last_name     = null;
     private ?string $email         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
@@ -47,36 +47,36 @@ class UserDTO
 
     public function getFirstName(): ?string
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     public function setFirstName(?string $firstName): static
     {
-        $this->firstName = $firstName;
+        $this->first_name = $firstName;
 
         return $this;
     }
 
     public function getMiddleName(): ?string
     {
-        return $this->middleName;
+        return $this->middle_name;
     }
 
     public function setMiddleName(?string $middleName): static
     {
-        $this->middleName = $middleName;
+        $this->middle_name = $middleName;
 
         return $this;
     }
 
     public function getLastName(): ?string
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
     public function setLastName(?string $lastName): static
     {
-        $this->lastName = $lastName;
+        $this->last_name = $lastName;
 
         return $this;
     }

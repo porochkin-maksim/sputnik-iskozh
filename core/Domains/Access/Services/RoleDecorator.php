@@ -3,74 +3,127 @@
 namespace Core\Domains\Access\Services;
 
 use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\Enums\RoleIdEnum;
 use Core\Domains\Access\Models\RoleDTO;
 
-readonly class RoleDecorator
+class RoleDecorator
 {
     public function __construct(
-        private ?RoleDTO $role,
+        private readonly ?RoleDTO $role,
     )
     {
     }
 
-    private function isAdmin(): bool
-    {
-        return $this->role?->is(RoleIdEnum::ADMIN);
-    }
-
-    public function canEditNews(): bool
-    {
-        return $this->isAdmin();
-    }
-
-    public function canEditFiles(): bool
-    {
-        return $this->isAdmin();
-    }
-
-    public function canEditReports(): bool
-    {
-        return $this->isAdmin();
-    }
-
-    public function canEditOptions(): bool
-    {
-        return $this->isAdmin();
-    }
-
     public function canEditTemplates(): bool
     {
-        return $this->isAdmin();
+        return $this->can(...PermissionEnum::cases());
     }
 
-    public function canEditServices(): bool
+    public function can(PermissionEnum ...$permissions): bool
     {
-        return $this->isAdmin();
+        $result = true;
+        foreach ($permissions as $permission) {
+            if ( ! $result) {
+                break;
+            }
+            $result = $this->role->hasPermission($permission);
+        }
+
+        return $result;
     }
 
-    public function canEditPeriods(): bool
+    public function canRoles(): bool
     {
-        return $this->isAdmin();
+        $actions = [
+            PermissionEnum::ROLES_VIEW,
+            PermissionEnum::ROLES_EDIT,
+            PermissionEnum::ROLES_CREATE,
+            PermissionEnum::ROLES_DROP,
+        ];
+
+        return $this->can(...$actions);
     }
 
-    public function canEditAccounts(): bool
+    public function canUsers(): bool
     {
-        return $this->isAdmin();
+        $actions = [
+            PermissionEnum::USERS_VIEW,
+            PermissionEnum::USERS_EDIT,
+            PermissionEnum::USERS_CREATE,
+            PermissionEnum::USERS_DROP,
+        ];
+
+        return $this->can(...$actions);
     }
 
-    public function canEditInvoices(): bool
+    public function canNews(): bool
     {
-        return $this->isAdmin();
+        $actions = [
+            PermissionEnum::NEWS_VIEW,
+            PermissionEnum::NEWS_EDIT,
+            PermissionEnum::NEWS_CREATE,
+            PermissionEnum::NEWS_DROP,
+        ];
+
+        return $this->can(...$actions);
     }
 
-    public function canEditRoles(): bool
+    public function canFiles(): bool
     {
-        return $this->isAdmin();
+        $actions = [
+            PermissionEnum::FILES_VIEW,
+            PermissionEnum::FILES_EDIT,
+            PermissionEnum::FILES_CREATE,
+            PermissionEnum::FILES_DROP,
+        ];
+
+        return $this->can(...$actions);
     }
 
-    public function canRoles(PermissionEnum $permission): bool
+    public function canServices(): bool
     {
-        return $this->isAdmin() || $this->role?->hasPermission($permission);
+        $actions = [
+            PermissionEnum::SERVICES_VIEW,
+            PermissionEnum::SERVICES_EDIT,
+            PermissionEnum::SERVICES_CREATE,
+            PermissionEnum::SERVICES_DROP,
+        ];
+
+        return $this->can(...$actions);
+    }
+
+    public function canPeriods(): bool
+    {
+        $actions = [
+            PermissionEnum::PERIODS_VIEW,
+            PermissionEnum::PERIODS_EDIT,
+            PermissionEnum::PERIODS_CREATE,
+            PermissionEnum::PERIODS_DROP,
+        ];
+
+        return $this->can(...$actions);
+    }
+
+    public function canAccounts(): bool
+    {
+        $actions = [
+            PermissionEnum::ACCOUNTS_VIEW,
+            PermissionEnum::ACCOUNTS_EDIT,
+            PermissionEnum::ACCOUNTS_CREATE,
+            PermissionEnum::ACCOUNTS_DROP,
+        ];
+
+        return $this->can(...$actions);
+    }
+
+    public function canInvoices(): bool
+    {
+        $actions = [
+            PermissionEnum::INVOICES_VIEW,
+            PermissionEnum::INVOICES_EDIT,
+            PermissionEnum::INVOICES_CREATE,
+            PermissionEnum::INVOICES_DROP,
+        ];
+
+        return $this->can(...$actions);
     }
 }

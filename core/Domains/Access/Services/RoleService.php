@@ -23,19 +23,6 @@ readonly class RoleService
     {
     }
 
-    public function getByUserId(int|string|null $id): ?RoleDTO
-    {
-        $result = $this->roleFactory->makeForUserId($id);
-
-        if ($result) {
-            return $result;
-        }
-
-        $result = $this->roleRepository->getByUserId((int) $id);
-
-        return $result ? $this->roleFactory->makeDtoFromObject($result) : null;
-    }
-
     public function save(RoleDTO $role)
     {
         $model = $this->roleRepository->getById($role->getId());
@@ -99,5 +86,23 @@ readonly class RoleService
         );
 
         return $this->roleRepository->deleteById($id);
+    }
+
+    public function getByUserId(int|string|null $id): ?RoleDTO
+    {
+        $result = $this->roleFactory->makeForUserId($id);
+
+        if ($result) {
+            return $result;
+        }
+
+        $result = $this->roleRepository->getByUserId((int) $id);
+
+        return $result ? $this->roleFactory->makeDtoFromObject($result) : null;
+    }
+
+    public function all(): RoleCollection
+    {
+        return $this->search(new RoleSearcher())->getItems();
     }
 }

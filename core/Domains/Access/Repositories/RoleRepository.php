@@ -33,34 +33,18 @@ class RoleRepository
     {
         /** @var ?Role $result */
         $result = $this->traitGetById($id);
-        if ($result) {
-            $result->permissions = $this->roleToPermissionRepository->getPermissionsByRoleId($id);
-        }
-
-        return $result;
-    }
-
-    public function search(SearcherInterface $searcher): SearchResponse
-    {
-        $result = $this->traitSearch($searcher);
-
-        $items = $result->getItems();
-        $permissions = $this->roleToPermissionRepository->getPermissionsByRoleIds($result->getIds());
-
-        $result->setItems($items->map(static function (Role $role) use ($permissions) {
-            $role->permissions = $permissions[$role->id] ?? [];
-
-            return $role;
-        }));
 
         return $result;
     }
 
     public function save(Role $role): Role
     {
+        $permissions = $role->permissions;
+        unset($role->permissions);
         $role->save();
-        $this->roleToPermissionRepository->saveRolesPermissions($role->id, $role->permissions);
+        $this->roleToPermissionRepository->saveRolesPermissions($role->id, $permissions);
 
+        $role->permissions;
         return $role;
     }
 

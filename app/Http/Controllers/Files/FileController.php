@@ -147,6 +147,6 @@ class FileController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditFiles();
+        return \app::roleDecorator()->canFiles();
     }
 }

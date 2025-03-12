@@ -317,6 +317,52 @@
             "transactionId": "{transactionId}"
         }
     },
+    "adminUserCreate": {
+        "name": "admin.user.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/create",
+        "args": []
+    },
+    "adminUserDelete": {
+        "name": "admin.user.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/users\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminUserIndex": {
+        "name": "admin.user.index",
+        "displayName": "\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+        "method": "get",
+        "uri": "\/admin\/users",
+        "args": []
+    },
+    "adminUserList": {
+        "name": "admin.user.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/list",
+        "args": []
+    },
+    "adminUserSave": {
+        "name": "admin.user.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/save",
+        "args": []
+    },
+    "adminUserView": {
+        "name": "admin.user.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "announcementsIndex": {
         "name": "announcements.index",
         "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",

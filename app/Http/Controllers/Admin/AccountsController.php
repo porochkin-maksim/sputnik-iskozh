@@ -106,6 +106,6 @@ class AccountsController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditAccounts();
+        return \app::roleDecorator()->canAccounts();
     }
 }

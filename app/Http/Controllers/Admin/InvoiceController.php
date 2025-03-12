@@ -164,6 +164,6 @@ class InvoiceController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditInvoices();
+        return \app::roleDecorator()->canInvoices();
     }
 }

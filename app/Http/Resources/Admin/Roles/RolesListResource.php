@@ -24,10 +24,10 @@ readonly class RolesListResource extends AbstractResource
         $result = [
             'roles'      => [],
             'actions'    => [
-                ResponsesEnum::CREATE => $access->canRoles(PermissionEnum::ROLES_CREATE),
-                ResponsesEnum::EDIT   => $access->canRoles(PermissionEnum::ROLES_EDIT),
-                ResponsesEnum::VIEW   => $access->canRoles(PermissionEnum::ROLES_VIEW),
-                ResponsesEnum::DROP   => $access->canRoles(PermissionEnum::ROLES_DROP),
+                ResponsesEnum::CREATE => $access->can(PermissionEnum::ROLES_CREATE),
+                ResponsesEnum::EDIT   => $access->can(PermissionEnum::ROLES_EDIT),
+                ResponsesEnum::VIEW   => $access->can(PermissionEnum::ROLES_VIEW),
+                ResponsesEnum::DROP   => $access->can(PermissionEnum::ROLES_DROP),
             ],
             'historyUrl' => HistoryChangesLocator::route(
                 type: HistoryType::ROLE,

@@ -151,6 +151,14 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::post('/save', [Controllers\Admin\RolesController::class, 'save'])->name(RouteNames::ADMIN_ROLE_SAVE);
                 Route::delete('/{id}', [Controllers\Admin\RolesController::class, 'delete'])->name(RouteNames::ADMIN_ROLE_DELETE);
             });
+            Route::group(['prefix' => 'users'], static function () {
+                Route::get('/', [Controllers\Admin\PagesController::class, 'users'])->name(RouteNames::ADMIN_USER_INDEX);
+                Route::get('/view/{id?}', [Controllers\Admin\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
+                Route::get('/create', [Controllers\Admin\UsersController::class, 'create'])->name(RouteNames::ADMIN_USER_CREATE);
+                Route::get('/list', [Controllers\Admin\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
+                Route::post('/save', [Controllers\Admin\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
+                Route::delete('/{id}', [Controllers\Admin\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
+            });
             Route::group(['prefix' => 'periods'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'periods'])->name(RouteNames::ADMIN_PERIOD_INDEX);
                 Route::get('/create', [Controllers\Admin\PeriodsController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);

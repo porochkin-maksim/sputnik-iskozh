@@ -214,6 +214,6 @@ class TransactionController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditInvoices();
+        return \app::roleDecorator()->canInvoices();
     }
 }

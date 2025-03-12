@@ -108,6 +108,6 @@ class ServicesController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditServices();
+        return \app::roleDecorator()->canServices();
     }
 }

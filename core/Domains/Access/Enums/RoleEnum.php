@@ -4,7 +4,7 @@ namespace Core\Domains\Access\Enums;
 
 use Core\Enums\EnumCommonTrait;
 
-enum RoleIdEnum: int
+enum RoleEnum: int
 {
     use EnumCommonTrait;
 

@@ -93,7 +93,6 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
         );
     }
 
-
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(

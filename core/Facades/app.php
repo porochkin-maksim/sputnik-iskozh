@@ -3,6 +3,7 @@
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleDecorator;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Services\UserDecorator;
@@ -13,6 +14,7 @@ abstract class app
 {
     private static UserDTO       $user;
     private static RoleDTO       $role;
+    private static AccountDTO       $account;
     private static RoleDecorator $roleDecorator;
     private static UserDecorator $userDecorator;
 
@@ -24,6 +26,8 @@ abstract class app
                 $user = UserLocator::UserFactory()->makeUndefined();
             }
             $user->setRole(self::role());
+            $user->setAccount(self::account());
+
             self::$user = $user;
         }
 
@@ -32,7 +36,16 @@ abstract class app
 
     public static function account(): AccountDTO
     {
-        return self::user()->getAccount();
+        if ( ! isset(self::$account)) {
+            $account = Auth::id() ? AccountLocator::AccountService()->getByUserId(Auth::id()) : null;
+            if ( ! $account) {
+                $account = AccountLocator::AccountFactory()->makeDefault();
+            }
+
+            self::$account = $account;
+        }
+
+        return self::$account;
     }
 
     public static function role(): RoleDTO

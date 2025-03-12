@@ -85,6 +85,6 @@ class AnnouncementController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditNews();
+        return \app::roleDecorator()->canNews();
     }
 }

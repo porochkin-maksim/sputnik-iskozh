@@ -4,7 +4,7 @@ namespace Core\Domains\Access\Factories;
 
 use App\Models\Access\Role;
 use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\Enums\RoleIdEnum;
+use Core\Domains\Access\Enums\RoleEnum;
 use Core\Domains\Access\Enums\UserToRole;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\User\UserLocator;
@@ -16,10 +16,11 @@ readonly class RoleFactory
         return new RoleDTO();
     }
 
-    public function make(RoleIdEnum $roleIdEnum): RoleDTO
+    public function make(RoleEnum $roleEnum): RoleDTO
     {
         $result = new RoleDTO();
-        $result->setId($roleIdEnum->value);
+        $result->setPermissions(PermissionEnum::values());
+        $result->setName($roleEnum->name());
 
         return $result;
     }
@@ -56,13 +57,20 @@ readonly class RoleFactory
             ->setName($model->name)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at)
-            ->setPermissions($model->permissions)
         ;
 
         if (isset($model->getRelations()[Role::USERS])) {
             foreach ($model->getRelation(Role::USERS) as $user) {
                 $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
             }
+        }
+
+        if (isset($model->getRelations()[Role::PERMISSIONS])) {
+            $permissions = [];
+            foreach ($model->getRelation(Role::PERMISSIONS) as $permission) {
+                $permissions[] = $permission->permission;
+            }
+            $result->setPermissions($permissions);
         }
 
         return $result;

@@ -24,7 +24,7 @@ $authRole = \app::roleDecorator();
         </tr>
         </thead>
         <tbody>
-        @if($authRole->canEditAccounts())
+        @if($authRole->canAccounts())
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
@@ -36,7 +36,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canEditPeriods())
+        @if($authRole->canPeriods())
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_PERIOD_INDEX) }}">
@@ -49,7 +49,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canEditServices())
+        @if($authRole->canServices())
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_SERVICE_INDEX) }}">
@@ -66,7 +66,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canEditInvoices())
+        @if($authRole->canInvoices())
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_INVOICE_INDEX) }}">

@@ -20,10 +20,10 @@ readonly class RoleResource extends AbstractResource
         return [
             'id'          => $this->role->getId(),
             'name'        => $this->role->getName(),
-            'permissions' => array_map(static fn(PermissionEnum $permission) => (string) ($permission->value), $this->role->getPermissions()),
+            'permissions' => array_values(array_map(static fn(PermissionEnum $permission) => (string) ($permission->value), $this->role->getPermissions())),
             'actions'     => [
-                'edit' => $access->canRoles(PermissionEnum::ROLES_EDIT),
-                'drop' => $access->canRoles(PermissionEnum::ROLES_DROP),
+                'edit' => $access->can(PermissionEnum::ROLES_EDIT),
+                'drop' => $access->can(PermissionEnum::ROLES_DROP),
             ],
         ];
     }

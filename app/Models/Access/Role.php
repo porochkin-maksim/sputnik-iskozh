@@ -6,11 +6,13 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int     $id
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
+ * @property int[]   $permissions
  *
  * @property ?string $name
  */
@@ -23,13 +25,12 @@ class Role extends Model
     public const ID   = 'id';
     public const NAME = 'name';
 
-    public const USERS = 'users';
-    public array $permissions = [];
+    public const USERS       = 'users';
+    public const PERMISSIONS = 'permissions';
 
-    public $timestamps = false;
-
-    protected $guarded = [];
-
+    protected $with       = [self::PERMISSIONS];
+    public    $timestamps = false;
+    protected $guarded    = [];
 
     public function users(): BelongsToMany
     {
@@ -39,5 +40,10 @@ class Role extends Model
             RoleToUser::ROLE,
             RoleToUser::USER,
         );
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(RoleToPermissions::class, RoleToPermissions::ROLE, self::ID);
     }
 }

@@ -18,7 +18,7 @@ class PagesController extends Controller
 
     public function services()
     {
-        if (app::roleDecorator()->canRoles(PermissionEnum::SERVICES_VIEW)) {
+        if (app::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_SERVICES);
         }
 
@@ -27,7 +27,7 @@ class PagesController extends Controller
 
     public function periods()
     {
-        if (app::roleDecorator()->canRoles(PermissionEnum::PERIODS_VIEW)) {
+        if (app::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_PERIODS);
         }
 
@@ -36,7 +36,7 @@ class PagesController extends Controller
 
     public function accounts()
     {
-        if (app::roleDecorator()->canRoles(PermissionEnum::ACCOUNTS_VIEW)) {
+        if (app::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_ACCOUNTS);
         }
 
@@ -45,7 +45,7 @@ class PagesController extends Controller
 
     public function invoices()
     {
-        if (app::roleDecorator()->canRoles(PermissionEnum::INVOICES_VIEW)) {
+        if (app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_INVOICES);
         }
 
@@ -54,8 +54,17 @@ class PagesController extends Controller
 
     public function roles()
     {
-        if (app::roleDecorator()->canRoles(PermissionEnum::ROLES_VIEW)) {
+        if (app::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_ROLES);
+        }
+
+        abort(403);
+    }
+
+    public function users()
+    {
+        if (app::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_USERS);
         }
 
         abort(403);

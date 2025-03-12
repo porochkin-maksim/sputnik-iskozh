@@ -15,7 +15,8 @@ class RoleToUserRepository
             ->where(RoleToUser::USER, SearcherInterface::EQUALS, $id)
             ->groupBy(RoleToUser::ROLE)
             ->pluck(RoleToUser::ROLE)
-            ->first();
+            ->first()
+        ;
     }
 
     /**
@@ -28,6 +29,18 @@ class RoleToUserRepository
             ->where(RoleToUser::ROLE, SearcherInterface::EQUALS, $id)
             ->groupBy(RoleToUser::USER)
             ->pluck(RoleToUser::USER)
-            ->toArray();
+            ->toArray()
+        ;
+    }
+
+    public function saveUserRole(int $userId, ?int $roleId): void
+    {
+        DB::table(RoleToUser::TABLE)->where(RoleToUser::USER, $userId)->delete();
+        if ($roleId) {
+            DB::table(RoleToUser::TABLE)->insert([
+                RoleToUser::ROLE => $roleId,
+                RoleToUser::USER => $userId,
+            ]);
+        }
     }
 }

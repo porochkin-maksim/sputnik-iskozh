@@ -3,7 +3,7 @@
 namespace Core\Domains\Access\Models;
 
 use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\Enums\RoleIdEnum;
+use Core\Domains\Access\Enums\RoleEnum;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
@@ -51,7 +51,7 @@ class RoleDTO
         return $this->name;
     }
 
-    public function is(?RoleIdEnum $roleId): bool
+    public function is(?RoleEnum $roleId): bool
     {
         return $this->getId() === $roleId?->value;
     }
@@ -93,7 +93,7 @@ class RoleDTO
             try {
                 $permission = PermissionEnum::tryFrom((int) $code);
                 if ($permission) {
-                    $permissions[] = $permission;
+                    $permissions[$code] = $permission;
                 }
             }
             catch (Throwable) {
@@ -106,6 +106,6 @@ class RoleDTO
 
     public function hasPermission(PermissionEnum $permission): bool
     {
-        return in_array($permission, $this->permissions, true);
+        return isset($this->permissions[$permission->value]) || in_array($permission, $this->permissions, true);
     }
 }

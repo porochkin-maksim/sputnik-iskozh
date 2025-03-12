@@ -87,6 +87,6 @@ class PeriodsController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditPeriods();
+        return \app::roleDecorator()->canPeriods();
     }
 }

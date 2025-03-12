@@ -5,17 +5,26 @@ namespace Core\Domains\User\Factories;
 use App\Models\User;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Models\UserDTO;
 use Illuminate\Support\Facades\Hash;
 
 readonly class UserFactory
 {
-    public function __construct(
-        public AccountFactory $accountFactory,
-    )
+    public function makeDefault(): UserDTO
     {
+        return new UserDTO();
+    }
+
+    public function makeUndefined(): UserDTO
+    {
+        $result = new UserDTO();
+        $result
+            ->setId(UserIdEnum::UNDEFINED)
+            ->setLastName('Робот')
+        ;
+
+        return $result;
     }
 
     private function encryptPassword(?string $password): ?string
@@ -64,24 +73,14 @@ readonly class UserFactory
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {
-            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(User::ACCOUNTS)->first()));
+            $account = $model->getRelation(User::ACCOUNTS)->first();
+            $result->setAccount($account ? AccountLocator::AccountFactory()->makeDtoFromObject($account) : null);
         }
 
         if (isset($model->getRelations()[User::ROLES])) {
             $role = $model->getRelation(User::ROLES)->first();
             $result->setRole($role ? RoleLocator::RoleFactory()->makeDtoFromObject($role) : null);
         }
-
-        return $result;
-    }
-
-    public function makeUndefined(): UserDTO
-    {
-        $result = new UserDTO();
-        $result
-            ->setId(UserIdEnum::UNDEFINED)
-            ->setLastName('Робот')
-        ;
 
         return $result;
     }

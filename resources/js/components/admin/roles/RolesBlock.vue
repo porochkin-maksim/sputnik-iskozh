@@ -218,6 +218,7 @@ export default {
             });
         },
         isChecked (code) {
+            console.log(this.checked);
             return this.checked.includes(String(code));
         },
         onChanged (code) {
