@@ -5,6 +5,7 @@ namespace App\Models\Billing;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -33,10 +34,17 @@ class Service extends Model implements CastsInterface
     public const COST      = 'cost';
     public const ACTIVE    = 'active';
 
+    public const PERIOD    = 'period';
+
     protected $guarded = [];
 
     protected $casts = [
         self::COST   => self::CAST_FLOAT,
         self::ACTIVE => self::CAST_BOOLEAN,
     ];
+
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(Period::class, self::PERIOD_ID);
+    }
 }

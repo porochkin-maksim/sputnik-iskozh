@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources\Admin\Transactions;
 
+use app;
 use App\Http\Resources\AbstractResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\transaction\Models\transactionDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Resources\RouteNames;
+use Core\Responses\ResponsesEnum;
 
 readonly class TransactionResource extends AbstractResource
 {
@@ -18,7 +20,8 @@ readonly class TransactionResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $name = $this->transaction->getName();
+        $access = app::roleDecorator();
+        $name   = $this->transaction->getName();
         if ( ! $name) {
             $name = $this->transaction->getService()?->getName();
         }
@@ -33,14 +36,16 @@ readonly class TransactionResource extends AbstractResource
             'name'       => $this->transaction->getName(),
             'created'    => $this->formatCreatedAt($this->transaction->getCreatedAt()),
             'actions'    => [
-                'drop' => ! $this->transaction->getId(),
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::TRANSACTIONS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::TRANSACTIONS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::TRANSACTIONS_DROP),
             ],
             'historyUrl' => $this->transaction->getId()
                 ? HistoryChangesLocator::route(
-                    type: HistoryType::INVOICE,
-                    primaryId: $this->transaction->getInvoiceId(),
+                    type         : HistoryType::INVOICE,
+                    primaryId    : $this->transaction->getInvoiceId(),
                     referenceType: HistoryType::TRANSACTION,
-                    referenceId: $this->transaction->getId(),
+                    referenceId  : $this->transaction->getId(),
                 ) : null,
         ];
     }

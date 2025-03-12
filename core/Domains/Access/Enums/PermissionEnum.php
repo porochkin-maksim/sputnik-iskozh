@@ -33,9 +33,9 @@ enum PermissionEnum: int
             70  => 'Участки',
             80  => 'Периоды',
             90  => 'Услуги',
-            100 => 'Транзакции',
-            110 => 'Платежи',
-            120 => 'Счета',
+            100 => 'Счета',
+            110 => 'Транзакции',
+            120 => 'Платежи',
         };
     }
 
@@ -45,10 +45,9 @@ enum PermissionEnum: int
         $result = (int) $code[strlen($code) - 1];
 
         return match ($result) {
-            1 => 'Создание',
-            2 => 'Просмотр',
-            3 => 'Редактирование',
-            4 => 'Удаление',
+            1 => 'Просмотр',
+            2 => 'Редактирование',
+            3 => 'Удаление',
         };
     }
 
@@ -79,63 +78,51 @@ enum PermissionEnum: int
         return $result;
     }
 
-    case ROLES_CREATE         = 11;
-    case ROLES_VIEW           = 12;
-    case ROLES_EDIT           = 13;
-    case ROLES_DROP           = 14;
+    case ROLES_VIEW        = 11;
+    case ROLES_EDIT        = 12;
+    case ROLES_DROP        = 13;
 
-    case USERS_CREATE         = 21;
-    case USERS_VIEW           = 22;
-    case USERS_EDIT           = 23;
-    case USERS_DROP           = 24;
+    case USERS_VIEW        = 21;
+    case USERS_EDIT        = 22;
+    case USERS_DROP        = 23;
 
-    case NEWS_CREATE          = 31;
-    case NEWS_VIEW            = 32;
-    case NEWS_EDIT            = 33;
-    case NEWS_DROP            = 34;
+    case NEWS_VIEW         = 31;
+    case NEWS_EDIT         = 32;
+    case NEWS_DROP         = 33;
 
-    case ANNOUNCEMENTS_CREATE = 41;
-    case ANNOUNCEMENTS_VIEW   = 42;
-    case ANNOUNCEMENTS_EDIT   = 43;
-    case ANNOUNCEMENTS_DROP   = 44;
+    case ANNOUNCEMENTS_VIE = 41;
+    case ANNOUNCEMENTS_EDI = 42;
+    case ANNOUNCEMENTS_DRO = 43;
 
-    case FOLDERS_CREATE       = 51;
-    case FOLDERS_VIEW         = 52;
-    case FOLDERS_EDIT         = 53;
-    case FOLDERS_DROP         = 54;
+    case FOLDERS_VIEW      = 51;
+    case FOLDERS_EDIT      = 52;
+    case FOLDERS_DROP      = 53;
 
-    case FILES_CREATE         = 61;
-    case FILES_VIEW           = 62;
-    case FILES_EDIT           = 63;
-    case FILES_DROP           = 64;
+    case FILES_VIEW        = 61;
+    case FILES_EDIT        = 62;
+    case FILES_DROP        = 63;
 
-    case ACCOUNTS_CREATE      = 71;
-    case ACCOUNTS_VIEW        = 72;
-    case ACCOUNTS_EDIT        = 73;
-    case ACCOUNTS_DROP        = 74;
+    case ACCOUNTS_VIEW     = 71;
+    case ACCOUNTS_EDIT     = 72;
+    case ACCOUNTS_DROP     = 73;
 
-    case PERIODS_CREATE       = 81;
-    case PERIODS_VIEW         = 82;
-    case PERIODS_EDIT         = 83;
-    case PERIODS_DROP         = 84;
+    case PERIODS_VIEW      = 81;
+    case PERIODS_EDIT      = 82;
+    case PERIODS_DROP      = 83;
 
-    case SERVICES_CREATE      = 91;
-    case SERVICES_VIEW        = 92;
-    case SERVICES_EDIT        = 93;
-    case SERVICES_DROP        = 94;
+    case SERVICES_VIEW     = 91;
+    case SERVICES_EDIT     = 92;
+    case SERVICES_DROP     = 93;
 
-    case TRANSACTIONS_CREATE  = 101;
-    case TRANSACTIONS_VIEW    = 102;
-    case TRANSACTIONS_EDIT    = 103;
-    case TRANSACTIONS_DROP    = 104;
+    case INVOICES_VIEW     = 101;
+    case INVOICES_EDIT     = 102;
+    case INVOICES_DROP     = 103;
 
-    case PAYMENTS_CREATE      = 111;
-    case PAYMENTS_VIEW        = 112;
-    case PAYMENTS_EDIT        = 113;
-    case PAYMENTS_DROP        = 114;
+    case TRANSACTIONS_VIEW = 111;
+    case TRANSACTIONS_EDIT = 112;
+    case TRANSACTIONS_DROP = 113;
 
-    case INVOICES_CREATE      = 121;
-    case INVOICES_VIEW        = 122;
-    case INVOICES_EDIT        = 123;
-    case INVOICES_DROP        = 124;
+    case PAYMENTS_VIEW     = 121;
+    case PAYMENTS_EDIT     = 122;
+    case PAYMENTS_DROP     = 123;
 }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
+use app;
 use App\Http\Resources\AbstractResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Responses\ResponsesEnum;
 
 readonly class PaymentsListResource extends AbstractResource
 {
@@ -17,12 +20,18 @@ readonly class PaymentsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $access = app::roleDecorator();
         $result = [
             'payments'   => [],
             'historyUrl' => HistoryChangesLocator::route(
-                type: HistoryType::INVOICE,
+                type         : HistoryType::INVOICE,
                 referenceType: HistoryType::PAYMENT,
             ),
+            'actions'    => [
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
+            ],
         ];
 
         foreach ($this->paymentCollection as $payment) {

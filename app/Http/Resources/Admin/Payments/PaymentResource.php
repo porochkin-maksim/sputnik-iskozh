@@ -2,12 +2,14 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
+use app;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\payment\Models\paymentDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Resources\RouteNames;
+use Core\Responses\ResponsesEnum;
 
 readonly class PaymentResource extends AbstractResource
 {
@@ -19,6 +21,8 @@ readonly class PaymentResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $access = app::roleDecorator();
+
         return [
             'id'         => $this->payment->getId(),
             'cost'       => $this->payment->getCost(),
@@ -26,13 +30,15 @@ readonly class PaymentResource extends AbstractResource
             'created'    => $this->formatCreatedAt($this->payment->getCreatedAt()),
             'invoice'    => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'    => [
-                'drop' => ! $this->payment->getId(),
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
             ],
             'historyUrl' => $this->payment->getId()
                 ? HistoryChangesLocator::route(
-                    type: HistoryType::INVOICE,
+                    type         : HistoryType::INVOICE,
                     referenceType: HistoryType::PAYMENT,
-                    referenceId: $this->payment->getId(),
+                    referenceId  : $this->payment->getId(),
                 ) : null,
         ];
     }

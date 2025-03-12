@@ -1,7 +1,6 @@
 <template>
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
-                 @hidden="closeAction"
     >
         <template v-slot:title>{{ id ? 'Редактирование счёта' : 'Добавление счёта' }}</template>
         <template v-slot:body>

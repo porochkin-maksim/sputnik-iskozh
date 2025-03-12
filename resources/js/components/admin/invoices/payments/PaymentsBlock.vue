@@ -2,6 +2,7 @@
     <h5>Платежи</h5>
     <div class="d-flex mb-2">
         <button class="btn btn-success"
+                v-if="invoice.actions.payments.edit"
                 v-on:click="makeAction">Добавить платёж
         </button>
     </div>
@@ -12,7 +13,7 @@
     />
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
-                 v-if="payment"
+                 v-if="payment && invoice.actions.payments.edit"
     >
         <template v-slot:title>{{ payment.id ? 'Редактирование платёжа' : 'Добавление платежа' }}</template>
         <template v-slot:body>

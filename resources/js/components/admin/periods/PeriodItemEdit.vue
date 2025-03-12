@@ -1,39 +1,52 @@
 <template>
-    <div v-if="!dropped">
-        <div class="input-group input-group-sm w-auto">
-            <button class="btn btn-success"
-                    @click="saveAction"
-                    :disabled="!canSave || loading">
-                <i class="fa"
-                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-            </button>
-            <input type="text"
-                   class="form-control name"
-                   placeholder="Название"
-                   v-model="name">
-            <input type="datetime-local"
-                   style="max-width: 200px"
-                   class="form-control"
-                   placeholder="Начало"
-                   v-model="startAt">
-            <span class="input-group-text">
+    <template v-if="actions.edit">
+        <div v-if="!dropped" class="mb-2">
+            <div class="input-group input-group-sm w-auto">
+                <button class="btn btn-success"
+                        @click="saveAction"
+                        :disabled="!canSave || loading">
+                    <i class="fa"
+                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                </button>
+                <input type="text"
+                       class="form-control name"
+                       placeholder="Название"
+                       v-model="name">
+                <input type="datetime-local"
+                       style="max-width: 200px"
+                       class="form-control"
+                       placeholder="Начало"
+                       v-model="startAt">
+                <span class="input-group-text">
                 -
             </span>
-            <input type="datetime-local"
-                   style="max-width: 200px"
-                   class="form-control"
-                   placeholder="Окончание"
-                   v-model="endAt">
-            <history-btn :disabled="!historyUrl"
-                         class="btn-light border"
-                         :url="historyUrl ? historyUrl : ''" />
-            <button class="btn btn-danger"
-                    @click="dropAction"
-                    :disabled="actions?.drop === false || loading">
-                <i class="fa fa-trash"></i>
-            </button>
+                <input type="datetime-local"
+                       style="max-width: 200px"
+                       class="form-control"
+                       placeholder="Окончание"
+                       v-model="endAt">
+                <history-btn :disabled="!historyUrl"
+                             class="btn-light border"
+                             :url="historyUrl ? historyUrl : ''" />
+                <button class="btn btn-danger"
+                        @click="dropAction"
+                        :disabled="actions?.drop === false || loading">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
         </div>
-    </div>
+    </template>
+    <template v-else>
+        <td>{{ id }}</td>
+        <td>{{ name }}</td>
+        <td>{{ $formatDateTime(startAt) }}</td>
+        <td>{{ $formatDateTime(endAt) }}</td>
+        <td>
+            <history-btn :disabled="!historyUrl"
+                         class="btn-link underline-none"
+                         :url="historyUrl ? historyUrl : ''" />
+        </td>
+    </template>
 </template>
 
 <script>
@@ -65,6 +78,7 @@ export default {
         'modelValue',
     ],
     created () {
+        console.log(this.modelValue);
         this.vueId = 'uuid' + this.$_uid;
         if (this.modelValue) {
             this.id      = this.modelValue.id;

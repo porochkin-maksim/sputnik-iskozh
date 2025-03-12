@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payments\SaveRequest;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
 use App\Models\Billing\Payment;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
@@ -31,7 +33,7 @@ class PaymentController extends Controller
 
     public function create(int $invoiceId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
@@ -51,7 +53,7 @@ class PaymentController extends Controller
 
     public function get(int $invoiceId, int $paymentId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
         if ( ! $invoiceId || ! $paymentId) {
@@ -73,7 +75,7 @@ class PaymentController extends Controller
 
     public function save(int $invoiceId, SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
@@ -107,7 +109,7 @@ class PaymentController extends Controller
 
     public function list(int $invoiceId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
 
@@ -125,15 +127,10 @@ class PaymentController extends Controller
 
     public function delete(int $invoiceId, int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_DROP)) {
             abort(403);
         }
 
         return $this->paymentService->deleteById($id);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canInvoices();
     }
 }

@@ -2,6 +2,7 @@
     <h5>Транзакции</h5>
     <div v-if="!transaction || transaction?.id">
         <button class="btn btn-success mb-2"
+                v-if="invoice.actions.transactions.edit"
                 v-on:click="makeAction">Добавить транзакцию
         </button>
     </div>
@@ -51,6 +52,7 @@
                 <div>
                     <button class="btn btn-sm border-0"
                             @click="saveAction"
+                            v-if="transaction.actions.edit"
                             :disabled="!canSave || loading">
                         <i class="fa"
                            :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>&nbsp;Сохранить
@@ -98,6 +100,7 @@ export default {
     data () {
         return {
             transactionCount: 0,
+            actions         : {},
             reloadList      : false,
             transactionId   : null,
             transaction     : null,

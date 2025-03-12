@@ -8,25 +8,54 @@
         </div>
     </div>
     <div v-if="periods && periods.length">
-        <div class="d-flex align-items-center mb-2">
-            <button class="btn btn-success"
-                    v-on:click="makeAction">Добавить услугу
-            </button>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex">
+                <button class="btn btn-success me-2"
+                        v-if="actions.edit"
+                        v-on:click="makeAction">Добавить услугу
+                </button>
+            </div>
             <history-btn
                 class="btn-link underline-none"
                 :url="historyUrl" />
         </div>
-        <div v-for="period in periods">
-            <div class="fw-bold mb-2">
-                Период «{{ period.value }}»
-            </div>
-            <div v-for="(service, index) in services">
-                <service-item-edit v-if="parseInt(service.periodId) === parseInt(period.key)"
-                                   :model-value="service"
-                                   :types="types"
-                                   :periods="periods"
-                                   :index="index"
-                                   class="mb-2" />
+        <div>
+            <div v-for="period in periods">
+                <div class="fw-bold mb-2">
+                    Период «{{ period.value }}»
+                </div>
+                <template v-if="actions.edit">
+                    <div v-for="service in services">
+                        <service-item-edit :model-value="service"
+                                           :types="types"
+                                           :periods="periods"
+                                           v-if="parseInt(service.periodId) === parseInt(period.key)" />
+                    </div>
+                </template>
+                <template v-else>
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Активен</th>
+                            <th>Название</th>
+                            <th>Тариф</th>
+                            <th>Период</th>
+                            <th>Тип</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="service in services"
+                            class="align-middle">
+                            <service-item-edit :model-value="service"
+                                               :types="types"
+                                               :periods="periods"
+                                               v-if="parseInt(service.periodId) === parseInt(period.key)" />
+                        </tr>
+                        </tbody>
+                    </table>
+                </template>
             </div>
         </div>
     </div>
@@ -52,6 +81,7 @@ export default {
             historyUrl: null,
             Url       : Url,
             loaded    : false,
+            actions   : {},
         };
     },
     created () {
@@ -65,7 +95,7 @@ export default {
                 this.services.push(service);
             }).catch(response => {
                 this.parseResponseErrors(response);
-            })
+            });
         },
         listAction () {
             window.axios[Url.Routes.adminServiceList.method](Url.Routes.adminServiceList.uri).then(response => {
@@ -80,6 +110,7 @@ export default {
                         this.services.push(service);
                     }
                 });
+                this.actions    = response.data.actions;
                 this.types      = response.data.types;
                 this.periods    = response.data.periods;
                 this.historyUrl = response.data.historyUrl;

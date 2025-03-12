@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Transactions\SaveRequest;
-use App\Http\Resources\Admin\Services\ServicesListResource;
+use App\Http\Resources\Admin\Transactions\ServicesListResource;
 use App\Http\Resources\Admin\Transactions\TransactionResource;
 use App\Http\Resources\Admin\Transactions\TransactionsListResource;
 use App\Http\Resources\Common\SelectResource;
 use App\Models\Billing\Service;
 use App\Models\Billing\Transaction;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
@@ -44,7 +46,7 @@ class TransactionController extends Controller
 
     public function create(int $invoiceId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
             abort(403);
         }
 
@@ -95,7 +97,7 @@ class TransactionController extends Controller
 
     public function get(int $invoiceId, int $transactionId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
             abort(403);
         }
         if ( ! $invoiceId || ! $transactionId) {
@@ -153,7 +155,7 @@ class TransactionController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
             abort(403);
         }
 
@@ -181,7 +183,7 @@ class TransactionController extends Controller
 
     public function list(int $invoiceId): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
             abort(403);
         }
 
@@ -194,7 +196,7 @@ class TransactionController extends Controller
 
     public function delete(int $invoiceId, int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_DROP)) {
             abort(403);
         }
 
@@ -210,10 +212,5 @@ class TransactionController extends Controller
             ->setSortOrderProperty(Transaction::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC);
 
         return $this->transactionService->search($searcher);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canInvoices();
     }
 }

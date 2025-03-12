@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
+use app;
 use App\Http\Resources\AbstractResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Responses\ResponsesEnum;
 
 readonly class AccountResource extends AbstractResource
 {
@@ -17,6 +20,7 @@ readonly class AccountResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $access = app::roleDecorator();
         return [
             'id'         => $this->account->getId(),
             'number'     => $this->account->getNumber(),
@@ -24,7 +28,9 @@ readonly class AccountResource extends AbstractResource
             'balance'    => $this->account->getBalance(),
             'is_member'  => $this->account->isMember(),
             'actions'    => [
-                'drop' => ! $this->account->isVerified(),
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::ACCOUNTS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::ACCOUNTS_DROP),
             ],
             'historyUrl' => $this->account->getId()
                 ? HistoryChangesLocator::route(

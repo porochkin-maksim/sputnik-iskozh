@@ -26,10 +26,9 @@ readonly class UsersListResource extends AbstractResource
             'users'      => [],
             'total'      => $this->totalUsersCount,
             'actions'    => [
-                ResponsesEnum::CREATE => $access->can(PermissionEnum::USERS_CREATE),
-                ResponsesEnum::EDIT   => $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::VIEW   => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::DROP   => $access->can(PermissionEnum::USERS_DROP),
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::USERS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::USERS_DROP),
             ],
             'historyUrl' => HistoryChangesLocator::route(
                 type: HistoryType::USER,

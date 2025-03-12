@@ -10,9 +10,12 @@
     <div v-if="periods && periods.length"
          class="d-flex justify-content-between align-items-center mb-2">
         <div class="d-flex">
-            <button class="btn btn-success me-2"
-                    v-on:click="makeAction">Добавить счёт
-            </button>
+            <div>
+                <button class="btn btn-success me-2"
+                        v-if="actions.edit"
+                        v-on:click="makeAction">Добавить счёт
+                </button>
+            </div>
             <template v-if="computedTypes && computedTypes.length">
                 <simple-select v-model="type"
                                :class="'d-inline-block form-select-sm w-auto me-2'"
@@ -53,7 +56,7 @@
               class="table">
         <invoices-list :invoices="invoices" />
     </template>
-    <invoice-item-edit v-if="invoice"
+    <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
                        :accounts="accounts"
                        :periods="periods"
@@ -96,6 +99,7 @@ export default {
             periodId  : 0,
             accountId : 0,
             Url       : Url,
+            actions   : {},
         };
     },
     created () {
@@ -148,6 +152,7 @@ export default {
                     account_id: this.accountId,
                 },
             }).then(response => {
+                this.actions    = response.data.actions;
                 this.invoices   = response.data.invoices;
                 this.total      = response.data.total;
                 this.types      = response.data.types;

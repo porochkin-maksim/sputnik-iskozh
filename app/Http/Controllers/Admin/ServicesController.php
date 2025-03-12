@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Services\SaveRequest;
-use App\Http\Resources\Admin\Periods\ServicesListResource;
 use App\Http\Resources\Admin\Services\ServiceResource;
+use App\Http\Resources\Admin\Services\ServicesListResource;
 use App\Models\Billing\Period;
 use App\Models\Billing\Service;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
@@ -35,7 +37,7 @@ class ServicesController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
@@ -46,13 +48,14 @@ class ServicesController extends Controller
 
     public function list(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
             abort(403);
         }
 
         $searcher = new ServiceSearcher();
         $searcher
             ->exludeType(ServiceTypeEnum::OTHER)
+            ->withPeriods()
             ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC);
@@ -71,7 +74,7 @@ class ServicesController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
@@ -99,15 +102,10 @@ class ServicesController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_DROP)) {
             abort(403);
         }
 
         return $this->serviceService->deleteById($id);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canServices();
     }
 }

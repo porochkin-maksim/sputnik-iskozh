@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
@@ -21,22 +22,22 @@ $season = match (Carbon::now()->month) {
 $authRole  = \app::roleDecorator();
 $navRoutes = [RouteNames::ADMIN];
 
-if ($authRole->canRoles()) {
+if ($authRole->can(PermissionEnum::ROLES_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_ROLE_INDEX;
 }
-if ($authRole->canUsers()) {
+if ($authRole->can(PermissionEnum::USERS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_USER_INDEX;
 }
-if ($authRole->canAccounts()) {
+if ($authRole->can(PermissionEnum::ACCOUNTS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
 }
-if ($authRole->canPeriods()) {
+if ($authRole->can(PermissionEnum::PERIODS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_PERIOD_INDEX;
 }
-if ($authRole->canServices()) {
+if ($authRole->can(PermissionEnum::SERVICES_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_SERVICE_INDEX;
 }
-if ($authRole->canInvoices()) {
+if ($authRole->can(PermissionEnum::INVOICES_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_INVOICE_INDEX;
 }
 ?>

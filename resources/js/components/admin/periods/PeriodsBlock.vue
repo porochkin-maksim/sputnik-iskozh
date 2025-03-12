@@ -1,18 +1,39 @@
 <template>
-    <div class="d-flex align-items-center mb-2">
-        <button class="btn btn-success"
-                v-on:click="makeAction">Добавить период
-        </button>
+    <div class="d-flex align-items-center justify-content-between mb-2">
+        <div>
+            <button class="btn btn-success"
+                    v-if="actions.edit"
+                    v-on:click="makeAction">Добавить период
+            </button>
+        </div>
         <history-btn
             class="btn-link underline-none"
             :url="historyUrl" />
     </div>
     <div>
-        <div v-for="(period, index) in periods">
-            <period-item-edit :model-value="period"
-                              :index="index"
-                              class="mb-2" />
-        </div>
+        <template v-if="actions.edit">
+            <div v-for="period in periods">
+                <period-item-edit :model-value="period" />
+            </div>
+        </template>
+        <template v-else>
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Начало</th>
+                    <th>Окончание</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="period in periods" class="align-middle">
+                    <period-item-edit :model-value="period" />
+                </tr>
+                </tbody>
+            </table>
+        </template>
     </div>
 </template>
 
@@ -32,6 +53,7 @@ export default {
         return {
             periods   : [],
             historyUrl: null,
+            actions   : {},
         };
     },
     created () {
@@ -58,6 +80,7 @@ export default {
                         this.periods.push(period);
                     }
                 });
+                this.actions    = response.data.actions;
                 this.types      = response.data.types;
                 this.historyUrl = response.data.historyUrl;
             }).catch(response => {

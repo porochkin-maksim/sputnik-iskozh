@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Periods\SaveRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
 use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use App\Models\Billing\Period;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Period\Factories\PeriodFactory;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
@@ -15,7 +17,7 @@ use Core\Domains\Billing\Period\Services\PeriodService;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 
-class PeriodsController extends Controller
+class PeriodsController extends Controller//
 {
     private PeriodFactory $periodFactory;
     private PeriodService $periodService;
@@ -28,7 +30,7 @@ class PeriodsController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
             abort(403);
         }
 
@@ -37,7 +39,7 @@ class PeriodsController extends Controller
 
     public function list(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
             abort(403);
         }
 
@@ -52,7 +54,7 @@ class PeriodsController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
             abort(403);
         }
 
@@ -78,15 +80,10 @@ class PeriodsController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_DROP)) {
             abort(403);
         }
 
         return $this->periodService->deleteById($id);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canPeriods();
     }
 }

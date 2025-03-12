@@ -10,7 +10,6 @@ use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use App\Models\Account\Account;
 use App\Models\User;
 use Core\Db\Searcher\SearcherInterface;
@@ -43,7 +42,10 @@ class UsersController extends Controller
 
     public function view(?int $id = null)
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            abort(403);
+        }
+        if ( ! $id && ! app::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
             abort(403);
         }
         $user = $id
@@ -66,7 +68,8 @@ class UsersController extends Controller
         $accountSearcher = new AccountSearcher();
         $accountSearcher
             ->setWithoutSntAccount()
-            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC)
+        ;
         $accountsCollection = $this->accountService->search($accountSearcher);
 
         $accounts = new AccountsSelectResource($accountsCollection->getItems(), true);
@@ -76,7 +79,7 @@ class UsersController extends Controller
 
     public function list(ListRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             abort(403);
         }
 
@@ -97,7 +100,7 @@ class UsersController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
             abort(403);
         }
 
@@ -124,7 +127,7 @@ class UsersController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_DROP)) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::USERS_DROP)) {
             abort(403);
         }
 

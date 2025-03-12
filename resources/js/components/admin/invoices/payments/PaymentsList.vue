@@ -13,6 +13,7 @@
                 <td>{{ payment.created }}</td>
                 <td>
                     <button class="btn btn-sm border-0"
+                            v-if="actions.edit"
                             @click="editAction(payment.id)">
                         <i class="fa fa-edit"></i>
                     </button>
@@ -20,6 +21,7 @@
                         class="btn-link underline-none"
                         :url="payment.historyUrl" />
                     <button class="btn btn-sm border-0"
+                            v-if="actions.drop"
                             @click="dropAction(payment.id)">
                         <i class="fa fa-trash text-danger"></i>
                     </button>
@@ -49,6 +51,7 @@ export default {
     data () {
         return {
             payments: [],
+            actions : {},
         };
     },
     created () {
@@ -61,8 +64,9 @@ export default {
             });
 
             window.axios[Url.Routes.adminPaymentList.method](uri).then(response => {
+                this.actions  = response.data.actions;
                 this.payments = response.data.payments;
-                this.$emit('update:count', this.payments.length)
+                this.$emit('update:count', this.payments.length);
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

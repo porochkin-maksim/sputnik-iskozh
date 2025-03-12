@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <div class="d-flex">
             <a class="btn btn-success me-2"
-               v-if="actions.create"
+               v-if="actions.edit"
                :href="getViewLink(null)">Добавить пользователя
             </a>
         </div>
@@ -32,10 +32,9 @@
         <tbody>
         <tr v-for="(user) in users">
             <td>{{ user.id }}</td>
-            <td v-if="actions.view">
+            <td>
                 <a :href="getViewLink(user.id)">{{ user.email }}</a>
             </td>
-            <td v-else>{{ user.email }}</td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>
             <td>{{ user.middleName }}</td>
@@ -125,11 +124,6 @@ export default {
         onPaginationUpdate (skip) {
             this.skip = skip;
             this.listAction();
-        },
-    },
-    computed: {
-        canSave () {
-            return this.user.name && this.checked && this.checked.length;
         },
     },
 };

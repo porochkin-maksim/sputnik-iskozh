@@ -1,46 +1,59 @@
 <template>
-    <div v-if="!dropped">
-        <div class="input-group input-group-sm w-auto">
-            <button class="btn btn-success"
-                    @click="saveAction"
-                    :disabled="!canSave || loading">
-                <i class="fa"
-                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-            </button>
-            <span class="input-group-text index">
+    <template v-if="actions.edit">
+        <div v-if="!dropped" class="mb-2">
+            <div class="input-group input-group-sm w-auto">
+                <button class="btn btn-success"
+                        @click="saveAction"
+                        :disabled="!canSave || loading">
+                    <i class="fa"
+                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                </button>
+                <span class="input-group-text index">
                 {{ id ? id : 'Новый' }}
             </span>
-            <div class="input-group-text">
-                <input class="form-check-input mt-0"
-                       type="checkbox"
-                       v-model="isMember"
-                       :id="vueId">
-                &nbsp;
-                <label :for="vueId"
-                       class="cursor-pointer">Член СНТ</label>
-            </div>
-            <input type="text"
-                   class="form-control number"
-                   placeholder="Номер"
-                   v-model="number">
-            <span class="input-group-text">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0"
+                           type="checkbox"
+                           v-model="isMember"
+                           :id="vueId">
+                    &nbsp;
+                    <label :for="vueId"
+                           class="cursor-pointer">Член СНТ</label>
+                </div>
+                <input type="text"
+                       class="form-control number"
+                       placeholder="Номер"
+                       v-model="number">
+                <span class="input-group-text">
                 Площадь (м²)
             </span>
-            <input type="number"
-                   step="1"
-                   class="form-control size"
-                   placeholder="Площадь"
-                   v-model="size">
-            <history-btn :disabled="!historyUrl"
-                         class="btn-light border"
-                         :url="historyUrl ? historyUrl : ''" />
-            <button class="btn btn-danger"
-                    @click="dropAction"
-                    :disabled="actions?.drop === false || loading">
-                <i class="fa fa-trash"></i>
-            </button>
+                <input type="number"
+                       step="1"
+                       class="form-control size"
+                       placeholder="Площадь"
+                       v-model="size">
+                <history-btn :disabled="!historyUrl"
+                             class="btn-light border"
+                             :url="historyUrl ? historyUrl : ''" />
+                <button class="btn btn-danger"
+                        @click="dropAction"
+                        :disabled="actions?.drop === false || loading">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
         </div>
-    </div>
+    </template>
+    <template v-else>
+        <td>{{ id }}</td>
+        <td>{{ isMember ? 'Член СНТ' : 'Не член СНТ' }}</td>
+        <td>{{ number }}</td>
+        <td>{{ size }}</td>
+        <td>
+            <history-btn :disabled="!historyUrl"
+                         class="btn-link underline-none"
+                         :url="historyUrl ? historyUrl : ''" />
+        </td>
+    </template>
 </template>
 
 <script>
@@ -171,5 +184,6 @@ export default {
 
 <style scoped>
 .index {width : 80px;}
+
 .size {width : 50px;}
 </style>

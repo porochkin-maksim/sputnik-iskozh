@@ -1,54 +1,70 @@
 <template>
-    <div v-if="!dropped">
-        <div class="input-group input-group-sm w-auto">
-            <button class="btn btn-success"
-                    @click="saveAction"
-                    :disabled="!canSave || loading">
-                <i class="fa"
-                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-            </button>
-            <div class="input-group-text">
-                <input class="form-check-input mt-0"
-                       type="checkbox"
-                       v-model="active"
-                       :id="vueId"
-                       :disabled="actions?.active === false">
-                &nbsp;
-                <label :for="vueId">Активен</label>
+    <template v-if="actions.edit">
+        <div v-if="!dropped"
+             class="mb-2">
+            <div class="input-group input-group-sm w-auto">
+                <button class="btn btn-success"
+                        @click="saveAction"
+                        :disabled="!canSave || loading">
+                    <i class="fa"
+                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                </button>
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0"
+                           type="checkbox"
+                           v-model="active"
+                           :id="vueId"
+                           :disabled="actions?.active === false">
+                    &nbsp;
+                    <label :for="vueId">Активен</label>
+                </div>
+                <input type="text"
+                       class="form-control name"
+                       placeholder="Название"
+                       v-model="name">
+                <input type="number"
+                       style="max-width: 120px"
+                       step="0.01"
+                       class="form-control cost"
+                       placeholder="Стоимость"
+                       v-model="cost">
+                <simple-select v-model="periodId"
+                               class="period"
+                               :items="periods"
+                               :disabled="!actions.period"
+                               :label="'Период'"
+                />
+                <simple-select v-model="type"
+                               style="min-width: 230px"
+                               :errors="errors.type"
+                               :items="actions?.type === false ? types.all : types.available[periodId]"
+                               :disabled="!actions.type"
+                               :label="'Тип'"
+                />
+                <history-btn :disabled="!historyUrl"
+                             class="btn-light border"
+                             :url="historyUrl ? historyUrl : ''" />
+                <button class="btn btn-danger"
+                        @click="dropAction"
+                        :disabled="actions?.drop === false || loading">
+                    <i class="fa fa-trash"></i>
+                </button>
             </div>
-            <input type="text"
-                   class="form-control name"
-                   placeholder="Название"
-                   v-model="name">
-            <input type="number"
-                   style="max-width: 120px"
-                   step="0.01"
-                   class="form-control cost"
-                   placeholder="Стоимость"
-                   v-model="cost">
-            <simple-select v-model="periodId"
-                           class="period"
-                           :items="periods"
-                           :disabled="id"
-                           :label="'Период'"
-            />
-            <simple-select v-model="type"
-                           style="min-width: 230px"
-                           :errors="errors.type"
-                           :items="actions?.type === false ? types.all : types.available[periodId]"
-                           :disabled="actions?.type === false || !periodId"
-                           :label="'Тип'"
-            />
-            <history-btn :disabled="!historyUrl"
-                         class="btn-light border"
-                         :url="historyUrl ? historyUrl : ''" />
-            <button class="btn btn-danger"
-                    @click="dropAction"
-                    :disabled="actions?.drop === false || loading">
-                <i class="fa fa-trash"></i>
-            </button>
         </div>
-    </div>
+    </template>
+    <template v-else>
+        <td>{{ id }}</td>
+        <td>{{ active ? 'да' : 'нет' }}}</td>
+        <td>{{ name }}</td>
+        <td>{{ $formatMoney(cost) }}</td>
+        <td>{{ periodName }}</td>
+        <td>{{ typeName }}</td>
+        <td>
+            <history-btn :disabled="!historyUrl"
+                         class="btn-link underline-none"
+                         :url="historyUrl ? historyUrl : ''" />
+        </td>
+    </template>
 </template>
 
 <script>
@@ -84,12 +100,14 @@ export default {
     created () {
         this.vueId = 'uuid' + this.$_uid;
         if (this.modelValue) {
-            this.id       = this.modelValue.id;
-            this.name     = this.modelValue.name;
-            this.periodId = this.modelValue.periodId;
-            this.type     = this.modelValue.type;
-            this.cost     = this.modelValue.cost;
-            this.active   = this.modelValue.active;
+            this.id         = this.modelValue.id;
+            this.name       = this.modelValue.name;
+            this.periodId   = this.modelValue.periodId;
+            this.type       = this.modelValue.type;
+            this.cost       = this.modelValue.cost;
+            this.active     = this.modelValue.active;
+            this.periodName = this.modelValue.periodName;
+            this.typeName   = this.modelValue.typeName;
 
             this.actions    = this.modelValue.actions;
             this.historyUrl = this.modelValue.historyUrl;
@@ -189,3 +207,6 @@ export default {
 <style scoped>
 .period {max-width : 150px;width : 150px;}
 </style>
+<script setup
+        lang="ts">
+</script>

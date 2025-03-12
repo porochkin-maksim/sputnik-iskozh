@@ -31,4 +31,11 @@ class ServiceSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function withPeriods(): static
+    {
+        $this->with[] = Service::PERIOD;
+
+        return $this;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\ListRequest;
 use App\Http\Requests\Admin\Accounts\SaveRequest;
@@ -9,6 +10,7 @@ use App\Http\Resources\Admin\Accounts\AccountResource;
 use App\Http\Resources\Admin\Accounts\AccountsListResource;
 use App\Models\Account\Account;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Models\AccountSearcher;
@@ -29,7 +31,7 @@ class AccountsController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
             abort(403);
         }
 
@@ -38,7 +40,7 @@ class AccountsController extends Controller
 
     public function list(ListRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             abort(403);
         }
 
@@ -46,9 +48,9 @@ class AccountsController extends Controller
         $searcher
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-
             ->setWithoutSntAccount()
             ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+
         if ($request->getAccountId()) {
             $searcher->setId($request->getAccountId());
         }
@@ -69,7 +71,7 @@ class AccountsController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
             abort(403);
         }
 
@@ -97,15 +99,10 @@ class AccountsController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_DROP)) {
             abort(403);
         }
 
         return $this->accountService->deleteById($id);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canAccounts();
     }
 }

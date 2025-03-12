@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
+use app;
 use App\Http\Resources\AbstractResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Resources\RouteNames;
+use Core\Responses\ResponsesEnum;
 
 readonly class InvoiceResource extends AbstractResource
 {
@@ -17,6 +20,8 @@ readonly class InvoiceResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $access = app::roleDecorator();
+
         return [
             'id'            => $this->invoice->getId(),
             'periodId'      => $this->invoice->getPeriodId(),
@@ -30,7 +35,19 @@ readonly class InvoiceResource extends AbstractResource
             'isPayed'       => $this->invoice->isPayed(),
             'created'       => $this->formatCreatedAt($this->invoice->getCreatedAt()),
             'actions'       => [
-                'drop' => ! $this->invoice->getId(),
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP),
+                'transactions' => [
+                    ResponsesEnum::VIEW => $access->can(PermissionEnum::TRANSACTIONS_VIEW),
+                    ResponsesEnum::EDIT => $access->can(PermissionEnum::TRANSACTIONS_EDIT),
+                    ResponsesEnum::DROP => $access->can(PermissionEnum::TRANSACTIONS_DROP),
+                ],
+                'payments' => [
+                    ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                    ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
+                    ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
+                ],
             ],
             'viewUrl'       => $this->invoice->getId() ? route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $this->invoice->getId()]) : null,
             'historyUrl'    => $this->invoice->getId() ? route(RouteNames::HISTORY_CHANGES, [

@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 
-$authRole = \app::roleDecorator();
+$authRole = app::roleDecorator();
 ?>
 
 @extends(ViewNames::LAYOUTS_ADMIN)
@@ -24,7 +25,31 @@ $authRole = \app::roleDecorator();
         </tr>
         </thead>
         <tbody>
-        @if($authRole->canAccounts())
+        @if($authRole->can(PermissionEnum::ROLES_VIEW))
+            <tr>
+                <th>
+                    <a href="{{ route(RouteNames::ADMIN_ROLE_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_ROLE_INDEX) }}
+                    </a>
+                </th>
+                <td>
+                    Управление ролями доступа в системе
+                </td>
+            </tr>
+        @endif
+        @if($authRole->can(PermissionEnum::USERS_VIEW))
+            <tr>
+                <th>
+                    <a href="{{ route(RouteNames::ADMIN_USER_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_USER_INDEX) }}
+                    </a>
+                </th>
+                <td>
+                    Управлениче учётными записями
+                </td>
+            </tr>
+        @endif
+        @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
@@ -36,7 +61,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canPeriods())
+        @if($authRole->can(PermissionEnum::PERIODS_VIEW))
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_PERIOD_INDEX) }}">
@@ -49,7 +74,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canServices())
+        @if($authRole->can(PermissionEnum::SERVICES_VIEW))
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_SERVICE_INDEX) }}">
@@ -66,7 +91,7 @@ $authRole = \app::roleDecorator();
                 </td>
             </tr>
         @endif
-        @if($authRole->canInvoices())
+        @if($authRole->can(PermissionEnum::INVOICES_VIEW))
             <tr>
                 <th>
                     <a href="{{ route(RouteNames::ADMIN_INVOICE_INDEX) }}">

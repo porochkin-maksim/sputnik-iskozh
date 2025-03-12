@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Billing\Service\Models;
 
+use Core\Domains\Billing\Period\Models\PeriodDTO;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Common\Traits\TimestampsTrait;
 
@@ -15,6 +16,7 @@ class ServiceDTO
     private ?string          $name      = null;
     private ?float           $cost      = null;
     private ?bool            $active    = null;
+    private ?PeriodDTO       $period    = null;
 
     public function getId(): ?int
     {
@@ -84,6 +86,18 @@ class ServiceDTO
     public function setIsActive(?bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getPeriod(): ?PeriodDTO
+    {
+        return $this->period;
+    }
+
+    public function setPeriod(?PeriodDTO $period): static
+    {
+        $this->period = $period;
 
         return $this;
     }

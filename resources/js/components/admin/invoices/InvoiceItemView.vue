@@ -11,6 +11,7 @@
         </button>
     </div>
     <div class="alert p-2 mb-2"
+         v-if="actions.view"
          :class="[invoice.cost !== 0 && localInvoice.isPayed ? 'alert-success' : 'alert-secondary']">
         <i class="fa fa-check text-success"
            v-if="localInvoice.isPayed"></i>
@@ -22,9 +23,11 @@
         </span>
     </div>
     <transaction-block :invoice="invoice"
+                       v-if="actions.transactions.view"
                        v-model:count="transactionsCount"
                        v-model:reload="reload" />
     <payments-block :invoice="invoice"
+                    v-if="actions.payments.view"
                     v-model:count="paymentsCount"
                     v-model:reload="reload" />
 </template>
@@ -56,12 +59,14 @@ export default {
     },
     created () {
         this.localInvoice = this.invoice;
+        this.actions      = this.invoice.actions;
         this.vueId        = 'uuid' + this.$_uid;
         this.getAction();
     },
     data () {
         return {
             localInvoice     : {},
+            actions          : {},
             reload           : false,
             transactionsCount: 0,
             paymentsCount    : 0,
@@ -74,6 +79,7 @@ export default {
             });
             window.axios[Url.Routes.adminInvoiceGet.method](uri).then(response => {
                 this.localInvoice = response.data;
+                this.actions      = this.localInvoice.actions;
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -106,7 +112,8 @@ export default {
     },
     computed: {
         canDrop () {
-            return this.transactionsCount === 0
+            return this.actions.drop
+                && this.transactionsCount === 0
                 && this.paymentsCount === 0;
         },
     },

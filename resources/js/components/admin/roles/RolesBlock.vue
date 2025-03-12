@@ -1,12 +1,13 @@
 <template>
     <div class="d-flex align-items-center justify-content-between mb-2">
         <button class="btn btn-success"
-                :disabled="!actions.create"
+                v-if="actions.edit"
                 v-on:click="makeAction">Добавить роль
         </button>
+        <div v-else></div>
         <history-btn
             class="btn-link underline-none"
-            :disabled="!actions.view"
+            v-if="actions.view"
             :url="historyUrl" />
     </div>
     <div class="row">
@@ -21,67 +22,84 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="align-middle"
-                    v-for="(role, index) in roles">
-                    <td>{{ role.id }}</td>
-                    <td class="w-100">
-                        <a href=""
-                           @click.prevent="editAction(role)">
-                            {{ role.name }}
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn"
-                                @click="dropAction(role.id)"
-                                :disabled="role.actions?.drop === false || loading">
-                            <i class="fa fa-trash text-danger"></i>
-                        </button>
-                    </td>
-                </tr>
+                <template v-for="(role, index) in roles">
+                    <tr class="align-middle"
+                        v-if="role.actions.view">
+                        <td>{{ role.id }}</td>
+                        <td class="w-100">
+                            <a href=""
+                               @click.prevent="editAction(role)">
+                                {{ role.name }}
+                            </a>
+                        </td>
+                        <td>
+                            <button class="btn"
+                                    v-if="role.actions.drop"
+                                    @click="dropAction(role.id)"
+                                    :disabled="loading">
+                                <i class="fa fa-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </template>
                 </tbody>
             </table>
         </div>
         <div class="col-4"
              v-if="role">
             <div class="input-group input-group-sm mb-2">
-                <button class="btn btn-success"
-                        @click="saveAction"
-                        :disabled="!canSave || role.actions?.edit === false || loading">
-                    <i class="fa"
-                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                </button>
-                <input type="text"
-                       class="form-control name"
-                       placeholder="Название"
-                       v-model="role.name">
+                <template v-if="role.actions.edit">
+                    <button class="btn btn-success"
+                            @click="saveAction"
+                            :disabled="!canSave || role.actions?.edit === false || loading">
+                        <i class="fa"
+                           :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                    </button>
+                    <input type="text"
+                           class="form-control name"
+                           placeholder="Название"
+                           v-model="role.name">
+                </template>
+                <template v-else>
+                    <div class="p-2 border w-100">{{ role.name }}</div>
+                </template>
             </div>
             <div v-for="(group, section) in permissions">
                 <ul v-for="(item, code) in group"
                     class="list-group list-unstyled">
-                    <template v-if="code === section">
-                        <li class="fw-bold mb-2">
-                            <input class="form-check-input cursor-pointer"
-                                   type="checkbox"
-                                   :id="vueId + code"
-                                   :checked="isChecked(code)"
-                                   :disabled="role.actions?.edit === false || loading"
-                                   @change="onChangedSection(code)">
-                            &nbsp;
-                            <label :for="vueId + code"
-                                   class="cursor-pointer">{{ item }}</label>
-                        </li>
+                    <template v-if="role.actions.edit">
+                        <template v-if="code === section">
+                            <li class="fw-bold mb-2">
+                                <input class="form-check-input cursor-pointer"
+                                       type="checkbox"
+                                       :id="vueId + code"
+                                       :checked="isChecked(code)"
+                                       :disabled="role.actions?.edit === false || loading"
+                                       @change="onChangedSection(code)">
+                                &nbsp;
+                                <label :for="vueId + code"
+                                       class="cursor-pointer">{{ item }}</label>
+                            </li>
+                        </template>
+                        <template v-else>
+                            <li>
+                                <input class="form-check-input cursor-pointer"
+                                       type="checkbox"
+                                       :id="vueId + code"
+                                       :checked="isChecked(code)"
+                                       :disabled="role.actions?.edit === false || loading"
+                                       @change="onChanged(code)">
+                                &nbsp;
+                                <label :for="vueId + code"
+                                       class="cursor-pointer">{{ item }}</label>
+                            </li>
+                        </template>
                     </template>
                     <template v-else>
                         <li>
-                            <input class="form-check-input cursor-pointer"
-                                   type="checkbox"
-                                   :id="vueId + code"
-                                   :checked="isChecked(code)"
-                                   :disabled="role.actions?.edit === false || loading"
-                                   @change="onChanged(code)">
-                            &nbsp;
-                            <label :for="vueId + code"
-                                   class="cursor-pointer">{{ item }}</label>
+                            <i class="fa fa-check text-success" v-if="isChecked(code)"></i>
+                            <i class="fa fa-check text-light" v-else></i>
+                            &nbsp;<span>{{ item }}</span>
                         </li>
                     </template>
                 </ul>
@@ -127,7 +145,7 @@ export default {
     },
     methods : {
         makeAction () {
-            if (!this.actions.create) {
+            if (!this.actions.edit) {
                 return;
             }
             window.axios[Url.Routes.adminRoleCreate.method](Url.Routes.adminRoleCreate.uri).then(response => {

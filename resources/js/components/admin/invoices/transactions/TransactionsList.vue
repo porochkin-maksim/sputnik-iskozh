@@ -20,6 +20,7 @@
                     <td>{{ transaction.created }}</td>
                     <td>
                         <button class="btn btn-sm border-0"
+                                v-if="actions.edit"
                                 @click="editAction(transaction.id)">
                             <i class="fa fa-edit"></i>
                         </button>
@@ -27,6 +28,7 @@
                             class="btn-link underline-none"
                             :url="transaction.historyUrl" />
                         <button class="btn btn-sm border-0"
+                                v-if="actions.drop"
                                 @click="dropAction(transaction.id)">
                             <i class="fa fa-trash text-danger"></i>
                         </button>
@@ -62,6 +64,7 @@ export default {
     data () {
         return {
             transactions: [],
+            actions     : {},
         };
     },
     created () {
@@ -74,6 +77,7 @@ export default {
             });
 
             window.axios[Url.Routes.adminTransactionList.method](uri).then(response => {
+                this.actions      = response.data.actions;
                 this.transactions = response.data.transactions;
                 this.types        = response.data.types;
                 this.periods      = response.data.periods;

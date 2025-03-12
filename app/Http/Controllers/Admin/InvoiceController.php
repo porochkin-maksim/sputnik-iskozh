@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
@@ -11,6 +12,7 @@ use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
@@ -41,7 +43,7 @@ class InvoiceController extends Controller
 
     public function view(int $id)
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
         $invoice = $this->invoiceService->getById($id);
@@ -58,7 +60,7 @@ class InvoiceController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
@@ -67,13 +69,10 @@ class InvoiceController extends Controller
 
     public function get(int $id): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
-        if ( ! $this->canEdit()) {
-            abort(403);
-        }
         $invoice = $this->invoiceService->getById($id);
         if ( ! $invoice) {
             abort(404);
@@ -87,7 +86,7 @@ class InvoiceController extends Controller
 
     public function list(ListRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
@@ -97,7 +96,8 @@ class InvoiceController extends Controller
             ->setOffset($request->getOffset())
             ->setWithPeriod()
             ->setWithAccount()
-            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
 
         if ($request->getPeriodId()) {
             $searcher->setPeriodId($request->getPeriodId());
@@ -114,7 +114,8 @@ class InvoiceController extends Controller
         $periodSearcher = new PeriodSearcher();
         $periodSearcher
             ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC)
+        ;
         $periods = $this->periodService->search($periodSearcher);
 
         $accountSearcher = new AccountSearcher();
@@ -131,7 +132,7 @@ class InvoiceController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
@@ -140,7 +141,8 @@ class InvoiceController extends Controller
             : $this->invoiceFactory->makeDefault()
                 ->setType(InvoiceTypeEnum::tryFrom($request->getType()))
                 ->setPeriodId($request->getPeriodId())
-                ->setAccountId($request->getAccountId());
+                ->setAccountId($request->getAccountId())
+        ;
 
         if ( ! $invoice) {
             abort(404);
@@ -155,15 +157,10 @@ class InvoiceController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! $this->canEdit()) {
+        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
             abort(403);
         }
 
         return $this->invoiceService->deleteById($id);
-    }
-
-    private function canEdit(): bool
-    {
-        return \app::roleDecorator()->canInvoices();
     }
 }

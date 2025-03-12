@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
-                    v-if="(!localUser.id && actions.create) || (localUser.id && actions.edit)"
+                    v-if="actions.edit"
                     @click="saveAction"
             >{{ localUser.id ? 'Сохранить' : 'Создать' }}
             </button>
@@ -17,66 +17,79 @@
     <div class="row">
         <div class="col-6">
             <div class="form">
-                <table class="table table-responsive align-middle table-borderless">
+                <table class="table table-responsive align-middle"
+                       :class="localUser.actions.edit ? 'table-borderless' : ''">
                     <tbody>
                     <tr>
                         <th>Фамилия</th>
                         <td>
                             <custom-input v-model="localUser.lastName"
+                                          v-if="localUser.actions.edit"
                                           :errors="errors.lastName"
                                           :required="true"
                                           @change="clearError('lastName')"
                             />
+                            <span v-else>{{ localUser.lastName }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Имя</th>
                         <td>
                             <custom-input v-model="localUser.firstName"
+                                          v-if="localUser.actions.edit"
                                           :errors="errors.firstName"
                                           :required="true"
                                           @change="clearError('firstName')"
                             />
+                            <span v-else>{{ localUser.firstName }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Отчество</th>
                         <td>
                             <custom-input v-model="localUser.middleName"
+                                          v-if="localUser.actions.edit"
                                           :errors="errors.middleName"
                                           :required="true"
                                           @change="clearError('middleName')"
                             />
+                            <span v-else>{{ localUser.middleName }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Почта</th>
                         <td>
                             <custom-input v-model="localUser.email"
+                                          v-if="localUser.actions.edit"
                                           :errors="errors.email"
                                           :required="true"
                                           @change="clearError('email')"
                             />
+                            <span v-else>{{ localUser.email }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Участок</th>
                         <td>
                             <search-select v-model="localUser.accountId"
+                                           v-if="localUser.actions.edit"
                                            :prop-class="'form-control'"
                                            :items="accounts"
                                            :placeholder="'Участок'"
                             />
+                            <span v-else>{{ localUser.accountName }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Роль</th>
                         <td>
                             <search-select v-model="localUser.roleId"
+                                           v-if="localUser.actions.edit"
                                            :prop-class="'form-control'"
                                            :items="roles"
                                            :placeholder="'Роль'"
                             />
+                            <span v-else>{{ localUser.roleName }}</span>
                         </td>
                     </tr>
                     </tbody>

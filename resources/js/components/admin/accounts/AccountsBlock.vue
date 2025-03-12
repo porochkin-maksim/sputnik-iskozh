@@ -2,6 +2,7 @@
     <div class="d-flex align-items-center justify-content-between mb-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
+                    v-if="actions.edit"
                     v-on:click="makeAction">Добавить участок
             </button>
             <template v-if="allAccounts && allAccounts.length">
@@ -27,11 +28,30 @@
         </div>
     </div>
     <div>
-        <div v-for="(account, index) in accounts">
-            <account-item-edit :model-value="account"
-                               :index="index"
-                               class="mb-2" />
-        </div>
+        <template v-if="actions.edit">
+            <div v-for="account in accounts">
+                <account-item-edit :model-value="account" />
+            </div>
+        </template>
+        <template v-else>
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th></th>
+                    <th>Номер</th>
+                    <th>Площадь (м²)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="account in accounts"
+                    class="align-middle">
+                    <account-item-edit :model-value="account" />
+                </tr>
+                </tbody>
+            </table>
+        </template>
     </div>
 </template>
 
@@ -54,6 +74,7 @@ export default {
             accounts   : [],
             allAccounts: [],
             historyUrl : null,
+            actions    : {},
 
             total     : null,
             perPage   : 25,
@@ -94,6 +115,7 @@ export default {
                     account_id: this.accountId,
                 },
             }).then(response => {
+                this.actions     = response.data.actions;
                 this.allAccounts = response.data.allAccounts;
                 this.accounts    = response.data.accounts;
                 this.total       = response.data.total;

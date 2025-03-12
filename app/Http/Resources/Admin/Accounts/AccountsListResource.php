@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
+use app;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectOptionResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Responses\ResponsesEnum;
 
 readonly class AccountsListResource extends AbstractResource
 {
@@ -20,10 +23,16 @@ readonly class AccountsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $access = app::roleDecorator();
         $result = [
             'accounts'    => [],
             'allAccounts' => [],
             'total'       => $this->totalAccountsCount,
+            'actions'    => [
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::ACCOUNTS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::ACCOUNTS_DROP),
+            ],
             'historyUrl'  => HistoryChangesLocator::route(
                 type: HistoryType::ACCOUNT,
             ),
