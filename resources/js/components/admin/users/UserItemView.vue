@@ -25,7 +25,6 @@
                         <td>
                             <custom-input v-model="localUser.lastName"
                                           v-if="localUser.actions.edit"
-                                          :errors="errors.lastName"
                                           :required="true"
                                           @change="clearError('lastName')"
                             />
@@ -37,7 +36,6 @@
                         <td>
                             <custom-input v-model="localUser.firstName"
                                           v-if="localUser.actions.edit"
-                                          :errors="errors.firstName"
                                           :required="true"
                                           @change="clearError('firstName')"
                             />
@@ -49,7 +47,6 @@
                         <td>
                             <custom-input v-model="localUser.middleName"
                                           v-if="localUser.actions.edit"
-                                          :errors="errors.middleName"
                                           :required="true"
                                           @change="clearError('middleName')"
                             />
@@ -61,7 +58,6 @@
                         <td>
                             <custom-input v-model="localUser.email"
                                           v-if="localUser.actions.edit"
-                                          :errors="errors.email"
                                           :required="true"
                                           @change="clearError('email')"
                             />
@@ -95,6 +91,16 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="col-6 pt-2"
+             v-if="localUser.id">
+            <ul class="list-group"
+                v-if="localUser.actions.edit">
+                <li class="list-group-item list-group-item-action cursor-pointer"
+                    @click="sendRestorePasswordEmail">
+                    Выслать ссылку на восстановление пароля
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -204,6 +210,23 @@ export default {
                     this.showDanger('Пользователь не удалён');
                 }
             }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        sendRestorePasswordEmail () {
+            if (!confirm('Отправить письмо для сброса пароля?')) {
+                return;
+            }
+            let form = new FormData();
+            form.append('id', this.localUser.id);
+
+            window.axios[Url.Routes.adminUserSendRestorePassword.method](
+                Url.Routes.adminUserSendRestorePassword.uri,
+                form,
+            ).then((response) => {
+                this.showInfo('Письмо отправлено');
+            }).catch(response => {
+                this.showDanger('Письмо не отправлено');
                 this.parseResponseErrors(response);
             });
         },

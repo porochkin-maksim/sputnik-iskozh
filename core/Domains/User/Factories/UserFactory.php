@@ -60,7 +60,7 @@ readonly class UserFactory
         if ( ! $model) {
             $model = User::make();
         }
-        $result = new UserDTO();
+        $result = new UserDTO($model);
 
         $result
             ->setId($model->id)

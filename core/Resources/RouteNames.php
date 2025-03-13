@@ -99,6 +99,8 @@ abstract class RouteNames
     public const ADMIN_USER_LIST   = 'admin.user.list';
     public const ADMIN_USER_DELETE = 'admin.user.delete';
 
+    public const ADMIN_USER_SEND_RESTORE_PASSWORD = 'admin.user.send.restore.password';
+
     public const ADMIN_SERVICE_INDEX  = 'admin.service.index';
     public const ADMIN_SERVICE_CREATE = 'admin.service.create';
     public const ADMIN_SERVICE_SAVE   = 'admin.service.save';

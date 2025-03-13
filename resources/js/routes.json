@@ -354,6 +354,13 @@
         "uri": "\/admin\/users\/save",
         "args": []
     },
+    "adminUserSendRestorePassword": {
+        "name": "admin.user.send.restore.password",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/sendRestorePassword",
+        "args": []
+    },
     "adminUserView": {
         "name": "admin.user.view",
         "displayName": "",

@@ -6,14 +6,16 @@ use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Repositories\UserRepository;
+use Core\Domains\User\Services\Notificator;
 use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\Services\UserService;
 
 class UserLocator
 {
-    private static UserFactory         $UserFactory;
-    private static UserRepository      $UserRepository;
-    private static UserService         $UserService;
+    private static UserFactory    $UserFactory;
+    private static UserRepository $UserRepository;
+    private static UserService    $UserService;
+    private static Notificator    $Notificator;
 
     public static function UserService(): UserService
     {
@@ -49,5 +51,14 @@ class UserLocator
     public static function UserDecorator(UserDTO $user): UserDecorator
     {
         return new UserDecorator($user);
+    }
+
+    public static function Notificator(): Notificator
+    {
+        if ( ! isset(self::$Notificator)) {
+            self::$Notificator = new Notificator();
+        }
+
+        return self::$Notificator;
     }
 }

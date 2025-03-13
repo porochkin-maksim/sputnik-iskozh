@@ -6,6 +6,7 @@ use app;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
 use App\Http\Requests\Admin\Users\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
@@ -132,5 +133,20 @@ class UsersController extends Controller
         }
 
         return $this->userService->deleteById($id);
+    }
+
+    public function sendRestorePassword(DefaultRequest $request): void
+    {
+        if ( ! app::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
+            abort(403);
+        }
+
+        $user = $this->userService->getById($request->getInt('id'));
+
+        if ( ! $user || ! $user->getModel()) {
+            abort(404);
+        }
+
+        UserLocator::Notificator()->sendRestorePassword($user);
     }
 }
