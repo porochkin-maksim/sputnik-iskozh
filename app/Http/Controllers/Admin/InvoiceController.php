@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
@@ -43,7 +43,7 @@ class InvoiceController extends Controller
 
     public function view(int $id)
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
         $invoice = $this->invoiceService->getById($id);
@@ -60,7 +60,7 @@ class InvoiceController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
@@ -69,7 +69,7 @@ class InvoiceController extends Controller
 
     public function get(int $id): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
@@ -86,7 +86,7 @@ class InvoiceController extends Controller
 
     public function list(ListRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
@@ -132,7 +132,7 @@ class InvoiceController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
@@ -157,7 +157,7 @@ class InvoiceController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
             abort(403);
         }
 

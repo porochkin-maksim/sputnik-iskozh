@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Users;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
@@ -20,7 +20,7 @@ readonly class UserResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
 
         return [
             'id'          => $this->user->getId(),

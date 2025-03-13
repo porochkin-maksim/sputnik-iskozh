@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Services\SaveRequest;
 use App\Http\Resources\Admin\Services\ServiceResource;
@@ -37,7 +37,7 @@ class ServicesController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
@@ -48,7 +48,7 @@ class ServicesController extends Controller
 
     public function list(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
             abort(403);
         }
 
@@ -74,7 +74,7 @@ class ServicesController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
@@ -102,7 +102,7 @@ class ServicesController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::SERVICES_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_DROP)) {
             abort(403);
         }
 

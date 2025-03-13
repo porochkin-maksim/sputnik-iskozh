@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Models\AccountDTO;
@@ -20,7 +20,7 @@ readonly class AccountResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         return [
             'id'         => $this->account->getId(),
             'number'     => $this->account->getNumber(),

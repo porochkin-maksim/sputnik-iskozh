@@ -2,12 +2,12 @@
 
 namespace Core\Domains\Infra\HistoryChanges\Factories;
 
-use app;
+use lc;
 use App\Models\Infra\HistoryChanges;
-use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
+use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Factories\UserFactory;
 
 readonly class HistoryChangesFactory
@@ -24,7 +24,7 @@ readonly class HistoryChangesFactory
             ->setId(null)
             ->setType(null)
             ->setReferenceType(null)
-            ->setUserId(app::user()->getId())
+            ->setUserId(lc::user()->getId())
             ->setPrimaryId(null)
             ->setReferenceId(null)
             ->setLog(null);
@@ -67,6 +67,9 @@ readonly class HistoryChangesFactory
 
         if (isset($model->getRelations()[HistoryChanges::USER])) {
             $result->setUser($this->userFactory->makeDtoFromObject($model->getRelation(HistoryChanges::USER)));
+        }
+        elseif ($result->getUserId() === UserIdEnum::ROBOT) {
+            $result->setUser($this->userFactory->makeRobot());
         }
         else {
             $result->setUser($this->userFactory->makeUndefined());

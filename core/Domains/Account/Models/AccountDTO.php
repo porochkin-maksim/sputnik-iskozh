@@ -17,8 +17,9 @@ class AccountDTO
     private ?string $number          = null;
     private ?int    $primary_user_id = null;
     private ?bool   $is_member       = null;
-    private ?bool           $is_manager = null;
-    private ?UserCollection $users      = null;
+    private ?bool   $is_manager      = null;
+
+    private ?UserCollection $users = null;
 
     public function __construct()
     {

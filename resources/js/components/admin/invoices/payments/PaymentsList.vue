@@ -6,14 +6,28 @@
                 <th>Сумма</th>
                 <th>Создан</th>
                 <th></th>
+                <th></th>
             </tr>
             <tr v-for="(payment) in payments">
                 <td>{{ payment.id }}</td>
                 <td>{{ $formatMoney(payment.cost) }}</td>
                 <td>{{ payment.created }}</td>
                 <td>
+                    <template v-if="payment.files && payment.files.length">
+                    <template v-for="(file, index) in payment.files">
+                        <file-item
+                            :file="file"
+                            :edit="true"
+                            :index="index"
+                            :use-up-sort="index!==0"
+                            :use-down-sort="index!==payment.files.length-1"
+                        />
+                    </template>
+                    </template>
+                </td>
+                <td>
                     <button class="btn btn-sm border-0"
-                            v-if="actions.edit"
+                            v-if="actions.edit || actions.view"
                             @click="editAction(payment.id)">
                         <i class="fa fa-edit"></i>
                     </button>
@@ -35,9 +49,10 @@
 import ResponseError from '../../../../mixin/ResponseError.js';
 import Url           from '../../../../utils/Url.js';
 import HistoryBtn    from '../../../common/HistoryBtn.vue';
+import FileItem      from '../../../common/files/FileItem.vue';
 
 export default {
-    components: { HistoryBtn },
+    components: { FileItem, HistoryBtn },
     emits     : ['update:reload', 'update:selectedId', 'update:count'],
     mixins    : [
         ResponseError,

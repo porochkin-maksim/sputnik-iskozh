@@ -28,7 +28,7 @@ class ProfileController extends Controller
 
     public function save(SaveProfileRequest $request): void
     {
-        $user = $request->dto(\app::user());
+        $user = $request->dto(\lc::user());
 
         $this->userService->save($user);
     }
@@ -38,7 +38,7 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\app::user());
+            $user = $request->dto(\lc::user());
 
             $this->userService->save($user);
 
@@ -57,7 +57,7 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\app::user());
+            $user = $request->dto(\lc::user());
 
             $this->userService->save($user);
 

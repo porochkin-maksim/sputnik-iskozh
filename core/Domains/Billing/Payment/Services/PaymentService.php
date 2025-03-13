@@ -48,11 +48,11 @@ readonly class PaymentService
         );
 
         if (
-            $current->getCost() !== $before->getCost()
-            ||
-            (
-                $current->getInvoiceId()
-                && $current->getInvoiceId() !== $before->getInvoice()
+            $current->getInvoiceId()
+            && (
+                $current->getCost() !== $before->getCost()
+                ||
+                $current->getInvoiceId() !== $before->getInvoice()
             )
         ) {
             PaymentsUpdatedEvent::dispatch($current->getInvoiceId());
@@ -83,7 +83,10 @@ readonly class PaymentService
         }
 
         $searcher = new PaymentSearcher();
-        $searcher->setId($id);
+        $searcher
+            ->setId($id)
+            ->setWithFiles()
+        ;
         $result = $this->paymentRepository->search($searcher)->getItems()->first();
 
         return $result ? $this->paymentFactory->makeDtoFromObject($result) : null;
@@ -105,7 +108,9 @@ readonly class PaymentService
             $payment->getId(),
         );
 
-        PaymentsUpdatedEvent::dispatch($payment->getInvoiceId());
+        if ($payment->getInvoiceId()) {
+            PaymentsUpdatedEvent::dispatch($payment->getInvoiceId());
+        }
 
         return $this->paymentRepository->deleteById($id);
     }

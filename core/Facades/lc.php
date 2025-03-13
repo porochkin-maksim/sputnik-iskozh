@@ -10,20 +10,30 @@ use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\UserLocator;
 use Illuminate\Support\Facades\Auth;
 
-abstract class app
+abstract class lc
 {
     private static UserDTO       $user;
     private static RoleDTO       $role;
-    private static AccountDTO       $account;
+    private static AccountDTO    $account;
     private static RoleDecorator $roleDecorator;
     private static UserDecorator $userDecorator;
+
+    public static function isAuth(): bool
+    {
+        return (bool) Auth::id();
+    }
 
     public static function user(): UserDTO
     {
         if ( ! isset(self::$user)) {
             $user = Auth::id() ? UserLocator::UserService()->getById(Auth::id()) : null;
             if ( ! $user) {
-                $user = UserLocator::UserFactory()->makeUndefined();
+                if (self::isCli()) {
+                    $user = UserLocator::UserFactory()->makeRobot();
+                }
+                else {
+                    $user = UserLocator::UserFactory()->makeUndefined();
+                }
             }
             $user->setRole(self::role());
             $user->setAccount(self::account());
@@ -32,6 +42,11 @@ abstract class app
         }
 
         return self::$user;
+    }
+
+    public static function isCli(): bool
+    {
+        return App::runningInConsole();
     }
 
     public static function account(): AccountDTO

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Resources\Views\ViewNames;
@@ -18,7 +18,7 @@ class PagesController extends Controller
 
     public function services()
     {
-        if (app::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_SERVICES);
         }
 
@@ -27,7 +27,7 @@ class PagesController extends Controller
 
     public function periods()
     {
-        if (app::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_PERIODS);
         }
 
@@ -36,7 +36,7 @@ class PagesController extends Controller
 
     public function accounts()
     {
-        if (app::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_ACCOUNTS);
         }
 
@@ -45,7 +45,7 @@ class PagesController extends Controller
 
     public function invoices()
     {
-        if (app::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_INVOICES);
         }
 
@@ -54,7 +54,7 @@ class PagesController extends Controller
 
     public function roles()
     {
-        if (app::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_ROLES);
         }
 
@@ -63,8 +63,17 @@ class PagesController extends Controller
 
     public function users()
     {
-        if (app::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             return view(ViewNames::ADMIN_PAGES_USERS);
+        }
+
+        abort(403);
+    }
+
+    public function payments()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_PAYMENTS);
         }
 
         abort(403);

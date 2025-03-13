@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Transactions\SaveRequest;
 use App\Http\Resources\Admin\Transactions\ServicesListResource;
@@ -46,7 +46,7 @@ class TransactionController extends Controller
 
     public function create(int $invoiceId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
             abort(403);
         }
 
@@ -97,7 +97,7 @@ class TransactionController extends Controller
 
     public function get(int $invoiceId, int $transactionId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
             abort(403);
         }
         if ( ! $invoiceId || ! $transactionId) {
@@ -155,7 +155,7 @@ class TransactionController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::TRANSACTIONS_EDIT)) {
             abort(403);
         }
 
@@ -183,7 +183,7 @@ class TransactionController extends Controller
 
     public function list(int $invoiceId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::TRANSACTIONS_VIEW)) {
             abort(403);
         }
 
@@ -196,7 +196,7 @@ class TransactionController extends Controller
 
     public function delete(int $invoiceId, int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::TRANSACTIONS_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::TRANSACTIONS_DROP)) {
             abort(403);
         }
 

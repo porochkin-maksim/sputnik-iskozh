@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Periods;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
@@ -20,7 +20,7 @@ readonly class PeriodResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         return [
             'id'         => $this->period->getId(),
             'name'       => $this->period->getName(),

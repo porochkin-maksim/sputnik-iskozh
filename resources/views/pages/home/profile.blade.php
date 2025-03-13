@@ -10,8 +10,8 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::CONTENT)
-    <profile-block :account='@json(new AccountResource(app::account()))'
-                   :user='@json(new UserResource(app::user()))'
+    <profile-block :account='@json(new AccountResource(lc::account()))'
+                   :user='@json(new UserResource(lc::user()))'
     ></profile-block>
 @endsection
 

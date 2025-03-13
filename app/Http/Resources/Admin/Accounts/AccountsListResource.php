@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectOptionResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -23,7 +23,7 @@ readonly class AccountsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'accounts'    => [],
             'allAccounts' => [],

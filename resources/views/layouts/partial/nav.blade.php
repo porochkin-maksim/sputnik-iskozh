@@ -27,9 +27,9 @@ $routes = [
             </a>
             <ul class="vertical-menu">
                 <li class="nav-item">
-                    <a class="nav-link @if(Route::is(RouteNames::PROPOSAL)) active @endif"
-                       href="{{ route(RouteNames::PROPOSAL) }}">
-                        <i class="fa fa-lightbulb-o"></i>&nbsp;{{ RouteNames::name(RouteNames::PROPOSAL) }}
+                    <a class="nav-link @if(Route::is(RouteNames::REQUESTS)) active @endif"
+                       href="{{ route(RouteNames::REQUESTS) }}">
+                        <i class="fa fa-lightbulb-o"></i>&nbsp;{{ RouteNames::name(RouteNames::REQUESTS) }}
                     </a>
                 </li>
             </ul>
@@ -78,7 +78,7 @@ $routes = [
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
-                    {{ \app::userDecorator()->getDisplayName() }}
+                    {{ \lc::userDecorator()->getDisplayName() }}
                 </a>
             </li>
             <li class="nav-item">
@@ -108,8 +108,8 @@ $routes = [
                 </li>
                 <li>
                     <a class="dropdown-item"
-                       href="{{ route(RouteNames::PROPOSAL) }}">
-                        {{ RouteNames::name(RouteNames::PROPOSAL) }}
+                       href="{{ route(RouteNames::REQUESTS) }}">
+                        {{ RouteNames::name(RouteNames::REQUESTS) }}
                     </a>
                 </li>
             </ul>
@@ -161,10 +161,10 @@ $routes = [
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::PROFILE) }}">
-                    {{ \app::userDecorator()->getDisplayName() }} {!! \app::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \app::account()->getNumber()) : '' !!}
+                    {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
                 </a>
             </li>
-            @if (app::roleDecorator()->canAccessAdmin())
+            @if (lc::roleDecorator()->canAccessAdmin())
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">

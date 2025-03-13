@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Periods\SaveRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
@@ -30,7 +30,7 @@ class PeriodsController extends Controller//
 
     public function create(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
             abort(403);
         }
 
@@ -39,7 +39,7 @@ class PeriodsController extends Controller//
 
     public function list(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
             abort(403);
         }
 
@@ -54,7 +54,7 @@ class PeriodsController extends Controller//
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
             abort(403);
         }
 
@@ -80,7 +80,7 @@ class PeriodsController extends Controller//
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PERIODS_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_DROP)) {
             abort(403);
         }
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Services;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -24,7 +24,7 @@ readonly class ServicesListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access         = app::roleDecorator();
+        $access         = lc::roleDecorator();
         $types          = array_filter(ServiceTypeEnum::array(), static fn(string $name) => $name !== ServiceTypeEnum::OTHER->name());
         $availableTypes = [];
 

@@ -3,10 +3,13 @@
 namespace App\Models\Billing;
 
 use App\Models\Account\Account;
+use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
+use Core\Domains\File\Enums\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property ?int     $id
@@ -34,8 +37,9 @@ class Payment extends Model implements CastsInterface
     public const VERIFIED   = 'verified';
     public const COMMENT    = 'comment';
 
-    public const ACCOUNT = 'invoice';
-    public const INVOICE = 'account';
+    public const ACCOUNT = 'account';
+    public const INVOICE = 'invoice';
+    public const FILES   = 'files';
 
     protected $guarded = [];
 
@@ -53,5 +57,12 @@ class Payment extends Model implements CastsInterface
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, self::ACCOUNT_ID);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(File::class, File::RELATED_ID)
+            ->where(File::TYPE, TypeEnum::PAYMENT->value)
+            ->orderBy(FILE::ORDER);
     }
 }

@@ -5,6 +5,7 @@ namespace Core\Domains\Billing\Payment\Models;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Domains\File\Models\FileDTO;
 
 class PaymentDTO
 {
@@ -20,6 +21,11 @@ class PaymentDTO
 
     private ?InvoiceDTO $invoice = null;
     private ?AccountDTO $account = null;
+
+    /**
+     * @var FileDTO[]
+     */
+    private array $files = [];
 
     public function getId(): ?int
     {
@@ -127,5 +133,20 @@ class PaymentDTO
         $this->account = $account;
 
         return $this;
+    }
+
+    /**
+     * @param FileDTO[] $files
+     */
+    public function setFiles(array $files): static
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
     }
 }

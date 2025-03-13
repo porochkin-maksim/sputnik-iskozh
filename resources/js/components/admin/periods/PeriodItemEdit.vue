@@ -78,7 +78,6 @@ export default {
         'modelValue',
     ],
     created () {
-        console.log(this.modelValue);
         this.vueId = 'uuid' + this.$_uid;
         if (this.modelValue) {
             this.id      = this.modelValue.id;

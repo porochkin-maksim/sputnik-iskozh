@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Proposal\Requests;
+namespace App\Http\Requests\Public\Requests;
 
 use App\Http\Requests\AbstractRequest;
 
-class CreateRequest extends AbstractRequest
+class ProposalCreateRequest extends AbstractRequest
 {
     private const EMAIL = 'email';
     private const PHONE = 'phone';

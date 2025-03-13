@@ -70,6 +70,7 @@ $season = match (Carbon::now()->month) {
         </div>
     </div>
 </footer>
+<alerts-block></alerts-block>
 {{--@if (!Cookie::has(CookieNames::COOKIE_AGREEMENT))--}}
 {{--    <div class="d-block alert alert-info w-100 sticky-bottom text-center m-0"--}}
 {{--         id="cookie">--}}

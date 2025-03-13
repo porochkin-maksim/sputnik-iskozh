@@ -7,7 +7,7 @@ use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 
-$authRole = app::roleDecorator();
+$authRole = lc::roleDecorator();
 ?>
 
 @extends(ViewNames::LAYOUTS_ADMIN)

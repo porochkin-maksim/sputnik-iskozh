@@ -10,9 +10,29 @@ class PaymentSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
-    public function setInvoiceId(int $id): static
+    public function setInvoiceId(?int $id): static
     {
-        $this->addWhere(Payment::INVOICE_ID, SearcherInterface::EQUALS, $id);
+        if (null === $id) {
+            $this->addWhere(Payment::INVOICE_ID, SearcherInterface::IS_NULL);
+        }
+        else {
+            $this->addWhere(Payment::INVOICE_ID, SearcherInterface::EQUALS, $id);
+        }
+
+
+        return $this;
+    }
+
+    public function setWithFiles(): static
+    {
+        $this->with[] = Payment::FILES;
+
+        return $this;
+    }
+
+    public function withAccount(): static
+    {
+        $this->with[] = Payment::ACCOUNT;
 
         return $this;
     }

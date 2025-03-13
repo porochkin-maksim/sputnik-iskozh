@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
@@ -20,7 +20,7 @@ readonly class PaymentsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'payments'   => [],
             'historyUrl' => HistoryChangesLocator::route(

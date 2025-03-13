@@ -79,6 +79,6 @@ class FolderController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canFiles();
+        return \lc::roleDecorator()->canFiles();
     }
 }

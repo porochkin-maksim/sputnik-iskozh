@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
+use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
+use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
 use App\Http\Resources\Common\SelectOptionResource;
 use App\Http\Resources\Common\SelectResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -28,11 +30,11 @@ readonly class InvoicesListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'invoices'   => [],
-            'periods'    => [],
-            'accounts'   => [],
+            'periods'    => new PeriodsSelectResource($this->periodCollection),
+            'accounts'   => new AccountsSelectResource($this->accountCollection, false),
             'total'      => $this->totalInvoicesCount,
             'types'      => new SelectResource(InvoiceTypeEnum::array()),
             'historyUrl' => HistoryChangesLocator::route(
@@ -47,20 +49,6 @@ readonly class InvoicesListResource extends AbstractResource
 
         foreach ($this->invoiceCollection as $invoice) {
             $result['invoices'][] = new InvoiceResource($invoice);
-        }
-
-        foreach ($this->periodCollection as $period) {
-            $result['periods'][] = new SelectOptionResource(
-                $period->getId(),
-                $period->getName(),
-            );
-        }
-
-        foreach ($this->accountCollection as $account) {
-            $result['accounts'][] = new SelectOptionResource(
-                $account->getId(),
-                $account->getNumber(),
-            );
         }
 
         return $result;

@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Proposal\Services;
 
+use App\Http\Requests\Public\Requests\ProposalCreateRequest;
+use Core\Domains\Enums\Emails;
 use Core\Domains\Proposal\Jobs\ProposalCreatedJob;
-use Core\Domains\Proposal\Requests\CreateRequest;
-use Core\Notifications\Email\Emails;
 use Core\Services\Files\Collections\TmpFiles;
 use Core\Services\Files\Models\TmpFile;
 use Core\Services\Files\Services\TmpFileService;
@@ -19,7 +19,7 @@ readonly class ProposalService
     {
     }
 
-    public function notify(CreateRequest $request): void
+    public function notify(ProposalCreateRequest $request): void
     {
         $attachFiles = new TmpFiles();
         foreach ($request->allFiles() as $file) {

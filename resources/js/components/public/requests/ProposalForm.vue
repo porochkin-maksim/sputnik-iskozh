@@ -145,6 +145,7 @@ export default {
                 setTimeout(() => {
                     location.reload();
                 }, 20000);
+                this.showSuccess('Ваше предложение успешно отправлено');
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).finally(() => {

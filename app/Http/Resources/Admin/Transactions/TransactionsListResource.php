@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Transactions;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Transaction\Collections\TransactionCollection;
@@ -20,7 +20,7 @@ readonly class TransactionsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'transactions' => [],
             'historyUrl'   => HistoryChangesLocator::route(

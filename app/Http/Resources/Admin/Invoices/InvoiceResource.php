@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
@@ -20,7 +20,7 @@ readonly class InvoiceResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
 
         return [
             'id'            => $this->invoice->getId(),

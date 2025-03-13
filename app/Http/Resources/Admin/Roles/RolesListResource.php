@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Roles;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Collections\RoleCollection;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -20,7 +20,7 @@ readonly class RolesListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'roles'      => [],
             'actions'    => [

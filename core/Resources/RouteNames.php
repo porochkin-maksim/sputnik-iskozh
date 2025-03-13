@@ -15,8 +15,11 @@ abstract class RouteNames
     public const SEARCH      = 'search';
     public const SITE_SEARCH = 'search.site';
 
+    public const REQUESTS        = 'requests';
     public const PROPOSAL        = 'proposal';
     public const PROPOSAL_CREATE = 'proposal.create';
+    public const PAYMENT         = 'payment';
+    public const PAYMENT_CREATE  = 'payment.create';
 
     public const TEMPLATE_GET    = 'template.get';
     public const TEMPLATE_UPDATE = 'template.update';
@@ -139,38 +142,49 @@ abstract class RouteNames
     public const ADMIN_PAYMENT_LIST   = 'admin.payment.list';
     public const ADMIN_PAYMENT_DELETE = 'admin.payment.delete';
 
+    public const ADMIN_NEW_PAYMENT_INDEX    = 'admin.new-payment.index';
+    public const ADMIN_NEW_PAYMENT_VIEW     = 'admin.new-payment.view';
+    public const ADMIN_NEW_PAYMENT_SAVE     = 'admin.new-payment.save';
+    public const ADMIN_NEW_PAYMENT_LIST     = 'admin.new-payment.list';
+    public const ADMIN_NEW_PAYMENT_INVOICES = 'admin.new-payment.get-invoices';
+    public const ADMIN_NEW_PAYMENT_DELETE   = 'admin.new-payment.delete';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS            => 'Контакты',
-            self::GARBAGE             => 'Вывоз мусора',
-            self::PRIVACY             => 'Политика обработки персональных данных',
-            self::REGULATION          => 'Устав',
-            self::RUBRICS             => 'Рубрикатор',
-            self::PROPOSAL            => 'Предложения',
-            self::SEARCH              => 'Поиск по сайту',
+            self::CONTACTS                => 'Контакты',
+            self::GARBAGE                 => 'Вывоз мусора',
+            self::PRIVACY                 => 'Политика обработки персональных данных',
+            self::REGULATION              => 'Устав',
+            self::RUBRICS                 => 'Рубрикатор',
+            self::SEARCH                  => 'Поиск по сайту',
 
-            self::HOME                => 'Личный кабинет',
-            self::PROFILE             => 'Профиль',
-            self::LOGOUT              => 'Выйти',
+            self::REQUESTS                => 'Обращения',
+            self::PROPOSAL                => 'Предложения',
+            self::PAYMENT                 => 'Платежи',
 
-            self::OPTIONS             => 'Настройки',
+            self::HOME                    => 'Личный кабинет',
+            self::PROFILE                 => 'Профиль',
+            self::LOGOUT                  => 'Выйти',
 
-            self::FILES               => 'Файлы',
-            self::NEWS                => 'Новости',
-            self::ANNOUNCEMENTS       => 'Объявления',
-            self::REPORTS             => 'Отчёты',
+            self::OPTIONS                 => 'Настройки',
+
+            self::FILES                   => 'Файлы',
+            self::NEWS                    => 'Новости',
+            self::ANNOUNCEMENTS           => 'Объявления',
+            self::REPORTS                 => 'Отчёты',
 
             // админка
-            self::ADMIN               => 'О системе',
-            self::ADMIN_USER_INDEX    => 'Пользователи',
-            self::ADMIN_ROLE_INDEX    => 'Роли',
-            self::ADMIN_SERVICE_INDEX => 'Услуги',
-            self::ADMIN_PERIOD_INDEX  => 'Периоды',
-            self::ADMIN_ACCOUNT_INDEX => 'Участки',
-            self::ADMIN_INVOICE_INDEX => 'Счета',
+            self::ADMIN                   => 'О системе',
+            self::ADMIN_USER_INDEX        => 'Пользователи',
+            self::ADMIN_ROLE_INDEX        => 'Роли',
+            self::ADMIN_SERVICE_INDEX     => 'Услуги',
+            self::ADMIN_PERIOD_INDEX      => 'Периоды',
+            self::ADMIN_ACCOUNT_INDEX     => 'Участки',
+            self::ADMIN_INVOICE_INDEX     => 'Счета',
+            self::ADMIN_NEW_PAYMENT_INDEX => 'Новые платежи',
 
-            default                   => $default,
+            default                       => $default,
         };
     }
 }

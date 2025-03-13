@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\ListRequest;
 use App\Http\Requests\Admin\Accounts\SaveRequest;
@@ -31,7 +31,7 @@ class AccountsController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
             abort(403);
         }
 
@@ -40,7 +40,7 @@ class AccountsController extends Controller
 
     public function list(ListRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             abort(403);
         }
 
@@ -71,7 +71,7 @@ class AccountsController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
             abort(403);
         }
 
@@ -99,7 +99,7 @@ class AccountsController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ACCOUNTS_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_DROP)) {
             abort(403);
         }
 

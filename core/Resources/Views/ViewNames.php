@@ -16,6 +16,7 @@ enum ViewNames: string
     public const PAGES_INDEX         = 'pages.index';
     public const PAGES_CONTACTS      = 'pages.contacts';
     public const PAGES_PROPOSAL      = 'pages.contacts.proposal';
+    public const PAGES_PAYMENT       = 'pages.contacts.payment';
     public const PAGES_GARBAGE       = 'pages.garbage';
     public const PAGES_PRIVACY       = 'pages.privacy';
     public const PAGES_SEARCH        = 'pages.search';
@@ -41,4 +42,5 @@ enum ViewNames: string
     public const ADMIN_PAGES_PERIODS  = 'admin.pages.periods';
     public const ADMIN_PAGES_ACCOUNTS = 'admin.pages.accounts';
     public const ADMIN_PAGES_INVOICES = 'admin.pages.invoices';
+    public const ADMIN_PAGES_PAYMENTS = 'admin.pages.payments';
 }

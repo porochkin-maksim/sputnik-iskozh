@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Periods;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Period\Collections\PeriodCollection;
@@ -20,7 +20,7 @@ readonly class PeriodsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
         $result = [
             'periods'    => [],
             'historyUrl' => HistoryChangesLocator::route(

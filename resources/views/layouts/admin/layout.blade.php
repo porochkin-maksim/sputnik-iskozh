@@ -19,7 +19,7 @@ $season = match (Carbon::now()->month) {
     default   => 'winter',
 };
 
-$authRole  = \app::roleDecorator();
+$authRole  = \lc::roleDecorator();
 $navRoutes = [RouteNames::ADMIN];
 
 if ($authRole->can(PermissionEnum::ROLES_VIEW)) {
@@ -39,6 +39,9 @@ if ($authRole->can(PermissionEnum::SERVICES_VIEW)) {
 }
 if ($authRole->can(PermissionEnum::INVOICES_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_INVOICE_INDEX;
+}
+if ($authRole->can(PermissionEnum::PAYMENTS_VIEW)) {
+    $navRoutes[] = RouteNames::ADMIN_NEW_PAYMENT_INDEX;
 }
 ?>
         <!doctype html>

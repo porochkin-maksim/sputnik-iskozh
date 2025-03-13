@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
-use app;
+use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -21,13 +21,16 @@ readonly class PaymentResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = app::roleDecorator();
+        $access = lc::roleDecorator();
 
         return [
             'id'         => $this->payment->getId(),
             'cost'       => $this->payment->getCost(),
             'comment'    => $this->payment->getComment(),
+            'files'      => $this->payment->getFiles(),
             'created'    => $this->formatCreatedAt($this->payment->getCreatedAt()),
+            'invoiceId'  => $this->payment->getInvoiceId(),
+            'accountId'  => $this->payment->getAccountId(),
             'invoice'    => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),

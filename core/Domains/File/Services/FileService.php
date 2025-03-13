@@ -101,8 +101,8 @@ readonly class FileService
                 ->setLimit(1);
 
             $lastFile = $this->search($searcher)->getItems()->first();
-            if ($lastFile->getId() !== $dto->getId()) {
-                $dto->setOrder($lastFile->getOrder() + 1);
+            if ($lastFile?->getId() !== $dto->getId()) {
+                $dto->setOrder((int) $lastFile?->getOrder() + 1);
             }
         }
 
@@ -212,5 +212,14 @@ readonly class FileService
         $file->setPath($path);
 
         return $this->save($file);
+    }
+
+    public function getByPath($filePath): ?FileDTO
+    {
+        $searcher = new FileSearcher();
+        $searcher->addWhere(File::PATH, SearcherInterface::EQUALS, $filePath)
+            ->setLimit(1);
+
+        return $this->search($searcher)->getItems()->first();
     }
 }

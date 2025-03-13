@@ -16,17 +16,17 @@
                         v-on:click="makeAction">Добавить счёт
                 </button>
             </div>
-            <template v-if="computedTypes && computedTypes.length">
-                <simple-select v-model="type"
-                               :class="'d-inline-block form-select-sm w-auto me-2'"
-                               :items="computedTypes"
-                               @change="listAction"
-                />
-            </template>
             <template v-if="computedPeriods && computedPeriods.length">
                 <simple-select v-model="periodId"
                                :class="'d-inline-block form-select-sm w-auto me-2'"
                                :items="computedPeriods"
+                               @change="listAction"
+                />
+            </template>
+            <template v-if="computedTypes && computedTypes.length">
+                <simple-select v-model="type"
+                               :class="'d-inline-block form-select-sm w-auto me-2'"
+                               :items="computedTypes"
                                @change="listAction"
                 />
             </template>

@@ -11,8 +11,13 @@ include __DIR__ . '/web/session.php';
 Route::get('/', [Controllers\Pages\PagesController::class, 'index'])->name(RouteNames::INDEX);
 
 Route::get('/contacts', [Controllers\Pages\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
-Route::get('/contacts/proposal', [Controllers\Pages\PagesController::class, 'proposal'])->name(RouteNames::PROPOSAL);
-Route::post('/contacts/proposal', [Controllers\Proposal\ProposalController::class, 'create'])->name(RouteNames::PROPOSAL_CREATE);
+Route::group(['prefix' => 'contacts/requests'], static function () {
+    Route::get('/', [Controllers\Pages\RequestsPagesController::class, 'index'])->name(RouteNames::REQUESTS);
+    Route::get('/proposal', [Controllers\Pages\RequestsPagesController::class, 'proposal'])->name(RouteNames::PROPOSAL);
+    Route::post('/proposal', [Controllers\Pages\Requests\ProposalController::class, 'create'])->name(RouteNames::PROPOSAL_CREATE);
+    Route::get('/payment', [Controllers\Pages\RequestsPagesController::class, 'payment'])->name(RouteNames::PAYMENT);
+    Route::post('/payment', [Controllers\Pages\Requests\PaymentsController::class, 'create'])->name(RouteNames::PAYMENT_CREATE);
+});
 
 Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
 Route::get('/privacy', [Controllers\Pages\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
@@ -138,6 +143,7 @@ Route::group(['prefix' => 'folders'], static function () {
     });
 });
 
+Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, 'download'])->where('filePath', '.*');
 
 Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
     Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
@@ -208,6 +214,14 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                             Route::get('/get/{paymentId}', [Controllers\Admin\PaymentController::class, 'get'])->name(RouteNames::ADMIN_PAYMENT_VIEW);
                         });
                     });
+                });
+                Route::group(['prefix' => 'payments'], static function () {
+                    Route::get('/', [Controllers\Admin\PagesController::class, 'payments'])->name(RouteNames::ADMIN_NEW_PAYMENT_INDEX);
+                    Route::get('/list', [Controllers\Admin\NewPaymentController::class, 'list'])->name(RouteNames::ADMIN_NEW_PAYMENT_LIST);
+                    Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\NewPaymentController::class, 'getInvoices'])->name(RouteNames::ADMIN_NEW_PAYMENT_INVOICES);
+                    Route::post('/save', [Controllers\Admin\NewPaymentController::class, 'save'])->name(RouteNames::ADMIN_NEW_PAYMENT_SAVE);
+                    Route::delete('/delete/{id}', [Controllers\Admin\NewPaymentController::class, 'delete'])->name(RouteNames::ADMIN_NEW_PAYMENT_DELETE);
+                    Route::get('/get/{paymentId}', [Controllers\Admin\NewPaymentController::class, 'get'])->name(RouteNames::ADMIN_NEW_PAYMENT_VIEW);
                 });
             });
         });

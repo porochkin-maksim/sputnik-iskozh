@@ -21,6 +21,17 @@ readonly class UserFactory
         $result = new UserDTO();
         $result
             ->setId(UserIdEnum::UNDEFINED)
+            ->setLastName('Неавторизованный')
+        ;
+
+        return $result;
+    }
+
+    public function makeRobot(): UserDTO
+    {
+        $result = new UserDTO();
+        $result
+            ->setId(UserIdEnum::ROBOT)
             ->setLastName('Робот')
         ;
 

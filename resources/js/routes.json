@@ -112,6 +112,55 @@
             "id": "{id}"
         }
     },
+    "adminNewPaymentDelete": {
+        "name": "admin.new-payment.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/payments\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminNewPaymentGetInvoices": {
+        "name": "admin.new-payment.get-invoices",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/get-invoices\/{accountId}\/{periodId}",
+        "args": {
+            "accountId": "{accountId}",
+            "periodId": "{periodId}"
+        }
+    },
+    "adminNewPaymentIndex": {
+        "name": "admin.new-payment.index",
+        "displayName": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments",
+        "args": []
+    },
+    "adminNewPaymentList": {
+        "name": "admin.new-payment.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/list",
+        "args": []
+    },
+    "adminNewPaymentSave": {
+        "name": "admin.new-payment.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/payments\/save",
+        "args": []
+    },
+    "adminNewPaymentView": {
+        "name": "admin.new-payment.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/get\/{paymentId}",
+        "args": {
+            "paymentId": "{paymentId}"
+        }
+    },
     "adminPaymentCreate": {
         "name": "admin.payment.create",
         "displayName": "",
@@ -722,6 +771,20 @@
         "uri": "\/password\/reset",
         "args": []
     },
+    "payment": {
+        "name": "payment",
+        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/contacts\/requests\/payment",
+        "args": []
+    },
+    "paymentCreate": {
+        "name": "payment.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/contacts\/requests\/payment",
+        "args": []
+    },
     "privacy": {
         "name": "privacy",
         "displayName": "\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445",
@@ -775,14 +838,14 @@
         "name": "proposal",
         "displayName": "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
         "method": "get",
-        "uri": "\/contacts\/proposal",
+        "uri": "\/contacts\/requests\/proposal",
         "args": []
     },
     "proposalCreate": {
         "name": "proposal.create",
         "displayName": "",
         "method": "post",
-        "uri": "\/contacts\/proposal",
+        "uri": "\/contacts\/requests\/proposal",
         "args": []
     },
     "regulation": {
@@ -854,6 +917,13 @@
         "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/save",
+        "args": []
+    },
+    "requests": {
+        "name": "requests",
+        "displayName": "\u041e\u0431\u0440\u0430\u0449\u0435\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/contacts\/requests",
         "args": []
     },
     "rubrics": {

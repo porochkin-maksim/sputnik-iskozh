@@ -4,7 +4,9 @@ namespace Core\Domains\Billing\Payment;
 
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Repositories\PaymentRepository;
+use Core\Domains\Billing\Payment\Services\FileService;
 use Core\Domains\Billing\Payment\Services\PaymentService;
+use Core\Domains\File\FileLocator;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 abstract class PaymentLocator
@@ -12,6 +14,7 @@ abstract class PaymentLocator
     private static PaymentService    $paymentService;
     private static PaymentFactory    $paymentFactory;
     private static PaymentRepository $paymentRepository;
+    private static FileService       $fileService;
 
     public static function PaymentService(): PaymentService
     {
@@ -42,5 +45,16 @@ abstract class PaymentLocator
         }
 
         return self::$paymentRepository;
+    }
+
+    public static function FileService(): FileService
+    {
+        if ( ! isset(self::$fileService)) {
+            self::$fileService = new FileService(
+                FileLocator::FileService(),
+            );
+        }
+
+        return self::$fileService;
     }
 }

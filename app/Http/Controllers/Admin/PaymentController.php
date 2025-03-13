@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use Core\Domains\Billing\Payment\Services\FileService;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payments\SaveRequest;
 use App\Http\Resources\Admin\Payments\PaymentResource;
@@ -23,17 +24,19 @@ class PaymentController extends Controller
     private PaymentFactory $paymentFactory;
     private PaymentService $paymentService;
     private InvoiceService $invoiceService;
+    private FileService    $fileService;
 
     public function __construct()
     {
         $this->paymentService = PaymentLocator::PaymentService();
         $this->paymentFactory = PaymentLocator::PaymentFactory();
+        $this->fileService    = PaymentLocator::FileService();
         $this->invoiceService = InvoiceLocator::InvoiceService();
     }
 
     public function create(int $invoiceId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
@@ -44,7 +47,8 @@ class PaymentController extends Controller
 
         $payment = $this->paymentFactory->makeDefault()
             ->setInvoiceId($invoiceId)
-            ->setInvoice($invoice);
+            ->setInvoice($invoice)
+        ;
 
         return response()->json([
             'payment' => new PaymentResource($payment),
@@ -53,15 +57,15 @@ class PaymentController extends Controller
 
     public function get(int $invoiceId, int $paymentId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
         if ( ! $invoiceId || ! $paymentId) {
             abort(412);
         }
 
-        $payment        = $this->paymentService->getById($paymentId);
-        $invoice        = $this->invoiceService->getById($invoiceId);
+        $payment = $this->paymentService->getById($paymentId);
+        $invoice = $this->invoiceService->getById($invoiceId);
         if ( ! $payment || ! $invoice) {
             abort(412);
         }
@@ -75,7 +79,7 @@ class PaymentController extends Controller
 
     public function save(int $invoiceId, SaveRequest $request): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
@@ -87,20 +91,26 @@ class PaymentController extends Controller
         $payment = $request->getId()
             ? $this->paymentService->getById($request->getId())
             : $this->paymentFactory->makeDefault()
-                ->setModerated(true)
-                ->setVerified(true)
                 ->setInvoiceId($invoiceId)
-                ->setAccountId($invoice->getAccountId());
+                ->setAccountId($invoice->getAccountId())
+        ;
 
         if ( ! $payment) {
             abort(404);
         }
 
         $payment
+            ->setModerated(true)
+            ->setVerified(true)
             ->setCost($request->getCost())
-            ->setComment($request->getComment());
+            ->setComment($request->getComment())
+        ;
 
         $payment = $this->paymentService->save($payment);
+
+        foreach ($request->allFiles() as $file) {
+            $this->fileService->store($file, $payment->getId());
+        }
 
         return response()->json([
             'payment' => new PaymentResource($payment),
@@ -109,14 +119,16 @@ class PaymentController extends Controller
 
     public function list(int $invoiceId): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
 
         $searcher = new PaymentSearcher();
         $searcher
+            ->setWithFiles()
             ->setInvoiceId($invoiceId)
-            ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
 
         $payments = $this->paymentService->search($searcher);
 
@@ -127,7 +139,7 @@ class PaymentController extends Controller
 
     public function delete(int $invoiceId, int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::PAYMENTS_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_DROP)) {
             abort(403);
         }
 

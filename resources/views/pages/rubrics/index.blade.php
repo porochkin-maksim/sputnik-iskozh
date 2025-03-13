@@ -17,7 +17,7 @@ $openGraph->setUrl(route(RouteNames::RUBRICS));
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(app::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->canEditTemplates())
         <page-editor :template="'{{ ViewNames::PAGES_RUBRICS }}'"></page-editor>
     @endif
     <h1 class="page-title">

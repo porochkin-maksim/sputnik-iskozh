@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use app;
+use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Roles\SaveRequest;
 use App\Http\Resources\Admin\Roles\RoleResource;
@@ -27,7 +27,7 @@ class RolesController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
             abort(403);
         }
 
@@ -36,7 +36,7 @@ class RolesController extends Controller
 
     public function list(): JsonResponse
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
             abort(403);
         }
 
@@ -48,11 +48,11 @@ class RolesController extends Controller
 
     public function save(SaveRequest $request): JsonResponse
     {
-        if ($request->getId() && ! app::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
+        if ($request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
             abort(403);
         }
 
-        if ( ! $request->getId() && ! app::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
+        if ( ! $request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
             abort(403);
         }
 
@@ -76,7 +76,7 @@ class RolesController extends Controller
 
     public function delete(int $id): bool
     {
-        if ( ! app::roleDecorator()->can(PermissionEnum::ROLES_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_DROP)) {
             abort(403);
         }
 

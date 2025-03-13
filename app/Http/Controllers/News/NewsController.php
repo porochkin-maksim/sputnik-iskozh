@@ -219,6 +219,6 @@ class NewsController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canNews();
+        return \lc::roleDecorator()->canNews();
     }
 }
