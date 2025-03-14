@@ -148,10 +148,12 @@ export default {
 
             actions   : this.user.actions,
             historyUrl: this.user.historyUrl,
+
+            routeState: 0,
         };
     },
     methods: {
-        saveAction () {
+        saveAction () {//
             if (!this.actions.edit) {
                 return;
             }
@@ -175,6 +177,11 @@ export default {
 
                 this.localUser.id   = response.data.id;
                 this.localUser.name = response.data.name;
+
+                let uri = Url.Generator.makeUri(Url.Routes.adminUserView, {
+                    id: this.localUser.id,
+                });
+                window.history.pushState({ state: this.routeState++ }, '', uri);
 
                 this.actions = response.data.actions;
             }).catch(response => {

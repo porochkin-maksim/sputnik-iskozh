@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Str;
 use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
@@ -107,7 +108,7 @@ class UsersController extends Controller
 
         $user = $request->getId()
             ? $this->userService->getById($request->getId())
-            : $this->userFactory->makeDefault();
+            : $this->userFactory->makeDefault()->setPassword(Str::random(8));
 
         if ( ! $user) {
             abort(404);
