@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Profile\Counters;
+namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
+use Core\Responses\ResponsesEnum;
 
 readonly class CounterHistoryListResource extends AbstractResource
 {
@@ -15,14 +17,22 @@ readonly class CounterHistoryListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $result = [];
+        $access = \lc::roleDecorator();
+        $result = [
+            'histories' => [],
+            'actions'   => [
+                ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::COUNTERS_DROP),
+            ],
+        ];
 
         if ($this->counterHistoryCollection->isEmpty()) {
             return $result;
         }
         $previous = null;
         foreach ($this->counterHistoryCollection as $counterHistory) {
-            $result[] = new CounterHistoryResource($counterHistory, $previous);
+            $result['histories'][] = new CounterHistoryResource($counterHistory, $previous);
 
             $previous = $counterHistory;
         }

@@ -50,6 +50,43 @@
         "uri": "\/admin\/accounts\/save",
         "args": []
     },
+    "adminCounterHistoryConfirm": {
+        "name": "admin.counter-history.confirm",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/confirm",
+        "args": []
+    },
+    "adminCounterHistoryDelete": {
+        "name": "admin.counter-history.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/counter-history\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterHistoryIndex": {
+        "name": "admin.counter-history.index",
+        "displayName": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u043a\u0430\u0437\u0430\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/admin\/counter-history",
+        "args": []
+    },
+    "adminCounterHistoryLink": {
+        "name": "admin.counter-history.link",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/link",
+        "args": []
+    },
+    "adminCounterHistoryList": {
+        "name": "admin.counter-history.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/counter-history\/json\/list",
+        "args": []
+    },
     "adminIndex": {
         "name": "admin.index",
         "displayName": "\u041e \u0441\u0438\u0441\u0442\u0435\u043c\u0435",
@@ -116,7 +153,7 @@
         "name": "admin.new-payment.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/invoices\/payments\/delete\/{id}",
+        "uri": "\/admin\/invoices\/payments\/json\/delete\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -125,7 +162,7 @@
         "name": "admin.new-payment.get-invoices",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/invoices\/payments\/get-invoices\/{accountId}\/{periodId}",
+        "uri": "\/admin\/invoices\/payments\/json\/get-invoices\/{accountId}\/{periodId}",
         "args": {
             "accountId": "{accountId}",
             "periodId": "{periodId}"
@@ -142,21 +179,21 @@
         "name": "admin.new-payment.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/invoices\/payments\/list",
+        "uri": "\/admin\/invoices\/payments\/json\/list",
         "args": []
     },
     "adminNewPaymentSave": {
         "name": "admin.new-payment.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/invoices\/payments\/save",
+        "uri": "\/admin\/invoices\/payments\/json\/save",
         "args": []
     },
     "adminNewPaymentView": {
         "name": "admin.new-payment.view",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/invoices\/payments\/get\/{paymentId}",
+        "uri": "\/admin\/invoices\/payments\/json\/get\/{paymentId}",
         "args": {
             "paymentId": "{paymentId}"
         }
@@ -281,6 +318,22 @@
         "method": "post",
         "uri": "\/admin\/roles\/save",
         "args": []
+    },
+    "adminSelectsAccounts": {
+        "name": "admin.selects.accounts",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/accounts",
+        "args": []
+    },
+    "adminSelectsCounters": {
+        "name": "admin.selects.counters",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/counters\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
     },
     "adminServiceCreate": {
         "name": "admin.service.create",
@@ -832,6 +885,13 @@
         "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",
         "method": "get",
         "uri": "\/home\/counters",
+        "args": []
+    },
+    "profilePaymentsIndex": {
+        "name": "profile.payments.index",
+        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/home\/payments",
         "args": []
     },
     "profileSave": {

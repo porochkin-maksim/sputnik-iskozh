@@ -3,6 +3,7 @@
 namespace Core\Domains\Counter\Factories;
 
 use App\Models\Counter\Counter;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
@@ -51,6 +52,10 @@ readonly class CounterFactory
 
         if (isset($model->getRelations()[Counter::HISTORY])) {
             $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::HISTORY)));
+        }
+
+        if (isset($model->getRelations()[Counter::ACCOUNT])) {
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::ACCOUNT)));
         }
 
         return $result;

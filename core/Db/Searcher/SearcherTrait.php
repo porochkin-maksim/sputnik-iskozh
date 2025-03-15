@@ -167,9 +167,9 @@ trait SearcherTrait
         return $this->where;
     }
 
-    public function addWhere(string $type, string $operator, mixed $value = null): static
+    public function addWhere(string $filed, string $operator, mixed $value = null): static
     {
-        $this->getWhere()->push(new Where($type, $operator, $value));
+        $this->getWhere()->push(new Where($filed, $operator, $value));
 
         return $this;
     }

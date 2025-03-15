@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Counter\Models;
 
+use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
@@ -16,6 +17,7 @@ class CounterDTO
     private ?string          $number      = null;
     private ?bool            $isInvoicing = null;
 
+    private ?AccountDTO               $account           = null;
     private ?CounterHistoryCollection $historyCollection = null;
 
     public function getId(): ?int
@@ -85,8 +87,20 @@ class CounterDTO
         return $this;
     }
 
-    public function getHistoryCollection(): ?CounterHistoryCollection
+    public function getHistoryCollection(): CounterHistoryCollection
     {
-        return $this->historyCollection;
+        return $this->historyCollection ?: new CounterHistoryCollection();
+    }
+
+    public function setAccount(?AccountDTO $account): static
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    public function getAccount(): ?AccountDTO
+    {
+        return $this->account;
     }
 }

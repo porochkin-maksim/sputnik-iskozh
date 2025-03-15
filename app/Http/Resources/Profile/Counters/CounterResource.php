@@ -16,7 +16,7 @@ readonly class CounterResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $lastHistory = $this->counter->getHistoryCollection()?->first();
+        $lastHistory = $this->counter->getHistoryCollection()->first();
 
         return [
             'id'          => $this->counter->getId(),

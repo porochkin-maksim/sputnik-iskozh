@@ -1,4 +1,5 @@
 export default {
+    account      : 'account',
     active       : 'active',
     article      : 'article',
     all          : 'all',
@@ -49,5 +50,10 @@ export default {
     primaryId    : 'primary_id',
     referenceType: 'reference_type',
     referenceId  : 'reference_id',
-    permissions  : 'permissions'
+    permissions  : 'permissions',
+    value        : 'value',
+    counter      : 'counter',
+    counterId    : 'counter_id',
+    phone        : 'phone',
+    text         : 'text'
 }

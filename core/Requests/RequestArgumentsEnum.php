@@ -58,6 +58,7 @@ enum RequestArgumentsEnum: string
     public const PERMISSIONS     = 'permissions';
     public const VALUE           = 'value';
     public const COUNTER         = 'counter';
+    public const COUNTER_ID      = 'counter_id';
     public const PHONE           = 'phone';
     public const TEXT            = 'text';
 }

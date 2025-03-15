@@ -33,14 +33,16 @@ class RecalcInvoiceJob implements ShouldQueue
         $searcher = new InvoiceSearcher();
         $searcher
             ->setId($this->invoiceId)
-            ->setWithTransactions();
+            ->setWithTransactions()
+        ;
 
-        $invoice       = InvoiceLocator::InvoiceService()->search($searcher)->getItems()->first();
-        $oldTotalPayed = MoneyService::parse($invoice->getPayed());
+        $invoice = InvoiceLocator::InvoiceService()->search($searcher)->getItems()->first();
 
         if ( ! $invoice) {
             return;
         }
+
+        $oldTotalPayed = MoneyService::parse($invoice->getPayed());
 
         $totalCost  = MoneyService::parse(0);
         $totalPayed = MoneyService::parse(0);

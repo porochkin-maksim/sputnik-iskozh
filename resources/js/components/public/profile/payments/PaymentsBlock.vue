@@ -49,62 +49,7 @@
             </button>
         </div>
     </div>
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
-                 @hidden="closeAction"
-    >
-        <template v-slot:title>{{ mode === 1 ? 'Добавление счётчика' : 'Внесение показаний счётчика' }}</template>
-        <template v-slot:body>
-            <div class="container-fluid">
-                <div v-if="mode === 1">
-                    <custom-input v-model="number"
-                                  :errors="errors.number"
-                                  :type="'text'"
-                                  :label="'Серийный номер устройства'"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <custom-input v-model="value"
-                                  :errors="errors.value"
-                                  :type="'number'"
-                                  :label="'Текущие показания на счётчике'"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <div v-if="file">
-                        <button class="btn btn-sm btn-danger"
-                                @click="removeFile">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        &nbsp;
-                        {{ file.name }}
-                    </div>
-                    <template v-else>
-                        <button class="btn btn-outline-secondary"
-                                @click="chooseFile"
-                                v-if="!file">
-                            <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
-                        </button>
-                        <input class="d-none"
-                               type="file"
-                               ref="fileElem"
-                               accept="image/*"
-                               @change="appendFile"
-                        />
-                    </template>
-                </div>
-            </div>
-        </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
-                    @click="submitAction"
-                    :disabled="!canSubmitAction">
-                Добавить
-            </button>
-        </template>
-    </view-dialog>
+
 </template>
 
 <script>
@@ -118,7 +63,7 @@ import FileItem       from '../../../common/files/FileItem.vue';
 import SearchSelect   from '../../../common/form/SearchSelect.vue';
 
 export default {
-    name      : 'ProfileCountersBlock',
+    name      : 'ProfilePaymentsBlock',
     components: {
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,

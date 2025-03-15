@@ -19,12 +19,12 @@ $hasAccount = (bool) lc::account()->getId();
                 {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @if(Route::is(RouteNames::ANNOUNCEMENTS) || Route::is(RouteNames::ANNOUNCEMENTS_SHOW)) active @endif"
-               href="">
-                {{ RouteNames::name(RouteNames::PROFILE_PAYMENTS) }}
-            </a>
-        </li>
+{{--        <li class="nav-item">--}}
+{{--            <a class="nav-link @if(Route::is(RouteNames::PROFILE_PAYMENTS)) active @endif"--}}
+{{--               href="">--}}
+{{--                {{ RouteNames::name(RouteNames::PROFILE_PAYMENTS) }}--}}
+{{--            </a>--}}
+{{--        </li>--}}
         @endif
         <li class="nav-item">
             <a class="nav-link"
@@ -49,12 +49,12 @@ $hasAccount = (bool) lc::account()->getId();
                 {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link"
-               href="">
-                {{ RouteNames::name(RouteNames::PROFILE_PAYMENTS) }}
-            </a>
-        </li>
+{{--        <li class="nav-item">--}}
+{{--            <a class="nav-link"--}}
+{{--               href="{{ route(RouteNames::PROFILE_PAYMENTS) }}">--}}
+{{--                {{ RouteNames::name(RouteNames::PROFILE_PAYMENTS) }}--}}
+{{--            </a>--}}
+{{--        </li>--}}
         @endif
     </ul>
 

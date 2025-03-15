@@ -8,5 +8,5 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_PROFILE)
 
 @section(SectionNames::CONTENT)
-    <profile-counters-block></profile-counters-block>
+    <profile-payments-block></profile-payments-block>
 @endsection

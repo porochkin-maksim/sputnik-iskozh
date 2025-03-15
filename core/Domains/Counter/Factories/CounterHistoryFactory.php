@@ -5,6 +5,7 @@ namespace Core\Domains\Counter\Factories;
 use App\Models\Counter\CounterHistory;
 use Carbon\Carbon;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
+use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\File\FileLocator;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,6 +55,10 @@ readonly class CounterHistoryFactory
 
         if (isset($model->getRelations()[CounterHistory::FILE])) {
             $result->setFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(CounterHistory::FILE)));
+        }
+
+        if (isset($model->getRelations()[CounterHistory::COUNTER])) {
+            $result->setCounter(CounterLocator::CounterFactory()->makeDtoFromObject($model->getRelation(CounterHistory::COUNTER)));
         }
 
         return $result;

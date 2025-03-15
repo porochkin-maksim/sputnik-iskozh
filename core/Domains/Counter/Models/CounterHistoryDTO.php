@@ -19,6 +19,7 @@ class CounterHistoryDTO
     private ?bool   $is_verified = null;
 
     private ?FileDTO $file = null;
+    private ?CounterDTO $counter = null;
 
     public function getId(): ?int
     {
@@ -114,5 +115,17 @@ class CounterHistoryDTO
     public function getFile(): ?FileDTO
     {
         return $this->file;
+    }
+
+    public function setCounter(?CounterDTO $counter): static
+    {
+        $this->counter = $counter;
+
+        return $this;
+    }
+
+    public function getCounter(): ?CounterDTO
+    {
+        return $this->counter;
     }
 }

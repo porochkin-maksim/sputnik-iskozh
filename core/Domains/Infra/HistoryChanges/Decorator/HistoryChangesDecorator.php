@@ -40,6 +40,11 @@ readonly class HistoryChangesDecorator
         return $result;
     }
 
+    public function getText(): ?string
+    {
+        return $this->logData->getText();
+    }
+
     public function getEvent(): Event
     {
         return $this->logData->getEvent();

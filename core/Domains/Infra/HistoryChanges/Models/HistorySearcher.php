@@ -23,8 +23,6 @@ class HistorySearcher implements SearcherInterface
         ?int                 $referenceId,
     ): static
     {
-        $this->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type);
-
         if ($type) {
             $this->addWhere(HistoryChanges::TYPE, SearcherInterface::EQUALS, $type);
         }

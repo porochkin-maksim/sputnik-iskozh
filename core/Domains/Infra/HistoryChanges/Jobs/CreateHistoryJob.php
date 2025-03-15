@@ -24,6 +24,6 @@ class CreateHistoryJob implements ShouldQueue
 
     public function handle(): void
     {
-HistoryChangesLocator::HistoryChangesService()->save($this->historyChanges);
+        HistoryChangesLocator::HistoryChangesService()->save($this->historyChanges);
     }
 }

@@ -43,6 +43,9 @@ if ($authRole->can(PermissionEnum::INVOICES_VIEW)) {
 if ($authRole->can(PermissionEnum::PAYMENTS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_NEW_PAYMENT_INDEX;
 }
+if ($authRole->can(PermissionEnum::COUNTERS_VIEW)) {
+    $navRoutes[] = RouteNames::ADMIN_COUNTER_HISTORY_INDEX;
+}
 ?>
         <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

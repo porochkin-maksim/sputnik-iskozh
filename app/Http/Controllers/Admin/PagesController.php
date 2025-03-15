@@ -78,4 +78,13 @@ class PagesController extends Controller
 
         abort(403);
     }
+
+    public function counterHistory()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::COUNTERS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_COUNTER_HISTORY);
+        }
+
+        abort(403);
+    }
 }

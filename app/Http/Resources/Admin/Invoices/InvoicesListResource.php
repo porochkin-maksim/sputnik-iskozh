@@ -6,7 +6,6 @@ use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use App\Http\Resources\Common\SelectResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Collections\AccountCollection;

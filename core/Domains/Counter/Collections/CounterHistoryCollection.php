@@ -18,4 +18,35 @@ class CounterHistoryCollection extends Collection implements CollectionInterface
     {
         return $item instanceof CounterHistoryDTO;
     }
+
+    public function hasUnlinked(): bool
+    {
+        foreach ($this as $item) {
+            if (!$item->getCounterId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getUnlinked(): static
+    {
+        $result = new static();
+
+        foreach ($this as $item) {
+            if (!$item->getCounterId()) {
+                $result->add($item);
+            }
+        }
+
+        return $result;
+    }
+
+    public function sortById(): static
+    {
+        return $this->sort(function (CounterHistoryDTO $account1, CounterHistoryDTO $account2) {
+            return $account1->getId() <= $account2->getId() ? -1 : 1;
+        });
+    }
 }

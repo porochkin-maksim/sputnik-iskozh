@@ -157,11 +157,14 @@ abstract class RouteNames
     public const ADMIN_NEW_PAYMENT_INVOICES = 'admin.new-payment.get-invoices';
     public const ADMIN_NEW_PAYMENT_DELETE   = 'admin.new-payment.delete';
 
-    public const ADMIN_COUNTER_HISTORY_INDEX  = 'admin.counter-history.index';
-    public const ADMIN_COUNTER_HISTORY_VIEW   = 'admin.counter-history.view';
-    public const ADMIN_COUNTER_HISTORY_SAVE   = 'admin.counter-history.save';
-    public const ADMIN_COUNTER_HISTORY_LIST   = 'admin.counter-history.list';
-    public const ADMIN_COUNTER_HISTORY_DELETE = 'admin.counter-history.delete';
+    public const ADMIN_COUNTER_HISTORY_INDEX   = 'admin.counter-history.index';
+    public const ADMIN_COUNTER_HISTORY_LINK    = 'admin.counter-history.link';
+    public const ADMIN_COUNTER_HISTORY_LIST    = 'admin.counter-history.list';
+    public const ADMIN_COUNTER_HISTORY_DELETE  = 'admin.counter-history.delete';
+    public const ADMIN_COUNTER_HISTORY_CONFIRM = 'admin.counter-history.confirm';
+
+    public const ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
+    public const ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
 
     public static function name(mixed $key, string $default = ''): string
     {
@@ -201,7 +204,7 @@ abstract class RouteNames
             self::ADMIN_ACCOUNT_INDEX         => 'Участки',
             self::ADMIN_INVOICE_INDEX         => 'Счета',
             self::ADMIN_NEW_PAYMENT_INDEX     => 'Новые платежи',
-            self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые счётчики',
+            self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые показания',
 
             default                           => $default,
         };

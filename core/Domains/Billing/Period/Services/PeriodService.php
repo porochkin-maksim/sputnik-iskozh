@@ -2,6 +2,9 @@
 
 namespace Core\Domains\Billing\Period\Services;
 
+use App\Models\Billing\Period;
+use Carbon\Carbon;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Billing\Period\Collections\PeriodCollection;
 use Core\Domains\Billing\Period\Events\PeriodCreatedEvent;
 use Core\Domains\Billing\Period\Factories\PeriodFactory;
@@ -13,6 +16,7 @@ use Core\Domains\Billing\Period\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Enums\DateTimeFormat;
 
 readonly class PeriodService
 {
@@ -98,5 +102,18 @@ readonly class PeriodService
         );
 
         return $this->periodRepository->deleteById($id);
+    }
+
+    public function getCurrentPeriod(): ?PeriodDTO
+    {
+        $searcher = new PeriodSearcher();
+        $searcher
+            ->addWhere(Period::START_AT, SearcherInterface::LTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
+           ->addWhere(Period::END_AT, SearcherInterface::GTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
+        ;
+
+        $result = $this->periodRepository->search($searcher)->getItems()->first();
+
+        return $result ? $this->periodFactory->makeDtoFromObject($result) : null;
     }
 }

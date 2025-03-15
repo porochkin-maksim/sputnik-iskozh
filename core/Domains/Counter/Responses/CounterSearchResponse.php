@@ -8,7 +8,7 @@ use Core\Domains\Counter\Collections\CounterCollection;
 /**
  * @method CounterCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class CounterSearchResponse extends BaseSearchResponse
 {
 
 }

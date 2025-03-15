@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import PaymentsList  from './PaymentsList.vue';
+import PaymentsList  from './PaymentsList.vue';//
 import ViewDialog    from '../../common/ViewDialog.vue';
 import ResponseError from '../../../mixin/ResponseError.js';
 import Url           from '../../../utils/Url.js';

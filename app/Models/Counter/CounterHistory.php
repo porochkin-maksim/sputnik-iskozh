@@ -7,6 +7,7 @@ use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\File\Enums\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -31,7 +32,8 @@ class CounterHistory extends Model implements CastsInterface
     public const DATE        = 'date';
     public const IS_VERIFIED = 'is_verified';
 
-    public const FILE = 'file';
+    public const FILE    = 'file';
+    public const COUNTER = 'counter';
 
     protected $guarded = [];
     protected $with    = [self::FILE];
@@ -48,5 +50,12 @@ class CounterHistory extends Model implements CastsInterface
         return $this->hasOne(File::class, File::RELATED_ID)
             ->where(File::TYPE, TypeEnum::COUNTER->value)
         ;
+    }
+
+    public function counter(): BelongsTo
+    {
+        return $this->belongsTo(Counter::class, self::COUNTER_ID)
+            ->with(Counter::ACCOUNT)
+            ->without(Counter::HISTORY);
     }
 }

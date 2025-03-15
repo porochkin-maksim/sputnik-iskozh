@@ -9,7 +9,7 @@ use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Models\CounterDTO;
 use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Counter\Repositories\CounterRepository;
-use Core\Domains\Counter\Responses\SearchResponse;
+use Core\Domains\Counter\Responses\CounterSearchResponse;
 
 readonly class CounterService
 {
@@ -20,11 +20,11 @@ readonly class CounterService
     {
     }
 
-    public function search(CounterSearcher $searcher): SearchResponse
+    public function search(CounterSearcher $searcher): CounterSearchResponse
     {
         $response = $this->counterRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new CounterSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new CounterCollection();
@@ -61,7 +61,7 @@ readonly class CounterService
 
     public function getByAccountId(?int $id): CounterCollection
     {
-        $searcher = new CounterSearcher();
+        $searcher = new CounterSearcher();//
         $searcher
             ->setAccountId($id)
             ->setSortOrderProperty(Counter::IS_INVOICING, SearcherInterface::SORT_ORDER_DESC)

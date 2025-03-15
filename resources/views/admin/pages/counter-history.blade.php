@@ -5,8 +5,8 @@ use Core\Resources\Views\ViewNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_PROFILE)
+@extends(ViewNames::LAYOUTS_ADMIN)
 
 @section(SectionNames::CONTENT)
-    <profile-counters-block></profile-counters-block>
+    <counter-history-block></counter-history-block>
 @endsection

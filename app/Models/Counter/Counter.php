@@ -2,10 +2,12 @@
 
 namespace App\Models\Counter;
 
+use App\Models\Account\Account;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -33,6 +35,7 @@ class Counter extends Model implements CastsInterface
     public const NUMBER       = 'number';
     public const IS_INVOICING = 'is_invoicing';
 
+    public const ACCOUNT = 'account';
     public const HISTORY = 'history';
 
     protected $guarded = [];
@@ -45,7 +48,14 @@ class Counter extends Model implements CastsInterface
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
-            ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->orderBy(CounterHistory::DATE, SearcherInterface::SORT_ORDER_ASC)
+            ->orderBy(CounterHistory::CREATED_AT, SearcherInterface::SORT_ORDER_ASC)
+            ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, self::ACCOUNT_ID);
     }
 }

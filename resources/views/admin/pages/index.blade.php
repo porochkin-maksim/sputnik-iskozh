@@ -103,10 +103,38 @@ $authRole = lc::roleDecorator();
                     <ul>
                         <li>
                             <b>{{ InvoiceTypeEnum::REGULAR->name() }}</b> - автоматически содаются транзакции по услугам в привязанном периоде
+                            <b class="text-danger">в пользу СНТ</b>
                         </li>
-                        <li><b>{{ InvoiceTypeEnum::INCOME->name() }}</b>- счёт для нерегулярных доходов</li>
-                        <li><b>{{ InvoiceTypeEnum::OUTCOME->name() }}</b> - счёт для расходов</li>
+                        <li><b>{{ InvoiceTypeEnum::INCOME->name() }}</b>- счёт для нерегулярных доходов
+                            <b class="text-danger">в пользу СНТ</b></li>
+                        <li><b>{{ InvoiceTypeEnum::OUTCOME->name() }}</b> - счёт для расходов
+                            <b class="text-danger">со счёта СНТ</b></li>
                     </ul>
+                </td>
+            </tr>
+        @endif
+        @if($authRole->can(PermissionEnum::PAYMENTS_VIEW))
+            <tr>
+                <th>
+                    <a href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}
+                    </a>
+                </th>
+                <td>
+                    Обработка и привязка платежей через <a href="{{ route(RouteNames::PAYMENT) }}">форму обращений</a>
+                </td>
+            </tr>
+        @endif
+        @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
+            <tr>
+                <th>
+                    <a href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}
+                    </a>
+                </th>
+                <td>
+                    Обработка и привязка показаний счётчиков полученных через
+                    <a href="{{ route(RouteNames::COUNTER) }}">форму обращений</a> и из личного кабинета члена СНТ
                 </td>
             </tr>
         @endif
