@@ -3,10 +3,10 @@
 namespace Core\Domains\Counter\Responses;
 
 use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
-use Core\Domains\Counter\Collections\Counters;
+use Core\Domains\Counter\Collections\CounterCollection;
 
 /**
- * @method Counters getItems()
+ * @method CounterCollection getItems()
  */
 class SearchResponse extends BaseSearchResponse
 {

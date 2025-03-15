@@ -27,6 +27,11 @@ readonly class HistoryChangesService
     {
     }
 
+    public function makeHistory(): HistoryChangesDTO
+    {
+        return $this->historyChangesFactory->makeDefault();
+    }
+
     public function writeToHistory(
         Event                  $event,
         HistoryType            $type,

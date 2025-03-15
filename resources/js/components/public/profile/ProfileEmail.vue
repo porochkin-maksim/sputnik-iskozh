@@ -68,7 +68,8 @@ export default {
             window.axios[Url.Routes.profileSaveEmail.method](Url.Routes.profileSaveEmail.uri, {
                 email  : this.email,
             }).then(response => {
-                location.reload();
+                this.editMode = false;
+                this.showSuccess('Почта изменена. Проверьте новую новую почту и подтвердите её.');
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

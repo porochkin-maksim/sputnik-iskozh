@@ -20,7 +20,7 @@
                       :classes="'my-3'"
                       @change="clearError('name')"
                       :errors="errors.name"
-                      :label="'Имя (по желанию)'"
+                      :label="'Ваше имя (по желанию)'"
                       @submit="sendForm"
         />
         <custom-input v-model="email"
@@ -94,10 +94,10 @@ export default {
         ResponseError,
     ],
     created () {
-        this.email = localStorage.getItem('paymentEmail') === 'null' ? '' : localStorage.getItem('paymentEmail');
-        this.phone = localStorage.getItem('paymentPhone') === 'null' ? '' : localStorage.getItem('paymentPhone');
-        this.name  = localStorage.getItem('paymentName') === 'null' ? '' : localStorage.getItem('paymentName');
-        this.text  = localStorage.getItem('paymentText') === 'null' ? '' : localStorage.getItem('paymentText');
+        this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
+        this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
+        this.name  = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        this.text  = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
     },
     data () {
         return {
@@ -128,20 +128,9 @@ export default {
             });
 
             window.axios[Url.Routes.paymentCreate.method](Url.Routes.paymentCreate.uri, form).then(response => {
-                localStorage.removeItem('paymentEmail');
-                localStorage.removeItem('paymentPhone');
-                localStorage.removeItem('paymentName');
-                localStorage.removeItem('paymentText');
-
-                this.email = '';
-                this.phone = '';
-                this.name  = '';
-                this.text  = '';
-                this.files = [];
-
+                localStorage.removeItem('requestText');
                 this.success = true;
                 this.showSuccess('Платёж принят');
-
                 setTimeout(() => {
                     location.reload();
                 }, 10000);
@@ -173,16 +162,16 @@ export default {
     },
     watch   : {
         email () {
-            localStorage.setItem('paymentEmail', this.email);
+            localStorage.setItem('requestEmail', this.email);
         },
         phone () {
-            localStorage.setItem('paymentPhone', this.phone);
+            localStorage.setItem('requestPhone', this.phone);
         },
         name () {
-            localStorage.setItem('paymentName', this.name);
+            localStorage.setItem('requestName', this.name);
         },
         text () {
-            localStorage.setItem('paymentText', this.text);
+            localStorage.setItem('requestText', this.text);
         },
     },
     computed: {

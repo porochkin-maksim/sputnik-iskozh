@@ -20,6 +20,8 @@ abstract class RouteNames
     public const PROPOSAL_CREATE = 'proposal.create';
     public const PAYMENT         = 'payment';
     public const PAYMENT_CREATE  = 'payment.create';
+    public const COUNTER         = 'counter';
+    public const COUNTER_CREATE  = 'counter.create';
 
     public const TEMPLATE_GET    = 'template.get';
     public const TEMPLATE_UPDATE = 'template.update';
@@ -82,8 +84,14 @@ abstract class RouteNames
     public const PROFILE_SAVE_EMAIL    = 'profile.save.email';
     public const PROFILE_SAVE_PASSWORD = 'profile.save.password';
 
-    public const PROFILE_COUNTERS_LIST = 'profile.counter.list';
-    public const PROFILE_COUNTER_SAVE  = 'profile.counter.save';
+
+    public const PROFILE_INDEX    = 'profile.index';
+    public const PROFILE_COUNTERS = 'profile.counters.index';
+    public const PROFILE_PAYMENTS = 'profile.payments.index';
+
+    public const PROFILE_COUNTERS_LIST     = 'profile.counter.list';
+    public const PROFILE_COUNTER_CREATE    = 'profile.counter.create';
+    public const PROFILE_COUNTER_ADD_VALUE = 'profile.counter.add-value';
 
     public const HISTORY_CHANGES = 'infra.history-changes';
 
@@ -149,42 +157,53 @@ abstract class RouteNames
     public const ADMIN_NEW_PAYMENT_INVOICES = 'admin.new-payment.get-invoices';
     public const ADMIN_NEW_PAYMENT_DELETE   = 'admin.new-payment.delete';
 
+    public const ADMIN_COUNTER_HISTORY_INDEX  = 'admin.counter-history.index';
+    public const ADMIN_COUNTER_HISTORY_VIEW   = 'admin.counter-history.view';
+    public const ADMIN_COUNTER_HISTORY_SAVE   = 'admin.counter-history.save';
+    public const ADMIN_COUNTER_HISTORY_LIST   = 'admin.counter-history.list';
+    public const ADMIN_COUNTER_HISTORY_DELETE = 'admin.counter-history.delete';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
-            self::CONTACTS                => 'Контакты',
-            self::GARBAGE                 => 'Вывоз мусора',
-            self::PRIVACY                 => 'Политика обработки персональных данных',
-            self::REGULATION              => 'Устав',
-            self::RUBRICS                 => 'Рубрикатор',
-            self::SEARCH                  => 'Поиск по сайту',
+            self::CONTACTS                    => 'Контакты',
+            self::GARBAGE                     => 'Вывоз мусора',
+            self::PRIVACY                     => 'Политика обработки персональных данных',
+            self::REGULATION                  => 'Устав',
+            self::RUBRICS                     => 'Рубрикатор',
+            self::SEARCH                      => 'Поиск по сайту',
 
-            self::REQUESTS                => 'Обращения',
-            self::PROPOSAL                => 'Предложения',
-            self::PAYMENT                 => 'Платежи',
+            self::REQUESTS                    => 'Обращения',
+            self::PROPOSAL                    => 'Предложения',
+            self::PAYMENT                     => 'Платежи',
+            self::COUNTER                     => 'Показания',
 
-            self::HOME                    => 'Личный кабинет',
-            self::PROFILE                 => 'Профиль',
-            self::LOGOUT                  => 'Выйти',
+            self::HOME                        => 'Личный кабинет',
+            self::PROFILE                     => 'Профиль',
+            self::LOGOUT                      => 'Выйти',
 
-            self::OPTIONS                 => 'Настройки',
+            self::PROFILE_COUNTERS            => 'Счётчики',
+            self::PROFILE_PAYMENTS            => 'Платежи',
 
-            self::FILES                   => 'Файлы',
-            self::NEWS                    => 'Новости',
-            self::ANNOUNCEMENTS           => 'Объявления',
-            self::REPORTS                 => 'Отчёты',
+            self::OPTIONS                     => 'Настройки',
+
+            self::FILES                       => 'Файлы',
+            self::NEWS                        => 'Новости',
+            self::ANNOUNCEMENTS               => 'Объявления',
+            self::REPORTS                     => 'Отчёты',
 
             // админка
-            self::ADMIN                   => 'О системе',
-            self::ADMIN_USER_INDEX        => 'Пользователи',
-            self::ADMIN_ROLE_INDEX        => 'Роли',
-            self::ADMIN_SERVICE_INDEX     => 'Услуги',
-            self::ADMIN_PERIOD_INDEX      => 'Периоды',
-            self::ADMIN_ACCOUNT_INDEX     => 'Участки',
-            self::ADMIN_INVOICE_INDEX     => 'Счета',
-            self::ADMIN_NEW_PAYMENT_INDEX => 'Новые платежи',
+            self::ADMIN                       => 'О системе',
+            self::ADMIN_USER_INDEX            => 'Пользователи',
+            self::ADMIN_ROLE_INDEX            => 'Роли',
+            self::ADMIN_SERVICE_INDEX         => 'Услуги',
+            self::ADMIN_PERIOD_INDEX          => 'Периоды',
+            self::ADMIN_ACCOUNT_INDEX         => 'Участки',
+            self::ADMIN_INVOICE_INDEX         => 'Счета',
+            self::ADMIN_NEW_PAYMENT_INDEX     => 'Новые платежи',
+            self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые счётчики',
 
-            default                       => $default,
+            default                           => $default,
         };
     }
 }

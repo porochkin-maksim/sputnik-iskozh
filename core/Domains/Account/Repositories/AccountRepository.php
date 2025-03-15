@@ -40,11 +40,11 @@ class AccountRepository
         return new AccountCollection($this->traitGetByIds($ids));
     }
 
-    public function save(Account $report): Account
+    public function save(Account $object): Account
     {
-        $report->save();
+        $object->save();
 
-        return $report;
+        return $object;
     }
 
     public function getByUserId(int $id): ?Account

@@ -11,23 +11,24 @@ return new class extends Migration {
     public function up(): void
     {
         if ( ! Schema::hasTable('counters')) {
-            Schema::create('counters', function (Blueprint $table) {
+            Schema::create('counters', static function (Blueprint $table) {
                 $table->id();
                 $table->tinyInteger('type')->index();
                 $table->foreignId('account_id')->references('id')->on('accounts')->restrictOnDelete();
                 $table->string('number')->unique()->index();
-                $table->boolean('is_primary')->default(false);
+                $table->boolean('is_invoicing')->default(false);
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
 
         if ( ! Schema::hasTable('counter_history')) {
-            Schema::create('counter_history', function (Blueprint $table) {
+            Schema::create('counter_history', static function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('counter_id')->references('id')->on('counters')->restrictOnDelete();
+                $table->foreignId('counter_id')->nullable()->references('id')->on('counters')->restrictOnDelete();
                 $table->float('value');
-                $table->float('tariff');
-                $table->float('cost');
+                $table->date('date');
+                $table->boolean('is_verified')->default(false);
                 $table->timestamps();
             });
         }

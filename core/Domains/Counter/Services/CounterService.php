@@ -2,8 +2,9 @@
 
 namespace Core\Domains\Counter\Services;
 
+use App\Models\Counter\Counter;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Counter\Collections\Counters;
+use Core\Domains\Counter\Collections\CounterCollection;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Models\CounterDTO;
 use Core\Domains\Counter\Models\CounterSearcher;
@@ -26,7 +27,7 @@ readonly class CounterService
         $result = new SearchResponse();
         $result->setTotal($response->getTotal());
 
-        $collection = new Counters();
+        $collection = new CounterCollection();
         foreach ($response->getItems() as $item) {
             $collection->add($this->counterFactory->makeDtoFromObject($item));
         }
@@ -50,7 +51,7 @@ readonly class CounterService
             $counter = $this->counterRepository->getById($dto->getId());
         }
         $counters = $this->getByAccountId($dto->getAccountId());
-        $dto->setIsPrimary(! $counters->getPrimary());
+        $dto->setIsInvoicing(! $counters->getInvoicing()->count());
 
         $counter = $this->counterFactory->makeModelFromDto($dto, $counter);
         $counter = $this->counterRepository->save($counter);
@@ -58,12 +59,14 @@ readonly class CounterService
         return $this->counterFactory->makeDtoFromObject($counter);
     }
 
-    public function getByAccountId(?int $id): Counters
+    public function getByAccountId(?int $id): CounterCollection
     {
         $searcher = new CounterSearcher();
         $searcher
             ->setAccountId($id)
-            ->setSortOrderProperty('id', SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Counter::IS_INVOICING, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Counter::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
 
         return $this->search($searcher)->getItems();
     }

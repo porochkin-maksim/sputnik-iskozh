@@ -54,13 +54,12 @@
                           v-model="payment.comment"
                 ></textarea>
                 <template v-for="(file, index) in payment.files">
-                    <file-item
-                        :file="file"
-                        :edit="true"
-                        :index="index"
-                        :use-up-sort="index!==0"
-                        :use-down-sort="index!==payment.files.length-1"
-                        class="mt-2"
+                    <file-item :file="file"
+                               :edit="true"
+                               :index="index"
+                               :use-up-sort="index!==0"
+                               :use-down-sort="index!==payment.files.length-1"
+                               class="mt-2"
                     />
                 </template>
             </div>

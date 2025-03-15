@@ -22,4 +22,9 @@ class RequestsPagesController extends Controller
     {
         return view(ViewNames::PAGES_PAYMENT);
     }
+
+    public function counter(): View
+    {
+        return view(ViewNames::PAGES_COUNTER);
+    }
 }

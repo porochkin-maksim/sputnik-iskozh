@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Requests\Accounts;
+namespace App\Http\Requests\Profile\Accounts;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
@@ -43,11 +43,21 @@ class RegisterRequest extends AbstractRequest
         ];
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             self::NUMBER => 'Номер участка',
         ];
+    }
+
+    public function getNumber(): string
+    {
+        return $this->getString(self::NUMBER);
+    }
+
+    public function getSize(): int
+    {
+        return $this->getInt(self::SIZE);
     }
 
 

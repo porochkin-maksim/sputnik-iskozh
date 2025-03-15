@@ -3,17 +3,20 @@
 namespace Core\Domains\Counter\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\Counter\Enums\TypeEnum;
+use Core\Domains\Counter\Collections\CounterHistoryCollection;
+use Core\Domains\Counter\Enums\CounterTypeEnum;
 
-class CounterDTO implements \JsonSerializable
+class CounterDTO
 {
     use TimestampsTrait;
 
-    private ?int      $id        = null;
-    private ?TypeEnum $type      = null;
-    private ?int      $accountId = null;
-    private ?string   $number    = null;
-    private ?bool     $isPrimary = null;
+    private ?int             $id          = null;
+    private ?CounterTypeEnum $type        = null;
+    private ?int             $accountId   = null;
+    private ?string          $number      = null;
+    private ?bool            $isInvoicing = null;
+
+    private ?CounterHistoryCollection $historyCollection = null;
 
     public function getId(): ?int
     {
@@ -27,12 +30,12 @@ class CounterDTO implements \JsonSerializable
         return $this;
     }
 
-    public function getType(): ?TypeEnum
+    public function getType(): ?CounterTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(?TypeEnum $type): CounterDTO
+    public function setType(?CounterTypeEnum $type): CounterDTO
     {
         $this->type = $type;
 
@@ -63,26 +66,27 @@ class CounterDTO implements \JsonSerializable
         return $this;
     }
 
-    public function isPrimary(): ?bool
+    public function isInvoicing(): ?bool
     {
-        return $this->isPrimary;
+        return $this->isInvoicing;
     }
 
-    public function setIsPrimary(?bool $isPrimary): CounterDTO
+    public function setIsInvoicing(?bool $isInvoicing): CounterDTO
     {
-        $this->isPrimary = $isPrimary;
+        $this->isInvoicing = $isInvoicing;
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setHistoryCollection(CounterHistoryCollection $historyCollection): static
     {
-        return [
-            'id'        => $this->getId(),
-            'type'      => $this->getType()?->value,
-            'accountId' => $this->getAccountId(),
-            'number'    => $this->getNumber(),
-            'isPrimary' => $this->isPrimary(),
-        ];
+        $this->historyCollection = $historyCollection;
+
+        return $this;
+    }
+
+    public function getHistoryCollection(): ?CounterHistoryCollection
+    {
+        return $this->historyCollection;
     }
 }

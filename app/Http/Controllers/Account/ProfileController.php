@@ -38,7 +38,8 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\lc::user());
+            $user = \lc::user();
+            $user->setEmail($request->getEmail());
 
             $this->userService->save($user);
 
@@ -57,7 +58,8 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\lc::user());
+            $user = \lc::user();
+            $user->setPassword($request->getPassword());
 
             $this->userService->save($user);
 

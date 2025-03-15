@@ -6,7 +6,7 @@ use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
-$openGraph->setUrl(route(RouteNames::PROPOSAL));
+$openGraph->setUrl(route(RouteNames::PAYMENT));
 
 ?>
 

@@ -2,10 +2,10 @@
 
 namespace Core\Domains\Counter\Models;
 
-use App\Models\Counter;
+use App\Models\Counter\Counter;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
-use Core\Domains\Counter\Enums\TypeEnum;
+use Core\Domains\Counter\Enums\CounterTypeEnum;
 
 class CounterSearcher implements SearcherInterface
 {
@@ -13,10 +13,10 @@ class CounterSearcher implements SearcherInterface
 
     public function __construct()
     {
-        $this->setType(TypeEnum::ELECTRICITY);
+        $this->setType(CounterTypeEnum::ELECTRICITY);
     }
 
-    public function setType(TypeEnum $enum): static
+    public function setType(CounterTypeEnum $enum): static
     {
         $this->addWhere(Counter::TYPE, SearcherInterface::EQUALS, $enum->value);
 

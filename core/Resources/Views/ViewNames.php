@@ -4,8 +4,9 @@ namespace Core\Resources\Views;
 
 enum ViewNames: string
 {
-    public const LAYOUTS_APP        = 'layouts.app.layout';
-    public const LAYOUTS_ADMIN      = 'layouts.admin.layout';
+    public const LAYOUTS_APP        = 'layouts.app-layout';
+    public const LAYOUTS_ADMIN      = 'layouts.admin-layout';
+    public const LAYOUTS_PROFILE    = 'layouts.profile-layout';
     public const LAYOUTS_TWO_COLUMN = 'layouts.pages.two-columns-page';
     public const LAYOUTS_ONE_COLUMN = 'layouts.pages.single-column-page';
 
@@ -17,6 +18,7 @@ enum ViewNames: string
     public const PAGES_CONTACTS      = 'pages.contacts';
     public const PAGES_PROPOSAL      = 'pages.contacts.proposal';
     public const PAGES_PAYMENT       = 'pages.contacts.payment';
+    public const PAGES_COUNTER       = 'pages.contacts.counter';
     public const PAGES_GARBAGE       = 'pages.garbage';
     public const PAGES_PRIVACY       = 'pages.privacy';
     public const PAGES_SEARCH        = 'pages.search';
@@ -32,15 +34,18 @@ enum ViewNames: string
     public const PAGES_HOME             = 'pages.home.index';
     public const PAGES_ACCOUNT_REGISTER = 'pages.home.register';
     public const PAGES_PROFILE          = 'pages.home.profile';
-    public const PAGES_COUNTERS_INDEX   = 'pages.counters.index';
-    public const PAGES_RUBRICS          = 'pages.rubrics.index';
+    public const PAGES_PROFILE_COUNTERS = 'pages.home.counters';
+    public const PAGES_PROFILE_PAYMENTS = 'pages.home.payments';
 
-    public const ADMIN_PAGES_INDEX    = 'admin.pages.index';
-    public const ADMIN_PAGES_ROLES    = 'admin.pages.roles';
-    public const ADMIN_PAGES_USERS    = 'admin.pages.users';
-    public const ADMIN_PAGES_SERVICES = 'admin.pages.services';
-    public const ADMIN_PAGES_PERIODS  = 'admin.pages.periods';
-    public const ADMIN_PAGES_ACCOUNTS = 'admin.pages.accounts';
-    public const ADMIN_PAGES_INVOICES = 'admin.pages.invoices';
-    public const ADMIN_PAGES_PAYMENTS = 'admin.pages.payments';
+    public const PAGES_RUBRICS = 'pages.rubrics.index';
+
+    public const ADMIN_PAGES_INDEX           = 'admin.pages.index';
+    public const ADMIN_PAGES_ROLES           = 'admin.pages.roles';
+    public const ADMIN_PAGES_USERS           = 'admin.pages.users';
+    public const ADMIN_PAGES_SERVICES        = 'admin.pages.services';
+    public const ADMIN_PAGES_PERIODS         = 'admin.pages.periods';
+    public const ADMIN_PAGES_ACCOUNTS        = 'admin.pages.accounts';
+    public const ADMIN_PAGES_INVOICES        = 'admin.pages.invoices';
+    public const ADMIN_PAGES_PAYMENTS        = 'admin.pages.payments';
+    public const ADMIN_PAGES_COUNTER_HISTORY = 'admin.pages.counter-history';
 }

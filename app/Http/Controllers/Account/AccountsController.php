@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Accounts\SaveRequest;
-use App\Http\Resources\Accounts\AccountResource;
+use App\Http\Requests\Profile\Accounts\SaveRequest;
+use App\Http\Resources\Profile\Accounts\AccountResource;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Resources\Views\ViewNames;

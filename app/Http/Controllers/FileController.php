@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentLocator;
+use Core\Domains\Counter\CounterLocator;
 use Core\Domains\File\Enums\TypeEnum;
 use Core\Domains\File\FileLocator;
 use Core\Domains\File\Models\FileDTO;
 use Illuminate\Support\Facades\Storage;
+use lc;
 
 class FileController extends Controller
 {
     public function download($filePath)
     {
-        if ( ! \lc::isAuth()) {
+        if ( ! lc::isAuth()) {
             abort(403);
         }
         $storagePath = $filePath;
@@ -45,6 +47,9 @@ class FileController extends Controller
         if ($fileDto->getType() === TypeEnum::PAYMENT) {
             $this->checkPaymentAccess($fileDto);
         }
+        elseif ($fileDto->getType() === TypeEnum::COUNTER) {
+            $this->checkCounterAccess($fileDto);
+        }
         else {
             abort(403);
         }
@@ -52,7 +57,7 @@ class FileController extends Controller
 
     private function checkPaymentAccess(FileDTO $fileDto): void
     {
-        if (\lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+        if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             return;
         }
 
@@ -64,10 +69,34 @@ class FileController extends Controller
         ;
         $payment = PaymentLocator::PaymentService()->search($searcher)->getItems()->first();
 
-        $account = \lc::account();
+        $account = lc::account();
         if (
             $account->getId()
             && $account->getId() === $payment->getAccount()?->getId()
+        ) {
+            return;
+        }
+
+        abort(403);
+    }
+
+    private function checkCounterAccess(FileDTO $fileDto): void
+    {
+        if (lc::roleDecorator()->canAccessAdmin()) {
+            return;
+        }
+
+        $counterHistory = CounterLocator::CounterHistoryService()->getById($fileDto->getRelatedId());
+        if ( ! $counterHistory) {
+            abort(404);
+        }
+
+        $counter = CounterLocator::CounterService()->getById($counterHistory->getCounterId());
+
+        $account = lc::account();
+        if (
+            $account->getId()
+            && $account->getId() === $counter?->getAccountId()
         ) {
             return;
         }

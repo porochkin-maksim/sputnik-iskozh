@@ -92,7 +92,8 @@ export default {
                 first_name : this.first_name,
                 middle_name: this.middle_name,
             }).then(response => {
-                location.reload();
+                this.editMode = false;
+                this.showSuccess('Данные сохранены');
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

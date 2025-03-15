@@ -7,7 +7,7 @@ use Core\Enums\EnumCommonTrait;
 /**
  * @method static tryFrom(int|string|null $value): ?static
  */
-enum TypeEnum: int
+enum CounterTypeEnum: int
 {
     use EnumCommonTrait;
 

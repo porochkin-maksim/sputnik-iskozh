@@ -2,9 +2,12 @@
 
 namespace App\Models\Counter;
 
+use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
+use Core\Domains\File\Enums\TypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int     $id
@@ -12,9 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $updated_at
  *
  * @property int     $counter_id
- * @property ?float  $old_value
- * @property ?float  $new_value
- * @property ?float  $tariff
+ * @property ?float  $value
+ * @property ?Carbon $date
+ * @property ?bool   $is_verified
  */
 class CounterHistory extends Model implements CastsInterface
 {
@@ -22,18 +25,28 @@ class CounterHistory extends Model implements CastsInterface
 
     protected $table = self::TABLE;
 
-    public const ID         = 'id';
-    public const COUNTER_ID = 'counter_id';
-    public const VALUE      = 'value';
-    public const TARIFF     = 'tariff';
-    public const COST       = 'cost';
+    public const ID          = 'id';
+    public const COUNTER_ID  = 'counter_id';
+    public const VALUE       = 'value';
+    public const DATE        = 'date';
+    public const IS_VERIFIED = 'is_verified';
+
+    public const FILE = 'file';
 
     protected $guarded = [];
+    protected $with    = [self::FILE];
 
     protected $casts = [
-        self::COUNTER_ID => self::CAST_INTEGER,
-        self::VALUE      => self::CAST_FLOAT,
-        self::TARIFF     => self::CAST_FLOAT,
-        self::COST       => self::CAST_FLOAT,
+        self::COUNTER_ID  => self::CAST_INTEGER,
+        self::VALUE       => self::CAST_FLOAT,
+        self::DATE        => self::CAST_DATETIME,
+        self::IS_VERIFIED => self::CAST_BOOLEAN,
     ];
+
+    public function file(): HasOne
+    {
+        return $this->hasOne(File::class, File::RELATED_ID)
+            ->where(File::TYPE, TypeEnum::COUNTER->value)
+        ;
+    }
 }

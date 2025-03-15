@@ -168,7 +168,7 @@ $routes = [
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">
-                        <i class="fa fa-gear"></i>
+                        <i class="fa fa-gears"></i>
                     </a>
                 </li>
             @endif

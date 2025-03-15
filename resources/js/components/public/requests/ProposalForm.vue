@@ -21,7 +21,7 @@
                       :classes="'my-3'"
                       @change="clearError('name')"
                       :errors="errors.name"
-                      :label="'Имя (по желанию)'"
+                      :label="'Ваше имя (по желанию)'"
                       @submit="sendForm"
         />
         <custom-input v-model="email"
@@ -95,10 +95,10 @@ export default {
         ResponseError,
     ],
     created () {
-        this.email = localStorage.getItem('proposalEmail') === 'null' ? '' : localStorage.getItem('proposalEmail');
-        this.phone = localStorage.getItem('proposalPhone') === 'null' ? '' : localStorage.getItem('proposalPhone');
-        this.name  = localStorage.getItem('proposalName') === 'null' ? '' : localStorage.getItem('proposalName');
-        this.text  = localStorage.getItem('proposalText') === 'null' ? '' : localStorage.getItem('proposalText');
+        this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
+        this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
+        this.name  = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        this.text  = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
     },
     data () {
         return {
@@ -129,19 +129,8 @@ export default {
             });
 
             window.axios[Url.Routes.proposalCreate.method](Url.Routes.proposalCreate.uri, form).then(response => {
-                localStorage.removeItem('proposalEmail');
-                localStorage.removeItem('proposalPhone');
-                localStorage.removeItem('proposalName');
-                localStorage.removeItem('proposalText');
-
-                this.email = '';
-                this.phone = '';
-                this.name  = '';
-                this.text  = '';
-                this.files = [];
-
+                localStorage.removeItem('requestText');
                 this.success = true;
-
                 setTimeout(() => {
                     location.reload();
                 }, 20000);
@@ -174,16 +163,16 @@ export default {
     },
     watch   : {
         email () {
-            localStorage.setItem('proposalEmail', this.email);
+            localStorage.setItem('requestEmail', this.email);
         },
         phone () {
-            localStorage.setItem('proposalPhone', this.phone);
+            localStorage.setItem('requestPhone', this.phone);
         },
         name () {
-            localStorage.setItem('proposalName', this.name);
+            localStorage.setItem('requestName', this.name);
         },
         text () {
-            localStorage.setItem('proposalText', this.text);
+            localStorage.setItem('requestText', this.text);
         },
     },
     computed: {

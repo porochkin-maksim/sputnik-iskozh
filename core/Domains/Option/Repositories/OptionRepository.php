@@ -24,10 +24,10 @@ class OptionRepository
         return Option::class;
     }
 
-    public function save(Option $report): Option
+    public function save(Option $object): Option
     {
-        $report->save();
+        $object->save();
 
-        return $report;
+        return $object;
     }
 }

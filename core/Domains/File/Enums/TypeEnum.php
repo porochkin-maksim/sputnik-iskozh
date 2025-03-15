@@ -11,6 +11,7 @@ enum TypeEnum: int
     case REPORT       = 2;
     case NEWS         = 3;
     case PAYMENT      = 4;
+    case COUNTER      = 5;
 
     public function name(): string
     {
@@ -19,6 +20,7 @@ enum TypeEnum: int
             self::REPORT       => 'Отчёт',
             self::NEWS         => 'Новость',
             self::PAYMENT      => 'Платёж',
+            self::COUNTER      => 'Счётчик',
         };
     }
 }

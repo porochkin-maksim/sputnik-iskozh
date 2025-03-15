@@ -31,11 +31,8 @@ class SaveProfilePasswordRequest extends AbstractRequest
         ];
     }
 
-    public function dto(UserDTO $dto = null): UserDTO
+    public function getPassword(): string
     {
-        $dto = $dto ?: new UserDTO();
-        $dto->setPassword($this->get(self::PASSWORD));
-
-        return $dto;
+        return $this->getString(self::PASSWORD);
     }
 }

@@ -1,16 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Counter\Requests;
+namespace App\Http\Requests\Profile\Counters;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Domains\Counter\Enums\TypeEnum;
-use Core\Domains\Counter\Models\CounterDTO;
 use Core\Requests\RequestArgumentsEnum;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
-class SaveRequest extends AbstractRequest
+class CreateRequest extends AbstractRequest
 {
     private const NUMBER = RequestArgumentsEnum::NUMBER;
+    private const VALUE  = 'value';
+    private const FILE  = 'file';
 
     public function rules(): array
     {
@@ -18,6 +19,12 @@ class SaveRequest extends AbstractRequest
             self::NUMBER => [
                 'required',
                 Rule::unique('counters', 'number'),
+            ],
+            self::VALUE => [
+                'required',
+            ],
+            self::FILE => [
+                'required',
             ],
         ];
     }
@@ -30,13 +37,18 @@ class SaveRequest extends AbstractRequest
         ];
     }
 
-    public function dto(): CounterDTO
+    public function getNumber(): string
     {
-        $dto = new CounterDTO();
+        return $this->getString(self::NUMBER);
+    }
 
-        $dto->setType(TypeEnum::ELECTRICITY)
-            ->setNumber($this->get(self::NUMBER));
+    public function getValue(): int
+    {
+        return $this->getInt(self::VALUE);
+    }
 
-        return $dto;
+    public function getFile(): UploadedFile
+    {
+        return $this->file(self::FILE);
     }
 }

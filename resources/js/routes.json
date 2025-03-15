@@ -456,6 +456,20 @@
         "uri": "\/cookie-agreement",
         "args": []
     },
+    "counter": {
+        "name": "counter",
+        "displayName": "\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/contacts\/requests\/counter",
+        "args": []
+    },
+    "counterCreate": {
+        "name": "counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/contacts\/requests\/counter",
+        "args": []
+    },
     "filesDelete": {
         "name": "files.delete",
         "displayName": "",
@@ -792,18 +806,32 @@
         "uri": "\/privacy",
         "args": []
     },
+    "profileCounterAddValue": {
+        "name": "profile.counter.add-value",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/add-value",
+        "args": []
+    },
+    "profileCounterCreate": {
+        "name": "profile.counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/create",
+        "args": []
+    },
     "profileCounterList": {
         "name": "profile.counter.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/home\/json\/counter\/list",
+        "uri": "\/home\/counters\/json\/list",
         "args": []
     },
-    "profileCounterSave": {
-        "name": "profile.counter.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/home\/json\/counter",
+    "profileCountersIndex": {
+        "name": "profile.counters.index",
+        "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",
+        "method": "get",
+        "uri": "\/home\/counters",
         "args": []
     },
     "profileSave": {

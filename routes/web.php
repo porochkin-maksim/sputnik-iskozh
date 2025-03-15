@@ -17,6 +17,8 @@ Route::group(['prefix' => 'contacts/requests'], static function () {
     Route::post('/proposal', [Controllers\Pages\Requests\ProposalController::class, 'create'])->name(RouteNames::PROPOSAL_CREATE);
     Route::get('/payment', [Controllers\Pages\RequestsPagesController::class, 'payment'])->name(RouteNames::PAYMENT);
     Route::post('/payment', [Controllers\Pages\Requests\PaymentsController::class, 'create'])->name(RouteNames::PAYMENT_CREATE);
+    Route::get('/counter', [Controllers\Pages\RequestsPagesController::class, 'counter'])->name(RouteNames::COUNTER);
+    Route::post('/counter', [Controllers\Pages\Requests\CounterController::class, 'create'])->name(RouteNames::COUNTER_CREATE);
 });
 
 Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
@@ -53,8 +55,14 @@ Route::group(['prefix' => 'home'], static function () {
             Route::get('/register', [Controllers\Account\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
             Route::group(['prefix' => 'json'], static function () {
                 Route::post('/register', [Controllers\Account\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
-                Route::get('/counter/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
-                Route::post('/counter', [Controllers\Account\CounterController::class, 'save'])->name(RouteNames::PROFILE_COUNTER_SAVE);
+            });
+            Route::group(['prefix' => 'counters'], static function () {
+                Route::get('/', [Controllers\Account\CounterController::class, 'index'])->name(RouteNames::PROFILE_COUNTERS);
+                Route::group(['prefix' => 'json'], static function () {
+                    Route::get('/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
+                    Route::post('/create', [Controllers\Account\CounterController::class, 'create'])->name(RouteNames::PROFILE_COUNTER_CREATE);
+                    Route::post('/add-value', [Controllers\Account\CounterController::class, 'addValue'])->name(RouteNames::PROFILE_COUNTER_ADD_VALUE);
+                });
             });
         });
     });

@@ -2,12 +2,19 @@
 
 namespace Core\Domains\Counter\Factories;
 
-use App\Models\Counter;
-use Core\Domains\Counter\Enums\TypeEnum;
+use App\Models\Counter\Counter;
+use Core\Domains\Counter\CounterLocator;
+use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
 
 readonly class CounterFactory
 {
+    public function makeDefault(): CounterDTO
+    {
+        return $this->make(CounterTypeEnum::ELECTRICITY)
+            ->setIsInvoicing(false);
+    }
+
     public function makeModelFromDto(CounterDTO $dto, ?Counter $model = null): Counter
     {
         if ($model) {
@@ -22,10 +29,10 @@ readonly class CounterFactory
         ]);
 
         return $result->fill([
-            Counter::TYPE       => $dto->getType()?->value,
-            Counter::ACCOUNT_ID => $dto->getAccountId(),
-            Counter::NUMBER     => $dto->getNumber(),
-            Counter::IS_PRIMARY => $dto->isPrimary(),
+            Counter::TYPE         => $dto->getType()?->value,
+            Counter::ACCOUNT_ID   => $dto->getAccountId(),
+            Counter::NUMBER       => $dto->getNumber(),
+            Counter::IS_INVOICING => $dto->isInvoicing(),
         ]);
     }
 
@@ -35,17 +42,21 @@ readonly class CounterFactory
 
         $result
             ->setId($model->id)
-            ->setType(TypeEnum::tryFrom($model->type))
+            ->setType(CounterTypeEnum::tryFrom($model->type))
             ->setAccountId($model->account_id)
             ->setNumber($model->number)
-            ->setIsPrimary($model->is_primary)
+            ->setIsInvoicing($model->is_invoicing)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
+
+        if (isset($model->getRelations()[Counter::HISTORY])) {
+            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::HISTORY)));
+        }
 
         return $result;
     }
 
-    public function make(TypeEnum $type): CounterDTO
+    public function make(CounterTypeEnum $type): CounterDTO
     {
         $result = new CounterDTO();
         $result->setType($type);

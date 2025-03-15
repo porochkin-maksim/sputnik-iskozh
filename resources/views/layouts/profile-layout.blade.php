@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
@@ -31,9 +32,8 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
-    @yield(SectionNames::METRICS)
 </head>
-<body class="d-flex flex-column h-100 {{ $season }}"
+<body class="d-flex flex-column h-100 {{ $season }} admin"
       id="app"
       style="background-image: url('{{ $bgImage->getUrl() }}')">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"
@@ -56,31 +56,18 @@ $season = match (Carbon::now()->month) {
         </button>
         <div class="collapse navbar-collapse"
              id="topMenuNavContent">
-            @include('layouts.partial.nav')
+            @include('layouts.partial.profile-nav')
         </div>
     </div>
 </nav>
 <main class="px-3 py-2">
     @yield(SectionNames::CONTENT)
 </main>
-<footer>
+<footer class="w-100">
     <div class="d-flex justify-content-center py-3">
-        <div class="social d-flex flex-column align-items-center">
-            @include(ViewNames::PARTIAL_SOCIAL)
-        </div>
+
     </div>
 </footer>
-<alerts-block></alerts-block>
-{{--@if (!Cookie::has(CookieNames::COOKIE_AGREEMENT))--}}
-{{--    <div class="d-block alert alert-info w-100 sticky-bottom text-center m-0"--}}
-{{--         id="cookie">--}}
-{{--        Сайт использует cookie, потому что без них не работает ни один сайт в интернете--}}
-{{--        <button class="btn btn-success ms-2"--}}
-{{--                type="submit"--}}
-{{--                onclick="event.preventDefault();axios.post('<?= route(RouteNames::COOKIE_AGREEMENT) ?>', {}, $('#cookie').remove())">--}}
-{{--            Прекрасно--}}
-{{--        </button>--}}
-{{--    </div>--}}
-{{--@endif--}}
+<alerts-block :disable-errors-popup="true"></alerts-block>
 </body>
 </html>

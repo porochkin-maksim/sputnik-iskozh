@@ -36,11 +36,8 @@ class SaveProfileEmailRequest extends AbstractRequest
         ];
     }
 
-    public function dto(UserDTO $dto = null): UserDTO
+    public function getEmail(): string
     {
-        $dto = $dto ?: new UserDTO();
-        $dto->setEmail($this->get(self::EMAIL));
-
-        return $dto;
+        return $this->getString(self::EMAIL);
     }
 }

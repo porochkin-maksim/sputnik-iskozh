@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, CounterDTO>
  */
-class Counters extends Collection implements CollectionInterface
+class CounterCollection extends Collection implements CollectionInterface
 {
     use CollectionTrait;
 
@@ -19,14 +19,15 @@ class Counters extends Collection implements CollectionInterface
         return $item instanceof CounterDTO;
     }
 
-    public function getPrimary(): ?CounterDTO
+    public function getInvoicing(): static
     {
+        $result = new static();
         foreach ($this->items as $counter) {
-            if ($counter->isPrimary()) {
-                return $counter;
+            if ($counter->isInvoicing()) {
+                $result->add($counter);
             }
         }
 
-        return null;
+        return $result;
     }
 }

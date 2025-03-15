@@ -4,6 +4,7 @@ namespace Core\Requests;
 
 enum RequestArgumentsEnum: string
 {
+    public const ACCOUNT         = 'account';
     public const ACTIVE          = 'active';
     public const ARTICLE         = 'article';
     public const ALL             = 'all';
@@ -55,4 +56,8 @@ enum RequestArgumentsEnum: string
     public const REFERENCE_TYPE  = 'reference_type';
     public const REFERENCE_ID    = 'reference_id';
     public const PERMISSIONS     = 'permissions';
+    public const VALUE           = 'value';
+    public const COUNTER         = 'counter';
+    public const PHONE           = 'phone';
+    public const TEXT            = 'text';
 }
