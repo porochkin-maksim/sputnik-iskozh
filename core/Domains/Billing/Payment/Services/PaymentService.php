@@ -3,6 +3,7 @@
 namespace Core\Domains\Billing\Payment\Services;
 
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
+use Core\Domains\Billing\Payment\Events\PaymentCreatedEvent;
 use Core\Domains\Billing\Payment\Events\PaymentsUpdatedEvent;
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Models\PaymentComparator;
@@ -56,6 +57,10 @@ readonly class PaymentService
             )
         ) {
             PaymentsUpdatedEvent::dispatch($current->getInvoiceId());
+        }
+
+        if ( ! $payment->getId()) {
+            PaymentCreatedEvent::dispatch($current->getId());
         }
 
         return $current;

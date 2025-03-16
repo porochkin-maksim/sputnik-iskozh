@@ -277,6 +277,9 @@ export default {
             });
         },
         confirmAction () {
+            if (!confirm('Подтвердить выделенные показания?')) {
+                return;
+            }
             let form = new FormData();
             this.checked.forEach(id => {
                 form.append('ids[]', id);

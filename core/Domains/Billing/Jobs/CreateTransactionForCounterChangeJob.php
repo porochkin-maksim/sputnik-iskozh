@@ -57,15 +57,7 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
             return;
         }
 
-        $previous = null;
-
-        foreach ($counter->getHistoryCollection()->sortById() as $item) {
-            if ((int) $item->getId() >= (int) $history->getId()) {
-                break;
-            }
-
-            $previous = $item;
-        }
+        $previous = CounterLocator::CounterHistoryService()->getPrevios($history);
 
         if ( ! $previous || ! $previous->isVerified()) {
             return;

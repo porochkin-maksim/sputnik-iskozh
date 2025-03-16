@@ -2,11 +2,16 @@
 
 namespace Core\Domains\Counter\Services;
 
+use App\Models\Counter\Counter;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
+use Core\Domains\Counter\CounterLocator;
+use Core\Domains\Counter\Events\CounterHistoryCreatedEvent;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
 use Core\Domains\Counter\Models\CounterHistoryComparator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
+use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Counter\Repositories\CounterHistoryRepository;
 use Core\Domains\Counter\Responses\CounterHistorySearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -59,6 +64,10 @@ readonly class CounterHistoryService
             text: $counterHistory->getId() ? null : sprintf("Добавлено показание: %s", $counterHistory->getValue()),
         );
 
+        if ( ! $counterHistory->getId()) {
+            CounterHistoryCreatedEvent::dispatch($current->getId());
+        }
+
         return $current;
     }
 
@@ -92,5 +101,29 @@ readonly class CounterHistoryService
         );
 
         return $this->counterHistoryRepository->deleteById($id);
+    }
+
+
+    public function getPrevios(CounterHistoryDTO $counterHistory): ?CounterHistoryDTO
+    {
+        $counterSearcher = new CounterSearcher();
+        $counterSearcher
+            ->setId($counterHistory->getCounterId())
+            ->addWhere(Counter::IS_INVOICING, SearcherInterface::EQUALS, true)
+        ;
+        $counter = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
+
+        $result = null;
+        if ($counter) {
+            foreach ($counter->getHistoryCollection()->sortById() as $item) {
+                if ((int) $item->getId() >= (int) $counterHistory->getId()) {
+                    break;
+                }
+
+                $result = $item;
+            }
+        }
+
+        return $result;
     }
 }

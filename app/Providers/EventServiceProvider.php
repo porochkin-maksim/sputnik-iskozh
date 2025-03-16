@@ -6,6 +6,7 @@ use Core\Domains\Billing\Invoice\Subscribers\InvoiceSubscriber;
 use Core\Domains\Billing\Payment\Subscribers\PaymentSubscriber;
 use Core\Domains\Billing\Period\Subscribers\PeriodSubscriber;
 use Core\Domains\Billing\Transaction\Subscribers\TransactionSubscriber;
+use Core\Domains\Counter\Subscribers\CounterSubscriber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -33,6 +34,7 @@ class EventServiceProvider extends ServiceProvider
         Event::subscribe(TransactionSubscriber::class);
         Event::subscribe(PeriodSubscriber::class);
         Event::subscribe(PaymentSubscriber::class);
+        Event::subscribe(CounterSubscriber::class);
     }
 
     /**
