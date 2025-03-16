@@ -137,13 +137,14 @@ abstract class RouteNames
     public const ADMIN_COUNTER_DELETE    = 'admin.counter.delete';
     public const ADMIN_COUNTER_ADD_VALUE = 'admin.counter.add-value';
 
-    public const ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
-    public const ADMIN_INVOICE_CREATE = 'admin.invoice.create';
-    public const ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
-    public const ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
-    public const ADMIN_INVOICE_GET    = 'admin.invoice.get';
-    public const ADMIN_INVOICE_LIST   = 'admin.invoice.list';
-    public const ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
+    public const ADMIN_INVOICE_INDEX   = 'admin.invoice.index';
+    public const ADMIN_INVOICE_SUMMARY = 'admin.invoice.summary';
+    public const ADMIN_INVOICE_CREATE  = 'admin.invoice.create';
+    public const ADMIN_INVOICE_SAVE    = 'admin.invoice.save';
+    public const ADMIN_INVOICE_VIEW    = 'admin.invoice.view';
+    public const ADMIN_INVOICE_GET     = 'admin.invoice.get';
+    public const ADMIN_INVOICE_LIST    = 'admin.invoice.list';
+    public const ADMIN_INVOICE_DELETE  = 'admin.invoice.delete';
 
     public const ADMIN_TRANSACTION_VIEW   = 'admin.transaction.view';
     public const ADMIN_TRANSACTION_CREATE = 'admin.transaction.create';

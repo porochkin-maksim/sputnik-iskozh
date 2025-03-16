@@ -13,7 +13,7 @@ class RoleDecorator
     {
     }
 
-    public function canEditTemplates(): bool
+    public function isSuperAdmin(): bool
     {
         return $this->can(...PermissionEnum::cases());
     }
@@ -27,6 +27,8 @@ class RoleDecorator
             PermissionEnum::PERIODS_VIEW,
             PermissionEnum::SERVICES_VIEW,
             PermissionEnum::INVOICES_VIEW,
+            PermissionEnum::PAYMENTS_VIEW,
+            PermissionEnum::COUNTERS_VIEW,
         );
     }
 

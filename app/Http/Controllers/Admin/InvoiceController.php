@@ -41,6 +41,15 @@ class InvoiceController extends Controller
         $this->accountService = AccountLocator::AccountService();
     }
 
+    public function summary(ListRequest $request): JsonResponse
+    {
+        $type      = $request->getType();
+        $periodId  = $request->getPeriodId();
+        $accountId = $request->getAccountId();
+
+        return response()->json($this->invoiceService->getSummaryFor($type, $periodId, $accountId));
+    }
+
     public function view(int $id)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {

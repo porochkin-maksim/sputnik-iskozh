@@ -26,7 +26,7 @@ return new class extends Migration {
             Schema::create('counter_history', static function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('counter_id')->nullable()->references('id')->on('counters')->restrictOnDelete();
-                $table->float('value');
+                $table->unsignedBigInteger('value');
                 $table->date('date');
                 $table->boolean('is_verified')->default(false);
                 $table->timestamps();

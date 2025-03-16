@@ -2,8 +2,8 @@
 
 namespace Core\Domains\Billing\Period\Listeners;
 
+use Core\Domains\Billing\Jobs\CreateMainServicesJob;
 use Core\Domains\Billing\Period\Events\PeriodCreatedEvent;
-use Core\Domains\Billing\Period\Jobs\CreateMainServicesJob;
 
 
 class PeriodCreatedListener

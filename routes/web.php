@@ -228,6 +228,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'invoices'])->name(RouteNames::ADMIN_INVOICE_INDEX);
                 Route::get('/view/{id}', [Controllers\Admin\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
+                    Route::get('/summary', [Controllers\Admin\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
                     Route::get('/create', [Controllers\Admin\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
                     Route::get('/list', [Controllers\Admin\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
                     Route::post('/save', [Controllers\Admin\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);

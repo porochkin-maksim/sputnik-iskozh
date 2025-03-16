@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\Accounts;
 
 use App\Http\Resources\Admin\Users\UserResource;
-use App\Http\Resources\Admin\Users\UsersListResource;
+use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
@@ -24,17 +24,18 @@ readonly class AccountResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();
+        $isSnt  = $this->account->getId() === AccountIdEnum::SNT->value;
 
         return [
             'id'         => $this->account->getId(),
             'number'     => $this->account->getNumber(),
             'size'       => $this->account->getSize(),
             'balance'    => $this->account->getBalance(),
-            'is_member'  => $this->account->isMember(),
+            'isMember'  => $this->account->isMember(),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::ACCOUNTS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::ACCOUNTS_DROP),
+                ResponsesEnum::EDIT => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_EDIT),
+                ResponsesEnum::DROP => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_DROP),
                 'counters'          => [
                     ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
                     ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),

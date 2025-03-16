@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Counters\ConfirmRequest;
 use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
+use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Billing\Jobs\CreateTransactionForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Jobs\CreateTransactionForCounterChangeJob;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
-use lc;
-use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\PermissionEnum;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class CounterController extends Controller
 {

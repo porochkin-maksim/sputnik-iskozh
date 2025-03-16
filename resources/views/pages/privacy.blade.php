@@ -9,7 +9,7 @@ use Core\Resources\Views\ViewNames;
 @extends(ViewNames::LAYOUTS_APP)
 
 @section(SectionNames::CONTENT)
-    @if(lc::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->isSuperAdmin())
         <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>
     @endif
     <h1 class="page-title">Политика в&nbsp;отношении обработки персональных данных</h1>

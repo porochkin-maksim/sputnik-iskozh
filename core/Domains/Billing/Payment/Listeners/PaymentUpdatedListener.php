@@ -2,8 +2,8 @@
 
 namespace Core\Domains\Billing\Payment\Listeners;
 
+use Core\Domains\Billing\Jobs\RecalcTransactionsPayedJob;
 use Core\Domains\Billing\Payment\Events\PaymentsUpdatedEvent;
-use Core\Domains\Billing\Transaction\Jobs\RecalcTransactionsPayedJob;
 
 class PaymentUpdatedListener
 {

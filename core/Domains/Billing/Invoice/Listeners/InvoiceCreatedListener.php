@@ -3,7 +3,7 @@
 namespace Core\Domains\Billing\Invoice\Listeners;
 
 use Core\Domains\Billing\Invoice\Events\InvoiceCreatedEvent;
-use Core\Domains\Billing\Transaction\Jobs\CreateTransactionsForIncomeInvoiceJob;
+use Core\Domains\Billing\Jobs\CreateTransactionsForIncomeInvoiceJob;
 
 class InvoiceCreatedListener
 {

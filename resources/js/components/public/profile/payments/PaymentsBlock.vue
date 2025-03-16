@@ -28,8 +28,8 @@
                         <div>{{ history.days === null ? '' : '+' + history.days + ' дней' }}</div>
                     </td>
                     <td class="text-end">
-                        <div>{{ history.value }}</div>
-                        <div>{{ history.delta === null ? '' : '+' + history.delta + 'кВт' }}</div>
+                        <div>{{ history.value.toLocaleString('ru-RU') }}</div>
+                        <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
                     </td>
                     <td>
                         <file-item :file="history.file"

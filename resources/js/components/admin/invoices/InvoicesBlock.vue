@@ -52,8 +52,17 @@
                 :url="historyUrl" />
         </div>
     </div>
-    <template v-if="invoices.length"
-              class="table">
+    <template v-if="summary">
+        <div>
+            <table class="table table-sm table-bordered text-center">
+                <thead>
+                <tr>
+                    <td>Доход {{ $formatMoney(summary.incomePayed) }} / {{ $formatMoney(summary.incomeCost) }}</td>
+                    <td>Расход {{ $formatMoney(summary.outcomePayed) }} / {{ $formatMoney(summary.outcomeCost) }}</td>
+                </tr>
+                </thead>
+            </table>
+        </div>
         <invoices-list :invoices="invoices" />
     </template>
     <invoice-item-edit v-if="invoice && actions.edit"
@@ -100,6 +109,7 @@ export default {
             accountId : 0,
             Url       : Url,
             actions   : {},
+            summary   : null,
         };
     },
     created () {
@@ -159,6 +169,23 @@ export default {
                 this.periods    = response.data.periods;
                 this.accounts   = response.data.accounts;
                 this.historyUrl = response.data.historyUrl;
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            }).then(() => {
+                this.loaded = true;
+            });
+
+            this.summaryAction();
+        },
+        summaryAction () {
+            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceSummary, {}, {
+                type      : this.type,
+                period_id : this.periodId,
+                account_id: this.accountId,
+            });
+
+            window.axios[Url.Routes.adminInvoiceSummary.method](uri).then(response => {
+                this.summary = response.data;
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).then(() => {

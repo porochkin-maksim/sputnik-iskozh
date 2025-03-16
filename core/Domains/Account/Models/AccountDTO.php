@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Account\Models;
 
+use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
@@ -135,5 +136,10 @@ class AccountDTO
     public function getUsers(): ?UserCollection
     {
         return $this->users;
+    }
+
+    public function isSnt(): bool
+    {
+        return $this->getId() === AccountIdEnum::SNT->value;
     }
 }

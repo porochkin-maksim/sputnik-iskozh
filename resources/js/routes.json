@@ -194,6 +194,13 @@
         "uri": "\/admin\/invoices\/json\/save",
         "args": []
     },
+    "adminInvoiceSummary": {
+        "name": "admin.invoice.summary",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/summary",
+        "args": []
+    },
     "adminInvoiceView": {
         "name": "admin.invoice.view",
         "displayName": "",

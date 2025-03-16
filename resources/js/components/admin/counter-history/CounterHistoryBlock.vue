@@ -62,7 +62,7 @@
                        class="fa fa-close text-danger"></i>
                 </td>
                 <td>
-                    <div>
+                    <div v-if="history.file">
                         <a :href="history.file.url"
                            class="text-decoration-none"
                            :data-lightbox="history.file.name"

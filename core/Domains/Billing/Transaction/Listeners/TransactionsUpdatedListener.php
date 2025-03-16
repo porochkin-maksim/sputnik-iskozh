@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Transaction\Listeners;
 
-use Core\Domains\Billing\Invoice\Jobs\RecalcInvoiceJob;
+use Core\Domains\Billing\Jobs\RecalcInvoiceJob;
 use Core\Domains\Billing\Transaction\Events\TransactionsUpdatedEvent;
 
 class TransactionsUpdatedListener

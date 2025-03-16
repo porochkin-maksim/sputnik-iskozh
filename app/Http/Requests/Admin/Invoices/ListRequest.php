@@ -7,7 +7,7 @@ use Core\Requests\RequestArgumentsEnum;
 
 class ListRequest extends DefaultRequest
 {
-    private const TYPE  = RequestArgumentsEnum::TYPE;
+    private const TYPE       = RequestArgumentsEnum::TYPE;
     private const PERIOD_ID  = RequestArgumentsEnum::PERIOD_ID;
     private const ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
 

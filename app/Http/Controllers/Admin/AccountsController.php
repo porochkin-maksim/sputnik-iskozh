@@ -71,7 +71,6 @@ class AccountsController extends Controller
         $searcher
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-            ->setWithoutSntAccount()
             ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
 
         if ($request->getAccountId()) {
@@ -81,7 +80,6 @@ class AccountsController extends Controller
 
         $searcher = new AccountSearcher();
         $searcher
-            ->setWithoutSntAccount()
             ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
         $allAccounts = $this->accountService->search($searcher);
 

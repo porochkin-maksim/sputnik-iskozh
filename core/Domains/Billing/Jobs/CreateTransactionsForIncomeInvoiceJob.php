@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Billing\Transaction\Jobs;
+namespace Core\Domains\Billing\Jobs;
 
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Enums\AccountIdEnum;

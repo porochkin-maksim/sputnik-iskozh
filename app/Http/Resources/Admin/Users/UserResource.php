@@ -25,7 +25,7 @@ readonly class UserResource extends AbstractResource
     {
         $access = lc::roleDecorator();
 
-        $isAdmin = UserIdEnum::OWNER === $this->user->getId();
+        $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
 
         return [
             'id'          => $this->user->getId(),
@@ -40,8 +40,8 @@ readonly class UserResource extends AbstractResource
             'accountName' => ($this->user->getAccount()?->getNumber()),
             'actions'     => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => ! $isAdmin && $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::DROP => ! $isAdmin && $access->can(PermissionEnum::USERS_DROP),
+                ResponsesEnum::EDIT => $canEdit && $access->can(PermissionEnum::USERS_EDIT),
+                ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
             ],
             'historyUrl'  => HistoryChangesLocator::route(
                 type     : HistoryType::USER,

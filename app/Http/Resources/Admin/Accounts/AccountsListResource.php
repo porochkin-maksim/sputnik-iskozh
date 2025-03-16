@@ -26,7 +26,7 @@ readonly class AccountsListResource extends AbstractResource
         $access = lc::roleDecorator();
         $result = [
             'accounts'    => [],
-            'allAccounts' => [],
+            'allAccounts' => new AccountsSelectResource($this->allAccountCollection, false),
             'total'       => $this->totalAccountsCount,
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
@@ -40,13 +40,6 @@ readonly class AccountsListResource extends AbstractResource
 
         foreach ($this->accountCollection as $account) {
             $result['accounts'][] = new AccountResource($account);
-        }
-
-        foreach ($this->allAccountCollection as $account) {
-            $result['allAccounts'][] = new SelectOptionResource(
-                $account->getId(),
-                $account->getNumber(),
-            );
         }
 
         return $result;

@@ -54,6 +54,6 @@ class TemplateController extends Controller
 
     private function canEdit(): bool
     {
-        return \lc::roleDecorator()->canEditTemplates();
+        return \lc::roleDecorator()->isSuperAdmin();
     }
 }

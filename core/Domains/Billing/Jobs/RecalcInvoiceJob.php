@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Billing\Invoice\Jobs;
+namespace Core\Domains\Billing\Jobs;
 
 use Core\Domains\Account\Jobs\UpdateSntBalanceJob;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;

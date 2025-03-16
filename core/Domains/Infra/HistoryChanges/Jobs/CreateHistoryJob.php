@@ -19,7 +19,7 @@ class CreateHistoryJob implements ShouldQueue
         private HistoryChangesDTO $historyChanges,
     )
     {
-        $this->onQueue(QueueEnum::DEFAULT->value);
+        $this->onQueue(QueueEnum::LOW->value);
     }
 
     public function handle(): void

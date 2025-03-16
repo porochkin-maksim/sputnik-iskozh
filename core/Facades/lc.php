@@ -93,4 +93,9 @@ abstract class lc
 
         return self::$userDecorator;
     }
+
+    public static function isSuperAdmin(): bool
+    {
+        return self::RoleDecorator()->isSuperAdmin();
+    }
 }

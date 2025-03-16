@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Billing\Period\Jobs;
+namespace Core\Domains\Billing\Jobs;
 
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\ServiceLocator;

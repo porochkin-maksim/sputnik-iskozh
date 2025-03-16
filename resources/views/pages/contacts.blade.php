@@ -23,7 +23,7 @@ $isWinter = $month >= 11 || $month <= 3;
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(lc::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->isSuperAdmin())
         <page-editor :template="'{{ ViewNames::PAGES_CONTACTS }}'"></page-editor>
     @endif
     <h1 class="page-title">
