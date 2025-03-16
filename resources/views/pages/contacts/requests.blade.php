@@ -25,10 +25,10 @@ $openGraph->setUrl(route(RouteNames::REQUESTS));
     <div class="row requests-block">
         <div class="col-lg-4 col-md-6 col-12">
             <a class="card request-item d-flex align-items-center justify-content-center p-3"
-               href="{{ route(RouteNames::PAYMENT) }}">
-                <h3>{{ RouteNames::name(RouteNames::PAYMENT) }}</h3>
+               href="{{ route(RouteNames::PROPOSAL) }}">
+                <h3>{{ RouteNames::name(RouteNames::PROPOSAL) }}</h3>
                 <div class="text-center">
-                    Сообщить о платеже
+                    Отправить идею или предложение по поводу улучшения жизни в СНТ
                 </div>
             </a>
         </div>

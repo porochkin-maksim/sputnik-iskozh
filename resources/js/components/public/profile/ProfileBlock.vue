@@ -58,7 +58,7 @@
                     <profile-password :user="user" />
                 </div>
             </div>
-            <div v-if="!account||!account.id"
+            <div v-if="!account"
                  class="alert alert-info text-center mt-2">
                 <a :href="Url.Routes.accountRegister.uri"
                    class="text-decoration-none">Зарегистрировать участок</a>

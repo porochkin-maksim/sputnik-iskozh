@@ -27,7 +27,7 @@ class RolesController extends Controller
 
     public function create(): JsonResponse
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
             abort(403);
         }
 
@@ -52,7 +52,7 @@ class RolesController extends Controller
             abort(403);
         }
 
-        if ( ! $request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_CREATE)) {
+        if ( ! $request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
             abort(403);
         }
 

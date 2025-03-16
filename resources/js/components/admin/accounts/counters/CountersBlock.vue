@@ -180,7 +180,7 @@ export default {
     methods : {
         listAction () {
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterList, {
-                id: this.account.id,
+                accountId: this.account.id,
             });
 
             window.axios[Url.Routes.adminCounterList.method](uri).then(response => {
@@ -208,7 +208,7 @@ export default {
             form.append('is_invoicing', this.isInvoicing);
 
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterCreate, {
-                id: this.account.id,
+                accountId: this.account.id,
             });
 
             window.axios[Url.Routes.adminCounterCreate.method](uri, form).then(response => {
@@ -228,7 +228,7 @@ export default {
             form.append('is_invoicing', this.isInvoicing);
 
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterSave, {
-                id: this.account.id,
+                accountId: this.account.id,
             });
 
             window.axios[Url.Routes.adminCounterSave.method](uri, form).then(response => {
@@ -244,7 +244,7 @@ export default {
             form.append('file', this.file);
 
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterAddValue, {
-                id: this.account.id,
+                accountId: this.account.id,
             });
             window.axios[Url.Routes.adminCounterAddValue.method](uri, form).then(response => {
                 this.onSuccessSubmit();

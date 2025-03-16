@@ -41,17 +41,13 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
             ->setId($counterHistory->getCounterId())
             ->addWhere(Counter::IS_INVOICING, SearcherInterface::EQUALS, true)
         ;
-        $counter = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
 
-        if ( ! $counter) {
-            return;
-        }
-
+        $counter  = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
         $previous = CounterLocator::CounterHistoryService()->getPrevios($counterHistory);
+        $account  = null;
 
-        $account = AccountLocator::AccountService()->getById($counter->getAccountId());
-        if ( ! $account) {
-            return;
+        if ($counter) {
+            $account = AccountLocator::AccountService()->getById($counter->getAccountId());
         }
 
         $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::COUNTERS_EDIT);
@@ -59,8 +55,8 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         foreach ($emails as $email) {
             $mail = new NewCounterHistoryCreatedEmail(
                 $email,
-                $counter,
                 $counterHistory,
+                $counter,
                 $previous,
                 $account,
             );

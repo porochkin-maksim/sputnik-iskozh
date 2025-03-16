@@ -94,6 +94,10 @@ readonly class CounterHistoryService
             return false;
         }
 
+        if ($history->getFile()) {
+            CounterLocator::FileService()->deleteById($history->getFile()->getId());
+        }
+
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
             HistoryType::COUNTER_HISTORY,

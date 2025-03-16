@@ -3,6 +3,7 @@
 namespace Core\Domains\Billing\Transaction\Listeners;
 
 use Core\Domains\Billing\Jobs\RecalcInvoiceJob;
+use Core\Domains\Billing\Jobs\RecalcTransactionsPayedJob;
 use Core\Domains\Billing\Transaction\Events\TransactionsUpdatedEvent;
 
 class TransactionsUpdatedListener
@@ -10,7 +11,7 @@ class TransactionsUpdatedListener
     public function handle(TransactionsUpdatedEvent $event): void
     {
         foreach ($event->getInvoiceIds() as $invoiceId) {
-            RecalcInvoiceJob::dispatch($invoiceId);
+            RecalcInvoiceJob::withChain([new RecalcTransactionsPayedJob($invoiceId)])->dispatch($invoiceId);
         }
     }
 }

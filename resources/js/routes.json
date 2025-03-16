@@ -54,9 +54,9 @@
         "name": "admin.account.view",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{id}",
+        "uri": "\/admin\/accounts\/view\/{accountId}",
         "args": {
-            "id": "{id}"
+            "accountId": "{accountId}"
         }
     },
     "adminCounterHistoryConfirm": {
@@ -100,26 +100,27 @@
         "name": "admin.counter.add-value",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{id}\/json\/add-value",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/add-value",
         "args": {
-            "id": "{id}"
+            "accountId": "{accountId}"
         }
     },
     "adminCounterCreate": {
         "name": "admin.counter.create",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{id}\/json\/create",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/create",
         "args": {
-            "id": "{id}"
+            "accountId": "{accountId}"
         }
     },
     "adminCounterDelete": {
         "name": "admin.counter.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/accounts\/view\/{id}\/json\/{id}",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/{id}",
         "args": {
+            "accountId": "{accountId}",
             "id": "{id}"
         }
     },
@@ -127,18 +128,18 @@
         "name": "admin.counter.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{id}\/json\/list",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/list",
         "args": {
-            "id": "{id}"
+            "accountId": "{accountId}"
         }
     },
     "adminCounterSave": {
         "name": "admin.counter.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{id}\/json\/save",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/save",
         "args": {
-            "id": "{id}"
+            "accountId": "{accountId}"
         }
     },
     "adminIndex": {

@@ -64,6 +64,10 @@ class RecalcTransactionsPayedJob implements ShouldQueue
         ]);
 
         foreach ($transactions as $transaction) {
+            $transaction->setPayed(0);
+        }
+
+        foreach ($transactions as $transaction) {
             $transactionCost  = MoneyService::parse($transaction->getCost());
             $transactionPayed = MoneyService::parse(0);
 

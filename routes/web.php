@@ -204,7 +204,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::post('/save', [Controllers\Admin\AccountsController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_SAVE);
                     Route::delete('/{id}', [Controllers\Admin\AccountsController::class, 'delete'])->name(RouteNames::ADMIN_ACCOUNT_DELETE);
                 });
-                Route::group(['prefix' => 'view/{id}'], static function () {
+                Route::group(['prefix' => 'view/{accountId}'], static function () {
                     Route::get('/', [Controllers\Admin\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                     Route::group(['prefix' => 'json'], static function () {
                         Route::post('/create', [Controllers\Admin\AdminCounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);

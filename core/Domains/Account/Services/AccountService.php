@@ -29,9 +29,6 @@ readonly class AccountService
 
     public function save(AccountDTO $service): AccountDTO
     {
-        if ($service->getId() === AccountIdEnum::SNT->value) {
-            abort(403);
-        }
         $model = $this->accountRepository->getById($service->getId());
         if ($model) {
             $before = $this->accountFactory->makeDtoFromObject($model);
