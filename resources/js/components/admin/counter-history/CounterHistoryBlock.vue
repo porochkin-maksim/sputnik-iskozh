@@ -24,7 +24,8 @@
                 <th>Участок</th>
                 <th>Счётчик</th>
                 <th>Дата</th>
-                <th>Показание</th>
+                <th class="text-center">Показание</th>
+                <th class="text-center">Выставлять счета</th>
                 <th>Файл</th>
                 <th v-if="actions.drop"></th>
             </tr>
@@ -53,7 +54,13 @@
                     </td>
                 </template>
                 <td>{{ history.date }}</td>
-                <td>{{ history.value }}</td>
+                <td class="text-end">{{ history.value }}</td>
+                <td class="text-center">
+                    <i v-if="history.isInvoicing"
+                       class="fa fa-check text-success"></i>
+                    <i v-else
+                       class="fa fa-close text-danger"></i>
+                </td>
                 <td>
                     <div>
                         <a :href="history.file.url"

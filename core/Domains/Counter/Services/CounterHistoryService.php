@@ -4,7 +4,6 @@ namespace Core\Domains\Counter\Services;
 
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
-use Core\Domains\Counter\Jobs\CreateTransactionForCounterChangeJob;
 use Core\Domains\Counter\Models\CounterHistoryComparator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
@@ -13,7 +12,6 @@ use Core\Domains\Counter\Responses\CounterHistorySearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Illuminate\Support\Facades\DB;
 
 readonly class CounterHistoryService
 {
@@ -60,10 +58,6 @@ readonly class CounterHistoryService
             new CounterHistoryComparator($before),
             text: $counterHistory->getId() ? null : sprintf("Добавлено показание: %s", $counterHistory->getValue()),
         );
-
-        if ($current->isVerified() !== $before->isVerified()) {
-            CreateTransactionForCounterChangeJob::dispatch($current->getId());
-        }
 
         return $current;
     }

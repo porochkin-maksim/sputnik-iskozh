@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
+use App\Http\Resources\Admin\Users\UserResource;
+use App\Http\Resources\Admin\Users\UsersListResource;
+use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -21,6 +24,7 @@ readonly class AccountResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();
+
         return [
             'id'         => $this->account->getId(),
             'number'     => $this->account->getNumber(),
@@ -31,12 +35,19 @@ readonly class AccountResource extends AbstractResource
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::ACCOUNTS_EDIT),
                 ResponsesEnum::DROP => $access->can(PermissionEnum::ACCOUNTS_DROP),
+                'counters'          => [
+                    ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
+                    ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),
+                    ResponsesEnum::DROP => $access->can(PermissionEnum::COUNTERS_DROP),
+                ],
             ],
             'historyUrl' => $this->account->getId()
                 ? HistoryChangesLocator::route(
-                    type: HistoryType::ACCOUNT,
+                    type     : HistoryType::ACCOUNT,
                     primaryId: $this->account->getId(),
                 ) : null,
+            'viewUrl'    => $this->account->getId() ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['id' => $this->account->getId()]) : null,
+            'users'      => $this->account->getUsers() ? array_map(static fn($user) => new UserResource($user), $this->account->getUsers()->toArray()) : [],
         ];
     }
 }

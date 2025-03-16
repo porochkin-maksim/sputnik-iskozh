@@ -17,14 +17,14 @@
         "name": "admin.account.create",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/create",
+        "uri": "\/admin\/accounts\/json\/create",
         "args": []
     },
     "adminAccountDelete": {
         "name": "admin.account.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/accounts\/{id}",
+        "uri": "\/admin\/accounts\/json\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -40,15 +40,24 @@
         "name": "admin.account.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/list",
+        "uri": "\/admin\/accounts\/json\/list",
         "args": []
     },
     "adminAccountSave": {
         "name": "admin.account.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/save",
+        "uri": "\/admin\/accounts\/json\/save",
         "args": []
+    },
+    "adminAccountView": {
+        "name": "admin.account.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
     },
     "adminCounterHistoryConfirm": {
         "name": "admin.counter-history.confirm",
@@ -86,6 +95,51 @@
         "method": "get",
         "uri": "\/admin\/counter-history\/json\/list",
         "args": []
+    },
+    "adminCounterAddValue": {
+        "name": "admin.counter.add-value",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{id}\/json\/add-value",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterCreate": {
+        "name": "admin.counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{id}\/json\/create",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterDelete": {
+        "name": "admin.counter.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/accounts\/view\/{id}\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterList": {
+        "name": "admin.counter.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{id}\/json\/list",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterSave": {
+        "name": "admin.counter.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{id}\/json\/save",
+        "args": {
+            "id": "{id}"
+        }
     },
     "adminIndex": {
         "name": "admin.index",
@@ -249,14 +303,14 @@
         "name": "admin.period.create",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/periods\/create",
+        "uri": "\/admin\/periods\/json\/create",
         "args": []
     },
     "adminPeriodDelete": {
         "name": "admin.period.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/periods\/{id}",
+        "uri": "\/admin\/periods\/json\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -272,28 +326,28 @@
         "name": "admin.period.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/periods\/list",
+        "uri": "\/admin\/periods\/json\/list",
         "args": []
     },
     "adminPeriodSave": {
         "name": "admin.period.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/periods\/save",
+        "uri": "\/admin\/periods\/json\/save",
         "args": []
     },
     "adminRoleCreate": {
         "name": "admin.role.create",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/roles\/create",
+        "uri": "\/admin\/roles\/json\/create",
         "args": []
     },
     "adminRoleDelete": {
         "name": "admin.role.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/roles\/{id}",
+        "uri": "\/admin\/roles\/json\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -309,14 +363,14 @@
         "name": "admin.role.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/roles\/list",
+        "uri": "\/admin\/roles\/json\/list",
         "args": []
     },
     "adminRoleSave": {
         "name": "admin.role.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/roles\/save",
+        "uri": "\/admin\/roles\/json\/save",
         "args": []
     },
     "adminSelectsAccounts": {
@@ -339,14 +393,14 @@
         "name": "admin.service.create",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/services\/create",
+        "uri": "\/admin\/services\/json\/create",
         "args": []
     },
     "adminServiceDelete": {
         "name": "admin.service.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/services\/{id}",
+        "uri": "\/admin\/services\/json\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -362,14 +416,14 @@
         "name": "admin.service.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/services\/list",
+        "uri": "\/admin\/services\/json\/list",
         "args": []
     },
     "adminServiceSave": {
         "name": "admin.service.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/services\/save",
+        "uri": "\/admin\/services\/json\/save",
         "args": []
     },
     "adminTransactionCreate": {
@@ -423,14 +477,14 @@
         "name": "admin.user.create",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/users\/create",
+        "uri": "\/admin\/users\/json\/create",
         "args": []
     },
     "adminUserDelete": {
         "name": "admin.user.delete",
         "displayName": "",
         "method": "delete",
-        "uri": "\/admin\/users\/{id}",
+        "uri": "\/admin\/users\/json\/{id}",
         "args": {
             "id": "{id}"
         }
@@ -446,21 +500,21 @@
         "name": "admin.user.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/users\/list",
+        "uri": "\/admin\/users\/json\/list",
         "args": []
     },
     "adminUserSave": {
         "name": "admin.user.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/users\/save",
+        "uri": "\/admin\/users\/json\/save",
         "args": []
     },
     "adminUserSendRestorePassword": {
         "name": "admin.user.send.restore.password",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/users\/sendRestorePassword",
+        "uri": "\/admin\/users\/json\/sendRestorePassword",
         "args": []
     },
     "adminUserView": {

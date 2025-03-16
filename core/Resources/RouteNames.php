@@ -125,10 +125,17 @@ abstract class RouteNames
     public const ADMIN_PERIOD_DELETE = 'admin.period.delete';
 
     public const ADMIN_ACCOUNT_INDEX  = 'admin.account.index';
+    public const ADMIN_ACCOUNT_VIEW   = 'admin.account.view';
     public const ADMIN_ACCOUNT_CREATE = 'admin.account.create';
     public const ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
     public const ADMIN_ACCOUNT_LIST   = 'admin.account.list';
     public const ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
+
+    public const ADMIN_COUNTER_CREATE    = 'admin.counter.create';
+    public const ADMIN_COUNTER_SAVE      = 'admin.counter.save';
+    public const ADMIN_COUNTER_LIST      = 'admin.counter.list';
+    public const ADMIN_COUNTER_DELETE    = 'admin.counter.delete';
+    public const ADMIN_COUNTER_ADD_VALUE = 'admin.counter.add-value';
 
     public const ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
     public const ADMIN_INVOICE_CREATE = 'admin.invoice.create';

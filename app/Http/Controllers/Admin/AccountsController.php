@@ -38,6 +38,29 @@ class AccountsController extends Controller
         return response()->json(new AccountResource($this->accountFactory->makeDefault()));
     }
 
+    public function view(int $id)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            abort(403);
+        }
+        if ( ! $id && ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
+            abort(403);
+        }
+        $accountSearcher = new AccountSearcher();
+        $accountSearcher
+            ->setId($id)
+            ->setWithUsers()
+        ;
+        $account = $this->accountService->search($accountSearcher)->getItems()->first();
+        
+        if ( ! $account) {
+            abort(404);
+        }
+        $account = new AccountResource($account);
+
+        return view('admin.pages.accounts.view', compact('account'));
+    }
+
     public function list(ListRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {

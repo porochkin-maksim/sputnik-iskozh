@@ -19,19 +19,22 @@ readonly class CounterHistoryResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
+        $counter = $this->counterHistory->getCounter();
+
         return [
             'id'            => $this->counterHistory->getId(),
             'value'         => $this->counterHistory->getValue(),
             'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
             'file'          => $this->counterHistory->getFile(),
             'counterId'     => $this->counterHistory->getCounterId(),
-            'counterNumber' => $this->counterHistory->getCounter()?->getNumber(),
-            'accountId'     => $this->counterHistory->getCounter()?->getAccountId(),
-            'accountNumber' => $this->counterHistory->getCounter()?->getAccount()?->getNumber(),
+            'counterNumber' => $counter?->getNumber(),
+            'accountId'     => $counter?->getAccountId(),
+            'accountNumber' => $counter?->getAccount()?->getNumber(),
+            'isInvoicing'   => $counter?->isInvoicing(),
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
-                    type: HistoryType::COUNTER,
-                    primaryId: $this->counterHistory->getCounterId(),
+                    type         : HistoryType::COUNTER,
+                    primaryId    : $this->counterHistory->getCounterId(),
                     referenceType: $this->counterHistory->getCounterId() ? null : HistoryType::COUNTER_HISTORY,
                     referenceId  : $this->counterHistory->getCounterId() ? null : $this->counterHistory->getId(),
                 ) : null,

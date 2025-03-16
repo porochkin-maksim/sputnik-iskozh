@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources\Admin\Users;
 
+use Core\Domains\User\Enums\UserIdEnum;
+use Core\Domains\User\UserLocator;
+use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -22,8 +25,11 @@ readonly class UserResource extends AbstractResource
     {
         $access = lc::roleDecorator();
 
+        $isAdmin = UserIdEnum::OWNER === $this->user->getId();
+
         return [
             'id'          => $this->user->getId(),
+            'fullName'    => UserLocator::UserDecorator($this->user)->getFullName(),
             'firstName'   => $this->user->getFirstName(),
             'middleName'  => $this->user->getMiddleName(),
             'lastName'    => $this->user->getLastName(),
@@ -34,13 +40,14 @@ readonly class UserResource extends AbstractResource
             'accountName' => ($this->user->getAccount()?->getNumber()),
             'actions'     => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::USERS_DROP),
+                ResponsesEnum::EDIT => ! $isAdmin && $access->can(PermissionEnum::USERS_EDIT),
+                ResponsesEnum::DROP => ! $isAdmin && $access->can(PermissionEnum::USERS_DROP),
             ],
             'historyUrl'  => HistoryChangesLocator::route(
                 type     : HistoryType::USER,
                 primaryId: $this->user->getId(),
             ),
+            'viewUrl' => $this->user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $this->user->getId()]) : null,
         ];
     }
 }

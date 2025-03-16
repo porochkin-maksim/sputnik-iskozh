@@ -33,7 +33,7 @@
         <tr v-for="(user) in users">
             <td>{{ user.id }}</td>
             <td>
-                <a :href="getViewLink(user.id)">{{ user.email }}</a>
+                <a :href="user.viewUrl">{{ user.email }}</a>
             </td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>

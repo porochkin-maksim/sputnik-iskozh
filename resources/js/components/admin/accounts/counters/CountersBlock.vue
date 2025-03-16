@@ -13,10 +13,22 @@
             <template v-for="item in counters">
                 <tr>
                     <th colspan="2"
-                        class="table-info text-center border-end-0">Счётчик №{{ item.number }}
+                        class="table-info text-center border-end-0">
+                        <a href=""
+                           class="text-decoration-none"
+                           @click.prevent="editAction(item)">
+                            <span v-if="item.isInvoicing">
+                                <i class="fa fa-check text-success"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-close text-secondary"></i>
+                            </span>
+                            &nbsp;Счётчик "{{ item.number }}"
+                        </a>
                     </th>
                     <th class="table-info text-center border-start-0">
                         <button class="btn btn-sm btn-success"
+                                v-if="this.account.actions.counters.edit"
                                 @click="addHistoryValue(item.id)"
                         >Добавить показания
                         </button>
@@ -45,7 +57,7 @@
     <div class="d-flex align-items-center justify-content-between mt-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
-                    v-if="showAddButton"
+                    v-if="this.account.actions.counters.edit"
                     @click="addCounter">Добавить счётчик
             </button>
         </div>
@@ -58,6 +70,9 @@
         <template v-slot:body>
             <div class="container-fluid">
                 <div v-if="mode === 1">
+                    <custom-checkbox v-model="isInvoicing"
+                                     :label="'Выставлять счета'"
+                    />
                     <custom-input v-model="number"
                                   :errors="errors.number"
                                   :type="'text'"
@@ -65,7 +80,8 @@
                                   :required="true"
                     />
                 </div>
-                <div class="mt-2">
+                <div class="mt-2"
+                     v-if="!(counter && counter.id)">
                     <custom-input v-model="value"
                                   :errors="errors.value"
                                   :type="'number'"
@@ -73,7 +89,8 @@
                                   :required="true"
                     />
                 </div>
-                <div class="mt-2">
+                <div class="mt-2"
+                     v-if="!(counter && counter.id)">
                     <div v-if="file">
                         <button class="btn btn-sm btn-danger"
                                 @click="removeFile">
@@ -100,6 +117,13 @@
         </template>
         <template v-slot:footer>
             <button class="btn btn-success"
+                    v-if="counter && counter.id"
+                    @click="saveAction"
+                    :disabled="!canSubmitAction">
+                Обновить
+            </button>
+            <button class="btn btn-success"
+                    v-else
                     @click="submitAction"
                     :disabled="!canSubmitAction">
                 Добавить
@@ -119,13 +143,15 @@ import FileItem       from '../../../common/files/FileItem.vue';
 import SearchSelect   from '../../../common/form/SearchSelect.vue';
 
 export default {
-    name      : 'ProfileCountersBlock',
     components: {
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,
         CustomInput,
         Wrapper,
 
+    },
+    props     : {
+        account: Object,
     },
     mixins    : [
         ResponseError,
@@ -135,9 +161,12 @@ export default {
             showDialog: false,
             hideDialog: false,
 
-            id    : null,
-            number: null,
-            value : null,
+            counter  : null,
+            counterId: null,
+
+            isInvoicing: null,
+            number     : null,
+            value      : null,
 
             counters: null,
             file    : null,
@@ -150,7 +179,11 @@ export default {
     },
     methods : {
         listAction () {
-            window.axios[Url.Routes.profileCounterList.method](Url.Routes.profileCounterList.uri).then(response => {
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterList, {
+                id: this.account.id,
+            });
+
+            window.axios[Url.Routes.adminCounterList.method](uri).then(response => {
                 this.counters = response.data.counters;
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -165,15 +198,40 @@ export default {
             }
         },
         createAction () {
-            if (!confirm('Номер счётчика невозможно будет изменить. Продолжить?')) {
+            if (!confirm('Добавить счётчик?')) {
                 return;
             }
             let form = new FormData();
             form.append('number', this.number);
             form.append('value', this.value);
             form.append('file', this.file);
+            form.append('is_invoicing', this.isInvoicing);
 
-            window.axios[Url.Routes.profileCounterCreate.method](Url.Routes.profileCounterCreate.uri, form).then(response => {
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterCreate, {
+                id: this.account.id,
+            });
+
+            window.axios[Url.Routes.adminCounterCreate.method](uri, form).then(response => {
+                this.onSuccessSubmit();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        saveAction () {
+            if (!this.counter || !this.counter.id) {
+                return;
+            }
+
+            let form = new FormData();
+            form.append('id', this.counter.id);
+            form.append('number', this.number);
+            form.append('is_invoicing', this.isInvoicing);
+
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterSave, {
+                id: this.account.id,
+            });
+
+            window.axios[Url.Routes.adminCounterSave.method](uri, form).then(response => {
                 this.onSuccessSubmit();
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -181,11 +239,14 @@ export default {
         },
         addHistoryValueAction () {
             let form = new FormData();
-            form.append('counter_id', this.id);
+            form.append('counter_id', this.counterId);
             form.append('value', this.value);
             form.append('file', this.file);
 
-            window.axios[Url.Routes.profileCounterAddValue.method](Url.Routes.profileCounterAddValue.uri, form).then(response => {
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterAddValue, {
+                id: this.account.id,
+            });
+            window.axios[Url.Routes.adminCounterAddValue.method](uri, form).then(response => {
                 this.onSuccessSubmit();
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -196,17 +257,36 @@ export default {
             this.hideDialog = true;
             this.file       = null;
             this.mode       = null;
-            this.id         = null;
+            this.counterId  = null;
             this.listAction();
         },
         addCounter () {
-            this.mode       = 1;
-            this.showDialog = true;
+            this.mode        = 1;
+            this.counter     = null;
+            this.number      = null;
+            this.value       = null;
+            this.isInvoicing = true;
+            this.showDialog  = true;
+        },
+        editAction (item) {
+            this.mode        = 1;
+            this.counter     = item;
+            this.number      = item.number;
+            this.isInvoicing = item.isInvoicing;
+            this.showDialog  = true;
         },
         addHistoryValue (id) {
             this.mode       = 2;
+            this.counter    = null;
+            this.number     = null;
             this.showDialog = true;
-            this.id         = id;
+            this.counterId  = id;
+
+            this.counters.forEach(item => {
+                if (item.id === id) {
+                    this.value = item.history[0].value;
+                }
+            })
         },
         closeAction () {
             this.showDialog = false;
@@ -225,14 +305,14 @@ export default {
         Url () {
             return Url;
         },
-        showAddButton () {
-            return !this.counters || !(this.counters.length > 2);
-        },
         canSubmitAction () {
             if (this.mode === 1) {
-                return this.number && this.value && this.file;
+                if (this.counter && this.counter.id) {
+                    return this.number;
+                }
+                return this.number && this.value;
             }
-            return this.value && this.file;
+            return this.value;
         },
     },
 };

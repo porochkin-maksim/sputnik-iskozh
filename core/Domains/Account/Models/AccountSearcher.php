@@ -31,4 +31,11 @@ class AccountSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setWithUsers(): static
+    {
+        $this->with[] = Account::USERS;
+
+        return $this;
+    }
 }

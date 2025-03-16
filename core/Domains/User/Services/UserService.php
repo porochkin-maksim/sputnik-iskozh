@@ -8,6 +8,7 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\User\Collections\UserCollection;
+use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserComparator;
 use Core\Domains\User\Models\UserDTO;
@@ -99,7 +100,7 @@ readonly class UserService
     {
         $user = $this->getById($id);
 
-        if ( ! $user) {
+        if ( ! $user || UserIdEnum::OWNER === $id) {
             return false;
         }
 

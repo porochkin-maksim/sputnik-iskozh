@@ -28,6 +28,7 @@ class CounterLocator
             self::$counterService = new CounterService(
                 self::CounterFactory(),
                 self::CounterRepository(),
+                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 

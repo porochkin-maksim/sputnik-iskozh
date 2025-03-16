@@ -27,50 +27,55 @@
                 :url="historyUrl" />
         </div>
     </div>
-    <div>
-        <template v-if="actions.edit">
-            <div v-for="account in accounts">
-                <account-item-edit :model-value="account" />
-            </div>
-        </template>
-        <template v-else>
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th></th>
-                    <th>Номер</th>
-                    <th>Площадь (м²)</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="account in accounts"
-                    class="align-middle">
-                    <account-item-edit :model-value="account" />
-                </tr>
-                </tbody>
-            </table>
-        </template>
-    </div>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Членство</th>
+            <th>Номер</th>
+            <th>Площадь (м²)</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="account in accounts"
+            class="align-middle">
+            <td>
+                <a :href="account.viewUrl">
+                    {{ account.id }}
+                </a>
+            </td>
+            <td>{{ account.isMember ? 'Член СНТ' : 'Не член СНТ' }}</td>
+            <td>{{ account.number }}</td>
+            <td>{{ account.size }}</td>
+            <td>
+                <history-btn :disabled="!account.historyUrl"
+                             class="btn-link underline-none"
+                             :url="account.historyUrl ? account.historyUrl : ''" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <account-item-add v-if="account" :model-value="account" @updated="onCreatedEvent"/>
 </template>
 
 <script>
-import ResponseError   from '../../../mixin/ResponseError.js';
-import Url             from '../../../utils/Url.js';
-import AccountItemEdit from './AccountItemEdit.vue';
-import HistoryBtn      from '../../common/HistoryBtn.vue';
-import SearchSelect    from '../../common/form/SearchSelect.vue';
-import Pagination      from '../../common/pagination/Pagination.vue';
+import ResponseError  from '../../../mixin/ResponseError.js';
+import Url            from '../../../utils/Url.js';
+import HistoryBtn     from '../../common/HistoryBtn.vue';
+import SearchSelect   from '../../common/form/SearchSelect.vue';
+import Pagination     from '../../common/pagination/Pagination.vue';
+import AccountItemAdd from './AccountItemAdd.vue';
 
 export default {
     name      : 'AccountsBlock',
-    components: { Pagination, SearchSelect, HistoryBtn, AccountItemEdit },
+    components: { AccountItemAdd, Pagination, SearchSelect, HistoryBtn },
     mixins    : [
         ResponseError,
     ],
     data () {
         return {
+            account    : null,
             accounts   : [],
             allAccounts: [],
             historyUrl : null,
@@ -94,7 +99,7 @@ export default {
     methods: {
         makeAction () {
             window.axios[Url.Routes.adminAccountCreate.method](Url.Routes.adminAccountCreate.uri).then(response => {
-                this.accounts.push(response.data);
+                this.account = response.data;
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -127,6 +132,10 @@ export default {
         },
         onPaginationUpdate (skip) {
             this.skip = skip;
+            this.listAction();
+        },
+        onCreatedEvent () {
+            this.account = null;
             this.listAction();
         },
     },

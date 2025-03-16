@@ -6,6 +6,7 @@ use App\Http\Requests\Admin\Counters\ConfirmRequest;
 use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
 use Core\Domains\Counter\CounterLocator;
+use Core\Domains\Counter\Jobs\CreateTransactionForCounterChangeJob;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use lc;
@@ -77,7 +78,9 @@ class CounterController extends Controller
 
         foreach ($counterHistories as $history) {
             $history->setIsVerified(true);
-            $this->counterHistoryService->save($history);
+            $history = $this->counterHistoryService->save($history);
+
+            CreateTransactionForCounterChangeJob::dispatch($history->getId());
         }
     }
 
