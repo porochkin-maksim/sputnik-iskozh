@@ -2,8 +2,8 @@
     <h5>Новые показания счётчиков</h5>
     <div class="d-flex align-items-center mb-2"
          v-if="actions.edit && histories.length">
-        <button class="btn  btn-success"
-                :disabled="!checked.length"
+        <button class="btn btn-success"
+                :disabled="!canSubmitAction"
                 @click="confirmAction"
         >
             Подтвердить выделенные
@@ -92,7 +92,7 @@
         <template v-slot:title>Привязка показаний</template>
         <template v-slot:body>
             <div class="container-fluid">
-                <label>Участок</label>
+                <label>Выберите участок</label>
                 <search-select
                     v-model="accountId"
                     :prop-class="'form-control mb-2'"
@@ -101,7 +101,7 @@
                     @update:model-value="getCounters"
                 />
                 <template v-if="accountId && counters.length">
-                    <label>Счётчик</label>
+                    <label>Выберите счётчик</label>
                     <search-select
                         v-model="counterId"
                         :prop-class="'form-control mb-2'"
@@ -164,7 +164,7 @@ export default {
         this.getAccounts();
         this.listAction();
     },
-    methods: {
+    methods : {
         listAction () {
             this.allCheck = false;
             this.checked  = [];
@@ -301,13 +301,22 @@ export default {
             });
         },
     },
-    watch  : {
+    watch   : {
         reload (value) {
             if (value === false) {
                 return;
             }
             this.listAction();
             this.$emit('update:reload', false);
+        },
+    },
+    computed: {
+        canSubmitAction () {
+            let result = true;
+            this.histories.forEach(history => {
+                result = result && history.counterId !== null;
+            });
+            return this.checked.length && result;
         },
     },
 };

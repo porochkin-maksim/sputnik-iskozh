@@ -180,12 +180,35 @@ $isWinter = $month >= 11 || $month <= 3;
         </tbody>
     </table>
 
-    <h3>
-        <a href="{{ route(RouteNames::PROPOSAL) }}"
-           class="btn btn-sm btn-success">
-            <i class="fa fa-envelope"></i>&nbsp;Написать&nbsp;предложение
-        </a>
-    </h3>
+    <div class="row requests-block">
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::PROPOSAL) }}">
+                <h3>{{ RouteNames::name(RouteNames::PROPOSAL) }}</h3>
+                <div class="text-center">
+                    Отправить идею или предложение по поводу улучшения жизни в СНТ
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::PAYMENT) }}">
+                <h3>{{ RouteNames::name(RouteNames::PAYMENT) }}</h3>
+                <div class="text-center">
+                    Сообщить о платеже
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::COUNTER) }}">
+                <h3>{{ RouteNames::name(RouteNames::COUNTER) }}</h3>
+                <div class="text-center">
+                    Отправить показания электроэнергии
+                </div>
+            </a>
+        </div>
+    </div>
 
     <div class="my-2">
         <a class="btn btn-link px-1"

@@ -39,14 +39,20 @@ class InvoiceRepository
 
     public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): array
     {
+        $regular = InvoiceTypeEnum::REGULAR->value;
+        $income = InvoiceTypeEnum::INCOME->value;
         $outcome = InvoiceTypeEnum::OUTCOME->value;
 
         $result = Invoice::query()->select(
             DB::raw("
-                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE cost END)  AS income_cost,
-                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE payed END) AS income_payed,
-                SUM(CASE WHEN type = {$outcome} THEN cost ELSE 0 END)  AS outcome_cost,
-                SUM(CASE WHEN type = {$outcome} THEN payed ELSE 0 END) AS outcome_payed
+                COUNT(CASE WHEN type = {$regular} THEN 1 ELSE NULL END) AS regularCount,
+                COUNT(CASE WHEN type = {$income} THEN 1 ELSE NULL END)   AS incomeCount,
+                COUNT(CASE WHEN type = {$outcome} THEN 1 ELSE NULL END) AS outcomeCount,
+                
+                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE cost END)  AS incomeCost,
+                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE payed END) AS incomePayed,
+                SUM(CASE WHEN type = {$outcome} THEN cost ELSE 0 END)  AS outcomeCost,
+                SUM(CASE WHEN type = {$outcome} THEN payed ELSE 0 END) AS outcomePayed
             "),
         )->when($periodId, function ($query) use ($periodId) {
             $query->where(Invoice::PERIOD_ID, SearcherInterface::EQUALS, $periodId);

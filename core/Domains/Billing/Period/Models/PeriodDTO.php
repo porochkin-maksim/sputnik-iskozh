@@ -62,4 +62,9 @@ class PeriodDTO
 
         return $this;
     }
+
+    public function isCurrent(): bool
+    {
+        return Carbon::now()->between($this->start_at, $this->end_at);
+    }
 }

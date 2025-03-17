@@ -1,45 +1,58 @@
 <template>
     <div>
-        <table class="table table-bordered table-striped-columns table-striped ">
+        <table class="table table-sm table-bordered">
+            <tbody>
             <tr>
-                <th>№</th>
-                <th>Услуга</th>
-                <th>Тариф</th>
-                <th>Стоимость</th>
-                <th>Оплачено</th>
-                <th>Создана</th>
+                <th class="text-center">№</th>
+                <th class="text-center">Услуга</th>
+                <th class="text-center">Тариф</th>
+                <th class="text-center">Стоимость</th>
+                <th class="text-center">Оплачено</th>
+                <th class="text-center">Создана</th>
                 <th></th>
             </tr>
-            <tr v-for="(transaction) in transactions">
-                <template v-if="!selectedId || selectedId !== transaction.id">
-                    <td>{{ transaction.id }}</td>
-                    <td>{{ transaction.service }}</td>
-                    <td>{{ $formatMoney(transaction.tariff) }}</td>
-                    <td>{{ $formatMoney(transaction.cost) }}</td>
-                    <td>{{ $formatMoney(transaction.payed) }}</td>
-                    <td>{{ transaction.created }}</td>
-                    <td>
-                        <button class="btn btn-sm border-0"
-                                v-if="actions.edit"
-                                @click="editAction(transaction.id)">
-                            <i class="fa fa-edit"></i>
-                        </button>
+            <tr v-for="(transaction, index) in transactions">
+                <td class="text-end">{{ transaction.id }}</td>
+                <td>{{ transaction.service }}</td>
+                <td class="text-end">{{ $formatMoney(transaction.tariff) }}</td>
+                <td class="text-end">{{ $formatMoney(transaction.cost) }}</td>
+                <td class="text-end">{{ $formatMoney(transaction.payed) }}</td>
+                <td class="text-center">{{ transaction.created }}</td>
+                <td>
+                    <div class="d-flex justify-content-center">
                         <history-btn
                             class="btn-link underline-none"
                             :url="transaction.historyUrl" />
-                        <button class="btn btn-sm border-0"
-                                v-if="actions.drop"
-                                @click="dropAction(transaction.id)">
-                            <i class="fa fa-trash text-danger"></i>
-                        </button>
-                    </td>
-                </template>
-                <template v-else>
-                    <slot name="transaction" />
-                </template>
+                        <div class="dropdown"
+                             v-if="actions.edit || actions.view || actions.drop">
+                            <a class="btn btn-sm btn-light border"
+                               href="#"
+                               role="button"
+                               :id="'dropDown'+index+vueId"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                            <ul class="dropdown-menu"
+                                :aria-labelledby="'dropDown'+vueId">
+                                <li v-if="actions.edit">
+                                    <a class="dropdown-item cursor-pointer"
+                                       @click="editAction(transaction.id)"><i class="fa fa-edit"></i> Редактировать</a>
+                                </li>
+                                <li v-else-if="actions.view">
+                                    <a class="dropdown-item cursor-pointer"
+                                       @click="editAction(transaction.id)"><i class="fa fa-eye"></i> Просмотр</a>
+                                </li>
+                                <li v-if="actions.drop">
+                                    <a class="dropdown-item cursor-pointer text-danger"
+                                       @click="dropAction(transaction.id)"><i class="fa fa-trash"></i> Удалить</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
             </tr>
-            <slot name="transaction"
-                  v-if="!selectedId" />
+            </tbody>
         </table>
     </div>
 </template>
@@ -65,9 +78,11 @@ export default {
         return {
             transactions: [],
             actions     : {},
+            vueId       : null,
         };
     },
     created () {
+        this.vueId = 'uuid' + this.$_uid;
         this.listAction();
     },
     methods: {

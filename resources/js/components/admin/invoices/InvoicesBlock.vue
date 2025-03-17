@@ -54,17 +54,46 @@
     </div>
     <template v-if="summary">
         <div>
-            <table class="table table-sm table-bordered text-center">
+            <table class="table table-sm table-bordered table-striped-columns text-center">
                 <thead>
                 <tr>
-                    <td>Доход {{ $formatMoney(summary.incomePayed) }} / {{ $formatMoney(summary.incomeCost) }}</td>
-                    <td>Расход {{ $formatMoney(summary.outcomePayed) }} / {{ $formatMoney(summary.outcomeCost) }}</td>
+                    <th></th>
+                    <th>Стоимость</th>
+                    <th>Оплачено</th>
+                    <th>Разница</th>
+                    <th colspan="2">Всего счетов {{ summary.totalCount }}</th>
                 </tr>
                 </thead>
+                <tbody>
+                <tr>
+                    <th>Доход</th>
+                    <td>{{ $formatMoney(summary.incomeCost) }}</td>
+                    <td>{{ $formatMoney(summary.incomePayed) }}</td>
+                    <td>{{ $formatMoney(summary.deltaIncome) }}</td>
+                    <td>Регулярных</td>
+                    <td>{{ summary.regularCount }}</td>
+                </tr>
+                <tr>
+                    <th>Расход</th>
+                    <td>{{ $formatMoney(summary.outcomeCost) }}</td>
+                    <td>{{ $formatMoney(summary.outcomePayed) }}</td>
+                    <td>{{ $formatMoney(summary.deltaOutcome) }}</td>
+                    <td>Доходных</td>
+                    <td>{{ summary.incomeCount }}</td>
+                </tr>
+                <tr>
+                    <th>Итого</th>
+                    <td>{{ $formatMoney(summary.deltaCost) }}</td>
+                    <td>{{ $formatMoney(summary.deltaPayed) }}</td>
+                    <td>{{ $formatMoney(summary.delta) }}</td>
+                    <td>Расходных</td>
+                    <td>{{ summary.outcomeCount }}</td>
+                </tr>
+                </tbody>
             </table>
         </div>
-        <invoices-list :invoices="invoices" />
     </template>
+    <invoices-list :invoices="invoices" />
     <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
                        :accounts="accounts"
@@ -105,7 +134,7 @@ export default {
             skip      : 0,
             routeState: 0,
             type      : 0,
-            periodId  : 0,
+            periodId  : null,
             accountId : 0,
             Url       : Url,
             actions   : {},

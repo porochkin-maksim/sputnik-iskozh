@@ -18,4 +18,15 @@ class PeriodCollection extends Collection implements CollectionInterface
     {
         return $item instanceof PeriodDTO;
     }
+
+    public function getCurrent(): ?PeriodDTO
+    {
+        foreach ($this as $period) {
+            if ($period->isCurrent()) {
+                return $period;
+            }
+        }
+
+        return null;
+    }
 }

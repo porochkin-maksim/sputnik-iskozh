@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
+use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
 use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
@@ -125,18 +127,23 @@ class InvoiceController extends Controller
             ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC)
         ;
-        $periods = $this->periodService->search($periodSearcher);
+        $periods = $this->periodService->search($periodSearcher)->getItems();
 
         $accountSearcher = new AccountSearcher();
         $accountSearcher->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
-        $accounts = $this->accountService->search($accountSearcher);
+        $accounts = $this->accountService->search($accountSearcher)->getItems();
 
-        return response()->json(new InvoicesListResource(
+        $result = (new InvoicesListResource(
             $invoices->getItems(),
             $invoices->getTotal(),
-            $periods->getItems(),
-            $accounts->getItems(),
-        ));
+        ))->jsonSerialize();
+
+        $result += [
+            'periods'  => new PeriodsSelectResource($periods),
+            'accounts' => new AccountsSelectResource($accounts, false),
+        ];
+
+        return response()->json($result);
     }
 
     public function save(SaveRequest $request): JsonResponse

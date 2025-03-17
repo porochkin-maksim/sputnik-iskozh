@@ -1,6 +1,6 @@
 <template>
     <h5>Транзакции</h5>
-    <div v-if="!transaction || transaction?.id">
+    <div>
         <button class="btn btn-success mb-2"
                 v-if="invoice.actions.transactions.edit"
                 v-on:click="makeAction">Добавить транзакцию
@@ -10,61 +10,58 @@
                        v-model:selected-id="selectedId"
                        v-model:reload="reloadList"
                        v-model:count="transactionCount"
+    />
+    <view-dialog v-model:show="showDialog"
+                 v-model:hide="hideDialog"
+                 @hidden="closeAction"
+                 v-if="transaction && (transaction.actions.edit || transaction.actions.view)"
     >
-        <template v-slot:transaction
-                  v-if="transaction">
-            <td>
-                {{ transaction.id ? transaction.id : '#' }}
-            </td>
-            <td>
+        <template v-slot:title>{{ transaction.id ? (transaction.actions.edit ? 'Редактирование транзакции' : 'Просмотр транзакции') : 'Добавление транзакции' }}</template>
+        <template v-slot:body>
+            <div class="container-fluid">
+                <label>Услуга</label>
                 <div class="input-group input-group-sm">
                     <simple-select v-model="transaction.serviceId"
                                    :disabled="selectedId"
-                                   :class="'form-select-sm border-0'"
+                                   :class="'form-select-sm border'"
                                    :items="servicesSelect"
                                    :label="'Услуга'"
                                    @change="onServiceIdChanged"
                     />
                 </div>
-            </td>
-            <td>
+                <label>Своё название услуги</label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       :disabled="!transaction.actions.edit"
+                       v-model="transaction.name"
+                />
+                <label>Тариф</label>
                 <input type="number"
-                       style="max-width: 120px"
                        step="0.01"
-                       class="form-control form-control-sm border-0 cost"
-                       placeholder="Стоимость"
-                       v-model="transaction.tariff">
-            </td>
-            <td>
+                       class="form-control form-control-sm"
+                       :disabled="!transaction.actions.edit"
+                       v-model="transaction.tariff"
+                />
+                <label>Стоимость</label>
                 <input type="number"
-                       style="max-width: 120px"
                        step="0.01"
-                       class="form-control form-control-sm border-0 cost"
-                       placeholder="Стоимость"
-                       v-model="transaction.cost">
-
-            </td>
-            <td>{{ $formatMoney(transaction.payed) }}</td>
-            <td>
-                {{ transaction.created }}
-            </td>
-            <td>
-                <div>
-                    <button class="btn btn-sm border-0"
-                            @click="saveAction"
-                            v-if="transaction.actions.edit"
-                            :disabled="!canSave || loading">
-                        <i class="fa"
-                           :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>&nbsp;Сохранить
-                    </button>
-                    <button class="btn btn-sm border-0"
-                            @click="closeAction">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </td>
+                       class="form-control form-control-sm"
+                       :disabled="!transaction.actions.edit"
+                       v-model="transaction.cost"
+                />
+            </div>
         </template>
-    </transactions-list>
+        <template v-slot:footer v-if="transaction.actions.edit">
+            <div class="d-flex justify-content-between w-100">
+                <div></div>
+                <button class="btn btn-success"
+                        :disabled="!canSave"
+                        @click="saveAction">
+                    {{ transaction.id ? 'Сохранить' : 'Создать' }}
+                </button>
+            </div>
+        </template>
+    </view-dialog>
 </template>
 
 <script>
@@ -73,10 +70,12 @@ import SimpleSelect     from '../../../common/form/SimpleSelect.vue';
 import TransactionsList from './TransactionsList.vue';
 import ResponseError    from '../../../../mixin/ResponseError.js';
 import Url              from '../../../../utils/Url.js';
+import FileItem         from '../../../common/files/FileItem.vue';
+import ViewDialog       from '../../../common/ViewDialog.vue';
 
 export default {
-    components: { TransactionsList, SimpleSelect },
-    emits     : ['update:count'],
+    components: { ViewDialog, FileItem, TransactionsList, SimpleSelect },
+    emits     : ['update:count', 'update:reload'],
     props     : {
         invoice: {
             type   : Object,
@@ -109,6 +108,9 @@ export default {
             servicesSelect: [],
             services      : [],
 
+            showDialog: false,
+            hideDialog: false,
+
             loading: false,
         };
     },
@@ -128,6 +130,7 @@ export default {
                     this.transaction.cost   = parseFloat(this.transaction.cost).toFixed(2);
                     this.transaction.payed  = parseFloat(this.transaction.payed).toFixed(2);
                     this.onServiceIdChanged(this.transaction.serviceId);
+                    this.showDialog = true;
                 }
                 else {
                     this.transaction = null;
@@ -148,6 +151,8 @@ export default {
                 this.transaction.tariff = parseFloat(this.transaction.tariff).toFixed(2);
                 this.transaction.cost   = parseFloat(this.transaction.cost).toFixed(2);
                 this.transaction.payed  = parseFloat(this.transaction.payed).toFixed(2);
+
+                this.showDialog = true;
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -160,7 +165,7 @@ export default {
             form.append('service_id', this.transaction.serviceId);
             form.append('tariff', parseFloat(this.transaction.tariff));
             form.append('cost', parseFloat(this.transaction.cost));
-            form.append('name', this.transaction.service);
+            form.append('name', this.transaction.name);
 
             this.clearResponseErrors();
             let uri = Url.Generator.makeUri(Url.Routes.adminTransactionSave, {
@@ -195,7 +200,8 @@ export default {
             });
         },
         closeAction () {
-            this.selectedId = null;
+            this.transaction = null;
+            this.selectedId  = null;
         },
         onSaved () {
             this.reloadList = true;
@@ -204,7 +210,7 @@ export default {
     },
     computed: {
         canSave () {
-            return this.transaction;
+            return this.transaction && this.transaction.serviceId && this.transaction.cost > 0;
         },
     },
     watch   : {
@@ -221,8 +227,14 @@ export default {
                 this.transaction = null;
             }
         },
-        transactionCount () {
-            this.$emit('update:count', this.transactionCount);
+        hideDialog () {
+            this.closeAction();
+        },
+        reloadList () {
+            this.$emit('update:reload', this.reloadList);
+        },
+        transactionsCount () {
+            this.$emit('update:count', this.transactionsCount);
         },
     },
 };
