@@ -35,7 +35,7 @@ class CreateTransactionsForIncomeInvoiceJob implements ShouldQueue
     {
         $invoice = InvoiceLocator::InvoiceService()->getById($this->invoiceId);
         if ( ! $invoice) {
-            throw new RuntimeException("Invoice not found #{$this->invoiceId}");
+            throw new RuntimeException("Счёт не найден #{$this->invoiceId}");
         }
 
         if ($invoice->getType() !== InvoiceTypeEnum::REGULAR) {

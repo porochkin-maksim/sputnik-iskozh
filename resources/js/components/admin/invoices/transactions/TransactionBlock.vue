@@ -10,6 +10,7 @@
                        v-model:selected-id="selectedId"
                        v-model:reload="reloadList"
                        v-model:count="transactionCount"
+                       @update:count="onUpdatedCount"
     />
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
@@ -206,6 +207,10 @@ export default {
         onSaved () {
             this.reloadList = true;
             this.$emit('update:reload', true);
+        },
+        onUpdatedCount(value) {
+            this.transactionsCount = value;
+            this.$emit('update:count', this.transactionsCount);
         },
     },
     computed: {

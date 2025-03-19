@@ -146,6 +146,9 @@ abstract class RouteNames
     public const ADMIN_INVOICE_LIST    = 'admin.invoice.list';
     public const ADMIN_INVOICE_DELETE  = 'admin.invoice.delete';
 
+    public const ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
+    public const ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
+
     public const ADMIN_TRANSACTION_VIEW   = 'admin.transaction.view';
     public const ADMIN_TRANSACTION_CREATE = 'admin.transaction.create';
     public const ADMIN_TRANSACTION_SAVE   = 'admin.transaction.save';

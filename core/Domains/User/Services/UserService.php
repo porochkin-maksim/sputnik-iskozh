@@ -46,8 +46,8 @@ readonly class UserService
         $model   = $this->userRepository->save($this->userFactory->makeModelFromDto($user, $model));
         $current = $this->userFactory->makeDtoFromObject($model);
 
-        $model->roles()->sync($user->getRole() ? [$user->getRole()?->getId()] : []);
-        $model->accounts()->sync($user->getAccount() ? [$user->getAccount()?->getId()] : []);
+        $model->roles()->sync($user->getRole()?->getId() ? [$user->getRole()?->getId()] : []);
+        $model->accounts()->sync($user->getAccount()?->getId() ? [$user->getAccount()?->getId()] : []);
 
         $current = $this->getById($current->getId());
 

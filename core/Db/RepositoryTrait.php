@@ -55,31 +55,22 @@ trait RepositoryTrait
     {
         $result = [];
         if (class_exists($this->modelClass())) {
-            $notCachedIds = [];
-            foreach ($ids as $id) {
-                $cacheKey = $this->cacheKey($id);
-                if (CacheLocator::LocalCache()->has($cacheKey)) {
-                    $result[] = CacheLocator::LocalCache()->get($cacheKey);
-                }
-                else {
-                    $notCachedIds[] = $id;
-                }
-            }
-
             $searcher = $searcher ?? new BaseSearcher();
-            $query    = $this->buildSearchQuery($searcher)->whereIn('id', $notCachedIds);
+            $searcher->setIds($ids);
+            $query = $this->buildSearchQuery($searcher);
+            $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
+                $query->limit($searcher->getLimit());
+            })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
+                $query->offset($searcher->getOffset());
+            })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
+                $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+            })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
+                $query->whereIn('id', $searcher->getIds());
+            });
             $result   = array_merge($result, $query->get()->all());
         }
 
-        $result = array_values($result);
-        foreach ($result as $item) {
-            $cacheKey = $this->cacheKey($item->id);
-            if ( ! CacheLocator::LocalCache()->has($cacheKey)) {
-                CacheLocator::LocalCache()->set($cacheKey, $item);
-            }
-        }
-
-        return array_values($result);
+        return $result;
     }
 
     public function search(SearcherInterface $searcher): SearchResponse
@@ -150,6 +141,10 @@ trait RepositoryTrait
                             break;
                     }
 
+                }
+            })->when($searcher->getWhereColumn(), function (Builder $query) use ($searcher) {
+                foreach ($searcher->getWhereColumn() as $where) {
+                    $query->whereColumn($where->getField(), $where->getOperator(), $where->getValue());
                 }
             })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getSortProperties() as $sort) {

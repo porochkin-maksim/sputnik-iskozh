@@ -2,6 +2,8 @@
 
 namespace Core\Domains\Billing\Invoice\Services;
 
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Jobs\UpdateSntBalanceJob;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 use Core\Domains\Billing\Invoice\Events\InvoiceCreatedEvent;
@@ -107,5 +109,14 @@ readonly class InvoiceService
     public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): Summary
     {
         return new Summary($this->invoiceRepository->getSummaryFor($type, $periodId, $accountId));
+    }
+
+    public function getAccountsWithoutRegularInvoice(int $periodId): AccountCollection
+    {
+        $result = $this->invoiceRepository->getAccountsWithoutRegularInvoice($periodId)->map(function ($item) {
+            return $item->id;
+        })->toArray();
+
+        return AccountLocator::AccountService()->getByIds($result);
     }
 }

@@ -156,6 +156,15 @@
         "uri": "\/admin\/invoices\/json\/create",
         "args": []
     },
+    "adminInvoiceCreateRegularInvoices": {
+        "name": "admin.invoice.create-regular-invoices",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/create-regular-invoices\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
     "adminInvoiceDelete": {
         "name": "admin.invoice.delete",
         "displayName": "",
@@ -172,6 +181,15 @@
         "uri": "\/admin\/invoices\/json\/get\/{id}",
         "args": {
             "id": "{id}"
+        }
+    },
+    "adminInvoiceGetAccountsCountWithoutRegular": {
+        "name": "admin.invoice.get-accounts-count-without-regular",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/get-without-regular\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
         }
     },
     "adminInvoiceIndex": {

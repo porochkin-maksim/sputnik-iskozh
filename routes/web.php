@@ -229,6 +229,8 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::get('/view/{id}', [Controllers\Admin\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
                     Route::get('/summary', [Controllers\Admin\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
+                    Route::get('/get-without-regular/{periodId}', [Controllers\Admin\InvoiceController::class, 'getAccountCountWithoutRegular'])->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR);
+                    Route::post('/create-regular-invoices/{periodId}', [Controllers\Admin\InvoiceController::class, 'createRegularInvoices'])->name(RouteNames::ADMIN_INVOICE_CREATE_REGULAR_INVOICES);
                     Route::get('/create', [Controllers\Admin\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
                     Route::get('/list', [Controllers\Admin\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
                     Route::post('/save', [Controllers\Admin\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);

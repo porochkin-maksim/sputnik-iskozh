@@ -3,8 +3,10 @@
 namespace Core\Domains\Account\Factories;
 
 use App\Models\Account\Account;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\User\UserLocator;
+use Illuminate\Database\Eloquent\Collection;
 
 readonly class AccountFactory
 {
@@ -55,6 +57,16 @@ readonly class AccountFactory
             foreach ($model->getRelation(Account::USERS) as $user) {
                 $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
             }
+        }
+
+        return $result;
+    }
+
+    public function makeDtoFromObjects(array|Collection $models): AccountCollection
+    {
+        $result = new AccountCollection();
+        foreach ($models as $model) {
+            $result->add($this->makeDtoFromObject($model));
         }
 
         return $result;

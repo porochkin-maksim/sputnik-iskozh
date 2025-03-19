@@ -20,8 +20,9 @@ trait SearcherTrait
     private array  $select = [];
     private array  $with   = [];
 
-    private ?WhereCollection $where   = null;
-    private array            $whereIn = [];
+    private ?WhereCollection $where       = null;
+    private ?WhereCollection $whereColumn = null;
+    private array            $whereIn     = [];
 
     private ?string $search = null;
 
@@ -157,7 +158,6 @@ trait SearcherTrait
     }
 
     /** Выборка */
-
     public function getWhere(): WhereCollection
     {
         if ( ! isset($this->where)) {
@@ -167,9 +167,26 @@ trait SearcherTrait
         return $this->where;
     }
 
-    public function addWhere(string $filed, string $operator, mixed $value = null): static
+    /** Выборка */
+    public function getWhereColumn(): WhereCollection
     {
-        $this->getWhere()->push(new Where($filed, $operator, $value));
+        if ( ! isset($this->whereColumn)) {
+            $this->whereColumn = new WhereCollection();
+        }
+
+        return $this->whereColumn;
+    }
+
+    public function addWhere(string $field, string $operator, mixed $value = null): static
+    {
+        $this->getWhere()->push(new Where($field, $operator, $value));
+
+        return $this;
+    }
+
+    public function addWhereColumn(string $field1, string $operator, mixed $field2 = null): static
+    {
+        $this->getWhereColumn()->push(new Where($field1, $operator, $field2));
 
         return $this;
     }

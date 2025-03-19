@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
@@ -110,6 +111,11 @@ class InvoiceController extends Controller
             ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
 
+        if ($request->getPayedStatus()) {
+            $operator = $request->getPayedStatus() === 'payed' ? SearcherInterface::GTE : SearcherInterface::LT;
+            $searcher->addWhereColumn(Invoice::PAYED, $operator, Invoice::COST);
+        }
+
         if ($request->getPeriodId()) {
             $searcher->setPeriodId($request->getPeriodId());
         }
@@ -178,5 +184,23 @@ class InvoiceController extends Controller
         }
 
         return $this->invoiceService->deleteById($id);
+    }
+
+    public function getAccountCountWithoutRegular(int $periodId): int
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+            abort(403);
+        }
+
+        return $this->invoiceService->getAccountsWithoutRegularInvoice($periodId)->count();
+    }
+
+    public function createRegularInvoices(int $periodId): void
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+            abort(403);
+        }
+
+        CreateRegularPeriodInvoicesJob::dispatchSync($periodId);
     }
 }

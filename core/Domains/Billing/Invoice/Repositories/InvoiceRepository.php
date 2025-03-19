@@ -2,10 +2,13 @@
 
 namespace Core\Domains\Billing\Invoice\Repositories;
 
+use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceRepository
@@ -40,7 +43,7 @@ class InvoiceRepository
     public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): array
     {
         $regular = InvoiceTypeEnum::REGULAR->value;
-        $income = InvoiceTypeEnum::INCOME->value;
+        $income  = InvoiceTypeEnum::INCOME->value;
         $outcome = InvoiceTypeEnum::OUTCOME->value;
 
         $result = Invoice::query()->select(
@@ -63,5 +66,18 @@ class InvoiceRepository
         })->first()?->toArray();
 
         return $result;
+    }
+
+    public function getAccountsWithoutRegularInvoice(int $periodId): Collection
+    {
+        return Account::select(['accounts.id'])
+            ->whereDoesntHave('invoices', function ($query) use ($periodId) {
+                // Условия для фильтров по счетам-фактурам (если нужны)
+                $query->where('period_id', $periodId)
+                    ->where('type', InvoiceTypeEnum::REGULAR->value);
+            })
+            ->where('accounts.id', '!=', AccountIdEnum::SNT->value)
+            ->get()
+        ;
     }
 }

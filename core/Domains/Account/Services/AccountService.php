@@ -91,6 +91,13 @@ readonly class AccountService
         return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
     }
 
+    public function getByIds(array $ids): AccountCollection
+    {
+        $result = $this->accountRepository->getByIds($ids);
+
+        return $this->accountFactory->makeDtoFromObjects($result);
+    }
+
     public function getSntAccount(): ?AccountDTO
     {
         return $this->getById(AccountIdEnum::SNT->value);

@@ -2,11 +2,13 @@
 
 namespace App\Models\Account;
 
+use App\Models\Billing\Invoice;
 use App\Models\Interfaces\CastsInterface;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -60,6 +62,15 @@ class Account extends Model implements CastsInterface
             AccountToUser::TABLE,
             AccountToUser::ACCOUNT,
             AccountToUser::USER,
+        );
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(
+            Invoice::class,
+            Invoice::ACCOUNT_ID,
+            self::ID,
         );
     }
 }

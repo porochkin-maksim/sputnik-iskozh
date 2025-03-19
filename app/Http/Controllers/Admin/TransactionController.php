@@ -66,11 +66,8 @@ class TransactionController extends Controller
 
         if ($invoice->getType() === InvoiceTypeEnum::REGULAR) {
             $services = $services->filter(static function (ServiceDTO $service) use ($existingServiceIds) {
-                return (
-                        ! in_array($service->getId(), $existingServiceIds, true)
-                        && $service->getType() !== ServiceTypeEnum::ELECTRIC_TARIFF
-                    )
-                    || $service->getType() === ServiceTypeEnum::OTHER;
+                return ! in_array($service->getId(), $existingServiceIds, true)
+                       || in_array($service->getType(), [ServiceTypeEnum::ELECTRIC_TARIFF, ServiceTypeEnum::OTHER], true);
             });
         }
         else {
@@ -122,11 +119,8 @@ class TransactionController extends Controller
 
         if ($invoice->getType() === InvoiceTypeEnum::REGULAR) {
             $services = $services->filter(static function (ServiceDTO $service) use ($existingServiceIds) {
-                return (
-                        ! in_array($service->getId(), $existingServiceIds, true)
-                        && $service->getType() !== ServiceTypeEnum::ELECTRIC_TARIFF
-                    )
-                    || $service->getType() === ServiceTypeEnum::OTHER;
+                return ! in_array($service->getId(), $existingServiceIds, true)
+                    || in_array($service->getType(), [ServiceTypeEnum::ELECTRIC_TARIFF, ServiceTypeEnum::OTHER], true);
             });
         }
         else {

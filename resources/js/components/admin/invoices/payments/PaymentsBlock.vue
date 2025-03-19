@@ -10,6 +10,7 @@
                    v-model:selected-id="selectedId"
                    v-model:reload="reloadList"
                    v-model:count="paymentsCount"
+                   @update:count="onUpdatedCount"
     />
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
@@ -221,6 +222,10 @@ export default {
                 }
             }
             this.files = result;
+        },
+        onUpdatedCount(value) {
+            this.paymentsCount = value;
+            this.$emit('update:count', this.paymentsCount);
         },
     },
     computed: {
