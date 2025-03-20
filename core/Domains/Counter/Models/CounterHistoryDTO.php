@@ -11,15 +11,15 @@ class CounterHistoryDTO
     use TimestampsTrait;
 
     private ?int    $id          = null;
-    private ?Carbon $created_at  = null;
-    private ?Carbon $updated_at  = null;
     private ?int    $counter_id  = null;
+    private ?int    $previous_id = null;
     private ?float  $value       = null;
     private ?Carbon $date        = null;
     private ?bool   $is_verified = null;
 
-    private ?FileDTO $file = null;
+    private ?FileDTO    $file    = null;
     private ?CounterDTO $counter = null;
+    private ?float      $previous_value = null;
 
     public function getId(): ?int
     {
@@ -35,24 +35,24 @@ class CounterHistoryDTO
 
     public function getCreatedAt(): ?Carbon
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     public function setCreatedAt(?Carbon $createdAt): static
     {
-        $this->created_at = $createdAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?Carbon
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
     public function setUpdatedAt(?Carbon $updatedAt): static
     {
-        $this->updated_at = $updatedAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -65,6 +65,18 @@ class CounterHistoryDTO
     public function setCounterId(?int $counter_id): static
     {
         $this->counter_id = $counter_id;
+
+        return $this;
+    }
+
+    public function getPreviousId(): ?int
+    {
+        return $this->previous_id;
+    }
+
+    public function setPreviousId(?int $previous_id): static
+    {
+        $this->previous_id = $previous_id;
 
         return $this;
     }
@@ -127,5 +139,17 @@ class CounterHistoryDTO
     public function getCounter(): ?CounterDTO
     {
         return $this->counter;
+    }
+
+    public function setPreviousValue(?float $value): static
+    {
+        $this->previous_value = $value;
+
+        return $this;
+    }
+
+    public function getPreviousValue(): ?float
+    {
+        return $this->previous_value;
     }
 }

@@ -1,9 +1,16 @@
 <template>
     <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.accountNumber }}» ({{ localInvoice.typeName }}) </h4>
     <div class="mb-2 d-flex align-items-center justify-content-between">
-        <history-btn
-            class="btn-link underline-none"
-            :url="localInvoice.historyUrl" />
+        <div>
+            <a class="btn btn-sm border text-decoration-none me-2"
+               v-if="localInvoice.accountUrl"
+               :href="localInvoice.accountUrl">
+                Перейти в участок {{ localInvoice.accountNumber }}
+            </a>
+            <history-btn
+                class="btn-link underline-none"
+                :url="localInvoice.historyUrl" />
+        </div>
         <button class="btn btn-sm text-danger"
                 v-if="canDrop"
                 @click="dropAction">

@@ -23,7 +23,14 @@
                     </td>
                     <td class="text-center">{{ invoice.typeName }}</td>
                     <td class="text-center">{{ invoice.periodName }}</td>
-                    <td class="text-end">{{ invoice.accountNumber }}</td>
+                    <td class="text-end">
+                        <template v-if="invoice.accountUrl">
+                            <a :href="invoice.accountUrl">{{ invoice.accountNumber }}</a>
+                        </template>
+                        <template v-else>
+                            {{ invoice.accountNumber }}
+                        </template>
+                    </td>
                     <td class="text-end">{{ $formatMoney(invoice.cost) }}</td>
                     <td class="text-end">{{ $formatMoney(invoice.payed) }}</td>
                     <td class="text-center">{{ invoice.created }}</td>

@@ -54,6 +54,9 @@ readonly class InvoiceResource extends AbstractResource
                 'type'      => HistoryType::INVOICE,
                 'primaryId' => $this->invoice->getId(),
             ]) : null,
+            'accountUrl'   => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
+                ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
+                : null,
         ];
     }
 }

@@ -25,6 +25,13 @@ class CounterHistorySearcher implements SearcherInterface
         return $this;
     }
 
+    public function setWithPrevious(): static
+    {
+        $this->with[] = CounterHistory::PREVIOUS;
+
+        return $this;
+    }
+
     public function defaultSort(): static
     {
         return $this
@@ -33,5 +40,14 @@ class CounterHistorySearcher implements SearcherInterface
             ->setSortOrderProperty(CounterHistory::CREATED_AT, SearcherInterface::SORT_ORDER_ASC)
             ->setSortOrderProperty(CounterHistory::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
+    }
+
+    public function setCounterId(?int $getCounterId): static
+    {
+        if (null !== $getCounterId) {
+            $this->addWhere(CounterHistory::COUNTER_ID, SearcherInterface::EQUALS, $getCounterId);
+        }
+
+        return $this;
     }
 }

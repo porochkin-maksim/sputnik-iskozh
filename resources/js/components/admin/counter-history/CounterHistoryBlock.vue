@@ -11,8 +11,9 @@
     </div>
     <div>
         <table class="table table-bordered align-middle">
-            <tr>
-                <th v-if="actions.edit">
+            <thead>
+            <tr class="text-center">
+                <th v-if="actions.edit && canCheckAction">
                     <div>
                         <input @change="onAllCheck"
                                v-model="allCheck"
@@ -24,13 +25,17 @@
                 <th>Участок</th>
                 <th>Счётчик</th>
                 <th>Дата</th>
-                <th class="text-center">Показание</th>
-                <th class="text-center">Выставлять счета</th>
+                <th>Показание</th>
+                <th v-if="canCheckAction">Предыдущее</th>
+                <th>Выставлять счета</th>
                 <th>Файл</th>
+                <th></th>
                 <th v-if="actions.drop"></th>
             </tr>
+            </thead>
+            <tbody>
             <tr v-for="(history) in histories">
-                <td v-if="actions.edit">
+                <td v-if="actions.edit && canCheckAction">
                     <div>
                         <input @change="onChanged(history.id)"
                                :checked="isChecked(history.id)"
@@ -40,7 +45,10 @@
                 </td>
                 <td>{{ history.id }}</td>
                 <template v-if="history.accountId && history.counterId">
-                    <td>{{ history.accountNumber }}</td>
+                    <td v-if="history.accountUrl">
+                        <a :href='history.accountUrl'>{{ history.accountNumber }}</a>
+                    </td>
+                    <td v-else>{{ history.accountNumber }}</td>
                     <td>{{ history.counterNumber }}</td>
                 </template>
                 <template v-else>
@@ -54,7 +62,15 @@
                     </td>
                 </template>
                 <td>{{ history.date }}</td>
-                <td class="text-end">{{ history.value }}</td>
+                <td class="text-end">
+                    {{ history.value }}
+                    <template v-if="history.previousValue">
+                        <br>
+                        +{{ history.value - history.previousValue }}кВт
+                    </template>
+
+                </td>
+                <td class="text-end" v-if="canCheckAction">{{ history.previousValue }}</td>
                 <td class="text-center">
                     <i v-if="history.isInvoicing"
                        class="fa fa-check text-success"></i>
@@ -83,6 +99,7 @@
                     </button>
                 </td>
             </tr>
+            </tbody>
         </table>
     </div>
     <view-dialog v-model:show="showDialog"
@@ -312,11 +329,15 @@ export default {
     },
     computed: {
         canSubmitAction () {
+            return this.checked.length && this.canCheckAction;
+        },
+        canCheckAction () {
             let result = true;
             this.histories.forEach(history => {
                 result = result && history.counterId !== null;
             });
-            return this.checked.length && result;
+
+            return result;
         },
     },
 };

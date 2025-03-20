@@ -17,6 +17,7 @@
                     </th>
                     <th class="table-info text-center border-start-0">
                         <button class="btn btn-sm btn-success"
+                                v-if="canAddNewHistory(item.id)"
                                 @click="addHistoryValue(item.id)"
                         >Добавить показания
                         </button>
@@ -207,6 +208,17 @@ export default {
             this.mode       = 2;
             this.showDialog = true;
             this.id         = id;
+        },
+        canAddNewHistory (id) {
+            const counter = this.getCounter(id);
+            const lastHistory = counter.history[0];
+            if (lastHistory) {
+                return lastHistory.actions.create;
+            }
+            return true;
+        },
+        getCounter (id) {
+            return this.counters.find(item => item.id === id);
         },
         closeAction () {
             this.showDialog = false;

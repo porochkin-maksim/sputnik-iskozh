@@ -35,6 +35,7 @@ readonly class CounterHistoryFactory
 
         return $result->fill([
             CounterHistory::COUNTER_ID  => $dto->getCounterId(),
+            CounterHistory::PREVIOUS_ID => $dto->getPreviousId(),
             CounterHistory::VALUE       => $dto->getValue(),
             CounterHistory::DATE        => $dto->getDate(),
             CounterHistory::IS_VERIFIED => $dto->isVerified(),
@@ -48,10 +49,17 @@ readonly class CounterHistoryFactory
         $result
             ->setId($model->id)
             ->setCounterId($model->counter_id)
+            ->setPreviousId($model->previous_id)
             ->setValue($model->value)
             ->setDate($model->date)
             ->setIsVerified($model->is_verified)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at)
         ;
+
+        if (isset($model->getRelations()[CounterHistory::PREVIOUS])) {
+            $result->setPreviousValue($model->getRelation(CounterHistory::PREVIOUS)->value);
+        }
 
         if (isset($model->getRelations()[CounterHistory::FILE])) {
             $result->setFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(CounterHistory::FILE)));

@@ -93,6 +93,7 @@ class CounterController extends Controller
         }
 
         $history = $this->counterHistoryFactory->makeDefault()
+            ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
             ->setCounterId($counter->getId())
             ->setValue($request->getValue())
         ;
