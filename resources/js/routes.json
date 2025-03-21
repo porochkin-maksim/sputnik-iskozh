@@ -29,6 +29,15 @@
             "id": "{id}"
         }
     },
+    "adminAccountGet": {
+        "name": "admin.account.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/json\/view\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
     "adminAccountIndex": {
         "name": "admin.account.index",
         "displayName": "\u0423\u0447\u0430\u0441\u0442\u043a\u0438",

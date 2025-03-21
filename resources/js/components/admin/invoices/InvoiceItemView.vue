@@ -37,6 +37,10 @@
                     v-if="actions.payments.view"
                     v-model:count="paymentsCount"
                     v-model:reload="reload" />
+
+    <counters-block v-if="account"
+                    :account="account"
+                    @history-added="onHistoryAdded" />
 </template>
 
 <script>
@@ -46,10 +50,13 @@ import TransactionBlock from './transactions/TransactionBlock.vue';
 import PaymentsBlock    from './payments/PaymentsBlock.vue';
 import Url              from '../../../utils/Url.js';
 import SearchSelect     from '../../common/form/SearchSelect.vue';
+import CountersBlock    from '../accounts/counters/CountersBlock.vue';
+import AccountActions   from '../accounts/AccountActions.js';
 
 export default {
     name      : 'InvoiceItemView',
     components: {
+        CountersBlock,
         SearchSelect,
         TransactionBlock,
         PaymentsBlock,
@@ -57,6 +64,7 @@ export default {
     },
     mixins    : [
         ResponseError,
+        AccountActions,
     ],
     props     : {
         invoice: {
@@ -69,6 +77,7 @@ export default {
         this.actions      = this.invoice.actions;
         this.vueId        = 'uuid' + this.$_uid;
         this.getAction();
+        this.getAccountAction(this.invoice.accountId);
     },
     data () {
         return {
@@ -115,6 +124,11 @@ export default {
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
+        },
+        onHistoryAdded () {
+            setTimeout(() => {
+                this.reload = true;
+            }, 700);
         },
     },
     computed: {

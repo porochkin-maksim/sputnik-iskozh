@@ -2,13 +2,6 @@
     <div>
         <table class="table table-bordered align-middle m-0 w-auto"
                v-if="counters && counters.length">
-            <thead>
-            <tr class="text-center align-middle">
-                <th>Дата фиксации</th>
-                <th>Показания (кВт)</th>
-                <th>Фото</th>
-            </tr>
-            </thead>
             <tbody>
             <template v-for="item in counters">
                 <tr>
@@ -22,6 +15,11 @@
                         >Добавить показания
                         </button>
                     </th>
+                </tr>
+                <tr class="text-center align-middle">
+                    <th>Дата фиксации</th>
+                    <th>Показания (кВт)</th>
+                    <th>Фото</th>
                 </tr>
                 <tr v-for="history in item.history">
                     <td class="text-center">
@@ -205,6 +203,8 @@ export default {
             this.showDialog = true;
         },
         addHistoryValue (id) {
+            this.value = this.getCounter(id).value;
+
             this.mode       = 2;
             this.showDialog = true;
             this.id         = id;

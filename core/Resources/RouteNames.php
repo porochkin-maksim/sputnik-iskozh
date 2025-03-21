@@ -126,6 +126,7 @@ abstract class RouteNames
 
     public const ADMIN_ACCOUNT_INDEX  = 'admin.account.index';
     public const ADMIN_ACCOUNT_VIEW   = 'admin.account.view';
+    public const ADMIN_ACCOUNT_GET    = 'admin.account.get';
     public const ADMIN_ACCOUNT_CREATE = 'admin.account.create';
     public const ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
     public const ADMIN_ACCOUNT_LIST   = 'admin.account.list';

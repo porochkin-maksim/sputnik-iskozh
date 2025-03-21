@@ -19,7 +19,7 @@ readonly class CounterResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = \lc::roleDecorator();
-        $lastHistory = $this->counter->getHistoryCollection()->first();
+        $lastHistory = $this->counter->getHistoryCollection()->last();
 
         return [
             'id'          => $this->counter->getId(),

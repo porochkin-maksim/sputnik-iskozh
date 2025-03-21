@@ -61,6 +61,19 @@ class AccountsController extends Controller
         return view('admin.pages.accounts.view', compact('account'));
     }
 
+    public function get(int $id): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            abort(403);
+        }
+        if ( ! $id && ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
+            abort(403);
+        }
+        $account = $this->accountService->getById($id);
+
+        return response()->json(new AccountResource($account));
+    }
+
     public function list(ListRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {

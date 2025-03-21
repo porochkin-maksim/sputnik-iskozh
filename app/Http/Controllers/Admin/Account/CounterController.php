@@ -73,6 +73,7 @@ class CounterController extends Controller
             $counter = $this->counterService->save($counter);
 
             $history = $this->counterHistoryFactory->makeDefault()
+                ->setIsVerified(true)
                 ->setCounterId($counter->getId())
                 ->setValue($request->getValue())
             ;
@@ -117,6 +118,7 @@ class CounterController extends Controller
         }
 
         $history = $this->counterHistoryFactory->makeDefault()
+            ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
             ->setIsVerified(true)
             ->setCounterId($counter->getId())
             ->setValue($request->getValue())

@@ -3,11 +3,6 @@
         <table class="table table-bordered align-middle m-0 w-auto"
                v-if="counters && counters.length">
             <thead>
-            <tr class="text-center align-middle">
-                <th>Дата фиксации</th>
-                <th>Показания (кВт)</th>
-                <th>Фото</th>
-            </tr>
             </thead>
             <tbody>
             <template v-for="item in counters">

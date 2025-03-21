@@ -2,17 +2,10 @@
     <div>
         <table class="table table-bordered align-middle m-0 w-auto"
                v-if="counters && counters.length">
-            <thead>
-            <tr class="text-center align-middle">
-                <th>Дата фиксации</th>
-                <th>Показания (кВт)</th>
-                <th>Фото</th>
-            </tr>
-            </thead>
             <tbody>
             <template v-for="item in counters">
                 <tr>
-                    <th colspan="2"
+                    <th colspan="3"
                         class="table-info text-center border-end-0">
                         <a href=""
                            class="text-decoration-none"
@@ -34,6 +27,12 @@
                         </button>
                     </th>
                 </tr>
+                <tr class="text-center align-middle">
+                    <th>Дата фиксации</th>
+                    <th>Показания (кВт)</th>
+                    <th>Подтверждены</th>
+                    <th>Фото</th>
+                </tr>
                 <tr v-for="history in item.history">
                     <td class="text-center">
                         <div>{{ history.date }}</div>
@@ -42,6 +41,14 @@
                     <td class="text-end">
                         <div>{{ history.value.toLocaleString('ru-RU') }}</div>
                         <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
+                    </td>
+                    <td class="text-center">
+                            <span v-if="history.isVerified">
+                                <i class="fa fa-check text-success"></i>
+                            </span>
+                        <span v-else>
+                                <i class="fa fa-close text-secondary"></i>
+                            </span>
                     </td>
                     <td>
                         <file-item :file="history.file"
@@ -79,6 +86,9 @@
                                   :label="'Серийный номер устройства'"
                                   :required="true"
                     />
+                </div>
+                <div v-else-if="mode===2 && getCounter(counterId).isInvoicing" class="alert alert-info">
+                    При добавлении показаний будет автоматически создана транзакция к регулярному счёту текущего периода, либо будет создан новый счёт
                 </div>
                 <div class="mt-2"
                      v-if="!(counter && counter.id)">
@@ -143,6 +153,7 @@ import FileItem       from '../../../common/files/FileItem.vue';
 import SearchSelect   from '../../../common/form/SearchSelect.vue';
 
 export default {
+    emits     : ['historyAdded'],
     components: {
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,
@@ -233,6 +244,7 @@ export default {
 
             window.axios[Url.Routes.adminCounterSave.method](uri, form).then(response => {
                 this.onSuccessSubmit();
+                this.showInfo('Счётчик обновлён');
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -248,6 +260,8 @@ export default {
             });
             window.axios[Url.Routes.adminCounterAddValue.method](uri, form).then(response => {
                 this.onSuccessSubmit();
+                this.showInfo('Показания внесены');
+                this.$emit('historyAdded');
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -276,17 +290,16 @@ export default {
             this.showDialog  = true;
         },
         addHistoryValue (id) {
+            this.value = this.getCounter(id).value;
+
             this.mode       = 2;
             this.counter    = null;
             this.number     = null;
             this.showDialog = true;
             this.counterId  = id;
-
-            this.counters.forEach(item => {
-                if (item.id === id) {
-                    this.value = item.history[0].value;
-                }
-            })
+        },
+        getCounter (id) {
+            return this.counters.find(item => item.id === id);
         },
         closeAction () {
             this.showDialog = false;

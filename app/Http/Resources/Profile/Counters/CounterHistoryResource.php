@@ -20,14 +20,15 @@ readonly class CounterHistoryResource extends AbstractResource
     public function jsonSerialize(): array
     {
         return [
-            'id'      => $this->counterHistory->getId(),
-            'value'   => $this->counterHistory->getValue(),
-            'before'  => $this->previousCounterHistory?->getValue(),
-            'delta'   => $this?->previousCounterHistory ? ($this->counterHistory->getValue() - $this?->previousCounterHistory->getValue()) : null,
-            'date'    => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
-            'days'    => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
-            'file'    => $this->counterHistory->getFile(),
-            'actions' => [
+            'id'         => $this->counterHistory->getId(),
+            'value'      => $this->counterHistory->getValue(),
+            'isVerified' => $this->counterHistory->isVerified(),
+            'before'     => $this->previousCounterHistory?->getValue(),
+            'delta'      => $this?->previousCounterHistory ? ($this->counterHistory->getValue() - $this?->previousCounterHistory->getValue()) : null,
+            'date'       => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
+            'days'       => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
+            'file'       => $this->counterHistory->getFile(),
+            'actions'    => [
                 ResponsesEnum::CREATE => (bool) $this?->previousCounterHistory?->getDate()?->endOfDay()?->lte(Carbon::now()->endOfDay()),
             ],
         ];
