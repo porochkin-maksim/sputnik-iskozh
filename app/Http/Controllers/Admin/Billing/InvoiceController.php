@@ -1,16 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Billing;
 
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
-use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
-use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
+use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use App\Http\Resources\Admin\Invoices\InvoicesListResource;
+use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
@@ -21,13 +19,15 @@ use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class InvoiceController extends Controller
 {

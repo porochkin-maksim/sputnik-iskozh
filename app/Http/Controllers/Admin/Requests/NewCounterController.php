@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Requests;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Counters\ConfirmRequest;
 use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
-use App\Models\Counter\CounterHistory;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Jobs\CreateTransactionForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;

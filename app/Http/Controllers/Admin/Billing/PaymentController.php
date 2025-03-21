@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Billing;
 
-use Core\Domains\Billing\Payment\Services\FileService;
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payments\SaveRequest;
 use App\Http\Resources\Admin\Payments\PaymentResource;
@@ -15,9 +13,11 @@ use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\Services\PaymentService;
 use Core\Domains\Billing\Payment\PaymentLocator;
+use Core\Domains\Billing\Payment\Services\FileService;
+use Core\Domains\Billing\Payment\Services\PaymentService;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class PaymentController extends Controller
 {

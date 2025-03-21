@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Account;
 
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\ListRequest;
 use App\Http\Requests\Admin\Accounts\SaveRequest;
@@ -17,6 +16,7 @@ use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class AccountsController extends Controller
 {

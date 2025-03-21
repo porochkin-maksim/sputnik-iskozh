@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\System;
 
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Roles\SaveRequest;
 use App\Http\Resources\Admin\Roles\RoleResource;
@@ -13,6 +12,7 @@ use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class RolesController extends Controller
 {

@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\System;
 
-use Illuminate\Support\Str;
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
 use App\Http\Requests\Admin\Users\SaveRequest;
@@ -22,10 +20,12 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\User\Factories\UserFactory;
-use Core\Domains\User\UserLocator;
 use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Services\UserService;
+use Core\Domains\User\UserLocator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
+use lc;
 
 class UsersController extends Controller
 {

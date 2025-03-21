@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Billing;
 
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Transactions\SaveRequest;
 use App\Http\Resources\Admin\Transactions\ServicesListResource;
@@ -28,6 +27,7 @@ use Core\Domains\Billing\Transaction\Responses\SearchResponse;
 use Core\Domains\Billing\Transaction\Services\TransactionService;
 use Core\Domains\Billing\Transaction\TransactionLocator;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class TransactionController extends Controller
 {

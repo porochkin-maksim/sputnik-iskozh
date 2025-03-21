@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Requests;
 
-use lc;
 use App\Http\Requests\Admin\Payments\LinkRequest;
 use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoicesSelectResource;
@@ -29,6 +28,7 @@ use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class NewPaymentController
 {

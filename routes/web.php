@@ -170,108 +170,108 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
             Route::group(['prefix' => 'roles'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'roles'])->name(RouteNames::ADMIN_ROLE_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/create', [Controllers\Admin\RolesController::class, 'create'])->name(RouteNames::ADMIN_ROLE_CREATE);
-                    Route::get('/list', [Controllers\Admin\RolesController::class, 'list'])->name(RouteNames::ADMIN_ROLE_LIST);
-                    Route::post('/save', [Controllers\Admin\RolesController::class, 'save'])->name(RouteNames::ADMIN_ROLE_SAVE);
-                    Route::delete('/{id}', [Controllers\Admin\RolesController::class, 'delete'])->name(RouteNames::ADMIN_ROLE_DELETE);
+                    Route::get('/create', [Controllers\Admin\System\RolesController::class, 'create'])->name(RouteNames::ADMIN_ROLE_CREATE);
+                    Route::get('/list', [Controllers\Admin\System\RolesController::class, 'list'])->name(RouteNames::ADMIN_ROLE_LIST);
+                    Route::post('/save', [Controllers\Admin\System\RolesController::class, 'save'])->name(RouteNames::ADMIN_ROLE_SAVE);
+                    Route::delete('/{id}', [Controllers\Admin\System\RolesController::class, 'delete'])->name(RouteNames::ADMIN_ROLE_DELETE);
                 });
             });
             Route::group(['prefix' => 'users'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'users'])->name(RouteNames::ADMIN_USER_INDEX);
-                Route::get('/view/{id?}', [Controllers\Admin\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
+                Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/create', [Controllers\Admin\UsersController::class, 'create'])->name(RouteNames::ADMIN_USER_CREATE);
-                    Route::get('/list', [Controllers\Admin\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
-                    Route::post('/save', [Controllers\Admin\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
-                    Route::delete('/{id}', [Controllers\Admin\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
-                    Route::post('/sendRestorePassword', [Controllers\Admin\UsersController::class, 'sendRestorePassword'])->name(RouteNames::ADMIN_USER_SEND_RESTORE_PASSWORD);
+                    Route::get('/create', [Controllers\Admin\System\UsersController::class, 'create'])->name(RouteNames::ADMIN_USER_CREATE);
+                    Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
+                    Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
+                    Route::delete('/{id}', [Controllers\Admin\System\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
+                    Route::post('/sendRestorePassword', [Controllers\Admin\System\UsersController::class, 'sendRestorePassword'])->name(RouteNames::ADMIN_USER_SEND_RESTORE_PASSWORD);
                 });
             });
             Route::group(['prefix' => 'periods'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'periods'])->name(RouteNames::ADMIN_PERIOD_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/create', [Controllers\Admin\PeriodsController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);
-                    Route::get('/list', [Controllers\Admin\PeriodsController::class, 'list'])->name(RouteNames::ADMIN_PERIOD_LIST);
-                    Route::post('/save', [Controllers\Admin\PeriodsController::class, 'save'])->name(RouteNames::ADMIN_PERIOD_SAVE);
-                    Route::delete('/{id}', [Controllers\Admin\PeriodsController::class, 'delete'])->name(RouteNames::ADMIN_PERIOD_DELETE);
+                    Route::get('/create', [Controllers\Admin\System\PeriodsController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);
+                    Route::get('/list', [Controllers\Admin\System\PeriodsController::class, 'list'])->name(RouteNames::ADMIN_PERIOD_LIST);
+                    Route::post('/save', [Controllers\Admin\System\PeriodsController::class, 'save'])->name(RouteNames::ADMIN_PERIOD_SAVE);
+                    Route::delete('/{id}', [Controllers\Admin\System\PeriodsController::class, 'delete'])->name(RouteNames::ADMIN_PERIOD_DELETE);
                 });
             });
             Route::group(['prefix' => 'accounts'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'accounts'])->name(RouteNames::ADMIN_ACCOUNT_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/create', [Controllers\Admin\AccountsController::class, 'create'])->name(RouteNames::ADMIN_ACCOUNT_CREATE);
-                    Route::get('/list', [Controllers\Admin\AccountsController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_LIST);
-                    Route::post('/save', [Controllers\Admin\AccountsController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_SAVE);
-                    Route::delete('/{id}', [Controllers\Admin\AccountsController::class, 'delete'])->name(RouteNames::ADMIN_ACCOUNT_DELETE);
+                    Route::get('/create', [Controllers\Admin\Account\AccountsController::class, 'create'])->name(RouteNames::ADMIN_ACCOUNT_CREATE);
+                    Route::get('/list', [Controllers\Admin\Account\AccountsController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_LIST);
+                    Route::post('/save', [Controllers\Admin\Account\AccountsController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_SAVE);
+                    Route::delete('/{id}', [Controllers\Admin\Account\AccountsController::class, 'delete'])->name(RouteNames::ADMIN_ACCOUNT_DELETE);
                 });
                 Route::group(['prefix' => 'view/{accountId}'], static function () {
-                    Route::get('/', [Controllers\Admin\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
+                    Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::post('/create', [Controllers\Admin\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
-                        Route::get('/list', [Controllers\Admin\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
-                        Route::post('/save', [Controllers\Admin\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
-                        Route::delete('/{id}', [Controllers\Admin\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_DELETE);
-                        Route::post('/add-value', [Controllers\Admin\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
+                        Route::post('/create', [Controllers\Admin\Account\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
+                        Route::get('/list', [Controllers\Admin\Account\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
+                        Route::post('/save', [Controllers\Admin\Account\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
+                        Route::delete('/{id}', [Controllers\Admin\Account\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_DELETE);
+                        Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
                     });
                 });
             });
             Route::group(['prefix' => 'services'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'services'])->name(RouteNames::ADMIN_SERVICE_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/create', [Controllers\Admin\ServicesController::class, 'create'])->name(RouteNames::ADMIN_SERVICE_CREATE);
-                    Route::get('/list', [Controllers\Admin\ServicesController::class, 'list'])->name(RouteNames::ADMIN_SERVICE_LIST);
-                    Route::post('/save', [Controllers\Admin\ServicesController::class, 'save'])->name(RouteNames::ADMIN_SERVICE_SAVE);
-                    Route::delete('/{id}', [Controllers\Admin\ServicesController::class, 'delete'])->name(RouteNames::ADMIN_SERVICE_DELETE);
+                    Route::get('/create', [Controllers\Admin\System\ServicesController::class, 'create'])->name(RouteNames::ADMIN_SERVICE_CREATE);
+                    Route::get('/list', [Controllers\Admin\System\ServicesController::class, 'list'])->name(RouteNames::ADMIN_SERVICE_LIST);
+                    Route::post('/save', [Controllers\Admin\System\ServicesController::class, 'save'])->name(RouteNames::ADMIN_SERVICE_SAVE);
+                    Route::delete('/{id}', [Controllers\Admin\System\ServicesController::class, 'delete'])->name(RouteNames::ADMIN_SERVICE_DELETE);
                 });
             });
             Route::group(['prefix' => 'invoices'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'invoices'])->name(RouteNames::ADMIN_INVOICE_INDEX);
-                Route::get('/view/{id}', [Controllers\Admin\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
+                Route::get('/view/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/summary', [Controllers\Admin\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
-                    Route::get('/get-without-regular/{periodId}', [Controllers\Admin\InvoiceController::class, 'getAccountCountWithoutRegular'])->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR);
-                    Route::post('/create-regular-invoices/{periodId}', [Controllers\Admin\InvoiceController::class, 'createRegularInvoices'])->name(RouteNames::ADMIN_INVOICE_CREATE_REGULAR_INVOICES);
-                    Route::get('/create', [Controllers\Admin\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
-                    Route::get('/list', [Controllers\Admin\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
-                    Route::post('/save', [Controllers\Admin\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);
-                    Route::delete('/delete/{id}', [Controllers\Admin\InvoiceController::class, 'delete'])->name(RouteNames::ADMIN_INVOICE_DELETE);
-                    Route::get('/get/{id}', [Controllers\Admin\InvoiceController::class, 'get'])->name(RouteNames::ADMIN_INVOICE_GET);
+                    Route::get('/summary', [Controllers\Admin\Billing\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
+                    Route::get('/get-without-regular/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'getAccountCountWithoutRegular'])->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR);
+                    Route::post('/create-regular-invoices/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'createRegularInvoices'])->name(RouteNames::ADMIN_INVOICE_CREATE_REGULAR_INVOICES);
+                    Route::get('/create', [Controllers\Admin\Billing\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
+                    Route::get('/list', [Controllers\Admin\Billing\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
+                    Route::post('/save', [Controllers\Admin\Billing\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);
+                    Route::delete('/delete/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'delete'])->name(RouteNames::ADMIN_INVOICE_DELETE);
+                    Route::get('/get/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'get'])->name(RouteNames::ADMIN_INVOICE_GET);
 
                     Route::group(['prefix' => '{invoiceId}'], static function () {
                         Route::group(['prefix' => 'transactions'], static function () {
-                            Route::get('/create', [Controllers\Admin\TransactionController::class, 'create'])->name(RouteNames::ADMIN_TRANSACTION_CREATE);
-                            Route::get('/list', [Controllers\Admin\TransactionController::class, 'list'])->name(RouteNames::ADMIN_TRANSACTION_LIST);
-                            Route::post('/save', [Controllers\Admin\TransactionController::class, 'save'])->name(RouteNames::ADMIN_TRANSACTION_SAVE);
-                            Route::delete('/delete/{id}', [Controllers\Admin\TransactionController::class, 'delete'])->name(RouteNames::ADMIN_TRANSACTION_DELETE);
-                            Route::get('/get/{transactionId}', [Controllers\Admin\TransactionController::class, 'get'])->name(RouteNames::ADMIN_TRANSACTION_VIEW);
+                            Route::get('/create', [Controllers\Admin\Billing\TransactionController::class, 'create'])->name(RouteNames::ADMIN_TRANSACTION_CREATE);
+                            Route::get('/list', [Controllers\Admin\Billing\TransactionController::class, 'list'])->name(RouteNames::ADMIN_TRANSACTION_LIST);
+                            Route::post('/save', [Controllers\Admin\Billing\TransactionController::class, 'save'])->name(RouteNames::ADMIN_TRANSACTION_SAVE);
+                            Route::delete('/delete/{id}', [Controllers\Admin\Billing\TransactionController::class, 'delete'])->name(RouteNames::ADMIN_TRANSACTION_DELETE);
+                            Route::get('/get/{transactionId}', [Controllers\Admin\Billing\TransactionController::class, 'get'])->name(RouteNames::ADMIN_TRANSACTION_VIEW);
                         });
                         Route::group(['prefix' => 'payments'], static function () {
-                            Route::get('/create', [Controllers\Admin\PaymentController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_CREATE);
-                            Route::get('/list', [Controllers\Admin\PaymentController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_LIST);
-                            Route::post('/save', [Controllers\Admin\PaymentController::class, 'save'])->name(RouteNames::ADMIN_PAYMENT_SAVE);
-                            Route::delete('/delete/{id}', [Controllers\Admin\PaymentController::class, 'delete'])->name(RouteNames::ADMIN_PAYMENT_DELETE);
-                            Route::get('/get/{paymentId}', [Controllers\Admin\PaymentController::class, 'get'])->name(RouteNames::ADMIN_PAYMENT_VIEW);
+                            Route::get('/create', [Controllers\Admin\Billing\PaymentController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_CREATE);
+                            Route::get('/list', [Controllers\Admin\Billing\PaymentController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_LIST);
+                            Route::post('/save', [Controllers\Admin\Billing\PaymentController::class, 'save'])->name(RouteNames::ADMIN_PAYMENT_SAVE);
+                            Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentController::class, 'delete'])->name(RouteNames::ADMIN_PAYMENT_DELETE);
+                            Route::get('/get/{paymentId}', [Controllers\Admin\Billing\PaymentController::class, 'get'])->name(RouteNames::ADMIN_PAYMENT_VIEW);
                         });
                     });
                 });
                 Route::group(['prefix' => 'payments'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'payments'])->name(RouteNames::ADMIN_NEW_PAYMENT_INDEX);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::get('/list', [Controllers\Admin\NewPaymentController::class, 'list'])->name(RouteNames::ADMIN_NEW_PAYMENT_LIST);
-                        Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\NewPaymentController::class, 'getInvoices'])->name(RouteNames::ADMIN_NEW_PAYMENT_INVOICES);
-                        Route::post('/save', [Controllers\Admin\NewPaymentController::class, 'save'])->name(RouteNames::ADMIN_NEW_PAYMENT_SAVE);
-                        Route::delete('/delete/{id}', [Controllers\Admin\NewPaymentController::class, 'delete'])->name(RouteNames::ADMIN_NEW_PAYMENT_DELETE);
-                        Route::get('/get/{paymentId}', [Controllers\Admin\NewPaymentController::class, 'get'])->name(RouteNames::ADMIN_NEW_PAYMENT_VIEW);
+                        Route::get('/list', [Controllers\Admin\Requests\NewPaymentController::class, 'list'])->name(RouteNames::ADMIN_NEW_PAYMENT_LIST);
+                        Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\Requests\NewPaymentController::class, 'getInvoices'])->name(RouteNames::ADMIN_NEW_PAYMENT_INVOICES);
+                        Route::post('/save', [Controllers\Admin\Requests\NewPaymentController::class, 'save'])->name(RouteNames::ADMIN_NEW_PAYMENT_SAVE);
+                        Route::delete('/delete/{id}', [Controllers\Admin\Requests\NewPaymentController::class, 'delete'])->name(RouteNames::ADMIN_NEW_PAYMENT_DELETE);
+                        Route::get('/get/{paymentId}', [Controllers\Admin\Requests\NewPaymentController::class, 'get'])->name(RouteNames::ADMIN_NEW_PAYMENT_VIEW);
                     });
                 });
             });
             Route::group(['prefix' => 'counter-history'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'counterHistory'])->name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/list', [Controllers\Admin\NewCounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
-                    Route::post('/link', [Controllers\Admin\NewCounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
-                    Route::delete('/delete/{id}', [Controllers\Admin\NewCounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
-                    Route::post('/confirm', [Controllers\Admin\NewCounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
+                    Route::get('/list', [Controllers\Admin\Requests\NewCounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
+                    Route::post('/link', [Controllers\Admin\Requests\NewCounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
+                    Route::delete('/delete/{id}', [Controllers\Admin\Requests\NewCounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
+                    Route::post('/confirm', [Controllers\Admin\Requests\NewCounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
                 });
             });
         });

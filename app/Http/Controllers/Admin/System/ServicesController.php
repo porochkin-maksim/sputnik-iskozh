@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\System;
 
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Services\SaveRequest;
 use App\Http\Resources\Admin\Services\ServiceResource;
@@ -21,6 +20,7 @@ use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Service\Services\ServiceService;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class ServicesController extends Controller
 {

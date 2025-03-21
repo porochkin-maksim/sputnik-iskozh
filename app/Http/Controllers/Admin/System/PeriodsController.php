@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\System;
 
-use lc;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Periods\SaveRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
@@ -16,6 +15,7 @@ use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class PeriodsController extends Controller//
 {
