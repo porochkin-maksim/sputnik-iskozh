@@ -22,6 +22,13 @@ $season = match (Carbon::now()->month) {
 $authRole  = \lc::roleDecorator();
 $navRoutes = [RouteNames::ADMIN];
 
+$cutRouteNameFn = static function (string $routeName) {
+    $parts = explode('.', $routeName);
+    array_splice($parts, 2, count($parts) + 1);
+
+    return implode('.', $parts) . '.*';
+};
+
 if ($authRole->can(PermissionEnum::ROLES_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_ROLE_INDEX;
 }
@@ -90,7 +97,7 @@ if ($authRole->can(PermissionEnum::COUNTERS_VIEW)) {
         <div class="col-2 admin-side-panel border-end">
             <div class="side-menu">
                 @foreach($navRoutes as $routeCode)
-                    <a class="@if(Route::is($routeCode)) active-link @endif"
+                    <a class="@if(Route::is($cutRouteNameFn($routeCode))) active-link @endif"
                        href="{{ route($routeCode) }}">
                         {{ RouteNames::name($routeCode) }}
                     </a>

@@ -33,11 +33,12 @@
                        v-if="actions.transactions.view"
                        v-model:count="transactionsCount"
                        v-model:reload="reload" />
+    <div class="border-top my-2"></div>
     <payments-block :invoice="invoice"
                     v-if="actions.payments.view"
                     v-model:count="paymentsCount"
                     v-model:reload="reload" />
-
+    <div class="border-top my-2"></div>
     <counters-block v-if="account"
                     :account="account"
                     @history-added="onHistoryAdded" />

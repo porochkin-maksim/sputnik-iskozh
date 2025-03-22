@@ -57,7 +57,7 @@
             </div>
         </div>
     </div>
-    <div class="mt-2">
+    <div class="mt-2 border-top">
         <counters-block :account="account" />
     </div>
 </template>
