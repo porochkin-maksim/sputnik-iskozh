@@ -97,8 +97,12 @@
             <ul class="list-group"
                 v-if="localUser.actions.edit">
                 <li class="list-group-item list-group-item-action cursor-pointer"
+                    @click="sendInvitePasswordEmail">
+                    <i class="fa fa-envelope"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
+                </li>
+                <li class="list-group-item list-group-item-action cursor-pointer"
                     @click="sendRestorePasswordEmail">
-                    Выслать ссылку на восстановление пароля
+                    <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
                 </li>
             </ul>
         </div>
@@ -229,6 +233,23 @@ export default {
 
             window.axios[Url.Routes.adminUserSendRestorePassword.method](
                 Url.Routes.adminUserSendRestorePassword.uri,
+                form,
+            ).then((response) => {
+                this.showInfo('Письмо отправлено');
+            }).catch(response => {
+                this.showDanger('Письмо не отправлено');
+                this.parseResponseErrors(response);
+            });
+        },
+        sendInvitePasswordEmail () {
+            if (!confirm('Отправить пригласительное письмо для установки пароля?')) {
+                return;
+            }
+            let form = new FormData();
+            form.append('id', this.localUser.id);
+
+            window.axios[Url.Routes.adminUserSendInviteWithPassword.method](
+                Url.Routes.adminUserSendInviteWithPassword.uri,
                 form,
             ).then((response) => {
                 this.showInfo('Письмо отправлено');

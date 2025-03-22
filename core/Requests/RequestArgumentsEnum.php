@@ -61,4 +61,5 @@ enum RequestArgumentsEnum: string
     public const COUNTER_ID      = 'counter_id';
     public const PHONE           = 'phone';
     public const TEXT            = 'text';
+    public const TOKEN           = 'token';
 }

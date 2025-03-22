@@ -2,6 +2,8 @@
 
 namespace Core\Domains\User\Services;
 
+use App\Models\User;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -90,6 +92,22 @@ readonly class UserService
             ->setId($id)
             ->setWithAccounts()
             ->setWithRoles()
+        ;
+        $result = $this->userRepository->search($searcher)->getItems()->first();
+
+        return $result ? $this->userFactory->makeDtoFromObject($result) : null;
+    }
+
+    public function getByEmail(?string $email): ?UserDTO
+    {
+        if ( ! $email) {
+            return null;
+        }
+
+        $searcher = new UserSearcher();
+        $searcher
+            ->addWhere(User::EMAIL, SearcherInterface::EQUALS, $email)
+            ->setLimit(1)
         ;
         $result = $this->userRepository->search($searcher)->getItems()->first();
 

@@ -545,6 +545,13 @@
         "uri": "\/admin\/users\/json\/save",
         "args": []
     },
+    "adminUserSendInviteWithPassword": {
+        "name": "admin.user.send.invite-with-password",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/send-invite-password",
+        "args": []
+    },
     "adminUserSendRestorePassword": {
         "name": "admin.user.send.restore.password",
         "displayName": "",
@@ -919,6 +926,20 @@
         "args": {
             "token": "{token}"
         }
+    },
+    "passwordSave": {
+        "name": "password.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/password\/set",
+        "args": []
+    },
+    "passwordSet": {
+        "name": "password.set",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/password\/set",
+        "args": []
     },
     "passwordUpdate": {
         "name": "password.update",

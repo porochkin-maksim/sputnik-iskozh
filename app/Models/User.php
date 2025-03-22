@@ -8,6 +8,7 @@ use App\Models\Account\Account;
 use App\Models\Account\AccountToUser;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
+use Core\Domains\User\Notifications\InviteNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -101,5 +102,10 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
             RoleToUser::USER,
             RoleToUser::ROLE,
         );
+    }
+
+    public function sendInviteNotification(string $email): void
+    {
+        $this->notify(new InviteNotification($email));
     }
 }

@@ -54,7 +54,7 @@ class UsersController extends Controller
             ? $this->userService->getById($id)
             : $this->userFactory->makeDefault();
         if ( ! $user) {
-            abort(404);
+            abort(412);
         }
 
         if ($id) {
@@ -111,7 +111,7 @@ class UsersController extends Controller
             : $this->userFactory->makeDefault()->setPassword(Str::random(8));
 
         if ( ! $user) {
-            abort(404);
+            abort(412);
         }
 
         $user->setFirstName($request->getFirstName())
@@ -145,9 +145,24 @@ class UsersController extends Controller
         $user = $this->userService->getById($request->getInt('id'));
 
         if ( ! $user || ! $user->getModel()) {
-            abort(404);
+            abort(412);
         }
 
         UserLocator::Notificator()->sendRestorePassword($user);
+    }
+
+    public function sendInviteWithPassword(DefaultRequest $request): void
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
+            abort(403);
+        }
+
+        $user = $this->userService->getById($request->getInt('id'));
+
+        if ( ! $user || ! $user->getModel()) {
+            abort(412);
+        }
+
+        UserLocator::Notificator()->sendInviteNotification($user);
     }
 }

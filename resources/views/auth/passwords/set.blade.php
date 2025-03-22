@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
+use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
-
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -12,10 +12,10 @@ use Core\Resources\Views\ViewNames;
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="">
-                <h3 class="alert text-center m-0">{{ __('Reset Password') }}</h3>
+                <h3 class="alert text-center m-0">Установить пароль</h3>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}">
+                    <form method="POST" action="{{ route(RouteNames::PASSWORD_SAVE) }}">
                         @csrf
 
                         <input type="hidden" name="token" value="{{ $token }}">
@@ -59,7 +59,7 @@ use Core\Resources\Views\ViewNames;
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-success">
-                                    {{ __('Reset Password') }}
+                                    Установить пароль
                                 </button>
                             </div>
                         </div>

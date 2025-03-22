@@ -15,6 +15,9 @@ abstract class RouteNames
     public const SEARCH      = 'search';
     public const SITE_SEARCH = 'search.site';
 
+    public const PASSWORD_SET  = 'password.set';
+    public const PASSWORD_SAVE = 'password.save';
+
     public const REQUESTS        = 'requests';
     public const PROPOSAL        = 'proposal';
     public const PROPOSAL_CREATE = 'proposal.create';
@@ -110,7 +113,8 @@ abstract class RouteNames
     public const ADMIN_USER_LIST   = 'admin.user.list';
     public const ADMIN_USER_DELETE = 'admin.user.delete';
 
-    public const ADMIN_USER_SEND_RESTORE_PASSWORD = 'admin.user.send.restore.password';
+    public const ADMIN_USER_SEND_RESTORE_PASSWORD     = 'admin.user.send.restore.password';
+    public const ADMIN_USER_SEND_INVITE_WITH_PASSWORD = 'admin.user.send.invite-with-password';
 
     public const ADMIN_SERVICE_INDEX  = 'admin.service.index';
     public const ADMIN_SERVICE_CREATE = 'admin.service.create';
