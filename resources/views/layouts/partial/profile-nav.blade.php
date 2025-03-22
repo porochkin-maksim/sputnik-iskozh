@@ -28,7 +28,7 @@ $hasAccount = (bool) lc::account()->getId();
         @endif
         <li class="nav-item">
             <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE) }}">
+               href="{{ route(RouteNames::HOME) }}">
                 {{ \lc::userDecorator()->getDisplayName() }}
             </a>
         </li>
@@ -61,7 +61,7 @@ $hasAccount = (bool) lc::account()->getId();
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
             <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE) }}">
+               href="{{ route(RouteNames::HOME) }}">
                 {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
             </a>
         </li>

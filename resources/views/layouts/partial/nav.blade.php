@@ -77,7 +77,7 @@ $routes = [
         @else
             <li class="nav-item">
                 <a class="nav-link"
-                   href="{{ route(RouteNames::PROFILE) }}">
+                   href="{{ route(RouteNames::HOME) }}">
                     {{ \lc::userDecorator()->getDisplayName() }}
                 </a>
             </li>
@@ -160,7 +160,7 @@ $routes = [
         @else
             <li class="nav-item">
                 <a class="nav-link"
-                   href="{{ route(RouteNames::PROFILE) }}">
+                   href="{{ route(RouteNames::HOME) }}">
                     {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
                 </a>
             </li>

@@ -7,13 +7,13 @@
                     <div class="fw-bold">
                         ФИО
                     </div>
-                    <button class="btn btn-light btn-sm "
-                            @click="toggleProfileBlock">
-                        <i class="fa fa-chevron-up"
-                           v-if="showProfileBlock"></i>
-                        <i class="fa fa-chevron-down"
-                           v-else></i>
-                    </button>
+<!--                    <button class="btn btn-light btn-sm "-->
+<!--                            @click="toggleProfileBlock">-->
+<!--                        <i class="fa fa-chevron-up"-->
+<!--                           v-if="showProfileBlock"></i>-->
+<!--                        <i class="fa fa-chevron-down"-->
+<!--                           v-else></i>-->
+<!--                    </button>-->
                 </div>
                 <div class="card-body"
                      v-if="showProfileBlock">
@@ -26,13 +26,13 @@
                     <div class="fw-bold">
                         Смена эл.почты
                     </div>
-                    <button class="btn btn-light btn-sm"
-                            @click="toggleEmailBlock">
-                        <i class="fa fa-chevron-up"
-                           v-if="showEmailBlock"></i>
-                        <i class="fa fa-chevron-down"
-                           v-else></i>
-                    </button>
+<!--                    <button class="btn btn-light btn-sm"-->
+<!--                            @click="toggleEmailBlock">-->
+<!--                        <i class="fa fa-chevron-up"-->
+<!--                           v-if="showEmailBlock"></i>-->
+<!--                        <i class="fa fa-chevron-down"-->
+<!--                           v-else></i>-->
+<!--                    </button>-->
                 </div>
                 <div class="card-body"
                      v-if="showEmailBlock">
@@ -45,13 +45,13 @@
                     <div class="fw-bold">
                         Смена пароля
                     </div>
-                    <button class="btn btn-light btn-sm"
-                            @click="togglePasswordBlock">
-                        <i class="fa fa-chevron-up"
-                           v-if="showPasswordBlock"></i>
-                        <i class="fa fa-chevron-down"
-                           v-else></i>
-                    </button>
+<!--                    <button class="btn btn-light btn-sm"-->
+<!--                            @click="togglePasswordBlock">-->
+<!--                        <i class="fa fa-chevron-up"-->
+<!--                           v-if="showPasswordBlock"></i>-->
+<!--                        <i class="fa fa-chevron-down"-->
+<!--                           v-else></i>-->
+<!--                    </button>-->
                 </div>
                 <div class="card-body"
                      v-if="showPasswordBlock">
@@ -98,9 +98,9 @@ export default {
     ],
     data () {
         return {
-            showProfileBlock : false,
-            showEmailBlock   : false,
-            showPasswordBlock: false,
+            showProfileBlock : true,
+            showEmailBlock   : true,
+            showPasswordBlock: true,
         };
     },
     created () {

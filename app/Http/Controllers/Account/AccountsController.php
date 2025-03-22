@@ -24,11 +24,7 @@ class AccountsController extends Controller
 
     public function index(): View
     {
-        if ($this->accountService->getByUserId(Auth::id())) {
-            return view(ViewNames::PAGES_HOME);
-        }
-
-        return view(ViewNames::PAGES_PROFILE);
+        return view(ViewNames::PAGES_HOME);
     }
 
     public function show(int $id): JsonResponse
