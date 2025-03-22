@@ -4,39 +4,46 @@
                v-if="counters && counters.length">
             <tbody>
             <template v-for="item in counters">
-                <tr>
+                <tr class="text-center" :class="[currentCounterId === item.id ? 'table-info' : '']">
                     <th colspan="2"
-                        class="table-info text-center border-end-0">Счётчик №{{ item.number }}
+                        class="border-end-0">Счётчик {{ item.number }}
                     </th>
-                    <th class="table-info text-center border-start-0">
+                    <th class="border-start-0 d-flex justify-content-end">
                         <button class="btn btn-sm btn-success"
-                                v-if="canAddNewHistory(item.id)"
+                                v-if="currentCounterId === item.id && canAddNewHistory(item.id)"
                                 @click="addHistoryValue(item.id)"
                         >Добавить показания
                         </button>
+                        <button class="btn btn-light border-secondary btn-sm"
+                                v-if="currentCounterId !== item.id"
+                                @click="toggleCounterBlock(item.id)">
+                            Подробнее <i class="fa fa-chevron-down"></i>
+                        </button>
                     </th>
                 </tr>
-                <tr class="text-center align-middle">
-                    <th>Дата фиксации</th>
-                    <th>Показания (кВт)</th>
-                    <th>Фото</th>
-                </tr>
-                <tr v-for="history in item.history">
-                    <td class="text-center">
-                        <div>{{ history.date }}</div>
-                        <div>{{ history.days === null ? '' : '+' + history.days + ' дней' }}</div>
-                    </td>
-                    <td class="text-end">
-                        <div>{{ history.value.toLocaleString('ru-RU') }}</div>
-                        <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
-                    </td>
-                    <td>
-                        <file-item :file="history.file"
-                                   v-if="history.file"
-                                   :edit="false"
-                        />
-                    </td>
-                </tr>
+                <template v-if="currentCounterId === item.id">
+                    <tr class="text-center align-middle">
+                        <th>Дата фиксации</th>
+                        <th>Показания (кВт)</th>
+                        <th>Фото</th>
+                    </tr>
+                    <tr v-for="history in item.history">
+                        <td class="text-center">
+                            <div>{{ history.date }}</div>
+                            <div>{{ history.days === null ? '' : '+' + history.days + ' дней' }}</div>
+                        </td>
+                        <td class="text-end">
+                            <div>{{ history.value.toLocaleString('ru-RU') }}</div>
+                            <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
+                        </td>
+                        <td>
+                            <file-item :file="history.file"
+                                       v-if="history.file"
+                                       :edit="false"
+                            />
+                        </td>
+                    </tr>
+                </template>
             </template>
             </tbody>
         </table>
@@ -44,7 +51,7 @@
     <div class="d-flex align-items-center justify-content-between mt-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
-                    v-if="showAddButton"
+                    v-if="showAddCounterButton"
                     @click="addCounter">Добавить счётчик
             </button>
         </div>
@@ -141,7 +148,8 @@ export default {
             counters: null,
             file    : null,
 
-            mode: null,
+            mode            : null,
+            currentCounterId: null,
         };
     },
     created () {
@@ -150,7 +158,8 @@ export default {
     methods : {
         listAction () {
             window.axios[Url.Routes.profileCounterList.method](Url.Routes.profileCounterList.uri).then(response => {
-                this.counters = response.data.counters;
+                this.counters         = response.data.counters;
+                this.currentCounterId = this.counters.length > 0 ? this.counters[0].id : null;
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -210,7 +219,7 @@ export default {
             this.id         = id;
         },
         canAddNewHistory (id) {
-            const counter = this.getCounter(id);
+            const counter     = this.getCounter(id);
             const lastHistory = counter.history[0];
             if (lastHistory) {
                 return lastHistory.actions.create;
@@ -232,13 +241,16 @@ export default {
         removeFile () {
             this.file = null;
         },
+        toggleCounterBlock (id) {
+            this.currentCounterId = this.currentCounterId === id ? null : id;
+        },
     },
     computed: {
         Url () {
             return Url;
         },
-        showAddButton () {
-            return !this.counters || !(this.counters.length > 2);
+        showAddCounterButton () {
+            return !this.counters || !this.counters.length || this.counters.length <= 1;
         },
         canSubmitAction () {
             if (this.mode === 1) {
