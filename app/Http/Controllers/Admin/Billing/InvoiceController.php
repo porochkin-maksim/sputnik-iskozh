@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Billing;
 
+use App\Exports\InvoicesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
@@ -26,8 +27,10 @@ use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Enums\DateTimeFormat;
 use Illuminate\Http\JsonResponse;
 use lc;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
@@ -150,6 +153,41 @@ class InvoiceController extends Controller
         ];
 
         return response()->json($result);
+    }
+
+    public function export(ListRequest $request)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+            abort(403);
+        }
+
+        $searcher = new InvoiceSearcher();
+        $searcher
+            ->setWithPeriod()
+            ->setWithAccount()
+            ->setWithTransactions()
+            ->setWithPayments()
+            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_ASC)
+        ;
+
+        if ($request->getPayedStatus()) {
+            $operator = $request->getPayedStatus() === 'payed' ? SearcherInterface::GTE : SearcherInterface::LT;
+            $searcher->addWhereColumn(Invoice::PAYED, $operator, Invoice::COST);
+        }
+
+        if ($request->getPeriodId()) {
+            $searcher->setPeriodId($request->getPeriodId());
+        }
+        if ($request->getAccountId()) {
+            $searcher->setAccountId($request->getAccountId());
+        }
+        if ($request->getType()) {
+            $searcher->setType($request->getType());
+        }
+
+        $invoices = $this->invoiceService->search($searcher)->getItems();
+
+        return Excel::download(new InvoicesExport($invoices), sprintf('счета-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
     public function save(SaveRequest $request): JsonResponse

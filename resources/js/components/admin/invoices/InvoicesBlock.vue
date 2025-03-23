@@ -34,39 +34,48 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex mb-2">
-            <template v-if="computedPeriods && computedPeriods.length">
-                <simple-select v-model="periodId"
-                               :class="'d-inline-block form-select-sm w-auto'"
-                               :items="computedPeriods"
-                               @change="listAction"
-                />
-            </template>
-            <template v-if="computedTypes && computedTypes.length">
-                <simple-select v-model="type"
-                               :class="'d-inline-block form-select-sm w-auto ms-2'"
-                               :items="computedTypes"
-                               @change="listAction"
-                />
-            </template>
-            <template v-if="computedAccounts && computedAccounts.length">
-                <search-select v-model="accountId"
-                               :prop-class="'form-control ms-2'"
-                               :items="computedAccounts"
-                               :placeholder="'Участок...'"
-                               @update:model-value="listAction"
-                />
-            </template>
-            <template v-if="computedPayedStatus && computedPayedStatus.length">
-                <simple-select v-model="payedStatus"
-                               :class="'d-inline-block form-select-sm w-auto ms-3'"
-                               :items="computedPayedStatus"
-                               @change="listAction"
-                />
-            </template>
+        <div class="d-flex justify-content-between">
+            <div class="d-flex mb-2">
+                <template v-if="computedPeriods && computedPeriods.length">
+                    <simple-select v-model="periodId"
+                                   :class="'d-inline-block form-select-sm w-auto'"
+                                   :items="computedPeriods"
+                                   @change="listAction"
+                    />
+                </template>
+                <template v-if="computedTypes && computedTypes.length">
+                    <simple-select v-model="type"
+                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
+                                   :items="computedTypes"
+                                   @change="listAction"
+                    />
+                </template>
+                <template v-if="computedAccounts && computedAccounts.length">
+                    <search-select v-model="accountId"
+                                   :prop-class="'form-control ms-2'"
+                                   :items="computedAccounts"
+                                   :placeholder="'Участок...'"
+                                   @update:model-value="listAction"
+                    />
+                </template>
+                <template v-if="computedPayedStatus && computedPayedStatus.length">
+                    <simple-select v-model="payedStatus"
+                                   :class="'d-inline-block form-select-sm w-auto ms-3'"
+                                   :items="computedPayedStatus"
+                                   @change="listAction"
+                    />
+                </template>
+            </div>
+            <div>
+                <button class="btn btn-success" @click="exportAction">
+                    <i class="fa fa-file-excel-o"></i>
+                </button>
+            </div>
         </div>
     </template>
-    <summary-block :account-id="accountId" :type="type" :period-id="periodId"/>
+    <summary-block :account-id="accountId"
+                   :type="type"
+                   :period-id="periodId" />
     <invoices-list :invoices="invoices" />
     <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
@@ -87,11 +96,20 @@ import SimpleSelect    from '../../common/form/SimpleSelect.vue';
 import SearchSelect    from '../../common/form/SearchSelect.vue';
 import InvoicesList    from './InvoicesList.vue';
 import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
-import SummaryBlock  from '../../common/blocks/SummaryBlock.vue';
+import SummaryBlock    from '../../common/blocks/SummaryBlock.vue';
 
 export default {
     name      : 'InvoicesBlock',
-    components: { CustomCheckbox, InvoicesList, SearchSelect, SimpleSelect, Pagination, HistoryBtn, InvoiceItemEdit, SummaryBlock },
+    components: {
+        CustomCheckbox,
+        InvoicesList,
+        SearchSelect,
+        SimpleSelect,
+        Pagination,
+        HistoryBtn,
+        InvoiceItemEdit,
+        SummaryBlock,
+    },
     mixins    : [
         ResponseError,
     ],
@@ -209,6 +227,14 @@ export default {
             }).then(() => {
                 this.loaded = true;
             });
+        },
+        exportAction() {
+            window.open(Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
+                type   : this.type,
+                period : this.periodId,
+                account: this.accountId,
+                status : this.payedStatus,
+            }), '_blank');
         },
         onPaginationUpdate (skip) {
             this.skip = skip;

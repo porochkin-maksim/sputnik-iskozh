@@ -49,7 +49,7 @@ class Invoice extends Model implements CastsInterface
 
     public function transactions(): HasMany
     {
-        return $this->hasMany(Transaction::class, Transaction::INVOICE_ID);
+        return $this->hasMany(Transaction::class, Transaction::INVOICE_ID)->with(Transaction::SERVICE);
     }
 
     public function payments(): HasMany
