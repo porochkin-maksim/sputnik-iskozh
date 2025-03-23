@@ -7,10 +7,10 @@ use Core\Domains\User\Enums\UserIdEnum;
 abstract class UserToRole
 {
     private const UserToRole = [
-        UserIdEnum::OWNER => RoleIdEnum::ADMIN,
+        UserIdEnum::OWNER => RoleEnum::ADMIN,
     ];
 
-    public static function getForUser(?int $id): ?RoleIdEnum
+    public static function getForUser(?int $id): ?RoleEnum
     {
         return self::UserToRole[$id] ?? null;
     }

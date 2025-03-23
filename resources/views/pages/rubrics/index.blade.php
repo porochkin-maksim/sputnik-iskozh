@@ -12,21 +12,15 @@ $openGraph->setUrl(route(RouteNames::RUBRICS));
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
-
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(app::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->isSuperAdmin())
         <page-editor :template="'{{ ViewNames::PAGES_RUBRICS }}'"></page-editor>
     @endif
-    <h1 class="border-bottom">
+    <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}
         </a>

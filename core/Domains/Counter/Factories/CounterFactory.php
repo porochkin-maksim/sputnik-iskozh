@@ -2,16 +2,24 @@
 
 namespace Core\Domains\Counter\Factories;
 
-use App\Models\Counter;
-use Core\Domains\Counter\Enums\TypeEnum;
+use App\Models\Counter\Counter;
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Counter\CounterLocator;
+use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
 
 readonly class CounterFactory
 {
-    public function makeModelFromDto(CounterDTO $dto, ?Counter $counter = null): Counter
+    public function makeDefault(): CounterDTO
     {
-        if ($counter) {
-            $result = $counter;
+        return $this->make(CounterTypeEnum::ELECTRICITY)
+            ->setIsInvoicing(false);
+    }
+
+    public function makeModelFromDto(CounterDTO $dto, ?Counter $model = null): Counter
+    {
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Counter::make();
@@ -22,28 +30,38 @@ readonly class CounterFactory
         ]);
 
         return $result->fill([
-            Counter::TYPE       => $dto->getType()?->value,
-            Counter::ACCOUNT_ID => $dto->getAccountId(),
-            Counter::NUMBER     => $dto->getNumber(),
-            Counter::IS_PRIMARY => $dto->isPrimary(),
+            Counter::TYPE         => $dto->getType()?->value,
+            Counter::ACCOUNT_ID   => $dto->getAccountId(),
+            Counter::NUMBER       => $dto->getNumber(),
+            Counter::IS_INVOICING => $dto->isInvoicing(),
         ]);
     }
 
-    public function makeDtoFromObject(Counter $counter): CounterDTO
+    public function makeDtoFromObject(Counter $model): CounterDTO
     {
         $result = new CounterDTO();
 
         $result
-            ->setId($counter->id)
-            ->setType(TypeEnum::tryFrom($counter->type))
-            ->setAccountId($counter->account_id)
-            ->setNumber($counter->number)
-            ->setIsPrimary($counter->is_primary);
+            ->setId($model->id)
+            ->setType(CounterTypeEnum::tryFrom($model->type))
+            ->setAccountId($model->account_id)
+            ->setNumber($model->number)
+            ->setIsInvoicing($model->is_invoicing)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
+
+        if (isset($model->getRelations()[Counter::HISTORY])) {
+            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::HISTORY)));
+        }
+
+        if (isset($model->getRelations()[Counter::ACCOUNT])) {
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::ACCOUNT)));
+        }
 
         return $result;
     }
 
-    public function make(TypeEnum $type): CounterDTO
+    public function make(CounterTypeEnum $type): CounterDTO
     {
         $result = new CounterDTO();
         $result->setType($type);

@@ -2,21 +2,20 @@
 
 namespace Core\Domains\User;
 
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Account\AccountLocator;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserDTO;
-use Core\Domains\User\Repositories\UserCacheRepository;
 use Core\Domains\User\Repositories\UserRepository;
+use Core\Domains\User\Services\Notificator;
 use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\Services\UserService;
 
 class UserLocator
 {
-    private static UserCacheRepository $UserCacheRepository;
-    private static UserFactory         $UserFactory;
-    private static UserRepository      $UserRepository;
-    private static UserService         $UserService;
+    private static UserFactory    $UserFactory;
+    private static UserRepository $UserRepository;
+    private static UserService    $UserService;
+    private static Notificator    $Notificator;
 
     public static function UserService(): UserService
     {
@@ -24,6 +23,7 @@ class UserLocator
             self::$UserService = new UserService(
                 self::UserFactory(),
                 self::UserRepository(),
+                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -33,10 +33,7 @@ class UserLocator
     public static function UserFactory(): UserFactory
     {
         if ( ! isset(self::$UserFactory)) {
-            self::$UserFactory = new UserFactory(
-                AccountLocator::AccountFactory(),
-                RoleLocator::RoleFactory(),
-            );
+            self::$UserFactory = new UserFactory();
         }
 
         return self::$UserFactory;
@@ -45,20 +42,23 @@ class UserLocator
     public static function UserRepository(): UserRepository
     {
         if ( ! isset(self::$UserRepository)) {
-            self::$UserRepository = new UserRepository(
-                self::UserCacheRepository(),
-            );
+            self::$UserRepository = new UserRepository();
         }
 
         return self::$UserRepository;
     }
 
-    public static function UserCacheRepository(): UserCacheRepository
+    public static function UserDecorator(UserDTO $user): UserDecorator
     {
-        if ( ! isset(self::$UserCacheRepository)) {
-            self::$UserCacheRepository = new UserCacheRepository();
+        return new UserDecorator($user);
+    }
+
+    public static function Notificator(): Notificator
+    {
+        if ( ! isset(self::$Notificator)) {
+            self::$Notificator = new Notificator();
         }
 
-        return self::$UserCacheRepository;
+        return self::$Notificator;
     }
 }

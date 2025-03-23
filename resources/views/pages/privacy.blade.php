@@ -8,16 +8,11 @@ use Core\Resources\Views\ViewNames;
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ route(RouteNames::PRIVACY) }}" />
-@endpush
-
 @section(SectionNames::CONTENT)
-    @if(app::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->isSuperAdmin())
         <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>
     @endif
-    <h1 class="border-bottom">Политика в&nbsp;отношении обработки персональных данных</h1>
+    <h1 class="page-title">Политика в&nbsp;отношении обработки персональных данных</h1>
     <div id="inputResult">
         <div class="row mb-4">
             <div class="col">

@@ -26,4 +26,13 @@ readonly class Where
     {
         return $this->value;
     }
+
+    public function __serialize(): array
+    {
+        return [
+            'field'    => $this->field,
+            'operator' => $this->operator,
+            'value'    => $this->value,
+        ];
+    }
 }

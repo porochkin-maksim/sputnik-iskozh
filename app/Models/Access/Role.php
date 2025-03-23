@@ -3,24 +3,34 @@
 namespace App\Models\Access;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int $id
+ * @property int     $id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property int[]   $permissions
+ *
+ * @property ?string $name
  */
 class Role extends Model
 {
-    use HasFactory;
-
     public const TABLE = 'roles';
 
-    public const ID = 'id';
+    protected $table = self::TABLE;
 
-    public $timestamps = false;
+    public const ID   = 'id';
+    public const NAME = 'name';
 
-    protected $guarded = [];
+    public const USERS       = 'users';
+    public const PERMISSIONS = 'permissions';
+
+    protected $with       = [self::PERMISSIONS];
+    public    $timestamps = false;
+    protected $guarded    = [];
 
     public function users(): BelongsToMany
     {
@@ -30,5 +40,10 @@ class Role extends Model
             RoleToUser::ROLE,
             RoleToUser::USER,
         );
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(RoleToPermissions::class, RoleToPermissions::ROLE, self::ID);
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\User\Requests\SaveProfileEmailRequest;
-use Core\Domains\User\Requests\SaveProfilePasswordRequest;
-use Core\Domains\User\Requests\SaveProfileRequest;
+use App\Http\Requests\Users\SaveProfileEmailRequest;
+use App\Http\Requests\Users\SaveProfilePasswordRequest;
+use App\Http\Requests\Users\SaveProfileRequest;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;
@@ -28,7 +28,7 @@ class ProfileController extends Controller
 
     public function save(SaveProfileRequest $request): void
     {
-        $user = $request->dto(\app::user());
+        $user = $request->dto(\lc::user());
 
         $this->userService->save($user);
     }
@@ -38,7 +38,8 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\app::user());
+            $user = \lc::user();
+            $user->setEmail($request->getEmail());
 
             $this->userService->save($user);
 
@@ -57,7 +58,8 @@ class ProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = $request->dto(\app::user());
+            $user = \lc::user();
+            $user->setPassword($request->getPassword());
 
             $this->userService->save($user);
 

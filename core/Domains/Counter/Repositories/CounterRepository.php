@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Counter\Repositories;
 
-use App\Models\Counter;
+use App\Models\Counter\Counter;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
 
@@ -21,10 +21,10 @@ class CounterRepository
         return Counter::class;
     }
 
-    public function save(Counter $report): Counter
+    public function save(Counter $object): Counter
     {
-        $report->save();
+        $object->save();
 
-        return $report;
+        return $object;
     }
 }

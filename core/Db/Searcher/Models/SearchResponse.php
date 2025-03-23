@@ -12,6 +12,7 @@ class SearchResponse
     public function __construct()
     {
         $this->items = new Collection();
+        $this->total = 0;
     }
 
     public function getItems(): Collection
@@ -34,7 +35,7 @@ class SearchResponse
         $result = [];
         try {
             foreach ($this->items as $item) {
-                $result[] = $item->getId();
+                $result[] = $item->id;
             }
         }
         catch (\Exception) {

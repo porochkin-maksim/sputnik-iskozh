@@ -1,11 +1,13 @@
 <template>
-    <ul v-if="computedErrors"
-        class="form-error"
-    >
-        <li v-for="error in errors">
-            {{ error }}
-        </li>
-    </ul>
+    <div class="form">
+        <ul v-if="computedErrors"
+            class="form-error"
+        >
+            <li v-for="error in errors">
+                {{ error }}
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>

@@ -5,7 +5,7 @@ use Core\Resources\Views\ViewNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends(ViewNames::LAYOUTS_PROFILE)
 
 @section(SectionNames::CONTENT)
     <register-account></register-account>

@@ -21,7 +21,7 @@ return [
     ],
     'boolean'              => 'Поле «:attribute» должно быть true or false.',
     'can'                  => 'Поле «:attribute» contains an unauthorized value.',
-    'confirmed'            => 'Поле «:attribute» confirmation does not match.',
+    'confirmed'            => 'Поле «:attribute» не совпадает с полем подтверждения.',
     'current_password'     => 'Поле «password» указано неверно.',
     'date'                 => 'Поле «:attribute» должно быть датой.',
     'date_equals'          => 'Поле «:attribute» должно с a date equal to :date.',

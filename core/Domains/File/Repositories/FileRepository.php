@@ -22,4 +22,19 @@ class FileRepository
 
         return $file;
     }
+
+    /**
+     * @return int[]
+     */
+    public function getIdsByFullTextSearch(string $search): array
+    {
+        return File::select('id')->whereRaw(
+            sprintf("MATCH(%s) AGAINST(? IN BOOLEAN MODE)",
+                implode(',', [File::NAME]),
+            ),
+            $search
+        )->get()->map(function (File $file) {
+            return $file->id;
+        })->unique()->toArray();
+    }
 }

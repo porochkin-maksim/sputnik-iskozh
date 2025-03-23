@@ -4,11 +4,8 @@ namespace Core\Domains\Access\Repositories;
 
 use App\Models\Access\Role;
 use Core\Db\RepositoryTrait;
+use Core\Db\Searcher\Models\SearchResponse;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Collections\Roles;
-use Core\Domains\Access\Enums\UserToRole;
-use Core\Domains\Access\Models\RolesSearcher;
-use Illuminate\Support\Facades\DB;
 
 class RoleRepository
 {
@@ -17,10 +14,12 @@ class RoleRepository
     use RepositoryTrait {
         getById as traitGetById;
         getByIds as traitGetByIds;
+        search as traitSearch;
     }
 
     public function __construct(
-        private readonly RoleToUserRepository $roleToUserRepository
+        private readonly RoleToUserRepository       $roleToUserRepository,
+        private readonly RoleToPermissionRepository $roleToPermissionRepository,
     )
     {
     }
@@ -38,28 +37,23 @@ class RoleRepository
         return $result;
     }
 
-    public function getByIds(array $ids): Roles
+    public function save(Role $role): Role
     {
-        return new Roles($this->traitGetByIds($ids));
-    }
+        $permissions = $role->permissions;
+        unset($role->permissions);
+        $role->save();
+        $this->roleToPermissionRepository->saveRolesPermissions($role->id, $permissions);
 
-    public function save(Role $report): Role
-    {
-        $report->save();
-
-        return $report;
+        $role->permissions;
+        return $role;
     }
 
     /**
-     * @return Role[]
+     * @return  int[]
      */
-    public function search(RolesSearcher $searcher): array
+    public function getPermissionsByRoleId(int $id): array
     {
-        $ids = DB::table(static::TABLE)
-            ->pluck('id')
-            ->toArray();
-
-        return $this->traitGetByIds($ids, $searcher);
+        return $this->roleToPermissionRepository->getPermissionsByRoleId($id);
     }
 
     public function getByUserId(int $id): ?Role

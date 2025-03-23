@@ -10,11 +10,11 @@ use Core\Resources\Views\ViewNames;
 @section(SectionNames::CONTENT)
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+            <div class="col-md-9">
+                <div class="">
+                    <h3 class="alert text-center m-0">{{ __('Verify Your Email Address') }}</h3>
 
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         @if (session('resent'))
                             <div class="alert alert-success"
                                  role="alert">
@@ -23,6 +23,7 @@ use Core\Resources\Views\ViewNames;
                         @endif
 
                         {{ __('Before proceeding, please check your email for a verification link.') }}
+                        <br>
                         {{ __('If you did not receive the email') }},
                         <form class="d-inline"
                               method="POST"

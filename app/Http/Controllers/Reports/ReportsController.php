@@ -107,6 +107,6 @@ class ReportsController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditReports();
+        return false;
     }
 }

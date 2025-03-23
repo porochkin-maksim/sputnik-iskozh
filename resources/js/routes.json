@@ -1,36 +1,590 @@
 {
-    "accountInfo": {
-        "name": "account.info",
-        "method": "get",
-        "uri": "\/home\/json\/account-info",
-        "args": []
-    },
     "accountRegister": {
         "name": "account.register",
+        "displayName": "",
         "method": "get",
         "uri": "\/home\/register",
         "args": []
     },
     "accountRegisterSave": {
         "name": "account.register.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/json\/register",
         "args": []
     },
+    "adminAccountCreate": {
+        "name": "admin.account.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/json\/create",
+        "args": []
+    },
+    "adminAccountDelete": {
+        "name": "admin.account.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/accounts\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminAccountGet": {
+        "name": "admin.account.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/json\/view\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminAccountIndex": {
+        "name": "admin.account.index",
+        "displayName": "\u0423\u0447\u0430\u0441\u0442\u043a\u0438",
+        "method": "get",
+        "uri": "\/admin\/accounts",
+        "args": []
+    },
+    "adminAccountList": {
+        "name": "admin.account.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/json\/list",
+        "args": []
+    },
+    "adminAccountSave": {
+        "name": "admin.account.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/json\/save",
+        "args": []
+    },
+    "adminAccountView": {
+        "name": "admin.account.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminCounterHistoryConfirm": {
+        "name": "admin.counter-history.confirm",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/confirm",
+        "args": []
+    },
+    "adminCounterHistoryDelete": {
+        "name": "admin.counter-history.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/counter-history\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminCounterHistoryIndex": {
+        "name": "admin.counter-history.index",
+        "displayName": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u043a\u0430\u0437\u0430\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/admin\/counter-history",
+        "args": []
+    },
+    "adminCounterHistoryLink": {
+        "name": "admin.counter-history.link",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/link",
+        "args": []
+    },
+    "adminCounterHistoryList": {
+        "name": "admin.counter-history.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/counter-history\/json\/list",
+        "args": []
+    },
+    "adminCounterAddValue": {
+        "name": "admin.counter.add-value",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/add-value",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminCounterCreate": {
+        "name": "admin.counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/create",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminCounterDelete": {
+        "name": "admin.counter.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/{id}",
+        "args": {
+            "accountId": "{accountId}",
+            "id": "{id}"
+        }
+    },
+    "adminCounterList": {
+        "name": "admin.counter.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/list",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminCounterSave": {
+        "name": "admin.counter.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/save",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminIndex": {
+        "name": "admin.index",
+        "displayName": "\u041e \u0441\u0438\u0441\u0442\u0435\u043c\u0435",
+        "method": "get",
+        "uri": "\/admin",
+        "args": []
+    },
+    "adminInvoiceCreate": {
+        "name": "admin.invoice.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/create",
+        "args": []
+    },
+    "adminInvoiceCreateRegularInvoices": {
+        "name": "admin.invoice.create-regular-invoices",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/create-regular-invoices\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
+    "adminInvoiceDelete": {
+        "name": "admin.invoice.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminInvoiceGet": {
+        "name": "admin.invoice.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/get\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminInvoiceGetAccountsCountWithoutRegular": {
+        "name": "admin.invoice.get-accounts-count-without-regular",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/get-without-regular\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
+    "adminInvoiceIndex": {
+        "name": "admin.invoice.index",
+        "displayName": "\u0421\u0447\u0435\u0442\u0430",
+        "method": "get",
+        "uri": "\/admin\/invoices",
+        "args": []
+    },
+    "adminInvoiceList": {
+        "name": "admin.invoice.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/list",
+        "args": []
+    },
+    "adminInvoiceSave": {
+        "name": "admin.invoice.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/save",
+        "args": []
+    },
+    "adminInvoiceSummary": {
+        "name": "admin.invoice.summary",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/summary",
+        "args": []
+    },
+    "adminInvoiceView": {
+        "name": "admin.invoice.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminNewPaymentDelete": {
+        "name": "admin.new-payment.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/payments\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminNewPaymentGetInvoices": {
+        "name": "admin.new-payment.get-invoices",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/json\/get-invoices\/{accountId}\/{periodId}",
+        "args": {
+            "accountId": "{accountId}",
+            "periodId": "{periodId}"
+        }
+    },
+    "adminNewPaymentIndex": {
+        "name": "admin.new-payment.index",
+        "displayName": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments",
+        "args": []
+    },
+    "adminNewPaymentList": {
+        "name": "admin.new-payment.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/json\/list",
+        "args": []
+    },
+    "adminNewPaymentSave": {
+        "name": "admin.new-payment.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/payments\/json\/save",
+        "args": []
+    },
+    "adminNewPaymentView": {
+        "name": "admin.new-payment.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/json\/get\/{paymentId}",
+        "args": {
+            "paymentId": "{paymentId}"
+        }
+    },
+    "adminPaymentCreate": {
+        "name": "admin.payment.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentDelete": {
+        "name": "admin.payment.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/delete\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
+    "adminPaymentList": {
+        "name": "admin.payment.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/list",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentSave": {
+        "name": "admin.payment.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/save",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentView": {
+        "name": "admin.payment.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/get\/{paymentId}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "paymentId": "{paymentId}"
+        }
+    },
+    "adminPeriodCreate": {
+        "name": "admin.period.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/periods\/json\/create",
+        "args": []
+    },
+    "adminPeriodDelete": {
+        "name": "admin.period.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/periods\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminPeriodIndex": {
+        "name": "admin.period.index",
+        "displayName": "\u041f\u0435\u0440\u0438\u043e\u0434\u044b",
+        "method": "get",
+        "uri": "\/admin\/periods",
+        "args": []
+    },
+    "adminPeriodList": {
+        "name": "admin.period.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/periods\/json\/list",
+        "args": []
+    },
+    "adminPeriodSave": {
+        "name": "admin.period.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/periods\/json\/save",
+        "args": []
+    },
+    "adminRoleCreate": {
+        "name": "admin.role.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/roles\/json\/create",
+        "args": []
+    },
+    "adminRoleDelete": {
+        "name": "admin.role.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/roles\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminRoleIndex": {
+        "name": "admin.role.index",
+        "displayName": "\u0420\u043e\u043b\u0438",
+        "method": "get",
+        "uri": "\/admin\/roles",
+        "args": []
+    },
+    "adminRoleList": {
+        "name": "admin.role.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/roles\/json\/list",
+        "args": []
+    },
+    "adminRoleSave": {
+        "name": "admin.role.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/roles\/json\/save",
+        "args": []
+    },
+    "adminSelectsAccounts": {
+        "name": "admin.selects.accounts",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/accounts",
+        "args": []
+    },
+    "adminSelectsCounters": {
+        "name": "admin.selects.counters",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/counters\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminServiceCreate": {
+        "name": "admin.service.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/services\/json\/create",
+        "args": []
+    },
+    "adminServiceDelete": {
+        "name": "admin.service.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/services\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminServiceIndex": {
+        "name": "admin.service.index",
+        "displayName": "\u0423\u0441\u043b\u0443\u0433\u0438",
+        "method": "get",
+        "uri": "\/admin\/services",
+        "args": []
+    },
+    "adminServiceList": {
+        "name": "admin.service.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/services\/json\/list",
+        "args": []
+    },
+    "adminServiceSave": {
+        "name": "admin.service.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/services\/json\/save",
+        "args": []
+    },
+    "adminTransactionCreate": {
+        "name": "admin.transaction.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionDelete": {
+        "name": "admin.transaction.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/delete\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
+    "adminTransactionList": {
+        "name": "admin.transaction.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/list",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionSave": {
+        "name": "admin.transaction.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/save",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminTransactionView": {
+        "name": "admin.transaction.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/get\/{transactionId}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "transactionId": "{transactionId}"
+        }
+    },
+    "adminUserCreate": {
+        "name": "admin.user.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/json\/create",
+        "args": []
+    },
+    "adminUserDelete": {
+        "name": "admin.user.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/users\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminUserIndex": {
+        "name": "admin.user.index",
+        "displayName": "\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+        "method": "get",
+        "uri": "\/admin\/users",
+        "args": []
+    },
+    "adminUserList": {
+        "name": "admin.user.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/json\/list",
+        "args": []
+    },
+    "adminUserSave": {
+        "name": "admin.user.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/save",
+        "args": []
+    },
+    "adminUserSendInviteWithPassword": {
+        "name": "admin.user.send.invite-with-password",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/send-invite-password",
+        "args": []
+    },
+    "adminUserSendRestorePassword": {
+        "name": "admin.user.send.restore.password",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/sendRestorePassword",
+        "args": []
+    },
+    "adminUserView": {
+        "name": "admin.user.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "announcementsIndex": {
         "name": "announcements.index",
+        "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",
         "method": "get",
         "uri": "\/announcements",
         "args": []
     },
     "announcementsList": {
         "name": "announcements.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/announcements\/json\/list",
         "args": []
     },
     "announcementsShow": {
         "name": "announcements.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/announcements\/{id}",
         "args": {
@@ -39,18 +593,35 @@
     },
     "contacts": {
         "name": "contacts",
+        "displayName": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b",
         "method": "get",
         "uri": "\/contacts",
         "args": []
     },
     "cookieAgreement": {
         "name": "cookie_agreement",
+        "displayName": "",
         "method": "post",
         "uri": "\/cookie-agreement",
         "args": []
     },
+    "counter": {
+        "name": "counter",
+        "displayName": "\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/contacts\/requests\/counter",
+        "args": []
+    },
+    "counterCreate": {
+        "name": "counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/contacts\/requests\/counter",
+        "args": []
+    },
     "filesDelete": {
         "name": "files.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/files\/json\/delete\/{id}",
         "args": {
@@ -59,6 +630,7 @@
     },
     "filesDown": {
         "name": "files.down",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/down\/{id}",
         "args": {
@@ -67,6 +639,7 @@
     },
     "filesEdit": {
         "name": "files.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/files\/json\/edit\/{id}",
         "args": {
@@ -75,6 +648,7 @@
     },
     "filesIndex": {
         "name": "files.index",
+        "displayName": "\u0424\u0430\u0439\u043b\u044b",
         "method": "get",
         "uri": "\/files\/{folder}",
         "args": {
@@ -83,36 +657,42 @@
     },
     "filesList": {
         "name": "files.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/files\/json\/list",
         "args": []
     },
     "filesMove": {
         "name": "files.move",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/move",
         "args": []
     },
     "filesReplace": {
         "name": "files.replace",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/replace",
         "args": []
     },
     "filesSave": {
         "name": "files.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/save",
         "args": []
     },
     "filesStore": {
         "name": "files.store",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/store",
         "args": []
     },
     "filesUp": {
         "name": "files.up",
+        "displayName": "",
         "method": "post",
         "uri": "\/files\/json\/up\/{id}",
         "args": {
@@ -121,6 +701,7 @@
     },
     "foldersDelete": {
         "name": "folders.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/folders\/json\/delete\/{id}",
         "args": {
@@ -129,18 +710,21 @@
     },
     "foldersList": {
         "name": "folders.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/folders\/json\/list",
         "args": []
     },
     "foldersSave": {
         "name": "folders.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/folders\/json\/save",
         "args": []
     },
     "foldersShow": {
         "name": "folders.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/folders\/json\/show\/{id}",
         "args": {
@@ -149,42 +733,56 @@
     },
     "garbage": {
         "name": "garbage",
+        "displayName": "\u0412\u044b\u0432\u043e\u0437 \u043c\u0443\u0441\u043e\u0440\u0430",
         "method": "get",
         "uri": "\/garbage",
         "args": []
     },
     "home": {
         "name": "home",
+        "displayName": "\u041b\u0438\u0447\u043d\u044b\u0439 \u043a\u0430\u0431\u0438\u043d\u0435\u0442",
         "method": "get",
         "uri": "\/home",
         "args": []
     },
     "index": {
         "name": "index",
+        "displayName": "",
         "method": "get",
         "uri": "\/",
         "args": []
     },
+    "infraHistoryChanges": {
+        "name": "infra.history-changes",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/history\/changes",
+        "args": []
+    },
     "login": {
         "name": "login",
+        "displayName": "",
         "method": "post",
         "uri": "\/login",
         "args": []
     },
     "logout": {
         "name": "logout",
+        "displayName": "\u0412\u044b\u0439\u0442\u0438",
         "method": "get",
         "uri": "\/logout",
         "args": []
     },
     "newsCreate": {
         "name": "news.create",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/create",
         "args": []
     },
     "newsDelete": {
         "name": "news.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/news\/json\/delete\/{id}",
         "args": {
@@ -193,6 +791,7 @@
     },
     "newsEdit": {
         "name": "news.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/edit\/{id}",
         "args": {
@@ -201,6 +800,7 @@
     },
     "newsFileDelete": {
         "name": "news.file.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/news\/json\/file\/delete\/{id}",
         "args": {
@@ -209,12 +809,14 @@
     },
     "newsFileSave": {
         "name": "news.file.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/file\/save",
         "args": []
     },
     "newsFileUpload": {
         "name": "news.file.upload",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/file\/upload\/{id}",
         "args": {
@@ -223,30 +825,42 @@
     },
     "newsIndex": {
         "name": "news.index",
+        "displayName": "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
         "method": "get",
         "uri": "\/news",
         "args": []
     },
     "newsList": {
         "name": "news.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/list",
         "args": []
     },
     "newsListAll": {
         "name": "news.list.all",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/json\/list\/all",
         "args": []
     },
+    "newsListLocked": {
+        "name": "news.list.locked",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/news\/json\/list\/locked",
+        "args": []
+    },
     "newsSave": {
         "name": "news.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/news\/json\/save",
         "args": []
     },
     "newsShow": {
         "name": "news.show",
+        "displayName": "",
         "method": "get",
         "uri": "\/news\/{id}",
         "args": {
@@ -255,6 +869,7 @@
     },
     "optionsEdit": {
         "name": "options.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/options\/json\/edit\/{id}",
         "args": {
@@ -263,122 +878,191 @@
     },
     "optionsIndex": {
         "name": "options.index",
+        "displayName": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
         "method": "get",
         "uri": "\/options",
         "args": []
     },
     "optionsList": {
         "name": "options.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/options\/json\/list",
         "args": []
     },
     "optionsSave": {
         "name": "options.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/options\/json\/save",
         "args": []
     },
     "passwordConfirm": {
         "name": "password.confirm",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/confirm",
         "args": []
     },
     "passwordEmail": {
         "name": "password.email",
+        "displayName": "",
         "method": "post",
         "uri": "\/password\/email",
         "args": []
     },
     "passwordRequest": {
         "name": "password.request",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/reset",
         "args": []
     },
     "passwordReset": {
         "name": "password.reset",
+        "displayName": "",
         "method": "get",
         "uri": "\/password\/reset\/{token}",
         "args": {
             "token": "{token}"
         }
     },
+    "passwordSave": {
+        "name": "password.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/password\/set",
+        "args": []
+    },
+    "passwordSet": {
+        "name": "password.set",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/password\/set",
+        "args": []
+    },
     "passwordUpdate": {
         "name": "password.update",
+        "displayName": "",
         "method": "post",
         "uri": "\/password\/reset",
         "args": []
     },
+    "payment": {
+        "name": "payment",
+        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/contacts\/requests\/payment",
+        "args": []
+    },
+    "paymentCreate": {
+        "name": "payment.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/contacts\/requests\/payment",
+        "args": []
+    },
     "privacy": {
         "name": "privacy",
+        "displayName": "\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445",
         "method": "get",
         "uri": "\/privacy",
         "args": []
     },
-    "profileCounterList": {
-        "name": "profile.counter.list",
-        "method": "get",
-        "uri": "\/home\/json\/counter\/list",
+    "profileCounterAddValue": {
+        "name": "profile.counter.add-value",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/add-value",
         "args": []
     },
-    "profileCounterSave": {
-        "name": "profile.counter.save",
+    "profileCounterCreate": {
+        "name": "profile.counter.create",
+        "displayName": "",
         "method": "post",
-        "uri": "\/home\/json\/counter",
+        "uri": "\/home\/counters\/json\/create",
+        "args": []
+    },
+    "profileCounterList": {
+        "name": "profile.counter.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/counters\/json\/list",
+        "args": []
+    },
+    "profileCountersIndex": {
+        "name": "profile.counters.index",
+        "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",
+        "method": "get",
+        "uri": "\/home\/counters",
+        "args": []
+    },
+    "profilePaymentsIndex": {
+        "name": "profile.payments.index",
+        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/home\/payments",
         "args": []
     },
     "profileSave": {
         "name": "profile.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile",
         "args": []
     },
     "profileSaveEmail": {
         "name": "profile.save.email",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/email",
         "args": []
     },
     "profileSavePassword": {
         "name": "profile.save.password",
+        "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/password",
         "args": []
     },
     "profileShow": {
         "name": "profile.show",
+        "displayName": "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
         "method": "get",
         "uri": "\/home\/profile",
         "args": []
     },
     "proposal": {
         "name": "proposal",
+        "displayName": "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
         "method": "get",
-        "uri": "\/contacts\/proposal",
+        "uri": "\/contacts\/requests\/proposal",
         "args": []
     },
     "proposalCreate": {
         "name": "proposal.create",
+        "displayName": "",
         "method": "post",
-        "uri": "\/contacts\/proposal",
+        "uri": "\/contacts\/requests\/proposal",
         "args": []
     },
     "regulation": {
         "name": "regulation",
+        "displayName": "\u0423\u0441\u0442\u0430\u0432",
         "method": "get",
         "uri": "\/regulation",
         "args": []
     },
     "reportsCreate": {
         "name": "reports.create",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/create",
         "args": []
     },
     "reportsDelete": {
         "name": "reports.delete",
+        "displayName": "",
         "method": "delete",
         "uri": "\/reports\/json\/delete\/{id}",
         "args": {
@@ -387,6 +1071,7 @@
     },
     "reportsEdit": {
         "name": "reports.edit",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/edit\/{id}",
         "args": {
@@ -395,6 +1080,7 @@
     },
     "reportsFileDelete": {
         "name": "reports.file.delete",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/file\/delete\/{id}",
         "args": {
@@ -403,6 +1089,7 @@
     },
     "reportsFileUpload": {
         "name": "reports.file.upload",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/file\/upload\/{id}",
         "args": {
@@ -411,66 +1098,98 @@
     },
     "reportsIndex": {
         "name": "reports.index",
+        "displayName": "\u041e\u0442\u0447\u0451\u0442\u044b",
         "method": "get",
         "uri": "\/reports",
         "args": []
     },
     "reportsList": {
         "name": "reports.list",
+        "displayName": "",
         "method": "get",
         "uri": "\/reports\/json\/list",
         "args": []
     },
     "reportsSave": {
         "name": "reports.save",
+        "displayName": "",
         "method": "post",
         "uri": "\/reports\/json\/save",
         "args": []
     },
+    "requests": {
+        "name": "requests",
+        "displayName": "\u041e\u0431\u0440\u0430\u0449\u0435\u043d\u0438\u044f",
+        "method": "get",
+        "uri": "\/contacts\/requests",
+        "args": []
+    },
     "rubrics": {
         "name": "rubrics",
+        "displayName": "\u0420\u0443\u0431\u0440\u0438\u043a\u0430\u0442\u043e\u0440",
         "method": "get",
         "uri": "\/rubrics",
         "args": []
     },
     "sanctumCsrfCookie": {
         "name": "sanctum.csrf-cookie",
+        "displayName": "",
         "method": "get",
         "uri": "\/sanctum\/csrf-cookie",
         "args": []
     },
+    "search": {
+        "name": "search",
+        "displayName": "\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u0441\u0430\u0439\u0442\u0443",
+        "method": "get",
+        "uri": "\/search",
+        "args": []
+    },
+    "searchSite": {
+        "name": "search.site",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/search\/json\/search",
+        "args": []
+    },
     "sessionStore": {
         "name": "session.store",
+        "displayName": "",
         "method": "post",
         "uri": "\/session",
         "args": []
     },
     "templateGet": {
         "name": "template.get",
+        "displayName": "",
         "method": "post",
         "uri": "\/pages\/json\/edit",
         "args": []
     },
     "templateUpdate": {
         "name": "template.update",
+        "displayName": "",
         "method": "patch",
         "uri": "\/pages\/json\/edit",
         "args": []
     },
     "verificationNotice": {
         "name": "verification.notice",
+        "displayName": "",
         "method": "get",
         "uri": "\/email\/verify",
         "args": []
     },
     "verificationResend": {
         "name": "verification.resend",
+        "displayName": "",
         "method": "post",
         "uri": "\/email\/resend",
         "args": []
     },
     "verificationVerify": {
         "name": "verification.verify",
+        "displayName": "",
         "method": "get",
         "uri": "\/email\/verify\/{id}\/{hash}",
         "args": {

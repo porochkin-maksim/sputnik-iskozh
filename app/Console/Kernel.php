@@ -10,6 +10,8 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('schedule:clear-cache')->dailyAt('03:00');
+
         $this->scheduleQueues($schedule);
     }
 
@@ -23,15 +25,13 @@ class Kernel extends ConsoleKernel
     private function scheduleQueues(Schedule $schedule): void
     {
         $schedule->command('queue:restart')
-                 ->everyFiveMinutes()
-                 ->name('queue.restart')
-                 ->withoutOverlapping()
-        ;
+            ->hourly()
+            ->name('queue.restart')
+            ->withoutOverlapping();
 
-        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --stop-when-empty', implode(',', QueueEnum::values())))
-                 ->everyFifteenSeconds()
-                 ->name('queue.work.normal')
-                 ->withoutOverlapping()
-        ;
+        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --stop-when-empty --verbose', implode(',', QueueEnum::values())))
+            ->everyFiveSeconds()
+            ->name('queue.work-normal')
+            ->withoutOverlapping();
     }
 }

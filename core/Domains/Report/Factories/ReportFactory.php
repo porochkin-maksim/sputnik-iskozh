@@ -20,9 +20,7 @@ readonly class ReportFactory
 
     public function makeDefault(): ReportDTO
     {
-        $result = new ReportDTO();
-
-        return $result
+        return (new ReportDTO())
             ->setId(null)
             ->setCategory(CategoryEnum::UNDEFINED)
             ->setType(TypeEnum::MONTH)
@@ -34,27 +32,25 @@ readonly class ReportFactory
             ->setParentId(null);
     }
 
-    public function makeModelFromDto(ReportDTO $dto, ?Report $report = null): Report
+    public function makeModelFromDto(ReportDTO $dto, ?Report $model = null): Report
     {
-        if ($report) {
-            $result = $report;
+        if ($model) {
+            $result = $model;
         }
         else {
             $result = Report::make();
         }
 
-        $startAt = $dto->getStartAt()
-            ? $dto->getStartAt()->format(DateTimeFormat::DATE_TIME_DEFAULT)
-            : Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT);
+        $startAt = $dto->getStartAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT)
+            ?: Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT);
 
-        $endAt = $dto->getEndAt()
-            ? $dto->getEndAt()->format(DateTimeFormat::DATE_TIME_DEFAULT)
-            : Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT);
+        $endAt = $dto->getEndAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT)
+            ?: Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT);
 
         $year = Carbon::parse($startAt)->year;
 
         return $result->fill([
-            Report::NAME      => $dto->getName() ? : $dto->getCategory()->defaultName(),
+            Report::NAME      => $dto->getName() ? : $dto->getCategory()?->defaultName(),
             Report::CATEGORY  => $dto->getCategory()?->value,
             Report::TYPE      => $dto->getType()?->value,
             Report::YEAR      => $year,
@@ -66,26 +62,26 @@ readonly class ReportFactory
         ]);
     }
 
-    public function makeDtoFromObject(Report $report): ReportDTO
+    public function makeDtoFromObject(Report $model): ReportDTO
     {
         $result = new ReportDTO();
 
         $result
-            ->setId($report->id)
-            ->setName($report->name)
-            ->setCategory(CategoryEnum::from($report->category))
-            ->setType(TypeEnum::from($report->type))
-            ->setYear($report->year)
-            ->setStartAt($report->start_at)
-            ->setEndAt($report->end_at)
-            ->setMoney($report->money ? (float) $report->money : null)
-            ->setVersion($report->version)
-            ->setParentId($report->parent_id)
-            ->setCreatedAt($report->created_at)
-            ->setUpdatedAt($report->updated_at);
+            ->setId($model->id)
+            ->setName($model->name)
+            ->setCategory(CategoryEnum::from($model->category))
+            ->setType(TypeEnum::from($model->type))
+            ->setYear($model->year)
+            ->setStartAt($model->start_at)
+            ->setEndAt($model->end_at)
+            ->setMoney($model->money ? (float) $model->money : null)
+            ->setVersion($model->version)
+            ->setParentId($model->parent_id)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
 
-        if ($report->{Report::FILES}) {
-            $result->setFiles($this->fileFactory->makeDtoFromObjects($report->{Report::FILES}));
+        if ($model->{Report::FILES}) {
+            $result->setFiles($this->fileFactory->makeDtoFromObjects($model->{Report::FILES}));
         }
 
         return $result;

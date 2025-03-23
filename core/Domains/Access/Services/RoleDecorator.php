@@ -2,59 +2,68 @@
 
 namespace Core\Domains\Access\Services;
 
-use Core\Domains\Access\Enums\RoleIdEnum;
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Models\RoleDTO;
 
-readonly class RoleDecorator
+class RoleDecorator
 {
     public function __construct(
-        private ?RoleDTO $role,
+        private readonly ?RoleDTO $role,
     )
     {
     }
 
-    public function canEditNews(): bool
+    public function isSuperAdmin(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->can(...PermissionEnum::cases());
     }
 
-    public function canEditFiles(): bool
+    public function canAccessAdmin(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
-
-        return false;
+        return $this->can(
+            PermissionEnum::ROLES_VIEW,
+            PermissionEnum::USERS_VIEW,
+            PermissionEnum::ACCOUNTS_VIEW,
+            PermissionEnum::PERIODS_VIEW,
+            PermissionEnum::SERVICES_VIEW,
+            PermissionEnum::INVOICES_VIEW,
+            PermissionEnum::PAYMENTS_VIEW,
+            PermissionEnum::COUNTERS_VIEW,
+        );
     }
 
-    public function canEditReports(): bool
+    public function can(PermissionEnum ...$permissions): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
+        $result = true;
+        foreach ($permissions as $permission) {
+            if ( ! $result) {
+                break;
+            }
+            $result = $this->role->hasPermission($permission);
         }
 
-        return false;
+        return $result;
     }
 
-    public function canEditOptions(): bool
+    public function canNews(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
+        $actions = [
+            PermissionEnum::NEWS_VIEW,
+            PermissionEnum::NEWS_EDIT,
+            PermissionEnum::NEWS_DROP,
+        ];
 
-        return false;
+        return $this->can(...$actions);
     }
 
-    public function canEditTemplates(): bool
+    public function canFiles(): bool
     {
-        if ($this->role?->is(RoleIdEnum::ADMIN)) {
-            return true;
-        }
+        $actions = [
+            PermissionEnum::FILES_VIEW,
+            PermissionEnum::FILES_EDIT,
+            PermissionEnum::FILES_DROP,
+        ];
 
-        return false;
+        return $this->can(...$actions);
     }
 }

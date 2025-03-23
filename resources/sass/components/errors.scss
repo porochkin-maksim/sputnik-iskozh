@@ -1,23 +1,86 @@
 .errors {
-    align-items: center;
+    align-items : center;
 }
 
 .errors .error-code,
 .errors .error-message {
-    padding: 0 1rem;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: #f5f5f5;
-    text-shadow: 1px 1px 1px #919191,1px 2px 1px #919191,1px 3px 1px #919191,1px 4px 1px #919191,1px 5px 1px #919191,1px 6px 1px #919191,1px 7px 1px #919191,1px 8px 1px #919191,1px 9px 1px #919191,1px 10px 1px #919191,1px 18px 6px rgba(16,16,16,.4),1px 22px 10px rgba(16,16,16,.2),1px 25px 35px rgba(16,16,16,.2),1px 30px 60px rgba(16,16,16,.4);
+    padding        : 0 1rem;
+    text-transform : uppercase;
+    font-weight    : 700;
+    color          : #f5f5f5;
+    text-shadow    : 1px 1px 1px #919191, 1px 2px 1px #919191, 1px 3px 1px #919191, 1px 4px 1px #919191, 1px 5px 1px #919191, 1px 6px 1px #919191, 1px 7px 1px #919191, 1px 8px 1px #919191, 1px 9px 1px #919191, 1px 10px 1px #919191, 1px 18px 6px rgba(16, 16, 16, .4), 1px 22px 10px rgba(16, 16, 16, .2), 1px 25px 35px rgba(16, 16, 16, .2), 1px 30px 60px rgba(16, 16, 16, .4);
 }
 
 .errors .error-code {
-    font-size: 15vw;
+    font-size : 15vw;
 }
 
 .errors .error-message {
-    text-align: center;
-    font-size: 3vw;
-    color: rgba(16,16,16,.4);
-    text-shadow: none;
+    text-align  : center;
+    font-size   : 3vw;
+    color       : rgba(16, 16, 16, .4);
+    text-shadow : none;
+}
+
+.error-container {
+    position         : fixed;
+    top              : 20px;
+    left             : 50%;
+    transform        : translateX(-50%);
+    max-width        : 80vw;
+    padding          : 0 10px;
+    border           : 1px solid var(--bs-danger);
+    background-color : var(--bs-danger-bg-subtle);
+    border-radius    : 6px;
+    box-shadow       : 0 2px 12px rgba(0, 0, 0, 0.08);
+    z-index          : 2000;
+
+    .error-list {
+        margin          : 0;
+        padding         : 0;
+        list-style-type : none;
+    }
+
+    .error-item {
+        display         : flex;
+        align-items     : center;
+        justify-content : space-between;
+        margin-bottom   : 10px;
+        padding         : 10px;
+        color           : #333;
+        font-size       : 14px;
+        border-radius   : 4px;
+        transition      : all 0.3s ease-in-out;
+
+        &:last-child {
+            margin-bottom : 0;
+        }
+    }
+
+    .error-text {
+        margin-right : auto;
+    }
+}
+
+.notification-container {
+    position : fixed;
+    bottom   : 20px;
+    right    : 20px;
+    width    : 300px;
+    z-index  : 1000;
+
+    .message {
+        margin-top  : 10px;
+        padding     : 15px;
+        border      : 1px solid;
+        border-left : 10px solid;
+        overflow    : hidden;
+        background  : #ffffff;
+        box-shadow  : 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition  : all 0.3s ease-in-out;
+    }
+
+    .message-text {
+        margin-bottom : 10px;
+    }
 }

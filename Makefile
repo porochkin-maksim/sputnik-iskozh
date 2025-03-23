@@ -21,8 +21,13 @@ endif
 
 .PHONY: build
 build: ## собрать контейнеры
-	@docker compose build --no-cache
+	@./scripts/install.sh
+	@docker compose build
+	@#docker compose build --no-cache
 	@./vendor/bin/sail up -d
+	@./vendor/bin/sail composer install
+	@./vendor/bin/sail yarn -i
+	@./vendor/bin/sail yarn build
 
 .PHONY: up
 up: ## запуск приложения
@@ -71,7 +76,7 @@ yarn-build: ## собрать фронт
 	@./vendor/bin/sail yarn run build
 
 .PHONY: js-routes
-routes: ## Выгрузить маршруты с бэка
+js-routes: ## Выгрузить маршруты с бэка
 	@./vendor/bin/sail artisan front:export-route-list-command
 
 .PHONY: js-arguments
@@ -97,6 +102,10 @@ migrate-refresh: ## откатить миграции
 .PHONY: volume-rm
 volume-rm: ## удалить "docker volumes" проекта
 	@docker volume rm laravel_sail-meilisearch laravel_sail-mysql laravel_sail-redis
+
+.PHONY: remove
+remove-all: ## Удалить все контейнеры и образы
+	@docker compose down -v --rmi all
 
 # empty action
 %:

@@ -17,6 +17,8 @@ class Option extends Model
 {
     public const TABLE = 'options';
 
+    protected $table = self::TABLE;
+
     public const ID   = 'id';
     public const TYPE = 'type';
     public const DATA = 'data';

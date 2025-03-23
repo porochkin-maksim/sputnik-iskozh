@@ -37,4 +37,16 @@ trait CollectionTrait
 
         return parent::add($item);
     }
+
+    final protected function orderingFunction(mixed $compareWith, $value1, $value2): int
+    {
+        if ($value1 === $compareWith) {
+            return -1;
+        }
+        if ($value2 === $compareWith) {
+            return 1;
+        }
+
+        return 0;
+    }
 }

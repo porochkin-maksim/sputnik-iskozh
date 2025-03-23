@@ -3,8 +3,9 @@
 namespace Core\Services\Images\Models;
 
 use Illuminate\Support\Facades\Storage;
+use JsonSerializable;
 
-readonly class StaticFile
+readonly class StaticFile implements JsonSerializable
 {
     public function __construct(
         private string $name,
@@ -47,5 +48,15 @@ readonly class StaticFile
     <image src="{$this->url}"></image>
 </a>
 HTML;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'ext'  => $this->ext,
+            'path' => $this->path,
+            'url'  => $this->url,
+        ];
     }
 }

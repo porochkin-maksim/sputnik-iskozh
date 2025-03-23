@@ -41,4 +41,14 @@
     <priority>0.8</priority>
     <changefreq>daily</changefreq>
   </url>
+  <url>
+    <loc>https://sputnik-iskozh.ru/contacts/proposal</loc>
+    <priority>0.6</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://sputnik-iskozh.ru/search</loc>
+    <priority>0.6</priority>
+    <changefreq>daily</changefreq>
+  </url>
 </urlset>

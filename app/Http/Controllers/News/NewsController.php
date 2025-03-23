@@ -84,7 +84,7 @@ class NewsController extends Controller
     {
         $canEdit = $this->canEdit();
 
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::DEFAULT)
@@ -103,11 +103,32 @@ class NewsController extends Controller
         ]);
     }
 
+    public function lockedNews(SearchRequest $request): JsonResponse
+    {
+        $searcher = $request->searcher();
+        $searcher
+            ->setSelect([News::TITLE, News::ID, News::CATEGORY, News::PUBLISHED_AT,])
+            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
+            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true);
+
+        if ( ! $this->canEdit()) {
+            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
+        }
+
+        $news = $this->newsService->search($searcher);
+
+        return response()->json([
+            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::TOTAL => $news->getTotal(),
+            ResponsesEnum::EDIT  => false,
+        ]);
+
+    }
+
     public function listAll(SearchRequest $request): JsonResponse
     {
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
-            ->setSortOrderProperty(News::IS_LOCK, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles();
 
@@ -133,6 +154,7 @@ class NewsController extends Controller
         $news = $this->newsFactory->makeDefault()
             ->setId($request->getId())
             ->setTitle($request->getTitle())
+            ->setDescription($request->getDescription())
             ->setArticle($request->getArticle())
             ->setCategory($request->getCategory())
             ->setIsLock($request->isLock())
@@ -197,6 +219,6 @@ class NewsController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditNews();
+        return \lc::roleDecorator()->canNews();
     }
 }

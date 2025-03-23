@@ -10,7 +10,7 @@ class UserDecorator
         private ?UserDTO $user,
     )
     {
-        if (!$this->user) {
+        if ( ! $this->user) {
             $this->user = new UserDTO();
         }
     }
@@ -54,6 +54,7 @@ class UserDecorator
         if ($short) {
             return $this->getShortName() ? : $this->getEmail();
         }
+
         return $this->getFullName() ? : $this->getEmail();
     }
 }

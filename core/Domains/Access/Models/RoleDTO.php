@@ -2,18 +2,29 @@
 
 namespace Core\Domains\Access\Models;
 
-use Core\Domains\Access\Enums\RoleIdEnum;
-use Core\Domains\User\Collections\Users;
+use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Access\Enums\RoleEnum;
+use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
+use Throwable;
 
-class RoleDTO implements \JsonSerializable
+class RoleDTO
 {
-    private ?int   $id    = null;
-    private ?Users $users = null;
+    use TimestampsTrait;
+
+    private ?int            $id    = null;
+    private ?string         $name  = null;
+    private ?UserCollection $users = null;
+
+    /**
+     * @var PermissionEnum[]
+     */
+    private array $permissions = [];
 
     public function __construct()
     {
-        $this->users = new Users();
+        $this->users = new UserCollection();
     }
 
     public function getId(): ?int
@@ -21,19 +32,26 @@ class RoleDTO implements \JsonSerializable
         return $this->id;
     }
 
-    public function setId(?int $id): RoleDTO
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function setName(?string $name): static
     {
-        return $this->getId() ? RoleIdEnum::from($this->getId())->name() : null;
+        $this->name = $name;
+
+        return $this;
     }
 
-    public function is(?RoleIdEnum $roleId): bool
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function is(?RoleEnum $roleId): bool
     {
         return $this->getId() === $roleId?->value;
     }
@@ -41,29 +59,53 @@ class RoleDTO implements \JsonSerializable
     public function addUser(UserDTO $user): static
     {
         if ( ! $this->users) {
-            $this->users = new Users();
+            $this->users = new UserCollection();
         }
         $this->users->add($user);
 
         return $this;
     }
 
-    public function getUsers(): ?Users
+    public function getUsers(): ?UserCollection
     {
         return $this->users;
     }
 
-    public function setUsers(?Users $users): static
+    public function setUsers(?UserCollection $users): static
     {
         $this->users = $users;
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function getPermissions(): array
     {
-        return [
-            'id' => $this->id,
-        ];
+        return $this->permissions;
+    }
+
+    /**
+     * @param int[] $codes
+     */
+    public function setPermissions(?array $codes): static
+    {
+        $permissions = [];
+        foreach ($codes as $code) {
+            try {
+                $permission = PermissionEnum::tryFrom((int) $code);
+                if ($permission) {
+                    $permissions[$code] = $permission;
+                }
+            }
+            catch (Throwable) {
+            }
+        }
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function hasPermission(PermissionEnum $permission): bool
+    {
+        return isset($this->permissions[$permission->value]) || in_array($permission, $this->permissions, true);
     }
 }

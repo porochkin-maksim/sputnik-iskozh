@@ -23,6 +23,15 @@ class FileSearcher implements SearcherInterface
         return $this;
     }
 
+    public function setTypes(?TypeEnum ...$type): static
+    {
+        foreach ($type as $t) {
+            $this->setType($t);
+        }
+
+        return $this;
+    }
+
     public function setRelatedId(?int $relatedId): static
     {
         if ($relatedId) {

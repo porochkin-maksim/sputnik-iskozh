@@ -2,6 +2,8 @@
 
 namespace Core\Db;
 
+use Core\Cache\CacheLocator;
+use Core\Db\Searcher\BaseSearcher;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\SearchResponse;
 use Core\Db\Searcher\SearcherInterface;
@@ -11,36 +13,36 @@ use Illuminate\Support\Facades\Hash;
 
 trait RepositoryTrait
 {
-    private static array $localCache = [];
     abstract protected function modelClass(): string;
 
     public function getById(?int $id): ?Model
     {
         $result     = null;
         $modelClass = $this->modelClass();
-        $cacheKey   = Hash::make($modelClass . $id);
 
         if ($id && class_exists($this->modelClass())) {
+            $cacheKey = $this->cacheKey($id);
 
-            if ($this instanceof UseCacheRepositoryInterface) {
-                /** @var null|Model $result */
-                if (isset($this->localCache[$cacheKey])) {
-                    $result = $this->localCache[$cacheKey];
-                }
+            if (CacheLocator::LocalCache()->has($cacheKey)) {
+                $result = CacheLocator::LocalCache()->get($cacheKey);
             }
-
-            if ( ! $result) {
+            else {
                 /** @var Model $model */
                 $model  = new $modelClass;
                 $result = $model::find($id);
 
-                if ($result && $this instanceof UseCacheRepositoryInterface) {
-                    $this->localCache[$cacheKey] = $result;
+                if ($result) {
+                    CacheLocator::LocalCache()->set($cacheKey, $result);
                 }
             }
         }
 
         return $result;
+    }
+
+    private function cacheKey($key): string
+    {
+        return Hash::make($this->modelClass() . $key);
     }
 
     /**
@@ -53,17 +55,34 @@ trait RepositoryTrait
     {
         $result = [];
         if (class_exists($this->modelClass())) {
-            $query  = $this->buildSearchQuery($searcher)->whereIn('id', $ids);
-            $result = array_merge($result, $query->get()->all());
+            $searcher = $searcher ?? new BaseSearcher();
+            $searcher->setIds($ids);
+            $query = $this->buildSearchQuery($searcher);
+            $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
+                $query->limit($searcher->getLimit());
+            })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
+                $query->offset($searcher->getOffset());
+            })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
+                $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+            })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
+                $query->whereIn('id', $searcher->getIds());
+            });
+            $result   = array_merge($result, $query->get()->all());
         }
 
-        return array_values($result);
+        return $result;
     }
 
     public function search(SearcherInterface $searcher): SearchResponse
     {
         $result = new SearchResponse();
-        $query  = $this->buildSearchQuery($searcher);
+
+        $cacheKey = md5(serialize($searcher));
+        if (CacheLocator::LocalCache()->has($cacheKey)) {
+            return CacheLocator::LocalCache()->get($cacheKey);
+        }
+
+        $query = $this->buildSearchQuery($searcher);
 
         $result->setTotal($query->count());
 
@@ -91,7 +110,7 @@ trait RepositoryTrait
         $query = $model::query();
 
         if ($searcher?->getSelect()) {
-            $query->select($searcher->getSelect());
+            $query->select($searcher?->getSelect());
         }
         else {
             $query->select(['*']);
@@ -107,17 +126,29 @@ trait RepositoryTrait
                         case SearcherInterface::GTE:
                         case SearcherInterface::LT:
                         case SearcherInterface::LTE:
+                        case SearcherInterface::IS_NOT:
                         case SearcherInterface::EQUALS:
                             $query->where($where->getField(), $where->getOperator(), $where->getValue());
                             break;
                         case SearcherInterface::IS_NULL:
                             $query->whereNull($where->getField());
+                            break;
+                        case SearcherInterface::NOT_IN:
+                            $query->whereNotIn($where->getField(), $where->getValue());
+                            break;
+                        case SearcherInterface::IN:
+                            $query->whereIn($where->getField(), $where->getValue());
+                            break;
                     }
 
                 }
+            })->when($searcher->getWhereColumn(), function (Builder $query) use ($searcher) {
+                foreach ($searcher->getWhereColumn() as $where) {
+                    $query->whereColumn($where->getField(), $where->getOperator(), $where->getValue());
+                }
             })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getSortProperties() as $sort) {
-                    /** @var Order $sort*/
+                    /** @var Order $sort */
                     $query->orderBy($sort->getField(), $sort->getValue());
                 }
             });
@@ -140,8 +171,12 @@ trait RepositoryTrait
         $modelClass = $this->modelClass();
 
         if (class_exists($this->modelClass())) {
-            $model  = new $modelClass;
-            $result = $model::whereIn('id', $ids)->delete();
+            $result = (new $modelClass)::whereIn('id', $ids)->delete();
+        }
+
+        foreach ($ids as $id) {
+            $cacheKey = $this->cacheKey($id);
+            CacheLocator::LocalCache()->drop($cacheKey);
         }
 
         return (bool) $result;

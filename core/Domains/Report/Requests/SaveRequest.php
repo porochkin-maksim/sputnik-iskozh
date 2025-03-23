@@ -9,7 +9,6 @@ use Core\Domains\Report\Enums\CategoryEnum;
 use Core\Domains\Report\Enums\TypeEnum;
 use Core\Domains\Report\Models\ReportDTO;
 use Core\Requests\RequestArgumentsEnum;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
@@ -21,7 +20,7 @@ class SaveRequest extends AbstractRequest
     private const TYPE     = RequestArgumentsEnum::TYPE;
     private const START_AT = RequestArgumentsEnum::START_AT;
     private const END_AT   = RequestArgumentsEnum::END_AT;
-    private const MONEY   = RequestArgumentsEnum::MONEY;
+    private const MONEY    = RequestArgumentsEnum::MONEY;
 
     public function rules(): array
     {
@@ -48,7 +47,7 @@ class SaveRequest extends AbstractRequest
                 'sometimes',
                 'date_format:' . DateTimeFormat::DATE_DEFAULT,
             ],
-            self::MONEY   => [
+            self::MONEY    => [
                 'nullable',
                 'numeric',
             ],

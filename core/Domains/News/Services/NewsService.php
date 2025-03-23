@@ -8,7 +8,6 @@ use Core\Domains\News\Models\NewsDTO;
 use Core\Domains\News\Models\NewsSearcher;
 use Core\Domains\News\Repositories\NewsRepository;
 use Core\Domains\News\Responses\SearchResponse;
-use Illuminate\Support\Facades\DB;
 
 readonly class NewsService
 {
@@ -31,22 +30,9 @@ readonly class NewsService
             $news->setArticle('');
         }
 
-        DB::beginTransaction();
-        try {
-            if ( ! $model?->is_lock && $news->isLock()) {
-                $this->newsRepository->unlockNews();
-            }
+        $model = $this->newsRepository->save($this->newsFactory->makeModelFromDto($news, $model));
 
-            $model = $this->newsRepository->save($this->newsFactory->makeModelFromDto($news, $model));
-
-            DB::commit();
-
-            return $this->newsFactory->makeDtoFromObject($model);
-        }
-        catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return $this->newsFactory->makeDtoFromObject($model);
     }
 
     public function search(NewsSearcher $searcher): SearchResponse
@@ -62,6 +48,18 @@ readonly class NewsService
         }
 
         return $result->setItems($collection);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getIdsByFullTextSearch(NewsSearcher $searcher): array
+    {
+        if ($searcher->getSearch()) {
+            return $this->newsRepository->getIdsByFullTextSearch($searcher->getSearch());
+        }
+
+        return [];
     }
 
     public function getById(?int $id): ?NewsDTO

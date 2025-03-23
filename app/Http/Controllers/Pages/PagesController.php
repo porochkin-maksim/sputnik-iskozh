@@ -48,8 +48,8 @@ class PagesController extends Controller
         return view(ViewNames::PAGES_RUBRICS);
     }
 
-    public function proposal(): View
+    public function search(): View
     {
-        return view(ViewNames::PAGES_PROPOSAL);
+        return view(ViewNames::PAGES_SEARCH);
     }
 }

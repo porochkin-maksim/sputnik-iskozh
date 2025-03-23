@@ -3,9 +3,8 @@
 namespace Core\Domains\User\Repositories;
 
 use App\Models\User;
-use Core\Cache\CacheRepositoryInterface;
 use Core\Db\RepositoryTrait;
-use Core\Domains\User\Collections\Users;
+use Core\Domains\User\Collections\UserCollection;
 
 class UserRepository
 {
@@ -13,10 +12,6 @@ class UserRepository
         getById as traitGetById;
         getByIds as traitGetByIds;
     }
-
-    public function __construct(
-        private readonly CacheRepositoryInterface $userCacheRepository,
-    ) {}
 
     protected function modelClass(): string
     {
@@ -31,9 +26,9 @@ class UserRepository
         return $result;
     }
 
-    public function getByIds(array $ids): Users
+    public function getByIds(array $ids): UserCollection
     {
-        return new Users($this->traitGetByIds($ids));
+        return new UserCollection($this->traitGetByIds($ids));
     }
 
     public function save(User $user): User

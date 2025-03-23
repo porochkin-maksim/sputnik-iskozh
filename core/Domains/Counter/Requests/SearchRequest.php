@@ -3,7 +3,7 @@
 namespace Core\Domains\Counter\Requests;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Domains\Counter\Enums\TypeEnum;
+use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Requests\RequestArgumentsEnum;
 
@@ -15,7 +15,7 @@ class SearchRequest extends AbstractRequest
     {
         $result = new CounterSearcher();
         if ($this->searchAll()) {
-            $result->setIds(TypeEnum::values());
+            $result->setIds(CounterTypeEnum::values());
         }
 
         return $result;

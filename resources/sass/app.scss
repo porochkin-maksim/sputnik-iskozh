@@ -1,26 +1,25 @@
 @import 'variables';
 @import 'colors';
 @import 'form';
+
 @import 'bootstrap/scss/bootstrap';
+@import 'lightbox2/dist/css/lightbox.min.css';
+
 @import "font-awesome";
-@import "media";
 @import "common";
 @import "layout";
 @import "nav";
 
-@import 'components/custom';
 @import 'components/custom-list';
-@import 'components/errors';
-
 @import 'components/auth';
-@import 'components/reports';
 @import 'components/news';
-@import 'components/files';
 @import 'components/folders';
+
+@import 'components/errors';
 
 @import 'components/slider';
 @import 'components/menus/vertical-menu';
-@import 'lightbox2/dist/css/lightbox.min.css';
+@import 'components/menus/side-menu';
 
 @import 'template';
 
@@ -37,6 +36,12 @@ h1 {
     a {
         color           : unset;
         text-decoration : none;
+    }
+}
+
+.html-editor {
+    div[role=application] {
+        height : 100% !important;
     }
 }
 

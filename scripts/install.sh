@@ -11,8 +11,7 @@ mkdir -p 'vendor/bin'
 cp -r 'storage/vendor/sail' 'vendor/laravel'
 cp -r 'storage/vendor/bin' 'vendor'
 
-docker compose stop
-docker compose up --build -d
+if [ ! -f /var/www/html/.env ]; then cp /var/www/html/.env.example /var/www/html/.env; fi
 
 sudo chown -R "${USER:=$(/usr/bin/id -run)}:$USER" '../'
 sudo chmod 0777 -R '.storage/'

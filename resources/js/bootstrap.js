@@ -14,6 +14,32 @@ import bootstrap from 'bootstrap/dist/js/bootstrap';
 window.bootstrap = bootstrap;
 
 import lightbox from 'lightbox2';
+lightbox.option({
+    'resizeDuration': 500,
+    'alwaysShowNavOnTouchDevices': true,
+    'disableScrolling': true,
+    'wrapAround': true,
+})
+import Hammer from 'hammerjs';
+document.addEventListener("DOMContentLoaded", function () {
+    const images = document.querySelectorAll('.lightbox img');
+
+    images.forEach(function (img) {
+        const mc = new Hammer(img);
+
+        mc.get('pinch').set({ enable: true });
+        mc.on('pinchin', onPinchIn);
+        mc.on('pinchout', onPinchOut);
+    });
+
+    function onPinchIn(ev) {
+        ev.target.style.transform = 'scale(' + (ev.scale * 0.8) + ')';
+    }
+
+    function onPinchOut(ev) {
+        ev.target.style.transform = 'scale(' + (ev.scale * 1.2) + ')';
+    }
+});
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

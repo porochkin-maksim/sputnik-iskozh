@@ -64,7 +64,7 @@ class AnnouncementController extends Controller
     {
         $canEdit = $this->canEdit();
 
-        $searcher = $request->dto();
+        $searcher = $request->searcher();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::ANNOUNCEMENT)
@@ -85,6 +85,6 @@ class AnnouncementController extends Controller
 
     private function canEdit(): bool
     {
-        return \app::roleDecorator()->canEditNews();
+        return \lc::roleDecorator()->canNews();
     }
 }

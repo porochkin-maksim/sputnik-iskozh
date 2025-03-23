@@ -20,8 +20,31 @@ trait SearcherTrait
     private array  $select = [];
     private array  $with   = [];
 
-    private WhereCollection $where;
-    private array           $whereIn = [];
+    private ?WhereCollection $where       = null;
+    private ?WhereCollection $whereColumn = null;
+    private array            $whereIn     = [];
+
+    private ?string $search = null;
+
+    public function __serialize(): array
+    {
+        return [
+            'sortOrderProperties' => $this->sortOrderProperties,
+
+            'limit'  => $this->limit,
+            'offset' => $this->offset,
+            'lastId' => $this->lastId,
+
+            'ids'    => $this->ids,
+            'select' => $this->select,
+            'with'   => $this->with,
+
+            'where'   => $this->where,
+            'whereIn' => $this->whereIn,
+
+            'search' => $this->search,
+        ];
+    }
 
     /**
      * @return null|int[]
@@ -51,6 +74,25 @@ trait SearcherTrait
     public function getSelect(): array
     {
         return $this->select;
+    }
+
+    public function setSelect(array $select): static
+    {
+        $this->select = $select;
+
+        return $this;
+    }
+
+    public function getSearch(): ?string
+    {
+        return $this->search;
+    }
+
+    public function setSearch(?string $search): static
+    {
+        $this->search = $search;
+
+        return $this;
     }
 
     /** Сортировки */
@@ -116,7 +158,6 @@ trait SearcherTrait
     }
 
     /** Выборка */
-
     public function getWhere(): WhereCollection
     {
         if ( ! isset($this->where)) {
@@ -126,9 +167,26 @@ trait SearcherTrait
         return $this->where;
     }
 
-    public function addWhere(string $type, string $operator, mixed $value = null): static
+    /** Выборка */
+    public function getWhereColumn(): WhereCollection
     {
-        $this->getWhere()->push(new Where($type, $operator, $value));
+        if ( ! isset($this->whereColumn)) {
+            $this->whereColumn = new WhereCollection();
+        }
+
+        return $this->whereColumn;
+    }
+
+    public function addWhere(string $field, string $operator, mixed $value = null): static
+    {
+        $this->getWhere()->push(new Where($field, $operator, $value));
+
+        return $this;
+    }
+
+    public function addWhereColumn(string $field1, string $operator, mixed $field2 = null): static
+    {
+        $this->getWhereColumn()->push(new Where($field1, $operator, $field2));
 
         return $this;
     }

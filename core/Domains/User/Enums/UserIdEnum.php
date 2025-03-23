@@ -4,5 +4,7 @@ namespace Core\Domains\User\Enums;
 
 abstract class UserIdEnum
 {
-    public const OWNER = 1;
+    public const UNDEFINED = null;
+    public const ROBOT     = 0;
+    public const OWNER     = 1;
 }

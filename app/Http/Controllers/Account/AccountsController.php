@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Profile\Accounts\SaveRequest;
+use App\Http\Resources\Profile\Accounts\AccountResource;
 use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Requests\SaveRequest;
 use Core\Domains\Account\Services\AccountService;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
@@ -23,13 +24,7 @@ class AccountsController extends Controller
 
     public function index(): View
     {
-        $account = $this->accountService->getByUserId(Auth::id());
-
-        if ($account) {
-            return view(ViewNames::PAGES_HOME);
-        }
-
-        return view(ViewNames::PAGES_PROFILE);
+        return view(ViewNames::PAGES_HOME);
     }
 
     public function show(int $id): JsonResponse
@@ -37,7 +32,7 @@ class AccountsController extends Controller
         $account = $this->accountService->getById($id);
 
         return response()->json([
-            ResponsesEnum::ACCOUNT => $account,
+            ResponsesEnum::ACCOUNT => new AccountResource($account),
         ]);
     }
 
@@ -45,18 +40,6 @@ class AccountsController extends Controller
     {
         $account = $request->dto();
         $account = $this->accountService->register($account);
-
-        return response()->json($account);
-    }
-
-    public function info(): JsonResponse
-    {
-        $account = $this->accountService->getByUserId(Auth::id());
-        if ($account) {
-            $info = $this->accountService->getAccountInfo($account);
-
-            return response()->json($info);
-        }
 
         return response()->json($account);
     }

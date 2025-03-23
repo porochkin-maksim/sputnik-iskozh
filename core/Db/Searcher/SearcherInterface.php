@@ -16,6 +16,9 @@ interface SearcherInterface
     public const GTE     = '>=';
     public const LT      = '<';
     public const LTE     = '<=';
+    public const IS_NOT  = '!=';
+    public const NOT_IN  = 'NOT_IN';
+    public const IN      = 'IN';
 
     public function getIds(): ?array;
 

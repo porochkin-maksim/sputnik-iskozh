@@ -1,33 +1,32 @@
 <?php declare(strict_types=1);
 
+use Carbon\Carbon;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
+use Core\Services\Images\StaticFileLocator;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
+$openGraph->setDescription('Контакты, режим работы');
 $openGraph->setUrl(route(RouteNames::CONTACTS));
 
+$month    = Carbon::now()->month;
+$isWinter = $month >= 11 || $month <= 3;
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
 
-@push(SectionNames::META)
-    <link rel="canonical"
-          href="{{ $openGraph->getUrl() }}" />
-    {!! $openGraph->toMetaTags() !!}
-@endpush
-
 @section(SectionNames::METRICS)
-    @include(ViewNames::METRICS)
+    @include(ViewNames::PARTIAL_METRICS)
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(app::roleDecorator()->canEditTemplates())
+    @if(lc::roleDecorator()->isSuperAdmin())
         <page-editor :template="'{{ ViewNames::PAGES_CONTACTS }}'"></page-editor>
     @endif
-    <h1 class="border-bottom">
+    <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}
         </a>
@@ -68,11 +67,11 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         <tr>
             <th colspan="2">График работы</th>
         </tr>
-        <tr>
+        <tr @if(!$isWinter) class="table-info" @endif>
             <th>01 апреля - 31 октября</th>
             <td>Каждые четверг и воскресенье 12:00-14:00</td>
         </tr>
-        <tr>
+        <tr @if($isWinter) class="table-info" @endif>
             <th>01 ноября - 31 марта</th>
             <td>Каждые 1-ое и 3-е воскресенье месяца 12:00-14:00</td>
         </tr>
@@ -81,29 +80,134 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
         </tr>
         <tr>
             <th>ОГРН</th>
-            <td>1026900580057</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="1026900580057">
+                    1026900580057
+                </a>
+            </td>
         </tr>
         <tr>
             <th>ИНН</th>
-            <td>6924004223</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="6924004223">
+                    6924004223
+                </a>
+            </td>
         </tr>
         <tr>
             <th>КПП</th>
-            <td>694901001</td>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="694901001">
+                    694901001
+                </a>
+            </td>
         </tr>
         <tr>
             <th>Юридический адрес</th>
             <td>170533, Тверская область, Калининский район, деревня Пищалкино, тер. снт Спутник-Искож</td>
         </tr>
+        <tr>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+        <tr>
+            <th colspan="2">Банковские реквизиты</th>
+        </tr>
+        <tr>
+            <th>Банк</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy='ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)'>
+                    ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Счёт</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="40703810017762000022">
+                    40703810017762000022
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Корр.счёт</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="30101810145250000411">
+                    30101810145250000411
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>БИК</th>
+            <td>
+                <a class="link cursor-pointer text-decoration-none"
+                   data-copy="044525411">
+                    044525411
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="alert alert-info d-inline-block">
+                    В назначении платежа указывайте <strong class="text-danger">номер дачи</strong> и
+                    <strong class="text-danger">участок</strong>
+                </div>
+                <div>
+                    <a href="{{ StaticFileLocator::StaticFileService()->qrPayment()->getUrl() }}"
+                       data-lightbox="qr_payment">
+                        <img src="{{ StaticFileLocator::StaticFileService()->qrPayment()->getUrl() }}"
+                             style="width:200px;height:200px"
+                             alt="QR код">
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+        <tr>
+            <th colspan="2">Дополнительно</th>
+        </tr>
+        <tr>
+            <th>Горячая линия Россети</th>
+            <td><a href="tel:88002200220"><i class="fa fa-phone"></i> 8(800)220-02-20</a></td>
+        </tr>
         </tbody>
     </table>
 
-    <h3>
-        <a href="{{ route(RouteNames::PROPOSAL) }}">Написать предложение</a>
-    </h3>
-    <h3 class="border-bottom mt-3 pb-0 d-inline-block">Мы в соцсетях</h3>
-    <div class="social d-flex flex-column pb-3">
-        @include(ViewNames::PARTIAL_SOCIAL)
+    <div class="row requests-block">
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::PROPOSAL) }}">
+                <h3>{{ RouteNames::name(RouteNames::PROPOSAL) }}</h3>
+                <div class="text-center">
+                    Отправить идею или предложение по поводу улучшения жизни в СНТ
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::PAYMENT) }}">
+                <h3>{{ RouteNames::name(RouteNames::PAYMENT) }}</h3>
+                <div class="text-center">
+                    Сообщить о платеже
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-6 col-12">
+            <a class="card request-item d-flex align-items-center justify-content-center p-3"
+               href="{{ route(RouteNames::COUNTER) }}">
+                <h3>{{ RouteNames::name(RouteNames::COUNTER) }}</h3>
+                <div class="text-center">
+                    Отправить показания электроэнергии
+                </div>
+            </a>
+        </div>
     </div>
 
     <div class="my-2">

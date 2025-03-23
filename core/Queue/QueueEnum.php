@@ -12,12 +12,12 @@ enum QueueEnum: string
     /** @return string[] */
     public static function values(): array
     {
-        return array_map(fn(QueueEnum $enum) => $enum->value, self::cases());
+        return array_map(static fn(QueueEnum $enum) => $enum->value, self::cases());
     }
 
     /** @return string[] */
     public static function normalPriorityValues(): array
     {
-        return array_map(fn(QueueEnum $enum) => $enum->value, [self::EMAIL, self::DEFAULT, self::LOW,]);
+        return array_map(static fn(QueueEnum $enum) => $enum->value, [self::EMAIL, self::DEFAULT, self::LOW,]);
     }
 }

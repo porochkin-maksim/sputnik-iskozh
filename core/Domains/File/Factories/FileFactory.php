@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FileFactory
 {
-    public function makeModelFromDto(FileDTO $dto, ?File $file = null): File
+    public function makeModelFromDto(FileDTO $dto, ?File $model = null): File
     {
-        if ( ! $file) {
+        if ( ! $model) {
             $result = File::make();
         }
         else {
-            $result = $file;
+            $result = $model;
         }
 
         return $result->fill([
@@ -29,31 +29,29 @@ class FileFactory
         ]);
     }
 
-    public function makeDtoFromObject(File $file): FileDTO
+    public function makeDtoFromObject(File $model): FileDTO
     {
-        $result = new FileDTO();
-
-        return $result
-            ->setId($file->id)
-            ->setType($file->type ? TypeEnum::from($file->type) : null)
-            ->setRelatedId($file->related_id)
-            ->setParentId($file->parent_id)
-            ->setOrder($file->order)
-            ->setExt($file->ext)
-            ->setName($file->name)
-            ->setPath($file->path)
-            ->setCreatedAt($file->created_at)
-            ->setUpdatedAt($file->updated_at);
+        return (new FileDTO())
+            ->setId($model->id)
+            ->setType($model->type ? TypeEnum::from($model->type) : null)
+            ->setRelatedId($model->related_id)
+            ->setParentId($model->parent_id)
+            ->setOrder($model->order)
+            ->setExt($model->ext)
+            ->setName($model->name)
+            ->setPath($model->path)
+            ->setCreatedAt($model->created_at)
+            ->setUpdatedAt($model->updated_at);
     }
 
     /**
-     * @param File[] $files
+     * @param File[] $models
      */
-    public function makeDtoFromObjects(array|Collection $files): array
+    public function makeDtoFromObjects(array|Collection $models): array
     {
         $result = [];
-        foreach ($files as $file) {
-            $result[] = $this->makeDtoFromObject($file);
+        foreach ($models as $model) {
+            $result[] = $this->makeDtoFromObject($model);
         }
 
         return $result;

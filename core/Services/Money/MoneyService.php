@@ -3,6 +3,7 @@
 namespace Core\Services\Money;
 
 use Cknow\Money\Money;
+use NumberFormatter;
 
 /**
  * https://github.com/cknow/laravel-money
@@ -19,5 +20,10 @@ class MoneyService
         }
 
         return Money::parse($amount, 'RUB');
+    }
+
+    public static function toFloat(Money $money): float
+    {
+        return (float) $money->formatByDecimal();
     }
 }

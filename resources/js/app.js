@@ -1,29 +1,17 @@
 import './bootstrap';
+import './utils/common.js';
 import './utils/menus/vertical-menu.js';
+
+import 'primevue/resources/themes/aura-light-noir/theme.css';
 
 import { createApp } from 'vue';
 
 import PrimeVue     from 'primevue/config';
-import 'primevue/resources/themes/aura-light-noir/theme.css';
 import VueUidPlugin from 'vue-uid';
-
-import store from './store/index.js';
+import Vuex         from 'vuex';
+import store        from './store/index.js';
 
 const app = createApp({
-    // provide () {
-    //     let alert = {
-    //         status: true,
-    //         text  : '',
-    //         show  : false,
-    //     };
-    //     Object.defineProperty(alert, 'type', { enumerable: true, get: () => this.alert });
-    //     return { alert };
-    // },
-    // data () {
-    //     return {
-    //         alert: {},
-    //     };
-    // },
     mounted () {
         // Включить Popover Bootstrap
         setTimeout(() => {
@@ -36,16 +24,42 @@ const app = createApp({
     },
 });
 
+
 Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
     if (definition.default.name) {
+        // console.log(definition.default.name);
         app.component(definition.default.name, definition.default);
     }
     // app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
 });
 
-app.mount('#app');
+function formatMoney (amount, currency = '₽') {
+    const formattedAmount = amount.toLocaleString('ru-RU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
+    return `${formattedAmount} ${currency}`;
+}
+
+function formatDateTime (isoString) {
+    const date    = new Date(isoString);
+    const day     = String(date.getDate()).padStart(2, '0');
+    const month   = String(date.getMonth() + 1).padStart(2, '0'); // месяцы индексируются с 0
+    const year    = date.getFullYear();
+    const hours   = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+app.config.globalProperties.$formatMoney    = formatMoney;
+app.config.globalProperties.$formatDateTime = formatDateTime;
+app.config.devtools                         = import.meta.env.DEV;
+
 app.use(PrimeVue);
-// app.use(store);
+app.use(Vuex);
+app.use(store);
 app.use(VueUidPlugin);
 
-app.config.devtools = import.meta.env.DEV;
+app.mount('#app');
