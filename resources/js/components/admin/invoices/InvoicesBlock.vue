@@ -66,47 +66,7 @@
             </template>
         </div>
     </template>
-    <template v-if="summary">
-        <div>
-            <table class="table table-sm table-bordered table-striped-columns text-center">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Стоимость</th>
-                    <th>Оплачено</th>
-                    <th>Разница</th>
-                    <th colspan="2">Всего счетов {{ summary.totalCount }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <th>Доход</th>
-                    <td>{{ $formatMoney(summary.incomeCost) }}</td>
-                    <td>{{ $formatMoney(summary.incomePayed) }}</td>
-                    <td>{{ $formatMoney(summary.deltaIncome) }}</td>
-                    <td>Регулярных</td>
-                    <td>{{ summary.regularCount }}</td>
-                </tr>
-                <tr>
-                    <th>Расход</th>
-                    <td>{{ $formatMoney(summary.outcomeCost) }}</td>
-                    <td>{{ $formatMoney(summary.outcomePayed) }}</td>
-                    <td>{{ $formatMoney(summary.deltaOutcome) }}</td>
-                    <td>Доходных</td>
-                    <td>{{ summary.incomeCount }}</td>
-                </tr>
-                <tr>
-                    <th>Итого</th>
-                    <td>{{ $formatMoney(summary.deltaCost) }}</td>
-                    <td>{{ $formatMoney(summary.deltaPayed) }}</td>
-                    <td>{{ $formatMoney(summary.delta) }}</td>
-                    <td>Расходных</td>
-                    <td>{{ summary.outcomeCount }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </template>
+    <summary-block :account-id="accountId" :type="type" :period-id="periodId"/>
     <invoices-list :invoices="invoices" />
     <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
@@ -127,10 +87,11 @@ import SimpleSelect    from '../../common/form/SimpleSelect.vue';
 import SearchSelect    from '../../common/form/SearchSelect.vue';
 import InvoicesList    from './InvoicesList.vue';
 import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
+import SummaryBlock  from '../../common/blocks/SummaryBlock.vue';
 
 export default {
     name      : 'InvoicesBlock',
-    components: { CustomCheckbox, InvoicesList, SearchSelect, SimpleSelect, Pagination, HistoryBtn, InvoiceItemEdit },
+    components: { CustomCheckbox, InvoicesList, SearchSelect, SimpleSelect, Pagination, HistoryBtn, InvoiceItemEdit, SummaryBlock },
     mixins    : [
         ResponseError,
     ],
@@ -243,23 +204,6 @@ export default {
                 this.periods    = response.data.periods;
                 this.accounts   = response.data.accounts;
                 this.historyUrl = response.data.historyUrl;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loaded = true;
-            });
-
-            this.summaryAction();
-        },
-        summaryAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceSummary, {}, {
-                type      : this.type,
-                period_id : this.periodId,
-                account_id: this.accountId,
-            });
-
-            window.axios[Url.Routes.adminInvoiceSummary.method](uri).then(response => {
-                this.summary = response.data;
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).then(() => {
