@@ -37,8 +37,6 @@ enum ViewNames: string
     public const PAGES_PROFILE_COUNTERS = 'pages.home.counters';
     public const PAGES_PROFILE_PAYMENTS = 'pages.home.payments';
 
-    public const PAGES_RUBRICS = 'pages.rubrics.index';
-
     public const ADMIN_PAGES_INDEX           = 'admin.pages.index';
     public const ADMIN_PAGES_ROLES           = 'admin.pages.roles';
     public const ADMIN_PAGES_USERS           = 'admin.pages.users';

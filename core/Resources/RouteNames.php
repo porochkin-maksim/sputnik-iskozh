@@ -11,7 +11,6 @@ abstract class RouteNames
     public const LOGOUT      = 'logout';
     public const HOME        = 'home';
     public const REGULATION  = 'regulation';
-    public const RUBRICS     = 'rubrics';
     public const SEARCH      = 'search';
     public const SITE_SEARCH = 'search.site';
 
@@ -189,7 +188,6 @@ abstract class RouteNames
             self::GARBAGE                     => 'Вывоз мусора',
             self::PRIVACY                     => 'Политика обработки персональных данных',
             self::REGULATION                  => 'Устав',
-            self::RUBRICS                     => 'Рубрикатор',
             self::SEARCH                      => 'Поиск по сайту',
 
             self::REQUESTS                    => 'Обращения',
