@@ -183,6 +183,13 @@
             "id": "{id}"
         }
     },
+    "adminInvoiceExport": {
+        "name": "admin.invoice.export",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/export",
+        "args": []
+    },
     "adminInvoiceGet": {
         "name": "admin.invoice.get",
         "displayName": "",
