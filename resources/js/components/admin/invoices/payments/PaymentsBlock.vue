@@ -76,7 +76,7 @@
                 <button class="btn btn-outline-secondary"
                         @click="chooseFiles"
                         v-if="!fileCountExceed">
-                    <i class="fa fa-paperclip "></i>&nbsp;Файлы
+                    <i class="fa fa-paperclip "></i>&nbsp;Файлы подтверждающие платёж
                 </button>
                 <button class="btn btn-success"
                         :disabled="!canSave"
