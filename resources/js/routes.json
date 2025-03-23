@@ -226,7 +226,7 @@
         "name": "admin.invoice.summary",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/invoices\/json\/summary",
+        "uri": "\/json\/summary",
         "args": []
     },
     "adminInvoiceView": {

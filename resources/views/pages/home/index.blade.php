@@ -63,6 +63,13 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
             </h5>
         @endforeach
     @endif
+    @if($period)
+        <div>
+            <hr>
+        </div>
+        <h3 class="text-dark text-center">Статистика СНТ в периоде <b class="text-nowrap">«{{ $period->getName() }}»</b></h3>
+        <summary-block :period-id="{{ $period->getId() }}" :show-invoice="false"></summary-block>
+    @endif
     @if($invoices->count())
         <div>
             <hr>
@@ -71,7 +78,7 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
             <thead class="text-center">
             <tr>
                 <th colspan="4">
-                    <h3 class="text-dark">Платежи в этом периоде</h3>
+                    <h3 class="text-dark">Ваши платежи в этом периоде</h3>
                 </th>
             </tr>
             </thead>
@@ -86,17 +93,17 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
                 @foreach($invoice->getTransactions() as $transaction)
                     <tr>
                         <td>{{ $transaction->getName() ?: $services->getById($transaction->getServiceId())->getName() }}</td>
-                        <td class="text-end">{{ MoneyService::parse($transaction->getTariff()) }}</td>
-                        <td class="text-end">{{ MoneyService::parse($transaction->getCost()) }}</td>
-                        <td class="text-end">{{ MoneyService::parse($transaction->getPayed()) }}</td>
+                        <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getTariff()) }}</td>
+                        <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getCost()) }}</td>
+                        <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getPayed()) }}</td>
                     </tr>
                 @endforeach
                 <tr class="table-info">
                     <th class="text-end"
                         colspan="2">Итого
                     </th>
-                    <td class="text-end">{{ MoneyService::parse($invoice->getCost()) }}</td>
-                    <td class="text-end">{{ MoneyService::parse($invoice->getPayed()) }}</td>
+                    <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost()) }}</td>
+                    <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
                 </tr>
                 <tr>
                     <th colspan="4"></th>

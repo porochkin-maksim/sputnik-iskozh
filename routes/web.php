@@ -158,6 +158,8 @@ Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, '
 
 Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
     Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
+        Route::get('/json/summary', [Controllers\Admin\Billing\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
+
         Route::get('/history/changes', Controllers\Infra\HistoryChangesViewController::class)->name(RouteNames::HISTORY_CHANGES);
         Route::group(['prefix' => 'admin'], static function () {
             Route::group(['prefix' => 'json'], static function () {
@@ -230,7 +232,6 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'invoices'])->name(RouteNames::ADMIN_INVOICE_INDEX);
                 Route::get('/view/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/summary', [Controllers\Admin\Billing\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
                     Route::get('/get-without-regular/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'getAccountCountWithoutRegular'])->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR);
                     Route::post('/create-regular-invoices/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'createRegularInvoices'])->name(RouteNames::ADMIN_INVOICE_CREATE_REGULAR_INVOICES);
                     Route::get('/create', [Controllers\Admin\Billing\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
