@@ -1124,13 +1124,6 @@
         "uri": "\/contacts\/requests",
         "args": []
     },
-    "rubrics": {
-        "name": "rubrics",
-        "displayName": "\u0420\u0443\u0431\u0440\u0438\u043a\u0430\u0442\u043e\u0440",
-        "method": "get",
-        "uri": "\/rubrics",
-        "args": []
-    },
     "sanctumCsrfCookie": {
         "name": "sanctum.csrf-cookie",
         "displayName": "",

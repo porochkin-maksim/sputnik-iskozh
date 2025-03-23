@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Account;
+namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Profile\Counters\CounterListResource;

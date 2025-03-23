@@ -24,7 +24,6 @@ Route::group(['prefix' => 'contacts/requests'], static function () {
 Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);
 Route::get('/privacy', [Controllers\Pages\PagesController::class, 'privacy'])->name(RouteNames::PRIVACY);
 Route::get('/regulation', [Controllers\Pages\PagesController::class, 'regulation'])->name(RouteNames::REGULATION);
-Route::get('/rubrics', [Controllers\Pages\PagesController::class, 'rubrics'])->name(RouteNames::RUBRICS);
 Route::get('/search', [Controllers\Pages\PagesController::class, 'search'])->name(RouteNames::SEARCH);
 
 Route::group(['prefix' => 'pages'], static function () {
@@ -42,30 +41,30 @@ Route::group(['prefix' => 'search'], static function () {
 
 Route::group(['prefix' => 'home'], static function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-        Route::get('/', [Controllers\Account\AccountsController::class, 'index'])->name(RouteNames::HOME);
+        Route::get('/', [Controllers\Profile\AccountsController::class, 'index'])->name(RouteNames::HOME);
 
         Route::group(['prefix' => 'profile'], static function () {
-            Route::get('/', [Controllers\Account\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
-            Route::post('/', [Controllers\Account\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
-            Route::post('/email', [Controllers\Account\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
-            Route::post('/password', [Controllers\Account\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
+            Route::get('/', [Controllers\Profile\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
+            Route::post('/', [Controllers\Profile\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
+            Route::post('/email', [Controllers\Profile\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
+            Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
         });
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-            Route::get('/register', [Controllers\Account\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
+            Route::get('/register', [Controllers\Profile\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
             Route::group(['prefix' => 'json'], static function () {
-                Route::post('/register', [Controllers\Account\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
+                Route::post('/register', [Controllers\Profile\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
             });
             Route::group(['prefix' => 'counters'], static function () {
-                Route::get('/', [Controllers\Account\CounterController::class, 'index'])->name(RouteNames::PROFILE_COUNTERS);
+                Route::get('/', [Controllers\Profile\CounterController::class, 'index'])->name(RouteNames::PROFILE_COUNTERS);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::get('/list', [Controllers\Account\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
-                    Route::post('/create', [Controllers\Account\CounterController::class, 'create'])->name(RouteNames::PROFILE_COUNTER_CREATE);
-                    Route::post('/add-value', [Controllers\Account\CounterController::class, 'addValue'])->name(RouteNames::PROFILE_COUNTER_ADD_VALUE);
+                    Route::get('/list', [Controllers\Profile\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
+                    Route::post('/create', [Controllers\Profile\CounterController::class, 'create'])->name(RouteNames::PROFILE_COUNTER_CREATE);
+                    Route::post('/add-value', [Controllers\Profile\CounterController::class, 'addValue'])->name(RouteNames::PROFILE_COUNTER_ADD_VALUE);
                 });
             });
             Route::group(['prefix' => 'payments'], static function () {
-                Route::get('/', [Controllers\Account\PaymentController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS);
+                Route::get('/', [Controllers\Profile\PaymentController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS);
             });
         });
     });
@@ -94,62 +93,62 @@ Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
             Route::get('/edit/{id}', [Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
             Route::delete('/delete/{id}', [Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
             Route::post('/file/upload/{id}', [Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
-            Route::post('/file/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
+            Route::post('/file/delete/{id}', [Controllers\Pages\Files\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
         });
     });
 });
 
 Route::group(['prefix' => 'news'], static function () {
-    Route::get('/', [Controllers\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
-    Route::get('/{id}', [Controllers\News\NewsController::class, 'show'])->name(RouteNames::NEWS_SHOW);
+    Route::get('/', [Controllers\Pages\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
+    Route::get('/{id}', [Controllers\Pages\News\NewsController::class, 'show'])->name(RouteNames::NEWS_SHOW);
     Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
-        Route::get('/list/all', [Controllers\News\NewsController::class, 'listAll'])->name(RouteNames::NEWS_LIST_ALL);
-        Route::get('/list/locked', [Controllers\News\NewsController::class, 'lockedNews'])->name(RouteNames::NEWS_LIST_LOCKED);
-        Route::get('/create', [Controllers\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
-        Route::post('/save', [Controllers\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
-        Route::get('/edit/{id}', [Controllers\News\NewsController::class, 'edit'])->name(RouteNames::NEWS_EDIT);
-        Route::delete('/delete/{id}', [Controllers\News\NewsController::class, 'delete'])->name(RouteNames::NEWS_DELETE);
-        Route::post('/file/save', [Controllers\News\NewsController::class, 'saveFile'])->name(RouteNames::NEWS_FILE_SAVE);
-        Route::post('/file/upload/{id}', [Controllers\News\NewsController::class, 'uploadFile'])->name(RouteNames::NEWS_FILE_UPLOAD);
-        Route::delete('/file/delete/{id}', [Controllers\News\NewsController::class, 'deleteFile'])->name(RouteNames::NEWS_FILE_DELETE);
+        Route::get('/list', [Controllers\Pages\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
+        Route::get('/list/all', [Controllers\Pages\News\NewsController::class, 'listAll'])->name(RouteNames::NEWS_LIST_ALL);
+        Route::get('/list/locked', [Controllers\Pages\News\NewsController::class, 'lockedNews'])->name(RouteNames::NEWS_LIST_LOCKED);
+        Route::get('/create', [Controllers\Pages\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
+        Route::post('/save', [Controllers\Pages\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
+        Route::get('/edit/{id}', [Controllers\Pages\News\NewsController::class, 'edit'])->name(RouteNames::NEWS_EDIT);
+        Route::delete('/delete/{id}', [Controllers\Pages\News\NewsController::class, 'delete'])->name(RouteNames::NEWS_DELETE);
+        Route::post('/file/save', [Controllers\Pages\News\NewsController::class, 'saveFile'])->name(RouteNames::NEWS_FILE_SAVE);
+        Route::post('/file/upload/{id}', [Controllers\Pages\News\NewsController::class, 'uploadFile'])->name(RouteNames::NEWS_FILE_UPLOAD);
+        Route::delete('/file/delete/{id}', [Controllers\Pages\News\NewsController::class, 'deleteFile'])->name(RouteNames::NEWS_FILE_DELETE);
     });
 });
 Route::group(['prefix' => 'announcements'], static function () {
-    Route::get('/', [Controllers\News\AnnouncementController::class, 'index'])->name(RouteNames::ANNOUNCEMENTS);
-    Route::get('/{id}', [Controllers\News\AnnouncementController::class, 'show'])->name(RouteNames::ANNOUNCEMENTS_SHOW);
+    Route::get('/', [Controllers\Pages\News\AnnouncementController::class, 'index'])->name(RouteNames::ANNOUNCEMENTS);
+    Route::get('/{id}', [Controllers\Pages\News\AnnouncementController::class, 'show'])->name(RouteNames::ANNOUNCEMENTS_SHOW);
     Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\News\AnnouncementController::class, 'list'])->name(RouteNames::ANNOUNCEMENTS_LIST);
+        Route::get('/list', [Controllers\Pages\News\AnnouncementController::class, 'list'])->name(RouteNames::ANNOUNCEMENTS_LIST);
     });
 });
 
 Route::group(['prefix' => 'files'], static function () {
-    Route::get('/{folder?}', [Controllers\Files\FolderController::class, 'index'])->name(RouteNames::FILES);
+    Route::get('/{folder?}', [Controllers\Pages\Files\FolderController::class, 'index'])->name(RouteNames::FILES);
 
     Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Files\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
+        Route::get('/list', [Controllers\Pages\Files\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-            Route::post('/store', [Controllers\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
-            Route::post('/save', [Controllers\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
-            Route::post('/replace', [Controllers\Files\FileController::class, 'replace'])->name(RouteNames::FILES_REPLACE);
-            Route::post('/up/{id}', [Controllers\Files\FileController::class, 'up'])->name(RouteNames::FILES_UP);
-            Route::post('/down/{id}', [Controllers\Files\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
-            Route::post('/move', [Controllers\Files\FileController::class, 'move'])->name(RouteNames::FILES_MOVE);
-            Route::get('/edit/{id}', [Controllers\Files\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
-            Route::delete('/delete/{id}', [Controllers\Files\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
+            Route::post('/store', [Controllers\Pages\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
+            Route::post('/save', [Controllers\Pages\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
+            Route::post('/replace', [Controllers\Pages\Files\FileController::class, 'replace'])->name(RouteNames::FILES_REPLACE);
+            Route::post('/up/{id}', [Controllers\Pages\Files\FileController::class, 'up'])->name(RouteNames::FILES_UP);
+            Route::post('/down/{id}', [Controllers\Pages\Files\FileController::class, 'down'])->name(RouteNames::FILES_DOWN);
+            Route::post('/move', [Controllers\Pages\Files\FileController::class, 'move'])->name(RouteNames::FILES_MOVE);
+            Route::get('/edit/{id}', [Controllers\Pages\Files\FileController::class, 'edit'])->name(RouteNames::FILES_EDIT);
+            Route::delete('/delete/{id}', [Controllers\Pages\Files\FileController::class, 'delete'])->name(RouteNames::FILES_DELETE);
         });
     });
 });
 
 Route::group(['prefix' => 'folders'], static function () {
     Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
-        Route::get('/show/{id}', [Controllers\Files\FolderController::class, 'show'])->name(RouteNames::FOLDERS_SHOW);
+        Route::get('/list', [Controllers\Pages\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
+        Route::get('/show/{id}', [Controllers\Pages\Files\FolderController::class, 'show'])->name(RouteNames::FOLDERS_SHOW);
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-            Route::post('/save', [Controllers\Files\FolderController::class, 'save'])->name(RouteNames::FOLDERS_SAVE);
-            Route::delete('/delete/{id}', [Controllers\Files\FolderController::class, 'delete'])->name(RouteNames::FOLDERS_DELETE);
+            Route::post('/save', [Controllers\Pages\Files\FolderController::class, 'save'])->name(RouteNames::FOLDERS_SAVE);
+            Route::delete('/delete/{id}', [Controllers\Pages\Files\FolderController::class, 'delete'])->name(RouteNames::FOLDERS_DELETE);
         });
     });
 });

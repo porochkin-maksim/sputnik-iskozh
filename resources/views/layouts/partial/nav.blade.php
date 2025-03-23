@@ -6,16 +6,6 @@ use Illuminate\Support\Facades\Route;
 /**
  * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
  */
-
-$routes = [
-    RouteNames::CONTACTS,
-    RouteNames::ANNOUNCEMENTS,
-    RouteNames::NEWS,
-    RouteNames::GARBAGE,
-    RouteNames::FILES,
-    RouteNames::RUBRICS,
-    RouteNames::REGULATION,
-];
 ?>
 
 <div class="vertical-menu vertical-menu-light d-block d-lg-none">
@@ -56,12 +46,6 @@ $routes = [
             <a class="nav-link @if(Route::is(RouteNames::FILES)) active @endif"
                href="{{ route(RouteNames::FILES) }}">
                 <i class="fa fa-file-o"></i>&nbsp;{{ RouteNames::name(RouteNames::FILES) }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link @if(Route::is(RouteNames::RUBRICS)) active @endif"
-               href="{{ route(RouteNames::RUBRICS) }}">
-                <i class="fa fa-cubes"></i>&nbsp;{{ RouteNames::name(RouteNames::RUBRICS) }}
             </a>
         </li>
         <li class="nav-item">
@@ -136,12 +120,6 @@ $routes = [
             <a class="nav-link"
                href="{{ route(RouteNames::FILES) }}">
                 {{ RouteNames::name(RouteNames::FILES) }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::RUBRICS) }}">
-                {{ RouteNames::name(RouteNames::RUBRICS) }}
             </a>
         </li>
         <li class="nav-item">

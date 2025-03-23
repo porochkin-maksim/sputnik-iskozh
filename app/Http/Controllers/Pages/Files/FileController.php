@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Files;
+namespace App\Http\Controllers\Pages\Files;
 
 use App\Http\Controllers\Controller;
 use Core\Domains\File\FileLocator;
