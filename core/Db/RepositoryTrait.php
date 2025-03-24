@@ -6,6 +6,7 @@ use Core\Cache\CacheLocator;
 use Core\Db\Searcher\BaseSearcher;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\SearchResponse;
+use Core\Db\Searcher\Models\Where;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -57,17 +58,19 @@ trait RepositoryTrait
         if (class_exists($this->modelClass())) {
             $searcher = $searcher ?? new BaseSearcher();
             $searcher->setIds($ids);
-            $query = $this->buildSearchQuery($searcher);
-            $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
-                $query->limit($searcher->getLimit());
-            })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
-                $query->offset($searcher->getOffset());
-            })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
-                $query->where('id', SearcherInterface::GT, $searcher->getLastId());
-            })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
-                $query->whereIn('id', $searcher->getIds());
-            });
-            $result   = array_merge($result, $query->get()->all());
+            $query  = $this->buildSearchQuery($searcher);
+            $query  = $this->buildCommonQuery($query, $searcher);
+
+            // $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
+            //     $query->limit($searcher->getLimit());
+            // })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
+            //     $query->offset($searcher->getOffset());
+            // })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
+            //     $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+            // })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
+            //     $query->whereIn('id', $searcher->getIds());
+            // });
+            $result = array_merge($result, $query->get()->all());
         }
 
         return $result;
@@ -86,15 +89,7 @@ trait RepositoryTrait
 
         $result->setTotal($query->count());
 
-        $items = $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
-            $query->limit($searcher->getLimit());
-        })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
-            $query->offset($searcher->getOffset());
-        })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
-            $query->where('id', SearcherInterface::GT, $searcher->getLastId());
-        })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
-            $query->whereIn('id', $searcher->getIds());
-        })->get();
+        $items = $this->buildCommonQuery($query, $searcher)->get();
 
         $result->setItems($items);
 
@@ -128,6 +123,7 @@ trait RepositoryTrait
                         case SearcherInterface::LTE:
                         case SearcherInterface::IS_NOT:
                         case SearcherInterface::EQUALS:
+                        case SearcherInterface::LIKE:
                             $query->where($where->getField(), $where->getOperator(), $where->getValue());
                             break;
                         case SearcherInterface::IS_NULL:
@@ -140,7 +136,29 @@ trait RepositoryTrait
                             $query->whereIn($where->getField(), $where->getValue());
                             break;
                     }
-
+                }
+            })->when($searcher->getOrWhere(), function (Builder $query) use ($searcher) {
+                foreach ($searcher->getOrWhere() as $where) {
+                    switch ($where->getOperator()) {
+                        case SearcherInterface::GT:
+                        case SearcherInterface::GTE:
+                        case SearcherInterface::LT:
+                        case SearcherInterface::LTE:
+                        case SearcherInterface::IS_NOT:
+                        case SearcherInterface::EQUALS:
+                        case SearcherInterface::LIKE:
+                            $query->orWhere($where->getField(), $where->getOperator(), $where->getValue());
+                            break;
+                        case SearcherInterface::IS_NULL:
+                            $query->orWhereNull($where->getField());
+                            break;
+                        case SearcherInterface::NOT_IN:
+                            $query->orWhereNotIn($where->getField(), $where->getValue());
+                            break;
+                        case SearcherInterface::IN:
+                            $query->orWhereIn($where->getField(), $where->getValue());
+                            break;
+                    }
                 }
             })->when($searcher->getWhereColumn(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getWhereColumn() as $where) {
@@ -148,11 +166,25 @@ trait RepositoryTrait
                 }
             })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getSortProperties() as $sort) {
-                    /** @var Order $sort */
                     $query->orderBy($sort->getField(), $sort->getValue());
                 }
             });
         }
+
+        return $query;
+    }
+
+    private function buildCommonQuery(Builder $query, SearcherInterface $searcher): Builder
+    {
+        $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
+            $query->limit($searcher->getLimit());
+        })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
+            $query->offset($searcher->getOffset());
+        })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
+            $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+        })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
+            $query->whereIn('id', $searcher->getIds());
+        });
 
         return $query;
     }

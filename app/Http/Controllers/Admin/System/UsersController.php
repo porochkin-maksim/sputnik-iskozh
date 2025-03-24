@@ -87,6 +87,7 @@ class UsersController extends Controller
 
         $searcher = new UserSearcher();
         $searcher
+            ->setWithAccounts()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
             ->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_DESC)
@@ -118,6 +119,7 @@ class UsersController extends Controller
             ->setMiddleName($request->getMiddleName())
             ->setLastName($request->getLastName())
             ->setEmail($request->getEmail())
+            ->setPhone($request->getPhone())
             ->setRole($this->roleService->getById($request->getRoleId()))
             ->setAccount($this->accountService->getById($request->getAccountId()))
         ;
@@ -125,6 +127,23 @@ class UsersController extends Controller
         $user = $this->userService->save($user);
 
         return response()->json(new UserResource($user));
+    }
+
+    public function search(DefaultRequest $request): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            abort(403);
+        }
+        $searchString = $request->getString('q');
+        $searcher     = new UserSearcher();
+        $searcher->addOrWhere(User::LAST_NAME, SearcherInterface::LIKE, "{$searchString}%")
+        ->addOrWhere(User::FIRST_NAME, SearcherInterface::LIKE, "{$searchString}%")
+        ->addOrWhere(User::EMAIL, SearcherInterface::LIKE, "{$searchString}%")
+        ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%");
+
+        $users = $this->userService->search($searcher);
+
+        return response()->json(new UsersListResource($users->getItems(), $users->getTotal()));
     }
 
     public function delete(int $id): bool

@@ -552,6 +552,13 @@
         "uri": "\/admin\/users\/json\/save",
         "args": []
     },
+    "adminUserSearch": {
+        "name": "admin.user.search",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/json\/search",
+        "args": []
+    },
     "adminUserSendInviteWithPassword": {
         "name": "admin.user.send.invite-with-password",
         "displayName": "",

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Users;
 
+use App\Http\Resources\Admin\Accounts\AccountResource;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\UserLocator;
 use Core\Resources\RouteNames;
@@ -27,13 +28,14 @@ readonly class UserResource extends AbstractResource
 
         $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
 
-        return [
+        $result = [
             'id'          => $this->user->getId(),
             'fullName'    => UserLocator::UserDecorator($this->user)->getFullName(),
             'firstName'   => $this->user->getFirstName(),
             'middleName'  => $this->user->getMiddleName(),
             'lastName'    => $this->user->getLastName(),
             'email'       => $this->user->getEmail(),
+            'phone'       => $this->user->getPhone(),
             'roleId'      => (int) ($this->user->getRole()?->getId()),
             'roleName'    => ($this->user->getRole()?->getName()),
             'accountId'   => (int) ($this->user->getAccount()?->getId()),
@@ -42,12 +44,21 @@ readonly class UserResource extends AbstractResource
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
                 ResponsesEnum::EDIT => $canEdit && $access->can(PermissionEnum::USERS_EDIT),
                 ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
+                'account'           => [
+                    ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                ],
             ],
             'historyUrl'  => HistoryChangesLocator::route(
                 type     : HistoryType::USER,
                 primaryId: $this->user->getId(),
             ),
-            'viewUrl' => $this->user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $this->user->getId()]) : null,
+            'viewUrl'     => $this->user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $this->user->getId()]) : null,
         ];
+
+        if ($this->user->getAccount() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            $result['account'] = new AccountResource($this->user->getAccount());
+        }
+
+        return $result;
     }
 }

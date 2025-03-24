@@ -18,18 +18,19 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property int     id
+ * @property int     $id
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
- * @property string  email
- * @property ?string first_name
- * @property ?string middle_name
- * @property ?string last_name
- * @property string  password
- * @property bool    remember_token
- * @property string  email_verified_at
- * @property int     telegram_id
+ * @property string  $email
+ * @property ?string $phone
+ * @property ?string $first_name
+ * @property ?string $middle_name
+ * @property ?string $last_name
+ * @property string  $password
+ * @property bool    $remember_token
+ * @property string  $email_verified_at
+ * @property int     $telegram_id
  */
 class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {
@@ -39,6 +40,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 
     public const ID                = 'id';
     public const EMAIL             = 'email';
+    public const PHONE             = 'phone';
     public const FIRST_NAME        = 'first_name';
     public const MIDDLE_NAME       = 'middle_name';
     public const LAST_NAME         = 'last_name';
@@ -57,6 +59,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
      */
     protected $fillable = [
         self::EMAIL,
+        self::PHONE,
         self::PASSWORD,
         self::FIRST_NAME,
         self::MIDDLE_NAME,
