@@ -65,6 +65,17 @@
                         </td>
                     </tr>
                     <tr>
+                        <th>Телефон</th>
+                        <td>
+                            <custom-input v-model="localUser.phone"
+                                          v-if="localUser.actions.edit"
+                                          :required="true"
+                                          @change="clearError('phone')"
+                            />
+                            <span v-else>{{ localUser.phone }}</span>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>Участок</th>
                         <td>
                             <search-select v-model="localUser.accountId"
@@ -157,7 +168,7 @@ export default {
         };
     },
     methods: {
-        saveAction () {//
+        saveAction () {
             if (!this.actions.edit) {
                 return;
             }
@@ -170,6 +181,7 @@ export default {
             form.append('email', this.localUser.email);
             form.append('account_id', this.localUser.accountId);
             form.append('role_id', this.localUser.roleId);
+            form.append('phone', this.localUser.phone);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminUserSave.method](

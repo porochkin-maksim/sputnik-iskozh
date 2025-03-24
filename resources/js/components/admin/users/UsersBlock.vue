@@ -5,6 +5,25 @@
                v-if="actions.edit"
                :href="getViewLink(null)">Добавить пользователя
             </a>
+            <div>
+                <div class="input-group input-group-sm">
+                    <button class="btn btn-light border"
+                            @click="searchAction">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <input class="form-control"
+                           v-model="search"
+                           name="users_search"
+                           placeholder="Поиск"
+                           @keyup="searchAction"
+                           ref="search">
+                    <button class="btn btn-light border"
+                            type="button"
+                            @click="listAction">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="d-flex">
             <div>
@@ -24,9 +43,11 @@
         <tr>
             <th>№</th>
             <th>Почта</th>
+            <th>Телефон</th>
             <th>Фамилия</th>
             <th>Имя</th>
             <th>Отчество</th>
+            <th>Участок</th>
         </tr>
         </thead>
         <tbody>
@@ -35,9 +56,16 @@
             <td>
                 <a :href="user.viewUrl">{{ user.email }}</a>
             </td>
+            <td>{{ user.phone }}</td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>
             <td>{{ user.middleName }}</td>
+            <td>
+                <template v-if="user.account?.viewUrl">
+                    <a :href="user.account.viewUrl">{{ user.accountName }}</a>
+                </template>
+                <template v-else>{{ user.accountName }}</template>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -50,10 +78,11 @@ import HistoryBtn    from '../../common/HistoryBtn.vue';
 import Pagination    from '../../common/pagination/Pagination.vue';
 import SimpleSelect  from '../../common/form/SimpleSelect.vue';
 import SearchSelect  from '../../common/form/SearchSelect.vue';
+import CustomInput   from '../../common/form/CustomInput.vue';
 
 export default {
     name      : 'UsersBlock',
-    components: { SearchSelect, SimpleSelect, Pagination, HistoryBtn },
+    components: { CustomInput, SearchSelect, SimpleSelect, Pagination, HistoryBtn },
     mixins    : [
         ResponseError,
     ],
@@ -81,6 +110,9 @@ export default {
             periodId  : 0,
             accountId : 0,
             Url       : Url,
+
+            search        : null,
+            searchProgress: null,
         };
     },
     created () {
@@ -90,15 +122,16 @@ export default {
 
         this.listAction();
     },
-    methods : {
+    methods: {
         getViewLink (id) {
             return Url.Generator.makeUri(Url.Routes.adminUserView, {
                 id: id,
             });
         },
         listAction () {
-            this.users = [];
-            let uri    = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, {
+            this.search = null;
+            this.users  = [];
+            let uri     = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, {
                 limit: this.perPage,
                 skip : this.skip,
             });
@@ -124,6 +157,27 @@ export default {
         onPaginationUpdate (skip) {
             this.skip = skip;
             this.listAction();
+        },
+        searchAction () {
+            if (!this.search) {
+                return;
+            }
+            clearTimeout(this.searchProgress);
+            this.searchProgress = setTimeout(() => {
+                window.axios[Url.Routes.adminUserSearch.method](Url.Routes.adminUserSearch.uri, {
+                    params: {
+                        q: this.search,
+                    },
+                }).then(response => {
+                    this.total = response.data.total;
+                    this.users = response.data.users;
+                }).catch(response => {
+                    this.parseResponseErrors(response);
+                }).finally(() => {
+                    this.searchProgress = null;
+                });
+            }, 300);
+            this.progress       = true;
         },
     },
 };

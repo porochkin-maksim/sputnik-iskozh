@@ -16,6 +16,7 @@ class UserDTO
     private ?string $middle_name   = null;
     private ?string $last_name     = null;
     private ?string $email         = null;
+    private ?string $phone         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
 
@@ -113,6 +114,18 @@ class UserDTO
     public function setRememberToken(?bool $rememberToken): static
     {
         $this->rememberToken = $rememberToken;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
 
         return $this;
     }

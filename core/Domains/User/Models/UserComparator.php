@@ -8,6 +8,7 @@ use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 class UserComparator extends AbstractComparatorDTO
 {
     public const TITLE_EMAIL       = 'Почта';
+    public const TITLE_PHONE       = 'Телефон';
     public const TITLE_FIRST_NAME  = 'Имя';
     public const TITLE_MIDDLE_NAME = 'Отчество';
     public const TITLE_LAST_NAME   = 'Фамилия';
@@ -20,6 +21,7 @@ class UserComparator extends AbstractComparatorDTO
 
     protected const KEYS_TO_TITLES = [
         User::EMAIL       => self::TITLE_EMAIL,
+        User::PHONE       => self::TITLE_PHONE,
         User::FIRST_NAME  => self::TITLE_FIRST_NAME,
         User::MIDDLE_NAME => self::TITLE_MIDDLE_NAME,
         User::LAST_NAME   => self::TITLE_LAST_NAME,

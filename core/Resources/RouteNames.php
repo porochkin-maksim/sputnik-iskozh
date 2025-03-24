@@ -108,6 +108,7 @@ abstract class RouteNames
     public const ADMIN_USER_INDEX  = 'admin.user.index';
     public const ADMIN_USER_VIEW   = 'admin.user.view';
     public const ADMIN_USER_CREATE = 'admin.user.create';
+    public const ADMIN_USER_SEARCH = 'admin.user.search';
     public const ADMIN_USER_SAVE   = 'admin.user.save';
     public const ADMIN_USER_LIST   = 'admin.user.list';
     public const ADMIN_USER_DELETE = 'admin.user.delete';

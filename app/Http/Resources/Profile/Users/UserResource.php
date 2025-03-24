@@ -20,6 +20,7 @@ readonly class UserResource extends AbstractResource
             'middleName' => $this->user->getMiddleName(),
             'lastName'   => $this->user->getLastName(),
             'email'      => $this->user->getEmail(),
+            'phone'      => $this->user->getPhone(),
         ];
     }
 }

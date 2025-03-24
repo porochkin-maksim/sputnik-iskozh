@@ -19,6 +19,7 @@ interface SearcherInterface
     public const IS_NOT  = '!=';
     public const NOT_IN  = 'NOT_IN';
     public const IN      = 'IN';
+    public const LIKE    = 'like';
 
     public function getIds(): ?array;
 
@@ -44,4 +45,6 @@ interface SearcherInterface
     public function getSelect(): array;
 
     public function getWhere(): WhereCollection;
+
+    public function getOrWhere(): WhereCollection;
 }

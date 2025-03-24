@@ -59,6 +59,7 @@ readonly class UserFactory
         return $result->fill([
             User::ID             => $dto->getId(),
             User::EMAIL          => $dto->getEmail(),
+            User::PHONE          => $dto->getPhone(),
             User::LAST_NAME      => $dto->getLastName(),
             User::FIRST_NAME     => $dto->getFirstName(),
             User::MIDDLE_NAME    => $dto->getMiddleName(),
@@ -76,6 +77,7 @@ readonly class UserFactory
         $result
             ->setId($model->id)
             ->setEmail($model->email)
+            ->setPhone($model->phone)
             ->setFirstName($model->first_name)
             ->setMiddleName($model->middle_name)
             ->setLastName($model->last_name)

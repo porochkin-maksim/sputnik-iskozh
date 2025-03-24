@@ -14,6 +14,7 @@ class SaveRequest extends AbstractRequest
     private const FIRST_NAME  = RequestArgumentsEnum::FIRST_NAME;
     private const MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
     private const EMAIL       = RequestArgumentsEnum::EMAIL;
+    private const PHONE       = RequestArgumentsEnum::PHONE;
     private const ROLE        = 'role_id';
     private const ACCOUNT     = 'account_id';
 
@@ -74,5 +75,10 @@ class SaveRequest extends AbstractRequest
     public function getAccountId(): int
     {
         return $this->getInt(self::ACCOUNT);
+    }
+
+    public function getPhone(): string
+    {
+        return $this->getStringOrNull(self::PHONE);
     }
 }

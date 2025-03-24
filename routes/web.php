@@ -182,6 +182,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
                 Route::group(['prefix' => 'json'], static function () {
                     Route::get('/create', [Controllers\Admin\System\UsersController::class, 'create'])->name(RouteNames::ADMIN_USER_CREATE);
+                    Route::get('/search', [Controllers\Admin\System\UsersController::class, 'search'])->name(RouteNames::ADMIN_USER_SEARCH);
                     Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
                     Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
                     Route::delete('/{id}', [Controllers\Admin\System\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
