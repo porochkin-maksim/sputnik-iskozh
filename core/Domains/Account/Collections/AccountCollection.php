@@ -23,10 +23,10 @@ class AccountCollection extends Collection implements CollectionInterface
     public function sortDefault(): static
     {
         return $this->sort(function (AccountDTO $account1, AccountDTO $account2) {
-            if ($account1->getId() === AccountIdEnum::SNT->value) {
+            if ($account1->isSnt()) {
                 return -1;
             }
-            if ($account2->getId() === AccountIdEnum::SNT->value) {
+            if ($account2->isSnt()) {
                 return 1;
             }
 
