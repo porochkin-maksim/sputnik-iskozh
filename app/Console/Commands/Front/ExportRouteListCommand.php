@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use JsonException;
 
 class ExportRouteListCommand extends Command
 {
@@ -26,6 +27,9 @@ class ExportRouteListCommand extends Command
     protected $signature   = 'front:export-route-list-command';
     protected $description = 'Экспортирует маршруты в файл для фронта';
 
+    /**
+     * @throws JsonException
+     */
     public function handle(): void
     {
         $routes = [];
@@ -34,13 +38,13 @@ class ExportRouteListCommand extends Command
             $routes[Str::camel(Str::replace('.', '_', $route['name']))] = $route;
         }
 
-        File::put(resource_path(self::OUTPUT_FILE_PATH), json_encode($routes, JSON_PRETTY_PRINT));
+        File::put(resource_path(self::OUTPUT_FILE_PATH), json_encode($routes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         $this->line("Routes exported to " . self::OUTPUT_FILE_PATH);
     }
 
     private function filterMethod(array $methods): string
     {
-        $array = array_filter($methods, fn($method) => in_array($method, Methods::AVAILABLE_METHODS));
+        $array = array_filter($methods, static fn($method) => in_array($method, Methods::AVAILABLE_METHODS, true));
 
         return array_pop($array);
     }
@@ -54,7 +58,7 @@ class ExportRouteListCommand extends Command
                 })->map(function (Route $route) {
                     return $this->getRouteInformation($route);
                 })->all(),
-            ), fn($route) => $route['name'],
+            ), static fn($route) => $route['name'],
         );
     }
 
@@ -76,7 +80,7 @@ class ExportRouteListCommand extends Command
      */
     private function sortRoutes(array $routes): array
     {
-        return Arr::sort($routes, function ($route) {
+        return Arr::sort($routes, static function ($route) {
             return $route['uri'];
         });
     }
@@ -89,7 +93,7 @@ class ExportRouteListCommand extends Command
         $result = [];
 
         preg_match_all('/{(.*?)}/', $uri, $params);
-        if (isset($params[0]) && isset($params[1])) {
+        if (isset($params[0], $params[1])) {
             foreach ($params[1] as $key => $value) {
                 $result[Str::replace('?', '', $value)] = Str::replace('?', '', $params[0][$key]);
             }

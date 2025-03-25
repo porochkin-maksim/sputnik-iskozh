@@ -19,10 +19,7 @@ class ExportRequestArgumentsCommand extends Command
     {
         $arguments = [];
 
-        $requestArguments = new ReflectionClass(RequestArgumentsEnum::class);
-        $constants        = $requestArguments->getConstants();
-
-        foreach ($constants as $name => $value) {
+        foreach ((new ReflectionClass(RequestArgumentsEnum::class))->getConstants() as $name => $value) {
             $arguments[Str::camel(Str::lower($name))] = $value;
         }
 
@@ -30,14 +27,14 @@ class ExportRequestArgumentsCommand extends Command
         $this->line("Arguments exported to " . self::OUTPUT_FILE_PATH);
     }
 
-    function renderAssocArray(array $array, int $indents = 1): string
+    public function renderAssocArray(array $array, int $indents = 1): string
     {
         $spaces        = str_repeat('    ', $indents);
         $values        = [];
         $maxNameLength = 0;
 
         foreach ($array as $name => $value) {
-            if ( ! is_integer($value)) {
+            if ( ! is_int($value)) {
                 $value = "'{$value}'";
             }
 
@@ -48,6 +45,6 @@ class ExportRequestArgumentsCommand extends Command
             }
         }
 
-        return $spaces . trim(implode(",\n", array_map(fn(array $item) => $spaces . sprintf("%-{$maxNameLength}s: %s", $item['name'], $item['value']), $values)));
+        return $spaces . trim(implode(",\n", array_map(static fn(array $item) => $spaces . sprintf("%-{$maxNameLength}s: %s", $item['name'], $item['value']), $values)));
     }
 }

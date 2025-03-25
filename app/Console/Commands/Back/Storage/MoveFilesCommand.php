@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class MoveFilesCommand extends Command
 {
     protected $signature   = 'storage:move-files';
-    protected $description = 'Удаляет файлы из папок, которых нет в БД';
+    protected $description = 'Переименовывает файлы';
 
     public function handle(): void
     {
@@ -31,9 +31,7 @@ class MoveFilesCommand extends Command
 
         $this->output->info(Storage::path($dir));
 
-        $paths = Storage::files($dir);
-
-        foreach ($paths as $path) {
+        foreach (Storage::files($dir) as $path) {
             $file    = $files->findByPath($path);
             $message = Storage::path($path);
 
