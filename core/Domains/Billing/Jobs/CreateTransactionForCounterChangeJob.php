@@ -88,7 +88,7 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
 
         $account = AccountLocator::AccountService()->getById($counter->getAccountId());
 
-        if ( ! $account) {
+        if ( ! $account || $account->isSnt()) {
             return;
         }
 
