@@ -24,7 +24,7 @@ readonly class AccountResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();
-        $isSnt  = $this->account->getId() === AccountIdEnum::SNT->value;
+        $isSnt  = $this->account->isSnt();
 
         return [
             'id'         => $this->account->getId(),
