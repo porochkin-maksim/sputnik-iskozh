@@ -4,6 +4,7 @@
             <tbody>
             <tr>
                 <th class="text-center">№</th>
+                <th class="text-center">Название</th>
                 <th class="text-center">Сумма</th>
                 <th class="text-center">Файлы</th>
                 <th class="text-center">Создан</th>
@@ -11,6 +12,7 @@
             </tr>
             <tr v-for="(payment, index) in payments">
                 <td class="text-end">{{ payment.id }}</td>
+                <td>{{ payment.name }}</td>
                 <td class="text-end">{{ $formatMoney(payment.cost) }}</td>
                 <td>
                     <div v-if="payment.files && payment.files.length">

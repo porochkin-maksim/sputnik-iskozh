@@ -47,6 +47,13 @@
                        :disabled="!payment.actions.edit"
                        v-model="payment.cost"
                 />
+                <label>Название платёжа</label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       :disabled="!payment.actions.edit"
+                       placeholder="необязательно..."
+                       v-model="payment.name"
+                />
                 <label>Комментарий</label>
                 <textarea class="form-control form-control-sm"
                           style="min-height: 200px;"
@@ -143,7 +150,9 @@ export default {
             this.loading = true;
             let form     = new FormData();
             form.append('id', this.payment.id);
+            form.append('name', this.payment.name);
             form.append('cost', parseFloat(this.payment.cost));
+            form.append('comment', this.payment.comment);
             form.append('account_id', parseFloat(this.payment.accountId));
             form.append('invoice_id', parseFloat(this.payment.invoiceId));
 

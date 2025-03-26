@@ -12,7 +12,9 @@ use Illuminate\Validation\Rule;
 class LinkRequest extends AbstractRequest
 {
     private const ID         = RequestArgumentsEnum::ID;
+    private const NAME       = RequestArgumentsEnum::NAME;
     private const COST       = RequestArgumentsEnum::COST;
+    private const COMMENT    = RequestArgumentsEnum::COMMENT;
     private const ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
     private const INVOICE_ID = RequestArgumentsEnum::INVOICE_ID;
 
@@ -23,6 +25,14 @@ class LinkRequest extends AbstractRequest
                 'required',
                 'numeric',
                 'min:0',
+            ],
+            self::NAME    => [
+                'nullable',
+                'string',
+            ],
+            self::COMMENT    => [
+                'nullable',
+                'string',
             ],
             self::ACCOUNT_ID => [
                 'required',
@@ -68,5 +78,15 @@ class LinkRequest extends AbstractRequest
     public function getInvoiceId(): int
     {
         return $this->getInt(self::INVOICE_ID);
+    }
+
+    public function getName(): ?string
+    {
+        return $this->getStringOrNull(self::NAME);
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->getStringOrNull(self::COMMENT);
     }
 }

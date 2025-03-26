@@ -17,7 +17,8 @@ readonly class PaymentFactory
         return (new PaymentDTO())
             ->setModerated(false)
             ->setVerified(false)
-            ->setCost(0.00);
+            ->setCost(0.00)
+        ;
     }
 
     public function makeModelFromDto(PaymentDTO $dto, ?Payment $model = null): Payment
@@ -36,6 +37,8 @@ readonly class PaymentFactory
             Payment::MODERATED  => $dto->isModerated(),
             Payment::VERIFIED   => $dto->isVerified(),
             Payment::COMMENT    => $dto->getComment(),
+            Payment::NAME       => $dto->getName(),
+            Payment::DATA       => $dto->getData(),
         ]);
     }
 
@@ -52,7 +55,10 @@ readonly class PaymentFactory
             ->setVerified($model->verified)
             ->setComment($model->comment)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+            ->setName($model->name)
+            ->setData($model->data)
+        ;
 
         if (isset($model->getRelations()[Payment::INVOICE])) {
             $result->setInvoice(InvoiceLocator::InvoiceFactory()->makeDtoFromObject($model->getRelation(Payment::INVOICE)));
