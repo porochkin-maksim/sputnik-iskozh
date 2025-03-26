@@ -54,7 +54,7 @@ class SetPasswordController extends AbstractAuthController
 
         Auth::login($user->getModel());
 
-        return redirect()->route(RouteNames::PROFILE);
+        return redirect()->route(RouteNames::HOME);
     }
 
     private function getEmail(DefaultRequest $request): ?string

@@ -31,7 +31,7 @@ class RegisterController extends Controller
     public function index(): RedirectResponse|View
     {
         if ($this->accountService->getByUserId(Auth::id())) {
-            return redirect()->route(RouteNames::PROFILE);
+            return redirect()->route(RouteNames::HOME);
         }
 
         return view(ViewNames::PAGES_ACCOUNT_REGISTER);
