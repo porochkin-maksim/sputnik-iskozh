@@ -27,7 +27,6 @@ use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Enums\DateTimeFormat;
 use Illuminate\Http\JsonResponse;
 use lc;
 use Maatwebsite\Excel\Facades\Excel;
@@ -45,15 +44,6 @@ class InvoiceController extends Controller
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->periodService  = PeriodLocator::PeriodService();
         $this->accountService = AccountLocator::AccountService();
-    }
-
-    public function summary(ListRequest $request): JsonResponse
-    {
-        $type      = $request->getType();
-        $periodId  = $request->getPeriodId();
-        $accountId = $request->getAccountId();
-
-        return response()->json($this->invoiceService->getSummaryFor($type, $periodId, $accountId));
     }
 
     public function view(int $id)
@@ -215,7 +205,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function delete(int $id): bool
+    public function delete(int $id): bool//
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
             abort(403);

@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Core\Domains\Billing\Invoice\Models;
+namespace Core\Domains\Billing\Summary\Models;
 
 use Core\Services\Money\MoneyService;
 

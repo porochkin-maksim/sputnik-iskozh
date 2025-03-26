@@ -215,13 +215,6 @@
         "uri": "\/admin\/invoices\/json\/save",
         "args": []
     },
-    "adminInvoiceSummary": {
-        "name": "admin.invoice.summary",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/json\/summary",
-        "args": []
-    },
     "adminInvoiceView": {
         "name": "admin.invoice.view",
         "displayName": "",
@@ -589,6 +582,22 @@
         "uri": "\/announcements\/{id}",
         "args": {
             "id": "{id}"
+        }
+    },
+    "commonSummary": {
+        "name": "common.summary",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/json\/summary",
+        "args": []
+    },
+    "commonSummaryDetailing": {
+        "name": "common.summary.detailing",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/json\/summary\/{type}",
+        "args": {
+            "type": "{type}"
         }
     },
     "contacts": {
