@@ -44,17 +44,17 @@ Route::group(['prefix' => 'home'], static function () {
         Route::get('/', [Controllers\Profile\AccountsController::class, 'index'])->name(RouteNames::HOME);
 
         Route::group(['prefix' => 'profile'], static function () {
-            Route::get('/', [Controllers\Profile\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
-            Route::post('/', [Controllers\Profile\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
-            Route::post('/email', [Controllers\Profile\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
+            // Route::get('/', [Controllers\Profile\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
+            // Route::post('/', [Controllers\Profile\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
+            // Route::post('/email', [Controllers\Profile\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
             Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
         });
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-            Route::get('/register', [Controllers\Profile\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
-            Route::group(['prefix' => 'json'], static function () {
-                Route::post('/register', [Controllers\Profile\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
-            });
+            // Route::get('/register', [Controllers\Profile\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
+            // Route::group(['prefix' => 'json'], static function () {
+            //     Route::post('/register', [Controllers\Profile\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
+            // });
             Route::group(['prefix' => 'counters'], static function () {
                 Route::get('/', [Controllers\Profile\CounterController::class, 'index'])->name(RouteNames::PROFILE_COUNTERS);
                 Route::group(['prefix' => 'json'], static function () {

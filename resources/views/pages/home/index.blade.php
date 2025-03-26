@@ -41,10 +41,7 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
         <h5 class="text-dark"> Площадь: {{ lc::account()->getSize() }}м²</h5>
     </div>
     <div>
-        <a class="btn btn-lg btn-success"
-           href="{{ route(RouteNames::PROFILE) }}">
-            Редактировать профиль
-        </a>
+        <password-block :account='@json(new AccountResource(lc::account()))' :user='@json(new UserResource(lc::user()))'></password-block>
     </div>
     @if($counters->count())
         <div class="mt-2">

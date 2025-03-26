@@ -1,18 +1,4 @@
 {
-    "accountRegister": {
-        "name": "account.register",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/home\/register",
-        "args": []
-    },
-    "accountRegisterSave": {
-        "name": "account.register.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/home\/json\/register",
-        "args": []
-    },
     "adminAccountCreate": {
         "name": "admin.account.create",
         "displayName": "",
@@ -1018,32 +1004,11 @@
         "uri": "\/home\/payments",
         "args": []
     },
-    "profileSave": {
-        "name": "profile.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/home\/profile",
-        "args": []
-    },
-    "profileSaveEmail": {
-        "name": "profile.save.email",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/home\/profile\/email",
-        "args": []
-    },
     "profileSavePassword": {
         "name": "profile.save.password",
         "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/password",
-        "args": []
-    },
-    "profileShow": {
-        "name": "profile.show",
-        "displayName": "\u041f\u0440\u043e\u0444\u0438\u043b\u044c",
-        "method": "get",
-        "uri": "\/home\/profile",
         "args": []
     },
     "proposal": {

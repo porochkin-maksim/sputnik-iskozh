@@ -3,7 +3,6 @@
         <table class="table table-responsive align-middle password">
             <tbody>
             <tr>
-                <th>Пароль</th>
                 <td class="toggle-parent">
                     <custom-input v-model="password"
                                   @change="clearError('password')"
@@ -19,7 +18,6 @@
                 </td>
             </tr>
             <tr>
-                <th>Повторите пароль</th>
                 <td>
                     <custom-input v-model="passwordConfirm"
                                   @change="clearError('password')"
@@ -35,7 +33,7 @@
     <div class="d-flex justify-content-center mb-3">
         <button class="btn btn-success"
                 @click="updatePassword">
-            <i class="fa fa-save"></i> Обновить
+            <i class="fa fa-save"></i> Сменить пароль
         </button>
     </div>
 </template>
@@ -60,7 +58,7 @@ export default {
             password       : null,
             passwordConfirm: null,
 
-            showPassword   : false,
+            showPassword: false,
         };
     },
     created () {
@@ -72,7 +70,10 @@ export default {
                 password             : this.password,
                 password_confirmation: this.passwordConfirm,
             }).then(response => {
-                location.reload();
+                this.password        = null;
+                this.passwordConfirm = null;
+                this.showPassword    = false;
+                this.showSuccess('Пароль изменён');
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
