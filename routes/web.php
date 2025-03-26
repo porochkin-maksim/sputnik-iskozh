@@ -157,7 +157,10 @@ Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, '
 
 Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
     Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-        Route::get('/json/summary', [Controllers\Admin\Billing\InvoiceController::class, 'summary'])->name(RouteNames::ADMIN_INVOICE_SUMMARY);
+        Route::group(['prefix' => '/json/summary'], static function () {
+            Route::get('/', [Controllers\Common\SummaryController::class, 'summary'])->name(RouteNames::SUMMARY);
+            Route::get('/{type}', [Controllers\Common\SummaryController::class, 'summaryDetailing'])->name(RouteNames::SUMMARY_DETAILING);
+        });
 
         Route::get('/history/changes', Controllers\Infra\HistoryChangesViewController::class)->name(RouteNames::HISTORY_CHANGES);
         Route::group(['prefix' => 'admin'], static function () {

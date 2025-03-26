@@ -11,7 +11,6 @@ use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
 use Core\Domains\Billing\Invoice\Models\InvoiceComparator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Invoice\Models\Summary;
 use Core\Domains\Billing\Invoice\Repositories\InvoiceRepository;
 use Core\Domains\Billing\Invoice\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -104,11 +103,6 @@ readonly class InvoiceService
         UpdateSntBalanceJob::dispatch($invoice->getPayed() * -1);
 
         return $this->invoiceRepository->deleteById($id);
-    }
-
-    public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): Summary
-    {
-        return new Summary($this->invoiceRepository->getSummaryFor($type, $periodId, $accountId));
     }
 
     public function getAccountsWithoutRegularInvoice(int $periodId): AccountCollection

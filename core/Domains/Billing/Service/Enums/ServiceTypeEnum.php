@@ -17,7 +17,7 @@ enum ServiceTypeEnum: int
     {
         return match ($this) {
             self::MEMBERSHIP_FEE  => 'Членский взнос',
-            self::ELECTRIC_TARIFF => 'Тариф за электричество',
+            self::ELECTRIC_TARIFF => 'Электричество',
             self::TARGET_FEE      => 'Целевой сбор',
             self::OTHER           => 'Прочее',
         };

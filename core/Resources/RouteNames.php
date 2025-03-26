@@ -97,6 +97,9 @@ abstract class RouteNames
 
     public const HISTORY_CHANGES = 'infra.history-changes';
 
+    public const SUMMARY           = 'common.summary';
+    public const SUMMARY_DETAILING = 'common.summary.detailing';
+
     public const ADMIN = 'admin.index';
 
     public const ADMIN_ROLE_INDEX  = 'admin.role.index';
@@ -142,15 +145,14 @@ abstract class RouteNames
     public const ADMIN_COUNTER_DELETE    = 'admin.counter.delete';
     public const ADMIN_COUNTER_ADD_VALUE = 'admin.counter.add-value';
 
-    public const ADMIN_INVOICE_INDEX   = 'admin.invoice.index';
-    public const ADMIN_INVOICE_SUMMARY = 'admin.invoice.summary';
-    public const ADMIN_INVOICE_CREATE  = 'admin.invoice.create';
-    public const ADMIN_INVOICE_SAVE    = 'admin.invoice.save';
-    public const ADMIN_INVOICE_VIEW    = 'admin.invoice.view';
-    public const ADMIN_INVOICE_GET     = 'admin.invoice.get';
-    public const ADMIN_INVOICE_LIST    = 'admin.invoice.list';
-    public const ADMIN_INVOICE_EXPORT  = 'admin.invoice.export';
-    public const ADMIN_INVOICE_DELETE  = 'admin.invoice.delete';
+    public const ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
+    public const ADMIN_INVOICE_CREATE = 'admin.invoice.create';
+    public const ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
+    public const ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
+    public const ADMIN_INVOICE_GET    = 'admin.invoice.get';
+    public const ADMIN_INVOICE_LIST   = 'admin.invoice.list';
+    public const ADMIN_INVOICE_EXPORT = 'admin.invoice.export';
+    public const ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
 
     public const ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
     public const ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
