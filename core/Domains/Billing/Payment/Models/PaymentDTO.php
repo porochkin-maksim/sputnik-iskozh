@@ -18,6 +18,8 @@ class PaymentDTO
     private ?bool   $moderated  = null;
     private ?bool   $verified   = null;
     private ?string $comment    = null;
+    private ?string $name       = null;
+    private ?array  $data       = null;
 
     private ?InvoiceDTO $invoice = null;
     private ?AccountDTO $account = null;
@@ -107,6 +109,30 @@ class PaymentDTO
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getData(): ?array
+    {
+        return $this->data;
+    }
+
+    public function setData(?array $data): static
+    {
+        $this->data = $data;
 
         return $this;
     }

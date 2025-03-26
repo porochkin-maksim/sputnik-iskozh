@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?boolean $moderated
  * @property ?boolean $verified
  * @property ?string  $comment
+ * @property ?string  $name
+ * @property ?array   $data
  */
 class Payment extends Model implements CastsInterface
 {
@@ -36,6 +38,8 @@ class Payment extends Model implements CastsInterface
     public const MODERATED  = 'moderated';
     public const VERIFIED   = 'verified';
     public const COMMENT    = 'comment';
+    public const NAME       = 'name';
+    public const DATA       = 'data';
 
     public const ACCOUNT = 'account';
     public const INVOICE = 'invoice';
@@ -47,6 +51,7 @@ class Payment extends Model implements CastsInterface
         self::COST      => self::CAST_FLOAT,
         self::MODERATED => self::CAST_BOOLEAN,
         self::VERIFIED  => self::CAST_BOOLEAN,
+        self::DATA      => self::CAST_JSON,
     ];
 
     public function invoice(): BelongsTo
@@ -63,6 +68,7 @@ class Payment extends Model implements CastsInterface
     {
         return $this->hasMany(File::class, File::RELATED_ID)
             ->where(File::TYPE, TypeEnum::PAYMENT->value)
-            ->orderBy(FILE::ORDER);
+            ->orderBy(FILE::ORDER)
+        ;
     }
 }

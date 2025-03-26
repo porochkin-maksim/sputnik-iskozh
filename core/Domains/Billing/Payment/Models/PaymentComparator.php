@@ -13,13 +13,15 @@ class PaymentComparator extends AbstractComparatorDTO
     public const TITLE_MODERATED  = 'Модерирован';
     public const TITLE_VERIFIED   = 'Подтверждён';
     public const TITLE_COMMENT    = 'Комментарий';
+    public const TITLE_NAME       = 'Название';
 
-    protected const KEYS_TO_TITLES   = [
+    protected const KEYS_TO_TITLES = [
         Payment::INVOICE_ID => self::TITLE_INVOICE_ID,
         Payment::ACCOUNT_ID => self::TITLE_ACCOUNT_ID,
         Payment::COST       => self::TITLE_COST,
         Payment::MODERATED  => self::TITLE_MODERATED,
         Payment::VERIFIED   => self::TITLE_VERIFIED,
+        Payment::NAME       => self::TITLE_NAME,
         Payment::COMMENT    => self::TITLE_COMMENT,
     ];
 

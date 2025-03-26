@@ -25,6 +25,7 @@ readonly class PaymentResource extends AbstractResource
 
         return [
             'id'         => $this->payment->getId(),
+            'name'       => $this->payment->getName(),
             'cost'       => $this->payment->getCost(),
             'comment'    => $this->payment->getComment(),
             'files'      => $this->payment->getFiles(),

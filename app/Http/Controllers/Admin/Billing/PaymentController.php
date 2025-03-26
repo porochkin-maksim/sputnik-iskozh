@@ -103,6 +103,7 @@ class PaymentController extends Controller
             ->setModerated(true)
             ->setVerified(true)
             ->setCost($request->getCost())
+            ->setName($request->getName())
             ->setComment($request->getComment())
         ;
 

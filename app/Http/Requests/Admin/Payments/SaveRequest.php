@@ -9,6 +9,7 @@ use Core\Requests\RequestArgumentsEnum;
 class SaveRequest extends AbstractRequest
 {
     private const ID         = RequestArgumentsEnum::ID;
+    private const NAME       = RequestArgumentsEnum::NAME;
     private const COST       = RequestArgumentsEnum::COST;
     private const COMMENT    = RequestArgumentsEnum::COMMENT;
 
@@ -19,6 +20,10 @@ class SaveRequest extends AbstractRequest
                 'required',
                 'numeric',
                 'min:0',
+            ],
+            self::NAME    => [
+                'nullable',
+                'string',
             ],
             self::COMMENT    => [
                 'nullable',
@@ -46,6 +51,11 @@ class SaveRequest extends AbstractRequest
     public function getCost(): float
     {
         return $this->getFloat(self::COST);
+    }
+
+    public function getName(): ?string
+    {
+        return $this->getStringOrNull(self::NAME);
     }
 
     public function getComment(): ?string

@@ -15,7 +15,7 @@
                     <button class="btn btn-sm border-0"
                             v-if="actions.edit || actions.view"
                             @click="editAction(payment.id)">
-                        <i class="fa fa-link"></i>
+                        <i class="fa fa-link"></i>&nbsp;Привязать
                     </button>
                     <history-btn
                         class="btn-link underline-none"

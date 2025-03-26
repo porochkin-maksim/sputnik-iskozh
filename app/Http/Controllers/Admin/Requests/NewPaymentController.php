@@ -112,7 +112,9 @@ class NewPaymentController
         $payment
             ->setVerified(true)
             ->setModerated(true)
+            ->setName($request->getName())
             ->setCost($request->getCost())
+            ->setComment($request->getComment())
             ->setAccountId($request->getAccountId())
             ->setInvoiceId($request->getInvoiceId())
         ;
