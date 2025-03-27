@@ -51,7 +51,7 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
             @php
                 $history = $counter->getHistoryCollection()->last();
             @endphp
-            <h5 class="d-flex mt-2 text-dark">
+            <h5 class="d-flex flex-md-row flex-column mt-2 text-dark">
                 <div class="me-2">Счётчик <b>«{{ $counter->getNumber() }}»</b></div>
                 @if($history)
                     <div class="me-2">{{ $history->getValue() }}кВт от&nbsp;{{ $history->getDate()->format(DateTimeFormat::DATE_VIEW_FORMAT) }}</div>
