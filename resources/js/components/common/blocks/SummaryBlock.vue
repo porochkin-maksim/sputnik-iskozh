@@ -6,7 +6,7 @@
                 <th></th>
                 <th class="text-end">План</th>
                 <th class="text-end">Оплачено</th>
-                <th class="text-end">Разница</th>
+                <th class="text-end">Долг</th>
                 <template v-if="showInvoice">
                     <th colspan="2">Всего счетов {{ summary.totalCount }}</th>
                 </template>
