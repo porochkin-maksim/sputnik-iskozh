@@ -181,6 +181,7 @@ abstract class RouteNames
     public const ADMIN_COUNTER_HISTORY_LIST               = 'admin.counter-history.list';
     public const ADMIN_COUNTER_HISTORY_DELETE             = 'admin.counter-history.delete';
     public const ADMIN_COUNTER_HISTORY_CONFIRM            = 'admin.counter-history.confirm';
+    public const ADMIN_COUNTER_HISTORY_CONFIRM_DELETE     = 'admin.counter-history.confirm-delete';
     public const ADMIN_COUNTER_HISTORY_CREATE_TRANSACTION = 'admin.counter-history.create-transaction';
 
     public const ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';

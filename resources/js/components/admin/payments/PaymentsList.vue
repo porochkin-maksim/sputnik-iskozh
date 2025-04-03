@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="payments && payments.length">
         <table class="table table-bordered table-striped-columns table-striped ">
             <tr>
                 <th>№</th>

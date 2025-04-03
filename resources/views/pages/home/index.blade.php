@@ -49,7 +49,7 @@ $counters = CounterLocator::CounterService()->getByAccountId(lc::account()->getI
         </div>
         @foreach($counters as $counter)
             @php
-                $history = $counter->getHistoryCollection()->last();
+                $history = $counter->getHistoryCollection()->first();
             @endphp
             <h5 class="d-flex flex-md-row flex-column mt-2 text-dark">
                 <div class="me-2">Счётчик <b>«{{ $counter->getNumber() }}»</b></div>

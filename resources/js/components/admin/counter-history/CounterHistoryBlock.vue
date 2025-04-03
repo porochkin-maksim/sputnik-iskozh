@@ -1,16 +1,24 @@
 <template>
     <h5>Новые показания счётчиков</h5>
     <div class="d-flex align-items-center mb-2"
-         v-if="actions.edit && histories.length">
+         v-if="histories.length">
         <button class="btn btn-success"
+                v-if="actions.edit"
                 :disabled="!canSubmitAction"
                 @click="confirmAction"
         >
             Подтвердить выделенные
         </button>
+        <button class="btn btn-danger ms-2"
+                v-if="actions.drop"
+                :disabled="!canSubmitAction"
+                @click="deleteAction"
+        >
+            Удалить выделенные
+        </button>
     </div>
-    <div>
-        <table class="table table-bordered align-middle">
+    <div v-if="histories.length">
+        <table class="table table-sm table-bordered align-middle">
             <thead>
             <tr class="text-center">
                 <th v-if="actions.edit && canCheckAction">
@@ -46,7 +54,7 @@
                 <td>{{ history.id }}</td>
                 <template v-if="history.accountId && history.counterId">
                     <td v-if="history.accountUrl">
-                        <a :href='history.accountUrl'>{{ history.accountNumber }}</a>
+                        <a :href="history.accountUrl">{{ history.accountNumber }}</a>
                     </td>
                     <td v-else>{{ history.accountNumber }}</td>
                     <td>{{ history.counterNumber }}</td>
@@ -70,7 +78,9 @@
                     </template>
 
                 </td>
-                <td class="text-end" v-if="canCheckAction">{{ history.before }}</td>
+                <td class="text-end"
+                    v-if="canCheckAction">{{ history.before }}
+                </td>
                 <td class="text-center">
                     <i v-if="history.isInvoicing"
                        class="fa fa-check text-success"></i>
@@ -313,6 +323,30 @@ export default {
                 let text = response?.data?.message ?
                     response.data.message
                     : 'Не получилось подтвердить показания';
+                this.showDanger(text);
+                this.parseResponseErrors(response);
+            });
+        },
+        deleteAction () {
+            if (!confirm('Удалить выделенные показания?')) {
+                return;
+            }
+            let form = new FormData();
+            this.checked.forEach(id => {
+                form.append('ids[]', id);
+            });
+
+            this.clearResponseErrors();
+            window.axios[Url.Routes.adminCounterHistoryConfirmDelete.method](
+                Url.Routes.adminCounterHistoryConfirmDelete.uri,
+                form,
+            ).then((response) => {
+                this.showInfo('Показания удалены');
+                this.listAction();
+            }).catch(response => {
+                let text = response?.data?.message ?
+                    response.data.message
+                    : 'Не получилось удалить показания';
                 this.showDanger(text);
                 this.parseResponseErrors(response);
             });
