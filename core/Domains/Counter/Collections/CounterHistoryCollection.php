@@ -49,4 +49,15 @@ class CounterHistoryCollection extends Collection implements CollectionInterface
             return $account1->getId() <= $account2->getId() ? -1 : 1;
         });
     }
+
+    public function getById(?int $id): ?CounterHistoryDTO
+    {
+        foreach ($this as $item) {
+            if ($item->getId() === $id) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
 }

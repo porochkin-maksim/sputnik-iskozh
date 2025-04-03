@@ -76,7 +76,7 @@ readonly class CounterService
 
     public function getByAccountId(?int $id): CounterCollection
     {
-        $searcher = new CounterSearcher();//
+        $searcher = new CounterSearcher();
         $searcher
             ->setAccountId($id)
             ->setSortOrderProperty(Counter::IS_INVOICING, SearcherInterface::SORT_ORDER_DESC)
