@@ -7,10 +7,11 @@ use Core\Requests\RequestArgumentsEnum;
 
 class ProposalCreateRequest extends AbstractRequest
 {
-    private const EMAIL = RequestArgumentsEnum::EMAIL;
-    private const PHONE = RequestArgumentsEnum::PHONE;
-    private const NAME  = RequestArgumentsEnum::NAME;
-    private const TEXT  = RequestArgumentsEnum::TEXT;
+    private const EMAIL   = RequestArgumentsEnum::EMAIL;
+    private const PHONE   = RequestArgumentsEnum::PHONE;
+    private const NAME    = RequestArgumentsEnum::NAME;
+    private const TEXT    = RequestArgumentsEnum::TEXT;
+    private const ACCOUNT = RequestArgumentsEnum::ACCOUNT;
 
     public function attributes(): array
     {
@@ -44,13 +45,19 @@ class ProposalCreateRequest extends AbstractRequest
 
     public function getFullText(): string
     {
-        return sprintf("%s%s%s%s%s",
+        return trim(implode('', [
+            $this->getFormattedAccount(),
             $this->getFormattedName(),
             $this->getFormattedEmail(),
             $this->getFormattedPhone(),
             $this->getFormattedAttachmentsList(),
             $this->getFormattedText(),
-        );
+        ]));
+    }
+
+    public function getAccount(): string
+    {
+        return (string) $this->getStringOrNull(self::ACCOUNT);
     }
 
     public function getName(): string
@@ -76,6 +83,11 @@ class ProposalCreateRequest extends AbstractRequest
     private function getFormattedText(): string
     {
         return sprintf("Текст обращения:\n%s", $this->getText());
+    }
+
+    private function getFormattedAccount(): string
+    {
+        return $this->getAccount() ? sprintf("Участок: %s\n", $this->getAccount()) : '';
     }
 
     private function getFormattedEmail(): string

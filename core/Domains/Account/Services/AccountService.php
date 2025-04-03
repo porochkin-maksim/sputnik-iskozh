@@ -69,6 +69,14 @@ readonly class AccountService
         return $this->accountFactory->makeDtoFromObject($account);
     }
 
+    public function findByNumber(string $number): ?AccountDTO
+    {
+        $searcher = new AccountSearcher();
+        $searcher->setNumber($number);
+
+        return $this->search($searcher)->getItems()->first();
+    }
+
     public function search(AccountSearcher $searcher): SearchResponse
     {
         $response = $this->accountRepository->search($searcher);

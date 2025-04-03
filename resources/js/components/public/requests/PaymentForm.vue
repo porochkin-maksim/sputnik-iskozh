@@ -5,10 +5,19 @@
     </div>
     <div class="form"
          v-if="!success">
+        <custom-input v-model="account"
+                      :classes="'my-3'"
+                      @change="clearError('account')"
+                      :required="true"
+                      :errors="errors.account"
+                      :label="'Номер дачи и номер участка (например: 999/1 )'"
+                      @submit="sendForm"
+        />
         <custom-textarea v-model="text"
                          @change="clearError('text')"
+                         :required="true"
                          :errors="errors.text"
-                         :label="'Комментарий о платеже - когда, какой участок и за что платили'"
+                         :label="'Комментарий о платеже - когда и за что платили'"
                          :height="'100'"
                          @submit="sendForm"
         />
@@ -83,6 +92,7 @@ import Url            from '../../../utils/Url.js';
 import ResponseError  from '../../../mixin/ResponseError.js';
 import CustomInput    from '../../common/form/CustomInput.vue';
 import CustomTextarea from '../../common/form/CustomTextarea.vue';
+import accountActions from '../../admin/accounts/AccountActions.js';
 
 export default {
     name      : 'PaymentForm',
@@ -94,18 +104,20 @@ export default {
         ResponseError,
     ],
     created () {
-        this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
-        this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
-        this.name  = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
-        this.text  = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+        this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
+        this.email   = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
+        this.phone   = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
+        this.name    = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        this.text    = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
     },
     data () {
         return {
             Url,
-            email: '',
-            phone: '',
-            name : '',
-            text : '',
+            account: '',
+            email  : '',
+            phone  : '',
+            name   : '',
+            text   : '',
 
             files: [],
 
@@ -121,6 +133,7 @@ export default {
             form.append('email', this.email ? this.email : null);
             form.append('phone', this.phone ? this.phone : null);
             form.append('name', this.name ? this.name : null);
+            form.append('account', this.account ? this.account : null);
             form.append('text', this.text ? this.text : null);
 
             this.files.forEach((file, index) => {
@@ -173,10 +186,16 @@ export default {
         text () {
             localStorage.setItem('requestText', this.text);
         },
+        account () {
+            localStorage.setItem('requestAccount', this.account);
+        },
     },
     computed: {
+        accountActions () {
+            return accountActions;
+        },
         disableSubmit () {
-            return !this.files.length || !this.text || this.pending || this.fileSizeExceed;
+            return !this.files.length || !this.account || !this.text || this.pending || this.fileSizeExceed;
         },
         filesSize () {
             let result = 0;

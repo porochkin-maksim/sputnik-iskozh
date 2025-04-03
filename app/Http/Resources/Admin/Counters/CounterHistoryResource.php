@@ -25,15 +25,16 @@ readonly class CounterHistoryResource extends AbstractResource
         $access  = \lc::roleDecorator();
         $counter = $this->counterHistory->getCounter();
 
-        $transaction = $this->counterHistory->getTransaction();
+        $transaction   = $this->counterHistory->getTransaction();
+        $previousValue = $this->previousCounterHistory?->getValue() ? : $this->counterHistory->getPreviousValue();
 
         $result = [
             'id'            => $this->counterHistory->getId(),
             'counterId'     => $this->counterHistory->getCounterId(),
             'value'         => $this->counterHistory->getValue(),
             'isVerified'    => $this->counterHistory->isVerified(),
-            'before'        => $this->previousCounterHistory?->getValue(),
-            'delta'         => $this?->previousCounterHistory ? ($this->counterHistory->getValue() - $this?->previousCounterHistory->getValue()) : null,
+            'before'        => $previousValue,
+            'delta'         => $previousValue ? ($this->counterHistory->getValue() - $previousValue) : null,
             'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'days'          => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
             'file'          => $this->counterHistory->getFile(),
@@ -41,7 +42,7 @@ readonly class CounterHistoryResource extends AbstractResource
             'accountId'     => $counter?->getAccountId(),
             'accountNumber' => $counter?->getAccount()?->getNumber(),
             'isInvoicing'   => $counter?->isInvoicing(),
-            'transaction' => $transaction ? new TransactionResource($transaction) : null,
+            'transaction'   => $transaction ? new TransactionResource($transaction) : null,
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
                     type         : HistoryType::COUNTER,
