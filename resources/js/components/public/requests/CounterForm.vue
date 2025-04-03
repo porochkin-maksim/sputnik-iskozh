@@ -8,22 +8,24 @@
         <custom-input v-model="account"
                       :classes="'my-3'"
                       @change="clearError('account')"
+                      :required="true"
                       :errors="errors.account"
                       :label="'Номер дачи и номер участка (например: 999/1 )'"
+                      @submit="sendForm"
+        />
+        <custom-input v-model="value"
+                      :classes="'my-3'"
+                      @change="clearError('value')"
+                      :required="true"
+                      :errors="errors.value"
+                      :label="'Показания счётчика'"
                       @submit="sendForm"
         />
         <custom-input v-model="counter"
                       :classes="'my-3'"
                       @change="clearError('counter')"
                       :errors="errors.counter"
-                      :label="'Номер счётчика'"
-                      @submit="sendForm"
-        />
-        <custom-input v-model="value"
-                      :classes="'my-3'"
-                      @change="clearError('value')"
-                      :errors="errors.value"
-                      :label="'Показания счётчика'"
+                      :label="'Номер счётчика (по возможности)'"
                       @submit="sendForm"
         />
         <custom-input v-model="name"
@@ -170,7 +172,7 @@ export default {
     },
     computed: {
         disableSubmit () {
-            return !this.account || !this.counter || !this.value || !this.file || this.pending;
+            return !this.account || !this.value || !this.file || this.pending;
         },
         filesSize () {
             let result = 0;
