@@ -6,10 +6,8 @@ use Core\Db\Searcher\Models\SearchResponse;
 use Core\Domains\Option\Collections\Options;
 use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Factories\OptionFactory;
-use Core\Domains\Option\Factories\TariffFactory;
 use Core\Domains\Option\Models\OptionDTO;
 use Core\Domains\Option\Models\OptionSearcher;
-use Core\Domains\Option\Models\Tariff\Tariff;
 use Core\Domains\Option\Repositories\OptionRepository;
 
 readonly class OptionService
@@ -17,7 +15,6 @@ readonly class OptionService
     public function __construct(
         private OptionRepository $optionRepository,
         private OptionFactory    $optionFactory,
-        private TariffFactory    $tariffFactory,
     )
     {
     }
@@ -75,7 +72,7 @@ readonly class OptionService
         return $this->optionFactory->makeDtoFromObject($option);
     }
 
-    public function getByType(OptionEnum $type, OptionFactory $optionFactory = null): null|OptionDTO|Tariff
+    public function getByType(OptionEnum $type, OptionFactory $optionFactory = null): null|OptionDTO
     {
         $option = $this->getById($type->value, $optionFactory);
 
@@ -85,35 +82,5 @@ readonly class OptionService
         }
 
         return $option;
-    }
-
-    public function getElectricTariff(): Tariff
-    {
-        $type = OptionEnum::ELECTRIC_TARIFF;
-        return $this->getByType($type, $this->tariffFactory);
-    }
-
-    public function getSntElectricTariff(): Tariff
-    {
-        $type = OptionEnum::ELECTRIC_SNT_TARIFF;
-        return $this->getByType($type, $this->tariffFactory);
-    }
-
-    public function getMembershipFee(): Tariff
-    {
-        $type = OptionEnum::MEMBERSHIP_FEE;
-        return $this->getByType($type, $this->tariffFactory);
-    }
-
-    public function getGarbageCollectionFee(): Tariff
-    {
-        $type = OptionEnum::GARBAGE_COLLECTION_FEE;
-        return $this->getByType($type, $this->tariffFactory);
-    }
-
-    public function getRoadCollectionFee(): Tariff
-    {
-        $type = OptionEnum::ROAD_REPAIR_FEE;
-        return $this->getByType($type, $this->tariffFactory);
     }
 }

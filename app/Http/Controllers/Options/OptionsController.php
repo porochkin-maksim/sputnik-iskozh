@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Options;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Option\Enums\OptionEnum;
@@ -15,7 +14,6 @@ use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class OptionsController extends Controller
 {
@@ -30,11 +28,6 @@ class OptionsController extends Controller
 
     private function checkAccess(): void
     {
-        $role = $this->roleService->getByUserId(Auth::id());
-
-        // if ( ! Permission::canEditOptions($role)) {
-        //     abort(403);
-        // }
     }
 
     public function index(): View

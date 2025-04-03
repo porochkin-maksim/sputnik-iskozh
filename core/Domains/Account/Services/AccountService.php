@@ -7,21 +7,18 @@ use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Account\Models\AccountDTO;
-use Core\Domains\Account\Models\AccountInfo;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Account\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Core\Domains\Option\Services\OptionService;
 
 readonly class AccountService
 {
     public function __construct(
         private AccountFactory        $accountFactory,
         private AccountRepository     $accountRepository,
-        private OptionService         $optionService,
         private HistoryChangesService $historyChangesService,
     )
     {
@@ -109,27 +106,6 @@ readonly class AccountService
     public function getSntAccount(): ?AccountDTO
     {
         return $this->getById(AccountIdEnum::SNT->value);
-    }
-
-    public function getAccountInfo(AccountDTO $account): AccountInfo
-    {
-        $electricTariff       = $this->optionService->getElectricTariff();
-        $membershipFee        = $this->optionService->getMembershipFee();
-        $garbageCollectionFee = $this->optionService->getGarbageCollectionFee();
-        $roadCollectionFee    = $this->optionService->getRoadCollectionFee();
-
-        $membershipFee        = $membershipFee->getMoney();
-        $electricTariff       = $electricTariff->getMoney();
-        $garbageCollectionFee = $garbageCollectionFee->getMoney();
-        $roadCollectionFee    = $roadCollectionFee->getMoney();
-
-        return new AccountInfo(
-            $account,
-            $membershipFee,
-            $electricTariff,
-            $garbageCollectionFee,
-            $roadCollectionFee,
-        );
     }
 
     public function deleteById(int $id): bool
