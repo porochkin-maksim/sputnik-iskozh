@@ -3,6 +3,7 @@
 namespace Core\Domains\Billing\Transaction\Services;
 
 use Core\Domains\Billing\Transaction\Collections\TransactionCollection;
+use Core\Domains\Billing\Transaction\Events\TransactionDeletedEvent;
 use Core\Domains\Billing\Transaction\Events\TransactionsUpdatedEvent;
 use Core\Domains\Billing\Transaction\Factories\TransactionFactory;
 use Core\Domains\Billing\Transaction\Models\TransactionComparator;
@@ -10,9 +11,12 @@ use Core\Domains\Billing\Transaction\Models\TransactionDTO;
 use Core\Domains\Billing\Transaction\Models\TransactionSearcher;
 use Core\Domains\Billing\Transaction\Repositories\TransactionRepository;
 use Core\Domains\Billing\Transaction\Responses\SearchResponse;
+use Core\Domains\Billing\TransactionToObject\TransactionToObjectLocator;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 readonly class TransactionService
 {
@@ -101,22 +105,33 @@ readonly class TransactionService
 
     public function deleteById(int $id): bool
     {
-        $transaction = $this->getById($id);
+        DB::beginTransaction();
+        try {
+            $transaction = $this->getById($id);
 
-        if ( ! $transaction) {
-            return false;
+            if ( ! $transaction) {
+                return false;
+            }
+
+            $this->historyChangesService->writeToHistory(
+                Event::DELETE,
+                HistoryType::INVOICE,
+                $transaction->getInvoiceId(),
+                HistoryType::TRANSACTION,
+                $transaction->getId(),
+            );
+
+            $result = $this->transactionRepository->deleteById($id);
+
+            TransactionDeletedEvent::dispatch($transaction);
+
+            DB::commit();
+
+            return $result;
         }
-
-        $this->historyChangesService->writeToHistory(
-            Event::DELETE,
-            HistoryType::INVOICE,
-            $transaction->getInvoiceId(),
-            HistoryType::TRANSACTION,
-            $transaction->getId(),
-        );
-
-        TransactionsUpdatedEvent::dispatch($transaction->getInvoiceId());
-
-        return $this->transactionRepository->deleteById($id);
+        catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

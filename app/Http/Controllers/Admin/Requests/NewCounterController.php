@@ -7,7 +7,7 @@ use App\Http\Requests\Admin\Counters\ConfirmRequest;
 use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
 use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Jobs\CreateTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
@@ -94,13 +94,13 @@ class NewCounterController extends Controller
             $history->setIsVerified(true);
             $history = $this->counterHistoryService->save($history);
 
-            CreateTransactionForCounterChangeJob::dispatch($history->getId());
+            dispatch(new CheckTransactionForCounterChangeJob($history->getId()));
         }
     }
 
     public function delete(int $id): bool
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_DROP)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_DROP)) {
             abort(403);
         }
 

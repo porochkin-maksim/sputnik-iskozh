@@ -48,6 +48,7 @@ class Counter extends Model implements CastsInterface
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
+            ->with(CounterHistory::TRANSACTON)
             ->orderBy(CounterHistory::DATE, SearcherInterface::SORT_ORDER_ASC)
             ->orderBy(CounterHistory::CREATED_AT, SearcherInterface::SORT_ORDER_ASC)
             ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_ASC)

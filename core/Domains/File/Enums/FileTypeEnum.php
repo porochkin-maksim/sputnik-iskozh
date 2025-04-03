@@ -5,7 +5,7 @@ namespace Core\Domains\File\Enums;
 /**
  * @method tryFrom(int|string|null $value): ?static
  */
-enum TypeEnum: int
+enum FileTypeEnum: int
 {
     case CONSTITUTION = 1;
     case REPORT       = 2;

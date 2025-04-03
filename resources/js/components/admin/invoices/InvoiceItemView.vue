@@ -40,8 +40,7 @@
                     v-model:reload="reload" />
     <div class="border-top my-2"></div>
     <counters-block v-if="account"
-                    :account="account"
-                    @history-added="onHistoryAdded" />
+                    :account="account"/>
 </template>
 
 <script>
@@ -125,11 +124,6 @@ export default {
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
-        },
-        onHistoryAdded () {
-            setTimeout(() => {
-                this.reload = true;
-            }, 700);
         },
     },
     computed: {

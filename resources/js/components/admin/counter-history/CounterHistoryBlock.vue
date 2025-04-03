@@ -276,7 +276,7 @@ export default {
                 return;
             }
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryDelete, {
-                id: id,
+                historyId: id,
             });
 
             window.axios[Url.Routes.adminCounterHistoryDelete.method](

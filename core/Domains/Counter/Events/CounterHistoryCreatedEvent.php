@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Counter\Events;
 
+use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -10,7 +11,7 @@ class CounterHistoryCreatedEvent
     use Dispatchable, SerializesModels;
 
     public function __construct(
-        public int $counterHistoryId,
+        public CounterHistoryDTO $counterHistory,
     )
     {
     }

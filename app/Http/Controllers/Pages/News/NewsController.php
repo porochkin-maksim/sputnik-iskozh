@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Pages\News;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
 use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\Factories\NewsFactory;
@@ -194,7 +194,7 @@ class NewsController extends Controller
             abort(403);
         }
         $file = $this->fileService->getById($request->getId());
-        if ($file && $file->getType() === TypeEnum::NEWS) {
+        if ($file && $file->getType() === FileTypeEnum::NEWS) {
             $file->setName($request->getName());
             $this->fileService->save($file);
 
@@ -210,7 +210,7 @@ class NewsController extends Controller
             abort(403);
         }
         $file = $this->fileService->getById($id);
-        if ($file?->getType() !== TypeEnum::NEWS) {
+        if ($file?->getType() !== FileTypeEnum::NEWS) {
             abort(403);
         }
 

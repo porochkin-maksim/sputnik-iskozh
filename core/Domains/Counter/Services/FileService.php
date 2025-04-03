@@ -2,8 +2,9 @@
 
 namespace Core\Domains\Counter\Services;
 
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Models\FileDTO;
+use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Services\FileService as BaseFileService;
 use Illuminate\Http\UploadedFile;
 
@@ -17,11 +18,12 @@ class FileService
     {
     }
 
-    public function store(UploadedFile $file, int $counterId): FileDTO
+    public function store(UploadedFile $file, int $historyId): FileDTO
     {
         $dto = $this->fileService->store($file, self::FILE_DIR, false);
-        $dto->setType(TypeEnum::COUNTER)
-            ->setRelatedId($counterId);
+        $dto->setType(FileTypeEnum::COUNTER)
+            ->setRelatedId($historyId)
+        ;
 
         $this->fileService->save($dto);
 
@@ -33,7 +35,7 @@ class FileService
         return $this->fileService->getById($id);
     }
 
-    public function deleteById(int $id): bool
+    public function deleteById(?int $id): bool
     {
         return $this->fileService->deleteById($id);
     }
@@ -41,5 +43,15 @@ class FileService
     public function save(FileDTO $file): FileDTO
     {
         return $this->fileService->save($file);
+    }
+
+    public function getByHistoryId(?int $historyId): ?FileDTO
+    {
+        $searcher = new FileSearcher();
+        $searcher->setType(FileTypeEnum::COUNTER)
+            ->setRelatedId($historyId)
+        ;
+
+        return $this->fileService->search($searcher)->getItems()->first();
     }
 }

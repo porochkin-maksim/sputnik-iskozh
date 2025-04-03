@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\File\File;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -53,6 +53,6 @@ class Report extends Model
 
     public function files(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)->where(File::TYPE, TypeEnum::REPORT->value);
+        return $this->hasMany(File::class, File::RELATED_ID)->where(File::TYPE, FileTypeEnum::REPORT->value);
     }
 }

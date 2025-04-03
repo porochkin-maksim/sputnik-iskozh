@@ -5,6 +5,7 @@ export default {
     all          : 'all',
     category     : 'category',
     data         : 'data',
+    date         : 'date',
     description  : 'description',
     email        : 'email',
     endAt        : 'end_at',

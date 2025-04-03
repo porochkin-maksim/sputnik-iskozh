@@ -5,13 +5,13 @@ namespace Core\Domains\File\Models;
 use App\Models\File\File;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 
 class FileSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
-    public function setType(?TypeEnum $type): static
+    public function setType(?FileTypeEnum $type): static
     {
         if ($type) {
             $this->addWhere(File::TYPE, SearcherInterface::EQUALS, $type->value);
@@ -23,7 +23,7 @@ class FileSearcher implements SearcherInterface
         return $this;
     }
 
-    public function setTypes(?TypeEnum ...$type): static
+    public function setTypes(?FileTypeEnum ...$type): static
     {
         foreach ($type as $t) {
             $this->setType($t);

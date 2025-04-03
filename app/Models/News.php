@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -54,7 +54,7 @@ class News extends Model implements CastsInterface
     public function files(): HasMany
     {
         return $this->hasMany(File::class, File::RELATED_ID)
-            ->where(File::TYPE, TypeEnum::NEWS->value)
+            ->where(File::TYPE, FileTypeEnum::NEWS->value)
             ->orderBy(FILE::ORDER);
     }
 }
