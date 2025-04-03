@@ -12,7 +12,9 @@ use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use lc;
+use Throwable;
 
 class NewCounterController extends Controller
 {
@@ -81,20 +83,49 @@ class NewCounterController extends Controller
             abort(403);
         }
 
-        $searcher = new CounterHistorySearcher();
-        $searcher
-            ->setIds($request->getIds())
-            ->setVerified(false)
-            ->defaultSort()
-        ;
+        DB::beginTransaction();
+        try {
+            $searcher = new CounterHistorySearcher();
+            $searcher
+                ->setIds($request->getIds())
+                ->setVerified(false)
+                ->defaultSort()
+            ;
 
-        $counterHistories = $this->counterHistoryService->search($searcher)->getItems();
+            $counterHistories = $this->counterHistoryService->search($searcher)->getItems();
 
-        foreach ($counterHistories as $history) {
-            $history->setIsVerified(true);
-            $history = $this->counterHistoryService->save($history);
+            foreach ($counterHistories as $history) {
+                $history->setIsVerified(true);
+                $history = $this->counterHistoryService->save($history);
 
-            dispatch(new CheckTransactionForCounterChangeJob($history->getId()));
+                dispatch(new CheckTransactionForCounterChangeJob($history->getId()));
+            }
+
+            DB::commit();
+        }
+        catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function confirmDelete(ConfirmRequest $request): void
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_DROP)) {
+            abort(403);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->getIds() as $id) {
+                $this->counterHistoryService->deleteById($id);
+            }
+
+            DB::commit();
+        }
+        catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 

@@ -281,6 +281,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::post('/link', [Controllers\Admin\Requests\NewCounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
                     Route::delete('/delete/{historyId}', [Controllers\Admin\Requests\NewCounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
                     Route::post('/confirm', [Controllers\Admin\Requests\NewCounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
+                    Route::post('/confirm-delete', [Controllers\Admin\Requests\NewCounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM_DELETE);
                 });
             });
         });

@@ -61,6 +61,13 @@
         "uri": "\/admin\/counter-history\/json\/confirm",
         "args": []
     },
+    "adminCounterHistoryConfirmDelete": {
+        "name": "admin.counter-history.confirm-delete",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/confirm-delete",
+        "args": []
+    },
     "adminCounterHistoryCreateTransaction": {
         "name": "admin.counter-history.create-transaction",
         "displayName": "",
