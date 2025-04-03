@@ -72,14 +72,14 @@
                         </div>
                     </th>
                 </tr>
-                <tr v-for="history in counter.history">
+                <tr v-for="history in counter.history.histories">
                     <td class="text-center">
                         <div>{{ $formatDate(history.date) }}</div>
                         <div>{{ history.days === null ? '' : '+' + history.days + ' дней' }}</div>
                     </td>
                     <td class="text-end">
-                        <div>{{ history.value.toLocaleString('ru-RU') }}</div>
-                        <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
+                        <div>{{ history.value?.toLocaleString('ru-RU') }}</div>
+                        <div>{{ history.delta === null ? '' : '+' + history.delta?.toLocaleString('ru-RU') + 'кВт' }}</div>
                     </td>
                     <td class="text-center">
                         <span v-if="history.isVerified"><i class="fa fa-check text-success"></i></span>

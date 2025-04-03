@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
+use App\Http\Resources\Admin\Transactions\TransactionResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
@@ -24,17 +25,23 @@ readonly class CounterHistoryResource extends AbstractResource
         $access  = \lc::roleDecorator();
         $counter = $this->counterHistory->getCounter();
 
-        return [
+        $transaction = $this->counterHistory->getTransaction();
+
+        $result = [
             'id'            => $this->counterHistory->getId(),
-            'value'         => $this->counterHistory->getValue(),
-            'previousValue' => $this->counterHistory->getPreviousValue(),
-            'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
-            'file'          => $this->counterHistory->getFile(),
             'counterId'     => $this->counterHistory->getCounterId(),
+            'value'         => $this->counterHistory->getValue(),
+            'isVerified'    => $this->counterHistory->isVerified(),
+            'before'        => $this->previousCounterHistory?->getValue(),
+            'delta'         => $this?->previousCounterHistory ? ($this->counterHistory->getValue() - $this?->previousCounterHistory->getValue()) : null,
+            'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
+            'days'          => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
+            'file'          => $this->counterHistory->getFile(),
             'counterNumber' => $counter?->getNumber(),
             'accountId'     => $counter?->getAccountId(),
             'accountNumber' => $counter?->getAccount()?->getNumber(),
             'isInvoicing'   => $counter?->isInvoicing(),
+            'transaction' => $transaction ? new TransactionResource($transaction) : null,
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
                     type         : HistoryType::COUNTER,
@@ -46,5 +53,11 @@ readonly class CounterHistoryResource extends AbstractResource
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $counter?->getAccountId()])
                 : null,
         ];
+
+        if ($transaction && $access->can(PermissionEnum::INVOICES_VIEW)) {
+            $result['invoiceUrl'] = route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $transaction->getInvoiceId()]);
+        }
+
+        return $result;
     }
 }

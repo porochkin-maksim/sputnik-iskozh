@@ -64,13 +64,13 @@
                 <td>{{ history.date }}</td>
                 <td class="text-end">
                     {{ history.value }}
-                    <template v-if="history.previousValue">
+                    <template v-if="history.before">
                         <br>
-                        +{{ history.value - history.previousValue }}кВт
+                        +{{ history.value - history.before }}кВт
                     </template>
 
                 </td>
-                <td class="text-end" v-if="canCheckAction">{{ history.previousValue }}</td>
+                <td class="text-end" v-if="canCheckAction">{{ history.before }}</td>
                 <td class="text-center">
                     <i v-if="history.isInvoicing"
                        class="fa fa-check text-success"></i>

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Resources\Profile\Counters;
 
@@ -20,13 +20,11 @@ readonly class CounterHistoryListResource extends AbstractResource
         if ($this->counterHistoryCollection->isEmpty()) {
             return $result;
         }
-        $previous = null;
-        foreach ($this->counterHistoryCollection as $counterHistory) {
-            $result[] = new CounterHistoryResource($counterHistory, $previous);
 
-            $previous = $counterHistory;
+        foreach ($this->counterHistoryCollection as $counterHistory) {
+            $result[] = new CounterHistoryResource($counterHistory, $this->counterHistoryCollection->getById($counterHistory->getPreviousId()));
         }
 
-        return array_reverse($result);
+        return $result;
     }
 }

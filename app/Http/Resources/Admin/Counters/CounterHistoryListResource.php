@@ -30,13 +30,11 @@ readonly class CounterHistoryListResource extends AbstractResource
         if ($this->counterHistoryCollection->isEmpty()) {
             return $result;
         }
-        $previous = null;
-        foreach ($this->counterHistoryCollection as $counterHistory) {
-            $result['histories'][] = new CounterHistoryResource($counterHistory, $previous);
 
-            $previous = $counterHistory;
+        foreach ($this->counterHistoryCollection as $counterHistory) {
+            $result['histories'][] = new CounterHistoryResource($counterHistory, $this->counterHistoryCollection->getById($counterHistory->getPreviousId()));
         }
 
-        return array_reverse($result);
+        return $result;
     }
 }

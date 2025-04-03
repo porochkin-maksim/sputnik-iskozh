@@ -29,8 +29,8 @@ class Kernel extends ConsoleKernel
             ->name('queue.restart')
             ->withoutOverlapping();
 
-        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --stop-when-empty --verbose', implode(',', QueueEnum::values())))
-            ->everyFiveSeconds()
+        $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --verbose', implode(',', QueueEnum::values())))
+            ->everySecond()
             ->name('queue.work-normal')
             ->withoutOverlapping();
     }

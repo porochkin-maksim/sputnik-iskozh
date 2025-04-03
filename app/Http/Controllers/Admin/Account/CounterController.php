@@ -7,7 +7,7 @@ use App\Http\Requests\Admin\Counters\AddHistoryRequest;
 use App\Http\Requests\Admin\Counters\CreateRequest;
 use App\Http\Requests\Admin\Counters\SaveRequest;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Resources\Profile\Counters\CounterListResource;
+use App\Http\Resources\Admin\Counters\CounterListResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;

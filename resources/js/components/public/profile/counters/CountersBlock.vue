@@ -1,17 +1,15 @@
 <template>
-    <div>
-        <table class="table table-bordered align-middle m-0 w-auto"
-               v-if="counters && counters.length">
-            <tbody>
-            <template v-for="item in counters">
-                <tr class="text-center" :class="[currentCounterId === item.id ? 'table-info' : '']">
-                    <th colspan="2"
-                        class="border-end-0">Счётчик {{ item.number }}
-                    </th>
-                    <th class="border-start-0 d-flex justify-content-end">
+    <div v-if="counters && counters.length">
+        <template v-for="item in counters">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-6 border bg-light d-flex justify-content-between align-items-center p-2">
+                    <div>
+                        <b>Счётчик {{ item.number }}</b>
+                    </div>
+                    <div>
                         <button class="btn btn-sm btn-success"
-                                v-if="currentCounterId === item.id && canAddNewHistory(item.id)"
-                                @click="addHistoryValue(item.id)"
+                                v-if="currentCounterId === item.id && canAddNewHistory(item)"
+                                @click="addHistoryValue(item)"
                         >Добавить показания
                         </button>
                         <button class="btn btn-light border-secondary btn-sm"
@@ -19,37 +17,40 @@
                                 @click="toggleCounterBlock(item.id)">
                             Подробнее <i class="fa fa-chevron-down"></i>
                         </button>
-                    </th>
-                </tr>
-                <template v-if="currentCounterId === item.id">
-                    <tr class="text-center align-middle">
-                        <th>Дата фиксации</th>
-                        <th>Показания (кВт)</th>
-                        <th>Фото</th>
-                    </tr>
-                    <tr v-for="history in item.history">
-                        <td class="text-center">
-                            <div>{{ history.date }}</div>
-                            <div>{{ history.days === null ? '' : '+' + history.days + ' дней' }}</div>
-                        </td>
-                        <td class="text-end">
-                            <div>{{ history.value.toLocaleString('ru-RU') }}</div>
-                            <div>{{ history.delta === null ? '' : '+' + history.delta.toLocaleString('ru-RU') + 'кВт' }}</div>
-                        </td>
-                        <td>
-                            <file-item :file="history.file"
-                                       v-if="history.file"
-                                       :edit="false"
-                            />
-                        </td>
-                    </tr>
+                    </div>
+                </div>
+            </div>
+            <template v-if="currentCounterId === item.id">
+                <template v-for="history in item.history">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-8 col-lg-6 border border-top-0  py-2">
+                            <div>
+                                <b>Показания:</b> {{ history.value.toLocaleString('ru-RU') }}{{ history.delta === null ? '' : ' (' + history.delta.toLocaleString('ru-RU') + 'кВт)' }}
+                            </div>
+                            <div class="mt-2">
+                                <b>Дата:</b> {{ $formatDate(history.date) }}{{ history.days === null ? '' : ' (+' + history.days + ' дней)' }}
+                            </div>
+                            <div class="mt-2">
+                                <b>Статус:</b> <b :class="history.isVerified ? 'text-success' : 'text-secondary'"> {{ history.isVerified ? 'Проверено' : 'Не проверено' }}</b>
+                            </div>
+                            <div class="mt-2"
+                                 v-if="history.transaction">
+                                <b>Оплачено:</b> {{ $formatMoney(history.transaction.payed) }}/{{ $formatMoney(history.transaction.cost) }} по тарифу {{ $formatMoney(history.transaction.tariff) }}
+                            </div>
+                            <div class="mt-2">
+                                <file-item :file="history.file"
+                                           v-if="history.file"
+                                           :edit="false"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </template>
             </template>
-            </tbody>
-        </table>
+        </template>
     </div>
-    <div class="d-flex align-items-center justify-content-between mt-2">
-        <div class="d-flex">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6 border bg-light d-flex justify-content-between align-items-center p-2">
             <button class="btn btn-success me-2"
                     v-if="showAddCounterButton"
                     @click="addCounter">Добавить счётчик
@@ -159,7 +160,12 @@ export default {
         listAction () {
             window.axios[Url.Routes.profileCounterList.method](Url.Routes.profileCounterList.uri).then(response => {
                 this.counters         = response.data.counters;
-                this.currentCounterId = this.counters.length > 0 ? this.counters[0].id : null;
+                if (this.id !== null) {
+                    this.currentCounterId = this.id;
+                }
+                else {
+                    this.currentCounterId = this.counters.length > 0 ? this.counters[0].id : null;
+                }
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
@@ -204,30 +210,25 @@ export default {
             this.hideDialog = true;
             this.file       = null;
             this.mode       = null;
-            this.id         = null;
             this.listAction();
         },
         addCounter () {
             this.mode       = 1;
             this.showDialog = true;
         },
-        addHistoryValue (id) {
-            this.value = this.getCounter(id).value;
+        addHistoryValue (item) {
+            this.value = item.value;
 
             this.mode       = 2;
             this.showDialog = true;
-            this.id         = id;
+            this.id         = item.id;
         },
-        canAddNewHistory (id) {
-            const counter     = this.getCounter(id);
-            const lastHistory = counter.history[0];
+        canAddNewHistory (item) {
+            const lastHistory = item.history[0];
             if (lastHistory) {
                 return lastHistory.actions.create;
             }
             return true;
-        },
-        getCounter (id) {
-            return this.counters.find(item => item.id === id);
         },
         closeAction () {
             this.showDialog = false;
@@ -250,7 +251,7 @@ export default {
             return Url;
         },
         showAddCounterButton () {
-            return !this.counters || !this.counters.length || this.counters.length <= 1;
+            return !this.counters || !this.counters.length || this.counters.length <= 2;
         },
         canSubmitAction () {
             if (this.mode === 1) {
