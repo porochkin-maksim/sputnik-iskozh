@@ -120,15 +120,13 @@ readonly class FileService
         return $this->search($searcher)->getItems()->first();
     }
 
-    public function deleteById(int $id): bool
+    public function deleteById(?int $id): bool
     {
-        $file = $this->getById($id);
-        if ($file) {
-            if ($this->fileRepository->deleteById($id)) {
-                $this->removeFromStorage($file->getPath());
+        $file = $id ? $this->getById($id) : null;
+        if ($file && $this->fileRepository->deleteById($id)) {
+            $this->removeFromStorage($file->getPath());
 
-                return true;
-            }
+            return true;
         }
 
         return false;

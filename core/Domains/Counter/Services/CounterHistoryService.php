@@ -3,10 +3,13 @@
 namespace Core\Domains\Counter\Services;
 
 use App\Models\Counter\Counter;
+use App\Models\Counter\CounterHistory;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Events\CounterHistoryCreatedEvent;
+use Core\Domains\Counter\Events\CounterHistoryDeletingEvent;
+use Core\Domains\Counter\Events\CounterHistoryUpdatedEvent;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
 use Core\Domains\Counter\Models\CounterHistoryComparator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
@@ -65,7 +68,10 @@ readonly class CounterHistoryService
         );
 
         if ( ! $counterHistory->getId()) {
-            CounterHistoryCreatedEvent::dispatch($current->getId());
+            CounterHistoryCreatedEvent::dispatch($current);
+        }
+        else {
+            CounterHistoryUpdatedEvent::dispatch($current, $before);
         }
 
         return $current;
@@ -94,9 +100,7 @@ readonly class CounterHistoryService
             return false;
         }
 
-        if ($history->getFile()) {
-            CounterLocator::FileService()->deleteById($history->getFile()->getId());
-        }
+        CounterHistoryDeletingEvent::dispatch($id);
 
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
@@ -110,22 +114,20 @@ readonly class CounterHistoryService
 
     public function getPrevios(CounterHistoryDTO $counterHistory): ?CounterHistoryDTO
     {
-        $counterSearcher = new CounterSearcher();
-        $counterSearcher
-            ->setId($counterHistory->getCounterId())
-            ->addWhere(Counter::IS_INVOICING, SearcherInterface::EQUALS, true)
+        $counterHistorySearcher = new CounterHistorySearcher();
+        $counterHistorySearcher->setCounterId($counterHistory->getCounterId())
+            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_ASC)
         ;
-        $counter = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
+
+        $histories = $this->search($counterHistorySearcher)->getItems();
 
         $result = null;
-        if ($counter) {
-            foreach ($counter->getHistoryCollection()->sortById() as $item) {
-                if ((int) $item->getId() >= (int) $counterHistory->getId()) {
-                    break;
-                }
-
-                $result = $item;
+        foreach ($histories as $item) {
+            if ($item->getDate()?->gte($counterHistory->getDate())) {
+                break;
             }
+
+            $result = $item;
         }
 
         return $result;

@@ -2,7 +2,7 @@
 
 namespace Core\Domains\News\Services;
 
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Services\FileService as BaseFileService;
 use Illuminate\Http\UploadedFile;
@@ -20,7 +20,7 @@ class FileService
     public function store(UploadedFile $file, int $newsId): FileDTO
     {
         $dto = $this->fileService->store($file, self::FILE_DIR);
-        $dto->setType(TypeEnum::NEWS)
+        $dto->setType(FileTypeEnum::NEWS)
             ->setRelatedId($newsId);
 
         $this->fileService->save($dto);

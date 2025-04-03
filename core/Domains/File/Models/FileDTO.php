@@ -3,7 +3,7 @@
 namespace Core\Domains\File\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Models\File\Dossier;
 use Core\Enums\DateTimeFormat;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +13,9 @@ class FileDTO implements \JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int      $id        = null;
-    private ?TypeEnum $type      = null;
-    private ?int      $relatedId = null;
+    private ?int          $id        = null;
+    private ?FileTypeEnum $type      = null;
+    private ?int          $relatedId = null;
     private ?int      $parentId  = null;
     private ?int      $order     = null;
     private ?string   $ext       = null;
@@ -34,12 +34,12 @@ class FileDTO implements \JsonSerializable
         return $this;
     }
 
-    public function getType(): ?TypeEnum
+    public function getType(): ?FileTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(?TypeEnum $type): static
+    public function setType(?FileTypeEnum $type): static
     {
         $this->type = $type;
 

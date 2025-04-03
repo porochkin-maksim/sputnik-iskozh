@@ -6,18 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Counters\AddHistoryRequest;
 use App\Http\Requests\Admin\Counters\CreateRequest;
 use App\Http\Requests\Admin\Counters\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Profile\Counters\CounterListResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Jobs\CreateTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Requests\RequestArgumentsEnum;
 use Core\Responses\ResponsesEnum;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use lc;
@@ -30,6 +37,7 @@ class CounterController extends Controller
     private CounterHistoryService $counterHistoryService;
     private CounterHistoryFactory $counterHistoryFactory;
     private FileService           $fileService;
+    private HistoryChangesService $historyChangesService;
 
     public function __construct()
     {
@@ -39,6 +47,7 @@ class CounterController extends Controller
         $this->counterHistoryService = CounterLocator::CounterHistoryService();
         $this->counterHistoryFactory = CounterLocator::CounterHistoryFactory();
         $this->fileService           = CounterLocator::FileService();
+        $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
     }
 
     public function list(int $accountId): JsonResponse
@@ -62,8 +71,12 @@ class CounterController extends Controller
 
         $account = $this->accountService->getById($accountId);
 
-        if ($account) {
-            DB::beginTransaction();
+        if ( ! $account) {
+            abort(404);
+        }
+
+        DB::beginTransaction();
+        try {
             $counter = $this->counterFactory->makeDefault()
                 ->setIsInvoicing($request->getIsInvoicing())
                 ->setNumber($request->getNumber())
@@ -84,6 +97,10 @@ class CounterController extends Controller
             }
             DB::commit();
         }
+        catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function save(int $accountId, SaveRequest $request): void
@@ -92,16 +109,18 @@ class CounterController extends Controller
             abort(403);
         }
 
-        if ($this->accountService->getById($accountId)) {
-            DB::beginTransaction();
-            $counter = $this->counterService->getById($request->getId())
-                ->setIsInvoicing($request->getIsInvoicing())
-                ->setNumber($request->getNumber())
-            ;
+        $counter = $this->counterService->getById($request->getId());
 
-            $this->counterService->save($counter);
-            DB::commit();
+        if ( ! $counter || $counter->getAccountId() !== $accountId) {
+            abort(404);
         }
+
+        $counter
+            ->setIsInvoicing($request->getIsInvoicing())
+            ->setNumber($request->getNumber())
+        ;
+
+        $this->counterService->save($counter);
     }
 
     public function addValue(int $accountId, AddHistoryRequest $request): void
@@ -111,26 +130,93 @@ class CounterController extends Controller
         }
 
         DB::beginTransaction();
-        $counter = $this->counterService->getById($request->getCounterId());
+        try {
+            $counter = $this->counterService->getById($request->getCounterId());
 
-        if ( ! $counter) {
-            abort(404);
+            if ( ! $counter || $counter->getAccountId() !== $accountId) {
+                abort(404);
+            }
+
+            $history = $this->counterHistoryService->getById($request->getId())
+                ? : $this->counterHistoryFactory->makeDefault()
+                    ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
+                    ->setCounterId($counter->getId())
+            ;
+
+            $history = $history
+                ->setDate($request->getDate())
+                ->setIsVerified(true)
+                ->setValue($request->getValue())
+            ;
+
+            $history = $this->counterHistoryService->save($history);
+
+            if ($request->getId() && $request->getFile() !== null) {
+                $file = $this->fileService->getByHistoryId($history->getId());
+                $this->fileService->deleteById($file?->getId());
+            }
+
+            if ($request->getFile()) {
+                $this->fileService->store($request->getFile(), $history->getId());
+            }
+
+            DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function createTransaction(int $counterHistoryId): void
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
+            abort(403);
         }
 
-        $history = $this->counterHistoryFactory->makeDefault()
-            ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
-            ->setIsVerified(true)
-            ->setCounterId($counter->getId())
-            ->setValue($request->getValue())
-        ;
+        DB::beginTransaction();
+        try {
+            $history = $this->counterHistoryService->getById($counterHistoryId);
+            if ($history && ! $history->isVerified()) {
+                $history->setIsVerified(true);
+                $this->counterHistoryService->save($history);
+            }
 
-        $history = $this->counterHistoryService->save($history);
-
-        CreateTransactionForCounterChangeJob::dispatch($history->getId());
-
-        if ($request->getFile()) {
-            $this->fileService->store($request->getFile(), $history->getId());
+            dispatch_sync(new CheckTransactionForCounterChangeJob($counterHistoryId));
+            DB::commit();
         }
-        DB::commit();
+        catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function delete(int $accountId, int $counterId, DefaultRequest $request): bool
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_DROP)) {
+            abort(403);
+        }
+
+        $comment = $request->getStringOrNull(RequestArgumentsEnum::COMMENT);
+
+        DB::beginTransaction();
+        try {
+            $result = $this->counterService->deleteById($counterId);
+            if ($result && $comment) {
+                $this->historyChangesService->writeToHistory(
+                    Event::COMMON,
+                    HistoryType::COUNTER,
+                    $counterId,
+                    text: sprintf('Удалён по причине: %s', $comment),
+                );
+            }
+            DB::commit();
+
+            return $result;
+        }
+        catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

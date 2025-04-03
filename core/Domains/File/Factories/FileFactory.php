@@ -3,7 +3,7 @@
 namespace Core\Domains\File\Factories;
 
 use App\Models\File\File;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Models\FileDTO;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -33,7 +33,7 @@ class FileFactory
     {
         return (new FileDTO())
             ->setId($model->id)
-            ->setType($model->type ? TypeEnum::from($model->type) : null)
+            ->setType($model->type ? FileTypeEnum::from($model->type) : null)
             ->setRelatedId($model->related_id)
             ->setParentId($model->parent_id)
             ->setOrder($model->order)

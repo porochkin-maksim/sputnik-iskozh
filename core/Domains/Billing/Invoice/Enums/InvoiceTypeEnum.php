@@ -15,9 +15,9 @@ enum InvoiceTypeEnum: int
     public function name(): string
     {
         return match ($this) {
-            self::REGULAR => 'Регулярный',
-            self::INCOME  => 'Доход СНТ',
-            self::OUTCOME => 'Расход СНТ',
+            self::REGULAR => 'Регулярный доход',
+            self::INCOME  => 'Доход',
+            self::OUTCOME => 'Расход',
         };
     }
 }

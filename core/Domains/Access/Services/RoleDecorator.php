@@ -20,7 +20,7 @@ class RoleDecorator
 
     public function canAccessAdmin(): bool
     {
-        return $this->can(
+        return $this->canAny(
             PermissionEnum::ROLES_VIEW,
             PermissionEnum::USERS_VIEW,
             PermissionEnum::ACCOUNTS_VIEW,
@@ -37,6 +37,19 @@ class RoleDecorator
         $result = true;
         foreach ($permissions as $permission) {
             if ( ! $result) {
+                break;
+            }
+            $result = $this->role->hasPermission($permission);
+        }
+
+        return $result;
+    }
+
+    public function canAny(PermissionEnum ...$permissions): bool
+    {
+        $result = false;
+        foreach ($permissions as $permission) {
+            if ($result) {
                 break;
             }
             $result = $this->role->hasPermission($permission);

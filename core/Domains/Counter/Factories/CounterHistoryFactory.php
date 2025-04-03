@@ -2,8 +2,10 @@
 
 namespace Core\Domains\Counter\Factories;
 
+use App\Models\Billing\TransactionToObject;
 use App\Models\Counter\CounterHistory;
 use Carbon\Carbon;
+use Core\Domains\Billing\Transaction\TransactionLocator;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
@@ -67,6 +69,13 @@ readonly class CounterHistoryFactory
 
         if (isset($model->getRelations()[CounterHistory::COUNTER])) {
             $result->setCounter(CounterLocator::CounterFactory()->makeDtoFromObject($model->getRelation(CounterHistory::COUNTER)));
+        }
+
+        if (isset($model->getRelations()[CounterHistory::TRANSACTON])) {
+            $transaction = $model->getRelation(CounterHistory::TRANSACTON);
+            if (isset($transaction->getRelations()[TransactionToObject::TRANSACTION])) {
+                $result->setTransaction(TransactionLocator::TransactionFactory()->makeDtoFromObject($transaction->getRelation(TransactionToObject::TRANSACTION)));
+            }
         }
 
         return $result;

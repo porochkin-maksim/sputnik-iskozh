@@ -85,4 +85,21 @@ readonly class CounterService
 
         return $this->search($searcher)->getItems();
     }
+
+    public function deleteById(int $id): bool
+    {
+        $counter = $this->getById($id);
+
+        if ( ! $counter) {
+            return false;
+        }
+
+        $this->historyChangesService->writeToHistory(
+            Event::DELETE,
+            HistoryType::COUNTER,
+            $counter->getId(),
+        );
+
+        return $this->counterRepository->deleteById($id);
+    }
 }

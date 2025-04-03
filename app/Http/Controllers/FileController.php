@@ -6,7 +6,7 @@ use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Counter\CounterLocator;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\FileLocator;
 use Core\Domains\File\Models\FileDTO;
 use Illuminate\Support\Facades\Storage;
@@ -44,10 +44,10 @@ class FileController extends Controller
 
     private function checkAccess(FileDTO $fileDto): void
     {
-        if ($fileDto->getType() === TypeEnum::PAYMENT) {
+        if ($fileDto->getType() === FileTypeEnum::PAYMENT) {
             $this->checkPaymentAccess($fileDto);
         }
-        elseif ($fileDto->getType() === TypeEnum::COUNTER) {
+        elseif ($fileDto->getType() === FileTypeEnum::COUNTER) {
             $this->checkCounterAccess($fileDto);
         }
         else {

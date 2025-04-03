@@ -77,7 +77,7 @@ class SaveRequest extends AbstractRequest
         return $this->getInt(self::ACCOUNT);
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->getStringOrNull(self::PHONE);
     }

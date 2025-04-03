@@ -50,4 +50,11 @@ class CounterHistorySearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setPreviousId(int $counterHistoryId): static
+    {
+        $this->addWhere(CounterHistory::PREVIOUS_ID, SearcherInterface::EQUALS, $counterHistoryId);
+
+        return $this;
+    }
 }

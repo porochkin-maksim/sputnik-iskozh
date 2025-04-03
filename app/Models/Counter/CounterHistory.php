@@ -2,10 +2,12 @@
 
 namespace App\Models\Counter;
 
+use App\Models\Billing\TransactionToObject;
 use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\Billing\TransactionToObject\Enums\TransactionObjectTypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -34,9 +36,10 @@ class CounterHistory extends Model implements CastsInterface
     public const DATE        = 'date';
     public const IS_VERIFIED = 'is_verified';
 
-    public const FILE     = 'file';
-    public const COUNTER  = 'counter';
-    public const PREVIOUS = 'previous';
+    public const FILE       = 'file';
+    public const COUNTER    = 'counter';
+    public const PREVIOUS   = 'previous';
+    public const TRANSACTON = 'transacton';
 
     protected $guarded = [];
     protected $with    = [self::FILE, self::PREVIOUS];
@@ -52,7 +55,7 @@ class CounterHistory extends Model implements CastsInterface
     public function file(): HasOne
     {
         return $this->hasOne(File::class, File::RELATED_ID)
-            ->where(File::TYPE, TypeEnum::COUNTER->value)
+            ->where(File::TYPE, FileTypeEnum::COUNTER->value)
         ;
     }
 
@@ -69,30 +72,10 @@ class CounterHistory extends Model implements CastsInterface
         return $this->hasOne(self::class, self::ID, self::PREVIOUS_ID);
     }
 
-    // public function previous()
-    // {
-    //     // Используем created_at или другое уникальное поле для точного определения порядка
-    //     return $this->belongsTo(self::class, 'counter_id', 'counter_id')
-    //         ->select(['id', 'value', 'created_at']) // Добавляем created_at для точной сортировки
-    //         ->whereColumn('date', '<', 'counter_history.date')
-    //         ->orderByDesc('created_at'); // Сортируем по убыванию временной метки
-    // }
-
-    // public function getPreviousValueAttribute()
-    // {
-    //     $result = \DB::table('counter_history as ch1')
-    //         ->leftJoin('counter_history as ch2', function ($join) {
-    //             $join->on('ch1.counter_id', '=', 'ch2.counter_id')
-    //                 ->on('ch2.date', '<=', 'ch1.date')
-    //                 ->on('ch2.id', '<', 'ch1.id');
-    //         })
-    //         ->where('ch1.id', $this->id)
-    //         ->select('ch2.value as previous');
-    //
-    //     $a = $result->toRawSql();
-    //
-    //     $result->first();
-    //
-    //     return $result ? $result->previous : null;
-    // }
+    public function transacton(): HasOne
+    {
+        return $this->hasOne(TransactionToObject::class, TransactionToObject::REFERENCE_ID, self::ID)
+            ->where(TransactionToObject::TYPE, TransactionObjectTypeEnum::COUNTER_HISTORY->value)
+        ;
+    }
 }

@@ -14,7 +14,10 @@ use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
+use Core\Domains\Billing\Transaction\Models\TransactionDTO;
 use Core\Domains\Billing\Transaction\TransactionLocator;
+use Core\Domains\Billing\TransactionToObject\Enums\TransactionObjectTypeEnum;
+use Core\Domains\Billing\TransactionToObject\TransactionToObjectLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -27,8 +30,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
-class CreateTransactionForCounterChangeJob implements ShouldQueue
+class CheckTransactionForCounterChangeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -41,8 +45,13 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
 
     public function handle(): void
     {
+        $transaction = TransactionToObjectLocator::TransactionToObjectService()
+            ->getByReference(TransactionObjectTypeEnum::COUNTER_HISTORY, $this->counterHistoryId)
+        ;
+
         $history = CounterLocator::CounterHistoryService()->getById($this->counterHistoryId);
         if ( ! $history) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
@@ -54,24 +63,28 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
         $counter = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
 
         if ( ! $counter) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
         $previous = CounterLocator::CounterHistoryService()->getPrevios($history);
 
         if ( ! $previous || ! $previous->isVerified()) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
         $delta = $history->getValue() - $previous->getValue();
 
         if ((float) $delta <= 0) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
         $period = PeriodLocator::PeriodService()->getCurrentPeriod();
 
         if ( ! $period) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
@@ -83,12 +96,14 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
         $service = ServiceLocator::ServiceService()->search($serviceSearcher)->getItems()->first();
 
         if ( ! $service || ! $service->getCost()) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
         $account = AccountLocator::AccountService()->getById($counter->getAccountId());
 
         if ( ! $account || $account->isSnt()) {
+            $this->deleteTransaction($transaction);
             return;
         }
 
@@ -119,41 +134,75 @@ class CreateTransactionForCounterChangeJob implements ShouldQueue
             }
         }
 
-        if ( ! $linkingInvoice) {
-            $linkingInvoice = InvoiceLocator::InvoiceFactory()
-                ->makeDefault()
-                ->setType($account->isSnt() ? InvoiceTypeEnum::OUTCOME : InvoiceTypeEnum::INCOME)
-                ->setPeriodId($period->getId())
-                ->setAccountId($account->getId())
-            ;
-            $linkingInvoice = InvoiceLocator::InvoiceService()->save($linkingInvoice);
+        DB::beginTransaction();
+
+        try {
+            $transactionExists = (bool) $transaction;
+
+            if ( ! $transactionExists) {
+                if ( ! $linkingInvoice) {
+                    $linkingInvoice = InvoiceLocator::InvoiceFactory()
+                        ->makeDefault()
+                        ->setType($account->isSnt() ? InvoiceTypeEnum::OUTCOME : InvoiceTypeEnum::INCOME)
+                        ->setPeriodId($period->getId())
+                        ->setAccountId($account->getId())
+                    ;
+                    $linkingInvoice = InvoiceLocator::InvoiceService()->save($linkingInvoice);
+                }
+
+                $transaction = TransactionLocator::TransactionFactory()
+                    ->makeDefault()
+                    ->setInvoiceId($linkingInvoice->getId())
+                    ->setServiceId($service->getId())
+                    ->setTariff($service->getCost())
+                    ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()))
+                ;
+            }
+            else {
+                $transaction->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()));
+            }
+
+
+            $deltaMoney = MoneyService::parse($delta)->multiply($service->getCost());
+            $hasChanges = $transaction->getCost() !== MoneyService::toFloat($deltaMoney);
+            $transaction->setCost(MoneyService::toFloat($deltaMoney));
+            $transaction = TransactionLocator::TransactionService()->save($transaction);
+
+            if ($hasChanges) {
+                $message = sprintf("%s автоматическа транзакция\n при показаниях счётчика \"%s\",\n участка \"%s\"\n на +%s кВт по тарифу %s",
+                    $transactionExists ? 'Обновлена' : 'Создана',
+                    $counter->getNumber(),
+                    $account->getNumber(),
+                    $delta,
+                    MoneyService::parse($service->getCost()),
+                );
+
+                HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+                    Event::COMMON,
+                    HistoryType::INVOICE,
+                    $linkingInvoice->getId(),
+                    HistoryType::TRANSACTION,
+                    $transaction->getId(),
+                    text: $message,
+                );
+            }
+
+            if ( ! TransactionToObjectLocator::TransactionToObjectService()->hasRelations($transaction)) {
+                TransactionToObjectLocator::TransactionToObjectService()->create($transaction, $history->getId(), TransactionObjectTypeEnum::COUNTER_HISTORY);
+            }
+
+            DB::commit();
         }
+        catch (\Exception $exception) {
+            DB::rollBack();
+            throw $exception;
+        }
+    }
 
-        $deltaMoney = MoneyService::parse($delta)->multiply($service->getCost());
-
-        $transaction = TransactionLocator::TransactionFactory()
-            ->makeDefault()
-            ->setInvoiceId($linkingInvoice->getId())
-            ->setServiceId($service->getId())
-            ->setTariff($service->getCost())
-            ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()))
-            ->setCost(MoneyService::toFloat($deltaMoney))
-        ;
-
-        $transaction = TransactionLocator::TransactionService()->save($transaction);
-        $message     = sprintf("Создана автоматическа транзакция\n при показаниях счётчика \"%s\",\n участка \"%s\"\n на +%s кВт по тарифу %s",
-            $counter->getNumber(),
-            $account->getNumber(),
-            $delta,
-            MoneyService::parse($service->getCost()),
-        );
-        HistoryChangesLocator::HistoryChangesService()->writeToHistory(
-            Event::COMMON,
-            HistoryType::INVOICE,
-            $linkingInvoice->getId(),
-            HistoryType::TRANSACTION,
-            $transaction->getId(),
-            text: $message,
-        );
+    private function deleteTransaction(?TransactionDTO $transaction): void
+    {
+        if ($transaction) {
+            TransactionLocator::TransactionService()->deleteById($transaction->getId());
+        }
     }
 }

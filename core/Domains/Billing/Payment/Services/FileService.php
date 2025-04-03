@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Payment\Services;
 
-use Core\Domains\File\Enums\TypeEnum;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\File\Models\FileDTO;
 use Core\Domains\File\Services\FileService as BaseFileService;
 use Illuminate\Http\UploadedFile;
@@ -20,7 +20,7 @@ class FileService
     public function store(UploadedFile $file, int $paymentId): FileDTO
     {
         $dto = $this->fileService->store($file, self::FILE_DIR, false);
-        $dto->setType(TypeEnum::PAYMENT)
+        $dto->setType(FileTypeEnum::PAYMENT)
             ->setRelatedId($paymentId);
 
         $this->fileService->save($dto);
