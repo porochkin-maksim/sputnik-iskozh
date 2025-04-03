@@ -18,7 +18,7 @@ readonly class OptionFactory
         }
 
         $result->forceFill([
-            'id' => $dto->getId(),
+            Option::ID => $dto->getId(),
         ]);
 
         return $result->fill([

@@ -7,7 +7,6 @@ use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Account\Repositories\AccountToUserRepository;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\Option\OptionLocator;
 
 class AccountLocator
 {
@@ -22,7 +21,6 @@ class AccountLocator
             self::$accountService = new AccountService(
                 self::AccountFactory(),
                 self::AccountRepository(),
-                OptionLocator::OptionService(),
                 HistoryChangesLocator::HistoryChangesService(),
             );
         }
