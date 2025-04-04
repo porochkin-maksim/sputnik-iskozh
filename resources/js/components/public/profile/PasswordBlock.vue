@@ -2,13 +2,13 @@
     <div class="row">
         <div class="col-lg-5 col-md-7 col-12">
             <div class="card mt-2">
-                <div class="card-header d-flex justify-content-between align-items-center"
+                <div class="card-header d-flex justify-content-between align-items-center cursor-pointer"
+                     @click="togglePasswordBlock"
                      :class="showPasswordBlock ? '' : 'border-bottom-0'">
                     <div class="fw-bold">
                         Смена пароля
                     </div>
-                    <button class="btn btn-light btn-sm"
-                            @click="togglePasswordBlock">
+                    <button class="btn btn-light btn-sm">
                         <i class="fa fa-chevron-down"
                            v-if="showPasswordBlock"></i>
                         <i class="fa fa-chevron-left"

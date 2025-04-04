@@ -1,20 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Core\Domains\Infra\Tokens;
 
 use App\Models\Infra\Token;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 abstract class TokenFacade
 {
-    public static function save(string|array $arg): string
+    public static function save(array $data): string
     {
-        $data = Crypt::encrypt($arg);
-
         $model = Token::make([
             Token::ID   => Str::uuid()->serialize(),
-            Token::DATA => $data,
+            Token::DATA => json_encode($data),
         ]);
 
         $model->save();
@@ -27,15 +24,15 @@ abstract class TokenFacade
         try {
             $model = Token::find($token);
 
-            return $model->data ? Crypt::decrypt($model->data) : null;
+            return $model->data ? json_decode($model->data, true): null;
         }
-        catch (\Throwable) {
+        catch (\Throwable $e) {
             return null;
         }
     }
 
-    public static function drop(mixed $get): void
+    public static function drop(string $id): void
     {
-        Token::where(Token::ID, $get)->delete();
+        Token::where(Token::ID, $id)->delete();
     }
 }
