@@ -71,8 +71,8 @@ readonly class CounterHistoryFactory
             $result->setCounter(CounterLocator::CounterFactory()->makeDtoFromObject($model->getRelation(CounterHistory::COUNTER)));
         }
 
-        if (isset($model->getRelations()[CounterHistory::TRANSACTON])) {
-            $transaction = $model->getRelation(CounterHistory::TRANSACTON);
+        if (isset($model->getRelations()[CounterHistory::TRANSACTION])) {
+            $transaction = $model->getRelation(CounterHistory::TRANSACTION);
             if (isset($transaction->getRelations()[TransactionToObject::TRANSACTION])) {
                 $result->setTransaction(TransactionLocator::TransactionFactory()->makeDtoFromObject($transaction->getRelation(TransactionToObject::TRANSACTION)));
             }

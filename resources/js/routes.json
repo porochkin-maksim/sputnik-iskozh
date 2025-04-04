@@ -1008,6 +1008,13 @@
         "uri": "\/home\/counters\/json\/create",
         "args": []
     },
+    "profileCounterHistoryList": {
+        "name": "profile.counter.history-list",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/history",
+        "args": []
+    },
     "profileCounterList": {
         "name": "profile.counter.list",
         "displayName": "",
@@ -1022,12 +1029,14 @@
         "uri": "\/home\/counters",
         "args": []
     },
-    "profilePaymentsIndex": {
-        "name": "profile.payments.index",
-        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+    "profileCountersView": {
+        "name": "profile.counters.view",
+        "displayName": "",
         "method": "get",
-        "uri": "\/home\/payments",
-        "args": []
+        "uri": "\/home\/counters\/{counter}",
+        "args": {
+            "counter": "{counter}"
+        }
     },
     "profileSavePassword": {
         "name": "profile.save.password",

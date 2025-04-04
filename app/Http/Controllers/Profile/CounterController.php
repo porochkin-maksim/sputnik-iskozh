@@ -3,17 +3,26 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Requests\Profile\Counters\AddHistoryRequest;
 use App\Http\Requests\Profile\Counters\CreateRequest;
+use App\Http\Resources\Profile\Counters\CounterHistoryListResource;
 use App\Http\Resources\Profile\Counters\CounterListResource;
+use App\Models\Counter\Counter;
+use App\Models\Counter\CounterHistory;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
+use Core\Domains\Counter\Models\CounterHistorySearcher;
+use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
@@ -46,9 +55,38 @@ class CounterController extends Controller
         return view(ViewNames::PAGES_PROFILE_COUNTERS);
     }
 
+    public function view(string $counterUid): View
+    {
+        $counterId = UidFacade::findReferenceId($counterUid);
+        if ( ! $counterId) {
+            abort(404);
+        }
+
+        $counterSearcher = new CounterSearcher();
+        $counterSearcher
+            ->setAccountId(lc::account()->getId())
+            ->setId($counterId)
+            ->setLimit(1)
+        ;
+        $counter = $this->counterService->search($counterSearcher)->getItems()->first();
+
+        if ( ! $counter) {
+            abort(404);
+        }
+
+        return view(ViewNames::PAGES_PROFILE_COUNTERS_VIEW, compact('counter'));
+    }
+
     public function list(): JsonResponse
     {
-        $result = $this->counterService->getByAccountId(lc::account()->getId());
+        $counterSearcher = new CounterSearcher();
+        $counterSearcher
+            ->setAccountId(lc::account()->getId())
+            ->setSortOrderProperty(Counter::IS_INVOICING, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Counter::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        $result = $this->counterService->search($counterSearcher)->getItems();
 
         return response()->json([
             ResponsesEnum::COUNTERS => new CounterListResource($result),
@@ -84,7 +122,7 @@ class CounterController extends Controller
         DB::beginTransaction();
         $counter = $this->counterService->getById($request->getCounterId());
 
-        if (!$counter) {
+        if ( ! $counter) {
             abort(404);
         }
 
@@ -102,5 +140,35 @@ class CounterController extends Controller
 
         $this->fileService->store($request->getFile(), $history->getId());
         DB::commit();
+    }
+
+    public function history(DefaultRequest $request): JsonResponse
+    {
+        $limit = 4;
+
+        $counterId = $request->getInt(RequestArgumentsEnum::COUNTER_ID);
+
+        $counter = $this->counterService->getById($counterId);
+        if ( ! $counter || $counter->getAccountId() !== lc::account()->getId()) {
+            abort(403);
+        }
+
+        $searcher = new CounterHistorySearcher();
+        $searcher
+            ->setCounterId($counterId)
+            ->setLimit($limit)
+            ->setOffset($request->getOffset())
+            ->setWithTransaction()
+            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        $response = $this->counterHistoryService->search($searcher);
+
+        return response()->json([
+            'histories' => new CounterHistoryListResource($response->getItems()),
+            'total'     => $response->getTotal(),
+            'limit'     => $limit,
+        ]);
     }
 }

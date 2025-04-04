@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Counter;
 
@@ -48,7 +48,7 @@ class Counter extends Model implements CastsInterface
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
-            ->with(CounterHistory::TRANSACTON)
+            ->with(CounterHistory::TRANSACTION)
             ->orderBy(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
             ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
         ;

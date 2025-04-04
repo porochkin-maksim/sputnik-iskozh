@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Counter;
 
@@ -36,10 +36,10 @@ class CounterHistory extends Model implements CastsInterface
     public const DATE        = 'date';
     public const IS_VERIFIED = 'is_verified';
 
-    public const FILE       = 'file';
-    public const COUNTER    = 'counter';
-    public const PREVIOUS   = 'previous';
-    public const TRANSACTON = 'transacton';
+    public const FILE        = 'file';
+    public const COUNTER     = 'counter';
+    public const PREVIOUS    = 'previous';
+    public const TRANSACTION = 'transaction';
 
     protected $guarded = [];
     protected $with    = [self::FILE, self::PREVIOUS];
@@ -72,7 +72,7 @@ class CounterHistory extends Model implements CastsInterface
         return $this->hasOne(self::class, self::ID, self::PREVIOUS_ID);
     }
 
-    public function transacton(): HasOne
+    public function transaction(): HasOne
     {
         return $this->hasOne(TransactionToObject::class, TransactionToObject::REFERENCE_ID, self::ID)
             ->where(TransactionToObject::TYPE, TransactionObjectTypeEnum::COUNTER_HISTORY->value)
