@@ -50,7 +50,7 @@ class SetPasswordController extends AbstractAuthController
 
         UserLocator::UserService()->save($user);
 
-        TokenFacade::drop($request->get('token'));
+        TokenFacade::drop($request->getString('token'));
 
         Auth::login($user->getModel());
 
