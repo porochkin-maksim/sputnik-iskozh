@@ -25,6 +25,13 @@ class ServiceSearcher implements SearcherInterface
         return $this;
     }
 
+    public function setType(ServiceTypeEnum $type): static
+    {
+        $this->addWhere(Service::TYPE, SearcherInterface::EQUALS, $type->value);
+
+        return $this;
+    }
+
     public function exludeType(ServiceTypeEnum $type): static
     {
         $this->addWhere(Service::TYPE, SearcherInterface::IS_NOT, $type->value);

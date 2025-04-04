@@ -155,7 +155,7 @@ export default {
             window.axios[Url.Routes.adminInvoiceGetAccountsCountWithoutRegular.method](uri).then(response => {
                 const count = response.data;
                 if (count === 0) {
-                    alert('Нет ни одного Участка для выставления регулярного счёта в периоде');
+                    alert('Нет ни одного участка для выставления регулярного счёта в периоде');
                     return;
                 }
                 else if (!confirm('Выставить регулярные счета всем участкам в периоде, у которых ещё нет таких счетов? (' + count + 'шт)')) {

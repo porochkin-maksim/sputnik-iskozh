@@ -3,10 +3,8 @@
 namespace Core\Domains\Billing\Jobs;
 
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
+use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,9 +13,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * При создании периода создаем основные услуги
+ * Создаёт технологическую услугу с типом "прочее" для указанного периода
  */
-class CreateMainServicesJob implements ShouldQueue
+class CreateOtherServiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,27 +28,23 @@ class CreateMainServicesJob implements ShouldQueue
 
     public function handle(): void
     {
-        foreach (ServiceTypeEnum::cases() as $case) {
-            if ($case === ServiceTypeEnum::TARGET_FEE) {
-                continue;
-            }
+        $serviceSearcher = new ServiceSearcher();
+        $serviceSearcher
+            ->setPeriodId($this->periodId)
+            ->setActive(true)
+            ->setType(ServiceTypeEnum::OTHER)
+        ;
+        $service = ServiceLocator::ServiceService()->search($serviceSearcher)->getItems()->first();
 
+        if ( ! $service) {
             $service = ServiceLocator::ServiceFactory()->makeDefault();
             $service
                 ->setPeriodId($this->periodId)
-                ->setType($case)
-                ->setName($case->name())
-                ->setCost(0);
-
+                ->setType(ServiceTypeEnum::OTHER)
+                ->setName(ServiceTypeEnum::OTHER->name())
+                ->setCost(0)
+            ;
             ServiceLocator::ServiceService()->save($service);
-
-            HistoryChangesLocator::HistoryChangesService()->writeToHistory(
-                Event::CREATE,
-                HistoryType::PERIOD,
-                $this->periodId,
-                HistoryType::SERVICE,
-                $service->getId(),
-            );
         }
     }
 }

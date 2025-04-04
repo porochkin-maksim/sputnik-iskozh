@@ -8,6 +8,7 @@
                 <th class="text-center">Тариф</th>
                 <th class="text-center">Стоимость</th>
                 <th class="text-center">Оплачено</th>
+                <th class="text-center">Долг</th>
                 <th class="text-center">Создана</th>
                 <th></th>
             </tr>
@@ -17,6 +18,7 @@
                 <td class="text-end">{{ $formatMoney(transaction.tariff) }}</td>
                 <td class="text-end">{{ $formatMoney(transaction.cost) }}</td>
                 <td class="text-end">{{ $formatMoney(transaction.payed) }}</td>
+                <td class="text-end">{{ $formatMoney(transaction.delta) }}</td>
                 <td class="text-center">{{ transaction.created }}</td>
                 <td>
                     <div class="d-flex justify-content-center">

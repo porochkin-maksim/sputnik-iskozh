@@ -27,6 +27,10 @@
         &nbsp;
         <span>
             Оплачено: {{ $formatMoney(localInvoice.payed ? localInvoice.payed : 0) }} / {{ $formatMoney(localInvoice.cost ? localInvoice.cost : 0) }}
+
+            <template v-if="localInvoice.delta !== 0">
+                &nbsp;(Долг {{ $formatMoney(localInvoice.delta) }})
+            </template>
         </span>
     </div>
     <transaction-block :invoice="invoice"

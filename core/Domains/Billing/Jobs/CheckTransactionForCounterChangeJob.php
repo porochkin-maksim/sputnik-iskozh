@@ -32,6 +32,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Процедура проверяет изменились ли показания привязанного счетчика и пересчитывает стоимость и тариф по текущему курсу
+ */
 class CheckTransactionForCounterChangeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

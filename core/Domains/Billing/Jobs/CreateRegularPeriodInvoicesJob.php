@@ -13,6 +13,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RuntimeException;
 
+/**
+ * По команде создаёт регулярные счета для всех участков, у которых их ещё нет
+ */
 class CreateRegularPeriodInvoicesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
