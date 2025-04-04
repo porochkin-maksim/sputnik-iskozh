@@ -31,6 +31,7 @@ readonly class TransactionResource extends AbstractResource
             'tariff'     => $this->transaction->getTariff(),
             'cost'       => $this->transaction->getCost(),
             'payed'      => $this->transaction->getPayed(),
+            'delta'      => $this->transaction->getCost() - $this->transaction->getPayed(),
             'serviceId'  => $this->transaction->getServiceId(),
             'service'    => $name,
             'name'       => $this->transaction->getName(),

@@ -32,6 +32,7 @@ readonly class InvoiceResource extends AbstractResource
             'typeName'      => $this->invoice->getType()?->name(),
             'cost'          => $this->invoice->getCost(),
             'payed'         => $this->invoice->getPayed(),
+            'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
             'isPayed'       => $this->invoice->isPayed(),
             'created'       => $this->formatCreatedAt($this->invoice->getCreatedAt()),
             'actions'       => [

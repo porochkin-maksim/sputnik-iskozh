@@ -203,7 +203,7 @@ class TransactionController extends Controller
         $searcher
             ->setInvoiceId($invoiceId)
             ->setWithService()
-            ->setSortOrderProperty(Transaction::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC);
+        ;
 
         return $this->transactionService->search($searcher);
     }

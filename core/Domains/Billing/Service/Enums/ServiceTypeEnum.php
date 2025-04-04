@@ -11,7 +11,7 @@ enum ServiceTypeEnum: int
     case MEMBERSHIP_FEE  = 1;
     case ELECTRIC_TARIFF = 2;
     case TARGET_FEE      = 3;
-    case OTHER           = 5;
+    case OTHER           = 4;
 
     public function name(): string
     {

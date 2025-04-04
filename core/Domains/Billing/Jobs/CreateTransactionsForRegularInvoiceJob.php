@@ -20,7 +20,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RuntimeException;
 
-class CreateTransactionsForIncomeInvoiceJob implements ShouldQueue
+/**
+ * Создаёт транзакции для регулярного счёта - членский и целевые взносы
+ */
+class CreateTransactionsForRegularInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

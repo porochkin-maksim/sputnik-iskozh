@@ -39,7 +39,7 @@ readonly class ServiceResource extends AbstractResource
                 'type'              => $canEdit && ! $this->service->getId(),
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::SERVICES_VIEW),
                 ResponsesEnum::EDIT => $canEdit,
-                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP) && $this->service->getType()->value === ServiceTypeEnum::TARGET_FEE->value,
+                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP) && $this->service->getType()?->value === ServiceTypeEnum::TARGET_FEE->value,
             ],
             'historyUrl' => $this->service->getId()
                 ? HistoryChangesLocator::route(
