@@ -61,11 +61,13 @@ Route::group(['prefix' => 'home'], static function () {
                     Route::get('/list', [Controllers\Profile\CounterController::class, 'list'])->name(RouteNames::PROFILE_COUNTERS_LIST);
                     Route::post('/create', [Controllers\Profile\CounterController::class, 'create'])->name(RouteNames::PROFILE_COUNTER_CREATE);
                     Route::post('/add-value', [Controllers\Profile\CounterController::class, 'addValue'])->name(RouteNames::PROFILE_COUNTER_ADD_VALUE);
+                    Route::post('/history', [Controllers\Profile\CounterController::class, 'history'])->name(RouteNames::PROFILE_COUNTER_HISTORY);
                 });
+                Route::get('/{counter}', [Controllers\Profile\CounterController::class, 'view'])->name(RouteNames::PROFILE_COUNTER_VIEW);
             });
-            Route::group(['prefix' => 'payments'], static function () {
-                Route::get('/', [Controllers\Profile\PaymentController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS);
-            });
+            // Route::group(['prefix' => 'payments'], static function () {
+            //     Route::get('/', [Controllers\Profile\PaymentController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS);
+            // });
         });
     });
 });

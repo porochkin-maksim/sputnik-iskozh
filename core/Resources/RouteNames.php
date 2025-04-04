@@ -87,12 +87,14 @@ abstract class RouteNames
     public const PROFILE_SAVE_PASSWORD = 'profile.save.password';
 
 
-    public const PROFILE_INDEX    = 'profile.index';
-    public const PROFILE_COUNTERS = 'profile.counters.index';
-    public const PROFILE_PAYMENTS = 'profile.payments.index';
+    public const PROFILE_INDEX        = 'profile.index';
+    public const PROFILE_COUNTERS     = 'profile.counters.index';
+    public const PROFILE_COUNTER_VIEW = 'profile.counters.view';
+    public const PROFILE_PAYMENTS     = 'profile.payments.index';
 
     public const PROFILE_COUNTERS_LIST     = 'profile.counter.list';
     public const PROFILE_COUNTER_CREATE    = 'profile.counter.create';
+    public const PROFILE_COUNTER_HISTORY   = 'profile.counter.history-list';
     public const PROFILE_COUNTER_ADD_VALUE = 'profile.counter.add-value';
 
     public const HISTORY_CHANGES = 'infra.history-changes';

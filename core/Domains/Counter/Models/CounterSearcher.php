@@ -16,6 +16,13 @@ class CounterSearcher implements SearcherInterface
         $this->setType(CounterTypeEnum::ELECTRICITY);
     }
 
+    public function setWithHistory(): static
+    {
+        $this->with[] = Counter::HISTORY;
+
+        return $this;
+    }
+
     public function setType(CounterTypeEnum $enum): static
     {
         $this->addWhere(Counter::TYPE, SearcherInterface::EQUALS, $enum->value);

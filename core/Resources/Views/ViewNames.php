@@ -34,7 +34,10 @@ enum ViewNames: string
     public const PAGES_HOME             = 'pages.home.index';
     public const PAGES_ACCOUNT_REGISTER = 'pages.home.register';
     public const PAGES_PROFILE          = 'pages.home.profile';
-    public const PAGES_PROFILE_COUNTERS = 'pages.home.counters';
+
+    public const PAGES_PROFILE_COUNTERS      = 'pages.home.counters.index';
+    public const PAGES_PROFILE_COUNTERS_VIEW = 'pages.home.counters.view';
+
     public const PAGES_PROFILE_PAYMENTS = 'pages.home.payments';
 
     public const ADMIN_PAGES_INDEX           = 'admin.pages.index';

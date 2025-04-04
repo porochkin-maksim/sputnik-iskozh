@@ -1,70 +1,30 @@
 <template>
     <div v-if="counters && counters.length">
         <template v-for="item in counters">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6 border bg-light d-flex justify-content-between align-items-center p-2">
-                    <div>
-                        <b>Счётчик {{ item.number }}</b>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-success"
-                                v-if="currentCounterId === item.id && canAddNewHistory(item)"
-                                @click="addHistoryValue(item)"
-                        >Добавить показания
-                        </button>
-                        <button class="btn btn-light border-secondary btn-sm"
-                                v-if="currentCounterId !== item.id"
-                                @click="toggleCounterBlock(item.id)">
-                            Подробнее <i class="fa fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
+            <div>
+            <a :href="item.viewUrl" class="text-decoration-none">
+                <h5 class="d-inline-flex flex-md-row flex-column mt-2">
+                    <div>Счётчик «{{ item.number }}»&nbsp;</div>
+                    <div>{{ item.value }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
+                </h5>
+            </a>
             </div>
-            <template v-if="currentCounterId === item.id">
-                <template v-for="history in item.history">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-8 col-lg-6 border border-top-0  py-2">
-                            <div>
-                                <b>Показания:</b> {{ history.value.toLocaleString('ru-RU') }}{{ history.delta === null ? '' : ' (' + history.delta.toLocaleString('ru-RU') + 'кВт)' }}
-                            </div>
-                            <div class="mt-2">
-                                <b>Дата:</b> {{ $formatDate(history.date) }}{{ history.days === null ? '' : ' (+' + history.days + ' дней)' }}
-                            </div>
-                            <div class="mt-2">
-                                <b>Статус:</b> <b :class="history.isVerified ? 'text-success' : 'text-secondary'"> {{ history.isVerified ? 'Проверено' : 'Не проверено' }}</b>
-                            </div>
-                            <div class="mt-2"
-                                 v-if="history.transaction">
-                                <b>Оплачено:</b> {{ $formatMoney(history.transaction.payed) }}/{{ $formatMoney(history.transaction.cost) }} по тарифу {{ $formatMoney(history.transaction.tariff) }}
-                            </div>
-                            <div class="mt-2">
-                                <file-item :file="history.file"
-                                           v-if="history.file"
-                                           :edit="false"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </template>
         </template>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6 border bg-light d-flex justify-content-between align-items-center p-2">
-            <button class="btn btn-success me-2"
-                    v-if="showAddCounterButton"
-                    @click="addCounter">Добавить счётчик
-            </button>
-        </div>
+    <div v-if="loaded">
+        <button class="btn btn-success mt-2"
+                v-if="showAddCounterButton"
+                @click="addCounter">Добавить счётчик
+        </button>
     </div>
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
                  @hidden="closeAction"
     >
-        <template v-slot:title>{{ mode === 1 ? 'Добавление счётчика' : 'Внесение показаний счётчика' }}</template>
+        <template v-slot:title>Добавление счётчика</template>
         <template v-slot:body>
             <div class="container-fluid">
-                <div v-if="mode === 1">
+                <div>
                     <custom-input v-model="number"
                                   :errors="errors.number"
                                   :type="'text'"
@@ -107,7 +67,7 @@
         </template>
         <template v-slot:footer>
             <button class="btn btn-success"
-                    @click="submitAction"
+                    @click="createAction"
                     :disabled="!canSubmitAction">
                 Добавить
             </button>
@@ -139,6 +99,8 @@ export default {
     ],
     data () {
         return {
+            loaded: false,
+
             showDialog: false,
             hideDialog: false,
 
@@ -149,7 +111,6 @@ export default {
             counters: null,
             file    : null,
 
-            mode            : null,
             currentCounterId: null,
         };
     },
@@ -159,7 +120,7 @@ export default {
     methods : {
         listAction () {
             window.axios[Url.Routes.profileCounterList.method](Url.Routes.profileCounterList.uri).then(response => {
-                this.counters         = response.data.counters;
+                this.counters = response.data.counters;
                 if (this.id !== null) {
                     this.currentCounterId = this.id;
                 }
@@ -168,15 +129,9 @@ export default {
                 }
             }).catch(response => {
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loaded = true;
             });
-        },
-        submitAction () {
-            if (this.mode === 1) {
-                this.createAction();
-            }
-            else {
-                this.addHistoryValueAction();
-            }
         },
         createAction () {
             if (!confirm('Номер счётчика невозможно будет изменить. Продолжить?')) {
@@ -193,42 +148,14 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
-        addHistoryValueAction () {
-            let form = new FormData();
-            form.append('counter_id', this.id);
-            form.append('value', this.value);
-            form.append('file', this.file);
-
-            window.axios[Url.Routes.profileCounterAddValue.method](Url.Routes.profileCounterAddValue.uri, form).then(response => {
-                this.onSuccessSubmit();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
         onSuccessSubmit () {
             this.showDialog = false;
             this.hideDialog = true;
             this.file       = null;
-            this.mode       = null;
             this.listAction();
         },
         addCounter () {
-            this.mode       = 1;
             this.showDialog = true;
-        },
-        addHistoryValue (item) {
-            this.value = item.value;
-
-            this.mode       = 2;
-            this.showDialog = true;
-            this.id         = item.id;
-        },
-        canAddNewHistory (item) {
-            const lastHistory = item.history[0];
-            if (lastHistory) {
-                return lastHistory.actions.create;
-            }
-            return true;
         },
         closeAction () {
             this.showDialog = false;
@@ -242,22 +169,13 @@ export default {
         removeFile () {
             this.file = null;
         },
-        toggleCounterBlock (id) {
-            this.currentCounterId = this.currentCounterId === id ? null : id;
-        },
     },
     computed: {
-        Url () {
-            return Url;
-        },
         showAddCounterButton () {
-            return !this.counters || !this.counters.length || this.counters.length <= 2;
+            return !this.counters || !this.counters.length || this.counters.length < 1;
         },
         canSubmitAction () {
-            if (this.mode === 1) {
-                return this.number && this.value && this.file;
-            }
-            return this.value && this.file;
+            return this.number && this.value && this.file;
         },
     },
 };

@@ -5,7 +5,10 @@ namespace App\Http\Resources\Profile\Counters;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Counter\Models\CounterDTO;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Enums\DateTimeFormat;
+use Core\Resources\RouteNames;
 
 readonly class CounterResource extends AbstractResource
 {
@@ -27,6 +30,7 @@ readonly class CounterResource extends AbstractResource
             'value'       => $lastHistory?->getValue(),
             'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
+            'viewUrl'     => route(RouteNames::PROFILE_COUNTER_VIEW, ['counter' => UidFacade::getUid(UidTypeEnum::COUNTER, $this->counter->getId())]),
         ];
     }
 }
