@@ -38,19 +38,19 @@ class SummaryRepository
         return $result;
     }
 
-    public function getTransactionsFor(array $invoiceIds): array
+    public function getClaimsFor(array $invoiceIds): array
     {
         $invoiceIdsString = implode(',', $invoiceIds);
         $otherType        = ServiceTypeEnum::OTHER->value;
 
         $sql = <<<SQL
             SELECT 
-                IF(services.type = {$otherType} AND transactions.name IS NOT NULL, transactions.name, services.name) AS service,
-                SUM(transactions.cost) AS cost,
-                SUM(transactions.payed) AS payed,
-                SUM(transactions.cost) - SUM(transactions.payed) AS delta
-            FROM transactions
-            INNER JOIN services ON transactions.service_id = services.id
+                IF(services.type = {$otherType} AND claims.name IS NOT NULL, claims.name, services.name) AS service,
+                SUM(claims.cost) AS cost,
+                SUM(claims.payed) AS payed,
+                SUM(claims.cost) - SUM(claims.payed) AS delta
+            FROM claims
+            INNER JOIN services ON claims.service_id = services.id
             WHERE invoice_id IN ({$invoiceIdsString})
             GROUP BY service, services.type
             ORDER BY services.type;

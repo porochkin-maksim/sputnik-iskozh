@@ -13,7 +13,7 @@ enum HistoryType: int
     case PERIOD          = 2;
     case ACCOUNT         = 3;
     case INVOICE         = 4;
-    case TRANSACTION     = 5;
+    case CLAIM     = 5;
     case PAYMENT         = 6;
     case USER            = 7;
     case ROLE            = 8;
@@ -28,7 +28,7 @@ enum HistoryType: int
             self::PERIOD          => 'Период',
             self::ACCOUNT         => 'Участок',
             self::INVOICE         => 'Счёт',
-            self::TRANSACTION     => 'Транзакция',
+            self::CLAIM     => 'Услуга',
             self::PAYMENT         => 'Платёж',
             self::USER            => 'Пользователь',
             self::ROLE            => 'Роль',

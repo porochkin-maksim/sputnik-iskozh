@@ -10,9 +10,9 @@ class InvoiceSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
-    public function setWithTransactions(): static
+    public function setWithClaims(): static
     {
-        $this->with[] = Invoice::TRANSACTIONS;
+        $this->with[] = Invoice::CLAIMS;
 
         return $this;
     }

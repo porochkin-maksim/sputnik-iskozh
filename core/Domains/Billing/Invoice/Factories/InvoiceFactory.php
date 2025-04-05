@@ -8,7 +8,7 @@ use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Transaction\TransactionLocator;
+use Core\Domains\Billing\Claim\ClaimLocator;
 
 readonly class InvoiceFactory
 {
@@ -53,8 +53,8 @@ readonly class InvoiceFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        if (isset($model->getRelations()[Invoice::TRANSACTIONS])) {
-            $result->setTransactions(TransactionLocator::TransactionFactory()->makeDtoFromObjects($model->getRelation(Invoice::TRANSACTIONS)));
+        if (isset($model->getRelations()[Invoice::CLAIMS])) {
+            $result->setClaims(ClaimLocator::ClaimFactory()->makeDtoFromObjects($model->getRelation(Invoice::CLAIMS)));
         }
 
         if (isset($model->getRelations()[Invoice::PAYMENTS])) {

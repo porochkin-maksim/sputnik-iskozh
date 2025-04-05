@@ -159,11 +159,11 @@ abstract class RouteNames
     public const ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
     public const ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
 
-    public const ADMIN_TRANSACTION_VIEW   = 'admin.transaction.view';
-    public const ADMIN_TRANSACTION_CREATE = 'admin.transaction.create';
-    public const ADMIN_TRANSACTION_SAVE   = 'admin.transaction.save';
-    public const ADMIN_TRANSACTION_LIST   = 'admin.transaction.list';
-    public const ADMIN_TRANSACTION_DELETE = 'admin.transaction.delete';
+    public const ADMIN_CLAIM_VIEW   = 'admin.claim.view';
+    public const ADMIN_CLAIM_CREATE = 'admin.claim.create';
+    public const ADMIN_CLAIM_SAVE   = 'admin.claim.save';
+    public const ADMIN_CLAIM_LIST   = 'admin.claim.list';
+    public const ADMIN_CLAIM_DELETE = 'admin.claim.delete';
 
     public const ADMIN_PAYMENT_VIEW   = 'admin.payment.view';
     public const ADMIN_PAYMENT_CREATE = 'admin.payment.create';
@@ -184,7 +184,7 @@ abstract class RouteNames
     public const ADMIN_COUNTER_HISTORY_DELETE             = 'admin.counter-history.delete';
     public const ADMIN_COUNTER_HISTORY_CONFIRM            = 'admin.counter-history.confirm';
     public const ADMIN_COUNTER_HISTORY_CONFIRM_DELETE     = 'admin.counter-history.confirm-delete';
-    public const ADMIN_COUNTER_HISTORY_CREATE_TRANSACTION = 'admin.counter-history.create-transaction';
+    public const ADMIN_COUNTER_HISTORY_CREATE_CLAIM       = 'admin.counter-history.create-claim';
 
     public const ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
     public const ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';

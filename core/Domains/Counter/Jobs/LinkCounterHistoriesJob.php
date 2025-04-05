@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Counter\Jobs;
 
-use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
@@ -35,6 +35,6 @@ class LinkCounterHistoriesJob implements ShouldQueue
         $newerHistory->setPreviousId($newerHistory->getPreviousId());
         CounterLocator::CounterHistoryService()->save($newerHistory);
 
-        dispatch(new CheckTransactionForCounterChangeJob($newerHistory->getId()));
+        dispatch(new CheckClaimForCounterChangeJob($newerHistory->getId()));
     }
 }

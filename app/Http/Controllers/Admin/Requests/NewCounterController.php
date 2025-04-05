@@ -7,7 +7,7 @@ use App\Http\Requests\Admin\Counters\ConfirmRequest;
 use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
 use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
@@ -98,7 +98,7 @@ class NewCounterController extends Controller
                 $history->setIsVerified(true);
                 $history = $this->counterHistoryService->save($history);
 
-                dispatch(new CheckTransactionForCounterChangeJob($history->getId()));
+                dispatch(new CheckClaimForCounterChangeJob($history->getId()));
             }
 
             DB::commit();

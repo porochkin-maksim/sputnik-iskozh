@@ -247,12 +247,12 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::get('/get/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'get'])->name(RouteNames::ADMIN_INVOICE_GET);
 
                     Route::group(['prefix' => '{invoiceId}'], static function () {
-                        Route::group(['prefix' => 'transactions'], static function () {
-                            Route::get('/create', [Controllers\Admin\Billing\TransactionController::class, 'create'])->name(RouteNames::ADMIN_TRANSACTION_CREATE);
-                            Route::get('/list', [Controllers\Admin\Billing\TransactionController::class, 'list'])->name(RouteNames::ADMIN_TRANSACTION_LIST);
-                            Route::post('/save', [Controllers\Admin\Billing\TransactionController::class, 'save'])->name(RouteNames::ADMIN_TRANSACTION_SAVE);
-                            Route::delete('/delete/{id}', [Controllers\Admin\Billing\TransactionController::class, 'delete'])->name(RouteNames::ADMIN_TRANSACTION_DELETE);
-                            Route::get('/get/{transactionId}', [Controllers\Admin\Billing\TransactionController::class, 'get'])->name(RouteNames::ADMIN_TRANSACTION_VIEW);
+                        Route::group(['prefix' => 'claims'], static function () {
+                            Route::get('/create', [Controllers\Admin\Billing\ClaimController::class, 'create'])->name(RouteNames::ADMIN_CLAIM_CREATE);
+                            Route::get('/list', [Controllers\Admin\Billing\ClaimController::class, 'list'])->name(RouteNames::ADMIN_CLAIM_LIST);
+                            Route::post('/save', [Controllers\Admin\Billing\ClaimController::class, 'save'])->name(RouteNames::ADMIN_CLAIM_SAVE);
+                            Route::delete('/delete/{id}', [Controllers\Admin\Billing\ClaimController::class, 'delete'])->name(RouteNames::ADMIN_CLAIM_DELETE);
+                            Route::get('/get/{claimId}', [Controllers\Admin\Billing\ClaimController::class, 'get'])->name(RouteNames::ADMIN_CLAIM_VIEW);
                         });
                         Route::group(['prefix' => 'payments'], static function () {
                             Route::get('/create', [Controllers\Admin\Billing\PaymentController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_CREATE);
@@ -277,7 +277,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
             Route::group(['prefix' => 'counter-history'], static function () {
                 Route::get('/', [Controllers\Admin\PagesController::class, 'counterHistory'])->name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX);
                 Route::group(['prefix' => 'json'], static function () {
-                    Route::post('/create-transaction/{historyId}', [Controllers\Admin\Account\CounterController::class, 'createTransaction'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CREATE_TRANSACTION);
+                    Route::post('/create-claim/{historyId}', [Controllers\Admin\Account\CounterController::class, 'createClaim'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CREATE_CLAIM);
 
                     Route::get('/list', [Controllers\Admin\Requests\NewCounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
                     Route::post('/link', [Controllers\Admin\Requests\NewCounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);

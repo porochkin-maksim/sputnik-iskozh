@@ -52,8 +52,8 @@ class SummaryController extends Controller
 
         $invoiceIds = $this->invoiceService->search($invoicesSearcher)->getItems()->getIds();
 
-        $transactions = $this->summaryService->getTransactionsFor($invoiceIds);
+        $claims = $this->summaryService->getClaimsFor($invoiceIds);
 
-        return response()->json($transactions);
+        return response()->json($claims);
     }
 }

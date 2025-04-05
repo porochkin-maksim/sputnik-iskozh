@@ -3,14 +3,14 @@
 namespace Core\Domains\Billing\Invoice\Listeners;
 
 use Core\Domains\Billing\Invoice\Events\InvoiceCreatedEvent;
-use Core\Domains\Billing\Jobs\CreateTransactionsForRegularInvoiceJob;
+use Core\Domains\Billing\Jobs\CreateClaimsForRegularInvoiceJob;
 
 class InvoiceCreatedListener
 {
     public function handle(InvoiceCreatedEvent $event): void
     {
         foreach ($event->invoiceIds as $invoiceId) {
-            CreateTransactionsForRegularInvoiceJob::dispatch($invoiceId);
+            CreateClaimsForRegularInvoiceJob::dispatch($invoiceId);
         }
     }
 }

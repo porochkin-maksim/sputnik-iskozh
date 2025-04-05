@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Admin\Transactions\TransactionResource;
+use App\Http\Resources\Admin\Claims\ClaimResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
@@ -25,7 +25,7 @@ readonly class CounterHistoryResource extends AbstractResource
         $access  = \lc::roleDecorator();
         $counter = $this->counterHistory->getCounter();
 
-        $transaction   = $this->counterHistory->getTransaction();
+        $claim         = $this->counterHistory->getClaim();
         $previousValue = $this->previousCounterHistory?->getValue() ? : $this->counterHistory->getPreviousValue();
 
         $result = [
@@ -42,7 +42,7 @@ readonly class CounterHistoryResource extends AbstractResource
             'accountId'     => $counter?->getAccountId(),
             'accountNumber' => $counter?->getAccount()?->getNumber(),
             'isInvoicing'   => $counter?->isInvoicing(),
-            'transaction'   => $transaction ? new TransactionResource($transaction) : null,
+            'claim'         => $claim ? new ClaimResource($claim) : null,
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
                     type         : HistoryType::COUNTER,
@@ -55,8 +55,8 @@ readonly class CounterHistoryResource extends AbstractResource
                 : null,
         ];
 
-        if ($transaction && $access->can(PermissionEnum::INVOICES_VIEW)) {
-            $result['invoiceUrl'] = route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $transaction->getInvoiceId()]);
+        if ($claim && $access->can(PermissionEnum::INVOICES_VIEW)) {
+            $result['invoiceUrl'] = route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $claim->getInvoiceId()]);
         }
 
         return $result;

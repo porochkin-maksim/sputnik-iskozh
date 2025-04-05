@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Counter\Listeners;
 
-use Core\Domains\Billing\Transaction\TransactionLocator;
-use Core\Domains\Billing\TransactionToObject\Enums\TransactionObjectTypeEnum;
-use Core\Domains\Billing\TransactionToObject\TransactionToObjectLocator;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
+use Core\Domains\Billing\ClaimToObject\ClaimToObjectLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Events\CounterHistoryDeletingEvent;
 use Core\Domains\Counter\Jobs\DeleteCounterHistoryFileJob;
@@ -20,14 +20,14 @@ class CounterHistoryDeletingListener
 
         try {
             /**
-             * Удалить связанную транзакцию, если есть
+             * Удалить связанную услугу, если есть
              */
-            $transaction = TransactionToObjectLocator::TransactionToObjectService()
-                ->getByReference(TransactionObjectTypeEnum::COUNTER_HISTORY, $event->counterHistoryId)
+            $claim = ClaimToObjectLocator::ClaimToObjectService()
+                ->getByReference(ClaimObjectTypeEnum::COUNTER_HISTORY, $event->counterHistoryId)
             ;
 
-            if ($transaction) {
-                TransactionLocator::TransactionService()->deleteById($transaction->getId());
+            if ($claim) {
+                ClaimLocator::ClaimService()->deleteById($claim->getId());
             }
 
             $history = CounterLocator::CounterHistoryService()->getById($event->counterHistoryId);

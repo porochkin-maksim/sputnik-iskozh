@@ -4,7 +4,7 @@ namespace Core\Domains\Counter\Jobs;
 
 use App\Models\Counter\CounterHistory;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Queue\QueueEnum;
@@ -43,7 +43,7 @@ class RewatchCounterHistoryChainJob implements ShouldQueue
             }
 
             $history = CounterLocator::CounterHistoryService()->save($history);
-            dispatch_sync(new CheckTransactionForCounterChangeJob($history->getId()));
+            dispatch_sync(new CheckClaimForCounterChangeJob($history->getId()));
             $previous = $history;
         }
     }

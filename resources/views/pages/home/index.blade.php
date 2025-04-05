@@ -24,7 +24,7 @@ if (lc::account()->getId()) {
 
     $invoiceSearcher = new InvoiceSearcher();
     $invoiceSearcher->setWithPayments()
-        ->setWithTransactions()
+        ->setWithClaims()
         ->setPeriodId($period->getId())
         ->setAccountId(lc::account()->getId())
     ;
@@ -83,12 +83,12 @@ if (lc::account()->getId()) {
                         <th>Стоимость</th>
                         <th>Оплачено</th>
                     </tr>
-                    @foreach($invoice->getTransactions() as $transaction)
+                    @foreach($invoice->getClaims() as $claim)
                         <tr>
-                            <td>{{ $transaction->getName() ?: $services->getById($transaction->getServiceId())->getName() }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getTariff()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getCost()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($transaction->getPayed()) }}</td>
+                            <td>{{ $claim->getName() ?: $services->getById($claim->getServiceId())->getName() }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPayed()) }}</td>
                         </tr>
                     @endforeach
                     <tr class="table-info">

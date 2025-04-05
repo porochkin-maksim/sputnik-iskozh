@@ -18,7 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Пересчитывает счёт и транзакции по стоимости и оплатам
+ * Пересчитывает счёт и претензии по стоимости и оплатам
  */
 class RecalcInvoiceJob implements ShouldQueue
 {
@@ -36,7 +36,7 @@ class RecalcInvoiceJob implements ShouldQueue
         $searcher = new InvoiceSearcher();
         $searcher
             ->setId($this->invoiceId)
-            ->setWithTransactions()
+            ->setWithClaims()
         ;
 
         $invoice = InvoiceLocator::InvoiceService()->search($searcher)->getItems()->first();
@@ -49,11 +49,11 @@ class RecalcInvoiceJob implements ShouldQueue
 
         $totalCost  = MoneyService::parse(0);
         $totalPayed = MoneyService::parse(0);
-        foreach ($invoice->getTransactions() ? : [] as $transaction) {
-            $cost      = MoneyService::parse($transaction->getCost());
+        foreach ($invoice->getClaims() ? : [] as $claim) {
+            $cost      = MoneyService::parse($claim->getCost());
             $totalCost = $totalCost->add($cost);
 
-            $payed      = MoneyService::parse($transaction->getPayed());
+            $payed      = MoneyService::parse($claim->getPayed());
             $totalPayed = $totalPayed->add($payed);
         }
         $invoice->setCost(MoneyService::toFloat($totalCost));

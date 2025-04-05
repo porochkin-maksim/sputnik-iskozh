@@ -100,11 +100,11 @@ import PaymentsList     from './PaymentsList.vue';
 import ViewDialog       from '../../../common/ViewDialog.vue';
 import ResponseError    from '../../../../mixin/ResponseError.js';
 import Url              from '../../../../utils/Url.js';
-import TransactionsList from '../transactions/TransactionsList.vue';
+import ClaimsList       from '../claims/ClaimsList.vue';
 import FileItem         from '../../../common/files/FileItem.vue';
 
 export default {
-    components: { FileItem, TransactionsList, ViewDialog, PaymentsList },
+    components: { FileItem, ClaimsList, ViewDialog, PaymentsList },
     emits     : ['update:reload', 'update:count'],
     props     : {
         invoice: {

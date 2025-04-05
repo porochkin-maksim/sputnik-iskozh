@@ -109,7 +109,7 @@ readonly class PaymentService
             Event::DELETE,
             HistoryType::INVOICE,
             $payment->getInvoiceId(),
-            HistoryType::TRANSACTION,
+            HistoryType::CLAIM,
             $payment->getId(),
         );
 
