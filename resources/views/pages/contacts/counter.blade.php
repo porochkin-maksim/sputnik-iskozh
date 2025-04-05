@@ -1,13 +1,16 @@
 <?php declare(strict_types=1);
 
+use App\Http\Resources\Profile\Accounts\AccountResource;
+use App\Http\Resources\Profile\Counters\CounterListResource;
+use App\Http\Resources\Profile\Users\UserResource;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
+
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setUrl(route(RouteNames::COUNTER));
-
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -28,7 +31,9 @@ $openGraph->setUrl(route(RouteNames::COUNTER));
                 <div>Здесь вы можете сообщить текущие показания электричества без посещения Правления.</div>
                 <div>Отметку в членской книжке можно будет проставить потом.</div>
             </div>
-            <counter-form></counter-form>
+            <counter-form :prop-account='@json(new AccountResource(lc::account()))'
+                          :prop-user='@json(new UserResource(lc::user()))'
+                          :prop-counters='@json(new CounterListResource(lc::counters()))'></counter-form>
         </div>
     </div>
 @endsection

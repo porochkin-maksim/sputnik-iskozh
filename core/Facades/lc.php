@@ -5,6 +5,8 @@ use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleDecorator;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Counter\Collections\CounterCollection;
+use Core\Domains\Counter\CounterLocator;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\UserLocator;
@@ -12,11 +14,12 @@ use Illuminate\Support\Facades\Auth;
 
 abstract class lc
 {
-    private static UserDTO       $user;
-    private static RoleDTO       $role;
-    private static AccountDTO    $account;
-    private static RoleDecorator $roleDecorator;
-    private static UserDecorator $userDecorator;
+    private static UserDTO           $user;
+    private static RoleDTO           $role;
+    private static CounterCollection $counters;
+    private static AccountDTO        $account;
+    private static RoleDecorator     $roleDecorator;
+    private static UserDecorator     $userDecorator;
 
     public static function isAuth(): bool
     {
@@ -61,6 +64,20 @@ abstract class lc
         }
 
         return self::$account;
+    }
+
+    public static function counters(): CounterCollection
+    {
+        if ( ! isset(self::$counters)) {
+            $counters = new CounterCollection();
+            if (self::account()->getId() !== null) {
+                $counters = CounterLocator::CounterService()->getByAccountId(self::account()->getId());
+            }
+
+            self::$counters = $counters;
+        }
+
+        return self::$counters;
     }
 
     public static function role(): RoleDTO

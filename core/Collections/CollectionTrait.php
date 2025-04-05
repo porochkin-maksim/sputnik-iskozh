@@ -49,4 +49,15 @@ trait CollectionTrait
 
         return 0;
     }
+
+    public function getById(?int $id): ?object
+    {
+        foreach ($this as $item) {
+            if ($item->getId() === $id) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
 }

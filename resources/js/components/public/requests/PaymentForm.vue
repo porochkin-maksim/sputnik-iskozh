@@ -11,6 +11,7 @@
                       :required="true"
                       :errors="errors.account"
                       :label="'Номер дачи и номер участка (например: 999/1 )'"
+                      :disabled="propAccount?.number"
                       @submit="sendForm"
         />
         <custom-textarea v-model="text"
@@ -30,6 +31,7 @@
                       @change="clearError('name')"
                       :errors="errors.name"
                       :label="'Ваше имя (по желанию)'"
+                      :disabled="propUser?.email"
                       @submit="sendForm"
         />
         <custom-input v-model="email"
@@ -37,6 +39,7 @@
                       @change="clearError('email')"
                       :errors="errors.email"
                       :label="'Эл.почта (по желанию)'"
+                      :disabled="propUser?.email"
                       @submit="sendForm"
         />
         <custom-input v-model="phone"
@@ -44,6 +47,7 @@
                       @change="clearError('phone')"
                       :errors="errors.phone"
                       :label="'Телефон (по желанию)'"
+                      :disabled="propUser?.phone"
                       @submit="sendForm"
         />
         <template v-if="files && files.length">
@@ -80,8 +84,12 @@
         <div class="d-flex justify-content-end mt-2">
             <button type="submit"
                     :disabled="disableSubmit"
+                    v-if="!pending"
                     @click="sendForm"
                     class="btn btn-success">Отправить
+            </button>
+            <button class="btn border-0" disabled v-else>
+                <i class="fa fa-spinner fa-spin"></i> Отправка
             </button>
         </div>
     </div>
@@ -103,12 +111,46 @@ export default {
     mixins    : [
         ResponseError,
     ],
+    props     : {
+        propAccount: {
+            type   : Object,
+            default: {},
+        },
+        propUser   : {
+            type   : Object,
+            default: {},
+        },
+    },
     created () {
-        this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
-        this.email   = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
-        this.phone   = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
-        this.name    = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
-        this.text    = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+        if (this.propAccount?.number) {
+            this.account = this.propAccount?.number;
+        }
+        else {
+            this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
+        }
+
+        if (this.propUser?.email) {
+            this.email = this.propUser?.email;
+        }
+        else {
+            this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
+        }
+
+        if (this.propUser?.phone) {
+            this.phone = this.propUser?.phone;
+        }
+        else {
+            this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
+        }
+
+        if (this.propUserName) {
+            this.name = this.propUserName;
+        }
+        else {
+            this.name = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        }
+
+        this.text = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
     },
     data () {
         return {
@@ -191,8 +233,11 @@ export default {
         },
     },
     computed: {
-        accountActions () {
-            return accountActions;
+        propUserName () {
+            if (!this.propUser?.email) {
+                return null;
+            }
+            return (this.propUser?.lastName + ' '  +this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
         },
         disableSubmit () {
             return !this.files.length || !this.account || !this.text || this.pending || this.fileSizeExceed;
