@@ -5,164 +5,236 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\UserLocator;
 use Core\Enums\DateTimeFormat;
+use Core\Requests\RequestArgumentsEnum;
+use Core\Resources\RouteNames;
 
 /**
  * @var HistoryChangesCollection $historyChanges
+ * @var int                      $limit
+ * @var int                      $offset
  */
 ?>
-        <!doctype html>
-<html lang="en">
+        <!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <title>Document</title>
+          content="width=device-width, initial-scale=1.0">
+    <title>История изменений</title>
     @vite(['resources/sass/app.scss'])
     <style>
-        html, body {
+        body {
             font-size : 14px;
+            padding   : 1rem;
         }
 
-        table {
-            width : 100%;
+        .table-responsive {
+            margin-bottom : 1rem;
         }
 
-        table, th, td {
-            border          : 1px solid black;
+        .badge {
+            font-size : 12px;
+        }
+
+        .changes-table {
+            width            : 100%;
+            margin-top       : 0.5rem;
+            font-size        : 13px;
+            background-color : white;
+        }
+
+        .changes-table th {
+            background-color : #f8f9fa;
+            font-weight      : 600;
+        }
+
+        .changes-table td, .changes-table th {
+            padding : 0.5rem;
+            border  : 1px solid #dee2e6;
+        }
+
+        .table > :not(caption) > * > * {
+            padding : 0.5rem;
+            border  : 1px solid #dee2e6;
+        }
+
+        .table-sm > :not(caption) > * > * {
+            padding : 0.25rem;
+        }
+
+        .table > tbody > tr > td {
+            vertical-align : top;
+        }
+
+        .controls-row {
+            display         : flex;
+            justify-content : space-between;
+            align-items     : center;
+            margin-bottom   : 1rem;
+        }
+
+        .table {
             border-collapse : collapse;
         }
 
-        th {
-            text-align       : center;
-            background-color : #cfcfcf;
-        }
-
-        td, th {
-            padding : 2px;
-        }
-
-        .description-cell {
-            padding : 0;
-        }
-
-        .description-cell div {
-            display       : flex;
-            width         : 100%;
-            flex          : 1;
-            margin        : 0;
-            border-radius : 0;
-            padding       : 0.3rem
-        }
-
-        .description-cell table,
-        .description-cell th,
-        .description-cell td {
-            font-weight   : normal;
-            border-bottom : 0;
-        }
-
-        .description-cell table,
-        .description-cell tr th:first-child,
-        .description-cell tr td:first-child {
-            border-left : 0;
-        }
-
-        .description-cell table,
-        .description-cell tr th:last-child,
-        .description-cell tr td:last-child {
-            border-right : 0;
+        .table th {
+            background-color : #f8f9fa;
+            font-weight      : 600;
         }
     </style>
 </head>
 <body>
-<table>
-    <thead>
-    <tr>
-        <th>№</th>
-        <th>Дата</th>
-        <th>Время</th>
-        <th>Пользователь</th>
-        <th>id1</th>
-        <th>id2</th>
-        <th>История</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($historyChanges as $historyChange)
-        <tr>
-            <td style="text-align: center; vertical-align: top;">
-                {{ $historyChange->getId() }}
-            </td>
-            <td style="text-align: center; vertical-align: top; width:70px;">
-                {{ $historyChange->getCreatedAt()->format(DateTimeFormat::DATE_VIEW_FORMAT) }}
-            </td>
-            <td style="text-align: center; vertical-align: top; width:70px;">
-                {{ $historyChange->getCreatedAt()->format(DateTimeFormat::TIME_FULL) }}
-            </td>
-            <td style="text-align: center; vertical-align: top; white-space: nowrap;">
-                {{ UserLocator::UserDecorator($historyChange->getUser())->getDisplayName() }}
-            </td>
-            <td style="text-align: center; vertical-align: top;">
-                {{ $historyChange->getPrimaryId() }}
-            </td>
-            <td style="text-align: center; vertical-align: top;">
-                {{ $historyChange->getReferenceId() }}
-            </td>
-            @php
-                $decorator = HistoryChangesLocator::HistoryChangesDecorator($historyChange);
-            @endphp
-            <td class="description-cell">
-                @switch($decorator->getEvent())
-                    @case(Event::CREATE)
-                        <div class="alert alert-success">
-                            {{ $decorator->getActionEventText() }}
-                        </div>
-                        @break
-                    @case(Event::UPDATE)
-                        <div class="alert alert-warning">
-                            {{ $decorator->getActionEventText() }}
-                        </div>
-                        @break
-                    @case(Event::DELETE)
-                        <div class="alert alert-danger">
-                            {{ $decorator->getActionEventText() }}
-                        </div>
-                        @break
-                @endswitch
-                @if($decorator->getText())
-                    <div class="alert">
-                        {!! nl2br($decorator->getText()) !!}
-                    </div>
-                @endif
-                @if ($decorator->getChanges())
-                    <table style="width: 100%">
-                        <thead>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h4>История изменений</h4>
+        </div>
+    </div>
+
+    <div class="card border-0 px-0">
+        <div class="card-body px-0">
+            <div class="controls-row">
+                <div class="btn-group">
+                    <select class="form-select form-select-sm"
+                            style="width: auto;"
+                            id="limitSelect">
+                        <option value="25" {{ $limit === 25 ? 'selected' : '' }}>25 записей</option>
+                        <option value="50" {{ $limit === 50 ? 'selected' : '' }}>50 записей</option>
+                        <option value="100" {{ $limit === 100 ? 'selected' : '' }}>100 записей</option>
+                    </select>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        @php
+                            $currentPage = floor($offset / $limit) + 1;
+                            $startOffset = max(0, $offset - (5 * $limit));
+                            $endOffset = count($historyChanges) >= $limit ? $offset + $limit : $offset;
+                        @endphp
+
+                        {{-- Previous page --}}
+                        <li class="page-item {{ $offset === 0 ? 'disabled' : '' }}">
+                            <a class="page-link"
+                               href="{{ route(RouteNames::HISTORY_CHANGES, array_merge(request()->query(), ['skip' => max(0, $offset - $limit)])) }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        {{-- First page --}}
+                        @if($offset > 5 * $limit)
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ route(RouteNames::HISTORY_CHANGES, array_merge(request()->query(), ['skip' => 0])) }}">1</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        @endif
+
+                        {{-- Page numbers --}}
+                        @for($i = $startOffset; $i <= $endOffset; $i += $limit)
+                            <li class="page-item {{ $i === $offset ? 'active' : '' }}">
+                                <a class="page-link"
+                                   href="{{ route(RouteNames::HISTORY_CHANGES, array_merge(request()->query(), ['skip' => $i])) }}">{{ floor($i / $limit) + 1 }}</a>
+                            </li>
+                        @endfor
+
+                        {{-- Next page --}}
+                        <li class="page-item {{ count($historyChanges) < $limit ? 'disabled' : '' }}">
+                            <a class="page-link"
+                               href="{{ route(RouteNames::HISTORY_CHANGES, array_merge(request()->query(), ['skip' => $offset + $limit])) }}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                    <tr class="text-center">
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Дата</th>
+                        <th class="text-center">Время</th>
+                        <th class="text-center">Пользователь</th>
+                        <th class="text-center">ID1</th>
+                        <th>ID2</th>
+                        <th>История</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($historyChanges as $historyChange)
+                        @php
+                            $decorator = HistoryChangesLocator::HistoryChangesDecorator($historyChange);
+                            $user = UserLocator::UserDecorator($historyChange->getUser());
+                            $createdAt = $historyChange->getCreatedAt();
+                        @endphp
                         <tr>
-                            <th>Свойство</th>
-                            <th>Было</th>
-                            <th>Стало</th>
+                            <td class="text-center">{{ $historyChange->getId() }}</td>
+                            <td class="text-center">{{ $createdAt->format(DateTimeFormat::DATE_VIEW_FORMAT) }}</td>
+                            <td class="text-center">{{ $createdAt->format(DateTimeFormat::TIME_FULL) }}</td>
+                            <td class="text-center">
+                                {{ $user->getDisplayName() }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">{{ $historyChange->getPrimaryId() }}</span>
+                            </td>
+                            <td>
+                                @if($historyChange->getReferenceId())
+                                    <span class="badge bg-{{ $decorator->getEvent() === Event::CREATE ? 'success' : ($decorator->getEvent() === Event::UPDATE ? 'primary' : 'danger') }}">
+                                        {{ $historyChange->getReferenceId() }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td>
+                                <div>{{ $decorator->getActionEventText() }}</div>
+                                @if($decorator->getText() && $decorator->getActionEventText() !== $decorator->getText())
+                                    <div>{!! nl2br($decorator->getText()) !!}</div>
+                                @endif
+                                @if ($decorator->getChanges())
+                                    <table class="changes-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Свойство</th>
+                                            <th>Было</th>
+                                            <th>Стало</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($decorator->getChanges() as $change)
+                                            <tr>
+                                                <td>{{ $change->getTitle() }}</td>
+                                                <td>{!! nl2br($change->getOldValue()) !!}</td>
+                                                <td>{!! nl2br($change->getNewValue()) !!}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                @endif
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($decorator->getChanges() as $change)
-                            <tr>
-                                <td>{{ $change->getTitle() }}</td>
-                                <td>{!! nl2br($change->getOldValue()) !!}</td>
-                                <td>{!! nl2br($change->getNewValue()) !!}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <th colspan="7"></th>
-        </tr>
-    @endforeach
-    </tbody>
-    <tfooter>
-    </tfooter>
-</table>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const limitSelect = document.getElementById('limitSelect');
+
+            limitSelect.addEventListener('change', function () {
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set('{{ RequestArgumentsEnum::LIMIT }}', this.value);
+                searchParams.set('{{ RequestArgumentsEnum::SKIP }}', '0');
+                window.location.href = window.location.pathname + '?' + searchParams.toString();
+            });
+        });
+    </script>
 </body>
 </html>

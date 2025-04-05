@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Infra;
 
 use App\Http\Requests\DefaultRequest;
+use App\Models\Infra\HistoryChanges;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Requests\RequestArgumentsEnum;
 
 class HistoryChangesViewController
 {
+    private const MAX_LIMIT = 100;
+
     private HistoryChangesService $historyChangesService;
 
     public function __construct()
@@ -18,13 +23,21 @@ class HistoryChangesViewController
 
     public function __invoke(DefaultRequest $request)
     {
-        $type           = $request->getIntOrNull(RequestArgumentsEnum::TYPE);
-        $primaryId      = $request->getIntOrNull(RequestArgumentsEnum::PRIMARY_ID);
-        $referenceType  = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_TYPE);
-        $referenceId    = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_ID);
+        $type          = $request->getIntOrNull(RequestArgumentsEnum::TYPE);
+        $primaryId     = $request->getIntOrNull(RequestArgumentsEnum::PRIMARY_ID);
+        $referenceType = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_TYPE);
+        $referenceId   = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_ID);
+        $limit         = min($request->getIntOrNull(RequestArgumentsEnum::LIMIT) ?? 25, self::MAX_LIMIT);
+        $offset        = max($request->getIntOrNull(RequestArgumentsEnum::SKIP) ?? 0, 0);
 
-        $historyChanges = $this->historyChangesService->search($type, $primaryId, $referenceType, $referenceId)->getItems();
+        $searcher = new HistoryChangesSearcher();
+        $searcher->setMainFilters($type, $primaryId, $referenceType, $referenceId)
+            ->setSortOrderProperty(HistoryChanges::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setLimit($limit)
+            ->setOffset($offset);
 
-        return view('admin.pages.history', compact('historyChanges'));
+        $historyChanges = $this->historyChangesService->search($searcher)->getItems();
+
+        return view('admin.pages.history', compact('historyChanges', 'limit', 'offset'));
     }
 }

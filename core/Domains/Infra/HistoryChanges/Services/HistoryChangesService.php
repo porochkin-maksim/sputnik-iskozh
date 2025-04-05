@@ -2,8 +2,6 @@
 
 namespace Core\Domains\Infra\HistoryChanges\Services;
 
-use App\Models\Infra\HistoryChanges;
-use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 use Core\Domains\Infra\Comparator\Services\Comparator;
 use Core\Domains\Infra\HistoryChanges\Collections\HistoryChangesCollection;
@@ -12,10 +10,10 @@ use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Factories\HistoryChangesFactory;
 use Core\Domains\Infra\HistoryChanges\Jobs\CreateHistoryJob;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
-use Core\Domains\Infra\HistoryChanges\Models\HistorySearcher;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Responses\SearchResponse;
+use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
 
 readonly class HistoryChangesService
 {
@@ -76,13 +74,8 @@ readonly class HistoryChangesService
         return $this->historyChangesFactory->makeDtoFromObject($model);
     }
 
-    public function search(?int $type, ?int $primaryId, ?int $referenceType, ?int $referenceId): SearchResponse
+    public function search(HistoryChangesSearcher $searcher): SearchResponse
     {
-        $searcher = new HistorySearcher();
-        $searcher
-            ->setMainFilters($type, $primaryId, $referenceType, $referenceId)
-            ->setSortOrderProperty(HistoryChanges::ID, SearcherInterface::SORT_ORDER_DESC);
-
         $response = $this->historyChangesRepository->search($searcher);
 
         $result = new SearchResponse();

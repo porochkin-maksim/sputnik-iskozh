@@ -22,10 +22,18 @@ export default {
         open () {
             let options = [];
 
-            options.push('width=800');
-            options.push('height=300');
-            options.push('left=50');
-            options.push('top=50');
+            // Calculate window dimensions
+            const screenWidth  = window.screen.width;
+            const screenHeight = window.screen.height;
+            const windowWidth  = Math.min(Math.max(screenWidth / 2, 1000), screenWidth);
+            const windowHeight = screenHeight;
+            const windowLeft   = (screenWidth - windowWidth) / 2;
+            const windowTop    = 0;
+
+            options.push(`width=${windowWidth}`);
+            options.push(`height=${windowHeight}`);
+            options.push(`left=${windowLeft}`);
+            options.push(`top=${windowTop}`);
             options.push('scrollbars=yes');
 
             let w = window.open(this.url, 'history', options.join(','));
