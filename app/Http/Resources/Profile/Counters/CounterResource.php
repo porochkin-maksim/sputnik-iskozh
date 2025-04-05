@@ -28,7 +28,7 @@ readonly class CounterResource extends AbstractResource
             'isInvoicing' => $this->counter->isInvoicing() && $this->counter->getAccountId() !== AccountIdEnum::SNT->value,
             'accountId'   => $this->counter->getAccountId(),
             'value'       => $lastHistory?->getValue(),
-            'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
+            'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
             'viewUrl'     => route(RouteNames::PROFILE_COUNTER_VIEW, ['counter' => UidFacade::getUid(UidTypeEnum::COUNTER, $this->counter->getId())]),
         ];
