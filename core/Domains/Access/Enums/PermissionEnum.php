@@ -34,7 +34,7 @@ enum PermissionEnum: int
             80  => 'Периоды',
             90  => 'Услуги',
             100 => 'Счета',
-            110 => 'Транзакции',
+            110 => 'Услуги счетов',
             120 => 'Платежи',
             130 => 'Счётчики',
         };
@@ -119,9 +119,9 @@ enum PermissionEnum: int
     case INVOICES_EDIT     = 102;
     case INVOICES_DROP     = 103;
 
-    case TRANSACTIONS_VIEW = 111;
-    case TRANSACTIONS_EDIT = 112;
-    case TRANSACTIONS_DROP = 113;
+    case CLAIMS_VIEW = 111;
+    case CLAIMS_EDIT = 112;
+    case CLAIMS_DROP = 113;
 
     case PAYMENTS_VIEW     = 121;
     case PAYMENTS_EDIT     = 122;

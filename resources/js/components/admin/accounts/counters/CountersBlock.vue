@@ -85,16 +85,16 @@
                         <span v-if="history.isVerified"><i class="fa fa-check text-success"></i></span>
                         <span v-else><i class="fa fa-close text-secondary"></i></span>
                     </td>
-                    <template v-if="history.transaction">
+                    <template v-if="history.claim">
                         <template v-if="history.invoiceUrl">
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.transaction.tariff) }}</a></td>
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.transaction.cost) }}</a></td>
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.transaction.payed) }}</a></td>
+                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.tariff) }}</a></td>
+                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.cost) }}</a></td>
+                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.payed) }}</a></td>
                         </template>
                         <template v-else>
-                            <td class="text-end">{{ $formatMoney(history.transaction.tariff) }}</td>
-                            <td class="text-end">{{ $formatMoney(history.transaction.cost) }}</td>
-                            <td class="text-end">{{ $formatMoney(history.transaction.payed) }}</td>
+                            <td class="text-end">{{ $formatMoney(history.claim.tariff) }}</td>
+                            <td class="text-end">{{ $formatMoney(history.claim.cost) }}</td>
+                            <td class="text-end">{{ $formatMoney(history.claim.payed) }}</td>
                         </template>
                     </template>
                     <template v-else>
@@ -103,8 +103,8 @@
                                 colspan="3">
                                 <button class="btn btn-sm btn-success"
                                         v-if="this.account.actions.counters.edit && counter.isInvoicing"
-                                        @click="addTransactionForHistory(history)">
-                                    Добавить транзакцию
+                                        @click="addClaimForHistory(history)">
+                                    Добавить услугу
                                 </button>
                             </td>
                         </template>
@@ -253,82 +253,88 @@ export default {
             this.mode            = 1;
             this.selectedCounter = counter;
         },
-        onSuccessSubmit () {
-            this.listAction();
-        },
-        editHistoryAction (history) {
-            this.mode            = 2;
-            this.selectedCounter = this.getCounter(history.counterId);
-            this.selectedHistory = history;
-        },
-        addHistoryAction (counter) {
-            this.mode            = 2;
-            this.selectedCounter = counter;
-            this.selectedHistory = null;
-        },
-        addTransactionForHistory (history) {
-            if (!confirm('Добавить транзакцию?')) {
-                return;
-            }
-
-            let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryCreateTransaction, {
-                historyId: history.id,
-            });
-            window.axios[Url.Routes.adminCounterHistoryCreateTransaction.method](uri).then(response => {
-                this.onSuccessSubmit();
-                this.showInfo('Транзакция создана');
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
         dropCounterAction (counter) {
-            const reason = prompt('Укажите причну удаления');
-
-            if (!reason) {
+            if (!confirm('Удалить счётчик?')) {
                 return;
             }
-
-            let form = new FormData();
-            form.append('comment', reason);
 
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterDelete, {
                 accountId: this.account.id,
                 counterId: counter.id,
             });
 
-            window.axios[Url.Routes.adminCounterDelete.method](uri, form).then(response => {
-                this.onSuccessSubmit();
-                this.showInfo('Счётчик удалён');
+            window.axios[Url.Routes.adminCounterDelete.method](
+                uri,
+            ).then((response) => {
+                if (response.data) {
+                    this.listAction();
+                    this.showInfo('Счётчик удалён');
+                }
+                else {
+                    this.showDanger('Счётчик не удалён');
+                }
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
+        },
+        addHistoryAction (counter) {
+            this.mode            = 2;
+            this.selectedCounter = counter;
+            this.selectedHistory = {};
+        },
+        editHistoryAction (history) {
+            this.mode            = 2;
+            this.selectedCounter = this.counters.find(counter => counter.id === history.counterId);
+            this.selectedHistory = history;
         },
         dropHistoryAction (history) {
             if (!confirm('Удалить показания?')) {
                 return;
             }
+
             let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryDelete, {
                 historyId: history.id,
             });
-            window.axios[Url.Routes.adminCounterHistoryDelete.method](uri).then(response => {
-                this.onSuccessSubmit();
-                this.showInfo('Показания удалены');
+
+            window.axios[Url.Routes.adminCounterHistoryDelete.method](
+                uri,
+            ).then((response) => {
+                if (response.data) {
+                    this.listAction();
+                    this.showInfo('Показания удалены');
+                }
+                else {
+                    this.showDanger('Показания не удалены');
+                }
             }).catch(response => {
                 this.parseResponseErrors(response);
             });
         },
-        onUpdateHistory () {
-            this.selectedCounter = null;
-            this.selectedHistory = null;
-            this.listAction();
+        addClaimForHistory (history) {
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryCreateClaim, {
+                historyId: history.id,
+            });
+
+            window.axios[Url.Routes.adminCounterHistoryCreateClaim.method](uri).then(response => {
+                if (response.data) {
+                    this.listAction();
+                    this.showInfo('Услуга создана');
+                }
+                else {
+                    this.showDanger('Услуга не создана');
+                }
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
         },
         onUpdateCounter () {
+            this.listAction();
+            this.selectedCounter = null;
+        },
+        onUpdateHistory () {
+            this.listAction();
             this.selectedCounter = null;
             this.selectedHistory = null;
-            this.listAction();
-        },
-        getCounter (id) {
-            return this.counters.find(item => item.id === id);
         },
     },
 };

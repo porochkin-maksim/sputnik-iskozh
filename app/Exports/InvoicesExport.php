@@ -36,17 +36,17 @@ class InvoicesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
                 $invoice->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
             ];
 
-            foreach ($invoice->getTransactions() as $transaction) {
+            foreach ($invoice->getClaims() as $claim) {
                 $result[] = [
                     '',
                     '',
                     '',
-                    $transaction->getService()?->getName(),
-                    $transaction->getName() === $transaction->getService()?->getName() ? '' : $transaction->getName(),
-                    $transaction->getCost(),
-                    $transaction->getPayed(),
-                    $transaction->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-                    $transaction->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+                    $claim->getService()?->getName(),
+                    $claim->getName() === $claim->getService()?->getName() ? '' : $claim->getName(),
+                    $claim->getCost(),
+                    $claim->getPayed(),
+                    $claim->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+                    $claim->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
                 ];
             }
         }
@@ -61,7 +61,7 @@ class InvoicesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
             'Период',
             'Участок',
             'Тип',
-            'Транзакция',
+            'Услуга',
             'Стоимость',
             'Оплачено',
             'Создан',

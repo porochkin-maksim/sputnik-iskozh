@@ -33,10 +33,10 @@
             </template>
         </span>
     </div>
-    <transaction-block :invoice="invoice"
-                       v-if="actions.transactions.view"
-                       v-model:count="transactionsCount"
-                       v-model:reload="reload" />
+    <claim-block :invoice="invoice"
+                 v-if="actions.claims.view"
+                 v-model:count="claimsCount"
+                 v-model:reload="reload" />
     <div class="border-top my-2"></div>
     <payments-block :invoice="invoice"
                     v-if="actions.payments.view"
@@ -50,7 +50,7 @@
 <script>
 import ResponseError    from '../../../mixin/ResponseError.js';
 import HistoryBtn       from '../../common/HistoryBtn.vue';
-import TransactionBlock from './transactions/TransactionBlock.vue';
+import ClaimBlock       from './claims/ClaimBlock.vue';
 import PaymentsBlock    from './payments/PaymentsBlock.vue';
 import Url              from '../../../utils/Url.js';
 import SearchSelect     from '../../common/form/SearchSelect.vue';
@@ -62,7 +62,7 @@ export default {
     components: {
         CountersBlock,
         SearchSelect,
-        TransactionBlock,
+        ClaimBlock,
         PaymentsBlock,
         HistoryBtn,
     },
@@ -85,11 +85,11 @@ export default {
     },
     data () {
         return {
-            localInvoice     : {},
-            actions          : {},
-            reload           : false,
-            transactionsCount: 0,
-            paymentsCount    : 0,
+            localInvoice : {},
+            actions      : {},
+            reload       : false,
+            claimsCount  : 0,
+            paymentsCount: 0,
         };
     },
     methods : {
@@ -133,7 +133,7 @@ export default {
     computed: {
         canDrop () {
             return this.actions.drop
-                && this.transactionsCount === 0
+                && this.claimsCount === 0
                 && this.paymentsCount === 0;
         },
     },

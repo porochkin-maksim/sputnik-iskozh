@@ -6,7 +6,7 @@ use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
-use Core\Domains\Billing\Transaction\Collections\TransactionCollection;
+use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 use Core\Domains\Common\Traits\TimestampsTrait;
 
 class InvoiceDTO
@@ -21,10 +21,10 @@ class InvoiceDTO
     private ?float           $payed      = null;
     private ?string          $comment    = null;
 
-    private ?TransactionCollection $transactions = null;
-    private ?PaymentCollection     $payments     = null;
-    private ?AccountDTO            $accountDTO   = null;
-    private ?PeriodDTO             $periodDTO    = null;
+    private ?ClaimCollection $claims     = null;
+    private ?PaymentCollection $payments = null;
+    private ?AccountDTO      $accountDTO = null;
+    private ?PeriodDTO       $periodDTO  = null;
 
     public function getId(): ?int
     {
@@ -112,14 +112,14 @@ class InvoiceDTO
 
     // дополнительно
 
-    public function getTransactions(): ?TransactionCollection
+    public function getClaims(): ?ClaimCollection
     {
-        return $this->transactions;
+        return $this->claims;
     }
 
-    public function setTransactions(TransactionCollection $transactions): static
+    public function setClaims(ClaimCollection $claims): static
     {
-        $this->transactions = $transactions;
+        $this->claims = $claims;
 
         return $this;
     }

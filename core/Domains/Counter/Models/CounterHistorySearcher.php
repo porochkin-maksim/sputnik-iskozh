@@ -58,9 +58,9 @@ class CounterHistorySearcher implements SearcherInterface
         return $this;
     }
 
-    public function setWithTransaction(): static
+    public function setWithClaim(): static
     {
-        $this->with[] = CounterHistory::TRANSACTION;
+        $this->with[] = CounterHistory::CLAIM;
 
         return $this;
     }

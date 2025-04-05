@@ -3,7 +3,7 @@
 namespace Core\Domains\Counter\Models;
 
 use Carbon\Carbon;
-use Core\Domains\Billing\Transaction\Models\TransactionDTO;
+use Core\Domains\Billing\Claim\Models\ClaimDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\File\Models\FileDTO;
 
@@ -20,9 +20,9 @@ class CounterHistoryDTO
 
     private ?float $previous_value = null;
 
-    private ?FileDTO        $file           = null;
-    private ?CounterDTO     $counter        = null;
-    private ?TransactionDTO $transactionDTO = null;
+    private ?FileDTO    $file        = null;
+    private ?CounterDTO $counter     = null;
+    private ?ClaimDTO   $claimDTO    = null;
 
     public function getId(): ?int
     {
@@ -156,14 +156,14 @@ class CounterHistoryDTO
         return $this->counter;
     }
 
-    public function getTransaction(): ?TransactionDTO
+    public function getClaim(): ?ClaimDTO
     {
-        return $this->transactionDTO;
+        return $this->claimDTO;
     }
 
-    public function setTransaction(?TransactionDTO $transactionDTO): static
+    public function setClaim(?ClaimDTO $claimDTO): static
     {
-        $this->transactionDTO = $transactionDTO;
+        $this->claimDTO = $claimDTO;
 
         return $this;
     }

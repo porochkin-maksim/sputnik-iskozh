@@ -155,7 +155,7 @@ class InvoiceController extends Controller
         $searcher
             ->setWithPeriod()
             ->setWithAccount()
-            ->setWithTransactions()
+            ->setWithClaims()
             ->setWithPayments()
             ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_ASC)
         ;

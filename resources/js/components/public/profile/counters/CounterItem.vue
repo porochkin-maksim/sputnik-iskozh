@@ -26,8 +26,8 @@
                         <b :class="history.isVerified ? 'text-success' : 'text-secondary'">&nbsp;{{ history.isVerified ? 'Проверено' : 'Не проверено' }}</b>
                     </div>
                     <div class="mt-1"
-                         v-if="history.transaction">
-                        <b>Оплачено:</b> {{ $formatMoney(history.transaction.payed) }}/{{ $formatMoney(history.transaction.cost) }} по тарифу {{ $formatMoney(history.transaction.tariff) }}
+                         v-if="history.claim">
+                        <b>Оплачено:</b> {{ $formatMoney(history.claim.payed) }}/{{ $formatMoney(history.claim.cost) }} по тарифу {{ $formatMoney(history.claim.tariff) }}
                     </div>
                     <div class="mt-1">
                         <file-item :file="history.file"
@@ -122,7 +122,6 @@ export default {
         CustomCheckbox,
         CustomInput,
         Wrapper,
-
     },
     props     : [
         'counter',

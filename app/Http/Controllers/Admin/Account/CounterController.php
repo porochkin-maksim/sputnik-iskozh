@@ -11,7 +11,7 @@ use App\Http\Resources\Admin\Counters\CounterListResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Jobs\CheckTransactionForCounterChangeJob;
+use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
@@ -168,7 +168,7 @@ class CounterController extends Controller
         }
     }
 
-    public function createTransaction(int $counterHistoryId): void
+    public function createClaim(int $counterHistoryId): void
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
             abort(403);
@@ -182,7 +182,7 @@ class CounterController extends Controller
                 $this->counterHistoryService->save($history);
             }
 
-            dispatch_sync(new CheckTransactionForCounterChangeJob($counterHistoryId));
+            dispatch_sync(new CheckClaimForCounterChangeJob($counterHistoryId));
             DB::commit();
         }
         catch (Exception $e) {

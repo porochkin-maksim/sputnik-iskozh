@@ -54,6 +54,53 @@
             "accountId": "{accountId}"
         }
     },
+    "adminClaimCreate": {
+        "name": "admin.claim.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminClaimDelete": {
+        "name": "admin.claim.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/delete\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
+    "adminClaimList": {
+        "name": "admin.claim.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/list",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminClaimSave": {
+        "name": "admin.claim.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/save",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminClaimView": {
+        "name": "admin.claim.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/get\/{claimId}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "claimId": "{claimId}"
+        }
+    },
     "adminCounterHistoryConfirm": {
         "name": "admin.counter-history.confirm",
         "displayName": "",
@@ -68,11 +115,11 @@
         "uri": "\/admin\/counter-history\/json\/confirm-delete",
         "args": []
     },
-    "adminCounterHistoryCreateTransaction": {
-        "name": "admin.counter-history.create-transaction",
+    "adminCounterHistoryCreateClaim": {
+        "name": "admin.counter-history.create-claim",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/counter-history\/json\/create-transaction\/{historyId}",
+        "uri": "\/admin\/counter-history\/json\/create-claim\/{historyId}",
         "args": {
             "historyId": "{historyId}"
         }
@@ -462,53 +509,6 @@
         "method": "post",
         "uri": "\/admin\/services\/json\/save",
         "args": []
-    },
-    "adminTransactionCreate": {
-        "name": "admin.transaction.create",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/create",
-        "args": {
-            "invoiceId": "{invoiceId}"
-        }
-    },
-    "adminTransactionDelete": {
-        "name": "admin.transaction.delete",
-        "displayName": "",
-        "method": "delete",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/delete\/{id}",
-        "args": {
-            "invoiceId": "{invoiceId}",
-            "id": "{id}"
-        }
-    },
-    "adminTransactionList": {
-        "name": "admin.transaction.list",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/list",
-        "args": {
-            "invoiceId": "{invoiceId}"
-        }
-    },
-    "adminTransactionSave": {
-        "name": "admin.transaction.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/save",
-        "args": {
-            "invoiceId": "{invoiceId}"
-        }
-    },
-    "adminTransactionView": {
-        "name": "admin.transaction.view",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/transactions\/get\/{transactionId}",
-        "args": {
-            "invoiceId": "{invoiceId}",
-            "transactionId": "{transactionId}"
-        }
     },
     "adminUserCreate": {
         "name": "admin.user.create",

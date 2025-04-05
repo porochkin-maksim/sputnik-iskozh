@@ -158,7 +158,7 @@ class CounterController extends Controller
             ->setCounterId($counterId)
             ->setLimit($limit)
             ->setOffset($request->getOffset())
-            ->setWithTransaction()
+            ->setWithClaim()
             ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
         ;

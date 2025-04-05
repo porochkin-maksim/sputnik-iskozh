@@ -35,10 +35,10 @@ class Invoice extends Model implements CastsInterface
     public const PAYED      = 'payed';
     public const COMMENT    = 'comment';
 
-    public const TRANSACTIONS = 'transactions';
-    public const PAYMENTS     = 'payments';
-    public const ACCOUNT      = 'account';
-    public const PERIOD       = 'period';
+    public const CLAIMS   = 'claims';
+    public const PAYMENTS = 'payments';
+    public const ACCOUNT  = 'account';
+    public const PERIOD   = 'period';
 
     protected $guarded = [];
 
@@ -47,9 +47,9 @@ class Invoice extends Model implements CastsInterface
         self::PAYED => self::CAST_FLOAT,
     ];
 
-    public function transactions(): HasMany
+    public function claims(): HasMany
     {
-        return $this->hasMany(Transaction::class, Transaction::INVOICE_ID)->with(Transaction::SERVICE);
+        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::SERVICE);
     }
 
     public function payments(): HasMany

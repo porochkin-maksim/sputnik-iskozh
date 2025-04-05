@@ -2,11 +2,11 @@
 
 namespace App\Models\Counter;
 
-use App\Models\Billing\TransactionToObject;
+use App\Models\Billing\ClaimToObject;
 use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Core\Domains\Billing\TransactionToObject\Enums\TransactionObjectTypeEnum;
+use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
 use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,10 +36,10 @@ class CounterHistory extends Model implements CastsInterface
     public const DATE        = 'date';
     public const IS_VERIFIED = 'is_verified';
 
-    public const FILE        = 'file';
-    public const COUNTER     = 'counter';
-    public const PREVIOUS    = 'previous';
-    public const TRANSACTION = 'transaction';
+    public const FILE     = 'file';
+    public const COUNTER  = 'counter';
+    public const PREVIOUS = 'previous';
+    public const CLAIM    = 'claim';
 
     protected $guarded = [];
     protected $with    = [self::FILE, self::PREVIOUS];
@@ -72,10 +72,10 @@ class CounterHistory extends Model implements CastsInterface
         return $this->hasOne(self::class, self::ID, self::PREVIOUS_ID);
     }
 
-    public function transaction(): HasOne
+    public function claim(): HasOne
     {
-        return $this->hasOne(TransactionToObject::class, TransactionToObject::REFERENCE_ID, self::ID)
-            ->where(TransactionToObject::TYPE, TransactionObjectTypeEnum::COUNTER_HISTORY->value)
+        return $this->hasOne(ClaimToObject::class, ClaimToObject::REFERENCE_ID, self::ID)
+            ->where(ClaimToObject::TYPE, ClaimObjectTypeEnum::COUNTER_HISTORY->value)
         ;
     }
 }
