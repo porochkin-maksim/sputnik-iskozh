@@ -21,8 +21,9 @@ lightbox.option({
     'wrapAround': true,
 })
 import Hammer from 'hammerjs';
+
 document.addEventListener("DOMContentLoaded", function () {
-    const images = document.querySelectorAll('.lightbox img');
+    const images = document.querySelectorAll('.lb-image img');
 
     images.forEach(function (img) {
         const mc = new Hammer(img);
