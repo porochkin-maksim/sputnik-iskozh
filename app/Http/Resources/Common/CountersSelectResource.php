@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Http\Resources\Admin\Counters;
+namespace App\Http\Resources\Common;
 
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use Core\Domains\Counter\Collections\CounterCollection;
 
 readonly class CountersSelectResource extends AbstractResource

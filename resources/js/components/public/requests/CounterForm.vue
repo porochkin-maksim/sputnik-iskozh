@@ -11,6 +11,7 @@
                       :required="true"
                       :errors="errors.account"
                       :label="'Номер дачи и номер участка (например: 999/1 )'"
+                      :disabled="propAccount?.number"
                       @submit="sendForm"
         />
         <custom-input v-model="value"
@@ -21,18 +22,29 @@
                       :label="'Показания счётчика'"
                       @submit="sendForm"
         />
-        <custom-input v-model="counter"
-                      :classes="'my-3'"
-                      @change="clearError('counter')"
-                      :errors="errors.counter"
-                      :label="'Номер счётчика (по возможности)'"
-                      @submit="sendForm"
-        />
+        <template v-if="propCounters && propCounters.length">
+            <label class="small text-secondary">Счётчик</label>
+            <simple-select v-model="counter"
+                           class="period"
+                           :items="computedCounters"
+                           @change="onCounterChange"
+            />
+        </template>
+        <template v-else>
+            <custom-input v-model="counter"
+                          :classes="'my-3'"
+                          @change="clearError('counter')"
+                          :errors="errors.counter"
+                          :label="'Номер счётчика (по возможности)'"
+                          @submit="sendForm"
+            />
+        </template>
         <custom-input v-model="name"
                       :classes="'my-3'"
                       @change="clearError('name')"
                       :errors="errors.name"
                       :label="'Ваше имя (по желанию)'"
+                      :disabled="propUserName"
                       @submit="sendForm"
         />
         <custom-input v-model="email"
@@ -40,6 +52,7 @@
                       @change="clearError('email')"
                       :errors="errors.email"
                       :label="'Эл.почта (по желанию)'"
+                      :disabled="propUser?.email"
                       @submit="sendForm"
         />
         <custom-input v-model="phone"
@@ -47,6 +60,7 @@
                       @change="clearError('phone')"
                       :errors="errors.phone"
                       :label="'Телефон (по желанию)'"
+                      :disabled="propUser?.phone"
                       @submit="sendForm"
         />
         <div class="mt-2">
@@ -75,8 +89,12 @@
         <div class="d-flex justify-content-end mt-2">
             <button type="submit"
                     :disabled="disableSubmit"
+                    v-if="!pending"
                     @click="sendForm"
                     class="btn btn-success">Отправить
+            </button>
+            <button class="btn border-0" disabled v-else>
+                <i class="fa fa-spinner fa-spin"></i> Отправка
             </button>
         </div>
     </div>
@@ -87,21 +105,65 @@ import Url            from '../../../utils/Url.js';
 import ResponseError  from '../../../mixin/ResponseError.js';
 import CustomInput    from '../../common/form/CustomInput.vue';
 import CustomTextarea from '../../common/form/CustomTextarea.vue';
+import SimpleSelect   from '../../common/form/SimpleSelect.vue';
 
 export default {
     name      : 'CounterForm',
     components: {
+        SimpleSelect,
         CustomTextarea,
         CustomInput,
     },
     mixins    : [
         ResponseError,
     ],
+    props     : {
+        propAccount : {
+            type   : Object,
+            default: {},
+        },
+        propUser    : {
+            type   : Object,
+            default: {},
+        },
+        propCounters: {
+            type   : Array,
+            default: [],
+        },
+    },
     created () {
-        this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
-        this.email   = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
-        this.phone   = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
-        this.name    = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        if (this.propAccount?.number) {
+            this.account = this.propAccount?.number;
+        }
+        else {
+            this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
+        }
+
+        if (this.propUser?.email) {
+            this.email = this.propUser?.email;
+        }
+        else {
+            this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
+        }
+
+        if (this.propUser?.phone) {
+            this.phone = this.propUser?.phone;
+        }
+        else {
+            this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
+        }
+
+        if (this.propUserName) {
+            this.name = this.propUserName;
+        }
+        else {
+            this.name = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
+        }
+
+        if (this.propCounters && this.propCounters.length) {
+            this.counter = this.propCounters[0].id;
+            this.value   = this.propCounters[0].value;
+        }
     },
     data () {
         return {
@@ -130,12 +192,15 @@ export default {
             form.append('account', this.account ? this.account : null);
             form.append('counter', this.counter ? this.counter : null);
             form.append('value', this.value ? this.value : null);
+            if (this.propCounters && this.propCounters.length) {
+                form.append('counter_id', this.counter ? this.counter : null);
+            }
 
             form.append('file', this.file);
 
             window.axios[Url.Routes.counterCreate.method](Url.Routes.counterCreate.uri, form).then(response => {
                 this.success = true;
-                this.showSuccess('Платёж принят');
+                this.showSuccess('Показания приняты');
 
                 setTimeout(() => {
                     location.reload();
@@ -155,6 +220,13 @@ export default {
         removeFile () {
             this.file = null;
         },
+        onCounterChange () {
+            this.propCounters.forEach(item => {
+                if (parseInt(item.id) === parseInt(this.counter)) {
+                    this.value = item.value;
+                }
+            });
+        },
     },
     watch   : {
         account () {
@@ -171,15 +243,28 @@ export default {
         },
     },
     computed: {
+        propUserName () {
+            if (!this.propUser?.email) {
+                return null;
+            }
+            return (this.propUser?.lastName + ' ' + this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
+        },
         disableSubmit () {
             return !this.account || !this.value || !this.file || this.pending;
         },
-        filesSize () {
-            let result = 0;
-            this.files.forEach(file => {
-                result += file.size;
+        computedCounters () {
+            let result = [];
+
+            if (!this.propCounters && !this.propCounters.length) {
+                return result;
+            }
+
+            return this.propCounters.map(item => {
+                return {
+                    key  : item.id,
+                    value: item.number,
+                };
             });
-            return (result / (1024 * 1024)).toFixed(2);
         },
     },
 };

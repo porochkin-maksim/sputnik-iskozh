@@ -52,10 +52,13 @@ class CounterController extends Controller
                 if ($account) {
                     $counters = $this->counterService->getByAccountId($account->getId());
                     $counter  = null;
-                    if ($request->getCounter()) {
+                    if ($request->getCounterId()) {
+                        $counter = $counters->getById($request->getCounterId());
+                    }
+                    elseif ($request->getCounter()) {
                         $counter = $counters->filter(function (CounterDTO $counter) use ($request) {
                             return $counter->getNumber() === $request->getCounter();
-                        });
+                        })->first();
                     }
                     $counter = $counter ?? $counters->getInvoicing()->first();
 

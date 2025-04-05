@@ -11,13 +11,14 @@ class CounterCreateRequest extends AbstractRequest
 {
     private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
 
-    private const EMAIL   = RequestArgumentsEnum::EMAIL;
-    private const PHONE   = RequestArgumentsEnum::PHONE;
-    private const NAME    = RequestArgumentsEnum::NAME;
-    private const COUNTER = RequestArgumentsEnum::COUNTER;
-    private const ACCOUNT = RequestArgumentsEnum::ACCOUNT;
-    private const VALUE   = RequestArgumentsEnum::VALUE;
-    private const FILE    = RequestArgumentsEnum::FILE;
+    private const EMAIL      = RequestArgumentsEnum::EMAIL;
+    private const PHONE      = RequestArgumentsEnum::PHONE;
+    private const NAME       = RequestArgumentsEnum::NAME;
+    private const COUNTER    = RequestArgumentsEnum::COUNTER;
+    private const COUNTER_ID = RequestArgumentsEnum::COUNTER_ID;
+    private const ACCOUNT    = RequestArgumentsEnum::ACCOUNT;
+    private const VALUE      = RequestArgumentsEnum::VALUE;
+    private const FILE       = RequestArgumentsEnum::FILE;
 
     public function rules(): array
     {
@@ -94,6 +95,11 @@ class CounterCreateRequest extends AbstractRequest
     public function getCounter(): string
     {
         return (string) $this->getStringOrNull(self::COUNTER);
+    }
+
+    public function getCounterId(): ?int
+    {
+        return $this->getIntOrNull(self::COUNTER_ID);
     }
 
     public function getAccount(): string

@@ -147,8 +147,8 @@ use Core\Enums\DateTimeFormat;
                         @foreach($decorator->getChanges() as $change)
                             <tr>
                                 <td>{{ $change->getTitle() }}</td>
-                                <td>{{ $change->getOldValue() }}</td>
-                                <td>{{ $change->getNewValue() }}</td>
+                                <td>{!! nl2br($change->getOldValue()) !!}</td>
+                                <td>{!! nl2br($change->getNewValue()) !!}</td>
                             </tr>
                         @endforeach
                         </tbody>

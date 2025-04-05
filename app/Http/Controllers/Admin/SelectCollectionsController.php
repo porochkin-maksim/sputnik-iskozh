@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
-use App\Http\Resources\Admin\Counters\CountersSelectResource;
+use App\Http\Resources\Common\CountersSelectResource;
 use App\Models\Account\Account;
 use App\Models\Counter\Counter;
 use Core\Db\Searcher\SearcherInterface;
