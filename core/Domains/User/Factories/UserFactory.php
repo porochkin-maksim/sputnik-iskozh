@@ -56,6 +56,10 @@ readonly class UserFactory
             $result->setAttribute(User::PASSWORD, $this->encryptPassword($dto->getPassword()));
         }
 
+        if ($dto->getEmailVerifiedAt()) {
+            $result->forceFill([User::EMAIL_VERIFIED_AT => $dto->getEmailVerifiedAt()]);
+        }
+
         return $result->fill([
             User::ID             => $dto->getId(),
             User::EMAIL          => $dto->getEmail(),
@@ -83,6 +87,7 @@ readonly class UserFactory
             ->setLastName($model->last_name)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at)
+            ->setEmailVerifiedAt($model->email_verified_at)
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {
