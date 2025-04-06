@@ -3,9 +3,11 @@
 namespace Core\Domains\User\Models;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Helpers\DateTime\DateTimeHelper;
 
 class UserDTO
 {
@@ -20,8 +22,9 @@ class UserDTO
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
 
-    private ?AccountDTO $account = null;
-    private ?RoleDTO    $role    = null;
+    private ?AccountDTO $account         = null;
+    private ?RoleDTO    $role            = null;
+    private ?Carbon     $emailVerifiedAt = null;
 
     public function __construct(
         private readonly ?User $user = null,
@@ -152,5 +155,17 @@ class UserDTO
     public function getRole(): ?RoleDTO
     {
         return $this->role;
+    }
+
+    public function setEmailVerifiedAt(mixed $emailVerifiedAt): static
+    {
+        $this->emailVerifiedAt = DateTimeHelper::toCarbonOrNull($emailVerifiedAt);
+
+        return $this;
+    }
+
+    public function getEmailVerifiedAt(): ?Carbon
+    {
+        return $this->emailVerifiedAt;
     }
 }

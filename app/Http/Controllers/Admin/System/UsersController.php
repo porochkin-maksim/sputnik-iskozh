@@ -12,6 +12,7 @@ use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
 use App\Models\Account\Account;
 use App\Models\User;
+use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\RoleLocator;
@@ -109,7 +110,10 @@ class UsersController extends Controller
 
         $user = $request->getId()
             ? $this->userService->getById($request->getId())
-            : $this->userFactory->makeDefault()->setPassword(Str::random(8));
+            : $this->userFactory->makeDefault()
+                ->setPassword(Str::random(8))
+                ->setEmailVerifiedAt(Carbon::now())
+        ;
 
         if ( ! $user) {
             abort(412);
@@ -137,9 +141,10 @@ class UsersController extends Controller
         $searchString = $request->getString('q');
         $searcher     = new UserSearcher();
         $searcher->addOrWhere(User::LAST_NAME, SearcherInterface::LIKE, "{$searchString}%")
-        ->addOrWhere(User::FIRST_NAME, SearcherInterface::LIKE, "{$searchString}%")
-        ->addOrWhere(User::EMAIL, SearcherInterface::LIKE, "{$searchString}%")
-        ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%");
+            ->addOrWhere(User::FIRST_NAME, SearcherInterface::LIKE, "{$searchString}%")
+            ->addOrWhere(User::EMAIL, SearcherInterface::LIKE, "{$searchString}%")
+            ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%")
+        ;
 
         $users = $this->userService->search($searcher);
 
