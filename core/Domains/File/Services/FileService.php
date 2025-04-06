@@ -14,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-readonly class FileService
+class FileService
 {
     public function __construct(
         private FileRepository $fileRepository,

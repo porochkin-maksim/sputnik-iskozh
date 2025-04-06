@@ -33,7 +33,7 @@ readonly class CounterHistoryResource extends AbstractResource
             'days'       => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
             'file'       => $this->counterHistory->getFile(),
             'actions'    => [
-                ResponsesEnum::CREATE => ! $this?->previousCounterHistory || (bool) $this?->previousCounterHistory?->getDate()?->endOfDay()?->lte(Carbon::now()->endOfDay()),
+                ResponsesEnum::CREATE => ! $this?->previousCounterHistory || (bool) $this?->previousCounterHistory?->getDate()?->endOfDay()?->lte(Carbon::now()->startOfDay()),
             ],
             'claim'      => $claim ? new ClaimResource($claim) : null,
         ];

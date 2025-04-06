@@ -10,16 +10,17 @@ interface SearcherInterface
     public const SORT_ORDER_ASC  = 'asc';
     public const SORT_ORDER_DESC = 'desc';
 
-    public const EQUALS  = '=';
-    public const IS_NULL = 'IS NULL';
-    public const GT      = '>';
-    public const GTE     = '>=';
-    public const LT      = '<';
-    public const LTE     = '<=';
-    public const IS_NOT  = '!=';
-    public const NOT_IN  = 'NOT_IN';
-    public const IN      = 'IN';
-    public const LIKE    = 'like';
+    public const EQUALS      = '=';
+    public const IS_NULL     = 'IS NULL';
+    public const IS_NOT_NULL = 'NOT NULL';
+    public const GT          = '>';
+    public const GTE         = '>=';
+    public const LT          = '<';
+    public const LTE         = '<=';
+    public const IS_NOT      = '!=';
+    public const NOT_IN      = 'NOT_IN';
+    public const IN          = 'IN';
+    public const LIKE        = 'like';
 
     public function getIds(): ?array;
 

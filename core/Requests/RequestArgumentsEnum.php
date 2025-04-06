@@ -63,4 +63,5 @@ enum RequestArgumentsEnum: string
     public const PHONE           = 'phone';
     public const TEXT            = 'text';
     public const TOKEN           = 'token';
+    public const INCREMENT       = 'increment';
 }

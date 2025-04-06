@@ -9,9 +9,10 @@ use Illuminate\Validation\Rule;
 
 class CreateRequest extends AbstractRequest
 {
-    private const NUMBER = RequestArgumentsEnum::NUMBER;
-    private const VALUE  = 'value';
-    private const FILE  = 'file';
+    private const NUMBER    = RequestArgumentsEnum::NUMBER;
+    private const VALUE     = 'value';
+    private const INCREMENT = RequestArgumentsEnum::INCREMENT;
+    private const FILE      = 'file';
 
     public function rules(): array
     {
@@ -20,10 +21,10 @@ class CreateRequest extends AbstractRequest
                 'required',
                 Rule::unique('counters', 'number'),
             ],
-            self::VALUE => [
+            self::VALUE  => [
                 'required',
             ],
-            self::FILE => [
+            self::FILE   => [
                 'required',
             ],
         ];
@@ -50,5 +51,10 @@ class CreateRequest extends AbstractRequest
     public function getFile(): UploadedFile
     {
         return $this->file(self::FILE);
+    }
+
+    public function getIncrement(): int
+    {
+        return abs($this->getInt(self::INCREMENT));
     }
 }

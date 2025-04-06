@@ -8,12 +8,14 @@ use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
 
-readonly class CounterFactory
+class CounterFactory
 {
     public function makeDefault(): CounterDTO
     {
         return $this->make(CounterTypeEnum::ELECTRICITY)
-            ->setIsInvoicing(false);
+            ->setIsInvoicing(false)
+            ->setIncrement(0)
+        ;
     }
 
     public function makeModelFromDto(CounterDTO $dto, ?Counter $model = null): Counter
@@ -34,6 +36,7 @@ readonly class CounterFactory
             Counter::ACCOUNT_ID   => $dto->getAccountId(),
             Counter::NUMBER       => $dto->getNumber(),
             Counter::IS_INVOICING => $dto->isInvoicing(),
+            Counter::INCREMENT    => $dto->getIncrement(),
         ]);
     }
 
@@ -47,6 +50,7 @@ readonly class CounterFactory
             ->setAccountId($model->account_id)
             ->setNumber($model->number)
             ->setIsInvoicing($model->is_invoicing)
+            ->setIncrement($model->increment)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 

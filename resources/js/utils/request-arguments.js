@@ -57,5 +57,6 @@ export default {
     counterId    : 'counter_id',
     phone        : 'phone',
     text         : 'text',
-    token        : 'token'
+    token        : 'token',
+    increment    : 'increment'
 }

@@ -12,7 +12,7 @@ use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\File\FileLocator;
 use Illuminate\Database\Eloquent\Collection;
 
-readonly class CounterHistoryFactory
+class CounterHistoryFactory
 {
     public function makeDefault(): CounterHistoryDTO
     {

@@ -44,24 +44,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
+// Инициализация всех компонентов Bootstrap
+document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация тултипов
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-// import Echo from 'laravel-echo';
+    // Инициализация поповеров
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
-// import Pusher from 'pusher-js';
-// window.Pusher = Pusher;
+    // Инициализация дропдаунов
+    const dropdownTriggerList = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    [...dropdownTriggerList].map(dropdownTriggerEl => new bootstrap.Dropdown(dropdownTriggerEl));
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: import.meta.env.VITE_PUSHER_APP_KEY,
-//     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-//     wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-//     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-//     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-//     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-//     enabledTransports: ['ws', 'wss'],
-// });
+    // Инициализация модальных окон
+    const modalTriggerList = document.querySelectorAll('[data-bs-toggle="modal"]');
+    [...modalTriggerList].map(modalTriggerEl => new bootstrap.Modal(modalTriggerEl));
+
+    // Инициализация коллапсов
+    const collapseTriggerList = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    [...collapseTriggerList].map(collapseTriggerEl => new bootstrap.Collapse(collapseTriggerEl, { toggle: false }));
+});

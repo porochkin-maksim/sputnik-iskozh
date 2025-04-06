@@ -117,6 +117,7 @@ class CounterController extends Controller
 
         $counter
             ->setIsInvoicing($request->getIsInvoicing())
+            ->setIncrement($request->getIncrement())
             ->setNumber($request->getNumber())
         ;
 
