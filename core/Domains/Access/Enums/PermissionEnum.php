@@ -37,6 +37,7 @@ enum PermissionEnum: int
             110 => 'Услуги счетов',
             120 => 'Платежи',
             130 => 'Счётчики',
+            140 => 'Опции',
         };
     }
 
@@ -119,9 +120,9 @@ enum PermissionEnum: int
     case INVOICES_EDIT     = 102;
     case INVOICES_DROP     = 103;
 
-    case CLAIMS_VIEW = 111;
-    case CLAIMS_EDIT = 112;
-    case CLAIMS_DROP = 113;
+    case CLAIMS_VIEW       = 111;
+    case CLAIMS_EDIT       = 112;
+    case CLAIMS_DROP       = 113;
 
     case PAYMENTS_VIEW     = 121;
     case PAYMENTS_EDIT     = 122;
@@ -130,4 +131,8 @@ enum PermissionEnum: int
     case COUNTERS_VIEW     = 131;
     case COUNTERS_EDIT     = 132;
     case COUNTERS_DROP     = 133;
+
+    case OPTIONS_VIEW      = 141;
+    case OPTIONS_EDIT      = 142;
+    case OPTIONS_DROP      = 143;
 }

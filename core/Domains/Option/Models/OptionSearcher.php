@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Option\Models;
 
-use App\Models\Option;
+use App\Models\Infra\Option;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
 use Core\Domains\Option\Enums\OptionEnum;
@@ -13,7 +13,7 @@ class OptionSearcher implements SearcherInterface
 
     public function setType(OptionEnum $enum): static
     {
-        $this->addWhere(Option::TYPE, SearcherInterface::EQUALS, $enum->value);
+        $this->addWhere(Option::ID, SearcherInterface::EQUALS, $enum->value);
 
         return $this;
     }

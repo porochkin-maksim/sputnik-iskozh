@@ -4,6 +4,7 @@ namespace Core\Domains\Infra\Comparator\DTO;
 
 use ReflectionObject;
 
+#[\AllowDynamicProperties]
 abstract class AbstractComparatorDTO
 {
     protected const KEYS_TO_TITLES = [];

@@ -72,19 +72,6 @@ Route::group(['prefix' => 'home'], static function () {
     });
 });
 
-Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-    Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-        Route::group(['prefix' => 'options'], static function () {
-            Route::get('/', [Controllers\Options\OptionsController::class, 'index'])->name(RouteNames::OPTIONS);
-            Route::group(['prefix' => 'json'], static function () {
-                Route::get('/list', [Controllers\Options\OptionsController::class, 'list'])->name(RouteNames::OPTIONS_LIST);
-                Route::post('/save', [Controllers\Options\OptionsController::class, 'save'])->name(RouteNames::OPTIONS_SAVE);
-                Route::get('/edit/{id}', [Controllers\Options\OptionsController::class, 'edit'])->name(RouteNames::OPTIONS_EDIT);
-            });
-        });
-    });
-});
-
 Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
     Route::group(['prefix' => 'reports'], static function () {
         Route::get('/', [Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
@@ -193,6 +180,13 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::delete('/{id}', [Controllers\Admin\System\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
                     Route::post('/sendRestorePassword', [Controllers\Admin\System\UsersController::class, 'sendRestorePassword'])->name(RouteNames::ADMIN_USER_SEND_RESTORE_PASSWORD);
                     Route::post('/send-invite-password', [Controllers\Admin\System\UsersController::class, 'sendInviteWithPassword'])->name(RouteNames::ADMIN_USER_SEND_INVITE_WITH_PASSWORD);
+                });
+            });
+            Route::group(['prefix' => 'options'], static function () {
+                Route::get('/', [Controllers\Admin\System\OptionsController::class, 'index'])->name(RouteNames::ADMIN_OPTIONS_INDEX);
+                Route::group(['prefix' => 'json'], static function () {
+                    Route::get('/list', [Controllers\Admin\System\OptionsController::class, 'list'])->name(RouteNames::ADMIN_OPTIONS_LIST);
+                    Route::post('/save', [Controllers\Admin\System\OptionsController::class, 'save'])->name(RouteNames::ADMIN_OPTIONS_SAVE);
                 });
             });
             Route::group(['prefix' => 'periods'], static function () {

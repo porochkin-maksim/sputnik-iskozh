@@ -35,6 +35,9 @@ if ($authRole->can(PermissionEnum::ROLES_VIEW)) {
 if ($authRole->can(PermissionEnum::USERS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_USER_INDEX;
 }
+if ($authRole->can(PermissionEnum::OPTIONS_VIEW)) {
+    $navRoutes[] = RouteNames::ADMIN_OPTIONS_INDEX;
+}
 if ($authRole->can(PermissionEnum::ACCOUNTS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
 }

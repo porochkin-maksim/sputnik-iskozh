@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Models\Infra;
 
+use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,10 +11,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
- * @property int     $type
  * @property ?string $data
  */
-class Option extends Model
+class Option extends Model implements CastsInterface
 {
     public const TABLE = 'options';
 
@@ -24,4 +24,8 @@ class Option extends Model
     public const DATA = 'data';
 
     protected $guarded = [];
+
+    protected $casts = [
+        self::DATA => self::CAST_JSON,
+    ];
 }

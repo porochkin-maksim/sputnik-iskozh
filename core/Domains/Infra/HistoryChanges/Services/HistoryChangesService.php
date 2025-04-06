@@ -15,7 +15,7 @@ use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
 
-readonly class HistoryChangesService
+class HistoryChangesService
 {
     public function __construct(
         private HistoryChangesFactory    $historyChangesFactory,

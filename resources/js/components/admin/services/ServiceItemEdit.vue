@@ -54,7 +54,7 @@
     </template>
     <template v-else>
         <td>{{ id }}</td>
-        <td>{{ active ? 'да' : 'нет' }}}</td>
+        <td>{{ active ? 'да' : 'нет' }}</td>
         <td>{{ name }}</td>
         <td>{{ $formatMoney(cost) }}</td>
         <td>{{ periodName }}</td>

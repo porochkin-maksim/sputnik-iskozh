@@ -2,21 +2,53 @@
 
 namespace Core\Domains\Option\Services;
 
-use Core\Db\Searcher\Models\SearchResponse;
-use Core\Domains\Option\Collections\Options;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Domains\Option\Collections\OptionCollection;
 use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Factories\OptionFactory;
+use Core\Domains\Option\Models\Comparators\ComparatorFactory;
 use Core\Domains\Option\Models\OptionDTO;
 use Core\Domains\Option\Models\OptionSearcher;
 use Core\Domains\Option\Repositories\OptionRepository;
+use Core\Domains\Option\Responses\SearchResponse;
 
 readonly class OptionService
 {
     public function __construct(
-        private OptionRepository $optionRepository,
-        private OptionFactory    $optionFactory,
+        private OptionFactory         $optionFactory,
+        private OptionRepository      $optionRepository,
+        private HistoryChangesService $historyChangesService,
+        private ComparatorFactory     $comparatorFactory,
     )
     {
+    }
+
+    public function save(OptionDTO $option): OptionDTO
+    {
+        $model = $this->optionRepository->getById($option->getId());
+        if ($model) {
+            $before = $this->optionFactory->makeDtoFromObject($model);
+        }
+        else {
+            $before = new OptionDTO();
+        }
+
+        $model   = $this->optionRepository->save($this->optionFactory->makeModelFromDto($option, $model));
+        $current = $this->optionFactory->makeDtoFromObject($model);
+
+        $this->historyChangesService->writeToHistory(
+            $option->getId() ? Event::UPDATE : Event::CREATE,
+            HistoryType::OPTION,
+            $current->getId(),
+            null,
+            null,
+            $this->comparatorFactory->createComparator($current),
+            $this->comparatorFactory->createComparator($before),
+        );
+
+        return $current;
     }
 
     public function search(OptionSearcher $searcher): SearchResponse
@@ -26,61 +58,68 @@ readonly class OptionService
         $result = new SearchResponse();
         $result->setTotal($response->getTotal());
 
-        $collection = new Options();
+        $collection = new OptionCollection();
         foreach ($response->getItems() as $item) {
             $collection->add($this->optionFactory->makeDtoFromObject($item));
         }
 
-        foreach (array_diff($searcher->getIds(), $collection->getIds()) as $id) {
-            $option = OptionEnum::tryFrom($id);
-            if ($option) {
-                $collection->add($this->optionFactory->make($option));
-            }
-        }
-
-        $result->setTotal(max($response->getTotal(), $collection->count()));
-
         return $result->setItems($collection);
     }
 
-    public function getById(int $id, ?OptionFactory $optionFactory = null): ?OptionDTO
+    public function getById(?int $id): ?OptionDTO
     {
-        $result = $this->optionRepository->getById($id);
-
-        if ($result) {
-            if ($optionFactory) {
-                return $optionFactory->makeDtoFromObject($result);
-            }
-            else {
-                return $this->optionFactory->makeDtoFromObject($result);
-            }
-        }
-        return null;
-    }
-
-    public function save(OptionDTO $dto): OptionDTO
-    {
-        $option = null;
-
-        if ($dto->getId()) {
-            $option = $this->optionRepository->getById($dto->getId());
+        if (!$id) {
+            return null;
         }
 
-        $option = $this->optionFactory->makeModelFromDto($dto, $option);
-        $option = $this->optionRepository->save($option);
+        $searcher = new OptionSearcher();
+        $searcher->setId($id);
+        $result = $this->optionRepository->search($searcher)->getItems()->first();
 
-        return $this->optionFactory->makeDtoFromObject($option);
+        // Если опция не найдена в БД, но ID соответствует значению из OptionEnum,
+        // создаем новый объект DTO на основе типа
+        $type = OptionEnum::tryFrom($id);
+        return $result 
+            ? $this->optionFactory->makeDtoFromObject($result) 
+            : ($type ? $this->optionFactory->makeByType($type) : null);
     }
 
-    public function getByType(OptionEnum $type, OptionFactory $optionFactory = null): null|OptionDTO
+    public function getByType(OptionEnum $type): OptionDTO
     {
-        $option = $this->getById($type->value, $optionFactory);
+        $option = $this->getById($type->value);
 
-        if ( ! $option) {
-            $option = $this->optionFactory->make($type);
-            $option = $this->save($option);
+        if ($option === null) {
+            $option = $this->optionFactory->makeByType($type);
         }
 
         return $option;
+    }
+
+    public function all(): SearchResponse
+    {
+        // Получаем все существующие опции из БД
+        $searcher = new OptionSearcher();
+        $searcher->setSortOrderProperty('id', 'DESC');
+        $response = $this->search($searcher);
+        
+        // Создаем map существующих опций по id
+        $existingOptions = [];
+        foreach ($response->getItems() as $option) {
+            $existingOptions[$option->getId()] = $option;
+        }
+
+        // Создаем коллекцию всех возможных опций
+        $collection = new OptionCollection();
+        foreach (OptionEnum::cases() as $case) {
+            if (isset($existingOptions[$case->value])) {
+                $collection->add($existingOptions[$case->value]);
+            } else {
+                $collection->add($this->optionFactory->makeByType($case));
+            }
+        }
+
+        return (new SearchResponse())
+            ->setItems($collection)
+            ->setTotal(count($collection));
     }
 }
