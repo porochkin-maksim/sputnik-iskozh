@@ -27,6 +27,7 @@ readonly class CounterResource extends AbstractResource
             'number'      => $this->counter->getNumber(),
             'isInvoicing' => $this->counter->isInvoicing() && $this->counter->getAccountId() !== AccountIdEnum::SNT->value,
             'accountId'   => $this->counter->getAccountId(),
+            'increment'   => $this->counter->getIncrement(),
             'value'       => $lastHistory?->getValue(),
             'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),

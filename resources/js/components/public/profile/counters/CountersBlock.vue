@@ -2,12 +2,13 @@
     <div v-if="counters && counters.length">
         <template v-for="item in counters">
             <div>
-            <a :href="item.viewUrl" class="text-decoration-none">
-                <h5 class="d-inline-flex flex-md-row flex-column mt-2">
-                    <div>Счётчик «{{ item.number }}»&nbsp;</div>
-                    <div>{{ item.value }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
-                </h5>
-            </a>
+                <a :href="item.viewUrl"
+                   class="text-decoration-none">
+                    <h5 class="d-inline-flex flex-md-row flex-column mt-2">
+                        <div>Счётчик «{{ item.number }}»&nbsp;</div>
+                        <div>{{ item.value }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
+                    </h5>
+                </a>
             </div>
         </template>
     </div>
@@ -30,6 +31,17 @@
                                   :type="'text'"
                                   :label="'Серийный номер устройства'"
                                   :required="true"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="increment"
+                                  :errors="errors.increment"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
+                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :required="true"
+                                  @focusout="calculateIncrement"
                     />
                 </div>
                 <div class="mt-2">
@@ -104,9 +116,10 @@ export default {
             showDialog: false,
             hideDialog: false,
 
-            id    : null,
-            number: null,
-            value : null,
+            id       : null,
+            number   : null,
+            value    : null,
+            increment: 0,
 
             counters: null,
             file    : null,
@@ -141,6 +154,7 @@ export default {
             form.append('number', this.number);
             form.append('value', this.value);
             form.append('file', this.file);
+            form.append('increment', this.increment);
 
             window.axios[Url.Routes.profileCounterCreate.method](Url.Routes.profileCounterCreate.uri, form).then(response => {
                 this.onSuccessSubmit();
@@ -168,6 +182,9 @@ export default {
         },
         removeFile () {
             this.file = null;
+        },
+        calculateIncrement () {
+            this.increment = this.increment < 0 ? this.increment * -1 : this.increment;
         },
     },
     computed: {

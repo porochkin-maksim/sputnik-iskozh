@@ -14,16 +14,13 @@ class CounterHistoryCreatedListener
      */
     public function handle(CounterHistoryCreatedEvent $event): void
     {
-        $counterId = $event->counterHistory->getCounterId();
-
-        if ( ! $counterId) {
-            return;
-        }
-
-        dispatch(new RewatchCounterHistoryChainJob($counterId));
-
         if ( ! $event->counterHistory?->isVerified()) {
             dispatch(new NotifyAboutNewUnverifiedCounterHistoryJob($event->counterHistory->getId()));
+        }
+
+        $counterId = $event->counterHistory->getCounterId();
+        if ($counterId) {
+            dispatch(new RewatchCounterHistoryChainJob($counterId));
         }
     }
 }

@@ -11,6 +11,7 @@ class SaveRequest extends AbstractRequest
     private const ID           = RequestArgumentsEnum::ID;
     private const NUMBER       = RequestArgumentsEnum::NUMBER;
     private const IS_INVOICING = 'is_invoicing';
+    private const INCREMENT    = RequestArgumentsEnum::INCREMENT;
 
     public function rules(): array
     {
@@ -43,5 +44,10 @@ class SaveRequest extends AbstractRequest
     public function getIsInvoicing(): bool
     {
         return $this->getBool(self::IS_INVOICING);
+    }
+
+    public function getIncrement(): int
+    {
+        return abs($this->getInt(self::INCREMENT));
     }
 }

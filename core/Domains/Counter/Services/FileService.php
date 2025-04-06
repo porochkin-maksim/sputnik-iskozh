@@ -13,7 +13,7 @@ class FileService
     private const FILE_DIR = 'counters';
 
     public function __construct(
-        private readonly BaseFileService $fileService,
+        private BaseFileService $fileService,
     )
     {
     }

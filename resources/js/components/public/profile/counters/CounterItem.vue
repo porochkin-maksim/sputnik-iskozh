@@ -5,11 +5,22 @@
                 <div>
                     <b>Счётчик {{ counter.number }}</b>
                 </div>
-                <div>
-                    <button class="btn btn-sm btn-success"
-                            v-if="canAddNewHistory"
+                <div class="d-flex flex-md-row flex-column">
+                    <button v-if="canAddNewHistory"
+                            class="btn btn-sm btn-success mb-md-0 mb-2"
                             @click="addHistoryValue"
                     >Добавить показания
+                    </button>
+                    <button v-else
+                            class="btn btn-sm btn-success mb-md-0 mb-2"
+                            data-bs-toggle="popover"
+                            :data-bs-content="'Добавить показания можно будет завтра'"
+                            data-bs-placement="bottom"
+                    >Добавить показания
+                    </button>
+                    <button class="btn btn-sm btn-outline-success ms-2"
+                            @click="editIncrement"
+                    >Автоприращение
                     </button>
                 </div>
             </div>
@@ -44,7 +55,9 @@
                             @click="loadMore">
                         Показать ещё
                     </button>
-                    <button class="btn border-0" disabled v-else>
+                    <button class="btn border-0"
+                            disabled
+                            v-else>
                         <i class="fa fa-spinner fa-spin"></i> Подгрузка
                     </button>
                 </div>
@@ -98,8 +111,44 @@
                     :disabled="!canSubmitAction">
                 Добавить
             </button>
-            <button class="btn border-0" disabled v-else>
+            <button class="btn border-0"
+                    disabled
+                    v-else>
                 <i class="fa fa-spinner fa-spin"></i> Добавление
+            </button>
+        </template>
+    </view-dialog>
+    <view-dialog v-model:show="showIncrementDialog"
+                 v-model:hide="hideIncrementDialog"
+                 @hidden="closeIncrementAction"
+    >
+        <template v-slot:title>Изменение автоприращения</template>
+        <template v-slot:body>
+            <div class="container-fluid">
+                <div class="mt-2">
+                    <custom-input v-model="increment"
+                                  :errors="errors.increment"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
+                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :required="true"
+                                  @focusout="calculateIncrement"
+                    />
+                </div>
+            </div>
+        </template>
+        <template v-slot:footer>
+            <button class="btn btn-success"
+                    v-if="!pending"
+                    @click="saveIncrementAction"
+                    :disabled="!canSubmitIncrementAction">
+                Сохранить
+            </button>
+            <button class="btn border-0"
+                    disabled
+                    v-else>
+                <i class="fa fa-spinner fa-spin"></i> Сохранение
             </button>
         </template>
     </view-dialog>
@@ -149,9 +198,14 @@ export default {
             skip : 0,
             total: null,
             limit: 0,
+
+            showIncrementDialog: false,
+            hideIncrementDialog: false,
+            increment          : null,
         };
     },
     created () {
+        this.increment = this.counter.increment ? this.counter.increment : 0;
         this.listAction();
     },
     methods : {
@@ -193,7 +247,7 @@ export default {
         },
         addHistoryValueAction () {
             this.pending = true;
-            let form = new FormData();
+            let form     = new FormData();
             form.append('counter_id', this.counter.id);
             form.append('value', this.value);
             form.append('file', this.file);
@@ -214,6 +268,9 @@ export default {
             this.listAction();
         },
         addHistoryValue (item) {
+            if (!this.canAddNewHistory) {
+                return;
+            }
             this.value      = item.value;
             this.showDialog = true;
             this.id         = item.id;
@@ -229,6 +286,41 @@ export default {
         },
         removeFile () {
             this.file = null;
+        },
+        editIncrement () {
+            this.showIncrementDialog = true;
+        },
+        closeIncrementAction () {
+            this.showIncrementDialog = false;
+        },
+        calculateIncrement () {
+            this.increment = this.increment < 0 ? this.increment * -1 : this.increment;
+        },
+        saveIncrementAction () {
+            if (this.pending) {
+                return;
+            }
+            this.pending = true;
+            let form     = new FormData();
+            form.append('id', this.counter.id);
+            form.append('increment', this.increment);
+
+            window.axios[Url.Routes.profileCountersIncrementSave.method](Url.Routes.profileCountersIncrementSave.uri, form)
+                .then(response => {
+                    this.onIncrementSuccessSubmit();
+                })
+                .catch(response => {
+                    this.parseResponseErrors(response);
+                })
+                .then(() => {
+                    this.pending = false;
+                });
+        },
+        onIncrementSuccessSubmit () {
+            this.showSuccess('Данные сохранены');
+            this.showIncrementDialog = false;
+            this.hideIncrementDialog = true;
+            this.$emit('increment-updated');
         },
     },
     computed: {
@@ -250,6 +342,9 @@ export default {
         },
         canLoadMore () {
             return this.total && this.skip < this.total;
+        },
+        canSubmitIncrementAction () {
+            return this.increment !== null;
         },
     },
 };

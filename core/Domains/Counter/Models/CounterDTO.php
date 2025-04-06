@@ -16,6 +16,7 @@ class CounterDTO
     private ?int             $accountId   = null;
     private ?string          $number      = null;
     private ?bool            $isInvoicing = null;
+    private ?int             $increment   = null;
 
     private ?AccountDTO               $account           = null;
     private ?CounterHistoryCollection $historyCollection = null;
@@ -80,6 +81,18 @@ class CounterDTO
         return $this;
     }
 
+    public function getIncrement(): ?int
+    {
+        return $this->increment;
+    }
+
+    public function setIncrement(?int $increment): static
+    {
+        $this->increment = $increment;
+
+        return $this;
+    }
+
     public function setHistoryCollection(CounterHistoryCollection $historyCollection): static
     {
         $this->historyCollection = $historyCollection;
@@ -89,7 +102,7 @@ class CounterDTO
 
     public function getHistoryCollection(): CounterHistoryCollection
     {
-        return $this->historyCollection ?: new CounterHistoryCollection();
+        return $this->historyCollection ? : new CounterHistoryCollection();
     }
 
     public function setAccount(?AccountDTO $account): static

@@ -39,7 +39,6 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         $counterSearcher = new CounterSearcher();
         $counterSearcher
             ->setId($counterHistory->getCounterId())
-            ->addWhere(Counter::IS_INVOICING, SearcherInterface::EQUALS, true)
         ;
 
         $counter  = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();

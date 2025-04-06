@@ -11,6 +11,8 @@
             :required="required"
             :placeholder="placeholder"
             :disabled="disabled"
+            :min="min"
+            :step="step"
             :name="name"
             :id="id"
             @change="onChange"
@@ -18,6 +20,7 @@
             @keyup="onKeyup"
             class="form-control"
             :class="[errors ? 'form-error' : '']"
+            @focusout="$emit('focusout')"
         />
     </element-wrapper>
     <errors-list :errors="errors" />
@@ -44,6 +47,8 @@ export default {
         'type',
         'label',
         'name',
+        'min',
+        'step',
         'placeholder',
         'required',
         'disabled',
@@ -53,6 +58,7 @@ export default {
         'change',
         'submit',
         'keyup',
+        'focusout',
     ],
     mounted () {
         this.id = 'input-' + this.$_uid;

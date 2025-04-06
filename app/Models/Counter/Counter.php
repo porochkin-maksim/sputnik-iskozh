@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int     $account_id
  * @property string  $number
  * @property bool    $is_invoicing
+ * @property int     $increment
  */
 class Counter extends Model implements CastsInterface
 {
@@ -34,6 +35,7 @@ class Counter extends Model implements CastsInterface
     public const ACCOUNT_ID   = 'account_id';
     public const NUMBER       = 'number';
     public const IS_INVOICING = 'is_invoicing';
+    public const INCREMENT    = 'increment';
 
     public const ACCOUNT = 'account';
     public const HISTORY = 'history';
@@ -43,6 +45,7 @@ class Counter extends Model implements CastsInterface
 
     protected $casts = [
         self::IS_INVOICING => self::CAST_BOOLEAN,
+        self::INCREMENT    => self::CAST_INTEGER,
     ];
 
     public function history(): HasMany

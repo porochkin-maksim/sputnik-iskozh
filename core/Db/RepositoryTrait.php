@@ -129,6 +129,9 @@ trait RepositoryTrait
                         case SearcherInterface::IS_NULL:
                             $query->whereNull($where->getField());
                             break;
+                        case SearcherInterface::IS_NOT_NULL:
+                            $query->whereNotNull($where->getField());
+                            break;
                         case SearcherInterface::NOT_IN:
                             $query->whereNotIn($where->getField(), $where->getValue());
                             break;

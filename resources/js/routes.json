@@ -1013,6 +1013,13 @@
         "uri": "\/home\/counters\/json\/list",
         "args": []
     },
+    "profileCountersIncrementSave": {
+        "name": "profile.counters.increment-save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/increment",
+        "args": []
+    },
     "profileCountersIndex": {
         "name": "profile.counters.index",
         "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",

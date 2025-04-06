@@ -36,4 +36,11 @@ class CounterSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setHasIncrement(): static
+    {
+        $this->addWhere(Counter::INCREMENT, SearcherInterface::IS_NOT_NULL);
+
+        return $this;
+    }
 }

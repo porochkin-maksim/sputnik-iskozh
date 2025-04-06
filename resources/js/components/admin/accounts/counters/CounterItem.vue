@@ -19,6 +19,17 @@
                                      :label="'Выставлять счета'"
                     />
                 </div>
+                <div class="mt-2">
+                    <custom-input v-model="localCounter.increment"
+                                  :errors="errors.increment"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
+                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :required="true"
+                                  @focusout="calculateIncrement"
+                    />
+                </div>
                 <div class="mt-2"
                      v-if="!localCounter?.id">
                     <custom-input v-model="localCounter.value"
@@ -125,6 +136,7 @@ export default {
             form.append('is_invoicing', this.localCounter.isInvoicing);
             form.append('value', this.localCounter.value);
             form.append('file', this.file);
+            form.append('increment', this.localCounter.increment);
 
             let route = this.localCounter?.id ? Url.Routes.adminCounterSave : Url.Routes.adminCounterCreate;
 
@@ -162,6 +174,9 @@ export default {
         },
         removeFile () {
             this.file = null;
+        },
+        calculateIncrement () {
+            this.localCounter.increment = this.localCounter.increment < 0 ? this.localCounter.increment * -1 : this.localCounter.increment;
         },
     },
     computed: {

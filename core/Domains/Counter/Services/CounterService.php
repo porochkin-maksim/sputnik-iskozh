@@ -58,6 +58,10 @@ readonly class CounterService
             $before = new CounterDTO();
         }
 
+        if ($counter->getIncrement() !== null && $counter->getIncrement() < 0) {
+            $counter->setIncrement(0);
+        }
+
         $model   = $this->counterRepository->save($this->counterFactory->makeModelFromDto($counter, $model));
         $current = $this->counterFactory->makeDtoFromObject($model);
 

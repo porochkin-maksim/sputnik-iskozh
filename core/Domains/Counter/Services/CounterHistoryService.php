@@ -2,11 +2,9 @@
 
 namespace Core\Domains\Counter\Services;
 
-use App\Models\Counter\Counter;
 use App\Models\Counter\CounterHistory;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
-use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Events\CounterHistoryCreatedEvent;
 use Core\Domains\Counter\Events\CounterHistoryDeletingEvent;
 use Core\Domains\Counter\Events\CounterHistoryUpdatedEvent;
@@ -14,7 +12,6 @@ use Core\Domains\Counter\Factories\CounterHistoryFactory;
 use Core\Domains\Counter\Models\CounterHistoryComparator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
-use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Counter\Repositories\CounterHistoryRepository;
 use Core\Domains\Counter\Responses\CounterHistorySearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;

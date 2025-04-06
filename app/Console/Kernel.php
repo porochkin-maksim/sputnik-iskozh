@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Core\Domains\Counter\Jobs\AutoIncrementingCounterHistoriesJob;
 use Core\Queue\QueueEnum;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -27,11 +28,19 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:restart')
             ->hourly()
             ->name('queue.restart')
-            ->withoutOverlapping();
+            ->withoutOverlapping()
+        ;
 
         $schedule->command(sprintf('queue:work --queue=%s --sleep=3 --tries=3 --verbose', implode(',', QueueEnum::values())))
             ->everySecond()
             ->name('queue.work-normal')
-            ->withoutOverlapping();
+            ->withoutOverlapping()
+        ;
+
+        $schedule->job(new AutoIncrementingCounterHistoriesJob())
+            ->dailyAt('08:30')
+            ->name('AutoIncrementingCounterHistoriesJob')
+            ->withoutOverlapping()
+        ;
     }
 }

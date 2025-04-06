@@ -13,14 +13,7 @@ import store        from './store/index.js';
 
 const app = createApp({
     mounted () {
-        // Включить Popover Bootstrap
-        setTimeout(() => {
-            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-            const popoverList        = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
-        }, 1);
-        //<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="Popover title"
-        // data-bs-content="And here's some amazing content. It's very engaging. Right?">Click to toggle
-        // popover</button>
+        // Bootstrap теперь инициализируется глобально в bootstrap.js
     },
 });
 
