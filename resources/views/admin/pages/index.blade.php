@@ -49,6 +49,18 @@ $authRole = lc::roleDecorator();
                 </td>
             </tr>
         @endif
+        @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
+            <tr>
+                <th>
+                    <a href="{{ route(RouteNames::ADMIN_OPTIONS_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_OPTIONS_INDEX) }}
+                    </a>
+                </th>
+                <td>
+                    Управление опциями сайта
+                </td>
+            </tr>
+        @endif
         @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
             <tr>
                 <th>

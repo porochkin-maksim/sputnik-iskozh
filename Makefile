@@ -51,6 +51,10 @@ sail: ## запуск sail
 artisan: ## запуск artisan
 	@./vendor/bin/sail artisan $(filter-out $@,$(MAKECMDGOALS))
 
+.PHONY: tests
+tests: ## запуск artisan
+	@./vendor/bin/sail artisan test
+
 .PHONY: php
 php: ## запуск php
 	@./vendor/bin/sail bash

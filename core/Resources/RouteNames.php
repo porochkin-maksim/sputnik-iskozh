@@ -73,11 +73,6 @@ abstract class RouteNames
     public const FOLDERS_SHOW   = 'folders.show';
     public const FOLDERS_DELETE = 'folders.delete';
 
-    public const OPTIONS      = 'options.index';
-    public const OPTIONS_LIST = 'options.list';
-    public const OPTIONS_SAVE = 'options.save';
-    public const OPTIONS_EDIT = 'options.edit';
-
     public const ACCOUNT_REGISTER      = 'account.register';
     public const ACCOUNT_REGISTER_SAVE = 'account.register.save';
 
@@ -117,6 +112,10 @@ abstract class RouteNames
     public const ADMIN_USER_SAVE   = 'admin.user.save';
     public const ADMIN_USER_LIST   = 'admin.user.list';
     public const ADMIN_USER_DELETE = 'admin.user.delete';
+
+    public const ADMIN_OPTIONS_INDEX = 'admin.options.index';
+    public const ADMIN_OPTIONS_LIST  = 'admin.options.list';
+    public const ADMIN_OPTIONS_SAVE  = 'admin.options.save';
 
     public const ADMIN_USER_SEND_RESTORE_PASSWORD     = 'admin.user.send.restore.password';
     public const ADMIN_USER_SEND_INVITE_WITH_PASSWORD = 'admin.user.send.invite-with-password';
@@ -178,13 +177,13 @@ abstract class RouteNames
     public const ADMIN_NEW_PAYMENT_INVOICES = 'admin.new-payment.get-invoices';
     public const ADMIN_NEW_PAYMENT_DELETE   = 'admin.new-payment.delete';
 
-    public const ADMIN_COUNTER_HISTORY_INDEX              = 'admin.counter-history.index';
-    public const ADMIN_COUNTER_HISTORY_LINK               = 'admin.counter-history.link';
-    public const ADMIN_COUNTER_HISTORY_LIST               = 'admin.counter-history.list';
-    public const ADMIN_COUNTER_HISTORY_DELETE             = 'admin.counter-history.delete';
-    public const ADMIN_COUNTER_HISTORY_CONFIRM            = 'admin.counter-history.confirm';
-    public const ADMIN_COUNTER_HISTORY_CONFIRM_DELETE     = 'admin.counter-history.confirm-delete';
-    public const ADMIN_COUNTER_HISTORY_CREATE_CLAIM       = 'admin.counter-history.create-claim';
+    public const ADMIN_COUNTER_HISTORY_INDEX          = 'admin.counter-history.index';
+    public const ADMIN_COUNTER_HISTORY_LINK           = 'admin.counter-history.link';
+    public const ADMIN_COUNTER_HISTORY_LIST           = 'admin.counter-history.list';
+    public const ADMIN_COUNTER_HISTORY_DELETE         = 'admin.counter-history.delete';
+    public const ADMIN_COUNTER_HISTORY_CONFIRM        = 'admin.counter-history.confirm';
+    public const ADMIN_COUNTER_HISTORY_CONFIRM_DELETE = 'admin.counter-history.confirm-delete';
+    public const ADMIN_COUNTER_HISTORY_CREATE_CLAIM   = 'admin.counter-history.create-claim';
 
     public const ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
     public const ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
@@ -210,8 +209,6 @@ abstract class RouteNames
             self::PROFILE_COUNTERS            => 'Счётчики',
             self::PROFILE_PAYMENTS            => 'Платежи',
 
-            self::OPTIONS                     => 'Настройки',
-
             self::FILES                       => 'Файлы',
             self::NEWS                        => 'Новости',
             self::ANNOUNCEMENTS               => 'Объявления',
@@ -220,6 +217,7 @@ abstract class RouteNames
             // админка
             self::ADMIN                       => 'О системе',
             self::ADMIN_USER_INDEX            => 'Пользователи',
+            self::ADMIN_OPTIONS_INDEX         => 'Опции',
             self::ADMIN_ROLE_INDEX            => 'Роли',
             self::ADMIN_SERVICE_INDEX         => 'Услуги',
             self::ADMIN_PERIOD_INDEX          => 'Периоды',

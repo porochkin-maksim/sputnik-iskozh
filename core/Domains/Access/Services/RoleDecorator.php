@@ -23,6 +23,7 @@ class RoleDecorator
         return $this->canAny(
             PermissionEnum::ROLES_VIEW,
             PermissionEnum::USERS_VIEW,
+            PermissionEnum::OPTIONS_VIEW,
             PermissionEnum::ACCOUNTS_VIEW,
             PermissionEnum::PERIODS_VIEW,
             PermissionEnum::SERVICES_VIEW,

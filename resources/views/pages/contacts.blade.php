@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
+use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\DataDTO\SntAccounting;
+use Core\Domains\Option\OptionLocator;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
@@ -14,6 +17,11 @@ $openGraph->setUrl(route(RouteNames::CONTACTS));
 
 $month    = Carbon::now()->month;
 $isWinter = $month >= 11 || $month <= 3;
+
+/**
+ * @var SntAccounting $accountingData
+ */
+$accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -82,8 +90,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>ОГРН</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="1026900580057">
-                    1026900580057
+                   data-copy="{{ $accountingData->getOgrn() }}">
+                    {{ $accountingData->getOgrn() }}
                 </a>
             </td>
         </tr>
@@ -91,8 +99,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>ИНН</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="6924004223">
-                    6924004223
+                   data-copy="{{ $accountingData->getInn() }}">
+                    {{ $accountingData->getInn() }}
                 </a>
             </td>
         </tr>
@@ -100,8 +108,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>КПП</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="694901001">
-                    694901001
+                   data-copy="{{ $accountingData->getKpp() }}">
+                    {{ $accountingData->getKpp() }}
                 </a>
             </td>
         </tr>
@@ -119,8 +127,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>Банк</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy='ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)'>
-                    ФИЛИАЛ "ЦЕНТРАЛЬНЫЙ" БАНКА ВТБ (ПАО)
+                   data-copy='{{ $accountingData->getBank() }}'>
+                    {{ $accountingData->getBank() }}
                 </a>
             </td>
         </tr>
@@ -128,8 +136,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>Счёт</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="40703810017762000022">
-                    40703810017762000022
+                   data-copy='{{ $accountingData->getAcc() }}'>
+                    {{ $accountingData->getAcc() }}
                 </a>
             </td>
         </tr>
@@ -137,8 +145,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>Корр.счёт</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="30101810145250000411">
-                    30101810145250000411
+                   data-copy='{{ $accountingData->getCorr() }}'>
+                    {{ $accountingData->getCorr() }}
                 </a>
             </td>
         </tr>
@@ -146,8 +154,8 @@ $isWinter = $month >= 11 || $month <= 3;
             <th>БИК</th>
             <td>
                 <a class="link cursor-pointer text-decoration-none"
-                   data-copy="044525411">
-                    044525411
+                   data-copy='{{ $accountingData->getBik() }}'>
+                    {{ $accountingData->getBik() }}
                 </a>
             </td>
         </tr>

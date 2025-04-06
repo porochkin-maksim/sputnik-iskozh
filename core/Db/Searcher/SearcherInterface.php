@@ -24,6 +24,11 @@ interface SearcherInterface
     public function getIds(): ?array;
 
     /**
+     * @param int[] $ids
+     */
+    public function setIds(array $ids): static;
+
+    /**
      * @return Order[]
      */
     public function getSortProperties(): array;
@@ -47,4 +52,6 @@ interface SearcherInterface
     public function getWhere(): WhereCollection;
 
     public function getOrWhere(): WhereCollection;
+
+    public function getWhereColumn(): WhereCollection;
 }

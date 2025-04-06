@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Option\Repositories;
 
-use App\Models\Option;
+use App\Models\Infra\Option;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
 

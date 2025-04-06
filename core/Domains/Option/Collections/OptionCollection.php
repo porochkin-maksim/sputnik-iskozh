@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, OptionDTO>
  */
-class Options extends Collection implements CollectionInterface
+class OptionCollection extends Collection implements CollectionInterface
 {
     use CollectionTrait;
 

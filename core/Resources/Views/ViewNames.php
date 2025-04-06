@@ -29,8 +29,6 @@ enum ViewNames: string
 
     public const PAGES_ANNOUNCEMENT_INDEX = 'pages.announcement.index';
 
-    public const PAGES_OPTIONS_INDEX = 'pages.options.index';
-
     public const PAGES_HOME             = 'pages.home.index';
     public const PAGES_ACCOUNT_REGISTER = 'pages.home.register';
     public const PAGES_PROFILE          = 'pages.home.profile';
@@ -43,6 +41,7 @@ enum ViewNames: string
     public const ADMIN_PAGES_INDEX           = 'admin.pages.index';
     public const ADMIN_PAGES_ROLES           = 'admin.pages.roles';
     public const ADMIN_PAGES_USERS           = 'admin.pages.users';
+    public const ADMIN_PAGES_OPTIONS         = 'admin.pages.options';
     public const ADMIN_PAGES_SERVICES        = 'admin.pages.services';
     public const ADMIN_PAGES_PERIODS         = 'admin.pages.periods';
     public const ADMIN_PAGES_ACCOUNTS        = 'admin.pages.accounts';

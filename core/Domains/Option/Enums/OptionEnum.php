@@ -11,18 +11,14 @@ enum OptionEnum: int
 {
     use EnumCommonTrait;
 
+    case SNT_ACCOUNTING      = 1;
+    case COUNTER_READING_DAY = 2;
+
     public function name(): string
     {
-        return '';
-    }
-
-    public function type(): string
-    {
-        return 'number';
-    }
-
-    public function default(): int|float|string|null
-    {
-        return 0;
+        return match ($this) {
+            self::SNT_ACCOUNTING      => 'Реквизиты СНТ',
+            self::COUNTER_READING_DAY => 'День снятия показаний счетчиков',
+        };
     }
 }

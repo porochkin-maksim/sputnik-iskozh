@@ -336,6 +336,27 @@
             "paymentId": "{paymentId}"
         }
     },
+    "adminOptionsIndex": {
+        "name": "admin.options.index",
+        "displayName": "\u041e\u043f\u0446\u0438\u0438",
+        "method": "get",
+        "uri": "\/admin\/options",
+        "args": []
+    },
+    "adminOptionsList": {
+        "name": "admin.options.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/options\/json\/list",
+        "args": []
+    },
+    "adminOptionsSave": {
+        "name": "admin.options.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/options\/json\/save",
+        "args": []
+    },
     "adminPaymentCreate": {
         "name": "admin.payment.create",
         "displayName": "",
@@ -891,36 +912,6 @@
         "args": {
             "id": "{id}"
         }
-    },
-    "optionsEdit": {
-        "name": "options.edit",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/options\/json\/edit\/{id}",
-        "args": {
-            "id": "{id}"
-        }
-    },
-    "optionsIndex": {
-        "name": "options.index",
-        "displayName": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
-        "method": "get",
-        "uri": "\/options",
-        "args": []
-    },
-    "optionsList": {
-        "name": "options.list",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/options\/json\/list",
-        "args": []
-    },
-    "optionsSave": {
-        "name": "options.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/options\/json\/save",
-        "args": []
     },
     "passwordConfirm": {
         "name": "password.confirm",

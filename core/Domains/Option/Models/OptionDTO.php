@@ -4,14 +4,16 @@ namespace Core\Domains\Option\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\DataDTO\DataDTOInterface;
+use JsonSerializable;
 
-class OptionDTO implements \JsonSerializable
+class OptionDTO implements JsonSerializable
 {
     use TimestampsTrait;
 
-    private ?int            $id   = null;
-    private ?OptionEnum     $type = null;
-    private null|int|string $data = null;
+    private ?int              $id   = null;
+    private ?OptionEnum       $type = null;
+    private ?DataDTOInterface $data = null;
 
     public function getId(): ?int
     {
@@ -37,12 +39,12 @@ class OptionDTO implements \JsonSerializable
         return $this;
     }
 
-    public function getData(): int|string|null
+    public function getData(): ?DataDTOInterface
     {
         return $this->data;
     }
 
-    public function setData(null|int|string $data): static
+    public function setData(?DataDTOInterface $data): static
     {
         $this->data = $data;
 
@@ -54,7 +56,6 @@ class OptionDTO implements \JsonSerializable
         return [
             'id'   => $this->getId(),
             'name' => $this->getType()?->name(),
-            'type' => $this->getType()?->type(),
             'data' => $this->getData(),
         ];
     }
