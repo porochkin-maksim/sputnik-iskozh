@@ -229,6 +229,6 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        CreateRegularPeriodInvoicesJob::dispatchSync($periodId);
+        dispatch(new CreateRegularPeriodInvoicesJob($periodId));
     }
 }

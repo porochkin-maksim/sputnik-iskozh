@@ -10,7 +10,7 @@ class InvoiceCreatedListener
     public function handle(InvoiceCreatedEvent $event): void
     {
         foreach ($event->invoiceIds as $invoiceId) {
-            CreateClaimsForRegularInvoiceJob::dispatch($invoiceId);
+            dispatch(new CreateClaimsForRegularInvoiceJob($invoiceId));
         }
     }
 }

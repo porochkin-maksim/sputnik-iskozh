@@ -23,7 +23,12 @@ class ClaimCollection extends Collection implements CollectionInterface
     /**
      * @param array<int, ServiceTypeEnum> $orderedTypes
      */
-    public function sortByServiceTypes(array $orderedTypes): static
+    public function sortByServiceTypes(array $orderedTypes = [
+        ServiceTypeEnum::MEMBERSHIP_FEE,
+        ServiceTypeEnum::TARGET_FEE,
+        ServiceTypeEnum::ELECTRIC_TARIFF,
+        ServiceTypeEnum::OTHER,
+    ]): static
     {
         return $this->sort(function (ClaimDTO $claim1, ClaimDTO $claim2) use ($orderedTypes) {
             foreach ($orderedTypes as $type) {

@@ -12,7 +12,9 @@
                 <th class="text-center">Создана</th>
                 <th></th>
             </tr>
-            <tr v-for="(claim, index) in claims">
+            <tr v-for="(claim, index) in claims"
+                :class="parseFloat(claim.delta) !== 0 ? 'table-warning' : ''"
+            >
                 <td class="text-end">{{ claim.id }}</td>
                 <td>{{ claim.service }}</td>
                 <td class="text-end">{{ $formatMoney(claim.tariff) }}</td>
