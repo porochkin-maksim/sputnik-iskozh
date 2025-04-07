@@ -64,12 +64,7 @@ class RecalcClaimsPayedJob implements ShouldQueue
         ;
 
         $claims = ClaimLocator::ClaimService()->search($claimSearcher)->getItems();
-        $claims = $claims->sortByServiceTypes([
-            ServiceTypeEnum::MEMBERSHIP_FEE,
-            ServiceTypeEnum::TARGET_FEE,
-            ServiceTypeEnum::ELECTRIC_TARIFF,
-            ServiceTypeEnum::OTHER,
-        ]);
+        $claims = $claims->sortByServiceTypes();
 
         foreach ($claims as $claim) {
             $claim->setPayed(0);

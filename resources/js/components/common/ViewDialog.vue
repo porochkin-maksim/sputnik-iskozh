@@ -3,7 +3,6 @@
          tabindex="-1"
          ref="modal"
          data-bs-backdrop="false"
-         @click="onModalClick"
     >
         <div class="modal-dialog"
              :class="modalClass">
@@ -57,16 +56,35 @@ export default {
         this.modal = new bootstrap.Modal(this.$refs.modal, {
             keyboard: false,
         });
+
         this.$refs.modal.addEventListener('hidden.bs.modal', () => {
             this.$emit('update:hide', false);
             this.$emit('hidden');
+            // Очищаем классы модального окна
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow     = '';
+            document.body.style.paddingRight = '';
         });
+
         this.$refs.modal.addEventListener('shown.bs.modal', () => {
-            this.$emit('update:show', false);
+            this.$emit('update:show', true);
+            this.$emit('update:hide', false);
             this.$emit('shown');
         });
+
         if (this.show) {
             this.modal.show();
+        }
+    },
+    beforeUnmount () {
+        if (this.modal) {
+            this.modal.hide();
+            this.modal.dispose();
+            this.modal = null;
+            // Очищаем классы модального окна
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow     = '';
+            document.body.style.paddingRight = '';
         }
     },
     methods: {

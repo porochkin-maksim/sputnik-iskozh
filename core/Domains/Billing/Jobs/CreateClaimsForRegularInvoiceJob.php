@@ -49,14 +49,15 @@ class CreateClaimsForRegularInvoiceJob implements ShouldQueue
             return;
         }
 
-        $claimService = ClaimLocator::ClaimService();
-        $claimFactory = ClaimLocator::ClaimFactory();
-        $accountService     = AccountLocator::AccountService();
+        $claimService   = ClaimLocator::ClaimService();
+        $claimFactory   = ClaimLocator::ClaimFactory();
+        $accountService = AccountLocator::AccountService();
 
         $serviceSearcher = new ServiceSearcher();
         $serviceSearcher
             ->setPeriodId($invoice->getPeriodId())
-            ->setActive(true);
+            ->setActive(true)
+        ;
 
         foreach (ServiceLocator::ServiceService()->search($serviceSearcher)->getItems() as $service) {
             if ( ! in_array($service->getType(), [
@@ -75,11 +76,12 @@ class CreateClaimsForRegularInvoiceJob implements ShouldQueue
             }
 
             $claim = $claimFactory->makeDefault();
-            $claim->setInvoiceId($this->invoiceId);
-            $claim->setServiceId($service->getId());
-            $claim->setTariff($service->getCost());
-            $claim->setCost(MoneyService::toFloat($cost));
-            $claim->setPayed(0.00);
+            $claim->setInvoiceId($this->invoiceId)
+                ->setServiceId($service->getId())
+                ->setTariff($service->getCost())
+                ->setCost(MoneyService::toFloat($cost))
+                ->setPayed(0.00)
+            ;
 
             $claimService->save($claim);
         }

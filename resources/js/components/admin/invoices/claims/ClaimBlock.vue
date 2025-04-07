@@ -189,7 +189,7 @@ export default {
                 this.showDanger(text);
                 this.parseResponseErrors(response);
             }).then(() => {
-                this.loading    = false;
+                this.loading = false;
                 this.selectedId = null;
             });
         },

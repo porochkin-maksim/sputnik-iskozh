@@ -8,6 +8,7 @@ use App\Http\Resources\Admin\Claims\ServicesListResource;
 use App\Http\Resources\Admin\Claims\ClaimResource;
 use App\Http\Resources\Admin\Claims\ClaimsListResource;
 use App\Http\Resources\Common\SelectResource;
+use App\Models\Billing\Claim;
 use App\Models\Billing\Service;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -54,7 +55,7 @@ class ClaimController extends Controller
             abort(412);
         }
 
-        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems();
+        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems()->sortByServiceTypes();
         $existingServiceIds = array_map(static fn(ClaimDTO $claim) => $claim->getServiceId(), $claims->toArray());
 
         $services = $this->serviceService->search(
@@ -107,7 +108,7 @@ class ClaimController extends Controller
             abort(412);
         }
 
-        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems();
+        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems()->sortByServiceTypes();
         $existingServiceIds = array_map(static fn(ClaimDTO $claim) => $claim->getServiceId(), $claims->toArray());
 
         $services = $this->serviceService->search(
@@ -185,7 +186,7 @@ class ClaimController extends Controller
         $claims = $this->getInvoiceClaims($invoiceId);
 
         return response()->json(new ClaimsListResource(
-            $claims->getItems(),
+            $claims->getItems()->sortByServiceTypes(),
         ));
     }
 
@@ -204,6 +205,8 @@ class ClaimController extends Controller
         $searcher
             ->setInvoiceId($invoiceId)
             ->setWithService()
+            ->setSortOrderProperty(Claim::ID, SearcherInterface::SORT_ORDER_ASC)
+            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
         return $this->claimService->search($searcher);

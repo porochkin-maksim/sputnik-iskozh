@@ -169,7 +169,7 @@ class CounterController extends Controller
         }
     }
 
-    public function createClaim(int $counterHistoryId): void
+    public function createClaim(int $counterHistoryId): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
             abort(403);
@@ -185,6 +185,8 @@ class CounterController extends Controller
 
             dispatch_sync(new CheckClaimForCounterChangeJob($counterHistoryId));
             DB::commit();
+
+            return true;
         }
         catch (Exception $e) {
             DB::rollBack();

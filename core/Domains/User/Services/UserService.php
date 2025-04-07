@@ -30,13 +30,7 @@ readonly class UserService
 
     public function save(UserDTO $user): UserDTO
     {
-        $searcher = new UserSearcher();
-        $searcher
-            ->setId($user->getId())
-            ->setWithAccounts()
-            ->setWithRoles()
-        ;
-        $model = $this->userRepository->search($searcher)->getItems()->first();
+        $model = $this->userRepository->getById($user->getId());
 
         if ($model) {
             $before = $this->userFactory->makeDtoFromObject($model);
@@ -106,6 +100,8 @@ readonly class UserService
 
         $searcher = new UserSearcher();
         $searcher
+            ->setWithAccounts()
+            ->setWithRoles()
             ->addWhere(User::EMAIL, SearcherInterface::EQUALS, $email)
             ->setLimit(1)
         ;
