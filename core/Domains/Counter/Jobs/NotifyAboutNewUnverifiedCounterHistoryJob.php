@@ -10,6 +10,9 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Mails\NewCounterHistoryCreatedEmail;
 use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,6 +53,7 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         }
 
         $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::COUNTERS_EDIT);
+        $emails = array_unique(array_merge($emails, [env('ADMIN_EMAIL')]));
 
         foreach ($emails as $email) {
             $mail = new NewCounterHistoryCreatedEmail(
@@ -60,6 +64,15 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
                 $account,
             );
             Mail::send($mail);
+
+            HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+                Event::COMMON,
+                HistoryType::COUNTER,
+                $counter?->getId(),
+                HistoryType::COUNTER_HISTORY,
+                $counterHistory->getId(),
+                text: 'Отправлено уведомление о новых показания счётчика на почту ' . $email,
+            );
         }
     }
 }
