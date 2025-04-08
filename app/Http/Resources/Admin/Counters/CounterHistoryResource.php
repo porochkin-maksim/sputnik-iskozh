@@ -45,10 +45,8 @@ readonly class CounterHistoryResource extends AbstractResource
             'claim'         => $claim ? new ClaimResource($claim) : null,
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
-                    type         : HistoryType::COUNTER,
-                    primaryId    : $this->counterHistory->getCounterId(),
-                    referenceType: $this->counterHistory->getCounterId() ? null : HistoryType::COUNTER_HISTORY,
-                    referenceId  : $this->counterHistory->getCounterId() ? null : $this->counterHistory->getId(),
+                    referenceType: HistoryType::COUNTER_HISTORY,
+                    referenceId  : $this->counterHistory?->getId(),
                 ) : null,
             'accountUrl'    => $counter?->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $counter?->getAccountId()])
