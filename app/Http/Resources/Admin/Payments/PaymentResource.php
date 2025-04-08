@@ -40,9 +40,8 @@ readonly class PaymentResource extends AbstractResource
             ],
             'historyUrl' => $this->payment->getId()
                 ? HistoryChangesLocator::route(
-                    type         : HistoryType::INVOICE,
                     referenceType: HistoryType::PAYMENT,
-                    referenceId  : $this->payment->getId(),
+                    referenceId  : $this->payment?->getId(),
                 ) : null,
         ];
     }

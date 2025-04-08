@@ -184,13 +184,21 @@ use Core\Resources\RouteNames;
                             </td>
                             <td>
                                 @if($historyChange->getReferenceId())
-                                    <span class="badge bg-{{ $decorator->getEvent() === Event::CREATE ? 'success' : ($decorator->getEvent() === Event::UPDATE ? 'primary' : 'danger') }}">
+                                    @php
+                                        $badgeColor = match ($decorator->getEvent()) {
+                                            Event::CREATE => 'success',
+                                            Event::UPDATE => 'primary',
+                                            Event::DELETE => 'danger',
+                                            default => 'info',
+                                        };
+                                    @endphp
+                                    <span class="badge bg-{{ $badgeColor }}">
                                         {{ $historyChange->getReferenceId() }}
                                     </span>
                                 @endif
                             </td>
                             <td>
-                                <div>{{ $decorator->getActionEventText() }}</div>
+                                <div>{!! nl2br($decorator->getActionEventText()) !!}</div>
                                 @if($decorator->getText() && $decorator->getActionEventText() !== $decorator->getText())
                                     <div>{!! nl2br($decorator->getText()) !!}</div>
                                 @endif

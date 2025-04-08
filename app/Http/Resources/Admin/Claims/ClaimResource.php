@@ -43,8 +43,6 @@ readonly class ClaimResource extends AbstractResource
             ],
             'historyUrl' => $this->claim->getId()
                 ? HistoryChangesLocator::route(
-                    type         : HistoryType::INVOICE,
-                    primaryId    : $this->claim->getInvoiceId(),
                     referenceType: HistoryType::CLAIM,
                     referenceId  : $this->claim->getId(),
                 ) : null,
