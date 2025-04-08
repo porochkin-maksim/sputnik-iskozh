@@ -54,6 +54,10 @@ class AutoIncrementingCounterHistoriesJob implements ShouldQueue
 
                 $lastHistory = $counter->getHistoryCollection()->first();
 
+                if ($lastHistory && $lastHistory->getDate()?->isCurrentMonth()) {
+                    return;
+                }
+
                 $history = CounterLocator::CounterHistoryFactory()->makeDefault();
                 $history
                     ->setCounterId($counter->getId())
