@@ -69,7 +69,7 @@ class AutoIncrementingCounterHistoriesJob implements ShouldQueue
                 HistoryChangesLocator::HistoryChangesService()->writeToHistory(
                     Event::COMMON,
                     HistoryType::COUNTER,
-                    $counter->getCounterId(),
+                    $history->getCounterId(),
                     HistoryType::COUNTER_HISTORY,
                     $history->getId(),
                     text: sprintf("Автоматическое прирощение показаний: на  %sкВт", $counter->getIncrement()),
