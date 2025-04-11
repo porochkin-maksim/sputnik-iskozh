@@ -6,6 +6,10 @@
                     @click="saveAction"
             >{{ localUser.id ? 'Сохранить' : 'Создать' }}
             </button>
+            <a class="btn btn-outline-primary me-2"
+               v-if="actions.edit && localUser.id"
+               :href="getCreateLink()">Добавить пользователя
+            </a>
         </div>
         <div class="d-flex">
             <history-btn
@@ -99,6 +103,32 @@
                             <span v-else>{{ localUser.roleName }}</span>
                         </td>
                     </tr>
+                    <tr>
+                        <th colspan="2" class="text-center table-light">Дополнительно</th>
+                    </tr>
+                    <tr>
+                        <th>Дата членства</th>
+                        <td>
+                            <custom-input v-model="localUser.ownershipDate"
+                                          v-if="localUser.actions.edit"
+                                          :type="'date'"
+                                          :required="true"
+                                          @change="clearError('phone')"
+                            />
+                            <span v-else>{{ $formatDate(localUser.ownershipDate) }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Основание членства</th>
+                        <td>
+                            <custom-input v-model="localUser.ownershipDutyInfo"
+                                          v-if="localUser.actions.edit"
+                                          :required="true"
+                                          @change="clearError('phone')"
+                            />
+                            <span v-else>{{ localUser.ownershipDutyInfo }}</span>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -182,6 +212,8 @@ export default {
             form.append('account_id', this.localUser.accountId);
             form.append('role_id', this.localUser.roleId);
             form.append('phone', this.localUser.phone);
+            form.append('ownershipDate', this.localUser.ownershipDate);
+            form.append('ownershipDutyInfo', this.localUser.ownershipDutyInfo);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminUserSave.method](
@@ -268,6 +300,11 @@ export default {
             }).catch(response => {
                 this.showDanger('Письмо не отправлено');
                 this.parseResponseErrors(response);
+            });
+        },
+        getCreateLink () {
+            return Url.Generator.makeUri(Url.Routes.adminUserView, {
+                id: null,
             });
         },
     },

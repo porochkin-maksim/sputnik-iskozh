@@ -15,9 +15,6 @@
     <div class="row">
         <div class="col-4">
             <template v-if="account.actions.edit">
-                <custom-checkbox v-model="account.isMember"
-                                 :label="'Член СНТ'"
-                />
                 <div>
                     <custom-input v-model="account.number"
                                   :required="true"
@@ -30,6 +27,19 @@
                                   :required="true"
                     />
                 </div>
+                <div class="mt-2">
+                    <custom-input v-model="account.cadastreNumber"
+                                  :label="'Кадастровый номер'"
+                                  :required="true"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="account.registryDate"
+                                  :label="'Дата регистрации'"
+                                  :type="'date'"
+                                  @change="clearError('registryDate')"
+                    />
+                </div>
             </template>
             <template v-else>
                 <h6>Данные участка</h6>
@@ -37,6 +47,8 @@
                     <li class="list-group-item">{{ account.isMember ? 'Член СНТ' : 'Не член СНТ' }}</li>
                     <li class="list-group-item">Номер участка {{ account.number }}</li>
                     <li class="list-group-item">Площадь {{ account.size }}(м²)</li>
+                    <li class="list-group-item">Кадастровый номер {{ account.cadastreNumber }}</li>
+                    <li class="list-group-item">Дата регистрации {{ account.registryDate ? $formatDate(account.registryDate) : null }}</li>
                 </ul>
             </template>
         </div>
@@ -116,6 +128,8 @@ export default {
             form.append('number', this.account.number);
             form.append('size', parseInt(this.account.size ? this.account.size : 0));
             form.append('is_member', !!this.account.isMember);
+            form.append('cadastreNumber', this.account.cadastreNumber);
+            form.append('registryDate', this.account.registryDate);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminAccountSave.method](

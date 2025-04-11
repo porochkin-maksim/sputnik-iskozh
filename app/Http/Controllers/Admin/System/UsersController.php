@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\System;
 
@@ -20,6 +20,9 @@ use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
+use Core\Domains\Infra\ExData\ExDataLocator;
+use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Services\UserService;
@@ -34,6 +37,7 @@ class UsersController extends Controller
     private UserService    $userService;
     private AccountService $accountService;
     private RoleService    $roleService;
+    private ExDataService  $exDataService;
 
     public function __construct()
     {
@@ -41,6 +45,7 @@ class UsersController extends Controller
         $this->userService    = UserLocator::UserService();
         $this->accountService = AccountLocator::AccountService();
         $this->roleService    = RoleLocator::RoleService();
+        $this->exDataService  = ExDataLocator::ExDataService();
     }
 
     public function view(?int $id = null)
@@ -129,6 +134,18 @@ class UsersController extends Controller
         ;
 
         $user = $this->userService->save($user);
+
+        $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId())
+            ?: $this->exDataService->makeDefault()->setType(ExDataTypeEnum::USER)->setReferenceId($user->getId());
+
+        $exData->setData($user->getExData()
+            ->setOwnershipDate($request->getOwnershipDate())
+            ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
+            ->jsonSerialize()
+        );
+
+        $this->exDataService->save($exData);
+
 
         return response()->json(new UserResource($user));
     }

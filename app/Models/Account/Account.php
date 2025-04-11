@@ -3,12 +3,15 @@
 namespace App\Models\Account;
 
 use App\Models\Billing\Invoice;
+use App\Models\Infra\ExData;
 use App\Models\Interfaces\CastsInterface;
 use App\Models\User;
 use Carbon\Carbon;
+use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -42,9 +45,12 @@ class Account extends Model implements CastsInterface
     public const IS_MEMBER       = 'is_member';
     public const IS_MANAGER      = 'is_manager';
 
-    public const USERS = 'users';
+    public const USERS   = 'users';
+    public const EX_DATA = 'exData';
 
     protected $guarded = [];
+
+    protected $with = [self::EX_DATA];
 
     protected $casts = [
         self::PRIMARY_USER_ID => self::CAST_INTEGER,
@@ -72,5 +78,14 @@ class Account extends Model implements CastsInterface
             Invoice::ACCOUNT_ID,
             self::ID,
         );
+    }
+
+    public function exData(): HasOne
+    {
+        return $this->hasOne(
+            ExData::class,
+            ExData::REFERENCE_ID,
+            self::ID,
+        )->where(ExData::TYPE, ExDataTypeEnum::ACCOUNT);
     }
 }

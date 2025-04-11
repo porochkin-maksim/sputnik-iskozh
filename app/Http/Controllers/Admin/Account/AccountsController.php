@@ -14,6 +14,9 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Factories\AccountFactory;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
+use Core\Domains\Infra\ExData\ExDataLocator;
+use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -22,11 +25,13 @@ class AccountsController extends Controller
 {
     private AccountFactory $accountFactory;
     private AccountService $accountService;
+    private ExDataService  $exDataService;
 
     public function __construct()
     {
         $this->accountFactory = AccountLocator::AccountFactory();
         $this->accountService = AccountLocator::AccountService();
+        $this->exDataService  = ExDataLocator::ExDataService();
     }
 
     public function create(): JsonResponse
@@ -52,7 +57,7 @@ class AccountsController extends Controller
             ->setWithUsers()
         ;
         $account = $this->accountService->search($accountSearcher)->getItems()->first();
-        
+
         if ( ! $account) {
             abort(404);
         }
@@ -84,7 +89,8 @@ class AccountsController extends Controller
         $searcher
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+            ->setSortOrderProperty(Account::ID, SearcherInterface::SORT_ORDER_ASC)
+        ;
 
         if ($request->getAccountId()) {
             $searcher->setId($request->getAccountId());
@@ -93,7 +99,8 @@ class AccountsController extends Controller
 
         $searcher = new AccountSearcher();
         $searcher
-            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC)
+        ;
         $allAccounts = $this->accountService->search($searcher);
 
         return response()->json(new AccountsListResource(
@@ -113,21 +120,32 @@ class AccountsController extends Controller
             ? $this->accountService->getById($request->getId())
             : $this->accountFactory->makeDefault();
 
-        $account->setIsVerified(true);
-
         if ( ! $account) {
             abort(404);
         }
 
+        $account->setIsVerified(true);
+
         $account
             ->setNumber($request->getNumber())
             ->setSize($request->getSize())
-            ->setIsMember($request->getIsMember());
+        ;
 
         $account = $this->accountService->save($account);
 
+        $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::ACCOUNT, $account->getId())
+            ? : $this->exDataService->makeDefault()->setType(ExDataTypeEnum::ACCOUNT)->setReferenceId($account->getId());
+
+        $exData->setData($account->getExData()
+            ->setCadastreNumber($request->getCadastreNumber())
+            ->setRegistryDate($request->getRegistryDate())
+            ->jsonSerialize(),
+        );
+
+        $this->exDataService->save($exData);
+
         return response()->json([
-            ResponsesEnum::ACCOUNT => new AccountResource($account),
+            ResponsesEnum::ACCOUNT => new AccountResource($this->accountService->getById($account->getId())),
         ]);
     }
 

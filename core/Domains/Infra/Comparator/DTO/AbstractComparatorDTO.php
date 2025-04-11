@@ -64,6 +64,16 @@ abstract class AbstractComparatorDTO
         }
     }
 
+    /**
+     * @param array<string, mixed> $properties
+     */
+    protected function addProperties(array $properties): void
+    {
+        foreach ($properties as $key => $value) {
+            $this->{$key} = $value;
+        }
+    }
+
     protected function getYesNoText(null|bool|int $value): ?string
     {
         return $value ? 'Да' : 'Нет';

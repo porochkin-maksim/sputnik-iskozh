@@ -14,6 +14,7 @@ use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
+use lc;
 
 class HistoryChangesService
 {

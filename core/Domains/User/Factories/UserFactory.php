@@ -5,8 +5,10 @@ namespace Core\Domains\User\Factories;
 use App\Models\User;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
+use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Models\UserDTO;
+use Core\Domains\User\Models\UserExDataDTO;
 use Illuminate\Support\Facades\Hash;
 
 readonly class UserFactory
@@ -93,6 +95,17 @@ readonly class UserFactory
         if (isset($model->getRelations()[User::ACCOUNTS])) {
             $account = $model->getRelation(User::ACCOUNTS)->first();
             $result->setAccount($account ? AccountLocator::AccountFactory()->makeDtoFromObject($account) : null);
+        }
+
+        if (isset($model->getRelations()[User::EX_DATA])) {
+            $exData    = $model->getRelation(User::EX_DATA);
+            $exDataDTO = $exData ? ExDataLocator::ExDataFactory()->makeDtoFromObject($exData) : null;
+
+            $data = new UserExDataDTO($exDataDTO?->getData());
+            $result->setExData($data)->getExData()?->setId($exData->id);
+        }
+        if ( ! $result->getExData()) {
+            $result->setExData(new UserExDataDTO());
         }
 
         if (isset($model->getRelations()[User::ROLES])) {

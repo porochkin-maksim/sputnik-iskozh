@@ -45,7 +45,7 @@ class Handler extends ExceptionHandler
 
             Mail::to(env('ADMIN_EMAIL'))->send(new ExceptionMail($content));
         }
-        catch (Throwable $exception) {
+        catch (Throwable) {
             Log::error($exception);
         }
     }

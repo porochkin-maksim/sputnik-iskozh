@@ -6,10 +6,6 @@
         <template v-slot:title>Добавление участка</template>
         <template v-slot:body>
             <div class="container-fluid">
-                <custom-checkbox v-model="isMember"
-                                 :errors="errors.lock"
-                                 :label="'Член СНТ'"
-                />
                 <div>
                     <custom-input v-model="number"
                                   v-if="modelValue.actions.edit"
@@ -22,6 +18,18 @@
                                   v-if="modelValue.actions.edit"
                                   :label="'Площадь (м²)'"
                                   :required="true"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="cadastreNumber"
+                                  v-if="modelValue.actions.edit"
+                                  :label="'Кадастровый номер'"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="registryDate"
+                                  v-if="modelValue.actions.edit"
+                                  :label="'Дата регистрации'"
                     />
                 </div>
             </div>
@@ -69,10 +77,11 @@ export default {
     created () {
         this.vueId = 'uuid' + this.$_uid;
         if (this.modelValue) {
-            this.id       = this.modelValue.id;
-            this.number   = this.modelValue.number;
-            this.size     = this.modelValue.size;
-            this.isMember = this.modelValue.is_member;
+            this.number         = this.modelValue.number;
+            this.size           = this.modelValue.size;
+            this.isMember       = this.modelValue.is_member;
+            this.cadastreNumber = this.modelValue.cadastreNumber;
+            this.registryDate   = this.modelValue.registryDate;
 
             this.showDialog = true;
             this.hideDialog = false;
@@ -99,10 +108,11 @@ export default {
         saveAction () {
             this.loading = true;
             let form     = new FormData();
-            form.append('id', this.id);
             form.append('number', this.number);
             form.append('size', parseInt(this.size ? this.size : 0));
             form.append('is_member', !!this.isMember);
+            form.append('cadastreNumber', this.cadastreNumber);
+            form.append('registryDate', this.registryDate);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminAccountSave.method](
@@ -110,14 +120,6 @@ export default {
                 form,
             ).then((response) => {
                 this.showInfo('Участок ' + response.data.account.id + ' создан');
-
-                this.id       = response.data.account.id;
-                this.number   = response.data.account.number;
-                this.size     = response.data.account.size;
-                this.isMember = response.data.account.is_member;
-
-                this.actions    = response.data.account.actions;
-                this.historyUrl = response.data.account.historyUrl;
 
                 this.$emit('updated');
             }).catch(response => {

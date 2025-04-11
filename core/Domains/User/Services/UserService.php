@@ -4,8 +4,6 @@ namespace Core\Domains\User\Services;
 
 use App\Models\User;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Account\AccountLocator;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
@@ -84,8 +82,6 @@ readonly class UserService
         $searcher = new UserSearcher();
         $searcher
             ->setId($id)
-            ->setWithAccounts()
-            ->setWithRoles()
         ;
         $result = $this->userRepository->search($searcher)->getItems()->first();
 
@@ -100,8 +96,6 @@ readonly class UserService
 
         $searcher = new UserSearcher();
         $searcher
-            ->setWithAccounts()
-            ->setWithRoles()
             ->addWhere(User::EMAIL, SearcherInterface::EQUALS, $email)
             ->setLimit(1)
         ;

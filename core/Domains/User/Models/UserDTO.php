@@ -5,6 +5,8 @@ namespace Core\Domains\User\Models;
 use App\Models\User;
 use Carbon\Carbon;
 use Core\Domains\Access\Models\RoleDTO;
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Helpers\DateTime\DateTimeHelper;
@@ -22,9 +24,10 @@ class UserDTO
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
 
-    private ?AccountDTO $account         = null;
-    private ?RoleDTO    $role            = null;
-    private ?Carbon     $emailVerifiedAt = null;
+    private ?AccountDTO    $account         = null;
+    private ?RoleDTO       $role            = null;
+    private ?Carbon        $emailVerifiedAt = null;
+    private ?UserExDataDTO $exData          = null;
 
     public function __construct(
         private readonly ?User $user = null,
@@ -140,8 +143,13 @@ class UserDTO
         return $this;
     }
 
-    public function getAccount(): ?AccountDTO
+    public function getAccount(bool $load = false): ?AccountDTO
     {
+        if ($load && ! $this->account) {
+            $result = AccountLocator::AccountService()->getByUserId($this->getId());
+            $this->setAccount($result);
+        }
+
         return $this->account;
     }
 
@@ -152,8 +160,13 @@ class UserDTO
         return $this;
     }
 
-    public function getRole(): ?RoleDTO
+    public function getRole(bool $load = false): ?RoleDTO
     {
+        if ($load && ! $this->role) {
+            $result = RoleLocator::RoleService()->getByUserId($this->getId());
+            $this->setRole($result);
+        }
+
         return $this->role;
     }
 
@@ -167,5 +180,19 @@ class UserDTO
     public function getEmailVerifiedAt(): ?Carbon
     {
         return $this->emailVerifiedAt;
+    }
+
+    public function getExData(): UserExDataDTO
+    {
+        $this->exData = $this->exData ? : new UserExDataDTO();
+
+        return $this->exData;
+    }
+
+    public function setExData(?UserExDataDTO $exData): static
+    {
+        $this->exData = $exData;
+
+        return $this;
     }
 }

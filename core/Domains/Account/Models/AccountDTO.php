@@ -20,6 +20,8 @@ class AccountDTO
     private ?bool   $is_member       = null;
     private ?bool   $is_manager      = null;
 
+    private ?AccountExDataDTO $exData = null;
+
     private ?UserCollection $users = null;
 
     public function __construct()
@@ -119,6 +121,20 @@ class AccountDTO
     public function setIsManager(?bool $is_manager): static
     {
         $this->is_manager = $is_manager;
+
+        return $this;
+    }
+
+    public function getExData(): AccountExDataDTO
+    {
+        $this->exData = $this->exData ?: new AccountExDataDTO();
+
+        return $this->exData;
+    }
+
+    public function setExData(?AccountExDataDTO $exData): static
+    {
+        $this->exData = $exData;
 
         return $this;
     }
