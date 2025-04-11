@@ -188,6 +188,7 @@ abstract class RouteNames
 
     public const ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
     public const ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
+    public const ADMIN_ERRORS           = 'admin.error-logs.index';
 
     public static function name(mixed $key, string $default = ''): string
     {
@@ -226,6 +227,7 @@ abstract class RouteNames
             self::ADMIN_INVOICE_INDEX         => 'Счета',
             self::ADMIN_NEW_PAYMENT_INDEX     => 'Новые платежи',
             self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые показания',
+            self::ADMIN_ERRORS                => 'Журнал ошибок',
 
             default                           => $default,
         };

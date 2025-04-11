@@ -6,6 +6,7 @@ use App\Mail\ExceptionMail;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use lc;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,27 +27,32 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $exception) {
-            $this->sendEmail($exception);
+        $this->reportable(function (Throwable $e) {
+            $this->logError($e);
         });
     }
 
-    public function sendEmail(Throwable $exception): void
+    protected function logError(Throwable $e): void
     {
-        try {
-            $content['message'] = $exception->getMessage();
-            $content['file']    = $exception->getFile();
-            $content['line']    = $exception->getLine();
-            $content['trace']   = $exception->getTrace();
-            $content['url']     = request()?->url();
-            $content['body']    = request()?->all();
-            $content['ip']      = request()?->ip();
-            $content['user']    = request()?->user()?->id ?? null;
+        $context = [
+            'timestamp' => now()->toDateTimeString(),
+            'userId'    => lc::user()->getId(),
+            'userName'  => lc::userDecorator()->getFullName(),
+            'url'       => request()?->fullUrl(),
+            'method'    => request()?->method(),
+            'input'     => request()?->all(),
+            'headers'   => request()->headers->all(),
+            'trace'     => $e->getTraceAsString(),
+            'file'      => $e->getFile(),
+            'line'      => $e->getLine(),
+            'code'      => $e->getCode(),
+            'previous'  => $e->getPrevious() ? [
+                'message' => $e->getPrevious()?->getMessage(),
+                'file'    => $e->getPrevious()?->getFile(),
+                'line'    => $e->getPrevious()?->getLine(),
+            ] : null,
+        ];
 
-            Mail::to(env('ADMIN_EMAIL'))->send(new ExceptionMail($content));
-        }
-        catch (Throwable) {
-            Log::error($exception);
-        }
+        Log::channel('errors')->error($e->getMessage(), $context);
     }
 }
