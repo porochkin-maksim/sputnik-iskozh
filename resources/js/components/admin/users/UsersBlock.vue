@@ -40,9 +40,10 @@
     </div>
     <table class="table table-sm">
         <thead>
-        <tr>
+        <tr class="text-end">
             <th>№</th>
             <th>Почта</th>
+            <th>Членство</th>
             <th>Телефон</th>
             <th>Фамилия</th>
             <th>Имя</th>
@@ -51,11 +52,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(user) in users">
+        <tr v-for="(user) in users" class="text-end">
             <td>{{ user.id }}</td>
             <td>
                 <a :href="user.viewUrl">{{ user.email }}</a>
             </td>
+            <td>{{ user.ownershipDate ? 'Да' : 'Нет' }}</td>
             <td>{{ user.phone }}</td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>

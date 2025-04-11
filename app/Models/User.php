@@ -6,12 +6,15 @@ use App\Models\Access\Role;
 use App\Models\Access\RoleToUser;
 use App\Models\Account\Account;
 use App\Models\Account\AccountToUser;
+use App\Models\Infra\ExData;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
+use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 use Core\Domains\User\Notifications\InviteNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,6 +54,11 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 
     public const ACCOUNTS = 'accounts';
     public const ROLES    = 'roles';
+    public const EX_DATA  = 'exData';
+
+    protected $with = [
+        self::EX_DATA,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -105,6 +113,15 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
             RoleToUser::USER,
             RoleToUser::ROLE,
         );
+    }
+
+    public function exData(): HasOne
+    {
+        return $this->hasOne(
+            ExData::class,
+            ExData::REFERENCE_ID,
+            self::ID,
+        )->where(ExData::TYPE, ExDataTypeEnum::USER);
     }
 
     public function sendInviteNotification(string $email): void

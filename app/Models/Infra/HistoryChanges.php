@@ -33,14 +33,16 @@ class HistoryChanges extends Model implements CastsInterface
     public const PRIMARY_ID     = 'primary_id';
     public const REFERENCE_ID   = 'reference_id';
     public const DESCRIPTION    = 'description';
+    public const USER           = 'user';
 
     protected $guarded = [];
 
     protected $casts = [
         self::DESCRIPTION => self::CAST_JSON,
     ];
-
-    public const USER = 'user';
+    protected $with  = [
+        self::USER,
+    ];
 
     public function user(): BelongsTo
     {

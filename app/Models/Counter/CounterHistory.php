@@ -11,6 +11,7 @@ use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class CounterHistory extends Model implements CastsInterface
 {
+    use SoftDeletes;
+
     public const TABLE = 'counter_history';
 
     protected $table = self::TABLE;

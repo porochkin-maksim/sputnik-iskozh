@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Accounts;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
+use Carbon\Carbon;
 use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Enums\Regexp;
 use Core\Requests\RequestArgumentsEnum;
@@ -32,10 +33,6 @@ class SaveRequest extends AbstractRequest
                 'numeric',
                 'min:0',
             ],
-            self::IS_MEMBER => [
-                'required',
-                'in:true,false,1,0',
-            ],
         ];
     }
 
@@ -50,9 +47,6 @@ class SaveRequest extends AbstractRequest
             self::SIZE . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_SIZE),
             self::SIZE . '.numeric'  => sprintf('Укажите число для «%s»', AccountComparator::TITLE_SIZE),
             self::SIZE . '.min'      => sprintf('Минимальное значение для «%s» - :min', AccountComparator::TITLE_SIZE),
-
-            self::IS_MEMBER . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_IS_MEMBER),
-            self::IS_MEMBER . '.in'     => sprintf('Некорректное значение «%s»', AccountComparator::TITLE_IS_MEMBER),
         ];
     }
 
@@ -71,8 +65,13 @@ class SaveRequest extends AbstractRequest
         return $this->getIntOrNull(self::SIZE);
     }
 
-    public function getIsMember(): bool
+    public function getCadastreNumber(): ?string
     {
-        return $this->getBool(self::IS_MEMBER);
+        return $this->getStringOrNull('cadastreNumber');
+    }
+
+    public function getRegistryDate(): ?Carbon
+    {
+        return $this->getDateOrNull('registryDate');
     }
 }

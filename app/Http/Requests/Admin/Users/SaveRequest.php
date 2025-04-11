@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin\Users;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\User;
+use Carbon\Carbon;
+use Core\Domains\Account\Models\AccountComparator;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
@@ -15,6 +17,7 @@ class SaveRequest extends AbstractRequest
     private const MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
     private const EMAIL       = RequestArgumentsEnum::EMAIL;
     private const PHONE       = RequestArgumentsEnum::PHONE;
+    private const IS_MEMBER   = RequestArgumentsEnum::IS_MEMBER;
     private const ROLE        = 'role_id';
     private const ACCOUNT     = 'account_id';
 
@@ -39,6 +42,9 @@ class SaveRequest extends AbstractRequest
             self::EMAIL . '.string'   => 'Поле должно быть строкой',
             self::EMAIL . '.email'    => 'Поле должно быть корретным адресом эл.почты',
             self::EMAIL . '.max'      => 'Количество символов должно быть меньше :max',
+
+            // self::IS_MEMBER . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_IS_MEMBER),
+            // self::IS_MEMBER . '.in'       => sprintf('Некорректное значение «%s»', AccountComparator::TITLE_IS_MEMBER),
         ];
     }
 
@@ -80,5 +86,20 @@ class SaveRequest extends AbstractRequest
     public function getPhone(): ?string
     {
         return $this->getStringOrNull(self::PHONE);
+    }
+
+    public function getOwnershipDate(): ?Carbon
+    {
+        return $this->getDateOrNull('ownershipDate');
+    }
+
+    public function getOwnershipDutyInfo(): ?string
+    {
+        return $this->getStringOrNull('ownershipDutyInfo');
+    }
+
+    public function getIsMember(): bool
+    {
+        return $this->getBool(self::IS_MEMBER);
     }
 }

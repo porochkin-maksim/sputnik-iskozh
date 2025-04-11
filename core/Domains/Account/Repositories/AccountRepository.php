@@ -27,6 +27,14 @@ class AccountRepository
         return Account::class;
     }
 
+    public function getById(?int $id): ?Account
+    {
+        /** @var ?Account $result */
+        $result = $this->traitGetById($id);
+
+        return $result;
+    }
+
     public function save(Account $object): Account
     {
         $object->save();

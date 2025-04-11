@@ -10,9 +10,25 @@ class UserSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
+    public function __construct()
+    {
+        $this
+            ->setWithAccounts()
+            ->setWithRoles()
+            ->setWithExData()
+        ;
+    }
+
     public function setWithRoles(): static
     {
         $this->with[] = User::ROLES;
+
+        return $this;
+    }
+
+    public function setWithExData(): static
+    {
+        $this->with[] = User::EX_DATA;
 
         return $this;
     }

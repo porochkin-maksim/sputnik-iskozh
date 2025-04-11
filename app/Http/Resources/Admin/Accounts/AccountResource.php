@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\Accounts;
 
 use App\Http\Resources\Admin\Users\UserResource;
-use Core\Domains\Account\Enums\AccountIdEnum;
+use Core\Enums\DateTimeFormat;
 use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
@@ -26,12 +26,18 @@ readonly class AccountResource extends AbstractResource
         $access = lc::roleDecorator();
         $isSnt  = $this->account->isSnt();
 
+        $exData = $this->account->getExData();
+
         return [
-            'id'         => $this->account->getId(),
-            'number'     => $this->account->getNumber(),
-            'size'       => $this->account->getSize(),
-            'balance'    => $this->account->getBalance(),
-            'isMember'  => $this->account->isMember(),
+            'id'       => $this->account->getId(),
+            'number'   => $this->account->getNumber(),
+            'size'     => $this->account->getSize(),
+            'balance'  => $this->account->getBalance(),
+            'isMember' => $this->account->isMember(),
+
+            'cadastreNumber' => $exData->getCadastreNumber(),
+            'registryDate'   => $exData->getRegistryDate()?->format(DateTimeFormat::DATE_DEFAULT),
+
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
                 ResponsesEnum::EDIT => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_EDIT),

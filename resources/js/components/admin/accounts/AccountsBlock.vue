@@ -31,8 +31,8 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th>Членство</th>
             <th>Номер</th>
+            <th>Кадастр</th>
             <th>Площадь (м²)</th>
             <th></th>
         </tr>
@@ -45,8 +45,8 @@
                     {{ account.id }}
                 </a>
             </td>
-            <td>{{ account.isMember ? 'Член СНТ' : 'Не член СНТ' }}</td>
             <td>{{ account.number }}</td>
+            <td>{{ account.cadastreNumber }}</td>
             <td>{{ account.size }}</td>
             <td>
                 <history-btn :disabled="!account.historyUrl"
@@ -135,7 +135,6 @@ export default {
             this.listAction();
         },
         onCreatedEvent () {
-            this.account = null;
             this.listAction();
         },
     },

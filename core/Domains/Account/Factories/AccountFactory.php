@@ -5,6 +5,8 @@ namespace Core\Domains\Account\Factories;
 use App\Models\Account\Account;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Account\Models\AccountExDataDTO;
+use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\UserLocator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -57,6 +59,17 @@ readonly class AccountFactory
             foreach ($model->getRelation(Account::USERS) as $user) {
                 $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
             }
+        }
+
+        if (isset($model->getRelations()[Account::EX_DATA])) {
+            $exData    = $model->getRelation(Account::EX_DATA);
+            $exDataDTO = $exData ? ExDataLocator::ExDataFactory()->makeDtoFromObject($exData) : null;
+
+            $data = new AccountExDataDTO($exDataDTO?->getData());
+            $result->setExData($data)->getExData()?->setId($exData->id);
+        }
+        if ( ! $result->getExData()) {
+            $result->setExData(new AccountExDataDTO());
         }
 
         return $result;
