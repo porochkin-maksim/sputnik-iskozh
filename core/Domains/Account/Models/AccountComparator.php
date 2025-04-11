@@ -21,7 +21,7 @@ class AccountComparator extends AbstractComparatorDTO
     protected const KEYS_TO_TITLES = [
         Account::NUMBER           => self::TITLE_NUMBER,
         Account::SIZE             => self::TITLE_SIZE,
-        Account::BALANCE          => self::TITLE_BALANCE,
+        // Account::BALANCE          => self::TITLE_BALANCE,
         Account::IS_VERIFIED      => self::TITLE_IS_VERIFIED,
         self::KEY_CADASTRE_NUMBER => self::TITLE_CADASTRE_NUMBER,
         self::KEY_REGISTRY_DATE   => self::TITLE_REGISTRY_DATE,

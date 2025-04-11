@@ -289,3 +289,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
         });
     });
 });
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('reestr/read', [\App\Http\Controllers\Admin\ReestrController::class, 'read'])->name('reestr.read');
+});

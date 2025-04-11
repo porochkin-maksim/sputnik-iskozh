@@ -27,6 +27,11 @@ trait SearcherTrait
 
     private ?string $search = null;
 
+    public static function make(): static
+    {
+        return new static();
+    }
+
     public function __serialize(): array
     {
         return [

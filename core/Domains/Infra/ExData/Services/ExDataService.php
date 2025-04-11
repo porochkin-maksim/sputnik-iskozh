@@ -25,7 +25,7 @@ readonly class ExDataService
         return $this->factory->makeDtoFromObject($model);
     }
 
-    public function getByTypeAndReferenceId(ExDataTypeEnum $type, int $referenceId): ?ExDataDTO
+    public function getByTypeAndReferenceId(ExDataTypeEnum $type, int $referenceId): ExDataDTO
     {
         $searcher = new ExDataSearcher();
         $searcher

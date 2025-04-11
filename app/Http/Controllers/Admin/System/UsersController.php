@@ -96,7 +96,7 @@ class UsersController extends Controller
             ->setWithAccounts()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-            ->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
         $users = $this->userService->search($searcher);

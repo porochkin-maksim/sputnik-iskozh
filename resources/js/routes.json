@@ -200,6 +200,32 @@
             "accountId": "{accountId}"
         }
     },
+    "adminErrorLogsDetails": {
+        "name": "admin.error-logs.details",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/error-logs\/{filename}\/details\/{index}",
+        "args": {
+            "filename": "{filename}",
+            "index": "{index}"
+        }
+    },
+    "adminErrorLogsIndex": {
+        "name": "admin.error-logs.index",
+        "displayName": "\u0416\u0443\u0440\u043d\u0430\u043b \u043e\u0448\u0438\u0431\u043e\u043a",
+        "method": "get",
+        "uri": "\/admin\/error-logs",
+        "args": []
+    },
+    "adminErrorLogsShow": {
+        "name": "admin.error-logs.show",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/error-logs\/{filename}",
+        "args": {
+            "filename": "{filename}"
+        }
+    },
     "adminIndex": {
         "name": "admin.index",
         "displayName": "\u041e \u0441\u0438\u0441\u0442\u0435\u043c\u0435",
@@ -439,6 +465,13 @@
         "displayName": "",
         "method": "post",
         "uri": "\/admin\/periods\/json\/save",
+        "args": []
+    },
+    "adminReestrRead": {
+        "name": "admin.reestr.read",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/reestr\/read",
         "args": []
     },
     "adminRoleCreate": {
@@ -802,7 +835,7 @@
         "name": "infra.history-changes",
         "displayName": "",
         "method": "get",
-        "uri": "\/history\/changes",
+        "uri": "\/admin\/history\/changes",
         "args": []
     },
     "login": {
