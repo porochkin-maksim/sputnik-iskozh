@@ -4,6 +4,10 @@ use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Processor\IntrospectionProcessor;
+use Monolog\Processor\WebProcessor;
+use App\Logging\JsonPrettyFormatter;
 
 return [
 
@@ -76,7 +80,7 @@ return [
             'driver'               => 'daily',
             'path'                 => storage_path('logs/laravel.log'),
             'level'                => env('LOG_LEVEL', 'debug'),
-            'days'                 => 14,
+            'days'                 => 7,
             'replace_placeholders' => true,
         ],
 
@@ -132,6 +136,27 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'errors' => [
+            'driver' => 'monolog',
+            'handler' => RotatingFileHandler::class,
+            'handler_with' => [
+                'filename' => storage_path('logs/errors/errors.log'),
+                'maxFiles' => 30,
+            ],
+            'formatter' => Monolog\Formatter\JsonFormatter::class,
+            'formatter_with' => [
+                'includeStacktraces' => true,
+                'jsonEncodeOptions' => JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+            ],
+
+            // 'formatter' => JsonPrettyFormatter::class,
+            'processors' => [
+                WebProcessor::class,
+                IntrospectionProcessor::class,
+            ],
+            'level' => 'error',
         ],
     ],
 

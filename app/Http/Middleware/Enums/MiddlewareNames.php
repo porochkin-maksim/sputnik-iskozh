@@ -15,4 +15,5 @@ enum MiddlewareNames: string
     public const SIGNED           = 'signed';
     public const THROTTLE         = 'throttle';
     public const VERIFIED         = 'verified';
+    public const ADMIN           = 'admin';
 }
