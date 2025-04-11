@@ -6,7 +6,7 @@ use Core\Domains\Infra\ExData\Factories\ExDataFactory;
 use Core\Domains\Infra\ExData\Repositories\ExDataRepository;
 use Core\Domains\Infra\ExData\Services\ExDataService;
 
-class ExDataLocator
+abstract class ExDataLocator
 {
     private static ?ExDataFactory    $ExDataFactory    = null;
     private static ?ExDataRepository $ExDataRepository = null;

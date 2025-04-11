@@ -40,29 +40,29 @@
     </div>
     <table class="table table-sm">
         <thead>
-        <tr class="text-end">
+        <tr class="text-start">
             <th>№</th>
-            <th>Почта</th>
-            <th>Членство</th>
-            <th>Телефон</th>
             <th>Фамилия</th>
             <th>Имя</th>
             <th>Отчество</th>
-            <th>Участок</th>
+            <th>Почта</th>
+            <th>Телефон</th>
+            <th class="text-center">Членство</th>
+            <th class="text-end">Участок</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(user) in users" class="text-end">
-            <td>{{ user.id }}</td>
+        <tr v-for="(user) in users" class="text-start">
             <td>
-                <a :href="user.viewUrl">{{ user.email }}</a>
+                <a :href="user.viewUrl">{{ user.id }}</a>
             </td>
-            <td>{{ user.ownershipDate ? 'Да' : 'Нет' }}</td>
-            <td>{{ user.phone }}</td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>
             <td>{{ user.middleName }}</td>
-            <td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+            <td class="text-center">{{ user.ownershipDate ? 'Да' : 'Нет' }}</td>
+            <td class="text-end">
                 <template v-if="user.account?.viewUrl">
                     <a :href="user.account.viewUrl">{{ user.accountName }}</a>
                 </template>
