@@ -19,4 +19,9 @@ class DefaultRequest extends AbstractRequest
     {
         return $this->getIntOrNull(self::SKIP);
     }
+
+    public function getSearch(): ?string
+    {
+        return $this->getStringOrNull(self::SEARCH);
+    }
 }

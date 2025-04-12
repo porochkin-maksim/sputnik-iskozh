@@ -6,12 +6,25 @@
                     v-on:click="makeAction">Добавить участок
             </button>
             <template v-if="allAccounts && allAccounts.length">
-                <search-select v-model="accountId"
-                               :prop-class="'form-control'"
-                               :items="allAccounts"
-                               :placeholder="'Участок'"
-                               @update:model-value="listAction"
-                />
+                <div class="d-flex">
+                    <div class="input-group input-group-sm">
+                        <button class="btn btn-light border"
+                                @click="listAction">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <input class="form-control"
+                               v-model="search"
+                               name="users_search"
+                               placeholder="Поиск"
+                               @keyup="listAction"
+                               ref="search">
+                        <button class="btn btn-light border"
+                                type="button"
+                                @click="search=null;listAction">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
             </template>
         </div>
         <div class="d-flex">
@@ -21,6 +34,9 @@
                             :prop-classes="'pagination-sm mb-0'"
                             @update="onPaginationUpdate"
                 />
+            </div>
+            <div class=" d-flex align-items-center justify-content-center mx-2">
+                Всего: {{ total }}
             </div>
             <history-btn
                 class="btn-link underline-none"
@@ -56,7 +72,9 @@
         </tr>
         </tbody>
     </table>
-    <account-item-add v-if="account" :model-value="account" @updated="onCreatedEvent"/>
+    <account-item-add v-if="account"
+                      :model-value="account"
+                      @updated="onCreatedEvent" />
 </template>
 
 <script>
@@ -85,14 +103,14 @@ export default {
             perPage   : 25,
             skip      : 0,
             routeState: 0,
-            accountId : 0,
+            search    : null,
         };
     },
     created () {
         const urlParams = new URLSearchParams(window.location.search);
         this.perPage    = parseInt(urlParams.get('limit') ? urlParams.get('limit') : 25);
         this.skip       = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
-        this.accountId  = parseInt(urlParams.get('account') ? urlParams.get('account') : 0);
+        this.search     = urlParams.get('search') ? urlParams.get('search') : '';
 
         this.listAction();
     },
@@ -107,17 +125,17 @@ export default {
         listAction () {
             this.accounts = [];
             let uri       = Url.Generator.makeUri(Url.Routes.adminAccountIndex, {}, {
-                limit  : this.perPage,
-                skip   : this.skip,
-                account: this.accountId,
+                limit : this.perPage,
+                skip  : this.skip,
+                search: this.search,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
             window.axios[Url.Routes.adminAccountList.method](Url.Routes.adminAccountList.uri, {
                 params: {
-                    limit     : this.perPage,
-                    skip      : this.skip,
-                    account_id: this.accountId,
+                    limit : this.perPage,
+                    skip  : this.skip,
+                    search: this.search,
                 },
             }).then(response => {
                 this.actions     = response.data.actions;

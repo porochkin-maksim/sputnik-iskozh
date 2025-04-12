@@ -92,6 +92,10 @@ class AccountsController extends Controller
             ->setSortOrderProperty(Account::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
+        if ($request->getSearch()) {
+            $searcher->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getSearch()}%");
+        }
+
         if ($request->getAccountId()) {
             $searcher->setId($request->getAccountId());
         }
