@@ -33,6 +33,9 @@
                             @update="onPaginationUpdate"
                 />
             </div>
+            <div class=" d-flex align-items-center justify-content-center mx-2">
+                Всего: {{ total }}
+            </div>
             <history-btn
                 class="btn-link underline-none"
                 :url="historyUrl" />
@@ -59,7 +62,7 @@
             <td>{{ user.lastName }}</td>
             <td>{{ user.firstName }}</td>
             <td>{{ user.middleName }}</td>
-            <td>{{ user.email }}</td>
+            <td><span :data-copy="user.email" class="text-primary cursor-pointer">{{ user.email }}</span></td>
             <td>{{ user.phone }}</td>
             <td class="text-center">{{ user.ownershipDate ? 'Да' : 'Нет' }}</td>
             <td class="text-end">

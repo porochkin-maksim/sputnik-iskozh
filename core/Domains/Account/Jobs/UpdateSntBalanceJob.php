@@ -24,6 +24,7 @@ class UpdateSntBalanceJob implements ShouldQueue
 
     public function handle(): void
     {
+        return;
         $snt = AccountLocator::AccountService()->getSntAccount();
         if ($snt) {
             $diff    = MoneyService::parse($this->difference);

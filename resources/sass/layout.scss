@@ -105,3 +105,15 @@ footer,
         }
     }
 }
+
+// Фиксируем ширину страницы для предотвращения "прыжков" при появлении скроллбара
+html {
+    overflow-y: scroll;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+body {
+    width: 100%;
+    position: relative;
+}
