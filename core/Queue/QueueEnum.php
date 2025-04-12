@@ -2,8 +2,12 @@
 
 namespace Core\Queue;
 
+use Core\Enums\EnumCommonTrait;
+
 enum QueueEnum: string
 {
+    use EnumCommonTrait;
+
     case HIGH    = 'high';
     case EMAIL   = 'email';
     case DEFAULT = 'default';

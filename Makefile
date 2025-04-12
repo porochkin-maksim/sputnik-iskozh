@@ -22,8 +22,8 @@ endif
 .PHONY: build
 build: ## собрать контейнеры
 	@./scripts/install.sh
-	@docker compose build
-	@#docker compose build --no-cache
+	@#docker compose build
+	@docker compose build --no-cache
 	@./vendor/bin/sail up -d
 	@./vendor/bin/sail composer install
 	@./vendor/bin/sail yarn -i
@@ -32,6 +32,7 @@ build: ## собрать контейнеры
 .PHONY: up
 up: ## запуск приложения
 	@./vendor/bin/sail up -d
+	@./vendor/bin/sail artisan cache:clear-all
 
 .PHONY: down
 down: ## остановка приложения
@@ -42,6 +43,7 @@ down: ## остановка приложения
 restart: ## перезапуск приложения
 	@./vendor/bin/sail stop
 	@./vendor/bin/sail up -d
+	@./vendor/bin/sail artisan cache:clear-all
 
 .PHONY: sail
 sail: ## запуск sail

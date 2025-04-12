@@ -56,7 +56,12 @@ if ($authRole->can(PermissionEnum::COUNTERS_VIEW)) {
 if ($authRole->can(PermissionEnum::OPTIONS_VIEW)) {
     $navRoutes[] = RouteNames::ADMIN_OPTIONS_INDEX;
 }
-$navRoutes[] = RouteNames::ADMIN_ERRORS;
+if ($authRole->canAccessAdmin()) {
+    $navRoutes[] = RouteNames::ADMIN_QUEUE;
+}
+if ($authRole->canAccessAdmin()) {
+    $navRoutes[] = RouteNames::ADMIN_ERRORS;
+}
 ?>
         <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

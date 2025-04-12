@@ -59,15 +59,7 @@ class RecalcInvoiceJob implements ShouldQueue
         $invoice->setCost(MoneyService::toFloat($totalCost));
         $invoice->setPayed(MoneyService::toFloat($totalPayed));
 
-        HistoryChangesLocator::HistoryChangesService()->writeToHistory(
-            Event::COMMON,
-            HistoryType::INVOICE,
-            $invoice->getId(),
-            text: 'Произведён перерасчёт',
-        );
-
         InvoiceLocator::InvoiceService()->save($invoice);
-
 
         if ($invoice->getType() === InvoiceTypeEnum::OUTCOME) {
             $difference = $oldTotalPayed->subtract($totalPayed);

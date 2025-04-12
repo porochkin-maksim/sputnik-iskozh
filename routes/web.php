@@ -285,6 +285,15 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::get('error-logs', [Controllers\Admin\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');
                 Route::get('error-logs/{filename}', [Controllers\Admin\ErrorLogsController::class, 'show'])->name('admin.error-logs.show');
                 Route::get('error-logs/{filename}/details/{index}', [Controllers\Admin\ErrorLogsController::class, 'details'])->name('admin.error-logs.details');
+
+                // Управление очередями
+                Route::get('queue', [Controllers\Admin\PagesController::class, 'queue'])->name(RouteNames::ADMIN_QUEUE);
+                Route::group(['prefix' => 'queue'], static function () {
+                    Route::get('status', [Controllers\Admin\QueueController::class, 'status'])->name(RouteNames::ADMIN_QUEUE_STATUS);
+                    Route::post('start', [Controllers\Admin\QueueController::class, 'start'])->name(RouteNames::ADMIN_QUEUE_START);
+                    Route::post('stop', [Controllers\Admin\QueueController::class, 'stop'])->name(RouteNames::ADMIN_QUEUE_STOP);
+                    Route::post('clear', [Controllers\Admin\QueueController::class, 'clear'])->name(RouteNames::ADMIN_QUEUE_CLEAR);
+                });
             });
         });
     });

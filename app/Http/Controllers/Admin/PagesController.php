@@ -87,4 +87,9 @@ class PagesController extends Controller
 
         abort(403);
     }
+
+    public function queue()
+    {
+        return view(ViewNames::ADMIN_PAGES_QUEUE);
+    }
 }
