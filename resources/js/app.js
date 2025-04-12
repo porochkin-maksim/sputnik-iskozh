@@ -68,4 +68,8 @@ app.use(Vuex);
 app.use(store);
 app.use(VueUidPlugin);
 
+// Компоненты админки
+import QueueManager from './components/QueueManager.vue';
+app.component('queue-manager', QueueManager);
+
 app.mount('#app');

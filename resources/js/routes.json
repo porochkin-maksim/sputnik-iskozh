@@ -467,6 +467,41 @@
         "uri": "\/admin\/periods\/json\/save",
         "args": []
     },
+    "adminQueue": {
+        "name": "admin.queue",
+        "displayName": "\u041e\u0447\u0435\u0440\u0435\u0434\u0438",
+        "method": "get",
+        "uri": "\/admin\/queue",
+        "args": []
+    },
+    "adminQueueClear": {
+        "name": "admin.queue.clear",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/queue\/clear",
+        "args": []
+    },
+    "adminQueueStart": {
+        "name": "admin.queue.start",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/queue\/start",
+        "args": []
+    },
+    "adminQueueStatus": {
+        "name": "admin.queue.status",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/queue\/status",
+        "args": []
+    },
+    "adminQueueStop": {
+        "name": "admin.queue.stop",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/queue\/stop",
+        "args": []
+    },
     "adminReestrRead": {
         "name": "admin.reestr.read",
         "displayName": "",

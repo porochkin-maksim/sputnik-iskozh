@@ -5,6 +5,7 @@ use App\Http\Resources\Profile\Users\UserResource;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
@@ -14,10 +15,13 @@ use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\Money\MoneyService;
 
-$period   = PeriodLocator::PeriodService()->getCurrentPeriod();
+$period = PeriodLocator::PeriodService()->getCurrentPeriod();
+if ( ! $period) {
+    $period = PeriodLocator::PeriodService()->search(PeriodSearcher::make())->getItems()->first();
+}
 $invoices = new InvoiceCollection();
 
-if (lc::account()->getId()) {
+if (lc::account()->getId() && $period) {
     $serviceSearcher = new ServiceSearcher();
     $serviceSearcher->setPeriodId($period->getId());
     $services = ServiceLocator::ServiceService()->search($serviceSearcher)->getItems();

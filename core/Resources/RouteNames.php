@@ -190,6 +190,12 @@ abstract class RouteNames
     public const ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
     public const ADMIN_ERRORS           = 'admin.error-logs.index';
 
+    public const ADMIN_QUEUE        = 'admin.queue';
+    public const ADMIN_QUEUE_STATUS = 'admin.queue.status';
+    public const ADMIN_QUEUE_START  = 'admin.queue.start';
+    public const ADMIN_QUEUE_STOP   = 'admin.queue.stop';
+    public const ADMIN_QUEUE_CLEAR  = 'admin.queue.clear';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
@@ -228,6 +234,7 @@ abstract class RouteNames
             self::ADMIN_NEW_PAYMENT_INDEX     => 'Новые платежи',
             self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые показания',
             self::ADMIN_ERRORS                => 'Журнал ошибок',
+            self::ADMIN_QUEUE                 => 'Очереди',
 
             default                           => $default,
         };

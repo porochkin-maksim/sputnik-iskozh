@@ -47,5 +47,6 @@ enum ViewNames: string
     public const ADMIN_PAGES_ACCOUNTS        = 'admin.pages.accounts';
     public const ADMIN_PAGES_INVOICES        = 'admin.pages.invoices';
     public const ADMIN_PAGES_PAYMENTS        = 'admin.pages.payments';
+    public const ADMIN_PAGES_QUEUE           = 'admin.pages.queue';
     public const ADMIN_PAGES_COUNTER_HISTORY = 'admin.pages.counter-history';
 }
