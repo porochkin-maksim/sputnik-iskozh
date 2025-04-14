@@ -6,6 +6,13 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
+use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
+use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Billing\Payment\Models\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentLocator;
+use Core\Domains\Billing\Period\Models\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
@@ -23,6 +30,131 @@ class ReestrController extends Controller
 {
     public function read(Request $request)
     {
+        // abort(404);
+        try {
+            $filePath = storage_path('tmp/invoice.xls');
+
+            if ( ! file_exists($filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Файл не найден',
+                ], 404);
+            }
+
+            $spreadsheet = IOFactory::load($filePath);
+            $sheets      = $spreadsheet->getAllSheets();
+
+            $result = [];
+            try {
+                foreach ($sheets as $sheetIndex => $sheet) {
+                    // if ($sheetIndex !== 1) {
+                    //     continue;
+                    // }
+                    $sheetName = $sheet->getTitle();
+                    $sheetData = [];
+
+                    foreach ($sheet->getRowIterator() as $i => $row) {
+                        if ($i <= 8) {
+                            continue;
+                        }
+                        $rowData = [];
+                        foreach ($row->getCellIterator() as $cell) {
+                            $rowData[] = $cell->getCalculatedValue();
+                        }
+
+                        try {
+                            $accountNumber = Str::replace('-', '', $rowData[1]) . '/' . ($sheetIndex + 1);
+                            $accountSize   = $rowData[2];
+
+                            $account = AccountLocator::AccountService()->search(AccountSearcher::make()->setNumber($accountNumber))->getItems()->first();
+                            if ( ! $account) {
+                                $account = AccountLocator::AccountFactory()->makeDefault()
+                                    ->setSize((int) $accountSize)
+                                    ->setNumber($accountNumber)
+                                ;
+                                $account = AccountLocator::AccountService()->save($account);
+                            }
+                            if ( ! $account?->getId()) {
+                                continue;
+                            }
+
+                            $period = PeriodLocator::PeriodService()->search(PeriodSearcher::make())->getItems()->first();
+
+                            $invoice = InvoiceLocator::InvoiceService()
+                                ->search(InvoiceSearcher::make()->setType(InvoiceTypeEnum::REGULAR)
+                                    ->setPeriodId($period->getId())
+                                    ->setAccountId($account->getId()),
+                                )
+                                ->getItems()
+                                ->first()
+                            ;
+
+                            if ( ! $invoice) {
+                                continue;
+                            }
+
+                            $payed = (float) $rowData[8] + (float) $rowData[9] + (float) $rowData[10];
+                            if ($payed <= 0) {
+                                continue;
+                            }
+
+                            $payment = PaymentLocator::PaymentService()
+                                ->search(
+                                    PaymentSearcher::make()->setInvoiceId($invoice->getId()),
+                                )
+                                ->getItems()
+                                ->first()
+                            ;
+
+                            if ( ! $payment) {
+                                $payment = PaymentLocator::PaymentFactory()->makeDefault();
+                            }
+
+                            $payment
+                                ->setAccountId($account->getId())
+                                ->setInvoiceId($invoice->getId())
+                                ->setModerated(true)
+                                ->setVerified(true)
+                                ->setCost($payed)
+                            ;
+
+                            $payment = PaymentLocator::PaymentService()->save($payment);
+
+                        }
+                        catch (\Exception $e) {
+                            $a = $e;
+                        }
+                        $sheetData[] = $rowData;
+                    }
+
+                    $result[$sheetName] = $sheetData;
+                }
+            }
+            catch (\Exception $e) {
+                Log::error($e->getMessage());
+            }
+
+            return response()->json([
+                'success' => true,
+                'data'    => $result,
+            ]);
+
+        }
+        catch (\Exception $e) {
+            Log::error('Ошибка при чтении файла reestr.xls', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при чтении файла: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function read1(Request $request)
+    {
         try {
             $filePath = storage_path('tmp/reestr.xls');
 
@@ -39,6 +171,9 @@ class ReestrController extends Controller
             $result = [];
             try {
                 foreach ($sheets as $sheetIndex => $sheet) {
+                    // if ($sheetIndex !== 2) {
+                    //     continue;
+                    // }
                     $sheetName = $sheet->getTitle();
                     $sheetData = [];
 
@@ -52,7 +187,6 @@ class ReestrController extends Controller
                         }
 
                         try {
-                            DB::beginTransaction();
                             $accountNumber  = Str::replace('-', '', $rowData[5]);
                             $cadastrNumber  = $rowData[6];
                             $accountSize    = $rowData[7];
@@ -81,17 +215,17 @@ class ReestrController extends Controller
                                     ->setRegistryDate($cadastrRegDate)
                                     ->jsonSerialize(),
                             );
-                            ExDataLocator::ExDataService()->save($accountExData);
+                            $accountExData = ExDataLocator::ExDataService()->save($accountExData);
 
                             // Разбираем строку с протоколом
                             if (isset($rowData[2]) && str_contains($rowData[2], 'принят в члены Товарищества')) {
                                 $protocolData = $this->parseProtocolString($rowData[2]);
-                                $rowData[2] = $protocolData;
+                                $rowData[2]   = $protocolData;
                             }
 
                             // Извлекаем и нормализуем первый номер телефона
                             if (isset($rowData[3])) {
-                                $phone = PhoneHelper::normalizePhone(PhoneHelper::extractAndNormalizePhone($rowData[3]));
+                                $phone      = PhoneHelper::normalizePhone(PhoneHelper::extractAndNormalizePhone($rowData[3]));
                                 $rowData[3] = $phone;
                             }
 
@@ -124,89 +258,86 @@ class ReestrController extends Controller
                             ;
                             $user = UserLocator::UserService()->save($user);
 
-                            $userExData = ExDataLocator::ExDataService()->getByTypeAndReferenceId(ExDataTypeEnum::ACCOUNT, $user->getId());
+                            $userExData    = ExDataLocator::ExDataService()->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId());
+                            $ownershipDate = Str::replace('москва', '', Str::lower($protocolData['date'] ?? ''));
                             $userExData->setData(
                                 $user->getExData()
-                                    ->setOwnershipDate(DateTimeHelper::toCarbonOrNull($protocolData['date'] ?? null))
+                                    ->setOwnershipDate(DateTimeHelper::toCarbonOrNull($ownershipDate))
                                     ->setOwnershipDutyInfo($protocolData['protocol'] ?? null)
                                     ->jsonSerialize(),
                             );
-                            ExDataLocator::ExDataService()->save($userExData);
-
-
-                            $counterDate1  = DateTimeHelper::toCarbonOrNull($rowData[9]);
-                            $counterValue1 = $rowData[10];
-                            $counterDate2  = DateTimeHelper::toCarbonOrNull($rowData[11]);
-                            $counterValue2 = $rowData[12];
-
-                            $counters = CounterLocator::CounterService()->getByAccountId($account->getId());
-                            $counter1 = $counters->first();
-                            $counter2 = $counters->last();
-
-                            if ($counterDate1 && $counterValue1) {
-                                if ( ! $counter1) {
-                                    $counter1 = CounterLocator::CounterFactory()->makeDefault()
-                                        ->setAccountId($account->getId())
-                                        ->setNumber($account->getNumber() . '-' . 1)
-                                    ;
-                                    CounterLocator::CounterService()->save($counter1);
-                                }
-
-                                $counterHistory1 = CounterLocator::CounterHistoryService()->search(
-                                    CounterHistorySearcher::make()
-                                        ->setCounterId($counter1->getId())
-                                        ->defaultSort(),
-                                )->getItems()->first();
-
-                                if (
-                                    ! $counterHistory1?->getId() ||
-                                    $counterHistory1->getValue() !== $counterValue1
-
-                                ) {
-                                    $counterHistory1 = CounterLocator::CounterHistoryFactory()->makeDefault()
-                                        ->setCounterId($counter1->getId())
-                                        ->setDate($counterDate1)
-                                        ->setValue($counterValue1)
-                                        ->setIsVerified(true)
-                                    ;
-                                    CounterLocator::CounterHistoryService()->save($counterHistory1);
-                                }
-                            }
-
-                            if ($counterDate2 && $counterValue2) {
-                                if ( ! $counter2) {
-                                    $counter2 = CounterLocator::CounterFactory()->makeDefault()
-                                        ->setAccountId($account->getId())
-                                        ->setNumber($account->getNumber() . '-' . 2)
-                                    ;
-                                    CounterLocator::CounterService()->save($counter2);
-                                }
-
-                                $counterHistory2 = CounterLocator::CounterHistoryService()->search(
-                                    CounterHistorySearcher::make()
-                                        ->setCounterId($counter2->getId())
-                                        ->defaultSort(),
-                                )->getItems()->first();
-
-                                if (
-                                    ! $counterHistory2?->getId() ||
-                                    $counterHistory2->getValue() !== $counterValue2
-
-                                ) {
-                                    $counterHistory2 = CounterLocator::CounterHistoryFactory()->makeDefault()
-                                        ->setCounterId($counter2->getId())
-                                        ->setDate($counterDate2)
-                                        ->setValue($counterValue2)
-                                        ->setIsVerified(true)
-                                    ;
-                                    CounterLocator::CounterHistoryService()->save($counterHistory2);
-                                }
-                            }
-
-                            DB::commit();
+                            $userExData = ExDataLocator::ExDataService()->save($userExData);
+                            $b          = 1;
+                            // $counterDate1  = DateTimeHelper::toCarbonOrNull($rowData[9]);
+                            // $counterValue1 = $rowData[10];
+                            // $counterDate2  = DateTimeHelper::toCarbonOrNull($rowData[11]);
+                            // $counterValue2 = $rowData[12];
+                            //
+                            // $counters = CounterLocator::CounterService()->getByAccountId($account->getId());
+                            // $counter1 = $counters->first();
+                            // $counter2 = $counters->last();
+                            //
+                            // if ($counterDate1 && $counterValue1) {
+                            //     if ( ! $counter1) {
+                            //         $counter1 = CounterLocator::CounterFactory()->makeDefault()
+                            //             ->setAccountId($account->getId())
+                            //             ->setNumber($account->getNumber() . '-' . 1)
+                            //         ;
+                            //         CounterLocator::CounterService()->save($counter1);
+                            //     }
+                            //
+                            //     $counterHistory1 = CounterLocator::CounterHistoryService()->search(
+                            //         CounterHistorySearcher::make()
+                            //             ->setCounterId($counter1->getId())
+                            //             ->defaultSort(),
+                            //     )->getItems()->first();
+                            //
+                            //     if (
+                            //         ! $counterHistory1?->getId() ||
+                            //         $counterHistory1->getValue() !== $counterValue1
+                            //
+                            //     ) {
+                            //         $counterHistory1 = CounterLocator::CounterHistoryFactory()->makeDefault()
+                            //             ->setCounterId($counter1->getId())
+                            //             ->setDate($counterDate1)
+                            //             ->setValue($counterValue1)
+                            //             ->setIsVerified(true)
+                            //         ;
+                            //         CounterLocator::CounterHistoryService()->save($counterHistory1);
+                            //     }
+                            // }
+                            //
+                            // if ($counterDate2 && $counterValue2) {
+                            //     if ( ! $counter2) {
+                            //         $counter2 = CounterLocator::CounterFactory()->makeDefault()
+                            //             ->setAccountId($account->getId())
+                            //             ->setNumber($account->getNumber() . '-' . 2)
+                            //         ;
+                            //         CounterLocator::CounterService()->save($counter2);
+                            //     }
+                            //
+                            //     $counterHistory2 = CounterLocator::CounterHistoryService()->search(
+                            //         CounterHistorySearcher::make()
+                            //             ->setCounterId($counter2->getId())
+                            //             ->defaultSort(),
+                            //     )->getItems()->first();
+                            //
+                            //     if (
+                            //         ! $counterHistory2?->getId() ||
+                            //         $counterHistory2->getValue() !== $counterValue2
+                            //
+                            //     ) {
+                            //         $counterHistory2 = CounterLocator::CounterHistoryFactory()->makeDefault()
+                            //             ->setCounterId($counter2->getId())
+                            //             ->setDate($counterDate2)
+                            //             ->setValue($counterValue2)
+                            //             ->setIsVerified(true)
+                            //         ;
+                            //         CounterLocator::CounterHistoryService()->save($counterHistory2);
+                            //     }
+                            // }
                         }
                         catch (\Exception $e) {
-                            DB::rollBack();
                             $a = $e;
                         }
                         $sheetData[] = $rowData;
