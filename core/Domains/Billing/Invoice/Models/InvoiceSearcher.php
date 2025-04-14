@@ -38,6 +38,13 @@ class InvoiceSearcher implements SearcherInterface
         return $this;
     }
 
+    public function setAccountIds(array $ids): static
+    {
+        $this->addWhere(Invoice::ACCOUNT_ID, SearcherInterface::IN, $ids);
+
+        return $this;
+    }
+
     public function setType(?int $type): static
     {
         $this->addWhere(Invoice::TYPE, SearcherInterface::EQUALS, $type);

@@ -101,19 +101,38 @@ class InvoiceController extends Controller
             ->setOffset($request->getOffset())
             ->setWithPeriod()
             ->setWithAccount()
-            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
 
+        if ($request->getSortField() && $request->getSortOrder()) {
+            $searcher->setSortOrderProperty(
+                $request->getSortField(),
+                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC
+            );
+        } else {
+            $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
+        }
+
         if ($request->getPayedStatus()) {
-            $operator = $request->getPayedStatus() === 'payed' ? SearcherInterface::GTE : SearcherInterface::LT;
-            $searcher->addWhereColumn(Invoice::PAYED, $operator, Invoice::COST);
+            if ($request->getPayedStatus() === 'unpayed') {
+                $searcher->addWhere(Invoice::PAYED, SearcherInterface::EQUALS, 0);
+            }
+            elseif ($request->getPayedStatus() === 'payed') {
+                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::GTE, Invoice::COST);
+            }
+            elseif ($request->getPayedStatus() === 'partial') {
+                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
+                ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0);
+            }
         }
 
         if ($request->getPeriodId()) {
             $searcher->setPeriodId($request->getPeriodId());
         }
-        if ($request->getAccountId()) {
-            $searcher->setAccountId($request->getAccountId());
+        if ($request->getAccount()) {
+            $accountIds = $this->accountService->search(
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%")
+            )->getItems()->getIds();
+            $searcher->setAccountIds($accountIds);
         }
         if ($request->getType()) {
             $searcher->setType($request->getType());
@@ -161,15 +180,26 @@ class InvoiceController extends Controller
         ;
 
         if ($request->getPayedStatus()) {
-            $operator = $request->getPayedStatus() === 'payed' ? SearcherInterface::GTE : SearcherInterface::LT;
-            $searcher->addWhereColumn(Invoice::PAYED, $operator, Invoice::COST);
+            if ($request->getPayedStatus() === 'unpayed') {
+                $searcher->addWhere(Invoice::PAYED, SearcherInterface::EQUALS, 0);
+            }
+            elseif ($request->getPayedStatus() === 'payed') {
+                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::GTE, Invoice::COST);
+            }
+            elseif ($request->getPayedStatus() === 'partial') {
+                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
+                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0);
+            }
         }
 
         if ($request->getPeriodId()) {
             $searcher->setPeriodId($request->getPeriodId());
         }
-        if ($request->getAccountId()) {
-            $searcher->setAccountId($request->getAccountId());
+        if ($request->getAccount()) {
+            $accountIds = $this->accountService->search(
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%")
+            )->getItems()->getIds();
+            $searcher->setAccountIds($accountIds);
         }
         if ($request->getType()) {
             $searcher->setType($request->getType());

@@ -1,72 +1,81 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Exports;
 
+use Core\Domains\Billing\Claim\Models\ClaimDTO;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Enums\DateTimeFormat;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class InvoicesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
+class InvoicesExport implements FromArray, ShouldAutoSize, WithEvents
 {
+    private array $headers;
+
     public function __construct(
         private InvoiceCollection $invoices,
     )
     {
+        $headers = [
+            'id'      => '№',
+            'period'  => 'Период',
+            'account' => 'Участок',
+            'type'    => 'Тип счёта',
+            'cost'    => 'Начислено',
+        ];
+
+        $claimHeaders = [];
+        foreach ($this->invoices as $invoice) {
+            foreach ($invoice->getClaims() as $claim) {
+                $claimName = $this->getClaimName($claim);
+                if ( ! in_array($claimName, $headers, true)) {
+                    $claimHeaders[$claimName] = $claimName;
+                }
+            }
+        }
+
+        foreach ($claimHeaders as $key => $claimHeader) {
+            $headers[$key . 'cost'] = $claimHeader;
+        }
+
+        $headers['payed'] = 'Оплачено';
+
+        foreach ($claimHeaders as $key => $claimHeader) {
+            $headers[$key . 'payed'] = $claimHeader;
+        }
+
+        $headers['delta'] = 'Долг';
+
+        $this->headers = $headers;
     }
 
     public function array(): array
     {
         $result = [];
 
+        $headers  = $this->headers;
+        $result[] = $this->headers;
+
         foreach ($this->invoices as $invoice) {
-            $result[] = [
-                $invoice->getId(),
-                $invoice->getPeriod()?->getName(),
-                $invoice->getAccount()?->getNumber(),
-                $invoice->getType()?->name(),
-                '',
-                $invoice->getCost(),
-                $invoice->getPayed(),
-                $invoice->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-                $invoice->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-            ];
+            $row = array_map(static fn($method) => 0, $headers);
+
+            $row['id']      = $invoice->getId();
+            $row['period']  = $invoice->getPeriod()?->getName();
+            $row['account'] = $invoice->getAccount()?->getNumber();
+            $row['type']    = $invoice->getType()?->name();
+            $row['cost']    = $invoice->getCost();
+            $row['payed']   = $invoice->getPayed();
+            $row['delta']   = $invoice->getCost() - $invoice->getPayed();
 
             foreach ($invoice->getClaims() as $claim) {
-                $result[] = [
-                    '',
-                    '',
-                    '',
-                    $claim->getService()?->getName(),
-                    $claim->getName() === $claim->getService()?->getName() ? '' : $claim->getName(),
-                    $claim->getCost(),
-                    $claim->getPayed(),
-                    $claim->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-                    $claim->getUpdatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-                ];
+                $row[$this->getClaimName($claim) . 'cost']  = $claim->getCost();
+                $row[$this->getClaimName($claim) . 'payed'] = $claim->getPayed();
             }
+
+            $result[] = $row;
         }
 
         return $result;
-    }
-
-    public function headings(): array
-    {
-        return [
-            '№',
-            'Период',
-            'Участок',
-            'Тип',
-            'Услуга',
-            'Стоимость',
-            'Оплачено',
-            'Создан',
-            'Обновлён',
-        ];
     }
 
     public function registerEvents(): array
@@ -77,5 +86,10 @@ class InvoicesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
             //     $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
             // },
         ];
+    }
+
+    private function getClaimName(ClaimDTO $claim): ?string
+    {
+        return $claim->getService()?->getName() ? : $claim->getService()?->getType()?->name();
     }
 }
