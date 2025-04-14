@@ -27,6 +27,9 @@
                                 @update="onPaginationUpdate"
                     />
                 </div>
+                <div class=" d-flex align-items-center justify-content-center mx-2">
+                    Всего: {{ total }}
+                </div>
                 <div>
                     <history-btn
                         class="btn-link underline-none"
@@ -51,32 +54,47 @@
                     />
                 </template>
                 <template v-if="computedAccounts && computedAccounts.length">
-                    <search-select v-model="accountId"
-                                   :prop-class="'form-control ms-2'"
-                                   :items="computedAccounts"
-                                   :placeholder="'Участок...'"
-                                   @update:model-value="listAction"
-                    />
+                    <div class="d-flex ms-2">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control"
+                                   v-model="searchAccount"
+                                   name="users_search"
+                                   placeholder="Участок..."
+                                   @keyup="listAction"
+                                   ref="search">
+                            <button class="btn btn-light border"
+                                    type="button"
+                                    @click="searchAccount=null;listAction">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+                    </div>
                 </template>
                 <template v-if="computedPayedStatus && computedPayedStatus.length">
                     <simple-select v-model="payedStatus"
-                                   :class="'d-inline-block form-select-sm w-auto ms-3'"
+                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
                                    :items="computedPayedStatus"
                                    @change="listAction"
                     />
                 </template>
             </div>
             <div>
-                <button class="btn btn-success" @click="exportAction">
+                <button class="btn btn-success"
+                        @click="exportAction">
                     <i class="fa fa-file-excel-o"></i>
                 </button>
             </div>
         </div>
     </template>
-    <summary-block :account-id="accountId"
-                   :type="type"
-                   :period-id="periodId" />
-    <invoices-list :invoices="invoices" />
+    <summary-block :account-id="parseInt(accountId)"
+                   :type="parseInt(type)"
+                   :period-id="parseInt(periodId)" />
+    <invoices-list 
+        :invoices="invoices" 
+        :sort-field="sortField"
+        :sort-order="sortOrder"
+        @sort="onSort"
+    />
     <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
                        :accounts="accounts"
@@ -122,18 +140,23 @@ export default {
             types     : [],
             historyUrl: null,
 
-            loaded     : false,
-            total      : null,
-            perPage    : 25,
-            skip       : 0,
-            routeState : 0,
-            type       : 0,
-            periodId   : null,
-            payedStatus: null,
-            accountId  : 0,
-            Url        : Url,
-            actions    : {},
-            summary    : null,
+            loaded       : false,
+            total        : null,
+            perPage      : 25,
+            skip         : 0,
+            routeState   : 0,
+            type         : 0,
+            periodId     : null,
+            payedStatus  : null,
+            accountId    : 0,
+            searchAccount: null,
+            Url          : Url,
+            actions      : {},
+            summary      : null,
+            
+            // Добавляем параметры сортировки
+            sortField    : 'id',
+            sortOrder    : 'desc',
         };
     },
     created () {
@@ -142,9 +165,9 @@ export default {
         this.skip        = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
         this.type        = parseInt(urlParams.get('type') ? urlParams.get('type') : 0);
         this.periodId    = parseInt(urlParams.get('period') ? urlParams.get('period') : 0);
-        this.accountId   = parseInt(urlParams.get('account') ? urlParams.get('account') : 0);
         this.payedStatus = String(urlParams.get('status') ? urlParams.get('status') : 'all');
-
+        this.sortField   = urlParams.get('sort_field') || 'id';
+        this.sortOrder   = urlParams.get('sort_order') || 'desc';
         this.listAction();
     },
     methods : {
@@ -181,9 +204,6 @@ export default {
                 if (this.periodId) {
                     invoice.periodId = this.periodId;
                 }
-                if (this.accountId) {
-                    invoice.accountId = this.accountId;
-                }
                 if (this.type) {
                     invoice.type = this.type;
                 }
@@ -196,12 +216,14 @@ export default {
         listAction () {
             this.invoices = [];
             let uri       = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
-                limit  : this.perPage,
-                skip   : this.skip,
-                type   : this.type,
-                period : this.periodId,
-                account: this.accountId,
-                status : this.payedStatus,
+                limit      : this.perPage,
+                skip       : this.skip,
+                type       : this.type,
+                period     : this.periodId,
+                account    : this.accountId,
+                status     : this.payedStatus,
+                sort_field : this.sortField,
+                sort_order : this.sortOrder,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
@@ -212,7 +234,10 @@ export default {
                     type        : this.type,
                     period_id   : this.periodId,
                     account_id  : this.accountId,
+                    account     : this.searchAccount,
                     payed_status: this.payedStatus,
+                    sort_field  : this.sortField,
+                    sort_order  : this.sortOrder,
                 },
             }).then(response => {
                 this.actions    = response.data.actions;
@@ -222,22 +247,32 @@ export default {
                 this.periods    = response.data.periods;
                 this.accounts   = response.data.accounts;
                 this.historyUrl = response.data.historyUrl;
+
+                if (!this.periodId && this.periods.length) {
+                    this.periodId = this.periods[this.periods.length - 1].key;
+                    this.listAction();
+                }
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).then(() => {
                 this.loaded = true;
             });
         },
-        exportAction() {
+        exportAction () {
             window.open(Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
                 type   : this.type,
                 period : this.periodId,
-                account: this.accountId,
+                account: this.searchAccount,
                 status : this.payedStatus,
             }), '_blank');
         },
         onPaginationUpdate (skip) {
             this.skip = skip;
+            this.listAction();
+        },
+        onSort({ field, order }) {
+            this.sortField = field;
+            this.sortOrder = order;
             this.listAction();
         },
     },
@@ -279,6 +314,10 @@ export default {
                 {
                     'key'  : 'unpayed',
                     'value': 'Неоплаченные',
+                },
+                {
+                    'key'  : 'partial',
+                    'value': 'Частично оплаченные',
                 },
             ];
         },

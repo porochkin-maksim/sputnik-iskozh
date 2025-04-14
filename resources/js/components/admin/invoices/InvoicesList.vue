@@ -1,17 +1,30 @@
 <template>
-    <div>
-        <table class="table table-sm table-bordered">
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered" v-if="invoices && invoices.length">
             <thead>
-            <tr>
-                <th class="text-center">№</th>
-                <th class="text-center">Тип</th>
-                <th class="text-center">Период</th>
-                <th class="text-center">Участок</th>
-                <th class="text-center">Стоимость</th>
-                <th class="text-center">Оплачено</th>
-                <th class="text-center">Создан</th>
-                <th class="text-center"></th>
-            </tr>
+                <tr>
+                    <th class="text-center cursor-pointer" @click="sort('id')">
+                        №
+                        <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                        <i v-else class="fa fa-sort"></i>
+                    </th>
+                    <th class="text-center">Тип</th>
+                    <th class="text-center">Период</th>
+                    <th class="text-center">Участок</th>
+                    <th class="text-center cursor-pointer" @click="sort('cost')">
+                        Стоимость
+                        <i v-if="sortField === 'cost'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                        <i v-else class="fa fa-sort"></i>
+                    </th>
+                    <th class="text-center cursor-pointer" @click="sort('payed')">
+                        Оплачено
+                        <i v-if="sortField === 'payed'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                        <i v-else class="fa fa-sort"></i>
+                    </th>
+                    <th class="text-center">Долг</th>
+                    <th class="text-center">Создан</th>
+                    <th class="text-center"></th>
+                </tr>
             </thead>
             <tbody>
             <template v-for="(invoice) in invoices">
@@ -33,6 +46,7 @@
                     </td>
                     <td class="text-end">{{ $formatMoney(invoice.cost) }}</td>
                     <td class="text-end">{{ $formatMoney(invoice.payed) }}</td>
+                    <td class="text-end">{{ $formatMoney(invoice.cost - invoice.payed) }}</td>
                     <td class="text-center">{{ invoice.created }}</td>
                     <td>
                         <div class="d-flex justify-content-center">
@@ -59,6 +73,23 @@ export default {
     ],
     props     : [
         'invoices',
+        'sortField',
+        'sortOrder'
     ],
+    methods: {
+        sort(field) {
+            if (this.sortField === field) {
+                this.$emit('sort', { 
+                    field: field, 
+                    order: this.sortOrder === 'asc' ? 'desc' : 'asc' 
+                });
+            } else {
+                this.$emit('sort', { 
+                    field: field, 
+                    order: 'asc' 
+                });
+            }
+        },
+    }
 };
 </script>

@@ -3,37 +3,67 @@
 namespace App\Http\Requests\Admin\Invoices;
 
 use App\Http\Requests\DefaultRequest;
-use Core\Requests\RequestArgumentsEnum;
+use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 
 class ListRequest extends DefaultRequest
 {
-    private const TYPE         = RequestArgumentsEnum::TYPE;
-    private const PERIOD_ID    = RequestArgumentsEnum::PERIOD_ID;
-    private const ACCOUNT_ID   = RequestArgumentsEnum::ACCOUNT_ID;
-    private const PAYED_STATUS = 'payed_status';
+    public function rules(): array
+    {
+        return [
+            'limit'        => 'integer|min:1|max:100',
+            'skip'         => 'integer|min:0',
+            'type'         => 'integer|in:0,' . implode(',', InvoiceTypeEnum::values()),
+            'period_id'    => 'integer|min:0',
+            'account_id'   => 'integer|min:0',
+            'account'      => 'string|max:255',
+            'payed_status' => 'string|in:all,payed,unpayed,partial',
+            'sort_field'   => 'string|in:id,cost,payed',
+            'sort_order'   => 'string|in:asc,desc',
+        ];
+    }
+
+    public function getLimit(): int
+    {
+        return (int)$this->input('limit', 25);
+    }
+
+    public function getOffset(): int
+    {
+        return (int)$this->input('skip', 0);
+    }
 
     public function getType(): ?int
     {
-        return $this->getIntOrNull(self::TYPE);
+        return $this->input('type') ? (int)$this->input('type') : null;
     }
 
     public function getPeriodId(): ?int
     {
-        return $this->getIntOrNull(self::PERIOD_ID);
+        return $this->input('period_id') ? (int)$this->input('period_id') : null;
     }
 
     public function getAccountId(): ?int
     {
-        return $this->getIntOrNull(self::ACCOUNT_ID);
+        return $this->input('account_id') ? (int)$this->input('account_id') : null;
+    }
+
+    public function getAccount(): ?string
+    {
+        return $this->input('account');
     }
 
     public function getPayedStatus(): ?string
     {
-        $result = $this->getStringOrNull(self::PAYED_STATUS);
-        if ($result === 'all' || ! in_array($result, ['payed', 'unpayed'])) {
-            return null;
-        }
+        return $this->input('payed_status');
+    }
 
-        return $result;
+    public function getSortField(): ?string
+    {
+        return $this->input('sort_field', 'id');
+    }
+
+    public function getSortOrder(): ?string
+    {
+        return $this->input('sort_order', 'desc');
     }
 }
