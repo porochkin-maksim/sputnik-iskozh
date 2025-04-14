@@ -5,6 +5,7 @@ namespace Core\Domains\Billing\Invoice\Models;
 use App\Models\Billing\Invoice;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Db\Searcher\SearcherTrait;
+use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 
 class InvoiceSearcher implements SearcherInterface
 {
@@ -45,9 +46,10 @@ class InvoiceSearcher implements SearcherInterface
         return $this;
     }
 
-    public function setType(?int $type): static
+    public function setType(null|int|InvoiceTypeEnum $type): static
     {
-        $this->addWhere(Invoice::TYPE, SearcherInterface::EQUALS, $type);
+        $value = $type instanceof InvoiceTypeEnum ? $type->value : $type;
+        $this->addWhere(Invoice::TYPE, SearcherInterface::EQUALS, $value);
 
         return $this;
     }
