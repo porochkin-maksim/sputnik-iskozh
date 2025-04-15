@@ -24,9 +24,9 @@ class HistoryChangesViewController
     public function __invoke(DefaultRequest $request)
     {
         $type          = $request->getIntOrNull(RequestArgumentsEnum::TYPE);
-        $primaryId     = $request->getIntOrNull(RequestArgumentsEnum::PRIMARY_ID);
-        $referenceType = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_TYPE);
-        $referenceId   = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_ID);
+        $primaryId     = $request->getIntOrNull(RequestArgumentsEnum::PRIMARY_ID) ?: $request->getIntOrNull('primaryId');
+        $referenceType = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_TYPE) ?: $request->getIntOrNull('referenceType');
+        $referenceId   = $request->getIntOrNull(RequestArgumentsEnum::REFERENCE_ID) ?: $request->getIntOrNull('referenceId');
         $limit         = min($request->getIntOrNull(RequestArgumentsEnum::LIMIT) ?? 25, self::MAX_LIMIT);
         $offset        = max($request->getIntOrNull(RequestArgumentsEnum::SKIP) ?? 0, 0);
 
