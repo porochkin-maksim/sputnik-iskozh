@@ -43,13 +43,7 @@
             </template>
             <template v-else>
                 <h6>Данные участка</h6>
-                <ul class="list-group">
-                    <li class="list-group-item">{{ account.isMember ? 'Член СНТ' : 'Не член СНТ' }}</li>
-                    <li class="list-group-item">Номер участка {{ account.number }}</li>
-                    <li class="list-group-item">Площадь {{ account.size }}(м²)</li>
-                    <li class="list-group-item">Кадастровый номер {{ account.cadastreNumber }}</li>
-                    <li class="list-group-item">Дата регистрации {{ account.registryDate ? $formatDate(account.registryDate) : null }}</li>
-                </ul>
+                <account-info-list :account="account" />
             </template>
         </div>
     </div>
@@ -86,11 +80,13 @@ import ErrorsList     from '../../common/form/partial/ErrorsList.vue';
 import HistoryBtn     from '../../common/HistoryBtn.vue';
 import Pagination     from '../../common/pagination/Pagination.vue';
 import SearchSelect   from '../../common/form/SearchSelect.vue';
-import CountersBlock  from './counters/CountersBlock.vue';
+import CountersBlock   from './counters/CountersBlock.vue';
+import AccountInfoList from './AccountInfoList.vue';
 
 export default {
     name      : 'AccountItemView',
     components: {
+        AccountInfoList,
         CountersBlock,
         SearchSelect, Pagination,
         ErrorsList,

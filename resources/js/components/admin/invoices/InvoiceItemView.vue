@@ -1,11 +1,11 @@
 <template>
-    <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.accountNumber }}» ({{ localInvoice.typeName }}) </h4>
+    <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.account.number }}» ({{ localInvoice.typeName }}) </h4>
     <div class="mb-2 d-flex align-items-center justify-content-between">
         <div>
             <a class="btn btn-sm border text-decoration-none me-2"
-               v-if="localInvoice.accountUrl"
-               :href="localInvoice.accountUrl">
-                Перейти в участок {{ localInvoice.accountNumber }}
+               v-if="localInvoice.account.viewUrl"
+               :href="localInvoice.account.viewUrl">
+                Перейти в участок {{ localInvoice.account.number }} (Площадь {{ localInvoice.account.size }}м²)
             </a>
             <history-btn
                 class="btn-link underline-none"
