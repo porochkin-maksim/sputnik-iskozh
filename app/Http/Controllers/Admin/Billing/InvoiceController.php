@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Billing;
 
-use App\Exports\InvoicesExport;
+use App\Exports\InvoicesExport\InvoicesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
@@ -235,7 +235,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function delete(int $id): bool//
+    public function delete(int $id): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
             abort(403);
