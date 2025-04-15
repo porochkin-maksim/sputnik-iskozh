@@ -27,6 +27,13 @@
                                 @update="onPaginationUpdate"
                     />
                 </div>
+                <div>
+                    <simple-select v-model="perPage"
+                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
+                                   :items="[15,25,50,100]"
+                                   @change="listAction"
+                    />
+                </div>
                 <div class=" d-flex align-items-center justify-content-center mx-2">
                     Всего: {{ total }}
                 </div>
@@ -87,10 +94,11 @@
         </div>
     </template>
     <summary-block :account-id="parseInt(accountId)"
+                   :account-search="searchAccount"
                    :type="parseInt(type)"
                    :period-id="parseInt(periodId)" />
-    <invoices-list 
-        :invoices="invoices" 
+    <invoices-list
+        :invoices="invoices"
         :sort-field="sortField"
         :sort-order="sortOrder"
         @sort="onSort"
@@ -153,21 +161,22 @@ export default {
             Url          : Url,
             actions      : {},
             summary      : null,
-            
+
             // Добавляем параметры сортировки
-            sortField    : 'id',
-            sortOrder    : 'desc',
+            sortField: 'id',
+            sortOrder: 'desc',
         };
     },
     created () {
-        const urlParams  = new URLSearchParams(window.location.search);
-        this.perPage     = parseInt(urlParams.get('limit') ? urlParams.get('limit') : 25);
-        this.skip        = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
-        this.type        = parseInt(urlParams.get('type') ? urlParams.get('type') : 0);
-        this.periodId    = parseInt(urlParams.get('period') ? urlParams.get('period') : 0);
-        this.payedStatus = String(urlParams.get('status') ? urlParams.get('status') : 'all');
-        this.sortField   = urlParams.get('sort_field') || 'id';
-        this.sortOrder   = urlParams.get('sort_order') || 'desc';
+        const urlParams    = new URLSearchParams(window.location.search);
+        this.perPage       = parseInt(urlParams.get('limit') || 25);
+        this.skip          = parseInt(urlParams.get('skip') || 0);
+        this.type          = parseInt(urlParams.get('type') || 0);
+        this.periodId      = parseInt(urlParams.get('period') || 0);
+        this.payedStatus   = urlParams.get('status') || 'all';
+        this.sortField     = urlParams.get('sort_field') || 'id';
+        this.sortOrder     = urlParams.get('sort_order') || 'desc';
+        this.searchAccount = urlParams.get('search') || null;
         this.listAction();
     },
     methods : {
@@ -216,14 +225,15 @@ export default {
         listAction () {
             this.invoices = [];
             let uri       = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
-                limit      : this.perPage,
-                skip       : this.skip,
-                type       : this.type,
-                period     : this.periodId,
-                account    : this.accountId,
-                status     : this.payedStatus,
-                sort_field : this.sortField,
-                sort_order : this.sortOrder,
+                limit     : this.perPage,
+                skip      : this.skip,
+                type      : this.type,
+                period    : this.periodId,
+                account   : this.accountId,
+                search    : this.searchAccount,
+                status    : this.payedStatus,
+                sort_field: this.sortField,
+                sort_order: this.sortOrder,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
@@ -270,7 +280,7 @@ export default {
             this.skip = skip;
             this.listAction();
         },
-        onSort({ field, order }) {
+        onSort ({ field, order }) {
             this.sortField = field;
             this.sortOrder = order;
             this.listAction();

@@ -15,7 +15,7 @@ class ListRequest extends DefaultRequest
             'type'         => 'integer|in:0,' . implode(',', InvoiceTypeEnum::values()),
             'period_id'    => 'integer|min:0',
             'account_id'   => 'integer|min:0',
-            'account'      => 'string|max:255',
+            'account'      => 'nullable|string|max:255',
             'payed_status' => 'string|in:all,payed,unpayed,partial',
             'sort_field'   => 'string|in:id,cost,payed',
             'sort_order'   => 'string|in:asc,desc',

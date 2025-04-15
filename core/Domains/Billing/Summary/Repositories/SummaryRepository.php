@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class SummaryRepository
 {
-    public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): array
+    public function getSummaryFor(?int $type, ?int $periodId, ?array $accountIds): array
     {
         $regular = InvoiceTypeEnum::REGULAR->value;
         $income  = InvoiceTypeEnum::INCOME->value;
@@ -29,8 +29,8 @@ class SummaryRepository
             "),
         )->when($periodId, function ($query) use ($periodId) {
             $query->where(Invoice::PERIOD_ID, SearcherInterface::EQUALS, $periodId);
-        })->when($accountId, function ($query) use ($accountId) {
-            $query->where(Invoice::ACCOUNT_ID, SearcherInterface::EQUALS, $accountId);
+        })->when($accountIds, function ($query) use ($accountIds) {
+            $query->whereIn(Invoice::ACCOUNT_ID, $accountIds);
         })->when($type, function ($query) use ($type) {
             $query->where(Invoice::TYPE, SearcherInterface::EQUALS, $type);
         })->first()?->toArray();
