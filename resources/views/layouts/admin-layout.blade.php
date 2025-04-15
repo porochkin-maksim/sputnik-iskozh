@@ -20,7 +20,6 @@ $season = match (Carbon::now()->month) {
 };
 
 $authRole  = \lc::roleDecorator();
-$navRoutes = [RouteNames::ADMIN];
 
 $cutRouteNameFn = static function (string $routeName) {
     $parts = explode('.', $routeName);
@@ -28,40 +27,6 @@ $cutRouteNameFn = static function (string $routeName) {
 
     return implode('.', $parts) . '.*';
 };
-
-if ($authRole->can(PermissionEnum::ROLES_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_ROLE_INDEX;
-}
-if ($authRole->can(PermissionEnum::USERS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_USER_INDEX;
-}
-if ($authRole->can(PermissionEnum::ACCOUNTS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_ACCOUNT_INDEX;
-}
-if ($authRole->can(PermissionEnum::PERIODS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_PERIOD_INDEX;
-}
-if ($authRole->can(PermissionEnum::SERVICES_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_SERVICE_INDEX;
-}
-if ($authRole->can(PermissionEnum::INVOICES_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_INVOICE_INDEX;
-}
-if ($authRole->can(PermissionEnum::PAYMENTS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_NEW_PAYMENT_INDEX;
-}
-if ($authRole->can(PermissionEnum::COUNTERS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_COUNTER_HISTORY_INDEX;
-}
-if ($authRole->can(PermissionEnum::OPTIONS_VIEW)) {
-    $navRoutes[] = RouteNames::ADMIN_OPTIONS_INDEX;
-}
-// if ($authRole->canAccessAdmin()) {
-//     $navRoutes[] = RouteNames::ADMIN_QUEUE;
-// }
-if ($authRole->canAccessAdmin()) {
-    $navRoutes[] = RouteNames::ADMIN_ERRORS;
-}
 ?>
         <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -105,12 +70,80 @@ if ($authRole->canAccessAdmin()) {
     <div class="row admin-content-body">
         <div class="col-2 admin-side-panel border-end">
             <div class="side-menu">
-                @foreach($navRoutes as $routeCode)
-                    <a class="@if(Route::is($cutRouteNameFn($routeCode))) active-link @endif"
-                       href="{{ route($routeCode) }}">
-                        {{ RouteNames::name($routeCode) }}
-                    </a>
-                @endforeach
+                <a class="@if(Route::is(RouteNames::ADMIN)) active-link @endif" href="{{ route(RouteNames::ADMIN) }}">
+                    <i class="fa fa-home me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN) }}</span>
+                </a>
+
+                @if($authRole->can(PermissionEnum::ROLES_VIEW))
+                <a class="@if(Route::is('admin.role.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ROLE_INDEX) }}">
+                    <i class="fa fa-users me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_ROLE_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::USERS_VIEW))
+                <a class="@if(Route::is('admin.user.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_USER_INDEX) }}">
+                    <i class="fa fa-user me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_USER_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
+                <a class="@if(Route::is('admin.account.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
+                    <i class="fa fa-building me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_ACCOUNT_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::PERIODS_VIEW))
+                <a class="@if(Route::is('admin.period.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_PERIOD_INDEX) }}">
+                    <i class="fa fa-calendar me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_PERIOD_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::SERVICES_VIEW))
+                <a class="@if(Route::is('admin.service.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_SERVICE_INDEX) }}">
+                    <i class="fa fa-cogs me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_SERVICE_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::INVOICES_VIEW))
+                <a class="@if(Route::is('admin.invoice.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_INVOICE_INDEX) }}">
+                    <i class="fa fa-file-text me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_INVOICE_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::PAYMENTS_VIEW))
+                <a class="@if(Route::is('admin.new-payment.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
+                    <i class="fa fa-credit-card me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
+                <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
+                    <i class="fa fa-tachometer me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
+                <a class="@if(Route::is('admin.options.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_OPTIONS_INDEX) }}">
+                    <i class="fa fa-sliders me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_OPTIONS_INDEX) }}</span>
+                </a>
+                @endif
+
+                @if($authRole->canAccessAdmin())
+                <a class="@if(Route::is('admin.error-logs.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ERRORS) }}">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_ERRORS) }}</span>
+                </a>
+                @endif
             </div>
         </div>
         <div class="col-10">

@@ -1,6 +1,6 @@
 <template>
     <div class="table-responsive">
-        <table class="table table-sm table-bordered" v-if="invoices && invoices.length">
+        <table class="table table-sm table-striped table-bordered" v-if="invoices && invoices.length">
             <thead>
                 <tr>
                     <th class="text-center cursor-pointer" @click="sort('id')">
