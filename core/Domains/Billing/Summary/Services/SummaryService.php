@@ -13,9 +13,9 @@ readonly class SummaryService
     {
     }
 
-    public function getSummaryFor(?int $type, ?int $periodId, ?int $accountId): Summary
+    public function getSummaryFor(?int $type, ?int $periodId, ?array $accountIds): Summary
     {
-        return new Summary($this->summaryRepository->getSummaryFor($type, $periodId, $accountId));
+        return new Summary($this->summaryRepository->getSummaryFor($type, $periodId, $accountIds));
     }
 
     public function getClaimsFor(array $invoiceIds): array
