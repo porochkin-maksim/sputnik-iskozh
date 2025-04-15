@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
+use App\Http\Resources\Admin\Accounts\AccountResource;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -58,6 +59,7 @@ readonly class InvoiceResource extends AbstractResource
             'accountUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
                 : null,
+            'account' => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];
     }
 }
