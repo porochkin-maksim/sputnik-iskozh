@@ -35,7 +35,8 @@ readonly class InvoiceResource extends AbstractResource
             'payed'         => $this->invoice->getPayed(),
             'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
             'isPayed'       => $this->invoice->isPayed(),
-            'created'       => $this->formatCreatedAt($this->invoice->getCreatedAt()),
+            'created'       => $this->formatTimestampAt($this->invoice->getCreatedAt()),
+            'updated'       => $this->formatTimestampAt($this->invoice->getUpdatedAt()),
             'actions'       => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT),
