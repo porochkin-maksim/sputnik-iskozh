@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?bool   $is_verified
  * @property ?int    $primary_user_id
  * @property ?bool   $is_invoicing
- * @property ?bool   $is_manager
+ * @property ?string $sort_value
  * @property ?User[] $users
  */
 class Account extends Model implements CastsInterface
@@ -43,7 +43,7 @@ class Account extends Model implements CastsInterface
     public const IS_VERIFIED     = 'is_verified';
     public const PRIMARY_USER_ID = 'primary_user_id';
     public const IS_INVOICING    = 'is_invoicing';
-    public const IS_MANAGER      = 'is_manager';
+    public const SORT_VALUE      = 'sort_value';
 
     public const USERS   = 'users';
     public const EX_DATA = 'exData';
@@ -57,7 +57,6 @@ class Account extends Model implements CastsInterface
         self::SIZE            => self::CAST_INTEGER,
         self::IS_VERIFIED     => self::CAST_BOOLEAN,
         self::IS_INVOICING    => self::CAST_BOOLEAN,
-        self::IS_MANAGER      => self::CAST_BOOLEAN,
         self::BALANCE         => self::CAST_FLOAT,
     ];
 

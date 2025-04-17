@@ -88,7 +88,7 @@ class AccountsController extends Controller
         $searcher = AccountSearcher::make()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-            ->setSortOrderProperty(Account::ID, SearcherInterface::SORT_ORDER_ASC)
+            ->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC)
         ;
 
         if ($request->getSearch()) {
