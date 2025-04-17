@@ -17,7 +17,7 @@ class AccountDTO
     private ?bool   $is_verified     = null;
     private ?string $number          = null;
     private ?int    $primary_user_id = null;
-    private ?bool   $is_member       = null;
+    private ?bool   $is_invoicing    = null;
     private ?bool   $is_manager      = null;
 
     private ?AccountExDataDTO $exData = null;
@@ -101,14 +101,14 @@ class AccountDTO
         return $this;
     }
 
-    public function isMember(): bool
+    public function isInvoicing(): bool
     {
-        return (bool) $this->is_member;
+        return (bool) $this->is_invoicing;
     }
 
-    public function setIsMember(?bool $isMember): static
+    public function setIsInvoicing(?bool $isInvoicing): static
     {
-        $this->is_member = $isMember;
+        $this->is_invoicing = $isInvoicing;
 
         return $this;
     }

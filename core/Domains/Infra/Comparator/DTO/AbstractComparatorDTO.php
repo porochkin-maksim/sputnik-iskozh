@@ -76,6 +76,6 @@ abstract class AbstractComparatorDTO
 
     protected function getYesNoText(null|bool|int $value): ?string
     {
-        return $value ? 'Да' : 'Нет';
+        return $value === null ? 'не указано' : ($value ? 'Да' : 'Нет');
     }
 }

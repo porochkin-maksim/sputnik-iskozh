@@ -29,11 +29,11 @@ readonly class AccountResource extends AbstractResource
         $exData = $this->account->getExData();
 
         return [
-            'id'       => $this->account->getId(),
-            'number'   => $this->account->getNumber(),
-            'size'     => $this->account->getSize(),
-            'balance'  => $this->account->getBalance(),
-            'isMember' => $this->account->isMember(),
+            'id'          => $this->account->getId(),
+            'number'      => $this->account->getNumber(),
+            'size'        => $this->account->getSize(),
+            'balance'     => $this->account->getBalance(),
+            'isInvoicing' => $this->account->isInvoicing(),
 
             'cadastreNumber' => $exData->getCadastreNumber(),
             'registryDate'   => $exData->getRegistryDate()?->format(DateTimeFormat::DATE_DEFAULT),

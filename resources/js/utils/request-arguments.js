@@ -58,5 +58,6 @@ export default {
     phone        : 'phone',
     text         : 'text',
     token        : 'token',
-    increment    : 'increment'
+    increment    : 'increment',
+    isInvoicing  : 'is_invoicing'
 }
