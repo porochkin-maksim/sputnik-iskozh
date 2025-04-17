@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Claims;
 
+use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -20,10 +21,11 @@ readonly class ClaimResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = lc::roleDecorator();
-        $name   = $this->claim->getName();
+        $access       = lc::roleDecorator();
+        $name         = $this->claim->getName();
+        $claimService = $this->claim->getService();
         if ( ! $name) {
-            $name = $this->claim->getService()?->getName();
+            $name = $claimService?->getName();
         }
 
         return [
@@ -39,7 +41,10 @@ readonly class ClaimResource extends AbstractResource
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP)
+                                       && ( ! $claimService
+                                            || $claimService->getType() !== ServiceTypeEnum::DEBT
+                                       ),
             ],
             'historyUrl' => $this->claim->getId()
                 ? HistoryChangesLocator::route(

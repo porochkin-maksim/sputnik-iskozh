@@ -61,6 +61,15 @@ readonly class ClaimService
         return $current;
     }
 
+    public function saveQuietly(ClaimDTO $claim): ClaimDTO
+    {
+        return $this->claimFactory->makeDtoFromObject(
+            $this->claimRepository->save($this->claimFactory->makeModelFromDto(
+                $claim, $this->claimRepository->getById($claim->getId())
+            ))
+        );
+    }
+
     /**
      * @param ClaimCollection $claims
      */
@@ -68,7 +77,7 @@ readonly class ClaimService
     {
         $result = new ClaimCollection();
         foreach ($claims as $claim) {
-            $result->add($this->save($claim));
+            $result->add($this->saveQuietly($claim));
         }
 
         return $result;

@@ -23,4 +23,18 @@ class ClaimSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setName(string $string): static
+    {
+        $this->addWhere(Claim::NAME, SearcherInterface::EQUALS, $string);
+
+        return $this;
+    }
+
+    public function setServiceId(?int $debtServiceId): static
+    {
+        $this->addWhere(Claim::SERVICE_ID, SearcherInterface::EQUALS, $debtServiceId);
+
+        return $this;
+    }
 }
