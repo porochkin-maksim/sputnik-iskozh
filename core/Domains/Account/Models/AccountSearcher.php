@@ -21,7 +21,7 @@ class AccountSearcher implements SearcherInterface
             Account::IS_VERIFIED,
             Account::PRIMARY_USER_ID,
             Account::IS_INVOICING,
-            Account::IS_MANAGER,
+            Account::SORT_VALUE,
         ];
     }
 

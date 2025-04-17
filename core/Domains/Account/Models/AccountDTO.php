@@ -18,7 +18,7 @@ class AccountDTO
     private ?string $number          = null;
     private ?int    $primary_user_id = null;
     private ?bool   $is_invoicing    = null;
-    private ?bool   $is_manager      = null;
+    private ?string $sort_value      = null;
 
     private ?AccountExDataDTO $exData = null;
 
@@ -113,21 +113,9 @@ class AccountDTO
         return $this;
     }
 
-    public function isManager(): bool
-    {
-        return (bool) $this->is_manager;
-    }
-
-    public function setIsManager(?bool $is_manager): static
-    {
-        $this->is_manager = $is_manager;
-
-        return $this;
-    }
-
     public function getExData(): AccountExDataDTO
     {
-        $this->exData = $this->exData ?: new AccountExDataDTO();
+        $this->exData = $this->exData ? : new AccountExDataDTO();
 
         return $this->exData;
     }
@@ -157,5 +145,43 @@ class AccountDTO
     public function isSnt(): bool
     {
         return $this->getId() === AccountIdEnum::SNT->value;
+    }
+
+    public function getSortValue(): ?string
+    {
+        return $this->sort_value ?: $this->normalizePlotNumber();
+    }
+
+    public function setSortValue(?string $sortValue): static
+    {
+        $this->sort_value = $sortValue;
+
+        return $this;
+    }
+
+    private function normalizePlotNumber(): string
+    {
+        try {
+            $parts = explode('/', (string) $this->getNumber());
+            if (empty($parts)) {
+                return '0';
+            }
+
+            // Берем первую часть (номер дачи)
+            $dachaNumber = $parts[0];
+
+            // Разбиваем на цифры и буквы
+            preg_match('/^(\d+)([А-Яа-я]*)/', $dachaNumber, $matches);
+
+            // Формируем строку для сортировки: цифры дополняем нулями, буквы добавляем как есть
+            $number = $parts[1] . str_pad($matches[1] ?? '0', 5, '0', STR_PAD_LEFT);
+            $letter = $matches[2] ?? '';
+
+            return $number . $letter;
+
+        }
+        catch (\Exception) {
+            return '';
+        }
     }
 }

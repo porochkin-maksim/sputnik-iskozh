@@ -21,7 +21,7 @@ readonly class AccountFactory
             ->setBalance(0)
             ->setIsVerified(false)
             ->setIsInvoicing(false)
-            ->setIsManager(false)
+            ->setSortValue(null)
             ->setExData(new AccountExDataDTO());
 
         return $account;
@@ -43,7 +43,7 @@ readonly class AccountFactory
             Account::IS_VERIFIED     => $dto->isVerified(),
             Account::PRIMARY_USER_ID => $dto->getPrimaryUserId(),
             Account::IS_INVOICING    => $dto->isInvoicing(),
-            Account::IS_MANAGER      => $dto->isManager(),
+            Account::SORT_VALUE      => $dto->getSortValue(),
         ]);
     }
 
@@ -59,7 +59,7 @@ readonly class AccountFactory
             ->setIsVerified($model->is_verified)
             ->setPrimaryUserId($model->primary_user_id)
             ->setIsInvoicing($model->is_invoicing)
-            ->setIsManager($model->is_manager)
+            ->setSortValue($model->sort_value)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 

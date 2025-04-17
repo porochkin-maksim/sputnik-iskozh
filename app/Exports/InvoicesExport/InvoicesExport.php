@@ -68,9 +68,9 @@ class InvoicesExport implements WithMultipleSheets
 
         // Сортируем все счета по номеру участка
         $sortedInvoices = $this->invoices->toArray();
-        usort($sortedInvoices, function($a, $b) {
-            $aNumber = $this->normalizePlotNumber($a->getAccount()?->getNumber() ?? '');
-            $bNumber = $this->normalizePlotNumber($b->getAccount()?->getNumber() ?? '');
+        usort($sortedInvoices, static function($a, $b) {
+            $aNumber = $a->getAccount()?->getSortValue() ?? '';
+            $bNumber = $b->getAccount()?->getSortValue() ?? '';
             return strnatcmp($aNumber, $bNumber);
         });
 
@@ -83,9 +83,9 @@ class InvoicesExport implements WithMultipleSheets
         // Добавляем листы по участкам
         foreach ($this->groupedInvoices as $plotNumber => $plotInvoices) {
             // Сортируем счета внутри листа по номеру участка
-            usort($plotInvoices, function($a, $b) {
-                $aNumber = $this->normalizePlotNumber($a->getAccount()?->getNumber() ?? '');
-                $bNumber = $this->normalizePlotNumber($b->getAccount()?->getNumber() ?? '');
+            usort($plotInvoices, static function($a, $b) {
+                $aNumber = $a->getAccount()?->getSortValue() ?? '';
+                $bNumber = $b->getAccount()?->getSortValue() ?? '';
                 return strnatcmp($aNumber, $bNumber);
             });
 
@@ -111,25 +111,5 @@ class InvoicesExport implements WithMultipleSheets
         $plotNumber = preg_replace('/[^0-9]/', '', end($parts));
         
         return (int) $plotNumber;
-    }
-
-    private function normalizePlotNumber(string $accountNumber): string
-    {
-        $parts = explode('/', $accountNumber);
-        if (empty($parts)) {
-            return '0';
-        }
-
-        // Берем первую часть (номер дачи)
-        $dachaNumber = $parts[0];
-        
-        // Разбиваем на цифры и буквы
-        preg_match('/^(\d+)([А-Яа-я]*)/', $dachaNumber, $matches);
-        
-        // Формируем строку для сортировки: цифры дополняем нулями, буквы добавляем как есть
-        $number = str_pad($matches[1] ?? '0', 5, '0', STR_PAD_LEFT);
-        $letter = $matches[2] ?? '';
-        
-        return $number . $letter;
     }
 }
