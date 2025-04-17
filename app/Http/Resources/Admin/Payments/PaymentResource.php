@@ -29,7 +29,7 @@ readonly class PaymentResource extends AbstractResource
             'cost'       => $this->payment->getCost(),
             'comment'    => $this->payment->getComment(),
             'files'      => $this->payment->getFiles(),
-            'created'    => $this->formatCreatedAt($this->payment->getCreatedAt()),
+            'created'    => $this->formatTimestampAt($this->payment->getCreatedAt()),
             'invoiceId'  => $this->payment->getInvoiceId(),
             'accountId'  => $this->payment->getAccountId(),
             'invoice'    => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,

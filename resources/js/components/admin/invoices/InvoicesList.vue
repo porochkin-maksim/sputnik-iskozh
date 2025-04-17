@@ -22,7 +22,11 @@
                         <i v-else class="fa fa-sort"></i>
                     </th>
                     <th class="text-center">Долг</th>
-                    <th class="text-center">Создан</th>
+                    <th class="text-center cursor-pointer" @click="sort('updated_at')">
+                        Обновлён
+                        <i v-if="sortField === 'updated_at'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                        <i v-else class="fa fa-sort"></i>
+                    </th>
                     <th class="text-center"></th>
                 </tr>
             </thead>
@@ -47,7 +51,7 @@
                     <td class="text-end">{{ $formatMoney(invoice.cost) }}</td>
                     <td class="text-end">{{ $formatMoney(invoice.payed) }}</td>
                     <td class="text-end">{{ $formatMoney(invoice.cost - invoice.payed) }}</td>
-                    <td class="text-center">{{ invoice.created }}</td>
+                    <td class="text-center">{{ invoice.updated }}</td>
                     <td>
                         <div class="d-flex justify-content-center">
                             <history-btn
@@ -67,6 +71,7 @@ import ResponseError from '../../../mixin/ResponseError.js';
 import HistoryBtn    from '../../common/HistoryBtn.vue';
 
 export default {
+    emits     : ['sort'],
     components: { HistoryBtn },
     mixins    : [
         ResponseError,

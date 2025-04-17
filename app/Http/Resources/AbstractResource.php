@@ -13,7 +13,7 @@ abstract readonly class AbstractResource implements JsonSerializable
         return $date ? $date->format(DateTimeFormat::DATE_TIME_FRONT) : Carbon::now()->format(DateTimeFormat::DATE_TIME_FRONT);
     }
 
-    protected function formatCreatedAt(?Carbon $date): string
+    protected function formatTimestampAt(?Carbon $date): string
     {
         return $date ? $date->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT) : '';
     }
