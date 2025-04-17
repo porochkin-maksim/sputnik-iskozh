@@ -42,6 +42,7 @@
                        class="form-control form-control-sm"
                        :disabled="!claim.actions.edit"
                        v-model="claim.tariff"
+                       @change="onTariffChanged"
                 />
                 <label>Стоимость</label>
                 <input type="number"
@@ -49,6 +50,7 @@
                        class="form-control form-control-sm"
                        :disabled="!claim.actions.edit"
                        v-model="claim.cost"
+                       @change="onCostChanged"
                 />
             </div>
         </template>
@@ -213,10 +215,20 @@ export default {
             this.claimCount = value;
             this.$emit('update:count', this.claimCount);
         },
+        onCostChanged() {
+            if (this.claim.tariff > this.claim.cost) {
+                this.claim.tariff = this.claim.cost;
+            }
+        },
+        onTariffChanged() {
+            if (this.claim.tariff > this.claim.cost) {
+                this.claim.cost = this.claim.tariff;
+            }
+        },
     },
     computed: {
         canSave () {
-            return this.claim && this.claim.serviceId && this.claim.cost > 0;
+            return this.claim && this.claim.serviceId && this.claim.cost >= 0;
         },
     },
     watch   : {

@@ -39,15 +39,15 @@
                             </a>
                             <ul class="dropdown-menu"
                                 :aria-labelledby="'dropDown'+vueId">
-                                <li v-if="actions.edit">
+                                <li v-if="claim.actions.edit">
                                     <a class="dropdown-item cursor-pointer"
                                        @click="editAction(claim.id)"><i class="fa fa-edit"></i> Редактировать</a>
                                 </li>
-                                <li v-else-if="actions.view">
+                                <li v-else-if="claim.actions.view">
                                     <a class="dropdown-item cursor-pointer"
                                        @click="editAction(claim.id)"><i class="fa fa-eye"></i> Просмотр</a>
                                 </li>
-                                <li v-if="actions.drop">
+                                <li v-if="claim.actions.drop">
                                     <a class="dropdown-item cursor-pointer text-danger"
                                        @click="dropAction(claim.id)"><i class="fa fa-trash"></i> Удалить</a>
                                 </li>

@@ -102,4 +102,13 @@ readonly class ServiceService
 
         return $this->serviceRepository->deleteById($id);
     }
+
+    public function getByPeriodIdAndType(int $periodId, ServiceTypeEnum $case): ?ServiceDTO
+    {
+        return $this->search(
+            ServiceSearcher::make()
+                ->setPeriodId($periodId)
+                ->setType($case)
+        )->getItems()->first();
+    }
 }

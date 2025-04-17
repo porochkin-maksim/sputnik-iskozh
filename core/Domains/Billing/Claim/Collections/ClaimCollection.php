@@ -24,10 +24,12 @@ class ClaimCollection extends Collection implements CollectionInterface
      * @param array<int, ServiceTypeEnum> $orderedTypes
      */
     public function sortByServiceTypes(array $orderedTypes = [
+        ServiceTypeEnum::DEBT,
         ServiceTypeEnum::MEMBERSHIP_FEE,
         ServiceTypeEnum::TARGET_FEE,
         ServiceTypeEnum::ELECTRIC_TARIFF,
         ServiceTypeEnum::OTHER,
+        ServiceTypeEnum::ADVANCE_PAYMENT,
     ]): static
     {
         return $this->sort(function (ClaimDTO $claim1, ClaimDTO $claim2) use ($orderedTypes) {
@@ -40,5 +42,16 @@ class ClaimCollection extends Collection implements CollectionInterface
 
             return 0;
         });
+    }
+
+    public function getByServiceType(ServiceTypeEnum $type): ?ClaimDTO
+    {
+        foreach ($this as $claim) {
+            if ($claim->getService()?->getType() === $type) {
+                return $claim;
+            }
+        }
+
+        return null;
     }
 }

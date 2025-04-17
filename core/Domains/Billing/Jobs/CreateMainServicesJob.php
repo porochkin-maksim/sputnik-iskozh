@@ -35,6 +35,11 @@ class CreateMainServicesJob implements ShouldQueue
                 continue;
             }
 
+            $service = ServiceLocator::ServiceService()->getByPeriodIdAndType($this->periodId, $case);
+            if ($service) {
+                continue;
+            }
+
             $service = ServiceLocator::ServiceFactory()->makeDefault();
             $service
                 ->setPeriodId($this->periodId)

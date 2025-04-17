@@ -45,4 +45,17 @@ class ServiceCollection extends Collection implements CollectionInterface
 
         return null;
     }
+
+    public function getByPeriodId(?int $periodId): static
+    {
+        $result = new static();
+
+        foreach ($this as $service) {
+            if ($service->getPeriodId() === $periodId) {
+                $result = $result->add($service);
+            }
+        }
+
+        return $result;
+    }
 }

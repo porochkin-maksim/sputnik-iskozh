@@ -238,7 +238,7 @@ export default {
     },
     computed: {
         canSave () {
-            return this.payment && this.payment.cost > 0;
+            return this.payment && this.payment.cost >= 0;
         },
         filesSize () {
             let result = 0;

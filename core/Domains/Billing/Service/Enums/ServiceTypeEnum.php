@@ -8,10 +8,12 @@ enum ServiceTypeEnum: int
 {
     use EnumCommonTrait;
 
-    case MEMBERSHIP_FEE  = 1;
-    case ELECTRIC_TARIFF = 2;
-    case TARGET_FEE      = 3;
-    case OTHER           = 4;
+    case MEMBERSHIP_FEE  = 1; // Членский взнос
+    case ELECTRIC_TARIFF = 2; // Электричество
+    case TARGET_FEE      = 3; // Целевой сбор
+    case OTHER           = 4; // Прочее
+    case DEBT            = 5; // Долг
+    case ADVANCE_PAYMENT = 6; // Аванс
 
     public function name(): string
     {
@@ -20,6 +22,8 @@ enum ServiceTypeEnum: int
             self::ELECTRIC_TARIFF => 'Электричество',
             self::TARGET_FEE      => 'Целевой сбор',
             self::OTHER           => 'Прочее',
+            self::DEBT            => 'Долг',
+            self::ADVANCE_PAYMENT => 'Аванс',
         };
     }
 }
