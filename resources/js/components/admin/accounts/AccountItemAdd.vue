@@ -8,27 +8,31 @@
             <div class="container-fluid">
                 <div>
                     <custom-input v-model="number"
-                                  v-if="modelValue.actions.edit"
                                   :required="true"
                                   :label="'Номер участка'"
                     />
                 </div>
                 <div class="mt-2">
                     <custom-input v-model="size"
-                                  v-if="modelValue.actions.edit"
                                   :label="'Площадь (м²)'"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
                                   :required="true"
                     />
                 </div>
                 <div class="mt-2">
+                    <custom-checkbox v-model="isInvoicing"
+                                     :label="'Выставлять счета'"
+                    />
+                </div>
+                <div>
                     <custom-input v-model="cadastreNumber"
-                                  v-if="modelValue.actions.edit"
                                   :label="'Кадастровый номер'"
                     />
                 </div>
                 <div class="mt-2">
                     <custom-input v-model="registryDate"
-                                  v-if="modelValue.actions.edit"
                                   :label="'Дата регистрации'"
                     />
                 </div>
@@ -37,8 +41,12 @@
         <template v-slot:footer>
             <button class="btn btn-success"
                     :disabled="!canSave"
+                    v-if="!loading"
                     @click="saveAction">
                 Создать
+            </button>
+            <button class="btn border-0" disabled v-else>
+                <i class="fa fa-spinner fa-spin"></i> Создание
             </button>
         </template>
     </view-dialog>
@@ -79,7 +87,7 @@ export default {
         if (this.modelValue) {
             this.number         = this.modelValue.number;
             this.size           = this.modelValue.size;
-            this.isMember       = this.modelValue.is_member;
+            this.isInvoicing    = this.modelValue.is_invoicing;
             this.cadastreNumber = this.modelValue.cadastreNumber;
             this.registryDate   = this.modelValue.registryDate;
 
@@ -92,16 +100,19 @@ export default {
     },
     data () {
         return {
-            id        : null,
-            number    : null,
-            size      : null,
-            isMember  : null,
-            historyUrl: null,
-            actions   : null,
+            id         : null,
+            number     : null,
+            size       : null,
+            isInvoicing: null,
+            historyUrl : null,
+            actions    : null,
 
             vueId  : null,
             dropped: false,
             loading: false,
+
+            showDialog: false,
+            hideDialog: false,
         };
     },
     methods : {
@@ -110,7 +121,7 @@ export default {
             let form     = new FormData();
             form.append('number', this.number);
             form.append('size', parseInt(this.size ? this.size : 0));
-            form.append('is_member', !!this.isMember);
+            form.append('is_invoicing', !!this.isInvoicing);
             form.append('cadastreNumber', this.cadastreNumber);
             form.append('registryDate', this.registryDate);
 
@@ -132,10 +143,14 @@ export default {
                 this.loading = false;
             });
         },
+        onCloseDialog () {
+            this.loading = false;
+        },
     },
     computed: {
         canSave () {
-            return this.number;
+            return this.number
+                && this.size && this.size >= 0;
         },
     },
 };

@@ -1,10 +1,19 @@
 <template>
     <div class="d-flex align-items-center justify-content-between mb-2">
         <div class="d-flex">
-            <button class="btn btn-success me-2"
-                    v-if="account.actions.edit"
-                    v-on:click="saveAction">Сохранить участок
-            </button>
+            <div class="d-flex"
+                 v-if="account.actions.edit">
+                <button class="btn btn-success me-2"
+                        v-if="!loading"
+                        :disabled="!canSave"
+                        v-on:click="saveAction">Сохранить участок
+                </button>
+                <button class="btn border-0"
+                        disabled
+                        v-else>
+                    <i class="fa fa-spinner fa-spin"></i> Сохранение
+                </button>
+            </div>
         </div>
         <div class="d-flex">
             <history-btn
@@ -24,10 +33,18 @@
                 <div class="mt-2">
                     <custom-input v-model="account.size"
                                   :label="'Площадь (м²)'"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
                                   :required="true"
                     />
                 </div>
                 <div class="mt-2">
+                    <custom-checkbox v-model="account.isInvoicing"
+                                     :label="'Выставлять счета'"
+                    />
+                </div>
+                <div>
                     <custom-input v-model="account.cadastreNumber"
                                   :label="'Кадастровый номер'"
                                   :required="true"
@@ -69,17 +86,17 @@
 </template>
 
 <script>
-import Url            from '../../../utils/Url.js';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
-import CustomTextarea from '../../common/form/CustomTextarea.vue';
-import CustomSelect   from '../../common/form/CustomSelect.vue';
-import ResponseError  from '../../../mixin/ResponseError.js';
-import SimpleSelect   from '../../common/form/SimpleSelect.vue';
-import ErrorsList     from '../../common/form/partial/ErrorsList.vue';
-import HistoryBtn     from '../../common/HistoryBtn.vue';
-import Pagination     from '../../common/pagination/Pagination.vue';
-import SearchSelect   from '../../common/form/SearchSelect.vue';
+import Url             from '../../../utils/Url.js';
+import CustomInput     from '../../common/form/CustomInput.vue';
+import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
+import CustomTextarea  from '../../common/form/CustomTextarea.vue';
+import CustomSelect    from '../../common/form/CustomSelect.vue';
+import ResponseError   from '../../../mixin/ResponseError.js';
+import SimpleSelect    from '../../common/form/SimpleSelect.vue';
+import ErrorsList      from '../../common/form/partial/ErrorsList.vue';
+import HistoryBtn      from '../../common/HistoryBtn.vue';
+import Pagination      from '../../common/pagination/Pagination.vue';
+import SearchSelect    from '../../common/form/SearchSelect.vue';
 import CountersBlock   from './counters/CountersBlock.vue';
 import AccountInfoList from './AccountInfoList.vue';
 
@@ -123,7 +140,7 @@ export default {
             form.append('id', this.account.id);
             form.append('number', this.account.number);
             form.append('size', parseInt(this.account.size ? this.account.size : 0));
-            form.append('is_member', !!this.account.isMember);
+            form.append('is_invoicing', !!this.account.isInvoicing);
             form.append('cadastreNumber', this.account.cadastreNumber);
             form.append('registryDate', this.account.registryDate);
 
@@ -175,14 +192,9 @@ export default {
     },
     computed: {
         canSave () {
-            return this.number;
+            return this.account.number
+                && this.account.size && this.account.size >= 0;
         },
     },
 };
 </script>
-
-<style scoped>
-.index {width : 80px;}
-
-.size {width : 50px;}
-</style>

@@ -10,8 +10,8 @@ class AccountComparator extends AbstractComparatorDTO
 {
     public const TITLE_NUMBER          = 'Номер';
     public const TITLE_SIZE            = 'Площадь';
-    public const TITLE_BALANCE         = 'Баланс';
     public const TITLE_IS_VERIFIED     = 'Подтверждён';
+    public const TITLE_IS_INVOICING    = 'Выставление счетов';
     public const TITLE_CADASTRE_NUMBER = 'Кадастровый номер';
     public const TITLE_REGISTRY_DATE   = 'Дата регистрации';
 
@@ -21,8 +21,8 @@ class AccountComparator extends AbstractComparatorDTO
     protected const KEYS_TO_TITLES = [
         Account::NUMBER           => self::TITLE_NUMBER,
         Account::SIZE             => self::TITLE_SIZE,
-        // Account::BALANCE          => self::TITLE_BALANCE,
         Account::IS_VERIFIED      => self::TITLE_IS_VERIFIED,
+        Account::IS_INVOICING     => self::TITLE_IS_INVOICING,
         self::KEY_CADASTRE_NUMBER => self::TITLE_CADASTRE_NUMBER,
         self::KEY_REGISTRY_DATE   => self::TITLE_REGISTRY_DATE,
     ];
@@ -38,7 +38,8 @@ class AccountComparator extends AbstractComparatorDTO
         ]);
 
         $this->expandedProperties = [
-            Account::IS_VERIFIED => $this->getYesNoText($entity->isVerified()),
+            Account::IS_VERIFIED  => $this->getYesNoText($entity->isVerified()),
+            Account::IS_INVOICING => $this->getYesNoText($entity->isInvoicing()),
         ];
     }
 }

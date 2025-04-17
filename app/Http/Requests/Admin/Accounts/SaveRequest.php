@@ -14,21 +14,21 @@ class SaveRequest extends AbstractRequest
 {
     private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
 
-    private const ID        = RequestArgumentsEnum::ID;
-    private const NUMBER    = RequestArgumentsEnum::NUMBER;
-    private const SIZE      = RequestArgumentsEnum::SIZE;
-    private const IS_MEMBER = RequestArgumentsEnum::IS_MEMBER;
+    private const ID           = RequestArgumentsEnum::ID;
+    private const NUMBER       = RequestArgumentsEnum::NUMBER;
+    private const SIZE         = RequestArgumentsEnum::SIZE;
+    private const IS_INVOICING = RequestArgumentsEnum::IS_INVOICING;
 
     public function rules(): array
     {
         return [
-            self::NUMBER    => [
+            self::NUMBER       => [
                 'required',
                 'string',
                 'regex:' . self::ACCOUNT_REGEXP,
                 Rule::unique(Account::TABLE, Account::NUMBER)->ignore($this->get(self::ID)),
             ],
-            self::SIZE      => [
+            self::SIZE         => [
                 'required',
                 'numeric',
                 'min:0',
@@ -73,5 +73,10 @@ class SaveRequest extends AbstractRequest
     public function getRegistryDate(): ?Carbon
     {
         return $this->getDateOrNull('registryDate');
+    }
+
+    public function getIsInvoicing(): bool
+    {
+        return $this->getBool(self::IS_INVOICING);
     }
 }

@@ -64,4 +64,5 @@ enum RequestArgumentsEnum: string
     public const TEXT            = 'text';
     public const TOKEN           = 'token';
     public const INCREMENT       = 'increment';
+    public const IS_INVOICING    = 'is_invoicing';
 }

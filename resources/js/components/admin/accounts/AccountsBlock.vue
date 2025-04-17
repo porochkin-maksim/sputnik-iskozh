@@ -45,11 +45,12 @@
     </div>
     <table class="table table-sm">
         <thead>
-        <tr>
+        <tr class="text-center">
             <th>ID</th>
             <th>Номер</th>
+            <th class="text-end">Площадь (м²)</th>
             <th>Кадастр</th>
-            <th>Площадь (м²)</th>
+            <th>Выставление счетов</th>
             <th></th>
         </tr>
         </thead>
@@ -61,9 +62,12 @@
                     {{ account.id }}
                 </a>
             </td>
-            <td>{{ account.number }}</td>
-            <td>{{ account.cadastreNumber }}</td>
-            <td>{{ account.size }}</td>
+            <td class="text-end">{{ account.number }}</td>
+            <td class="text-end">{{ account.size }}</td>
+            <td class="text-center">{{ account.cadastreNumber }}</td>
+            <td class="text-center">
+                <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
+            </td>
             <td>
                 <history-btn :disabled="!account.historyUrl"
                              class="btn-link underline-none"

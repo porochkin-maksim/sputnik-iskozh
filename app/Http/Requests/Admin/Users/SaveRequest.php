@@ -5,7 +5,6 @@ namespace App\Http\Requests\Admin\Users;
 use App\Http\Requests\AbstractRequest;
 use App\Models\User;
 use Carbon\Carbon;
-use Core\Domains\Account\Models\AccountComparator;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 

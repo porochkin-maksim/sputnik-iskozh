@@ -11,11 +11,18 @@ class AccountSearcher implements SearcherInterface
 {
     use SearcherTrait;
 
-    public function setPrimaryUserId(int $id): static
+    public function __construct()
     {
-        $this->addWhere(Account::PRIMARY_USER_ID, SearcherInterface::EQUALS, $id);
-
-        return $this;
+        $this->select = [
+            Account::ID,
+            Account::NUMBER,
+            Account::SIZE,
+            Account::BALANCE,
+            Account::IS_VERIFIED,
+            Account::PRIMARY_USER_ID,
+            Account::IS_INVOICING,
+            Account::IS_MANAGER,
+        ];
     }
 
     public function setNumber(string $number): static

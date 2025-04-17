@@ -47,6 +47,7 @@ class InvoiceRepository
                     ->where('type', InvoiceTypeEnum::REGULAR->value);
             })
             ->where('accounts.id', '!=', AccountIdEnum::SNT->value)
+            ->where('accounts.is_invoicing', true)
             ->get()
         ;
     }

@@ -14,9 +14,17 @@ readonly class AccountFactory
 {
     public function makeDefault(): AccountDTO
     {
-        return (new AccountDTO())
-            ->setBalance(0.00)
-            ->setIsVerified(false);
+        $account = new AccountDTO();
+        $account
+            ->setNumber(null)
+            ->setSize(null)
+            ->setBalance(0)
+            ->setIsVerified(false)
+            ->setIsInvoicing(false)
+            ->setIsManager(false)
+            ->setExData(new AccountExDataDTO());
+
+        return $account;
     }
 
     public function makeModelFromDto(AccountDTO $dto, ?Account $model = null): Account
@@ -34,7 +42,7 @@ readonly class AccountFactory
             Account::BALANCE         => $dto->getBalance(),
             Account::IS_VERIFIED     => $dto->isVerified(),
             Account::PRIMARY_USER_ID => $dto->getPrimaryUserId(),
-            Account::IS_MEMBER       => $dto->isMember(),
+            Account::IS_INVOICING    => $dto->isInvoicing(),
             Account::IS_MANAGER      => $dto->isManager(),
         ]);
     }
@@ -50,7 +58,7 @@ readonly class AccountFactory
             ->setBalance($model->balance)
             ->setIsVerified($model->is_verified)
             ->setPrimaryUserId($model->primary_user_id)
-            ->setIsMember($model->is_member)
+            ->setIsInvoicing($model->is_invoicing)
             ->setIsManager($model->is_manager)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);

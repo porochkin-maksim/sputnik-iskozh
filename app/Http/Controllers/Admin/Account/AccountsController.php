@@ -85,8 +85,7 @@ class AccountsController extends Controller
             abort(403);
         }
 
-        $searcher = new AccountSearcher();
-        $searcher
+        $searcher = AccountSearcher::make()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
             ->setSortOrderProperty(Account::ID, SearcherInterface::SORT_ORDER_ASC)
@@ -101,11 +100,9 @@ class AccountsController extends Controller
         }
         $accounts = $this->accountService->search($searcher);
 
-        $searcher = new AccountSearcher();
-        $searcher
-            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC)
-        ;
-        $allAccounts = $this->accountService->search($searcher);
+        $allAccounts = $this->accountService->search(
+            AccountSearcher::make()->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC),
+        );
 
         return response()->json(new AccountsListResource(
             $accounts->getItems(),
@@ -132,6 +129,7 @@ class AccountsController extends Controller
 
         $account
             ->setNumber($request->getNumber())
+            ->setIsInvoicing($request->getIsInvoicing())
             ->setSize($request->getSize())
         ;
 
