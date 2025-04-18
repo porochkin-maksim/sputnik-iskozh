@@ -223,7 +223,6 @@ export default {
             });
         },
         listAction () {
-            this.invoices = [];
             let uri       = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
                 limit     : this.perPage,
                 skip      : this.skip,

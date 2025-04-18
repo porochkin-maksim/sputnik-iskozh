@@ -1,21 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Claims\ClaimResource;
+use Carbon\Carbon;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Enums\DateTimeFormat;
 use Core\Resources\RouteNames;
+use Core\Responses\ResponsesEnum;
 
 readonly class CounterHistoryResource extends AbstractResource
 {
     public function __construct(
-        private CounterHistoryDTO  $counterHistory,
-        private ?CounterHistoryDTO $previousCounterHistory = null,
+        private CounterHistoryDTO $counterHistory,
     )
     {
     }
@@ -26,7 +27,9 @@ readonly class CounterHistoryResource extends AbstractResource
         $counter = $this->counterHistory->getCounter();
 
         $claim         = $this->counterHistory->getClaim();
-        $previousValue = $this->previousCounterHistory?->getValue() ? : $this->counterHistory->getPreviousValue();
+        $previousValue = $this->counterHistory->getPreviousValue();
+        $previous      = $this->counterHistory->getPrevious();
+        $canCreateNew  = $this->counterHistory->getDate()?->endOfMonth()->endOfDay()?->lte(Carbon::now()->startOfDay());
 
         $result = [
             'id'            => $this->counterHistory->getId(),
@@ -34,15 +37,18 @@ readonly class CounterHistoryResource extends AbstractResource
             'value'         => $this->counterHistory->getValue(),
             'isVerified'    => $this->counterHistory->isVerified(),
             'before'        => $previousValue,
-            'delta'         => $previousValue ? ($this->counterHistory->getValue() - $previousValue) : null,
+            'delta'         => $this->counterHistory->getDelta(),
             'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'days'          => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
+            'days'          => $previous ? $this->counterHistory->getDate()?->diffInDays($previous->getDate()) : null,
             'file'          => $this->counterHistory->getFile(),
             'counterNumber' => $counter?->getNumber(),
             'accountId'     => $counter?->getAccountId(),
             'accountNumber' => $counter?->getAccount()?->getNumber(),
             'isInvoicing'   => $counter?->isInvoicing(),
             'claim'         => $claim ? new ClaimResource($claim) : null,
+            'actions'       => [
+                ResponsesEnum::CREATE => $canCreateNew,
+            ],
             'historyUrl'    => $this->counterHistory->getId()
                 ? HistoryChangesLocator::route(
                     referenceType: HistoryType::COUNTER_HISTORY,

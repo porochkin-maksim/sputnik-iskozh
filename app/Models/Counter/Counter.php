@@ -41,7 +41,6 @@ class Counter extends Model implements CastsInterface
     public const HISTORY = 'history';
 
     protected $guarded = [];
-    protected $with    = [self::HISTORY];
 
     protected $casts = [
         self::IS_INVOICING => self::CAST_BOOLEAN,

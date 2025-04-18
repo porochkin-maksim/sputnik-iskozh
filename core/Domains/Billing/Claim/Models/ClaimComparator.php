@@ -24,10 +24,5 @@ class ClaimComparator extends AbstractComparatorDTO
     public function __construct(ClaimDTO $entity)
     {
         $this->initProperties($entity, $entity->getId());
-
-        $this->expandedProperties = [
-            // Claim::PERIOD_ID => $entity->getPeriodId(),
-            // Claim::ACCOUNT_ID   => $entity->getAccountId(),
-        ];
     }
 }

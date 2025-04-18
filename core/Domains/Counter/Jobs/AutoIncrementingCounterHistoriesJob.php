@@ -52,7 +52,7 @@ class AutoIncrementingCounterHistoriesJob implements ShouldQueue
                     continue;
                 }
 
-                $lastHistory = $counter->getHistoryCollection()->first();
+                $lastHistory = CounterLocator::CounterHistoryService()->getLastByCounterId($counter->getId());
 
                 if ($lastHistory && $lastHistory->getDate()?->isCurrentMonth()) {
                     return;

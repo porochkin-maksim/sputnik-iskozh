@@ -100,7 +100,7 @@ class CounterDTO
         return $this;
     }
 
-    public function getHistoryCollection(): CounterHistoryCollection
+    public function getHistoryCollection(): CounterHistoryCollection//
     {
         return $this->historyCollection ? : new CounterHistoryCollection();
     }

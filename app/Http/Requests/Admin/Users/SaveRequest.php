@@ -41,9 +41,6 @@ class SaveRequest extends AbstractRequest
             self::EMAIL . '.string'   => 'Поле должно быть строкой',
             self::EMAIL . '.email'    => 'Поле должно быть корретным адресом эл.почты',
             self::EMAIL . '.max'      => 'Количество символов должно быть меньше :max',
-
-            // self::IS_MEMBER . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_IS_MEMBER),
-            // self::IS_MEMBER . '.in'       => sprintf('Некорректное значение «%s»', AccountComparator::TITLE_IS_MEMBER),
         ];
     }
 

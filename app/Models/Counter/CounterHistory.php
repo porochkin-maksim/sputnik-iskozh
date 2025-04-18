@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int     $counter_id
  * @property ?int    $previous_id
  * @property ?float  $value
+ * @property ?float  $previous_value
  * @property ?Carbon $date
  * @property ?bool   $is_verified
  */
@@ -32,12 +33,13 @@ class CounterHistory extends Model implements CastsInterface
 
     protected $table = self::TABLE;
 
-    public const ID          = 'id';
-    public const COUNTER_ID  = 'counter_id';
-    public const PREVIOUS_ID = 'previous_id';
-    public const VALUE       = 'value';
-    public const DATE        = 'date';
-    public const IS_VERIFIED = 'is_verified';
+    public const ID             = 'id';
+    public const COUNTER_ID     = 'counter_id';
+    public const PREVIOUS_ID    = 'previous_id';
+    public const PREVIOUS_VALUE = 'previous_value';
+    public const VALUE          = 'value';
+    public const DATE           = 'date';
+    public const IS_VERIFIED    = 'is_verified';
 
     public const FILE     = 'file';
     public const COUNTER  = 'counter';
@@ -48,11 +50,12 @@ class CounterHistory extends Model implements CastsInterface
     protected $with    = [self::FILE, self::PREVIOUS];
 
     protected $casts = [
-        self::COUNTER_ID  => self::CAST_INTEGER,
-        self::PREVIOUS_ID => self::CAST_INTEGER,
-        self::VALUE       => self::CAST_FLOAT,
-        self::DATE        => self::CAST_DATETIME,
-        self::IS_VERIFIED => self::CAST_BOOLEAN,
+        self::COUNTER_ID     => self::CAST_INTEGER,
+        self::PREVIOUS_ID    => self::CAST_INTEGER,
+        self::VALUE          => self::CAST_FLOAT,
+        self::PREVIOUS_VALUE => self::CAST_FLOAT,
+        self::DATE           => self::CAST_DATETIME,
+        self::IS_VERIFIED    => self::CAST_BOOLEAN,
     ];
 
     public function file(): HasOne

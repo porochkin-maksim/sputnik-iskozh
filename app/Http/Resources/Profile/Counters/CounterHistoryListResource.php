@@ -22,7 +22,7 @@ readonly class CounterHistoryListResource extends AbstractResource
         }
 
         foreach ($this->counterHistoryCollection as $counterHistory) {
-            $result[] = new CounterHistoryResource($counterHistory, $this->counterHistoryCollection->getById($counterHistory->getPreviousId()));
+            $result[] = new CounterHistoryResource($counterHistory);
         }
 
         return $result;

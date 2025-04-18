@@ -109,7 +109,7 @@ readonly class CounterHistoryService
     }
 
 
-    public function getPrevios(CounterHistoryDTO $counterHistory): ?CounterHistoryDTO
+    public function getPrevious(CounterHistoryDTO $counterHistory): ?CounterHistoryDTO
     {
         $counterHistorySearcher = new CounterHistorySearcher();
         $counterHistorySearcher->setCounterId($counterHistory->getCounterId())
@@ -128,5 +128,17 @@ readonly class CounterHistoryService
         }
 
         return $result;
+    }
+
+    public function getLastByCounterId(?int $counterId): ?CounterHistoryDTO
+    {
+        $searcher = CounterHistorySearcher::make()
+            ->setCounterId($counterId)
+            ->setLimit(1)
+            ->setWithClaim()
+            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        return $this->search($searcher)->getItems()->first();
     }
 }

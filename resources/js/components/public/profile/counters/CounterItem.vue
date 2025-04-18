@@ -12,9 +12,9 @@
                     >Добавить показания
                     </button>
                     <button v-else
-                            class="btn btn-sm btn-success mb-md-0 mb-2"
+                            class="btn btn-sm btn-success mb-md-0 mb-2 disabled"
                             data-bs-toggle="popover"
-                            :data-bs-content="'Добавить показания можно будет завтра'"
+                            :data-bs-content="'Добавить показания можно будет в следующем месяце'"
                             data-bs-placement="bottom"
                     >Добавить показания
                     </button>
@@ -62,6 +62,15 @@
                     </button>
                 </div>
             </template>
+        </div>
+    </div>
+    <div class="row mt-2" v-if="chartData && chartData.length">
+        <div class="col-12 col-md-8 col-lg-6">
+            <h5 class="text-center">График показаний</h5>
+            <counters-chart-block
+                :chart-data="chartData"
+                :options="chartOptions"
+            />
         </div>
     </div>
     <view-dialog v-model:show="showDialog"
@@ -155,18 +164,20 @@
 </template>
 
 <script>
-import Url            from '../../../../utils/Url.js';
-import ResponseError  from '../../../../mixin/ResponseError.js';
-import Wrapper        from '../../../common/Wrapper.vue';
-import CustomInput    from '../../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../../common/form/CustomCheckbox.vue';
-import ViewDialog     from '../../../common/ViewDialog.vue';
-import FileItem       from '../../../common/files/FileItem.vue';
-import SearchSelect   from '../../../common/form/SearchSelect.vue';
+import Url                from '../../../../utils/Url.js';
+import ResponseError      from '../../../../mixin/ResponseError.js';
+import Wrapper            from '../../../common/Wrapper.vue';
+import CustomInput        from '../../../common/form/CustomInput.vue';
+import CustomCheckbox     from '../../../common/form/CustomCheckbox.vue';
+import ViewDialog         from '../../../common/ViewDialog.vue';
+import FileItem           from '../../../common/files/FileItem.vue';
+import SearchSelect       from '../../../common/form/SearchSelect.vue';
+import CountersChartBlock from '../../../common/blocks/CountersChartBlock.vue';
 
 export default {
     name      : 'ProfileCounterItem',
     components: {
+        CountersChartBlock,
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,
         CustomInput,
@@ -186,7 +197,6 @@ export default {
             showDialog: false,
             hideDialog: false,
 
-            id   : null,
             value: null,
 
             histories: [],
@@ -202,6 +212,15 @@ export default {
             showIncrementDialog: false,
             hideIncrementDialog: false,
             increment          : null,
+
+            chartData   : [],
+            chartOptions: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
         };
     },
     created () {
@@ -214,6 +233,7 @@ export default {
         },
         listAction () {
             this.pending = true;
+            this.skip += this.limit;
             window.axios[Url.Routes.profileCounterHistoryList.method](Url.Routes.profileCounterHistoryList.uri, {
                 counter_id: this.counter.id,
                 skip      : this.skip,
@@ -228,10 +248,17 @@ export default {
                     if (!exists) {
                         this.histories.push(history);
                     }
+
+                    this.chartData = this.histories
+                        .filter(item => item.date && item.delta && !isNaN(parseFloat(item.delta)))
+                        .map(item => ({
+                            date : item.date,
+                            value: parseFloat(item.delta),
+                        }))
+                        .sort((a, b) => new Date(a.date) - new Date(b.date));
                 });
                 this.total = response.data.total;
                 this.limit = response.data.limit;
-                this.skip += this.limit;
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).then(() => {
@@ -265,15 +292,20 @@ export default {
             this.hideDialog = true;
             this.file       = null;
             this.mode       = null;
-            this.listAction();
+            location.reload();
         },
-        addHistoryValue (item) {
+        addHistoryValue () {
             if (!this.canAddNewHistory) {
                 return;
             }
-            this.value      = item.value;
+            const lastHistory = this.histories[0];
+            if (lastHistory) {
+                this.value = lastHistory.value + lastHistory.delta;
+            }
+            else {
+                this.value = this.counter.value;
+            }
             this.showDialog = true;
-            this.id         = item.id;
         },
         closeAction () {
             this.showDialog = false;

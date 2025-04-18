@@ -13,7 +13,6 @@ readonly class CounterHistoryResource extends AbstractResource
 {
     public function __construct(
         private CounterHistoryDTO  $counterHistory,
-        private ?CounterHistoryDTO $previousCounterHistory = null,
     )
     {
     }
@@ -22,18 +21,21 @@ readonly class CounterHistoryResource extends AbstractResource
     {
         $claim = $this->counterHistory->getClaim();
 
+        $previous     = $this->counterHistory->getPrevious();
+        $canCreateNew = $this->counterHistory->getDate()?->endOfMonth()->endOfDay()?->lte(Carbon::now()->startOfDay());
+
         return [
             'id'         => $this->counterHistory->getId(),
             'counterId'  => $this->counterHistory->getCounterId(),
             'value'      => $this->counterHistory->getValue(),
             'isVerified' => $this->counterHistory->isVerified(),
-            'before'     => $this->previousCounterHistory?->getValue(),
-            'delta'      => $this?->previousCounterHistory ? ($this->counterHistory->getValue() - $this?->previousCounterHistory->getValue()) : null,
+            'before'     => $previous?->getValue(),
+            'delta'      => $previous ? ($this->counterHistory->getValue() - $previous->getValue()) : null,
             'date'       => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'days'       => $this?->previousCounterHistory ? $this->counterHistory->getDate()?->diffInDays($this?->previousCounterHistory->getDate()) : null,
+            'days'       => $previous ? $this->counterHistory->getDate()?->diffInDays($previous->getDate()) : null,
             'file'       => $this->counterHistory->getFile(),
             'actions'    => [
-                ResponsesEnum::CREATE => ! $this?->previousCounterHistory || (bool) $this?->previousCounterHistory?->getDate()?->endOfDay()?->lte(Carbon::now()->startOfDay()),
+                ResponsesEnum::CREATE => $canCreateNew,
             ],
             'claim'      => $claim ? new ClaimResource($claim) : null,
         ];
