@@ -232,7 +232,7 @@ abstract class RouteNames
             self::ADMIN_ACCOUNT_INDEX         => 'Участки',
             self::ADMIN_INVOICE_INDEX         => 'Счета',
             self::ADMIN_NEW_PAYMENT_INDEX     => 'Новые платежи',
-            self::ADMIN_COUNTER_HISTORY_INDEX => 'Новые показания',
+            self::ADMIN_COUNTER_HISTORY_INDEX => 'Счётчики',
             self::ADMIN_ERRORS                => 'Журнал ошибок',
             self::ADMIN_QUEUE                 => 'Очереди',
 

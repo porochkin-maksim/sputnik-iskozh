@@ -8,13 +8,19 @@ use App\Http\Requests\Admin\Counters\CreateRequest;
 use App\Http\Requests\Admin\Counters\SaveRequest;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Counters\CounterListResource;
+use App\Models\Counter\CounterHistory;
+use Carbon\Carbon;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Period\Services\PeriodService;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
+use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
@@ -22,6 +28,7 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Enums\DateTimeFormat;
 use Core\Requests\RequestArgumentsEnum;
 use Core\Responses\ResponsesEnum;
 use Exception;
@@ -38,6 +45,7 @@ class CounterController extends Controller
     private CounterHistoryFactory $counterHistoryFactory;
     private FileService           $fileService;
     private HistoryChangesService $historyChangesService;
+    private PeriodService         $periodService;
 
     public function __construct()
     {
@@ -48,15 +56,47 @@ class CounterController extends Controller
         $this->counterHistoryFactory = CounterLocator::CounterHistoryFactory();
         $this->fileService           = CounterLocator::FileService();
         $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
+        $this->periodService         = PeriodLocator::PeriodService();
     }
 
-    public function list(int $accountId): JsonResponse
+    public function list(int $accountId, DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_VIEW)) {
             abort(403);
         }
 
         $result = $this->counterService->getByAccountId($accountId);
+
+        $period = null;
+        $limit  = $request->getLimit() ? : 12;
+
+        $searcher = CounterHistorySearcher::make()
+            ->setLimit($limit)
+            ->setOffset($request->getOffset())
+            ->setWithClaim()
+            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        if ($request->getIntOrNull('periodId')) {
+            $period = $this->periodService->getById($request->getIntOrNull('periodId'));
+        }
+        if ($period) {
+            $searcher
+                ->addWhere(CounterHistory::DATE, SearcherInterface::GTE, $period->getStartAt()?->format(DateTimeFormat::DATE_DEFAULT))
+                ->addWhere(CounterHistory::DATE, SearcherInterface::LTE, $period->getEndAt()?->format(DateTimeFormat::DATE_DEFAULT))
+            ;
+        }
+        else {
+            $searcher->setLimit($limit);
+        }
+
+        foreach ($result as $counter) {
+            $counter->setHistoryCollection(
+                $this->counterHistoryService->search(
+                    $searcher->setCounterId($counter->getId()),
+                )->getItems(),
+            );
+        }
 
         return response()->json([
             ResponsesEnum::COUNTERS => new CounterListResource($result),
@@ -138,9 +178,10 @@ class CounterController extends Controller
                 abort(404);
             }
 
-            $history = $this->counterHistoryService->getById($request->getId())
+            $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
+            $history     = $this->counterHistoryService->getById($request->getId())
                 ? : $this->counterHistoryFactory->makeDefault()
-                    ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
+                    ->setPreviousId($lastHistory?->getId())
                     ->setCounterId($counter->getId())
             ;
 

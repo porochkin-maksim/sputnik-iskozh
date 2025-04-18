@@ -36,11 +36,12 @@ class CounterHistoryFactory
         ]);
 
         return $result->fill([
-            CounterHistory::COUNTER_ID  => $dto->getCounterId(),
-            CounterHistory::PREVIOUS_ID => $dto->getPreviousId(),
-            CounterHistory::VALUE       => $dto->getValue(),
-            CounterHistory::DATE        => $dto->getDate(),
-            CounterHistory::IS_VERIFIED => $dto->isVerified(),
+            CounterHistory::COUNTER_ID     => $dto->getCounterId(),
+            CounterHistory::PREVIOUS_ID    => $dto->getPreviousId(),
+            CounterHistory::PREVIOUS_VALUE => $dto->getPreviousValue(),
+            CounterHistory::VALUE          => $dto->getValue(),
+            CounterHistory::DATE           => $dto->getDate(),
+            CounterHistory::IS_VERIFIED    => $dto->isVerified(),
         ]);
     }
 
@@ -52,6 +53,7 @@ class CounterHistoryFactory
             ->setId($model->id)
             ->setCounterId($model->counter_id)
             ->setPreviousId($model->previous_id)
+            ->setPreviousValue($model->previous_value)
             ->setValue($model->value)
             ->setDate($model->date)
             ->setIsVerified($model->is_verified)
@@ -60,7 +62,7 @@ class CounterHistoryFactory
         ;
 
         if (isset($model->getRelations()[CounterHistory::PREVIOUS])) {
-            $result->setPreviousValue($model->getRelation(CounterHistory::PREVIOUS)->value);
+            $result->setPrevious($this->makeDtoFromObject($model->getRelation(CounterHistory::PREVIOUS)));
         }
 
         if (isset($model->getRelations()[CounterHistory::FILE])) {

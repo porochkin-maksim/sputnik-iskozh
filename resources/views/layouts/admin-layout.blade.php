@@ -117,17 +117,17 @@ $cutRouteNameFn = static function (string $routeName) {
                 </a>
                 @endif
 
+                @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
+                    <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
+                        <i class="fa fa-tachometer me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}</span>
+                    </a>
+                @endif
+
                 @if($authRole->can(PermissionEnum::PAYMENTS_VIEW))
                 <a class="@if(Route::is('admin.new-payment.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
                     <i class="fa fa-credit-card me-2"></i>
                     <span>{{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}</span>
-                </a>
-                @endif
-
-                @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
-                <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
-                    <i class="fa fa-tachometer me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}</span>
                 </a>
                 @endif
 

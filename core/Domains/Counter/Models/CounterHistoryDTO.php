@@ -20,9 +20,10 @@ class CounterHistoryDTO
 
     private ?float $previous_value = null;
 
-    private ?FileDTO    $file        = null;
-    private ?CounterDTO $counter     = null;
-    private ?ClaimDTO   $claimDTO    = null;
+    private ?FileDTO           $file     = null;
+    private ?CounterDTO        $counter  = null;
+    private ?ClaimDTO          $claimDTO = null;
+    private ?CounterHistoryDTO $previous = null;
 
     public function getId(): ?int
     {
@@ -166,5 +167,22 @@ class CounterHistoryDTO
         $this->claimDTO = $claimDTO;
 
         return $this;
+    }
+
+    public function setPrevious(?CounterHistoryDTO $previous): static
+    {
+        $this->previous = $previous;
+
+        return $this;
+    }
+
+    public function getPrevious(): ?CounterHistoryDTO
+    {
+        return $this->previous;
+    }
+
+    public function getDelta(): ?float
+    {
+        return $this->getPreviousValue() ? ($this->getValue() - $this->getPreviousValue()) : null;
     }
 }

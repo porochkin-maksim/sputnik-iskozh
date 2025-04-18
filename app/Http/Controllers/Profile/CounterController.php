@@ -13,6 +13,7 @@ use App\Models\Counter\CounterHistory;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
@@ -89,6 +90,11 @@ class CounterController extends Controller
 
         $result = $this->counterService->search($counterSearcher)->getItems();
 
+        foreach ($result as $counter) {
+            $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
+            $counter->setHistoryCollection(new CounterHistoryCollection([$lastHistory]));
+        }
+
         return response()->json([
             ResponsesEnum::COUNTERS => new CounterListResource($result),
         ]);
@@ -146,8 +152,11 @@ class CounterController extends Controller
                 abort(403);
             }
 
+            $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
+
             $history = $this->counterHistoryFactory->makeDefault()
-                ->setPreviousId($counter->getHistoryCollection()->last()?->getId())
+                ->setPreviousId($lastHistory?->getId())
+                ->setPreviousValue($lastHistory?->getValue())
                 ->setCounterId($counter->getId())
                 ->setValue($request->getValue())
             ;
@@ -175,14 +184,12 @@ class CounterController extends Controller
             abort(403);
         }
 
-        $searcher = new CounterHistorySearcher();
-        $searcher
+        $searcher = CounterHistorySearcher::make()
             ->setCounterId($counterId)
             ->setLimit($limit)
             ->setOffset($request->getOffset())
             ->setWithClaim()
             ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
 
         $response = $this->counterHistoryService->search($searcher);

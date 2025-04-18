@@ -70,7 +70,7 @@ class CheckClaimForCounterChangeJob implements ShouldQueue
             return;
         }
 
-        $previous = CounterLocator::CounterHistoryService()->getPrevios($history);
+        $previous = CounterLocator::CounterHistoryService()->getPrevious($history);
 
         if ( ! $previous || ! $previous->isVerified()) {
             $this->deleteClaim($claim);

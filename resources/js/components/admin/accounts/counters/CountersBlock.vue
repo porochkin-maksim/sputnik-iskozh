@@ -149,6 +149,11 @@
                         </div>
                     </td>
                 </tr>
+                <tr v-if="counter.history.histories && counter.history.histories.length">
+                    <td colspan="8">
+                        <counter-item-chart-block :histories="counter.history.histories" />
+                    </td>
+                </tr>
             </template>
             </tbody>
         </table>
@@ -187,9 +192,11 @@ import SearchSelect       from '../../../common/form/SearchSelect.vue';
 import CounterHistoryItem from './CounterHistoryItem.vue';
 import CounterItem        from './CounterItem.vue';
 import HistoryBtn         from '../../../common/HistoryBtn.vue';
+import CounterItemChartBlock from './CounterItemChartBlock.vue';
 
 export default {
     components: {
+        CounterItemChartBlock,
         HistoryBtn,
         CounterItem,
         CounterHistoryItem,
@@ -202,6 +209,7 @@ export default {
     },
     props     : {
         account: Object,
+        periodId: Number,
     },
     mixins    : [
         ResponseError,
@@ -239,7 +247,11 @@ export default {
                 accountId: this.account.id,
             });
 
-            window.axios[Url.Routes.adminCounterList.method](uri).then(response => {
+            window.axios[Url.Routes.adminCounterList.method](uri, {
+                params: {
+                    periodId: this.periodId,
+                }
+            }).then(response => {
                 this.counters = response.data.counters;
             }).catch(response => {
                 this.parseResponseErrors(response);

@@ -275,11 +275,11 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::group(['prefix' => 'json'], static function () {
                         Route::post('/create-claim/{historyId}', [Controllers\Admin\Account\CounterController::class, 'createClaim'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CREATE_CLAIM);
 
-                        Route::get('/list', [Controllers\Admin\Requests\NewCounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
-                        Route::post('/link', [Controllers\Admin\Requests\NewCounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
-                        Route::delete('/delete/{historyId}', [Controllers\Admin\Requests\NewCounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
-                        Route::post('/confirm', [Controllers\Admin\Requests\NewCounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
-                        Route::post('/confirm-delete', [Controllers\Admin\Requests\NewCounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM_DELETE);
+                        Route::get('/list', [Controllers\Admin\Requests\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
+                        Route::post('/link', [Controllers\Admin\Requests\CounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
+                        Route::delete('/delete/{historyId}', [Controllers\Admin\Requests\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
+                        Route::post('/confirm', [Controllers\Admin\Requests\CounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
+                        Route::post('/confirm-delete', [Controllers\Admin\Requests\CounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM_DELETE);
                     });
                 });
                 Route::get('error-logs', [Controllers\Admin\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');

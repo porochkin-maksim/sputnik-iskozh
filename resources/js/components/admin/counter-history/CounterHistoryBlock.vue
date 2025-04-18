@@ -1,27 +1,77 @@
 <template>
-    <h5>Новые показания счётчиков</h5>
-    <div class="d-flex align-items-center mb-2"
-         v-if="histories.length">
-        <button class="btn btn-success"
-                v-if="actions.edit"
-                :disabled="!canSubmitAction"
-                @click="confirmAction"
-        >
-            Подтвердить выделенные
-        </button>
-        <button class="btn btn-danger ms-2"
-                v-if="actions.drop"
-                :disabled="!canSubmitAction"
-                @click="deleteAction"
-        >
-            Удалить выделенные
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex align-items-center">
+            <template v-if="computedStatuses && computedStatuses.length">
+                <simple-select v-model="verifiedStatus"
+                               :class="'d-inline-block form-select-sm w-auto'"
+                               :items="computedStatuses"
+                               @change="listAction"
+                />
+            </template>
+            <template v-if="!isVerifiedStatus">
+                <template v-if="histories.length">
+                    <button class="btn btn-success ms-2"
+                            v-if="actions.edit"
+                            :disabled="!canSubmitAction"
+                            @click="confirmAction"
+                    >
+                        <i class="fa fa-check"></i> Подтвердить
+                    </button>
+                    <button class="btn btn-danger ms-2"
+                            v-if="actions.drop"
+                            :disabled="!canSubmitAction"
+                            @click="deleteAction"
+                    >
+                        <i class="fa fa-trash"></i> Удалить
+                    </button>
+                </template>
+            </template>
+            <template v-else>
+                <div class="d-flex ms-2">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control"
+                               v-model="searchAccount"
+                               name="users_search"
+                               placeholder="Участок..."
+                               @keyup="listAction"
+                               ref="search">
+                        <button class="btn btn-light border"
+                                type="button"
+                                @click="clearSearch">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="d-flex">
+            <template v-if="isVerifiedStatus">
+                <div>
+                    <pagination :total="total"
+                                :perPage="perPage"
+                                :prop-classes="'pagination-sm mb-0'"
+                                @update="onPaginationUpdate"
+                    />
+                </div>
+                <div>
+                    <simple-select v-model="perPage"
+                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
+                                   :items="[15,25,50,100,500]"
+                                   @change="listAction"
+                    />
+                </div>
+            </template>
+            <div class=" d-flex align-items-center justify-content-center text-nowrap mx-2">
+                Всего: {{ total }}
+            </div>
+        </div>
     </div>
+
     <div v-if="histories.length">
         <table class="table table-sm table-bordered align-middle">
             <thead>
             <tr class="text-center">
-                <th v-if="actions.edit && canCheckAction">
+                <th v-if="actions.edit && canCheckAction && !isVerifiedStatus">
                     <div>
                         <input @change="onAllCheck"
                                v-model="allCheck"
@@ -29,12 +79,12 @@
                                class="form-check-input" />
                     </div>
                 </th>
-                <th>№</th>
                 <th>Участок</th>
                 <th>Счётчик</th>
                 <th>Дата</th>
                 <th>Показание</th>
                 <th v-if="canCheckAction">Предыдущее</th>
+                <th v-if="canCheckAction">Дельта</th>
                 <th>Выставлять счета</th>
                 <th>Файл</th>
                 <th></th>
@@ -43,7 +93,8 @@
             </thead>
             <tbody>
             <tr v-for="(history) in histories">
-                <td v-if="actions.edit && canCheckAction">
+                <td v-if="actions.edit && canCheckAction && !isVerifiedStatus"
+                    class="text-center">
                     <div>
                         <input @change="onChanged(history.id)"
                                :checked="isChecked(history.id)"
@@ -51,12 +102,14 @@
                                class="form-check-input" />
                     </div>
                 </td>
-                <td>{{ history.id }}</td>
                 <template v-if="history.accountId && history.counterId">
-                    <td v-if="history.accountUrl">
+                    <td v-if="history.accountUrl"
+                        class="text-end">
                         <a :href="history.accountUrl">{{ history.accountNumber }}</a>
                     </td>
-                    <td v-else>{{ history.accountNumber }}</td>
+                    <td v-else
+                        class="text-end">{{ history.accountNumber }}
+                    </td>
                     <td>{{ history.counterNumber }}</td>
                 </template>
                 <template v-else>
@@ -69,17 +122,15 @@
                         </button>
                     </td>
                 </template>
-                <td>{{ history.date }}</td>
+                <td class="text-center">{{ $formatDate(history.date) }}</td>
                 <td class="text-end">
                     {{ history.value }}
-                    <template v-if="history.before">
-                        <br>
-                        +{{ history.value - history.before }}кВт
-                    </template>
-
                 </td>
                 <td class="text-end"
-                    v-if="canCheckAction">{{ history.before }}
+                    v-if="canCheckAction">{{ history.before ? history.before : 'начальное' }}
+                </td>
+                <td class="text-end"
+                    v-if="canCheckAction">{{ history.delta ? history.delta : '' }}
                 </td>
                 <td class="text-center">
                     <i v-if="history.isInvoicing"
@@ -154,15 +205,23 @@
 </template>
 
 <script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
-import HistoryBtn    from '../../common/HistoryBtn.vue';
-import ViewDialog    from '../../common/ViewDialog.vue';
-import SearchSelect  from '../../common/form/SearchSelect.vue';
+import ResponseError      from '../../../mixin/ResponseError.js';
+import Url                from '../../../utils/Url.js';
+import HistoryBtn         from '../../common/HistoryBtn.vue';
+import ViewDialog         from '../../common/ViewDialog.vue';
+import SearchSelect       from '../../common/form/SearchSelect.vue';
+import Pagination         from '../../common/pagination/Pagination.vue';
+import SimpleSelect       from '../../common/form/SimpleSelect.vue';
 
 export default {
     name      : 'CounterHistoryBlock',
-    components: { HistoryBtn, ViewDialog, SearchSelect },
+    components: {
+        SimpleSelect,
+        Pagination,
+        HistoryBtn,
+        ViewDialog,
+        SearchSelect
+    },
     emits     : ['update:reload', 'update:selectedId', 'update:count'],
     mixins    : [
         ResponseError,
@@ -170,6 +229,13 @@ export default {
     props     : [],
     data () {
         return {
+            loaded        : false,
+            total         : null,
+            perPage       : 25,
+            skip          : 0,
+            routeState    : 0,
+            verifiedStatus: false,
+
             histories: [],
             actions  : {},
             allCheck : false,
@@ -184,20 +250,43 @@ export default {
             counterId: null,
             counters : [],
 
-            loadedCounters: false,
+            loadedCounters: 'false',
+            searchAccount : null,
         };
     },
     created () {
+        const urlParams     = new URLSearchParams(window.location.search);
+        this.perPage        = parseInt(urlParams.get('limit') || 25);
+        this.skip           = parseInt(urlParams.get('skip') || 0);
+        this.verifiedStatus = urlParams.get('verified') || 'false';
+        this.searchAccount  = urlParams.get('search') || null;
+
         this.getAccounts();
         this.listAction();
     },
     methods : {
         listAction () {
+            let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryIndex, {}, {
+                limit   : this.perPage,
+                skip    : this.skip,
+                verified: this.verifiedStatus,
+                search  : this.searchAccount,
+            });
+            window.history.pushState({ state: this.routeState++ }, '', uri);
+
             this.allCheck = false;
             this.checked  = [];
-            window.axios[Url.Routes.adminCounterHistoryList.method](Url.Routes.adminCounterHistoryList.uri).then(response => {
-                this.actions   = response.data.actions;
-                this.histories = response.data.histories;
+            window.axios[Url.Routes.adminCounterHistoryList.method](Url.Routes.adminCounterHistoryList.uri, {
+                params: {
+                    limit   : this.perPage,
+                    skip    : this.skip,
+                    verified: this.verifiedStatus,
+                    search  : this.searchAccount,
+                },
+            }).then(response => {
+                this.actions   = response.data.histories.actions;
+                this.histories = response.data.histories.histories;
+                this.total     = response.data.total;
                 this.$emit('update:count', this.histories.length);
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -206,6 +295,7 @@ export default {
         getAccounts () {
             this.accountId = null;
             this.accounts  = [];
+
             window.axios[Url.Routes.adminSelectsAccounts.method](Url.Routes.adminSelectsAccounts.uri).then(response => {
                 this.accounts = response.data;
             }).catch(response => {
@@ -351,6 +441,14 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
+        onPaginationUpdate (skip) {
+            this.skip = skip;
+            this.listAction();
+        },
+        clearSearch () {
+            this.searchAccount = '';
+            this.listAction();
+        },
     },
     watch   : {
         reload (value) {
@@ -373,6 +471,24 @@ export default {
 
             return result;
         },
+        computedStatuses () {
+            return [
+                {
+                    'key'  : 'false',
+                    'value': 'Непроверенные',
+                },
+                {
+                    'key'  : 'true',
+                    'value': 'Проверенные',
+                },
+            ];
+        },
+        isVerifiedStatus () {
+            return this.verifiedStatus === 'true';
+        },
     },
 };
+</script>
+<script setup
+        lang="ts">
 </script>

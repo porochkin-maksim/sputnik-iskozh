@@ -51,6 +51,13 @@ class CounterHistorySearcher implements SearcherInterface
         return $this;
     }
 
+    public function setCounterIds(array $counterIds): static
+    {
+        $this->addWhere(CounterHistory::COUNTER_ID, SearcherInterface::IN, $counterIds);
+
+        return $this;
+    }
+
     public function setPreviousId(int $counterHistoryId): static
     {
         $this->addWhere(CounterHistory::PREVIOUS_ID, SearcherInterface::EQUALS, $counterHistoryId);

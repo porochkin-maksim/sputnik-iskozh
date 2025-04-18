@@ -45,7 +45,7 @@ abstract class Env
         return self::$server['SERVER_PORT'];
     }
 
-    public function isProduction(): bool
+    public static function isProduction(): bool
     {
         return App::isProduction();
     }

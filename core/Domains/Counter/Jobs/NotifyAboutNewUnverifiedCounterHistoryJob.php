@@ -45,7 +45,7 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         ;
 
         $counter  = CounterLocator::CounterService()->search($counterSearcher)->getItems()->first();
-        $previous = CounterLocator::CounterHistoryService()->getPrevios($counterHistory);
+        $previous = CounterLocator::CounterHistoryService()->getPrevious($counterHistory);
         $account  = null;
 
         if ($counter) {

@@ -38,8 +38,10 @@ class RewatchCounterHistoryChainJob implements ShouldQueue
         foreach ($histories as $history) {
             if ( ! $previous) {
                 $history->setPreviousId(null);
+                $history->setPreviousValue(null);
             } else {
                 $history->setPreviousId($previous->getId());
+                $history->setPreviousValue($previous->getValue());
             }
 
             $history = CounterLocator::CounterHistoryService()->save($history);
