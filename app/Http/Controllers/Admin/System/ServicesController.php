@@ -55,6 +55,8 @@ class ServicesController extends Controller
         $searcher = new ServiceSearcher();
         $searcher
             ->exludeType(ServiceTypeEnum::OTHER)
+            ->exludeType(ServiceTypeEnum::DEBT)
+            ->exludeType(ServiceTypeEnum::ADVANCE_PAYMENT)
             ->withPeriods()
             ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
