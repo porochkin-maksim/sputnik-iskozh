@@ -10,14 +10,16 @@ readonly class PeriodFactory
 {
     public function makeDefault(): PeriodDTO
     {
-        $startAt = Carbon::now()->setMonth(6)->startOfMonth()->startOfDay();
-        $endAt   = Carbon::now()->setMonth(6)->startOfMonth()->startOfDay()->addYear()->subSecond();
-        $name    = $startAt->format('Y') . ' - ' . $endAt->format('Y');
+        $year    = Carbon::now()->year;
+        $startAt = Carbon::createFromDate($year, 1, 1)->startOfDay();
+        $endAt   = Carbon::createFromDate($year, 12, 31)->endOfDay();
 
         return (new PeriodDTO())
-            ->setName($name)
+            ->setName((string) $year)
             ->setStartAt($startAt)
-            ->setEndAt($endAt);
+            ->setEndAt($endAt)
+            ->setIsClosed(false)
+        ;
     }
 
     public function makeModelFromDto(PeriodDTO $dto, ?Period $model = null): Period
@@ -30,9 +32,10 @@ readonly class PeriodFactory
         }
 
         return $result->fill([
-            Period::NAME     => $dto->getName(),
-            Period::START_AT => $dto->getStartAt(),
-            Period::END_AT   => $dto->getEndAt(),
+            Period::NAME      => $dto->getName(),
+            Period::IS_CLOSED => $dto->isClosed(),
+            Period::START_AT  => $dto->getStartAt(),
+            Period::END_AT    => $dto->getEndAt(),
         ]);
     }
 
@@ -45,8 +48,10 @@ readonly class PeriodFactory
             ->setName($model->name)
             ->setStartAt($model->start_at)
             ->setEndAt($model->end_at)
+            ->setIsClosed($model->is_closed)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+        ;
 
         return $result;
     }

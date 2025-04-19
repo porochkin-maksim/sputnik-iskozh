@@ -1,6 +1,7 @@
 <template>
     <template v-if="actions.edit">
-        <div v-if="!dropped" class="mb-2">
+        <div v-if="!dropped"
+             class="mb-2">
             <div class="input-group input-group-sm w-auto">
                 <button class="btn btn-success"
                         @click="saveAction"
@@ -12,6 +13,13 @@
                        class="form-control name"
                        placeholder="Название"
                        v-model="name">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0"
+                           type="checkbox"
+                           v-model="isClosed"
+                           :id="vueId + 'isClosed'">&nbsp;
+                    <label :for="vueId + 'isClosed'">Закрыт</label>
+                </div>
                 <input type="datetime-local"
                        style="max-width: 200px"
                        class="form-control"
@@ -80,10 +88,11 @@ export default {
     created () {
         this.vueId = 'uuid' + this.$_uid;
         if (this.modelValue) {
-            this.id      = this.modelValue.id;
-            this.name    = this.modelValue.name;
-            this.startAt = this.modelValue.startAt;
-            this.endAt   = this.modelValue.endAt;
+            this.id       = this.modelValue.id;
+            this.name     = this.modelValue.name;
+            this.startAt  = this.modelValue.startAt;
+            this.endAt    = this.modelValue.endAt;
+            this.isClosed = this.modelValue.isClosed;
 
             this.actions    = this.modelValue.actions;
             this.historyUrl = this.modelValue.historyUrl;
@@ -99,21 +108,29 @@ export default {
             startAt   : null,
             endAt     : null,
             historyUrl: null,
-            actions   : null,
+            isClosed  : false,
 
             vueId  : null,
             dropped: false,
             loading: false,
+            actions: {},
         };
     },
     methods : {
         saveAction () {
+            if (this.isClosed) {
+                if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
+                    return;
+                }
+            }
+
             this.loading = true;
             let form     = new FormData();
             form.append('id', this.id);
             form.append('name', this.name);
             form.append('start_at', this.startAt);
             form.append('end_at', this.endAt);
+            form.append('is_closed', this.isClosed);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminPeriodSave.method](
@@ -123,12 +140,12 @@ export default {
                 let text = this.id ? 'Период обновлён' : 'Период ' + response.data.period.id + ' создан';
                 this.showInfo(text);
 
-                this.id      = response.data.period.id;
-                this.name    = response.data.period.name;
-                this.startAt = response.data.period.startAt;
-                this.endAt   = response.data.period.endAt;
+                this.id       = response.data.period.id;
+                this.name     = response.data.period.name;
+                this.startAt  = response.data.period.startAt;
+                this.endAt    = response.data.period.endAt;
+                this.isClosed = response.data.period.isClosed;
 
-                this.actions    = response.data.period.actions;
                 this.historyUrl = response.data.period.historyUrl;
             }).catch(response => {
                 let text = response?.data?.message ?

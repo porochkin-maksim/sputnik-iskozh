@@ -10,10 +10,11 @@ class PeriodDTO
 {
     use TimestampsTrait;
 
-    private ?int    $id       = null;
-    private ?string $name     = null;
-    private ?Carbon $start_at = null;
-    private ?Carbon $end_at   = null;
+    private ?int    $id        = null;
+    private ?string $name      = null;
+    private ?Carbon $start_at  = null;
+    private ?Carbon $end_at    = null;
+    private bool    $is_closed = false;
 
     public function getId(): ?int
     {
@@ -59,6 +60,18 @@ class PeriodDTO
     public function setEndAt(mixed $end_at): static
     {
         $this->end_at = DateTimeHelper::toCarbonOrNull($end_at);
+
+        return $this;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->is_closed;
+    }
+
+    public function setIsClosed(bool $is_closed): static
+    {
+        $this->is_closed = $is_closed;
 
         return $this;
     }

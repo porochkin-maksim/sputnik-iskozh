@@ -17,7 +17,7 @@ use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
 
-class PeriodsController extends Controller//
+class PeriodController extends Controller
 {
     private PeriodFactory $periodFactory;
     private PeriodService $periodService;
@@ -69,7 +69,8 @@ class PeriodsController extends Controller//
         $period
             ->setName($request->getName())
             ->setStartAt($request->getStartAt())
-            ->setEndAt($request->getEndAt());
+            ->setEndAt($request->getEndAt())
+            ->setIsClosed($request->getIsClosed());
 
         $period = $this->periodService->save($period);
 

@@ -10,24 +10,25 @@ use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID       = RequestArgumentsEnum::ID;
-    private const NAME     = RequestArgumentsEnum::NAME;
-    private const START_AT = RequestArgumentsEnum::START_AT;
-    private const END_AT   = RequestArgumentsEnum::END_AT;
+    private const ID        = RequestArgumentsEnum::ID;
+    private const NAME      = RequestArgumentsEnum::NAME;
+    private const START_AT  = RequestArgumentsEnum::START_AT;
+    private const END_AT    = RequestArgumentsEnum::END_AT;
+    private const IS_CLOSED = 'is_closed';
 
     public function rules(): array
     {
         return [
-            self::NAME     => [
+            self::NAME      => [
                 'required',
                 'string',
                 'max:255',
             ],
-            self::START_AT => [
+            self::START_AT  => [
                 'required',
                 'date',
             ],
-            self::END_AT   => [
+            self::END_AT    => [
                 'required',
                 'date',
             ],
@@ -41,11 +42,11 @@ class SaveRequest extends AbstractRequest
             self::NAME . '.string'   => sprintf('Укажите «%s»', PeriodComparator::TITLE_NAME),
             self::NAME . '.max'      => sprintf('«%s» слишком длинное', PeriodComparator::TITLE_NAME),
 
-            self::START_AT . '.required'    => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
-            self::START_AT . '.date' => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
+            self::START_AT . '.required' => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
+            self::START_AT . '.date'     => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
 
-            self::END_AT . '.required'    => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
-            self::END_AT . '.date' => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
+            self::END_AT . '.required' => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
+            self::END_AT . '.date'     => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
         ];
     }
 
@@ -67,5 +68,10 @@ class SaveRequest extends AbstractRequest
     public function getEndAt(): ?Carbon
     {
         return DateTimeHelper::toCarbonOrNull($this->get(self::END_AT));
+    }
+
+    public function getIsClosed(): bool
+    {
+        return $this->getBool(self::IS_CLOSED);
     }
 }
