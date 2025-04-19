@@ -26,10 +26,11 @@ readonly class PeriodResource extends AbstractResource
             'name'       => $this->period->getName(),
             'startAt'    => $this->formatDateTimeOrNow($this->period->getStartAt()),
             'endAt'      => $this->formatDateTimeOrNow($this->period->getEndAt()),
+            'isClosed'   => $this->period->isClosed(),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PERIODS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT) && !$this->period->isClosed(),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP) && !$this->period->isClosed(),
             ],
             'historyUrl' => $this->period->getId()
                 ? HistoryChangesLocator::route(
