@@ -2,7 +2,7 @@
     <div class="d-flex align-items-center justify-content-between mb-2">
         <div>
             <button class="btn btn-success"
-                    v-if="actions.edit"
+                    v-if="actions.create"
                     @click="showCreateDialog">
                 <i class="fa fa-plus"></i> Добавить период
             </button>
@@ -12,7 +12,7 @@
             :url="historyUrl" />
     </div>
 
-    <div class="table-responsive">
+    <div class="">
         <table class="table table-sm table-hover align-middle">
             <thead>
             <tr>

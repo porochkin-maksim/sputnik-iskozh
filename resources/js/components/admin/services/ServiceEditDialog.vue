@@ -4,32 +4,36 @@
                  @hidden="closeDialog"
     >
         <template v-slot:title>
-            {{ modelValue?.id ? 'Редактирование периода' : 'Создание периода' }}
+            {{ modelValue?.id ? 'Редактирование услуги' : 'Создание услуги' }}
         </template>
         <template v-slot:body>
             <div class="container-fluid">
+                <div class="form-check d-none">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           v-model="active"
+                           :disabled="!actions?.active">
+                    <label class="form-check-label">Активна</label>
+                </div>
                 <label>Название</label>
                 <input type="text"
                        class="form-control"
-                       v-model="name"
-                       :disabled="modelValue?.isClosed">
-                <label>Начало периода</label>
-                <input type="datetime-local"
+                       v-model="name">
+                <label>Стоимость</label>
+                <input type="number"
+                       step="0.01"
                        class="form-control"
-                       v-model="startAt"
-                       :disabled="modelValue?.isClosed">
-                <label>Окончание периода</label>
-                <input type="datetime-local"
-                       class="form-control"
-                       v-model="endAt"
-                       :disabled="modelValue?.isClosed">
-                <div class="form-check">
-                    <input type="checkbox"
-                           class="form-check-input"
-                           v-model="isClosed"
-                           :disabled="!modelValue?.id">
-                    <label class="form-check-label">Закрыть период</label>
-                </div>
+                       v-model="cost">
+                <label>Период</label>
+                <simple-select v-model="periodId"
+                               class="form-control"
+                               :items="periods"
+                               :disabled="!actions?.period" />
+                <label>Тип</label>
+                <simple-select v-model="type"
+                               class="form-control"
+                               :items="actions && actions.type === false ? types.all : (types.available && types.available[periodId] || [])"
+                               :disabled="!actions?.type" />
             </div>
         </template>
         <template v-slot:footer>
@@ -48,11 +52,13 @@
 import ResponseError from '../../../mixin/ResponseError.js';
 import Url           from '../../../utils/Url.js';
 import ViewDialog    from '../../common/ViewDialog.vue';
+import SimpleSelect  from '../../common/form/SimpleSelect.vue';
 
 export default {
-    name      : 'PeriodEditDialog',
+    name      : 'ServiceEditDialog',
     components: {
         ViewDialog,
+        SimpleSelect,
     },
     mixins    : [ResponseError],
     props     : {
@@ -64,16 +70,27 @@ export default {
             type   : Boolean,
             default: false,
         },
+        types     : {
+            type    : Object,
+            required: true,
+        },
+        periods   : {
+            type    : Array,
+            required: true,
+        },
     },
     emits     : ['update:modelValue', 'update:show'],
     data () {
         return {
+            id        : null,
             name      : null,
-            startAt   : null,
-            endAt     : null,
-            isClosed  : false,
+            type      : null,
+            periodId  : null,
+            cost      : null,
+            active    : false,
             loading   : false,
             hideDialog: false,
+            actions   : null,
         };
     },
     computed: {
@@ -86,7 +103,7 @@ export default {
             },
         },
         canSave () {
-            return this.name && this.startAt && this.endAt;
+            return this.name && this.type && parseFloat(this.cost) >= 0 && this.periodId;
         },
     },
     watch   : {
@@ -95,9 +112,11 @@ export default {
                 if (newValue) {
                     this.id       = newValue.id;
                     this.name     = newValue.name;
-                    this.startAt  = newValue.startAt;
-                    this.endAt    = newValue.endAt;
-                    this.isClosed = newValue.isClosed;
+                    this.type     = newValue.type;
+                    this.periodId = newValue.periodId;
+                    this.cost     = newValue.cost;
+                    this.active   = newValue.active;
+                    this.actions  = newValue.actions;
                 }
                 else {
                     this.resetForm();
@@ -108,43 +127,41 @@ export default {
     },
     methods : {
         resetForm () {
+            this.id       = null;
             this.name     = null;
-            this.startAt  = null;
-            this.endAt    = null;
-            this.isClosed = false;
+            this.type     = null;
+            this.periodId = null;
+            this.cost     = null;
+            this.active   = false;
+            this.actions  = null;
         },
         closeDialog () {
             this.showDialog = false;
             this.resetForm();
         },
         saveAction () {
-            if (this.isClosed) {
-                if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
-                    return;
-                }
-            }
-
             this.loading = true;
             let form     = new FormData();
             if (this.modelValue?.id) {
                 form.append('id', this.modelValue.id);
             }
             form.append('name', this.name);
-            form.append('start_at', this.startAt);
-            form.append('end_at', this.endAt);
-            form.append('is_closed', this.isClosed);
+            form.append('type', this.type);
+            form.append('period_id', this.periodId);
+            form.append('cost', parseFloat(this.cost).toFixed(2));
+            form.append('active', this.active);
 
             this.clearResponseErrors();
-            window.axios[Url.Routes.adminPeriodSave.method](
-                Url.Routes.adminPeriodSave.uri,
+            window.axios[Url.Routes.adminServiceSave.method](
+                Url.Routes.adminServiceSave.uri,
                 form,
             ).then(response => {
-                this.$emit('update:modelValue', response.data.period);
-                this.showInfo(this.modelValue?.id ? 'Период обновлен' : 'Период создан');
+                this.$emit('update:modelValue', response.data.service);
+                this.showInfo(this.modelValue?.id ? 'Услуга обновлена' : 'Услуга создана');
                 this.closeDialog();
             }).catch(response => {
                 let text = response?.data?.message ||
-                    'Не удалось ' + (this.modelValue?.id ? 'обновить' : 'создать') + ' период';
+                    'Не удалось ' + (this.modelValue?.id ? 'обновить' : 'создать') + ' услугу';
                 this.showDanger(text);
                 this.parseResponseErrors(response);
             }).finally(() => {

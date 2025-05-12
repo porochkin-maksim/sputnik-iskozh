@@ -87,9 +87,15 @@
                     </td>
                     <template v-if="history.claim">
                         <template v-if="history.invoiceUrl">
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.tariff) }}</a></td>
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.cost) }}</a></td>
-                            <td class="text-end"><a :href="history.invoiceUrl" class="text-decoration-none">{{ $formatMoney(history.claim.payed) }}</a></td>
+                            <td class="text-end"><a :href="history.invoiceUrl"
+                                                    class="text-decoration-none">{{ $formatMoney(history.claim.tariff) }}</a>
+                            </td>
+                            <td class="text-end"><a :href="history.invoiceUrl"
+                                                    class="text-decoration-none">{{ $formatMoney(history.claim.cost) }}</a>
+                            </td>
+                            <td class="text-end"><a :href="history.invoiceUrl"
+                                                    class="text-decoration-none">{{ $formatMoney(history.claim.payed) }}</a>
+                            </td>
                         </template>
                         <template v-else>
                             <td class="text-end">{{ $formatMoney(history.claim.tariff) }}</td>
@@ -161,7 +167,7 @@
     <div class="d-flex align-items-center justify-content-between mt-2">
         <div class="d-flex">
             <button class="btn btn-success me-2"
-                    v-if="this.account.actions.counters.edit"
+                    v-if="this.account.actions.counters.edit && !period?.isClosed"
                     @click="addCounterAction">Добавить счётчик
             </button>
         </div>
@@ -181,17 +187,17 @@
 </template>
 
 <script>
-import Url                from '../../../../utils/Url.js';
-import ResponseError      from '../../../../mixin/ResponseError.js';
-import Wrapper            from '../../../common/Wrapper.vue';
-import CustomInput        from '../../../common/form/CustomInput.vue';
-import CustomCheckbox     from '../../../common/form/CustomCheckbox.vue';
-import ViewDialog         from '../../../common/ViewDialog.vue';
-import FileItem           from '../../../common/files/FileItem.vue';
-import SearchSelect       from '../../../common/form/SearchSelect.vue';
-import CounterHistoryItem from './CounterHistoryItem.vue';
-import CounterItem        from './CounterItem.vue';
-import HistoryBtn         from '../../../common/HistoryBtn.vue';
+import Url                   from '../../../../utils/Url.js';
+import ResponseError         from '../../../../mixin/ResponseError.js';
+import Wrapper               from '../../../common/Wrapper.vue';
+import CustomInput           from '../../../common/form/CustomInput.vue';
+import CustomCheckbox        from '../../../common/form/CustomCheckbox.vue';
+import ViewDialog            from '../../../common/ViewDialog.vue';
+import FileItem              from '../../../common/files/FileItem.vue';
+import SearchSelect          from '../../../common/form/SearchSelect.vue';
+import CounterHistoryItem    from './CounterHistoryItem.vue';
+import CounterItem           from './CounterItem.vue';
+import HistoryBtn            from '../../../common/HistoryBtn.vue';
 import CounterItemChartBlock from './CounterItemChartBlock.vue';
 
 export default {
@@ -208,7 +214,7 @@ export default {
         Wrapper,
     },
     props     : {
-        account: Object,
+        account : Object,
         periodId: Number,
     },
     mixins    : [
@@ -235,6 +241,8 @@ export default {
 
             selectedCounter: null,
             selectedHistory: null,
+
+            period: null,
         };
     },
     created () {
@@ -250,9 +258,10 @@ export default {
             window.axios[Url.Routes.adminCounterList.method](uri, {
                 params: {
                     periodId: this.periodId,
-                }
+                },
             }).then(response => {
                 this.counters = response.data.counters;
+                this.period   = response.data.period;
             }).catch(response => {
                 this.parseResponseErrors(response);
             });

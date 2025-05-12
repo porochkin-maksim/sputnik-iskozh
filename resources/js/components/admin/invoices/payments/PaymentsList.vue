@@ -34,7 +34,7 @@
                             class="btn-link underline-none"
                             :url="payment.historyUrl" />
                         <div class="dropdown"
-                             v-if="actions.edit || actions.view || actions.drop">
+                             v-if="payment.actions.edit || payment.actions.view || payment.actions.drop">
                             <a class="btn btn-sm btn-light border"
                                href="#"
                                role="button"
@@ -45,15 +45,15 @@
                             </a>
                             <ul class="dropdown-menu"
                                 :aria-labelledby="'dropDown'+vueId">
-                                <li v-if="actions.edit">
+                                <li v-if="payment.actions.edit">
                                     <a class="dropdown-item cursor-pointer"
                                        @click="editAction(payment.id)"><i class="fa fa-edit"></i> Редактировать</a>
                                 </li>
-                                <li v-else-if="actions.view">
+                                <li v-else-if="payment.actions.view">
                                     <a class="dropdown-item cursor-pointer"
                                        @click="editAction(payment.id)"><i class="fa fa-eye"></i> Просмотр</a>
                                 </li>
-                                <li v-if="actions.drop">
+                                <li v-if="payment.actions.drop">
                                     <a class="dropdown-item cursor-pointer text-danger"
                                        @click="dropAction(payment.id)"><i class="fa fa-trash"></i> Удалить</a>
                                 </li>

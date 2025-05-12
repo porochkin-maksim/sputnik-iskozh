@@ -22,16 +22,17 @@ readonly class ServiceResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access  = lc::roleDecorator();
-        $canEdit = $access->can(PermissionEnum::SERVICES_EDIT);
+        $period  = $this->service->getPeriod();
+        $canEdit = $access->can(PermissionEnum::SERVICES_EDIT) && ! $period?->isClosed();
 
         return [
             'id'         => $this->service->getId(),
             'type'       => $this->service->getType()?->value,
             'typeName'   => $this->service->getType()?->name(),
             'periodId'   => $this->service->getPeriodId(),
-            'periodName' => $this->service->getPeriod()?->getName(),
+            'periodName' => $period?->getName(),
             'name'       => $this->service->getName(),
-            'cost'       => $this->service->getCost(), 2,
+            'cost'       => $this->service->getCost(),
             'active'     => $this->service->isActive(),
             'actions'    => [
                 'active'            => $canEdit && $this->service->getType()->value === ServiceTypeEnum::TARGET_FEE->value,

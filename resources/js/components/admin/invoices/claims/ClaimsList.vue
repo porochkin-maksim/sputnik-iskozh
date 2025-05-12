@@ -28,7 +28,7 @@
                             class="btn-link underline-none"
                             :url="claim.historyUrl" />
                         <div class="dropdown"
-                             v-if="actions.edit || actions.view || actions.drop">
+                             v-if="claim.actions.edit || claim.actions.view || claim.actions.drop">
                             <a class="btn btn-sm btn-light border"
                                href="#"
                                role="button"

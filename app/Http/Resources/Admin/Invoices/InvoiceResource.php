@@ -23,10 +23,12 @@ readonly class InvoiceResource extends AbstractResource
     {
         $access = lc::roleDecorator();
 
+        $period = $this->invoice->getPeriod();
+
         return [
             'id'            => $this->invoice->getId(),
             'periodId'      => $this->invoice->getPeriodId(),
-            'periodName'    => $this->invoice->getPeriod()?->getName(),
+            'periodName'    => $period?->getName(),
             'accountId'     => $this->invoice->getAccountId(),
             'accountNumber' => $this->invoice->getAccount()?->getNumber(),
             'type'          => $this->invoice->getType()?->value,
@@ -39,17 +41,17 @@ readonly class InvoiceResource extends AbstractResource
             'updated'       => $this->formatTimestampAt($this->invoice->getUpdatedAt()),
             'actions'       => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP) && ( ! $period || ! $period->isClosed()),
                 'claims'            => [
                     ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                    ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT),
-                    ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP),
+                    ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ( ! $period || ! $period->isClosed()),
+                    ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
                 'payments'          => [
                     ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                    ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
-                    ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
+                    ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ( ! $period || ! $period->isClosed()),
+                    ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
             ],
             'viewUrl'       => $this->invoice->getId() ? route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $this->invoice->getId()]) : null,
@@ -60,7 +62,7 @@ readonly class InvoiceResource extends AbstractResource
             'accountUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
                 : null,
-            'account' => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
+            'account'       => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];
     }
 }

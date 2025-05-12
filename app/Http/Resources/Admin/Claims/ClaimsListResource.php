@@ -21,6 +21,7 @@ readonly class ClaimsListResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();
+
         $result = [
             'claims' => [],
             'historyUrl'   => HistoryChangesLocator::route(

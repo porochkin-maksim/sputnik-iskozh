@@ -14,7 +14,10 @@ use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Period\Services\PeriodService;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceDTO;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
@@ -35,6 +38,7 @@ class ClaimController extends Controller
     private ClaimService   $claimService;
     private InvoiceService $invoiceService;
     private ServiceService $serviceService;
+    private PeriodService  $periodService;
 
     public function __construct()
     {
@@ -42,6 +46,7 @@ class ClaimController extends Controller
         $this->claimFactory   = ClaimLocator::ClaimFactory();
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->serviceService = ServiceLocator::ServiceService();
+        $this->periodService  = PeriodLocator::PeriodService();
     }
 
     public function create(int $invoiceId): JsonResponse
@@ -137,8 +142,10 @@ class ClaimController extends Controller
             $servicesMap[$service->getId()] = $service->getName();
         }
         $servicesMap[$claimService->getId()] = $claimService->getName();
+        $claim->setService($claimService);
 
-        $claim = $claim->setService($claimService);
+        $invoice = $this->fetchInvoice($invoiceId);
+        $claim->setInvoice($invoice);
 
         return response()->json([
             'servicesSelect' => new SelectResource($servicesMap),
@@ -209,6 +216,23 @@ class ClaimController extends Controller
             ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
-        return $this->claimService->search($searcher);
+
+        $result = $this->claimService->search($searcher);
+
+        $invoice = $this->fetchInvoice($invoiceId);
+        $result->setItems($result->getItems()->map(function (ClaimDTO $claimDTO) use ($invoice) {
+            return $claimDTO->setInvoice($invoice);
+        }));
+
+        return $result;
+    }
+
+    private function fetchInvoice(int $invoiceId): ?InvoiceDTO
+    {
+        $invoice = $this->invoiceService->getById($invoiceId);
+        $period  = $invoice ? $this->periodService->getById($invoice->getPeriodId()) : null;
+        $invoice?->setPeriod($period);
+
+        return $invoice;
     }
 }

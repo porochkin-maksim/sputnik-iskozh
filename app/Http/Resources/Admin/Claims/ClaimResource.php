@@ -28,6 +28,8 @@ readonly class ClaimResource extends AbstractResource
             $name = $claimService?->getName();
         }
 
+        $period = $this->claim->getInvoice()?->getPeriod();
+
         return [
             'id'         => $this->claim->getId(),
             'tariff'     => $this->claim->getTariff(),
@@ -40,8 +42,8 @@ readonly class ClaimResource extends AbstractResource
             'created'    => $this->formatTimestampAt($this->claim->getCreatedAt()),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP)
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ! $period?->isClosed(),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ! $period?->isClosed()
                                        && ( ! $claimService
                                             || $claimService->getType() !== ServiceTypeEnum::DEBT
                                        ),
