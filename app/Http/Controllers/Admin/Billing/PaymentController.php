@@ -10,12 +10,16 @@ use App\Models\Billing\Payment;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
+use Core\Domains\Billing\Payment\Models\PaymentDTO;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Payment\Services\FileService;
 use Core\Domains\Billing\Payment\Services\PaymentService;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Period\Services\PeriodService;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -25,6 +29,7 @@ class PaymentController extends Controller
     private PaymentService $paymentService;
     private InvoiceService $invoiceService;
     private FileService    $fileService;
+    private PeriodService  $periodService;
 
     public function __construct()
     {
@@ -32,6 +37,7 @@ class PaymentController extends Controller
         $this->paymentFactory = PaymentLocator::PaymentFactory();
         $this->fileService    = PaymentLocator::FileService();
         $this->invoiceService = InvoiceLocator::InvoiceService();
+        $this->periodService  = PeriodLocator::PeriodService();
     }
 
     public function create(int $invoiceId): JsonResponse
@@ -65,7 +71,8 @@ class PaymentController extends Controller
         }
 
         $payment = $this->paymentService->getById($paymentId);
-        $invoice = $this->invoiceService->getById($invoiceId);
+        $invoice = $this->fetchInvoice($invoiceId);
+
         if ( ! $payment || ! $invoice) {
             abort(412);
         }
@@ -133,6 +140,11 @@ class PaymentController extends Controller
 
         $payments = $this->paymentService->search($searcher);
 
+        $invoice = $this->fetchInvoice($invoiceId);
+        $payments->setItems($payments->getItems()->map(function (PaymentDTO $paymentDTO) use ($invoice) {
+            return $paymentDTO->setInvoice($invoice);
+        }));
+
         return response()->json(new PaymentsListResource(
             $payments->getItems(),
         ));
@@ -145,5 +157,14 @@ class PaymentController extends Controller
         }
 
         return $this->paymentService->deleteById($id);
+    }
+
+    private function fetchInvoice(int $invoiceId): ?InvoiceDTO
+    {
+        $invoice = $this->invoiceService->getById($invoiceId);
+        $period  = $invoice ? $this->periodService->getById($invoice->getPeriodId()) : null;
+        $invoice?->setPeriod($period);
+
+        return $invoice;
     }
 }

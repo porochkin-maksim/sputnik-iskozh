@@ -23,6 +23,8 @@ readonly class PaymentResource extends AbstractResource
     {
         $access = lc::roleDecorator();
 
+        $period = $this->payment->getInvoice()?->getPeriod();
+
         return [
             'id'         => $this->payment->getId(),
             'name'       => $this->payment->getName(),
@@ -35,8 +37,8 @@ readonly class PaymentResource extends AbstractResource
             'invoice'    => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed(),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed(),
             ],
             'historyUrl' => $this->payment->getId()
                 ? HistoryChangesLocator::route(

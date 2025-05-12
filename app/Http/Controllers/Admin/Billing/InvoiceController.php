@@ -58,6 +58,10 @@ class InvoiceController extends Controller
 
         $account = $this->accountService->getById($invoice->getAccountId());
         $invoice->setAccount($account);
+
+        $period = $this->periodService->getById($invoice->getPeriodId());
+        $invoice->setPeriod($period);
+
         $invoice = new InvoiceResource($invoice);
 
         return view('admin.pages.invoices.view', compact('invoice'));
@@ -85,6 +89,9 @@ class InvoiceController extends Controller
 
         $account = $this->accountService->getById($invoice->getAccountId());
         $invoice->setAccount($account);
+
+        $period = $this->periodService->getById($invoice->getPeriodId());
+        $invoice->setPeriod($period);
 
         return response()->json(new InvoiceResource($invoice));
     }

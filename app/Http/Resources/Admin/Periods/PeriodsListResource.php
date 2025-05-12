@@ -14,7 +14,7 @@ readonly class PeriodsListResource extends AbstractResource
 {
     public function __construct(
         private PeriodCollection $periodCollection,
-    )
+    )//
     {
     }
 
@@ -33,9 +33,13 @@ readonly class PeriodsListResource extends AbstractResource
             ],
         ];
 
+        $hasUnclosed = false;
         foreach ($this->periodCollection as $period) {
             $result['periods'][] = new PeriodResource($period);
+            $hasUnclosed         = $hasUnclosed || ! $period->isClosed();
         }
+
+        $result['actions'][ResponsesEnum::CREATE] = ! $hasUnclosed;
 
         return $result;
     }

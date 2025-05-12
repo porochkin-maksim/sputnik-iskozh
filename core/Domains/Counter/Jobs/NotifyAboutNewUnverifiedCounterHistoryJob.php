@@ -55,6 +55,10 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::COUNTERS_EDIT);
         $emails = array_unique(array_merge($emails, [env('ADMIN_EMAIL')]));
 
+        if ($previous?->getValue() === $counterHistory->getValue()) {
+            return;
+        }
+
         foreach ($emails as $email) {
             $mail = new NewCounterHistoryCreatedEmail(
                 $email,

@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Billing\Claim\Models;
 
+use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Service\Models\ServiceDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 
@@ -17,6 +18,7 @@ class ClaimDTO
     private ?float      $cost       = null;
     private ?float      $payed      = null;
     private ?ServiceDTO $service    = null;
+    private ?InvoiceDTO $invoice    = null;
 
     public function getId(): ?int
     {
@@ -110,6 +112,18 @@ class ClaimDTO
     public function setService(?ServiceDTO $service): static
     {
         $this->service = $service;
+
+        return $this;
+    }
+
+    public function getInvoice(): ?InvoiceDTO
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?InvoiceDTO $invoice): static
+    {
+        $this->invoice = $invoice;
 
         return $this;
     }

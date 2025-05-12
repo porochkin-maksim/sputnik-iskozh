@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Counters\CreateRequest;
 use App\Http\Requests\Admin\Counters\SaveRequest;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Counters\CounterListResource;
+use App\Http\Resources\Admin\Periods\PeriodResource;
 use App\Models\Counter\CounterHistory;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
@@ -100,6 +101,7 @@ class CounterController extends Controller
 
         return response()->json([
             ResponsesEnum::COUNTERS => new CounterListResource($result),
+            ResponsesEnum::PERIOD   => $period ? new PeriodResource($period) : null,
         ]);
     }
 

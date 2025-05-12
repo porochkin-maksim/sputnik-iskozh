@@ -62,6 +62,7 @@ class AutoIncrementingCounterHistoriesJob implements ShouldQueue
                 $history
                     ->setCounterId($counter->getId())
                     ->setValue((int) $lastHistory?->getValue() + (int) $counter->getIncrement())
+                    ->setIsVerified($lastHistory->isVerified())
                 ;
 
                 $history = CounterLocator::CounterHistoryService()->save($history);
