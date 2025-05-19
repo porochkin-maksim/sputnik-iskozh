@@ -100,8 +100,6 @@ readonly class InvoiceService
             $invoice->getId(),
         );
 
-        // UpdateSntBalanceJob::dispatch($invoice->getPayed() * -1);
-
         return $this->invoiceRepository->deleteById($id);
     }
 

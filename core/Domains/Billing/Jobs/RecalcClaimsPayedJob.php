@@ -97,19 +97,21 @@ class RecalcClaimsPayedJob implements ShouldQueue
         // если платежей больше чем в счёте
         if ($totalPayed->isPositive()) {
             // фиксируем переплату как аванс
-            $service = $overpayedClaim
-                ? : ServiceLocator::ServiceService()->search(
+            if ($overpayedClaim) {
+                $claim = $overpayedClaim;
+            } else {
+                $service = ServiceLocator::ServiceService()->search(
                     ServiceSearcher::make()
                         ->setPeriodId($invoice->getPeriodId())
                         ->setActive(true)
                         ->setType(ServiceTypeEnum::ADVANCE_PAYMENT),
                 )->getItems()->first();
 
-            $claim = $overpayedClaim
-                ? : ClaimLocator::ClaimFactory()->makeDefault()
+                $claim = ClaimLocator::ClaimFactory()->makeDefault()
                     ->setInvoiceId($invoice->getId())
                     ->setServiceId($service->getId())
-            ;
+                ;
+            }
 
             $claim
                 ->setTariff(MoneyService::toFloat($totalPayed))
@@ -120,13 +122,6 @@ class RecalcClaimsPayedJob implements ShouldQueue
             if ( ! $overpayedClaim) {
                 $claims->push($claim);
             }
-        }
-        elseif ($overpayedClaim) {
-            $overpayedClaim
-                ->setCost(0)
-                ->setTariff(0)
-                ->setPayed(0)
-            ;
         }
 
         $claims = ClaimLocator::ClaimService()->saveCollection($claims);
