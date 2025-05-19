@@ -50,8 +50,9 @@ class NewsController extends Controller
         ]);
     }
 
-    public function show(int $id): mixed
+    public function show($id): mixed
     {
+        $id   = is_numeric($id) ? (int) $id : null;
         $news = $this->newsService->getById($id);
         $edit = Auth::id();
 
@@ -88,7 +89,8 @@ class NewsController extends Controller
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setCategory(CategoryEnum::DEFAULT)
-            ->setWithFiles();
+            ->setWithFiles()
+        ;
 
         if ( ! $canEdit) {
             $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
@@ -109,7 +111,8 @@ class NewsController extends Controller
         $searcher
             ->setSelect([News::TITLE, News::ID, News::CATEGORY, News::PUBLISHED_AT,])
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true);
+            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true)
+        ;
 
         if ( ! $this->canEdit()) {
             $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
@@ -130,7 +133,8 @@ class NewsController extends Controller
         $searcher = $request->searcher();
         $searcher
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setWithFiles();
+            ->setWithFiles()
+        ;
 
         if ( ! $this->canEdit()) {
             $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
@@ -158,7 +162,8 @@ class NewsController extends Controller
             ->setArticle($request->getArticle())
             ->setCategory($request->getCategory())
             ->setIsLock($request->isLock())
-            ->setPublishedAt($request->getPublishedAt());
+            ->setPublishedAt($request->getPublishedAt())
+        ;
 
         $news = $this->newsService->save($news);
 
