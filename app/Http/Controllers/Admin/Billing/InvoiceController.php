@@ -10,6 +10,7 @@ use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use App\Http\Resources\Admin\Invoices\InvoicesListResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Common\SelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
@@ -113,9 +114,10 @@ class InvoiceController extends Controller
         if ($request->getSortField() && $request->getSortOrder()) {
             $searcher->setSortOrderProperty(
                 $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC
+                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
             );
-        } else {
+        }
+        else {
             $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
         }
 
@@ -128,7 +130,8 @@ class InvoiceController extends Controller
             }
             elseif ($request->getPayedStatus() === 'partial') {
                 $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
-                ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0);
+                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0)
+                ;
             }
         }
 
@@ -137,7 +140,7 @@ class InvoiceController extends Controller
         }
         if ($request->getAccount()) {
             $accountIds = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%")
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%"),
             )->getItems()->getIds();
             $searcher->setAccountIds($accountIds);
         }
@@ -164,9 +167,15 @@ class InvoiceController extends Controller
         ))->jsonSerialize();
 
         $result += [
-            'periods'  => new PeriodsSelectResource($periods),
-            'accounts' => new AccountsSelectResource($accounts, false),
+            'periods'       => new PeriodsSelectResource($periods),
+            'activePeriods' => new PeriodsSelectResource($periods->getActive()),
+            'accounts'      => new AccountsSelectResource($accounts, false),
+            'types'         => new SelectResource(InvoiceTypeEnum::array()),
         ];
+
+        $activeTypes = InvoiceTypeEnum::array();
+        unset($activeTypes[InvoiceTypeEnum::REGULAR->value]);
+        $result['activeTypes'] = new SelectResource($activeTypes);
 
         return response()->json($result);
     }
@@ -195,7 +204,8 @@ class InvoiceController extends Controller
             }
             elseif ($request->getPayedStatus() === 'partial') {
                 $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
-                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0);
+                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0)
+                ;
             }
         }
 
@@ -204,7 +214,7 @@ class InvoiceController extends Controller
         }
         if ($request->getAccount()) {
             $accountIds = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%")
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%"),
             )->getItems()->getIds();
             $searcher->setAccountIds($accountIds);
         }

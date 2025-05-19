@@ -4,10 +4,8 @@ namespace App\Http\Resources\Admin\Invoices;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Common\SelectResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Responses\ResponsesEnum;
@@ -27,7 +25,6 @@ readonly class InvoicesListResource extends AbstractResource
         $result = [
             'invoices'   => [],
             'total'      => $this->totalInvoicesCount,
-            'types'      => new SelectResource(InvoiceTypeEnum::array()),
             'historyUrl' => HistoryChangesLocator::route(
                 type: HistoryType::INVOICE,
             ),
