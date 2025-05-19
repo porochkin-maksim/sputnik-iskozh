@@ -18,11 +18,6 @@ class InvoiceCreatedEvent
         $this->invoiceIds = $invoiceIds;
     }
 
-    public function hasSingleId(): bool
-    {
-        return count($this->invoiceIds) === 1;
-    }
-
     public function __serialize(): array
     {
         return [
