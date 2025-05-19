@@ -19,48 +19,48 @@
     >
         <template v-slot:title>{{ claim.id ? (claim.actions.edit ? 'Редактирование услуги' : 'Просмотр услуги') : 'Добавление услуги' }}</template>
         <template v-slot:body>
-            <div class="container-fluid">
-                <label>Услуга</label>
-                <div class="input-group input-group-sm">
-                    <simple-select v-model="claim.serviceId"
-                                   :disabled="selectedId"
-                                   :class="'form-select-sm border'"
-                                   :items="servicesSelect"
-                                   :label="'Услуга'"
-                                   @change="onServiceIdChanged"
-                    />
-                </div>
-                <label>Своё название услуги</label>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       :disabled="!claim.actions.edit"
-                       v-model="claim.name"
-                />
-                <label>Тариф</label>
-                <input type="number"
-                       step="0.01"
-                       class="form-control form-control-sm"
-                       :disabled="!claim.actions.edit"
-                       v-model="claim.tariff"
-                       @change="onTariffChanged"
-                />
-                <label>Стоимость</label>
-                <input type="number"
-                       step="0.01"
-                       class="form-control form-control-sm"
-                       :disabled="!claim.actions.edit"
-                       v-model="claim.cost"
-                       @change="onCostChanged"
+            <label>Услуга</label>
+            <div class="input-group input-group-sm">
+                <simple-select v-model="claim.serviceId"
+                               :disabled="selectedId || loading"
+                               :class="'form-select-sm border'"
+                               :items="servicesSelect"
+                               :label="'Услуга'"
+                               @change="onServiceIdChanged"
                 />
             </div>
+            <label>Своё название услуги</label>
+            <input type="text"
+                   class="form-control form-control-sm"
+                   :disabled="!claim.actions.edit || loading"
+                   v-model="claim.name"
+            />
+            <label>Тариф</label>
+            <input type="number"
+                   step="0.01"
+                   class="form-control form-control-sm"
+                   :disabled="!claim.actions.edit || loading"
+                   v-model="claim.tariff"
+                   @change="onTariffChanged"
+            />
+            <label>Стоимость</label>
+            <input type="number"
+                   step="0.01"
+                   class="form-control form-control-sm"
+                   :disabled="!claim.actions.edit || loading"
+                   v-model="claim.cost"
+                   @change="onCostChanged"
+            />
         </template>
         <template v-slot:footer
                   v-if="claim.actions.edit">
             <div class="d-flex justify-content-between w-100">
                 <div></div>
                 <button class="btn btn-success"
-                        :disabled="!canSave"
+                        :disabled="!canSave || loading"
                         @click="saveAction">
+                    <i class="fa"
+                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                     {{ claim.id ? 'Сохранить' : 'Создать' }}
                 </button>
             </div>
@@ -191,7 +191,7 @@ export default {
                 this.showDanger(text);
                 this.parseResponseErrors(response);
             }).then(() => {
-                this.loading = false;
+                this.loading    = false;
                 this.selectedId = null;
             });
         },
@@ -215,12 +215,12 @@ export default {
             this.claimCount = value;
             this.$emit('update:count', this.claimCount);
         },
-        onCostChanged() {
+        onCostChanged () {
             if (this.claim.tariff > this.claim.cost) {
                 this.claim.tariff = this.claim.cost;
             }
         },
-        onTariffChanged() {
+        onTariffChanged () {
             if (this.claim.tariff > this.claim.cost) {
                 this.claim.cost = this.claim.tariff;
             }

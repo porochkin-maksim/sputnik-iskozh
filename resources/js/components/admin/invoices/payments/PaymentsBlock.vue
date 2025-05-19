@@ -19,75 +19,77 @@
     >
         <template v-slot:title>{{ payment.id ? (payment.actions.edit ? 'Редактирование платёжа' : 'Просмотр платёжа') : 'Добавление платежа' }}</template>
         <template v-slot:body>
-            <div class="container-fluid">
-                <label>Стоимость</label>
-                <input type="number"
-                       step="0.01"
-                       class="form-control form-control-sm"
-                       :disabled="!payment.actions.edit"
-                       v-model="payment.cost"
+            <label>Стоимость</label>
+            <input type="number"
+                   step="0.01"
+                   class="form-control form-control-sm"
+                   :disabled="!payment.actions.edit || loading"
+                   v-model="payment.cost"
+            />
+            <label>Название платёжа</label>
+            <input type="text"
+                   class="form-control form-control-sm"
+                   :disabled="!payment.actions.edit || loading"
+                   placeholder="необязательно..."
+                   v-model="payment.name"
+            />
+            <label>Комментарий</label>
+            <textarea class="form-control form-control-sm"
+                      style="min-height: 200px;"
+                      :disabled="!payment.actions.edit || loading"
+                      v-model="payment.comment"
+            ></textarea>
+            <template v-for="(file, index) in payment.files">
+                <file-item
+                    :file="file"
+                    :edit="true"
+                    :index="index"
+                    :use-up-sort="index!==0"
+                    :use-down-sort="index!==payment.files.length-1"
+                    class="mt-2"
                 />
-                <label>Название платёжа</label>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       :disabled="!payment.actions.edit"
-                       placeholder="необязательно..."
-                       v-model="payment.name"
-                />
-                <label>Комментарий</label>
-                <textarea class="form-control form-control-sm"
-                          style="min-height: 200px;"
-                          :disabled="!payment.actions.edit"
-                          v-model="payment.comment"
-                ></textarea>
-                <template v-for="(file, index) in payment.files">
-                    <file-item
-                        :file="file"
-                        :edit="true"
-                        :index="index"
-                        :use-up-sort="index!==0"
-                        :use-down-sort="index!==payment.files.length-1"
-                        class="mt-2"
-                    />
-                </template>
-                <template v-if="files && files.length">
-                    <ul class="list-unstyled mt-2">
-                        <li v-for="(file, index) in files"
-                            class="mb-2 d-flex justify-content-between">
-                            <div>
-                                <button class="btn btn-sm btn-danger"
-                                        @click="removeFile(index)">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                &nbsp;
-                                {{ index + 1 }}. {{ file.name }}
-                            </div>
-                            <span class="text-secondary">
+            </template>
+            <template v-if="files && files.length">
+                <ul class="list-unstyled mt-2">
+                    <li v-for="(file, index) in files"
+                        class="mb-2 d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-sm btn-danger"
+                                    @click="removeFile(index)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            &nbsp;
+                            {{ index + 1 }}. {{ file.name }}
+                        </div>
+                        <span class="text-secondary">
                         {{ (file.size / (1024 * 1024)).toFixed(2) }}MB
                     </span>
-                        </li>
-                    </ul>
-                    <div class="d-flex justify-content-end small">
-                        <span :class="[fileSizeExceed ? 'text-danger' : 'text-secondary']">Размер файлов: {{ filesSize }}MB</span>
-                    </div>
-                </template>
-                <input class="d-none"
-                       type="file"
-                       ref="fileElem"
-                       @change="appendFiles"
-                       multiple>
-            </div>
+                    </li>
+                </ul>
+                <div class="d-flex justify-content-end small">
+                    <span :class="[fileSizeExceed ? 'text-danger' : 'text-secondary']">Размер файлов: {{ filesSize }}MB</span>
+                </div>
+            </template>
+            <input class="d-none"
+                   type="file"
+                   ref="fileElem"
+                   @change="appendFiles"
+                   multiple>
         </template>
-        <template v-slot:footer v-if="payment.actions.edit">
+        <template v-slot:footer
+                  v-if="payment.actions.edit">
             <div class="d-flex justify-content-between w-100">
                 <button class="btn btn-outline-secondary"
                         @click="chooseFiles"
+                        :disabled="loading"
                         v-if="!fileCountExceed">
                     <i class="fa fa-paperclip "></i>&nbsp;Файлы подтверждающие платёж
                 </button>
                 <button class="btn btn-success"
-                        :disabled="!canSave"
+                        :disabled="!canSave || loading"
                         @click="saveAction">
+                    <i class="fa"
+                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                     {{ payment.id ? 'Сохранить' : 'Создать' }} платёж
                 </button>
             </div>
@@ -96,12 +98,12 @@
 </template>
 
 <script>
-import PaymentsList     from './PaymentsList.vue';
-import ViewDialog       from '../../../common/ViewDialog.vue';
-import ResponseError    from '../../../../mixin/ResponseError.js';
-import Url              from '../../../../utils/Url.js';
-import ClaimsList       from '../claims/ClaimsList.vue';
-import FileItem         from '../../../common/files/FileItem.vue';
+import PaymentsList  from './PaymentsList.vue';
+import ViewDialog    from '../../../common/ViewDialog.vue';
+import ResponseError from '../../../../mixin/ResponseError.js';
+import Url           from '../../../../utils/Url.js';
+import ClaimsList    from '../claims/ClaimsList.vue';
+import FileItem      from '../../../common/files/FileItem.vue';
 
 export default {
     components: { FileItem, ClaimsList, ViewDialog, PaymentsList },
@@ -231,7 +233,7 @@ export default {
             }
             this.files = result;
         },
-        onUpdatedCount(value) {
+        onUpdatedCount (value) {
             this.paymentsCount = value;
             this.$emit('update:count', this.paymentsCount);
         },
