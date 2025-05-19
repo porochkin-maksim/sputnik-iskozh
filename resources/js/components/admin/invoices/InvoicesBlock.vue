@@ -106,8 +106,8 @@
     <invoice-item-edit v-if="invoice && actions.edit"
                        :model-value="invoice"
                        :accounts="accounts"
-                       :periods="periods"
-                       :types="types"
+                       :periods="activePeriods"
+                       :types="activeTypes"
                        @updated="listAction"
     />
 </template>
@@ -141,12 +141,14 @@ export default {
     ],
     data () {
         return {
-            invoice   : null,
-            invoices  : [],
-            accounts  : [],
-            periods   : [],
-            types     : [],
-            historyUrl: null,
+            invoice      : null,
+            invoices     : [],
+            accounts     : [],
+            periods      : [],
+            activePeriods: [],
+            types        : [],
+            activeTypes  : [],
+            historyUrl   : null,
 
             loaded       : false,
             total        : null,
@@ -223,7 +225,7 @@ export default {
             });
         },
         listAction () {
-            let uri       = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
+            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
                 limit     : this.perPage,
                 skip      : this.skip,
                 type      : this.type,
@@ -249,13 +251,15 @@ export default {
                     sort_order  : this.sortOrder,
                 },
             }).then(response => {
-                this.actions    = response.data.actions;
-                this.invoices   = response.data.invoices;
-                this.total      = response.data.total;
-                this.types      = response.data.types;
-                this.periods    = response.data.periods;
-                this.accounts   = response.data.accounts;
-                this.historyUrl = response.data.historyUrl;
+                this.actions       = response.data.actions;
+                this.invoices      = response.data.invoices;
+                this.total         = response.data.total;
+                this.types         = response.data.types;
+                this.activeTypes   = response.data.activeTypes;
+                this.periods       = response.data.periods;
+                this.activePeriods = response.data.activePeriods;
+                this.accounts      = response.data.accounts;
+                this.historyUrl    = response.data.historyUrl;
 
                 if (!this.periodId && this.periods.length) {
                     this.periodId = this.periods[this.periods.length - 1].key;

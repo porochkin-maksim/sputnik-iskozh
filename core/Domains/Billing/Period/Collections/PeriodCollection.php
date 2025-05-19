@@ -29,4 +29,11 @@ class PeriodCollection extends Collection implements CollectionInterface
 
         return null;
     }
+
+    public function getActive(): static
+    {
+        return $this->filter(function (PeriodDTO $period) {
+            return ! $period->isClosed();
+        });
+    }
 }
