@@ -44,8 +44,9 @@ class AnnouncementController extends Controller
         ]);
     }
 
-    public function show(int $id): mixed
+    public function show($id): mixed
     {
+        $id   = is_numeric($id) ? (int) $id : null;
         $news = $this->newsService->getById($id);
         $edit = Auth::id();
 
