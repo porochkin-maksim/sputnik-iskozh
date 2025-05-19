@@ -93,7 +93,7 @@ class RecalcClaimsPayedJob implements ShouldQueue
             }
         }
 
-        $overpayedClaim = $claims->getByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
+        $overpayedClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
         // если платежей больше чем в счёте
         if ($totalPayed->isPositive()) {
             // фиксируем переплату как аванс

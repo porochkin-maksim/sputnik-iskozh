@@ -52,8 +52,7 @@ class ServicesController extends Controller
             abort(403);
         }
 
-        $searcher = new ServiceSearcher();
-        $searcher
+        $searcher = ServiceSearcher::make()
             ->exludeType(ServiceTypeEnum::OTHER)
             ->exludeType(ServiceTypeEnum::DEBT)
             ->exludeType(ServiceTypeEnum::ADVANCE_PAYMENT)
@@ -63,8 +62,8 @@ class ServicesController extends Controller
             ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC);
         $services = $this->serviceService->search($searcher);
 
-        $periodSearcher = new PeriodSearcher();
-        $periodSearcher->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC);
+        $periodSearcher = PeriodSearcher::make()
+            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC);
 
         $periods = $this->periodService->search($periodSearcher);
 

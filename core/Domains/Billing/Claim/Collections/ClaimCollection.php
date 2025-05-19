@@ -44,7 +44,7 @@ class ClaimCollection extends Collection implements CollectionInterface
         });
     }
 
-    public function getByServiceType(ServiceTypeEnum $type): ?ClaimDTO
+    public function findByServiceType(ServiceTypeEnum $type): ?ClaimDTO
     {
         foreach ($this as $claim) {
             if ($claim->getService()?->getType() === $type) {
