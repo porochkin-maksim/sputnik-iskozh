@@ -33,7 +33,7 @@
                     <th class="text-end border-start-0"
                         colspan="2">
                         <button class="btn btn-sm btn-success"
-                                v-if="this.account.actions.counters.edit"
+                                v-if="this.account.actions.counters.edit && !period?.isClosed"
                                 @click="addHistoryAction(counter)"
                         >Добавить показания
                         </button>
@@ -47,7 +47,7 @@
                     <th>Стоимость</th>
                     <th>Оплачено</th>
                     <th>Фото</th>
-                    <th>
+                    <th v-if="!period?.isClosed">
                         <div class="dropdown">
                             <a class="btn btn-sm btn-light border"
                                href="#"
@@ -59,7 +59,7 @@
                             </a>
                             <ul class="dropdown-menu"
                                 :aria-labelledby="'dropDownCounter'+counter.id+vueId">
-                                <li v-if="this.account.actions.counters.drop">
+                                <li v-if="this.account.actions.counters.drop && !period?.isClosed">
                                     <a class="dropdown-item cursor-pointer text-danger"
                                        @click="dropCounterAction(counter)"><i class="fa fa-trash"></i> Удалить</a>
                                 </li>
@@ -108,7 +108,7 @@
                             <td class="text-center"
                                 colspan="3">
                                 <button class="btn btn-sm btn-success"
-                                        v-if="this.account.actions.counters.edit && counter.isInvoicing"
+                                        v-if="this.account.actions.counters.edit && counter.isInvoicing && !period?.isClosed"
                                         @click="addClaimForHistory(history)">
                                     Добавить услугу
                                 </button>
@@ -126,7 +126,7 @@
                                    :edit="false"
                         />
                     </td>
-                    <td class="text-center">
+                    <td class="text-center" v-if="!period?.isClosed">
                         <div class="dropdown">
                             <a class="btn btn-sm btn-light border"
                                href="#"
@@ -138,11 +138,11 @@
                             </a>
                             <ul class="dropdown-menu"
                                 :aria-labelledby="'dropDownHistory'+history.id+vueId">
-                                <li v-if="this.account.actions.counters.edit">
+                                <li v-if="this.account.actions.counters.edit && !period?.isClosed">
                                     <a class="dropdown-item cursor-pointer"
                                        @click="editHistoryAction(history)"><i class="fa fa-edit"></i> Редактировать</a>
                                 </li>
-                                <li v-if="this.account.actions.counters.drop">
+                                <li v-if="this.account.actions.counters.drop && !period?.isClosed">
                                     <a class="dropdown-item cursor-pointer text-danger"
                                        @click="dropHistoryAction(history)"><i class="fa fa-trash"></i> Удалить</a>
                                 </li>
@@ -175,6 +175,7 @@
     <counter-item
         v-if="selectedCounter && mode===1"
         :account="account"
+        :period="period"
         :counter="selectedCounter"
         @counter-updated="onUpdateCounter"
     />
