@@ -6,7 +6,7 @@
                    class="text-decoration-none">
                     <h5 class="d-inline-flex flex-md-row flex-column mt-2">
                         <div>Счётчик «{{ item.number }}»&nbsp;</div>
-                        <div>{{ item.value }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
+                        <div>{{ item.value.toLocaleString('ru-RU') }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
                     </h5>
                 </a>
             </div>
