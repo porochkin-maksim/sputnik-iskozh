@@ -66,7 +66,9 @@ class NewPaymentController
         $accounts = $this->accountService->search($accountSearcher);
 
         $periodSearcher = new PeriodSearcher();
-        $periodSearcher->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC);
+        $periodSearcher
+            ->setIsClosed(false)
+            ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC);
         $periods = $this->periodService->search($periodSearcher);
 
         return response()->json([
