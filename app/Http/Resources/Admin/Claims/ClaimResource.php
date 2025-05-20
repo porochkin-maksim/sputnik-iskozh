@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Admin\Claims;
 
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -43,10 +42,7 @@ readonly class ClaimResource extends AbstractResource
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ! $period?->isClosed(),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ! $period?->isClosed()
-                                       && ( ! $claimService
-                                            || $claimService->getType() !== ServiceTypeEnum::DEBT
-                                       ),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ! $period?->isClosed(),
             ],
             'historyUrl' => $this->claim->getId()
                 ? HistoryChangesLocator::route(
