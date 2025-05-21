@@ -109,11 +109,10 @@
                     <tr>
                         <th>Дата членства</th>
                         <td>
-                            <custom-input v-model="localUser.ownershipDate"
-                                          v-if="localUser.actions.edit"
-                                          :type="'date'"
-                                          :required="true"
-                                          @change="clearError('phone')"
+                            <custom-calendar v-model="localUser.ownershipDate"
+                                             v-if="localUser.actions.edit"
+                                             :required="true"
+                                             @change="clearError('ownershipDate')"
                             />
                             <span v-else>{{ $formatDate(localUser.ownershipDate) }}</span>
                         </td>
@@ -157,10 +156,12 @@ import Url           from '../../../utils/Url.js';
 import CustomInput   from '../../common/form/CustomInput.vue';
 import Pagination    from '../../common/pagination/Pagination.vue';
 import SearchSelect  from '../../common/form/SearchSelect.vue';
+import CustomCalendar from '../../common/form/CustomCalendar.vue';
 
 export default {
     name      : 'UserItemView',
     components: {
+        CustomCalendar,
         SearchSelect,
         Pagination,
         CustomInput,

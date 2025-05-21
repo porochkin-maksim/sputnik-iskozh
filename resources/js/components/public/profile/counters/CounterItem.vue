@@ -1,4 +1,11 @@
 <template>
+    <div class="alert">
+        <custom-calendar
+            v-model="selectedDate"
+            label="Выберите дату"
+            :required="true"
+        />
+    </div>
     <div class="row">
         <div class="col-12 col-md-8 col-lg-6">
             <div class="border bg-light d-flex justify-content-between align-items-center p-2">
@@ -173,10 +180,12 @@ import ViewDialog         from '../../../common/ViewDialog.vue';
 import FileItem           from '../../../common/files/FileItem.vue';
 import SearchSelect       from '../../../common/form/SearchSelect.vue';
 import CountersChartBlock from '../../../common/blocks/CountersChartBlock.vue';
+import CustomCalendar     from '../../../common/form/CustomCalendar.vue';
 
 export default {
     name      : 'ProfileCounterItem',
     components: {
+        CustomCalendar,
         CountersChartBlock,
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,
@@ -193,6 +202,7 @@ export default {
         return {
             loaded : false,
             pending: false,
+            selectedDate: null,
 
             showDialog: false,
             hideDialog: false,
