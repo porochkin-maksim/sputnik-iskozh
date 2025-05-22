@@ -262,7 +262,7 @@ export default {
                 this.historyUrl    = response.data.historyUrl;
 
                 if (!this.periodId && this.periods.length) {
-                    this.periodId = this.periods[this.periods.length - 1].key;
+                    this.periodId = this.periods[0].key;
                     this.listAction();
                 }
             }).catch(response => {
