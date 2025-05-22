@@ -12,9 +12,9 @@ readonly class ClaimToObjectService
     public function create(ClaimDTO $claim, ?int $referenceId, ClaimObjectTypeEnum $type): void
     {
         ClaimToObject::make([
-            ClaimToObject::CLAIM_ID => $claim->getId(),
-            ClaimToObject::REFERENCE_ID   => $referenceId,
-            ClaimToObject::TYPE           => $type->value,
+            ClaimToObject::CLAIM_ID     => $claim->getId(),
+            ClaimToObject::REFERENCE_ID => $referenceId,
+            ClaimToObject::TYPE         => $type->value,
         ])->save();
     }
 
@@ -22,7 +22,8 @@ readonly class ClaimToObjectService
     {
         $claimId = ClaimToObject::where(ClaimToObject::TYPE, $type->value)
             ->where(ClaimToObject::REFERENCE_ID, $referenceId)
-            ->value(ClaimToObject::CLAIM_ID);
+            ->value(ClaimToObject::CLAIM_ID)
+        ;
 
         return ClaimLocator::ClaimService()->getById($claimId);
     }
