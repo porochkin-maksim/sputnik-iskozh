@@ -118,7 +118,7 @@ if (lc::account()->getId() && $period) {
                             <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
                             <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost()) }}</td>
                             <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPayed()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost() - $claim->getPayed()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getDelta()) }}</td>
                         </tr>
                     @endforeach
                     <tr class="table-info">
@@ -127,7 +127,7 @@ if (lc::account()->getId() && $period) {
                         </th>
                         <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost()) }}</td>
                         <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
-                        <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost() - $invoice->getPayed()) }}</td>
+                        <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
                     </tr>
                     <tr>
                         <th colspan="4"></th>

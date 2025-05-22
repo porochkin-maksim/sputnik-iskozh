@@ -21,10 +21,10 @@ class InvoiceDTO
     private ?float           $payed      = null;
     private ?string          $comment    = null;
 
-    private ?ClaimCollection $claims     = null;
-    private ?PaymentCollection $payments = null;
-    private ?AccountDTO      $accountDTO = null;
-    private ?PeriodDTO       $periodDTO  = null;
+    private ?ClaimCollection   $claims     = null;
+    private ?PaymentCollection $payments   = null;
+    private ?AccountDTO        $accountDTO = null;
+    private ?PeriodDTO         $periodDTO  = null;
 
     public function getId(): ?int
     {
@@ -111,6 +111,15 @@ class InvoiceDTO
     }
 
     // дополнительно
+
+    public function getDelta(): ?float
+    {
+        if ($this->getCost() === null || $this->getPayed() === null) {
+            return null;
+        }
+
+        return $this->getCost() - $this->getPayed();
+    }
 
     public function getClaims(): ?ClaimCollection
     {

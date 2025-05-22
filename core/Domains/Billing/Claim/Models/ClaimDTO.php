@@ -104,6 +104,17 @@ class ClaimDTO
         return $this;
     }
 
+    // Дополнительно
+
+    public function getDelta(): ?float
+    {
+        if ($this->getCost() === null || $this->getPayed() === null) {
+            return null;
+        }
+
+        return $this->getCost() - $this->getPayed();
+    }
+
     public function getService(): ?ServiceDTO
     {
         return $this->service;
