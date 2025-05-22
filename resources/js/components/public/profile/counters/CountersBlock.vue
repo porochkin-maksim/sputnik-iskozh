@@ -18,7 +18,6 @@
                 @click="addCounter">Добавить счётчик
         </button>
     </div>
-    123
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
                  @hidden="closeAction"
