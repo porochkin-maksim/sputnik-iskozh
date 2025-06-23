@@ -218,13 +218,5 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
         </div>
     </div>
 
-    <div class="my-2">
-        <a class="btn btn-link px-1"
-           href="https://egrp365.org/map/?kadnum=69:10:0205201:521"
-           target="_blank">
-            <i class="fa fa-external-link"></i> Кадастровая карта
-        </a>
-    </div>
-
     {!! Iframes::map() !!}
 @endsection
