@@ -10,7 +10,11 @@
                     </th>
                     <th class="text-center">Тип</th>
                     <th class="text-center">Период</th>
-                    <th class="text-center">Участок</th>
+                    <th class="text-center cursor-pointer" @click="sort('account_sort')">
+                        Участок
+                        <i v-if="sortField === 'account_sort'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                        <i v-else class="fa fa-sort"></i>
+                    </th>
                     <th class="text-center cursor-pointer" @click="sort('cost')">
                         Стоимость
                         <i v-if="sortField === 'cost'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
@@ -32,7 +36,7 @@
             </thead>
             <tbody>
             <template v-for="(invoice) in invoices">
-                <tr class="align-middle" :class="[invoice.isPayed ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '']">
+                <tr class="align-middle" :class="[invoice.isPayed ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
                     <td class="text-end">
                         <a :href="invoice.viewUrl">
                             {{ invoice.id }}
@@ -48,9 +52,11 @@
                             {{ invoice.accountNumber }}
                         </template>
                     </td>
-                    <td class="text-end">{{ $formatMoney(invoice.cost) }}</td>
+                    <td class="text-end">{{ $formatMoney(invoice.advance ? invoice.cost - invoice.advance : invoice.cost) }}</td>
                     <td class="text-end">{{ $formatMoney(invoice.payed) }}</td>
-                    <td class="text-end">{{ $formatMoney(invoice.cost - invoice.payed) }}</td>
+                    <td class="text-end" :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
+                        {{ invoice.advance ? $formatMoney(-invoice.advance) : $formatMoney(invoice.delta) }}
+                    </td>
                     <td class="text-center">{{ invoice.updated }}</td>
                     <td>
                         <div class="d-flex justify-content-center">

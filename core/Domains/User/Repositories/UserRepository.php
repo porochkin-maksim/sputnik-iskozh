@@ -8,6 +8,8 @@ use Core\Domains\User\Collections\UserCollection;
 
 class UserRepository
 {
+    private const string TABLE = User::TABLE;
+
     use RepositoryTrait {
         getById as traitGetById;
         getByIds as traitGetByIds;

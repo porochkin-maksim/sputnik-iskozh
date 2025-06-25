@@ -58,7 +58,7 @@ readonly class InvoiceService
         return $current;
     }
 
-    public function search(InvoiceSearcher $searcher): SearchResponse
+    public function search(InvoiceSearcher $searcher): SearchResponse//
     {
         $response = $this->invoiceRepository->search($searcher);
 
