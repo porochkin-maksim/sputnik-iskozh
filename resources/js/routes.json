@@ -383,6 +383,15 @@
         "uri": "\/admin\/options\/json\/save",
         "args": []
     },
+    "adminPaymentAutoCreate": {
+        "name": "admin.payment.auto-create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/auto-create",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
     "adminPaymentCreate": {
         "name": "admin.payment.create",
         "displayName": "",

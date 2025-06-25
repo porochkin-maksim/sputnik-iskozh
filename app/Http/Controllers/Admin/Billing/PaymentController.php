@@ -61,6 +61,33 @@ class PaymentController extends Controller
         ]);
     }
 
+    public function autoCreate(int $invoiceId): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
+            abort(403);
+        }
+
+        $invoice = $this->invoiceService->getById($invoiceId);
+        if ( ! $invoice) {
+            abort(412);
+        }
+
+        $payment = $this->paymentFactory->makeDefault()
+            ->setInvoiceId($invoiceId)
+            ->setInvoice($invoice)
+            ->setCost($invoice->getCost())
+            ->setModerated(true)
+            ->setVerified(true)
+        ;
+
+        $payment = $this->paymentService->save($payment);
+
+        return response()->json([
+            'payment' => new PaymentResource($payment),
+        ]);
+
+    }
+
     public function get(int $invoiceId, int $paymentId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
