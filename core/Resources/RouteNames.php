@@ -165,11 +165,12 @@ abstract class RouteNames
     public const ADMIN_CLAIM_LIST   = 'admin.claim.list';
     public const ADMIN_CLAIM_DELETE = 'admin.claim.delete';
 
-    public const ADMIN_PAYMENT_VIEW   = 'admin.payment.view';
-    public const ADMIN_PAYMENT_CREATE = 'admin.payment.create';
-    public const ADMIN_PAYMENT_SAVE   = 'admin.payment.save';
-    public const ADMIN_PAYMENT_LIST   = 'admin.payment.list';
-    public const ADMIN_PAYMENT_DELETE = 'admin.payment.delete';
+    public const ADMIN_PAYMENT_VIEW        = 'admin.payment.view';
+    public const ADMIN_PAYMENT_CREATE      = 'admin.payment.create';
+    public const ADMIN_PAYMENT_AUTO_CREATE = 'admin.payment.auto-create';
+    public const ADMIN_PAYMENT_SAVE        = 'admin.payment.save';
+    public const ADMIN_PAYMENT_LIST        = 'admin.payment.list';
+    public const ADMIN_PAYMENT_DELETE      = 'admin.payment.delete';
 
     public const ADMIN_NEW_PAYMENT_INDEX    = 'admin.new-payment.index';
     public const ADMIN_NEW_PAYMENT_VIEW     = 'admin.new-payment.view';

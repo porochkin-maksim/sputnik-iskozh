@@ -252,6 +252,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                             });
                             Route::group(['prefix' => 'payments'], static function () {
                                 Route::get('/create', [Controllers\Admin\Billing\PaymentController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_CREATE);
+                                Route::get('/auto-create', [Controllers\Admin\Billing\PaymentController::class, 'autoCreate'])->name(RouteNames::ADMIN_PAYMENT_AUTO_CREATE);
                                 Route::get('/list', [Controllers\Admin\Billing\PaymentController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_LIST);
                                 Route::post('/save', [Controllers\Admin\Billing\PaymentController::class, 'save'])->name(RouteNames::ADMIN_PAYMENT_SAVE);
                                 Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentController::class, 'delete'])->name(RouteNames::ADMIN_PAYMENT_DELETE);

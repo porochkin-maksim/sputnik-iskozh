@@ -5,6 +5,10 @@
                 v-if="invoice.actions.payments.edit"
                 v-on:click="makeAction">Добавить платёж
         </button>
+        <button class="btn btn-outline-success ms-2"
+                v-if="!invoice.isPayed && !forcePayed"
+                v-on:click="makePayed">Оплатить всё
+        </button>
     </div>
     <payments-list :invoice-id="invoice.id"
                    v-model:selected-id="selectedId"
@@ -141,9 +145,27 @@ export default {
 
             showDialog: false,
             hideDialog: false,
+            forcePayed: false,
         };
     },
     methods : {
+        makePayed () {
+            if (!confirm('Создать платёж на сумму счёта?')) {
+                return;
+            }
+            let uri = Url.Generator.makeUri(Url.Routes.adminPaymentAutoCreate, {
+                invoiceId: this.invoice.id,
+            });
+
+            window.axios[Url.Routes.adminPaymentAutoCreate.method](uri).then(response => {
+                let text = 'Платёж ' + response.data.payment.id + ' создан';
+                this.forcePayed = true;
+                this.showInfo(text);
+                this.onSaved();
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
         makeAction () {
             let uri = Url.Generator.makeUri(Url.Routes.adminPaymentCreate, {
                 invoiceId: this.invoice.id,
