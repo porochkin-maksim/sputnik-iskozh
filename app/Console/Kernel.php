@@ -43,10 +43,10 @@ class Kernel extends ConsoleKernel
         //     ->name('queue.workers')
         //     ->appendOutputTo(storage_path('logs/queue-workers.log'));
 
-        $schedule->job(new AutoIncrementingCounterHistoriesJob())
-            ->dailyAt('08:30')
-            ->name('AutoIncrementingCounterHistoriesJob')
-            ->withoutOverlapping()
-        ;
+        // $schedule->job(new AutoIncrementingCounterHistoriesJob())
+        //     ->dailyAt('08:30')
+        //     ->name('AutoIncrementingCounterHistoriesJob')
+        //     ->withoutOverlapping()
+        // ;
     }
 }
