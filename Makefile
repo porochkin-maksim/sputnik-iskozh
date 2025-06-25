@@ -61,6 +61,23 @@ tests: ## запуск artisan
 php: ## запуск php
 	@./vendor/bin/sail bash
 
+.PHONY: mysql
+mysql: ## запуск php
+	@./vendor/bin/sail mysql -e "SHOW VARIABLES LIKE 'datadir';"
+
+.PHONY: import-sql
+import-sql: ## импорт SQL дампа
+	@if [ -z "$(FILE)" ]; then \
+		echo "Ошибка: не указан файл дампа. Используйте: make import-sql FILE=имя_файла.sql"; \
+		exit 1; \
+	fi
+	@if [ ! -f "$(FILE)" ]; then \
+		echo "Ошибка: файл $(FILE) не найден"; \
+		exit 1; \
+	fi
+	@echo "Импорт SQL дампа из файла $(FILE)"
+	./vendor/bin/sail mysql -u root -p < $(FILE)
+
 .PHONY: node
 node: ## запуск node
 	@./vendor/bin/sail node $(filter-out $@,$(MAKECMDGOALS))
