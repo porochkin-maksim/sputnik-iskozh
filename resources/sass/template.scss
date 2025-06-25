@@ -32,6 +32,7 @@ a:not(.btn) {
     .page-link {
         background-color : $default-primary;
         border-color     : $default-primary;
+        color            : white !important;
     }
 }
 

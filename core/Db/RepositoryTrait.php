@@ -11,6 +11,7 @@ use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 trait RepositoryTrait
 {
@@ -60,16 +61,6 @@ trait RepositoryTrait
             $searcher->setIds($ids);
             $query  = $this->buildSearchQuery($searcher);
             $query  = $this->buildCommonQuery($query, $searcher);
-
-            // $query->when($searcher->getLimit() !== null, function (Builder $query) use ($searcher) {
-            //     $query->limit($searcher->getLimit());
-            // })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
-            //     $query->offset($searcher->getOffset());
-            // })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
-            //     $query->where('id', SearcherInterface::GT, $searcher->getLastId());
-            // })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
-            //     $query->whereIn('id', $searcher->getIds());
-            // });
             $result = array_merge($result, $query->get()->all());
         }
 
@@ -96,6 +87,12 @@ trait RepositoryTrait
         return $result;
     }
 
+    // для переопределения
+    private function getQuery(Builder $query): Builder
+    {
+        return $query;
+    }
+
     protected function buildSearchQuery(?SearcherInterface $searcher = null): Builder
     {
         $modelClass = $this->modelClass();
@@ -110,12 +107,16 @@ trait RepositoryTrait
         else {
             $query->select(['*']);
         }
+        $query = $this->getQuery($query);
 
         if ($searcher) {
             $query->when($searcher->getWith(), function (Builder $query) use ($searcher) {
                 $query->with($searcher->getWith());
             })->when($searcher->getWhere(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getWhere() as $where) {
+                    $field = $this->adaptFieldName($where->getField());
+                    $value = $where->getValue();
+
                     switch ($where->getOperator()) {
                         case SearcherInterface::GT:
                         case SearcherInterface::GTE:
@@ -124,24 +125,27 @@ trait RepositoryTrait
                         case SearcherInterface::IS_NOT:
                         case SearcherInterface::EQUALS:
                         case SearcherInterface::LIKE:
-                            $query->where($where->getField(), $where->getOperator(), $where->getValue());
+                            $query->where($field, $where->getOperator(), $value);
                             break;
                         case SearcherInterface::IS_NULL:
-                            $query->whereNull($where->getField());
+                            $query->whereNull($field);
                             break;
                         case SearcherInterface::IS_NOT_NULL:
-                            $query->whereNotNull($where->getField());
+                            $query->whereNotNull($field);
                             break;
                         case SearcherInterface::NOT_IN:
-                            $query->whereNotIn($where->getField(), $where->getValue());
+                            $query->whereNotIn($field, $value);
                             break;
                         case SearcherInterface::IN:
-                            $query->whereIn($where->getField(), $where->getValue());
+                            $query->whereIn($field, $value);
                             break;
                     }
                 }
             })->when($searcher->getOrWhere(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getOrWhere() as $where) {
+                    $field = $this->adaptFieldName($where->getField());
+                    $value = $where->getValue();
+
                     switch ($where->getOperator()) {
                         case SearcherInterface::GT:
                         case SearcherInterface::GTE:
@@ -150,16 +154,16 @@ trait RepositoryTrait
                         case SearcherInterface::IS_NOT:
                         case SearcherInterface::EQUALS:
                         case SearcherInterface::LIKE:
-                            $query->orWhere($where->getField(), $where->getOperator(), $where->getValue());
+                            $query->orWhere($field, $where->getOperator(), $value);
                             break;
                         case SearcherInterface::IS_NULL:
-                            $query->orWhereNull($where->getField());
+                            $query->orWhereNull($field);
                             break;
                         case SearcherInterface::NOT_IN:
-                            $query->orWhereNotIn($where->getField(), $where->getValue());
+                            $query->orWhereNotIn($field, $value);
                             break;
                         case SearcherInterface::IN:
-                            $query->orWhereIn($where->getField(), $where->getValue());
+                            $query->orWhereIn($field, $value);
                             break;
                     }
                 }
@@ -169,7 +173,7 @@ trait RepositoryTrait
                 }
             })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getSortProperties() as $sort) {
-                    $query->orderBy($sort->getField(), $sort->getValue());
+                    $query->orderBy($this->adaptFieldName($sort->getField()), $sort->getValue());
                 }
             });
         }
@@ -184,12 +188,21 @@ trait RepositoryTrait
         })->when($searcher->getOffset() !== null, function (Builder $query) use ($searcher) {
             $query->offset($searcher->getOffset());
         })->when($searcher->getLastId() !== null, function (Builder $query) use ($searcher) {
-            $query->where('id', SearcherInterface::GT, $searcher->getLastId());
+            $query->where($this->adaptFieldName('id'), SearcherInterface::GT, $searcher->getLastId());
         })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
-            $query->whereIn('id', $searcher->getIds());
+            $query->whereIn($this->adaptFieldName('id'), $searcher->getIds());
         });
 
         return $query;
+    }
+
+    private function adaptFieldName(string $field): string
+    {
+        if (Str::contains($field, '.')) {
+            return $field;
+        }
+
+        return sprintf("%s.%s", static::TABLE, $field);
     }
 
     public function deleteById(int $id): bool

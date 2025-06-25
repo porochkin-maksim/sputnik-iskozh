@@ -23,6 +23,7 @@
                 <div>
                     <pagination :total="total"
                                 :perPage="perPage"
+                                :page="Math.ceil(this.skip > 0 ? this.skip / this.perPage : 0) + 1"
                                 :prop-classes="'pagination-sm mb-0'"
                                 @update="onPaginationUpdate"
                     />

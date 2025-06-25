@@ -37,11 +37,18 @@ export default {
             type   : String,
             default: '',
         },
+        page: {
+            type   : Number,
+            default: 1,
+        },
     },
     data () {
         return {
             current: 1,
         };
+    },
+    created () {
+        this.current = this.page;
     },
     methods : {
         setCurrent (i) {

@@ -17,7 +17,7 @@ class ListRequest extends DefaultRequest
             'account_id'   => 'integer|min:0',
             'account'      => 'nullable|string|max:255',
             'payed_status' => 'string|in:all,payed,unpayed,partial',
-            'sort_field'   => 'string|in:id,cost,payed,updated_at',
+            'sort_field'   => 'string|in:id,cost,payed,updated_at,account_sort',
             'sort_order'   => 'string|in:asc,desc',
         ];
     }

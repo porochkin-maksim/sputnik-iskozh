@@ -25,6 +25,8 @@ readonly class InvoiceResource extends AbstractResource
 
         $period = $this->invoice->getPeriod();
 
+        $advance = $this->invoice->getClaims()?->getAdvancePayment();
+
         return [
             'id'            => $this->invoice->getId(),
             'periodId'      => $this->invoice->getPeriodId(),
@@ -36,6 +38,7 @@ readonly class InvoiceResource extends AbstractResource
             'cost'          => $this->invoice->getCost(),
             'payed'         => $this->invoice->getPayed(),
             'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
+            'advance'       => (float) $advance?->getPayed(),
             'isPayed'       => $this->invoice->isPayed(),
             'created'       => $this->formatTimestampAt($this->invoice->getCreatedAt()),
             'updated'       => $this->formatTimestampAt($this->invoice->getUpdatedAt()),
