@@ -5,6 +5,7 @@ namespace App\Models\Billing;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Period extends Model implements CastsInterface
 {
+    use SoftDeletes;
+
     public const TABLE = 'periods';
 
     protected $table = self::TABLE;
