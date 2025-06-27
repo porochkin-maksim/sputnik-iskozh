@@ -70,7 +70,17 @@ class RecalcClaimsPayedJob implements ShouldQueue
             $claim->setPayed(0);
         }
 
+        $overpayedClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
+        $overpayedClaim?->setTariff(0)
+            ->setPayed(0)
+            ->setCost(0)
+        ;
+
         foreach ($claims as $claim) {
+            if ($claim->getId() === $overpayedClaim?->getId()) {
+                continue;
+            }
+
             $claimCost  = MoneyService::parse($claim->getCost());
             $claimPayed = MoneyService::parse(0);
 
@@ -93,7 +103,6 @@ class RecalcClaimsPayedJob implements ShouldQueue
             }
         }
 
-        $overpayedClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
         // если платежей больше чем в счёте
         if ($totalPayed->isPositive()) {
             // фиксируем переплату как аванс
@@ -125,6 +134,10 @@ class RecalcClaimsPayedJob implements ShouldQueue
         }
 
         $claims = ClaimLocator::ClaimService()->saveCollection($claims);
+
+        if ( ! $totalPayed->isPositive() && $overpayedClaim?->getId()) {
+            ClaimLocator::ClaimService()->deleteById($overpayedClaim->getId());
+        }
 
         // пересчитываем счёт
         $totalCost  = MoneyService::parse(0);
