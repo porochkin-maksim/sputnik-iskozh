@@ -147,9 +147,11 @@ export default {
                 return;
             }
 
-            window.axios[Url.Routes.adminPeriodDelete.method](
-                Url.Routes.adminPeriodDelete.uri + '/' + period.id,
-            ).then(() => {
+            let uri = Url.Generator.makeUri(Url.Routes.adminPeriodDelete, {
+                id: period.id,
+            });
+
+            window.axios[Url.Routes.adminPeriodDelete.method](uri).then(() => {
                 this.periods = this.periods.filter(p => p.id !== period.id);
                 this.showInfo('Период удален');
             }).catch(response => {
