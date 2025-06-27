@@ -39,8 +39,8 @@ class LinkRequest extends AbstractRequest
                 Rule::exists(Account::TABLE, Account::ID),
             ],
             self::INVOICE_ID => [
-                'required',
-                Rule::exists(Invoice::TABLE, Invoice::ID),
+                'sometimes',
+                // Rule::exists(Invoice::TABLE, Invoice::ID),
             ],
         ];
     }
@@ -72,12 +72,12 @@ class LinkRequest extends AbstractRequest
 
     public function getAccountId(): int
     {
-        return $this->getInt(self::ACCOUNT_ID);
+        return $this->getIntOrNull(self::ACCOUNT_ID);
     }
 
-    public function getInvoiceId(): int
+    public function getInvoiceId(): ?int
     {
-        return $this->getInt(self::INVOICE_ID);
+        return $this->getInt(self::INVOICE_ID) ?: null;
     }
 
     public function getName(): ?string

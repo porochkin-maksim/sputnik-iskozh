@@ -19,6 +19,11 @@ readonly class InvoiceResource extends AbstractResource
     {
     }
 
+    public function getInvoice(): InvoiceDTO
+    {
+        return $this->invoice;
+    }
+
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();

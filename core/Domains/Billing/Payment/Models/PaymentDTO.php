@@ -21,6 +21,8 @@ class PaymentDTO
     private ?string $name       = null;
     private ?array  $data       = null;
 
+    private ?string $account_number = null;
+
     private ?InvoiceDTO $invoice = null;
     private ?AccountDTO $account = null;
 
@@ -133,6 +135,18 @@ class PaymentDTO
     public function setData(?array $data): static
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    public function getAccountNumber(): ?string
+    {
+        return $this->account_number;
+    }
+
+    public function setAccountNumber(?string $account_number): static
+    {
+        $this->account_number = $account_number;
 
         return $this;
     }
