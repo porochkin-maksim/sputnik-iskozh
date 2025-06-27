@@ -26,21 +26,22 @@ readonly class PaymentResource extends AbstractResource
         $period = $this->payment->getInvoice()?->getPeriod();
 
         return [
-            'id'         => $this->payment->getId(),
-            'name'       => $this->payment->getName(),
-            'cost'       => $this->payment->getCost(),
-            'comment'    => $this->payment->getComment(),
-            'files'      => $this->payment->getFiles(),
-            'created'    => $this->formatTimestampAt($this->payment->getCreatedAt()),
-            'invoiceId'  => $this->payment->getInvoiceId(),
-            'accountId'  => $this->payment->getAccountId(),
-            'invoice'    => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
-            'actions'    => [
+            'id'            => $this->payment->getId(),
+            'name'          => $this->payment->getName(),
+            'cost'          => $this->payment->getCost(),
+            'comment'       => $this->payment->getComment(),
+            'files'         => $this->payment->getFiles(),
+            'created'       => $this->formatTimestampAt($this->payment->getCreatedAt()),
+            'invoiceId'     => $this->payment->getInvoiceId(),
+            'accountNumber' => $this->payment->getAccountNumber(),
+            'accountId'     => $this->payment->getAccountId(),
+            'invoice'       => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
+            'actions'       => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed(),
                 ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed(),
             ],
-            'historyUrl' => $this->payment->getId()
+            'historyUrl'    => $this->payment->getId()
                 ? HistoryChangesLocator::route(
                     referenceType: HistoryType::PAYMENT,
                     referenceId  : $this->payment?->getId(),

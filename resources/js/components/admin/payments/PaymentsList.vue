@@ -1,8 +1,9 @@
 <template>
     <div v-if="payments && payments.length">
         <table class="table table-bordered table-striped-columns align-middle table-striped ">
-            <tr>
+            <tr class="text-center">
                 <th>№</th>
+                <th>Участок</th>
                 <th>Сумма</th>
                 <th>Создан</th>
                 <th>Файл</th>
@@ -10,8 +11,9 @@
             </tr>
             <tr v-for="(payment) in payments">
                 <td>{{ payment.id }}</td>
-                <td>{{ $formatMoney(payment.cost) }}</td>
-                <td>{{ payment.created }}</td>
+                <td class="text-end">{{ payment.accountNumber }}</td>
+                <td class="text-end">{{ $formatMoney(payment.cost) }}</td>
+                <td class="text-center">{{ payment.created }}</td>
                 <td>
                     <template v-for="(file, index) in payment.files">
                         <file-item :file="file"

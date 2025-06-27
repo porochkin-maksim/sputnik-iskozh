@@ -12,15 +12,7 @@
         <template v-slot:body>
             <div class="container-fluid">
                 <template v-if="payment.actions.edit">
-                    <label>Период</label>
-                    <search-select v-if="periods.length"
-                                   v-model="periodId"
-                                   :prop-class="'form-control mb-2'"
-                                   :items="periods"
-                                   :placeholder="'Период...'"
-                                   @update:model-value="getInvoices"
-                    />
-                    <template v-if="accounts.length && periodId">
+                    <template v-if="accounts.length">
                         <label>Участок</label>
                         <search-select
                             v-model="payment.accountId"
@@ -30,6 +22,14 @@
                             @update:model-value="getInvoices"
                         />
                     </template>
+                    <label>Период</label>
+                    <search-select v-if="periods.length"
+                                   v-model="periodId"
+                                   :prop-class="'form-control mb-2'"
+                                   :items="periods"
+                                   :placeholder="'Период...'"
+                                   @update:model-value="getInvoices"
+                    />
                     <template v-if="invoices.length">
                         <label>Счёт</label>
                         <search-select
@@ -204,7 +204,7 @@ export default {
     },
     computed: {
         canSave () {
-            return this.payment && this.payment.cost > 0 && this.payment.accountId && this.payment.invoiceId;
+            return this.payment && this.payment.cost > 0 && this.payment.accountId;
         },
     },
     watch   : {

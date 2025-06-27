@@ -2,17 +2,20 @@
 
 namespace Core\Domains\Billing\Payment\Repositories;
 
+use App\Models\Account\Account;
 use App\Models\Billing\Payment;
 use Core\Db\RepositoryTrait;
-use Core\Domains\Billing\Payment\Collections\PaymentCollection;
+use Core\Db\Searcher\SearcherInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class PaymentRepository
 {
-    private const TABLE = Payment::TABLE;
+    private const string TABLE = Payment::TABLE;
 
     use RepositoryTrait {
         getById as traitGetById;
         getByIds as traitGetByIds;
+        getQuery as traitGetQuery;
     }
 
     protected function modelClass(): string
@@ -33,5 +36,15 @@ class PaymentRepository
         $payment->save();
 
         return $payment;
+    }
+
+    private function getQuery(Builder $query): Builder
+    {
+        $query->select(self::TABLE. '.*')
+            ->leftJoin(Account::TABLE, Account::TABLE . '.' . Account::ID, SearcherInterface::EQUALS, Payment::TABLE . '.' . Payment::ACCOUNT_ID)
+            ->selectSub(Account::TABLE . '.' . Account::NUMBER, 'account_number')
+        ;
+
+        return $query;
     }
 }

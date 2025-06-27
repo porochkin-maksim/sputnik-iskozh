@@ -14,7 +14,7 @@ abstract class Emails
         return [
             self::POROCHKIN_MAKSIM,
             self::JIGANOVA_SVETLANA,
-            self::BRYSKINA_TATYANA,
+            // self::BRYSKINA_TATYANA,
             env('MAIL_PRESS'),
         ];
     }

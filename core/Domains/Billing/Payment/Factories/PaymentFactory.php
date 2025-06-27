@@ -58,6 +58,7 @@ readonly class PaymentFactory
             ->setUpdatedAt($model->updated_at)
             ->setName($model->name)
             ->setData($model->data)
+            ->setAccountNumber($model->account_number)
         ;
 
         if (isset($model->getRelations()[Payment::INVOICE])) {
