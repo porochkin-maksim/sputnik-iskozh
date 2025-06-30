@@ -33,7 +33,7 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
 </head>
-<body class="d-flex flex-column h-100 {{ $season }} admin"
+<body class="d-flex flex-column h-100 {{ $season }}"
       id="app"
       style="background-image: url('{{ $bgImage->getUrl() }}')">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"

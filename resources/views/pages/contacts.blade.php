@@ -182,6 +182,10 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
             <th colspan="2">Дополнительно</th>
         </tr>
         <tr>
+            <th>Кадастровая карта</th>
+            <td><a href="https://map.ru/pkk?kad=69:10:0205201&z=16"><i class="fa fa-map-marker"></i> https://map.ru/pkk?kad=69:10:0205201</a></td>
+        </tr>
+        <tr>
             <th>Горячая линия Россети</th>
             <td><a href="tel:88002200220"><i class="fa fa-phone"></i> 8(800)220-02-20</a></td>
         </tr>
