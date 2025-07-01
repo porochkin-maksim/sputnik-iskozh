@@ -3,26 +3,19 @@
 namespace App\Http\Requests\Admin\Users;
 
 use App\Http\Requests\DefaultRequest;
-use Core\Requests\RequestArgumentsEnum;
+use App\Http\Requests\SortFieldTrait;
 
 class ListRequest extends DefaultRequest
 {
-    private const TYPE  = RequestArgumentsEnum::TYPE;
-    private const PERIOD_ID  = RequestArgumentsEnum::PERIOD_ID;
-    private const ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
+    use SortFieldTrait;
 
-    public function getType(): ?int
+    public function rules(): array
     {
-        return $this->getIntOrNull(self::TYPE);
-    }
-
-    public function getPeriodId(): ?int
-    {
-        return $this->getIntOrNull(self::PERIOD_ID);
-    }
-
-    public function getAccountId(): ?int
-    {
-        return $this->getIntOrNull(self::ACCOUNT_ID);
+        return [
+            'limit'        => 'integer|min:1|max:100',
+            'skip'         => 'integer|min:0',
+            'sort_field'   => 'string|in:id,last_name,first_name,middle_name,email,account_sort',
+            'sort_order'   => 'string|in:asc,desc',
+        ];
     }
 }

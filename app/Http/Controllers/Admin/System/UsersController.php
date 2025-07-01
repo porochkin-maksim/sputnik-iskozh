@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\System;
 
+use App\Exports\InvoicesExport\InvoicesExport;
+use App\Exports\UsersExport\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
 use App\Http\Requests\Admin\Users\SaveRequest;
@@ -11,6 +13,7 @@ use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
 use App\Models\Account\Account;
+use App\Models\Billing\Invoice;
 use App\Models\User;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
@@ -20,9 +23,7 @@ use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
-use Core\Domains\Infra\ExData\ExDataLocator;
-use Core\Domains\Infra\ExData\Services\ExDataService;
+use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Services\UserService;
@@ -30,6 +31,7 @@ use Core\Domains\User\UserLocator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use lc;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsersController extends Controller
 {
@@ -37,7 +39,6 @@ class UsersController extends Controller
     private UserService    $userService;
     private AccountService $accountService;
     private RoleService    $roleService;
-    private ExDataService  $exDataService;
 
     public function __construct()
     {
@@ -45,7 +46,6 @@ class UsersController extends Controller
         $this->userService    = UserLocator::UserService();
         $this->accountService = AccountLocator::AccountService();
         $this->roleService    = RoleLocator::RoleService();
-        $this->exDataService  = ExDataLocator::ExDataService();
     }
 
     public function view(?int $id = null)
@@ -96,8 +96,17 @@ class UsersController extends Controller
             ->setWithAccounts()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
-            ->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
+
+        if ($request->getSortField() && $request->getSortOrder()) {
+            $searcher->setSortOrderProperty(
+                $request->getSortField(),
+                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
+            );
+        }
+        else {
+            $searcher->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_DESC);
+        }
 
         $users = $this->userService->search($searcher);
 
@@ -105,6 +114,23 @@ class UsersController extends Controller
             $users->getItems(),
             $users->getTotal(),
         ));
+    }
+
+    public function export(ListRequest $request)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            abort(403);
+        }
+
+        $searcher = new UserSearcher();
+        $searcher
+            ->setWithAccounts()
+            ->setSortOrderProperty('account_sort', SearcherInterface::SORT_ORDER_ASC)
+        ;
+
+        $users = $this->userService->search($searcher)->getItems();
+
+        return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
     public function save(SaveRequest $request): JsonResponse
@@ -131,21 +157,11 @@ class UsersController extends Controller
             ->setPhone($request->getPhone())
             ->setRole($this->roleService->getById($request->getRoleId()))
             ->setAccount($this->accountService->getById($request->getAccountId()))
+            ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
+            ->setOwnershipDate($request->getOwnershipDate())
         ;
 
         $user = $this->userService->save($user);
-
-        $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId())
-            ?: $this->exDataService->makeDefault()->setType(ExDataTypeEnum::USER)->setReferenceId($user->getId());
-
-        $exData->setData($user->getExData()
-            ->setOwnershipDate($request->getOwnershipDate())
-            ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
-            ->jsonSerialize()
-        );
-
-        $this->exDataService->save($exData);
-
 
         return response()->json(new UserResource($user));
     }

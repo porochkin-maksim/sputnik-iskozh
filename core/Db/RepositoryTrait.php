@@ -31,7 +31,7 @@ trait RepositoryTrait
             else {
                 /** @var Model $model */
                 $model  = new $modelClass;
-                $result = $model::find($id);
+                $result = $this->getQuery($model::query())->find($id);
 
                 if ($result) {
                     CacheLocator::LocalCache()->set($cacheKey, $result);
@@ -51,8 +51,8 @@ trait RepositoryTrait
      * @param int[] $ids
      */
     public function getByIds(
-        array             $ids,
-        SearcherInterface $searcher = null,
+        array              $ids,
+        ?SearcherInterface $searcher = null,
     ): array
     {
         $result = [];

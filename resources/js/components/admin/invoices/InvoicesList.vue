@@ -31,7 +31,6 @@
                         <i v-if="sortField === 'updated_at'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th class="text-center"></th>
                 </tr>
             </thead>
             <tbody>
@@ -58,13 +57,6 @@
                         {{ invoice.advance ? $formatMoney(-invoice.advance) : $formatMoney(invoice.delta) }}
                     </td>
                     <td class="text-center">{{ invoice.updated }}</td>
-                    <td>
-                        <div class="d-flex justify-content-center">
-                            <history-btn
-                                class="btn-link btn-sm underline-none"
-                                :url="invoice.historyUrl" />
-                        </div>
-                    </td>
                 </tr>
             </template>
             </tbody>

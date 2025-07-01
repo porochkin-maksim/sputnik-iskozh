@@ -24,13 +24,27 @@
                     </button>
                 </div>
             </div>
+            <div class="ms-2">
+                <button class="btn btn-success"
+                        @click="exportAction">
+                    <i class="fa fa-file-excel-o"></i>
+                </button>
+            </div>
         </div>
         <div class="d-flex">
             <div>
                 <pagination :total="total"
                             :perPage="perPage"
+                            :page="Math.ceil(this.skip > 0 ? this.skip / this.perPage : 0) + 1"
                             :prop-classes="'pagination-sm mb-0'"
                             @update="onPaginationUpdate"
+                />
+            </div>
+            <div>
+                <simple-select v-model="perPage"
+                               :class="'d-inline-block form-select-sm w-auto ms-2'"
+                               :items="[15,25,50,100]"
+                               @change="listAction"
                 />
             </div>
             <div class=" d-flex align-items-center justify-content-center mx-2">
@@ -41,17 +55,42 @@
                 :url="historyUrl" />
         </div>
     </div>
-    <table class="table table-sm">
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-bordered">
         <thead>
         <tr class="text-start">
-            <th>№</th>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Почта</th>
+            <th class="cursor-pointer" @click="sort('id')">
+                №
+                <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
+            <th class="text-end cursor-pointer" @click="sort('account_sort')">
+                Участок
+                <i v-if="sortField === 'account_sort'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
+            <th class="cursor-pointer" @click="sort('last_name')">
+                Фамилия
+                <i v-if="sortField === 'last_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
+            <th class="cursor-pointer" @click="sort('first_name')">
+                Имя
+                <i v-if="sortField === 'first_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
+            <th class="cursor-pointer" @click="sort('middle_name')">
+                Отчество
+                <i v-if="sortField === 'middle_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
+            <th class="cursor-pointer" @click="sort('email')">
+                Почта
+                <i v-if="sortField === 'email'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                <i v-else class="fa fa-sort"></i>
+            </th>
             <th>Телефон</th>
-            <th class="text-center">Членство</th>
-            <th class="text-end">Участок</th>
+            <th>Членство</th>
         </tr>
         </thead>
         <tbody>
@@ -59,21 +98,22 @@
             <td>
                 <a :href="user.viewUrl">{{ user.id }}</a>
             </td>
-            <td>{{ user.lastName }}</td>
-            <td>{{ user.firstName }}</td>
-            <td>{{ user.middleName }}</td>
-            <td><span :data-copy="user.email" class="text-primary cursor-pointer">{{ user.email }}</span></td>
-            <td>{{ user.phone }}</td>
-            <td class="text-center">{{ user.ownershipDate ? 'Да' : 'Нет' }}</td>
             <td class="text-end">
                 <template v-if="user.account?.viewUrl">
                     <a :href="user.account.viewUrl">{{ user.accountName }}</a>
                 </template>
                 <template v-else>{{ user.accountName }}</template>
             </td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.middleName }}</td>
+            <td><span :data-copy="user.email" class="text-primary cursor-pointer">{{ user.email }}</span></td>
+            <td>{{ user.phone }}</td>
+            <td>{{ $formatDate(user.ownershipDate) }}</td>
         </tr>
         </tbody>
     </table>
+    </div>
 </template>
 
 <script>
@@ -118,12 +158,17 @@ export default {
 
             search        : null,
             searchProgress: null,
+
+            sortField: null,
+            sortOrder: null,
         };
     },
     created () {
         const urlParams = new URLSearchParams(window.location.search);
         this.perPage    = parseInt(urlParams.get('limit') ? urlParams.get('limit') : 25);
         this.skip       = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
+        this.sortField  = urlParams.get('sort_field') || 'account_sort';
+        this.sortOrder  = urlParams.get('sort_order') || 'asc';
 
         this.listAction();
     },
@@ -135,20 +180,24 @@ export default {
         },
         listAction () {
             this.search = null;
-            this.users  = [];
             let uri     = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, {
-                limit: this.perPage,
-                skip : this.skip,
+                limit     : this.perPage,
+                skip      : this.skip,
+                sort_field: this.sortField,
+                sort_order: this.sortOrder,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
             this.loading = true;
             window.axios[Url.Routes.adminUserList.method](Url.Routes.adminUserList.uri, {
                 params: {
-                    limit: this.perPage,
-                    skip : this.skip,
+                    limit     : this.perPage,
+                    skip      : this.skip,
+                    sort_field: this.sortField,
+                    sort_order: this.sortOrder,
                 },
             }).then(response => {
+                this.users      = [];
                 this.total      = response.data.total;
                 this.actions    = response.data.actions;
                 this.users      = response.data.users;
@@ -183,6 +232,19 @@ export default {
                 });
             }, 300);
             this.progress       = true;
+        },
+        exportAction () {
+            window.open(Url.Generator.makeUri(Url.Routes.adminUserExport), '_blank');
+        },
+        sort (field) {
+            if (this.sortField === field) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            }
+            else {
+                this.sortOrder = 'asc';
+            }
+            this.sortField = field;
+            this.listAction();
         },
     },
 };

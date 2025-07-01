@@ -8,23 +8,23 @@ use Core\Enums\DateTimeFormat;
 
 class UserComparator extends AbstractComparatorDTO
 {
-    public const  TITLE_EMAIL               = 'Почта';
-    public const  TITLE_PHONE               = 'Телефон';
-    public const  TITLE_FIRST_NAME          = 'Имя';
-    public const  TITLE_MIDDLE_NAME         = 'Отчество';
-    public const  TITLE_LAST_NAME           = 'Фамилия';
-    public const  TITLE_TELEGRAM_ID         = 'ID Телеграма';
-    public const  TITLE_ACCOUNT             = 'Участок';
-    public const  TITLE_ROLE                = 'Роль';
-    private const TITLE_OWNERSHIP_DATE      = 'Дата членства';
-    private const TITLE_OWNERSHIP_DUTY_INFO = 'Основание членства';
+    public const  string TITLE_EMAIL               = 'Почта';
+    public const  string TITLE_PHONE               = 'Телефон';
+    public const  string TITLE_FIRST_NAME          = 'Имя';
+    public const  string TITLE_MIDDLE_NAME         = 'Отчество';
+    public const  string TITLE_LAST_NAME           = 'Фамилия';
+    public const  string TITLE_TELEGRAM_ID         = 'ID Телеграма';
+    public const  string TITLE_ACCOUNT             = 'Участок';
+    public const  string TITLE_ROLE                = 'Роль';
+    private const string TITLE_OWNERSHIP_DATE      = 'Дата членства';
+    private const string TITLE_OWNERSHIP_DUTY_INFO = 'Основание членства';
 
-    private const KEY_ACCOUNT             = 'account';
-    private const KEY_ROLE                = 'role';
-    private const KEY_OWNERSHIP_DATE      = 'ownershipDate';
-    private const KEY_OWNERSHIP_DUTY_INFO = 'ownershipDutyInfo';
+    private const string KEY_ACCOUNT             = 'account';
+    private const string KEY_ROLE                = 'role';
+    private const string KEY_OWNERSHIP_DATE             = 'ownershipDate';
+    private const string KEY_OWNERSHIP_DUTY_INFO = 'ownershipDutyInfo';
 
-    protected const KEYS_TO_TITLES = [
+    protected const array KEYS_TO_TITLES = [
         User::EMAIL                   => self::TITLE_EMAIL,
         User::PHONE                   => self::TITLE_PHONE,
         User::FIRST_NAME              => self::TITLE_FIRST_NAME,
@@ -41,15 +41,14 @@ class UserComparator extends AbstractComparatorDTO
     {
         $account = $entity->getAccount(true);
         $role    = $entity->getRole(true);
-        $exData  = $entity->getExData();
 
         $this->initProperties($entity, $entity->getId());
 
         $this->addProperties([
             self::KEY_ACCOUNT             => $account?->getId(),
             self::KEY_ROLE                => $role?->getId(),
-            self::KEY_OWNERSHIP_DATE      => $exData->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            self::KEY_OWNERSHIP_DUTY_INFO => $exData->getOwnershipDutyInfo(),
+            self::KEY_OWNERSHIP_DATE      => $entity->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
+            self::KEY_OWNERSHIP_DUTY_INFO => $entity->getOwnershipDutyInfo(),
         ]);
 
         $this->expandedProperties = [
