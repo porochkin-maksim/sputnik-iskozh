@@ -1,5 +1,5 @@
 <template>
-    <button class="btn"
+    <button class="btn py-0"
             @click="open">
         <div :style="url ? '' : 'opacity: 0.2'">
             <i class="fa fa-file-text text-warning"></i>&nbsp;История

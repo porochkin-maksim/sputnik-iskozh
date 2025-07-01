@@ -2,6 +2,7 @@
 
 namespace Core\Domains\User\Factories;
 
+use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
@@ -90,6 +91,8 @@ readonly class UserFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at)
             ->setEmailVerifiedAt($model->email_verified_at)
+            ->setOwnershipDate($model->{UserInfo::OWNERSHIP_DATE})
+            ->setOwnershipDutyInfo($model->{UserInfo::OWNERSHIP_DUTY_INFO})
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {

@@ -24,6 +24,9 @@ class UserDTO
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
 
+    private ?string $ownershipDutyInfo = null;
+    private ?Carbon $ownershipDate = null;
+
     private ?AccountDTO    $account         = null;
     private ?RoleDTO       $role            = null;
     private ?Carbon        $emailVerifiedAt = null;
@@ -192,6 +195,30 @@ class UserDTO
     public function setExData(?UserExDataDTO $exData): static
     {
         $this->exData = $exData;
+
+        return $this;
+    }
+
+    public function getOwnershipDutyInfo(): ?string
+    {
+        return $this->ownershipDutyInfo;
+    }
+
+    public function setOwnershipDutyInfo(?string $ownershipDutyInfo): static
+    {
+        $this->ownershipDutyInfo = $ownershipDutyInfo;
+
+        return $this;
+    }
+
+    public function getOwnershipDate(): ?Carbon
+    {
+        return $this->ownershipDate;
+    }
+
+    public function setOwnershipDate(mixed $ownershipDate): static
+    {
+        $this->ownershipDate = DateTimeHelper::toCarbonOrNull($ownershipDate);
 
         return $this;
     }

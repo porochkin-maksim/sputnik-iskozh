@@ -3,10 +3,13 @@
 namespace App\Http\Requests\Admin\Invoices;
 
 use App\Http\Requests\DefaultRequest;
+use App\Http\Requests\SortFieldTrait;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 
 class ListRequest extends DefaultRequest
 {
+    use SortFieldTrait;
+
     public function rules(): array
     {
         return [
@@ -55,15 +58,5 @@ class ListRequest extends DefaultRequest
     public function getPayedStatus(): ?string
     {
         return $this->input('payed_status');
-    }
-
-    public function getSortField(): ?string
-    {
-        return $this->input('sort_field', 'id');
-    }
-
-    public function getSortOrder(): ?string
-    {
-        return $this->input('sort_order', 'desc');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Core\Domains\User\Services;
 
+use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -37,8 +38,20 @@ readonly class UserService
             $before = new UserDTO();
         }
 
-        $model   = $this->userRepository->save($this->userFactory->makeModelFromDto($user, $model));
-        $current = $this->userFactory->makeDtoFromObject($model);
+        $model = $this->userRepository->save($this->userFactory->makeModelFromDto($user, $model));
+
+        $userInfo = UserInfo::where(UserInfo::USER_ID, $user->getId())->first();
+        if ( ! $userInfo) {
+            $userInfo = new UserInfo([UserInfo::USER_ID => $model->id]);
+        }
+        $userInfo->ownership_date      = $user->getOwnershipDate();
+        $userInfo->ownership_duty_info = $user->getOwnershipDutyInfo();
+        $userInfo->save();
+
+        $current = $this->userFactory->makeDtoFromObject($model)
+            ->setOwnershipDate($user->getOwnershipDate())
+            ->setOwnershipDutyInfo($user->getOwnershipDutyInfo())
+        ;
 
         $model->roles()->sync($user->getRole()?->getId() ? [$user->getRole()?->getId()] : []);
         $model->accounts()->sync($user->getAccount()?->getId() ? [$user->getAccount()?->getId()] : []);

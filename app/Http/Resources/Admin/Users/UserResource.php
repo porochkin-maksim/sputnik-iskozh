@@ -6,6 +6,7 @@ use App\Http\Resources\Admin\Accounts\AccountResource;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\UserLocator;
 use Core\Enums\DateTimeFormat;
+use Core\Helpers\Phone\PhoneHelper;
 use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
@@ -28,23 +29,23 @@ readonly class UserResource extends AbstractResource
         $access = lc::roleDecorator();
 
         $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
-        $exData  = $this->user->getExData();
 
         $result = [
-            'id'          => $this->user->getId(),
-            'fullName'    => UserLocator::UserDecorator($this->user)->getFullName(),
-            'firstName'   => $this->user->getFirstName(),
-            'middleName'  => $this->user->getMiddleName(),
-            'lastName'    => $this->user->getLastName(),
-            'email'       => $this->user->getEmail(),
-            'phone'       => $this->user->getPhone(),
-            'roleId'      => (int) ($this->user->getRole()?->getId()),
-            'roleName'    => ($this->user->getRole()?->getName()),
-            'accountId'   => (int) ($this->user->getAccount()?->getId()),
-            'accountName' => ($this->user->getAccount()?->getNumber()),
+            'id'              => $this->user->getId(),
+            'fullName'        => UserLocator::UserDecorator($this->user)->getFullName(),
+            'firstName'       => $this->user->getFirstName(),
+            'middleName'      => $this->user->getMiddleName(),
+            'lastName'        => $this->user->getLastName(),
+            'email'           => $this->user->getEmail(),
+            'phone'           => $this->user->getPhone() ? PhoneHelper::normalizePhone($this->user->getPhone()) : null,
+            'roleId'          => (int) ($this->user->getRole()?->getId()),
+            'roleName'        => $this->user->getRole()?->getName(),
+            'accountId'       => (int) ($this->user->getAccount()?->getId()),
+            'accountName'     => $this->user->getAccount()?->getNumber(),
+            'emailVerifiedAt' => $this->user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
 
-            'ownershipDate'     => $exData->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'ownershipDutyInfo' => $exData->getOwnershipDutyInfo(),
+            'ownershipDate'     => $this->user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
+            'ownershipDutyInfo' => $this->user->getOwnershipDutyInfo(),
 
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),

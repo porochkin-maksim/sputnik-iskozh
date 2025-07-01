@@ -174,8 +174,8 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::group(['prefix' => 'users'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'users'])->name(RouteNames::ADMIN_USER_INDEX);
                     Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
+                    Route::get('/export', [Controllers\Admin\System\UsersController::class, 'export'])->name(RouteNames::ADMIN_USER_EXPORT);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::get('/create', [Controllers\Admin\System\UsersController::class, 'create'])->name(RouteNames::ADMIN_USER_CREATE);
                         Route::get('/search', [Controllers\Admin\System\UsersController::class, 'search'])->name(RouteNames::ADMIN_USER_SEARCH);
                         Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
                         Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
@@ -301,5 +301,5 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('reestr/read', [\App\Http\Controllers\Admin\ReestrController::class, 'read'])->name('reestr.read');
+    // Route::get('reestr/read', [\App\Http\Controllers\Admin\ReestrController::class, 'read'])->name('reestr.read');
 });

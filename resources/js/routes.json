@@ -511,13 +511,6 @@
         "uri": "\/admin\/queue\/stop",
         "args": []
     },
-    "adminReestrRead": {
-        "name": "admin.reestr.read",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/reestr\/read",
-        "args": []
-    },
     "adminRoleCreate": {
         "name": "admin.role.create",
         "displayName": "",
@@ -608,13 +601,6 @@
         "uri": "\/admin\/services\/json\/save",
         "args": []
     },
-    "adminUserCreate": {
-        "name": "admin.user.create",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/users\/json\/create",
-        "args": []
-    },
     "adminUserDelete": {
         "name": "admin.user.delete",
         "displayName": "",
@@ -623,6 +609,13 @@
         "args": {
             "id": "{id}"
         }
+    },
+    "adminUserExport": {
+        "name": "admin.user.export",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/export",
+        "args": []
     },
     "adminUserIndex": {
         "name": "admin.user.index",

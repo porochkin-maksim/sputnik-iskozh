@@ -39,22 +39,22 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    public const TABLE = 'users';
+    public const string TABLE = 'users';
 
-    public const ID                = 'id';
-    public const EMAIL             = 'email';
-    public const PHONE             = 'phone';
-    public const FIRST_NAME        = 'first_name';
-    public const MIDDLE_NAME       = 'middle_name';
-    public const LAST_NAME         = 'last_name';
-    public const PASSWORD          = 'password';
-    public const REMEMBER_TOKEN    = 'remember_token';
-    public const EMAIL_VERIFIED_AT = 'email_verified_at';
-    public const TELEGRAM_ID       = 'telegram_id';
+    public const string ID                = 'id';
+    public const string EMAIL             = 'email';
+    public const string PHONE             = 'phone';
+    public const string FIRST_NAME        = 'first_name';
+    public const string MIDDLE_NAME       = 'middle_name';
+    public const string LAST_NAME         = 'last_name';
+    public const string PASSWORD          = 'password';
+    public const string REMEMBER_TOKEN    = 'remember_token';
+    public const string EMAIL_VERIFIED_AT = 'email_verified_at';
+    public const string TELEGRAM_ID       = 'telegram_id';
 
-    public const ACCOUNTS = 'accounts';
-    public const ROLES    = 'roles';
-    public const EX_DATA  = 'exData';
+    public const string ACCOUNTS = 'accounts';
+    public const string ROLES    = 'roles';
+    public const string EX_DATA  = 'exData';
 
     protected $with = [
         self::EX_DATA,
