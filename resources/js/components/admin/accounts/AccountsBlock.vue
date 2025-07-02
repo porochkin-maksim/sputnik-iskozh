@@ -31,8 +31,16 @@
             <div>
                 <pagination :total="total"
                             :perPage="perPage"
+                            :page="Math.ceil(this.skip > 0 ? this.skip / this.perPage : 0) + 1"
                             :prop-classes="'pagination-sm mb-0'"
                             @update="onPaginationUpdate"
+                />
+            </div>
+            <div>
+                <simple-select v-model="perPage"
+                               :class="'d-inline-block form-select-sm w-auto ms-2'"
+                               :items="[15,25,50,100]"
+                               @change="listAction"
                 />
             </div>
             <div class=" d-flex align-items-center justify-content-center mx-2">
@@ -43,39 +51,52 @@
                 :url="historyUrl" />
         </div>
     </div>
-    <table class="table table-sm">
-        <thead>
-        <tr class="text-center">
-            <th>ID</th>
-            <th>Номер</th>
-            <th class="text-end">Площадь (м²)</th>
-            <th>Кадастр</th>
-            <th>Выставление счетов</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="account in accounts"
-            class="align-middle">
-            <td>
-                <a :href="account.viewUrl">
-                    {{ account.id }}
-                </a>
-            </td>
-            <td class="text-end">{{ account.number }}</td>
-            <td class="text-end">{{ account.size }}</td>
-            <td class="text-center">{{ account.cadastreNumber }}</td>
-            <td class="text-center">
-                <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
-            </td>
-            <td>
-                <history-btn :disabled="!account.historyUrl"
-                             class="btn-link underline-none"
-                             :url="account.historyUrl ? account.historyUrl : ''" />
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-bordered">
+            <thead>
+            <tr class="text-center">
+                <th class="cursor-pointer text-end" @click="sort('id')">
+                    №
+                    <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else class="fa fa-sort"></i>
+                </th>
+                <th class="cursor-pointer" @click="sort('sort_value')">
+                    Номер
+                    <i v-if="sortField === 'sort_value'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else class="fa fa-sort"></i>
+                </th>
+                <th class="cursor-pointer" @click="sort('size')">
+                    Площадь (м²)
+                    <i v-if="sortField === 'size'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else class="fa fa-sort"></i>
+                </th>
+                <th>Кадастр</th>
+                <th>Выставление счетов</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="account in accounts" class="align-middle">
+                <td class="text-end">
+                    <a :href="account.viewUrl">
+                        {{ account.id }}
+                    </a>
+                </td>
+                <td class="text-end">{{ account.number }}</td>
+                <td class="text-end">{{ account.size }}</td>
+                <td class="text-center">{{ account.cadastreNumber }}</td>
+                <td class="text-center">
+                    <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
+                </td>
+                <td>
+                    <history-btn :disabled="!account.historyUrl"
+                                 class="btn-link underline-none"
+                                 :url="account.historyUrl ? account.historyUrl : ''" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <account-item-add v-if="account"
                       :model-value="account"
                       @updated="onCreatedEvent" />
@@ -88,10 +109,11 @@ import HistoryBtn     from '../../common/HistoryBtn.vue';
 import SearchSelect   from '../../common/form/SearchSelect.vue';
 import Pagination     from '../../common/pagination/Pagination.vue';
 import AccountItemAdd from './AccountItemAdd.vue';
+import SimpleSelect   from '../../common/form/SimpleSelect.vue';
 
 export default {
     name      : 'AccountsBlock',
-    components: { AccountItemAdd, Pagination, SearchSelect, HistoryBtn },
+    components: { SimpleSelect, AccountItemAdd, Pagination, SearchSelect, HistoryBtn },
     mixins    : [
         ResponseError,
     ],
@@ -108,6 +130,9 @@ export default {
             skip      : 0,
             routeState: 0,
             search    : null,
+
+            sortField: null,
+            sortOrder: null,
         };
     },
     created () {
@@ -115,6 +140,8 @@ export default {
         this.perPage    = parseInt(urlParams.get('limit') ? urlParams.get('limit') : 25);
         this.skip       = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
         this.search     = urlParams.get('search') ? urlParams.get('search') : '';
+        this.sortField  = urlParams.get('sort_field') || 'sort_value';
+        this.sortOrder  = urlParams.get('sort_order') || 'asc';
 
         this.listAction();
     },
@@ -127,21 +154,25 @@ export default {
             });
         },
         listAction () {
-            this.accounts = [];
             let uri       = Url.Generator.makeUri(Url.Routes.adminAccountIndex, {}, {
-                limit : this.perPage,
-                skip  : this.skip,
-                search: this.search,
+                limit     : this.perPage,
+                skip      : this.skip,
+                search    : this.search,
+                sort_field: this.sortField,
+                sort_order: this.sortOrder,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
             window.axios[Url.Routes.adminAccountList.method](Url.Routes.adminAccountList.uri, {
                 params: {
-                    limit : this.perPage,
-                    skip  : this.skip,
-                    search: this.search,
+                    limit     : this.perPage,
+                    skip      : this.skip,
+                    search    : this.search,
+                    sort_field: this.sortField,
+                    sort_order: this.sortOrder,
                 },
             }).then(response => {
+                this.accounts = [];
                 this.actions     = response.data.actions;
                 this.allAccounts = response.data.allAccounts;
                 this.accounts    = response.data.accounts;
@@ -157,6 +188,16 @@ export default {
             this.listAction();
         },
         onCreatedEvent () {
+            this.listAction();
+        },
+        sort (field) {
+            if (this.sortField === field) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            }
+            else {
+                this.sortOrder = 'asc';
+            }
+            this.sortField = field;
             this.listAction();
         },
     },

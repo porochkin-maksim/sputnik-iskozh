@@ -55,11 +55,11 @@
                 :url="historyUrl" />
         </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive 1">
         <table class="table table-sm table-striped table-bordered">
         <thead>
         <tr class="text-start">
-            <th class="cursor-pointer" @click="sort('id')">
+            <th class="cursor-pointer text-end" @click="sort('id')">
                 №
                 <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                 <i v-else class="fa fa-sort"></i>
@@ -95,7 +95,7 @@
         </thead>
         <tbody>
         <tr v-for="(user) in users" class="text-start">
-            <td>
+            <td class="text-end">
                 <a :href="user.viewUrl">{{ user.id }}</a>
             </td>
             <td class="text-end">
