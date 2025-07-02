@@ -28,6 +28,10 @@ class SaveRequest extends AbstractRequest
                 'required',
                 'numeric',
             ],
+            self::DESCRIPTION    => [
+                'nullable',
+                'max:255',
+            ],
         ];
     }
 
