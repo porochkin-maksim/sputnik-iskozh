@@ -7,16 +7,19 @@ use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 use Core\Domains\Infra\ExData\Models\AbstractExData;
 use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
+use Core\Helpers\Phone\PhoneHelper;
 
 class UserExDataDTO extends AbstractExData
 {
-    private ?Carbon $ownershipDate;
-    private ?string $ownershipDutyInfo;
+    private ?string $phone;
+    private ?string $legalAddress;
+    private ?string $postAddress;
 
     public function __construct(array $data = [])
     {
-        $this->ownershipDate     = DateTimeHelper::toCarbonOrNull($data['ownershipDate'] ?? null);
-        $this->ownershipDutyInfo = $data['ownershipDutyInfo'] ?? null;
+        $this->phone        = $data['phone'] ?? null;
+        $this->legalAddress = $data['legalAddress'] ?? null;
+        $this->postAddress  = $data['postAddress'] ?? null;
     }
 
     public function getType(): ExDataTypeEnum
@@ -24,26 +27,38 @@ class UserExDataDTO extends AbstractExData
         return ExDataTypeEnum::USER;
     }
 
-    public function getOwnershipDate(): ?Carbon
+    public function getPhone(): ?string
     {
-        return $this->ownershipDate;
+        return $this->phone;
     }
 
-    public function setOwnershipDate(?Carbon $ownershipDate): static
+    public function setPhone(?string $phone): static
     {
-        $this->ownershipDate = $ownershipDate;
+        $this->phone = $phone;
 
         return $this;
     }
 
-    public function getOwnershipDutyInfo(): ?string
+    public function getLegalAddress(): ?string
     {
-        return $this->ownershipDutyInfo;
+        return $this->legalAddress;
     }
 
-    public function setOwnershipDutyInfo(?string $ownershipDutyInfo): static
+    public function setLegalAddress(?string $legalAddress): static
     {
-        $this->ownershipDutyInfo = $ownershipDutyInfo;
+        $this->legalAddress = $legalAddress;
+
+        return $this;
+    }
+
+    public function getPostAddress(): ?string
+    {
+        return $this->postAddress;
+    }
+
+    public function setPostAddress(?string $postAddress): static
+    {
+        $this->postAddress = $postAddress;
 
         return $this;
     }
@@ -51,8 +66,9 @@ class UserExDataDTO extends AbstractExData
     public function jsonSerialize(): array
     {
         return [
-            'ownershipDate'     => $this->ownershipDate?->format(DateTimeFormat::DATE_DEFAULT),
-            'ownershipDutyInfo' => $this->ownershipDutyInfo,
+            'phone'        => $this->phone,
+            'legalAddress' => $this->legalAddress,
+            'postAddress'  => $this->postAddress,
         ];
     }
 } 

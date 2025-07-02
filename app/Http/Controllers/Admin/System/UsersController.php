@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\System;
 
-use App\Exports\InvoicesExport\InvoicesExport;
 use App\Exports\UsersExport\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
@@ -13,7 +12,6 @@ use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
 use App\Models\Account\Account;
-use App\Models\Billing\Invoice;
 use App\Models\User;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
@@ -23,11 +21,14 @@ use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
+use Core\Domains\Infra\ExData\ExDataLocator;
+use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
+use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use lc;
@@ -39,6 +40,7 @@ class UsersController extends Controller
     private UserService    $userService;
     private AccountService $accountService;
     private RoleService    $roleService;
+    private ExDataService  $exDataService;
 
     public function __construct()
     {
@@ -46,6 +48,7 @@ class UsersController extends Controller
         $this->userService    = UserLocator::UserService();
         $this->accountService = AccountLocator::AccountService();
         $this->roleService    = RoleLocator::RoleService();
+        $this->exDataService  = ExDataLocator::ExDataService();
     }
 
     public function view(?int $id = null)
@@ -163,6 +166,18 @@ class UsersController extends Controller
 
         $user = $this->userService->save($user);
 
+        $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId())
+            ? : $this->exDataService->makeDefault(ExDataTypeEnum::USER)->setReferenceId($user->getId());
+
+        $exData->setData($user->getExData()
+            ->setPhone($request->getAddPhone())
+            ->setLegalAddress($request->getLegalAddress())
+            ->setPostAddress($request->getPostAddress())
+            ->jsonSerialize(),
+        );
+
+        $this->exDataService->save($exData);
+
         return response()->json(new UserResource($user));
     }
 
@@ -221,5 +236,14 @@ class UsersController extends Controller
         }
 
         UserLocator::Notificator()->sendInviteNotification($user);
+    }
+
+    public function generateEmail(DefaultRequest $request): ?string
+    {
+        $lastName   = $request->getStringOrNull(RequestArgumentsEnum::LAST_NAME);
+        $firstName  = $request->getStringOrNull(RequestArgumentsEnum::FIRST_NAME);
+        $middleName = $request->getStringOrNull(RequestArgumentsEnum::MIDDLE_NAME);
+
+        return Str::slug($lastName) . '.' . Str::slug($firstName) . '@' . Str::slug($middleName) . '.ru';
     }
 }

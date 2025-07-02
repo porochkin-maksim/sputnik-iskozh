@@ -60,11 +60,15 @@
                     <tr>
                         <th>Почта</th>
                         <td>
-                            <custom-input v-model="localUser.email"
-                                          v-if="localUser.actions.edit"
-                                          :required="true"
-                                          @change="clearError('email')"
-                            />
+                            <div class="input-group w-100" v-if="localUser.actions.edit">
+                                <input class="form-control"
+                                       v-model="localUser.email">
+                                <button class="btn btn-success"
+                                        v-if="canGenerateEmail"
+                                        @click="generateEmail">
+                                    <i class="fa fa-retweet"></i>
+                                </button>
+                            </div>
                             <span v-else>{{ localUser.email }}</span>
                         </td>
                     </tr>
@@ -80,7 +84,16 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Участок</th>
+                        <th>
+                            <template v-if="localUser.account?.viewUrl">
+                                <a :href="localUser.account?.viewUrl">
+                                    Участок {{ localUser.account?.number }}
+                                </a>
+                            </template>
+                            <template v-else>
+                                Участок
+                            </template>
+                        </th>
                         <td>
                             <search-select v-model="localUser.accountId"
                                            v-if="localUser.actions.edit"
@@ -126,6 +139,33 @@
                                           @change="clearError('phone')"
                             />
                             <span v-else>{{ localUser.ownershipDutyInfo }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Дополнительный телефон</th>
+                        <td>
+                            <custom-input v-model="localUser.addPhone"
+                                          v-if="localUser.actions.edit"
+                            />
+                            <span v-else>{{ localUser.addPhone }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Адрес по прописке</th>
+                        <td>
+                            <custom-input v-model="localUser.legalAddress"
+                                          v-if="localUser.actions.edit"
+                            />
+                            <span v-else>{{ localUser.legalAddress }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Адрес почтовый</th>
+                        <td>
+                            <custom-input v-model="localUser.postAddress"
+                                          v-if="localUser.actions.edit"
+                            />
+                            <span v-else>{{ localUser.postAddress }}</span>
                         </td>
                     </tr>
                     </tbody>
@@ -215,6 +255,9 @@ export default {
             form.append('phone', this.localUser.phone);
             form.append('ownershipDate', this.localUser.ownershipDate);
             form.append('ownershipDutyInfo', this.localUser.ownershipDutyInfo);
+            form.append('add_phone', this.localUser.addPhone);
+            form.append('legal_address', this.localUser.legalAddress);
+            form.append('post_address', this.localUser.postAddress);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminUserSave.method](
@@ -238,6 +281,24 @@ export default {
                     response.data.message
                     : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' пользователя';
                 this.showDanger(text);
+                this.parseResponseErrors(response);
+            });
+        },
+        generateEmail() {
+            let form     = new FormData();
+            form.append('id', this.localUser.id);
+            form.append('first_name', this.localUser.firstName);
+            form.append('last_name', this.localUser.lastName);
+            form.append('middle_name', this.localUser.middleName);
+
+            this.clearResponseErrors();
+            window.axios[Url.Routes.adminUserGenerateEmail.method](
+                Url.Routes.adminUserGenerateEmail.uri,
+                form,
+            ).then((response) => {
+                this.localUser.email = response.data;
+            }).catch(response => {
+                this.showDanger('Что-то пошло не так');
                 this.parseResponseErrors(response);
             });
         },
@@ -307,6 +368,11 @@ export default {
             return Url.Generator.makeUri(Url.Routes.adminUserView, {
                 id: null,
             });
+        },
+    },
+    computed: {
+        canGenerateEmail () {
+            return !this.localUser.id && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
         },
     },
 };

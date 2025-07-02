@@ -7,8 +7,12 @@ class PhoneHelper
     /**
      * Нормализует номер телефона из строки в формат 8(900)000-00-00
      */
-    public static function normalizePhone(string $string): ?string
+    public static function normalizePhone(?string $string): ?string
     {
+        if (null === $string) {
+            return null;
+        }
+
         // Удаляем все нецифровые символы
         $digits = preg_replace('/[^0-9]/', '', $string);
 
@@ -42,8 +46,12 @@ class PhoneHelper
     /**
      * Нормализует номер телефона в международном формате в формат +7(900)000-00-00
      */
-    public static function normalizeInternationalPhone(string $string): ?string
+    public static function normalizeInternationalPhone(?string $string): ?string
     {
+        if (null === $string) {
+            return null;
+        }
+
         // Удаляем все нецифровые символы
         $digits = preg_replace('/[^0-9]/', '', $string);
 
@@ -74,6 +82,10 @@ class PhoneHelper
      */
     public static function extractAndNormalizePhone(mixed $string): ?string
     {
+        if (!$string) {
+            return null;
+        }
+
         try {
             $string = (string) $string;
         }

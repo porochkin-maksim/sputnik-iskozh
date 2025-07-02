@@ -31,13 +31,26 @@
                             @click="prevMonth"
                             type="button">&lt;
                     </button>
-                    <span class="custom-calendar__month-name flex-grow-1 text-center">{{ monthYearLabel }}</span>
+                    <span class="custom-calendar__month-name flex-grow-1 text-center"
+                          style="cursor:pointer;"
+                          @click="toggleMonthYearSelect">
+                        {{ monthYearLabel }}
+                    </span>
                     <button class="btn btn-sm btn-outline-secondary px-2"
                             @click="nextMonth"
                             type="button">&gt;
                     </button>
                 </div>
-                <table class="table table-bordered table-sm mb-0 text-center align-middle">
+                <div v-if="isMonthYearSelectOpen" class="custom-calendar__month-year-select mb-2 d-flex justify-content-center align-items-center gap-2">
+                    <select v-model.number="tempYear" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
+                        <option v-for="year in yearsRange" :key="year" :value="year">{{ year }}</option>
+                    </select>
+                    <select v-model.number="tempMonth" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
+                        <option v-for="(m, idx) in months" :key="m" :value="idx">{{ m }}</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary ms-2" @click="applyMonthYear">OK</button>
+                </div>
+                <table v-if="!isMonthYearSelectOpen" class="table table-bordered table-sm mb-0 text-center align-middle">
                     <thead>
                     <tr>
                         <th v-for="d in weekdays"
@@ -97,6 +110,9 @@ export default {
         const today = new Date();
         return {
             isOpen      : false,
+            isMonthYearSelectOpen: false,
+            tempMonth: today.getMonth(),
+            tempYear: today.getFullYear(),
             selected    : null,
             currentMonth: today.getMonth(),
             currentYear : today.getFullYear(),
@@ -111,6 +127,14 @@ export default {
     computed: {
         monthYearLabel () {
             return `${this.months[this.currentMonth]} ${this.currentYear}`;
+        },
+        yearsRange() {
+            const current = new Date().getFullYear();
+            const min = current - 100;
+            const max = current + 10;
+            const years = [];
+            for (let y = min; y <= max; y++) years.push(y);
+            return years;
         },
         // weeks — массив недель, каждая неделя — массив из 7 объектов (день месяца или пусто)
         weeks () {
@@ -169,6 +193,20 @@ export default {
                 return;
             }
             this.isOpen = !this.isOpen;
+            if (!this.isOpen) this.isMonthYearSelectOpen = false;
+        },
+        toggleMonthYearSelect() {
+            this.isMonthYearSelectOpen = !this.isMonthYearSelectOpen;
+            this.tempMonth = this.currentMonth;
+            this.tempYear = this.currentYear;
+        },
+        onMonthYearChange() {
+            // ничего не делаем, только обновляем tempMonth/tempYear
+        },
+        applyMonthYear() {
+            this.currentMonth = this.tempMonth;
+            this.currentYear = this.tempYear;
+            this.isMonthYearSelectOpen = false;
         },
         prevMonth () {
             if (this.currentMonth === 0) {
@@ -212,6 +250,7 @@ export default {
         handleClickOutside (event) {
             if (!this.$refs.calendarRoot.contains(event.target)) {
                 this.isOpen = false;
+                this.isMonthYearSelectOpen = false;
             }
         },
         setCalendarToDate(val) {

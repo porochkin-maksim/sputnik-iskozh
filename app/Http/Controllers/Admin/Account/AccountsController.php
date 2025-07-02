@@ -147,7 +147,7 @@ class AccountsController extends Controller
         $account = $this->accountService->save($account);
 
         $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::ACCOUNT, $account->getId())
-            ? : $this->exDataService->makeDefault()->setType(ExDataTypeEnum::ACCOUNT)->setReferenceId($account->getId());
+            ? : $this->exDataService->makeDefault(ExDataTypeEnum::ACCOUNT)->setReferenceId($account->getId());
 
         $exData->setData($account->getExData()
             ->setCadastreNumber($request->getCadastreNumber())

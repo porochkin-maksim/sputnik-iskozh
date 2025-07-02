@@ -617,6 +617,13 @@
         "uri": "\/admin\/users\/export",
         "args": []
     },
+    "adminUserGenerateEmail": {
+        "name": "admin.user.generate-email",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/generate-email",
+        "args": []
+    },
     "adminUserIndex": {
         "name": "admin.user.index",
         "displayName": "\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
