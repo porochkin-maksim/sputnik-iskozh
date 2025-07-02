@@ -45,7 +45,7 @@
                     </div>
                 </template>
 
-                <a class="btn btn-success btn-sm mx-2" :href="file.url" :download="file.name">
+                <a class="btn btn-success btn-sm me-2" :href="file.url" :download="file.name">
                     <i class="fa fa-download"></i>
                 </a>
 

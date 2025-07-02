@@ -10,21 +10,19 @@
     </div>
     <div :style="[articleStyle]"
          class="position-relative">
-        <div class="custom-item news-item w-100"
-             :ref="(el) => (newsElementRef = el)">
+        <div class="custom-item news-item w-100" :ref="(el) => (newsElementRef = el)">
             <div class="title">
-                <div class="date">{{ news.dossier.publishedAt }}</div>
-                <a class="name"
-                   :href="news.url">
+                <a class="name" :href="news.url">
                     <template v-if="news.isLock">
                         <i class="fa fa-bolt text-warning"></i>&nbsp;
                     </template>
                     {{ news.title ? news.title : 'Без названия' }}
                 </a>
+                <div class="date">{{ news.dossier.publishedAt }}</div>
             </div>
 
             <div class="body">
-                <div class="news-slider py-2" v-if="images && images.length">
+                <div class="news-slider py-2" v-if="images && images.length && !showExpand">
                     <bs-slider :images="images"
                                :id="sliderId"/>
                 </div>
@@ -35,8 +33,8 @@
             </div>
 
             <div class="footer">
-                <div v-if="news.files.length"
-                     class="mt-2">
+                <div v-if="news.files.length" class="mt-2">
+                    <div class="fw-bold mb-2">Приложения:</div>
                     <template v-for="(file, index) in news.files">
                         <file-item v-if="!file.isImage || edit"
                                    :file="file"
