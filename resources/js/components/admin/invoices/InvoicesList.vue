@@ -2,31 +2,31 @@
     <div class="table-responsive">
         <table class="table table-sm table-striped table-bordered" v-if="invoices && invoices.length">
             <thead>
-                <tr>
-                    <th class="text-center cursor-pointer" @click="sort('id')">
+                <tr class="text-center">
+                    <th class="text-end cursor-pointer" @click="sort('id')">
                         №
                         <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th class="text-center">Тип</th>
-                    <th class="text-center">Период</th>
-                    <th class="text-center cursor-pointer" @click="sort('account_sort')">
+                    <th>Тип</th>
+                    <th>Период</th>
+                    <th class="cursor-pointer" @click="sort('account_sort')">
                         Участок
                         <i v-if="sortField === 'account_sort'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th class="text-center cursor-pointer" @click="sort('cost')">
+                    <th class="cursor-pointer" @click="sort('cost')">
                         Стоимость
                         <i v-if="sortField === 'cost'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th class="text-center cursor-pointer" @click="sort('payed')">
+                    <th class="cursor-pointer" @click="sort('payed')">
                         Оплачено
                         <i v-if="sortField === 'payed'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th class="text-center">Долг</th>
-                    <th class="text-center cursor-pointer" @click="sort('updated_at')">
+                    <th>Долг</th>
+                    <th class="cursor-pointer" @click="sort('updated_at')">
                         Обновлён
                         <i v-if="sortField === 'updated_at'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
@@ -35,14 +35,14 @@
             </thead>
             <tbody>
             <template v-for="(invoice) in invoices">
-                <tr class="align-middle" :class="[invoice.isPayed ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
+                <tr class="text-center align-middle" :class="[invoice.isPayed ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
                     <td class="text-end">
                         <a :href="invoice.viewUrl">
                             {{ invoice.id }}
                         </a>
                     </td>
-                    <td class="text-center">{{ invoice.typeName }}</td>
-                    <td class="text-center">{{ invoice.periodName }}</td>
+                    <td>{{ invoice.typeName }}</td>
+                    <td>{{ invoice.periodName }}</td>
                     <td class="text-end">
                         <template v-if="invoice.accountUrl">
                             <a :href="invoice.accountUrl">{{ invoice.accountNumber }}</a>
@@ -56,7 +56,7 @@
                     <td class="text-end" :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
                         {{ invoice.advance ? $formatMoney(-invoice.advance) : $formatMoney(invoice.delta) }}
                     </td>
-                    <td class="text-center">{{ invoice.updated }}</td>
+                    <td>{{ invoice.updated }}</td>
                 </tr>
             </template>
             </tbody>
