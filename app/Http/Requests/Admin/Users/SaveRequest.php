@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin\Users;
 use App\Http\Requests\AbstractRequest;
 use App\Models\User;
 use Carbon\Carbon;
+use Core\Helpers\Phone\PhoneHelper;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
@@ -94,8 +95,18 @@ class SaveRequest extends AbstractRequest
         return $this->getStringOrNull('ownershipDutyInfo');
     }
 
-    public function getIsMember(): bool
+    public function getAddPhone(): ?string
     {
-        return $this->getBool(self::IS_MEMBER);
+        return PhoneHelper::normalizePhone($this->getStringOrNull('add_phone'));
+    }
+
+    public function getLegalAddress(): ?string
+    {
+        return $this->getStringOrNull('legal_address');
+    }
+
+    public function getPostAddress(): ?string
+    {
+        return $this->getStringOrNull('post_address') ?: $this->getLegalAddress();
     }
 }

@@ -106,13 +106,14 @@ abstract class RouteNames
     public const ADMIN_ROLE_LIST   = 'admin.role.list';
     public const ADMIN_ROLE_DELETE = 'admin.role.delete';
 
-    public const ADMIN_USER_INDEX  = 'admin.user.index';
-    public const ADMIN_USER_VIEW   = 'admin.user.view';
-    public const ADMIN_USER_SEARCH = 'admin.user.search';
-    public const ADMIN_USER_SAVE   = 'admin.user.save';
-    public const ADMIN_USER_LIST   = 'admin.user.list';
-    public const ADMIN_USER_DELETE = 'admin.user.delete';
-    public const ADMIN_USER_EXPORT = 'admin.user.export';
+    public const string ADMIN_USER_INDEX          = 'admin.user.index';
+    public const string ADMIN_USER_VIEW           = 'admin.user.view';
+    public const string ADMIN_USER_SEARCH         = 'admin.user.search';
+    public const string ADMIN_USER_SAVE           = 'admin.user.save';
+    public const string ADMIN_USER_GENERATE_EMAIL = 'admin.user.generate-email';
+    public const string ADMIN_USER_LIST           = 'admin.user.list';
+    public const string ADMIN_USER_DELETE         = 'admin.user.delete';
+    public const string ADMIN_USER_EXPORT         = 'admin.user.export';
 
     public const ADMIN_OPTIONS_INDEX = 'admin.options.index';
     public const ADMIN_OPTIONS_LIST  = 'admin.options.list';

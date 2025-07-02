@@ -8,15 +8,14 @@ use Core\Domains\Infra\ExData\Models\ExDataDTO;
 
 class ExDataFactory
 {
-    public function makeDefault(): ExDataDTO
+    public function makeDefault(ExDataTypeEnum $type): ExDataDTO
     {
-        return new ExDataDTO();
+        return new ExDataDTO()->setType($type);
     }
 
     public function makeByType(ExDataTypeEnum $type, int $referenceId): ExDataDTO
     {
-        return $this->makeDefault()
-            ->setType($type)
+        return $this->makeDefault($type)
             ->setReferenceId($referenceId);
     }
 
@@ -38,12 +37,10 @@ class ExDataFactory
 
     public function makeDtoFromObject(ExData $model): ExDataDTO
     {
-        $result = $this->makeDefault();
-        $type = ExDataTypeEnum::tryFrom($model->type);
+        $result = $this->makeDefault(ExDataTypeEnum::tryFrom($model->type));
 
         $result
             ->setId($model->id)
-            ->setType($type)
             ->setReferenceId($model->reference_id)
             ->setData($model->data)
             ->setCreatedAt($model->created_at)

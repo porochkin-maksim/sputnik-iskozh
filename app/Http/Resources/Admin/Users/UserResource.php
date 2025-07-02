@@ -29,6 +29,7 @@ readonly class UserResource extends AbstractResource
         $access = lc::roleDecorator();
 
         $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
+        $exData  = $this->user->getExData();
 
         $result = [
             'id'              => $this->user->getId(),
@@ -46,6 +47,10 @@ readonly class UserResource extends AbstractResource
 
             'ownershipDate'     => $this->user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'ownershipDutyInfo' => $this->user->getOwnershipDutyInfo(),
+
+            'addPhone'     => $exData->getPhone(),
+            'legalAddress' => $exData->getLegalAddress(),
+            'postAddress'  => $exData->getPostAddress(),
 
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),

@@ -46,8 +46,8 @@ readonly class ExDataService
         $this->repository->deleteById($dto->getId());
     }
 
-    public function makeDefault(): ExDataDTO
+    public function makeDefault(ExDataTypeEnum $type): ExDataDTO
     {
-        return $this->factory->makeDefault();
+        return $this->factory->makeDefault($type);
     }
 } 
