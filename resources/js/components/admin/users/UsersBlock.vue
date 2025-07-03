@@ -169,8 +169,12 @@ export default {
         this.skip       = parseInt(urlParams.get('skip') ? urlParams.get('skip') : 0);
         this.sortField  = urlParams.get('sort_field') || 'account_sort';
         this.sortOrder  = urlParams.get('sort_order') || 'asc';
+        this.search     = urlParams.get('search') || '';
 
         this.listAction();
+        if (this.search) {
+            this.searchAction();
+        }
     },
     methods: {
         getViewLink (id) {
@@ -179,12 +183,12 @@ export default {
             });
         },
         listAction () {
-            this.search = null;
-            let uri     = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, {
+            let uri = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, {
                 limit     : this.perPage,
                 skip      : this.skip,
                 sort_field: this.sortField,
                 sort_order: this.sortOrder,
+                search    : this.search || null,
             });
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
@@ -195,6 +199,7 @@ export default {
                     skip      : this.skip,
                     sort_field: this.sortField,
                     sort_order: this.sortOrder,
+                    search    : this.search,
                 },
             }).then(response => {
                 this.users      = [];
@@ -218,18 +223,7 @@ export default {
             }
             clearTimeout(this.searchProgress);
             this.searchProgress = setTimeout(() => {
-                window.axios[Url.Routes.adminUserSearch.method](Url.Routes.adminUserSearch.uri, {
-                    params: {
-                        q: this.search,
-                    },
-                }).then(response => {
-                    this.total = response.data.total;
-                    this.users = response.data.users;
-                }).catch(response => {
-                    this.parseResponseErrors(response);
-                }).finally(() => {
-                    this.searchProgress = null;
-                });
+                this.listAction();
             }, 300);
             this.progress       = true;
         },

@@ -5,6 +5,7 @@
         :required="required"
         :disabled="disabled"
         :help="help"
+        :classes="'w-100'"
     >
         <div class="custom-calendar"
              ref="calendarRoot">
@@ -264,7 +265,14 @@ export default {
             this.currentYear = date.getFullYear();
         },
         onInput(e) {
-            this.inputValue = e.target.value;
+            let val = e.target.value.replace(/[^\d]/g, '');
+            if (val.length > 8) val = val.slice(0, 8);
+            if (val.length > 4) {
+                val = val.slice(0,2) + '.' + val.slice(2,4) + '.' + val.slice(4);
+            } else if (val.length > 2) {
+                val = val.slice(0,2) + '.' + val.slice(2);
+            }
+            this.inputValue = val;
         },
         onBlur() {
             const val = this.inputValue.trim();

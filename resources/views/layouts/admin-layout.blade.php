@@ -91,7 +91,7 @@ $cutRouteNameFn = static function (string $routeName) {
 
                 @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
                 <a class="@if(Route::is('admin.account.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
-                    <i class="fa fa-building me-2"></i>
+                    <i class="fa fa-home me-2"></i>
                     <span>{{ RouteNames::name(RouteNames::ADMIN_ACCOUNT_INDEX) }}</span>
                 </a>
                 @endif
@@ -128,6 +128,7 @@ $cutRouteNameFn = static function (string $routeName) {
                 <a class="@if(Route::is('admin.new-payment.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
                     <i class="fa fa-credit-card me-2"></i>
                     <span>{{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}</span>
+                    <span id="new-payments-count"></span>
                 </a>
                 @endif
 
@@ -147,6 +148,7 @@ $cutRouteNameFn = static function (string $routeName) {
             </div>
         </div>
         <div class="col-10">
+            <top-panel-block></top-panel-block>
             @yield(SectionNames::CONTENT)
         </div>
     </div>
