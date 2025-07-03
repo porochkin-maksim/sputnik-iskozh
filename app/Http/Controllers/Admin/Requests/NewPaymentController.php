@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Requests;
 
@@ -20,7 +20,6 @@ use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Payment\Services\PaymentService;
@@ -32,7 +31,6 @@ use lc;
 
 class NewPaymentController
 {
-    private PaymentFactory $paymentFactory;
     private PaymentService $paymentService;
     private InvoiceService $invoiceService;
     private AccountService $accountService;
@@ -41,7 +39,6 @@ class NewPaymentController
     public function __construct()
     {
         $this->paymentService = PaymentLocator::PaymentService();
-        $this->paymentFactory = PaymentLocator::PaymentFactory();
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->accountService = AccountLocator::AccountService();
         $this->periodService  = PeriodLocator::PeriodService();

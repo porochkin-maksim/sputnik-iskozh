@@ -601,6 +601,20 @@
         "uri": "\/admin\/services\/json\/save",
         "args": []
     },
+    "adminTopPanelIndex": {
+        "name": "admin.top-panel.index",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/top-panel",
+        "args": []
+    },
+    "adminTopPanelSearch": {
+        "name": "admin.top-panel.search",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/json\/top-panel",
+        "args": []
+    },
     "adminUserDelete": {
         "name": "admin.user.delete",
         "displayName": "",
@@ -643,13 +657,6 @@
         "displayName": "",
         "method": "post",
         "uri": "\/admin\/users\/json\/save",
-        "args": []
-    },
-    "adminUserSearch": {
-        "name": "admin.user.search",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/users\/json\/search",
         "args": []
     },
     "adminUserSendInviteWithPassword": {

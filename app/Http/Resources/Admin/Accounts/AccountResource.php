@@ -53,8 +53,13 @@ readonly class AccountResource extends AbstractResource
                     type     : HistoryType::ACCOUNT,
                     primaryId: $this->account->getId(),
                 ) : null,
-            'viewUrl'    => $this->account->getId() ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->account->getId()]) : null,
+            'viewUrl'    => $this->getViewUrl(),
             'users'      => $this->account->getUsers() ? array_map(static fn($user) => new UserResource($user), $this->account->getUsers()->toArray()) : [],
         ];
+    }
+
+    public function getViewUrl(): ?string
+    {
+        return $this->account->getId() ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->account->getId()]) : null;
     }
 }

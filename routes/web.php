@@ -160,6 +160,10 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::get('/accounts', [Controllers\Admin\SelectCollectionsController::class, 'accounts'])->name(RouteNames::ADMIN_SELECTS_ACCOUNTS);
                         Route::get('/counters/{accountId?}', [Controllers\Admin\SelectCollectionsController::class, 'counters'])->name(RouteNames::ADMIN_SELECTS_COUNTERS);
                     });
+                    Route::group(['prefix' => 'top-panel'], static function () {
+                        Route::get('/', [Controllers\Admin\TopPanelController::class, 'index'])->name(RouteNames::ADMIN_TOP_PANEL_INDEX);
+                        Route::post('/', [Controllers\Admin\TopPanelController::class, 'search'])->name(RouteNames::ADMIN_TOP_PANEL_SEARCH);
+                    });
                 });
                 Route::get('/', [Controllers\Admin\PagesController::class, 'index'])->name(RouteNames::ADMIN);
                 Route::group(['prefix' => 'roles'], static function () {
@@ -176,7 +180,6 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
                     Route::get('/export', [Controllers\Admin\System\UsersController::class, 'export'])->name(RouteNames::ADMIN_USER_EXPORT);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::get('/search', [Controllers\Admin\System\UsersController::class, 'search'])->name(RouteNames::ADMIN_USER_SEARCH);
                         Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
                         Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
                         Route::post('/generate-email', [Controllers\Admin\System\UsersController::class, 'generateEmail'])->name(RouteNames::ADMIN_USER_GENERATE_EMAIL);
