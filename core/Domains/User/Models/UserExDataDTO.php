@@ -14,12 +14,14 @@ class UserExDataDTO extends AbstractExData
     private ?string $phone;
     private ?string $legalAddress;
     private ?string $postAddress;
+    private ?string $additional;
 
     public function __construct(array $data = [])
     {
         $this->phone        = $data['phone'] ?? null;
         $this->legalAddress = $data['legalAddress'] ?? null;
         $this->postAddress  = $data['postAddress'] ?? null;
+        $this->additional   = $data['additional'] ?? null;
     }
 
     public function getType(): ExDataTypeEnum
@@ -63,12 +65,25 @@ class UserExDataDTO extends AbstractExData
         return $this;
     }
 
+    public function getAdditional(): ?string
+    {
+        return $this->additional;
+    }
+
+    public function setAdditional(?string $additional): static
+    {
+        $this->additional = $additional;
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'phone'        => $this->phone,
             'legalAddress' => $this->legalAddress,
             'postAddress'  => $this->postAddress,
+            'additional'   => $this->additional,
         ];
     }
 } 

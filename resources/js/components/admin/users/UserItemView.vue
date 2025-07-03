@@ -168,6 +168,16 @@
                             <span v-else>{{ localUser.postAddress }}</span>
                         </td>
                     </tr>
+                    <tr>
+                        <th>Примечание</th>
+                        <td>
+                            <custom-textarea v-model="localUser.additional"
+                                             :height="100"
+                                          v-if="localUser.actions.edit"
+                            />
+                            <span v-else>{{ localUser.additional }}</span>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -197,10 +207,12 @@ import CustomInput   from '../../common/form/CustomInput.vue';
 import Pagination    from '../../common/pagination/Pagination.vue';
 import SearchSelect  from '../../common/form/SearchSelect.vue';
 import CustomCalendar from '../../common/form/CustomCalendar.vue';
+import CustomTextarea from '../../common/form/CustomTextarea.vue';
 
 export default {
     name      : 'UserItemView',
     components: {
+        CustomTextarea,
         CustomCalendar,
         SearchSelect,
         Pagination,
@@ -258,6 +270,7 @@ export default {
             form.append('add_phone', this.localUser.addPhone);
             form.append('legal_address', this.localUser.legalAddress);
             form.append('post_address', this.localUser.postAddress);
+            form.append('additional', this.localUser.additional);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminUserSave.method](

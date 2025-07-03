@@ -182,6 +182,7 @@ class UsersController extends Controller
             ->setPhone($request->getAddPhone())
             ->setLegalAddress($request->getLegalAddress())
             ->setPostAddress($request->getPostAddress())
+            ->setAdditional($request->getAdditional())
             ->jsonSerialize(),
         );
 
