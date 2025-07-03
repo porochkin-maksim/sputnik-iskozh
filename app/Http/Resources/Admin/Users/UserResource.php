@@ -51,6 +51,7 @@ readonly class UserResource extends AbstractResource
             'addPhone'     => $exData->getPhone(),
             'legalAddress' => $exData->getLegalAddress(),
             'postAddress'  => $exData->getPostAddress(),
+            'additional'   => $exData->getAdditional(),
 
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),

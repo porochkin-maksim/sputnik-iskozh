@@ -109,4 +109,9 @@ class SaveRequest extends AbstractRequest
     {
         return $this->getStringOrNull('post_address') ?: $this->getLegalAddress();
     }
+
+    public function getAdditional(): ?string
+    {
+        return $this->getStringOrNull('additional');
+    }
 }
