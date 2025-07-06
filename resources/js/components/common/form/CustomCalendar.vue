@@ -7,7 +7,7 @@
         :help="help"
         :classes="'w-100'"
     >
-        <div class="custom-calendar"
+        <div class="custom-calendar w-100"
              ref="calendarRoot">
             <div class="custom-calendar__input d-flex align-items-center position-relative">
                 <input
