@@ -110,7 +110,7 @@ class InvoiceController extends Controller
         $periods = $this->periodService->search($periodSearcher)->getItems();
 
         $accountSearcher = new AccountSearcher();
-        $accountSearcher->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+        $accountSearcher->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC);
         $accounts = $this->accountService->search($accountSearcher)->getItems();
 
         $result = new InvoicesListResource(

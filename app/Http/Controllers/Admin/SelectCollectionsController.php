@@ -19,7 +19,7 @@ class SelectCollectionsController extends Controller
     public function accounts(): JsonResponse
     {
         $searcher = new AccountSearcher();
-        $searcher->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC);
+        $searcher->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC);
         $items = AccountLocator::AccountService()->search($searcher);
 
         return response()->json(new AccountsSelectResource(

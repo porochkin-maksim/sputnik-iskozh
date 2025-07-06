@@ -79,7 +79,7 @@ class UsersController extends Controller
         $accountSearcher = new AccountSearcher();
         $accountSearcher
             ->setWithoutSntAccount()
-            ->setSortOrderProperty(Account::NUMBER, SearcherInterface::SORT_ORDER_ASC)
+            ->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC)
         ;
         $accountsCollection = $this->accountService->search($accountSearcher);
 
