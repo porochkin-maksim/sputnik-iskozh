@@ -4,7 +4,10 @@
             <button class="btn btn-success me-2"
                     v-if="actions.edit"
                     @click="saveAction"
-            >{{ localUser.id ? 'Сохранить' : 'Создать' }}
+                    :disabled="loading"
+            >
+                <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ localUser.id ? 'Сохранить' : 'Создать' }}
             </button>
             <a class="btn btn-outline-primary me-2"
                v-if="actions.edit && localUser.id"
@@ -29,7 +32,7 @@
                         <td>
                             <custom-input v-model="localUser.lastName"
                                           v-if="localUser.actions.edit"
-                                          :required="true"
+                                          :disabled="loading"                                          
                                           @change="clearError('lastName')"
                             />
                             <span v-else>{{ localUser.lastName }}</span>
@@ -40,7 +43,7 @@
                         <td>
                             <custom-input v-model="localUser.firstName"
                                           v-if="localUser.actions.edit"
-                                          :required="true"
+                                          :disabled="loading"
                                           @change="clearError('firstName')"
                             />
                             <span v-else>{{ localUser.firstName }}</span>
@@ -51,7 +54,7 @@
                         <td>
                             <custom-input v-model="localUser.middleName"
                                           v-if="localUser.actions.edit"
-                                          :required="true"
+                                          :disabled="loading"
                                           @change="clearError('middleName')"
                             />
                             <span v-else>{{ localUser.middleName }}</span>
@@ -62,10 +65,12 @@
                         <td>
                             <div class="input-group w-100" v-if="localUser.actions.edit">
                                 <input class="form-control"
-                                       v-model="localUser.email">
+                                       v-model="localUser.email"
+                                       :disabled="loading">
                                 <button class="btn btn-success"
                                         v-if="canGenerateEmail"
-                                        @click="generateEmail">
+                                        @click="generateEmail"
+                                        :disabled="loading">
                                     <i class="fa fa-retweet"></i>
                                 </button>
                             </div>
@@ -77,7 +82,7 @@
                         <td>
                             <custom-input v-model="localUser.phone"
                                           v-if="localUser.actions.edit"
-                                          :required="true"
+                                          :disabled="loading"
                                           @change="clearError('phone')"
                             />
                             <span v-else>{{ localUser.phone }}</span>
@@ -109,6 +114,7 @@
                         <td>
                             <search-select v-model="localUser.roleId"
                                            v-if="localUser.actions.edit"
+                                           :disabled="loading"
                                            :prop-class="'form-control'"
                                            :items="roles"
                                            :placeholder="'Роль'"
@@ -124,7 +130,7 @@
                         <td>
                             <custom-calendar v-model="localUser.ownershipDate"
                                              v-if="localUser.actions.edit"
-                                             :required="true"
+                                             :disabled="loading"
                                              @change="clearError('ownershipDate')"
                             />
                             <span v-else>{{ $formatDate(localUser.ownershipDate) }}</span>
@@ -135,7 +141,7 @@
                         <td>
                             <custom-input v-model="localUser.ownershipDutyInfo"
                                           v-if="localUser.actions.edit"
-                                          :required="true"
+                                          :disabled="loading"
                                           @change="clearError('phone')"
                             />
                             <span v-else>{{ localUser.ownershipDutyInfo }}</span>
@@ -146,6 +152,7 @@
                         <td>
                             <custom-input v-model="localUser.addPhone"
                                           v-if="localUser.actions.edit"
+                                          :disabled="loading"
                             />
                             <span v-else>{{ localUser.addPhone }}</span>
                         </td>
@@ -155,6 +162,7 @@
                         <td>
                             <custom-input v-model="localUser.legalAddress"
                                           v-if="localUser.actions.edit"
+                                          :disabled="loading"
                             />
                             <span v-else>{{ localUser.legalAddress }}</span>
                         </td>
@@ -164,6 +172,7 @@
                         <td>
                             <custom-input v-model="localUser.postAddress"
                                           v-if="localUser.actions.edit"
+                                          :disabled="loading"
                             />
                             <span v-else>{{ localUser.postAddress }}</span>
                         </td>
@@ -172,8 +181,9 @@
                         <th>Примечание</th>
                         <td>
                             <custom-textarea v-model="localUser.additional"
+                                             v-if="localUser.actions.edit"
                                              :height="100"
-                                          v-if="localUser.actions.edit"
+                                             :disabled="loading"
                             />
                             <span v-else>{{ localUser.additional }}</span>
                         </td>
@@ -247,6 +257,7 @@ export default {
             actions   : this.user.actions,
             historyUrl: this.user.historyUrl,
 
+            loading   : null,
             routeState: 0,
         };
     },
@@ -280,8 +291,7 @@ export default {
                 let text = this.localUser.id ? 'Пользователь обновлён' : 'Пользователь ' + response.data.id + ' создан';
                 this.showInfo(text);
 
-                this.localUser.id   = response.data.id;
-                this.localUser.name = response.data.name;
+                this.localUser = response.data;
 
                 let uri = Url.Generator.makeUri(Url.Routes.adminUserView, {
                     id: this.localUser.id,
@@ -295,6 +305,8 @@ export default {
                     : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' пользователя';
                 this.showDanger(text);
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loading = false;
             });
         },
         generateEmail() {
