@@ -66,6 +66,7 @@ $cutRouteNameFn = static function (string $routeName) {
         </div>
     </div>
 </nav>
+@if(!App::isProduction()) <div style="background-color: red;height:5px;z-index:99999;" class="position-absolute w-100 top-0 left-0"></div> @endif
 <main class="px-3 py-2 w-100">
     <div class="row admin-content-body">
         <div class="col-2 admin-side-panel border-end">
