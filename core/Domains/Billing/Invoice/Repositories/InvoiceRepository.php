@@ -61,6 +61,7 @@ class InvoiceRepository
             })
             ->where('accounts.id', '!=', AccountIdEnum::SNT->value)
             ->where('accounts.is_invoicing', true)
+            ->orderBy('accounts.sort_value')
             ->get()
         ;
     }
