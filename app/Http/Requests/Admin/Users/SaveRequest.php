@@ -11,15 +11,13 @@ use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID          = RequestArgumentsEnum::ID;
-    private const LAST_NAME   = RequestArgumentsEnum::LAST_NAME;
-    private const FIRST_NAME  = RequestArgumentsEnum::FIRST_NAME;
-    private const MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
-    private const EMAIL       = RequestArgumentsEnum::EMAIL;
-    private const PHONE       = RequestArgumentsEnum::PHONE;
-    private const IS_MEMBER   = RequestArgumentsEnum::IS_MEMBER;
-    private const ROLE        = 'role_id';
-    private const ACCOUNT     = 'account_id';
+    private const string ID          = RequestArgumentsEnum::ID;
+    private const string LAST_NAME   = RequestArgumentsEnum::LAST_NAME;
+    private const string FIRST_NAME  = RequestArgumentsEnum::FIRST_NAME;
+    private const string MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
+    private const string EMAIL       = RequestArgumentsEnum::EMAIL;
+    private const string PHONE       = RequestArgumentsEnum::PHONE;
+    private const string ROLE        = 'role_id';
 
     public function rules(): array
     {
@@ -75,9 +73,9 @@ class SaveRequest extends AbstractRequest
         return $this->getInt(self::ROLE);
     }
 
-    public function getAccountId(): int
+    public function getAccountIds(): array
     {
-        return $this->getInt(self::ACCOUNT);
+        return $this->getArray('account_ids', [], 'intval');
     }
 
     public function getPhone(): ?string

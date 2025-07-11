@@ -64,8 +64,10 @@ class UserRepository
             ->selectSub(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DUTY_INFO, UserInfo::OWNERSHIP_DUTY_INFO)
 
             ->leftJoin(AccountToUser::TABLE, AccountToUser::TABLE . '.' . AccountToUser::USER, SearcherInterface::EQUALS, User::TABLE . '.' . User::ID)
+
             ->leftJoin(Account::TABLE, Account::TABLE . '.' . Account::ID, SearcherInterface::EQUALS, AccountToUser::TABLE . '.' . AccountToUser::ACCOUNT)
             ->selectSub(Account::TABLE . '.' . Account::SORT_VALUE, 'account_sort')
+            ->selectSub(Account::TABLE . '.' . Account::ID, 'account_id')
         ;
         $query->toRawSql();
 

@@ -19,6 +19,7 @@ use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
 use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
@@ -83,7 +84,7 @@ class UsersController extends Controller
         ;
         $accountsCollection = $this->accountService->search($accountSearcher);
 
-        $accounts = new AccountsSelectResource($accountsCollection->getItems(), true);
+        $accounts = new AccountsSelectResource($accountsCollection->getItems(), false);
 
         return view('admin.pages.users.view', compact('user', 'accounts', 'roles'));
     }
@@ -168,10 +169,12 @@ class UsersController extends Controller
             ->setEmail($request->getEmail())
             ->setPhone($request->getPhone())
             ->setRole($this->roleService->getById($request->getRoleId()))
-            ->setAccount($this->accountService->getById($request->getAccountId()))
             ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
             ->setOwnershipDate($request->getOwnershipDate())
         ;
+
+        $accounts = $request->getAccountIds() ? $this->accountService->getByIds($request->getAccountIds()) : new AccountCollection();
+        $user->setAccounts($accounts);
 
         $user = $this->userService->save($user);
 

@@ -20,11 +20,17 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize, WithStyles, WithEvents
 {
-    public const string ACCOUNT    = 'account';
-    public const string NAME       = 'name';
-    public const string EMAIL      = 'email';
-    public const string PHONE      = 'phone';
-    public const string MEMBERSHIP = 'membership';
+    public const string ID              = 'id';
+    public const string ACCOUNT         = 'account';
+    public const string NAME            = 'name';
+    public const string EMAIL           = 'email';
+    public const string PHONE           = 'phone';
+    public const string MEMBERSHIP      = 'membership';
+    public const string MEMBERSHIP_DUTY = 'membership_duty';
+    public const string ADD_PHONE       = 'add_phone';
+    public const string ADDRESS         = 'address';
+    public const string POST_ADDRESS    = 'post_address';
+    public const string NOTE            = 'note';
 
     public function __construct(
         protected UserCollection|array $users,
@@ -43,13 +49,20 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
         $result = [];
 
         foreach ($this->users as $user) {
-            $row = array_fill_keys(array_keys($this->headers), 0);
+            $row    = array_fill_keys(array_keys($this->headers), 0);
+            $exData = $user->getExData();
 
-            $row[self::ACCOUNT]    = $user->getAccount()?->getNumber();
-            $row[self::NAME]       = UserLocator::UserDecorator($user)->getFullName();
-            $row[self::EMAIL]      = $user->getEmail();
-            $row[self::PHONE]      = $user->getPhone() ? PhoneHelper::normalizePhone($user->getPhone()) : null;
-            $row[self::MEMBERSHIP] = $user->getOwnershipDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT);
+            $row[self::ID]              = $user->getId();
+            $row[self::ACCOUNT]         = $user->getAccounts()->getById($user->getAccountId())?->getNumber();
+            $row[self::NAME]            = UserLocator::UserDecorator($user)->getFullName();
+            $row[self::EMAIL]           = $user->getEmail();
+            $row[self::PHONE]           = $user->getPhone() ? PhoneHelper::normalizePhone($user->getPhone()) : null;
+            $row[self::MEMBERSHIP]      = $user->getOwnershipDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT);
+            $row[self::MEMBERSHIP_DUTY] = $user->getOwnershipDutyInfo();
+            $row[self::ADD_PHONE]       = $exData->getPhone();
+            $row[self::ADDRESS]         = $exData->getLegalAddress();
+            $row[self::POST_ADDRESS]    = $exData->getPostAddress();
+            $row[self::NOTE]            = $exData->getAdditional();
 
             $result[] = $row;
         }
