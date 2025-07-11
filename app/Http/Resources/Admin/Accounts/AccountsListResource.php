@@ -4,7 +4,6 @@ namespace App\Http\Resources\Admin\Accounts;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;

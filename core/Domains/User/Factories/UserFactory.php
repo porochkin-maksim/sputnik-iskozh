@@ -6,6 +6,7 @@ use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Models\UserDTO;
@@ -91,13 +92,18 @@ readonly class UserFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at)
             ->setEmailVerifiedAt($model->email_verified_at)
+            ->setAccountId($model->account_id)
             ->setOwnershipDate($model->{UserInfo::OWNERSHIP_DATE})
             ->setOwnershipDutyInfo($model->{UserInfo::OWNERSHIP_DUTY_INFO})
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {
-            $account = $model->getRelation(User::ACCOUNTS)->first();
-            $result->setAccount($account ? AccountLocator::AccountFactory()->makeDtoFromObject($account) : null);
+            $accounts = $model->getRelation(User::ACCOUNTS);
+            $accountsCollection = new AccountCollection();
+            foreach ($accounts as $account) {
+                $accountsCollection->add(AccountLocator::AccountFactory()->makeDtoFromObject($account));
+            }
+            $result->setAccounts($accountsCollection);
         }
 
         if (isset($model->getRelations()[User::EX_DATA])) {

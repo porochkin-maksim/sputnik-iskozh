@@ -88,27 +88,50 @@
                             <span v-else>{{ localUser.phone }}</span>
                         </td>
                     </tr>
-                    <tr>
-                        <th>
-                            <template v-if="localUser.account?.viewUrl">
-                                <a :href="localUser.account?.viewUrl">
-                                    Участок {{ localUser.account?.number }}
-                                </a>
-                            </template>
-                            <template v-else>
-                                Участок
-                            </template>
-                        </th>
-                        <td>
-                            <search-select v-model="localUser.accountId"
-                                           v-if="localUser.actions.edit"
-                                           :prop-class="'form-control'"
-                                           :items="accounts"
-                                           :placeholder="'Участок'"
-                            />
-                            <span v-else>{{ localUser.accountName }}</span>
-                        </td>
-                    </tr>
+                    <template v-if="localUser.actions.edit">
+                        <template v-for="(account, index) in localUserAccounts">
+                            <tr>
+                                <th>
+                                    <template v-if="account.viewUrl">
+                                        <a :href="account.viewUrl">
+                                            Участок {{ account.number }}
+                                        </a>
+                                    </template>
+                                    <template v-else>
+                                        Участок
+                                    </template>
+                                </th>
+                                <td v-if="index===0" :rowspan="localUserAccounts" class="align-top">
+                                    <search-select v-model="localUser.accountIds"
+                                                   :disabled="loading"
+                                                   :multiple="true"
+                                                   :prop-class="'form-control'"
+                                                   :items="accounts"
+                                                   :placeholder="'Участок'"
+                                    />
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <template v-for="(account) in localUserAccounts">
+                            <tr>
+                                <th>
+                                    Участок
+                                </th>
+                                <td>
+                                    <template v-if="account.viewUrl">
+                                        <a :href="account.viewUrl">
+                                            {{ account.number }}
+                                        </a>
+                                    </template>
+                                    <template v-else>
+                                        {{ account.number }}
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
                     <tr>
                         <th>Роль</th>
                         <td>
@@ -247,7 +270,12 @@ export default {
         },
     },
     created () {
-        this.localUser = this.user;
+        this.localUser = {
+            ...this.user,
+            accountIds: Array.isArray(this.user.accountIds)
+                ? this.user.accountIds.map(String)
+                : (this.user.accountId ? [String(this.user.accountId)] : []),
+        };
         this.vueId     = 'uuid' + this.$_uid;
     },
     data () {
@@ -273,7 +301,13 @@ export default {
             form.append('last_name', this.localUser.lastName);
             form.append('middle_name', this.localUser.middleName);
             form.append('email', this.localUser.email);
-            form.append('account_id', this.localUser.accountId);
+            if (Array.isArray(this.localUser.accountIds)) {
+                for (const id of this.localUser.accountIds) {
+                    form.append('account_ids[]', id);
+                }
+            } else if (this.localUser.accountIds) {
+                form.append('account_ids[]', this.localUser.accountIds);
+            }
             form.append('role_id', this.localUser.roleId);
             form.append('phone', this.localUser.phone);
             form.append('ownershipDate', this.localUser.ownershipDate);
@@ -399,6 +433,14 @@ export default {
         canGenerateEmail () {
             return !this.localUser.id && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
         },
+        localUserAccounts() {
+            let result = this.localUser.accounts;
+            if (!result.length) {
+                result = [{}];
+            }
+
+            return result;
+        }
     },
 };
 </script>

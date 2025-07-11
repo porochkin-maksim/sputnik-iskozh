@@ -7,11 +7,12 @@
             :class="propClass"
             :placeholder="placeholder"
             :disabled="disabled"
-            v-model="searchQuery"
+            :value="inputDisplay"
+            @input="searchQuery = $event.target.value"
             @focus="openList"
             @blur="closeOnBlur"
         >
-        <span v-if="searchQuery && !disabled"
+        <span v-if="(multiple ? (selectedItems.length > 0) : (searchQuery && !disabled))"
               class="clear-icon"
               @click.stop="clearSelection">
         &times;
@@ -23,6 +24,9 @@
             <li v-for="item in filteredItems"
                 :key="item.key"
                 @click.stop="selectItem(item)">
+                <template v-if="multiple">
+                    <input type="checkbox" class="form-check-input me-1" :checked="modelValue && modelValue.includes(item.key)" readonly>
+                </template>
                 {{ item.value }}
             </li>
         </ul>
@@ -45,10 +49,14 @@ export default {
             default: 'form-control', // Значение по умолчанию
         },
         modelValue : {
-            type   : [String, Number],
+            type   : [String, Number, Array],
             default: null,
         },
         disabled   : {
+            default: false,
+        },
+        multiple: {
+            type: Boolean,
             default: false,
         },
     },
@@ -62,38 +70,84 @@ export default {
     },
     computed: {
         filteredItems () {
-            return this.items.filter(
+            let filtered = this.items.filter(
                 (item) =>
                     item.value.toLowerCase().includes(this.searchQuery.toLowerCase()),
             );
+            // Сортируем: выбранные элементы наверху
+            if (this.multiple && Array.isArray(this.modelValue)) {
+                filtered = filtered.sort((a, b) => {
+                    const aSel = this.modelValue.includes(a.key);
+                    const bSel = this.modelValue.includes(b.key);
+                    if (aSel === bSel) return 0;
+                    return aSel ? -1 : 1;
+                });
+            } else if (!this.multiple && this.modelValue !== null && this.modelValue !== undefined) {
+                filtered = filtered.sort((a, b) => {
+                    const aSel = String(a.key) === String(this.modelValue);
+                    const bSel = String(b.key) === String(this.modelValue);
+                    if (aSel === bSel) return 0;
+                    return aSel ? -1 : 1;
+                });
+            }
+            return filtered;
+        },
+        selectedItems() {
+            if (!this.multiple) return [];
+            if (!Array.isArray(this.modelValue)) return [];
+            return this.items.filter(item => this.modelValue.includes(item.key));
+        },
+        inputDisplay() {
+            // Если выпадающий список открыт — показываем searchQuery (для поиска)
+            if (this.isOpen) return this.searchQuery;
+            // Если закрыт — показываем выбранные значения
+            if (this.multiple) {
+                if (this.selectedItems.length === 0) return '';
+                return this.selectedItems.map(i => i.value).join(', ');
+            } else {
+                const selected = this.items.find(i => String(i.key) === String(this.modelValue));
+                return selected ? selected.value : '';
+            }
         },
     },
     watch   : {
         modelValue (value) {
-            this.filteredItems.forEach((item) => {
-                if (String(item.key) === String(value)) {
-                    this.searchQuery = item.value;
-                }
-            });
-        },
-        items: {
-            handler () {
+            if (this.multiple) {
+                // ничего не делаем, inputDisplay сам обновится
+            } else {
                 this.filteredItems.forEach((item) => {
-                    if (String(item.key) === String(this.modelValue)) {
+                    if (String(item.key) === String(value)) {
                         this.searchQuery = item.value;
                     }
                 });
+            }
+        },
+        items: {
+            handler () {
+                if (this.multiple) {
+                    // ничего не делаем
+                } else {
+                    this.filteredItems.forEach((item) => {
+                        if (String(item.key) === String(this.modelValue)) {
+                            this.searchQuery = item.value;
+                        }
+                    });
+                }
             },
             deep: true,
         },
     },
     mounted () {
         this.uid = 'uuid' + this._uid;
-        this.filteredItems.forEach((item) => {
-            if (String(item.key) === String(this.modelValue)) {
-                this.searchQuery = item.value;
-            }
-        });
+        if (this.multiple) {
+            // ничего не делаем
+        } else {
+            this.filteredItems.forEach((item) => {
+                if (String(item.key) === String(this.modelValue)) {
+                    this.searchQuery = item.value;
+                }
+            });
+        }
         document.addEventListener('click', this.handleClickOutside);
     },
     unmounted () {
@@ -102,22 +156,43 @@ export default {
     methods: {
         openList () {
             this.isOpen = true;
+            this.searchQuery = '';
         },
         closeOnBlur (event) {
             // Проверяем, кликнули ли вне области выпадающего списка
             if (!event.target.closest(`#${this.uid}`)) {
                 this.isOpen = false;
+                // После потери фокуса показываем выбранные значения
+                this.searchQuery = '';
             }
         },
         clearSelection () {
             this.searchQuery = '';
-            this.$emit('update:modelValue', null);
+            if (this.multiple) {
+                this.$emit('update:modelValue', []);
+            } else {
+                this.$emit('update:modelValue', null);
+            }
         },
         selectItem (item) {
-            this.$emit('update:modelValue', item.key); // Обновляем внешнее v-model
-            this.$emit('select', item); // Дополнительно эмитируем событие select
-            this.searchQuery = item.value; // Синхронизируем внутреннее состояние
-            this.isOpen      = false; // Закрываем список
+            if (this.multiple) {
+                let newValue = Array.isArray(this.modelValue) ? [...this.modelValue] : [];
+                const idx = newValue.indexOf(item.key);
+                if (idx > -1) {
+                    newValue.splice(idx, 1); // убрать
+                } else {
+                    newValue.push(item.key); // добавить
+                }
+                this.$emit('update:modelValue', newValue);
+                this.$emit('select', item);
+                // не закрываем список, оставляем открытым
+                this.searchQuery = '';
+            } else {
+                this.$emit('update:modelValue', item.key); // Обновляем внешнее v-model
+                this.$emit('select', item); // Дополнительно эмитируем событие select
+                this.searchQuery = '';
+                this.isOpen      = false; // Закрываем список
+            }
         },
         handleClickOutside (event) {
             if (!event.target.closest(`#${this.uid}`)) {

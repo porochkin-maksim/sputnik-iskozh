@@ -19,11 +19,17 @@ class UsersExport implements WithMultipleSheets
     )
     {
         $this->headers = [
-            BaseSheet::ACCOUNT    => 'Участок',
-            BaseSheet::NAME       => 'ФИО',
-            BaseSheet::EMAIL      => 'Почта',
-            BaseSheet::PHONE      => 'Телефон',
-            BaseSheet::MEMBERSHIP => 'Членство',
+            BaseSheet::ID              => 'ID',
+            BaseSheet::ACCOUNT         => 'Участок',
+            BaseSheet::NAME            => 'ФИО',
+            BaseSheet::EMAIL           => 'Почта',
+            BaseSheet::PHONE           => 'Телефон',
+            BaseSheet::MEMBERSHIP      => 'Членство',
+            BaseSheet::MEMBERSHIP_DUTY => 'Основание членства',
+            BaseSheet::ADD_PHONE       => 'Доп. телефон',
+            BaseSheet::ADDRESS         => 'Адрес регистрации',
+            BaseSheet::POST_ADDRESS    => 'Почтовый адрес',
+            BaseSheet::NOTE            => 'Примечание',
         ];
 
         $this->groupedUsers[self::PLOT_MEMBER] = $this->users;

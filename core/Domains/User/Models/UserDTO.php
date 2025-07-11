@@ -7,9 +7,11 @@ use Carbon\Carbon;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
+use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Helpers\DateTime\DateTimeHelper;
+use function PHPUnit\Framework\isArray;
 
 class UserDTO
 {
@@ -25,12 +27,15 @@ class UserDTO
     private ?bool   $rememberToken = null;
 
     private ?string $ownershipDutyInfo = null;
-    private ?Carbon $ownershipDate = null;
+    private ?Carbon $ownershipDate     = null;
 
-    private ?AccountDTO    $account         = null;
-    private ?RoleDTO       $role            = null;
-    private ?Carbon        $emailVerifiedAt = null;
-    private ?UserExDataDTO $exData          = null;
+    private ?int $account_id = null;
+
+    private ?AccountDTO        $account         = null;
+    private ?RoleDTO           $role            = null;
+    private ?Carbon            $emailVerifiedAt = null;
+    private ?UserExDataDTO     $exData          = null;
+    private ?AccountCollection $accounts       = null;
 
     public function __construct(
         private readonly ?User $user = null,
@@ -221,5 +226,43 @@ class UserDTO
         $this->ownershipDate = DateTimeHelper::toCarbonOrNull($ownershipDate);
 
         return $this;
+    }
+
+    public function getAccountId(): ?int
+    {
+        return $this->account_id;
+    }
+
+    public function setAccountId(?int $account_id): static
+    {
+        $this->account_id = $account_id;
+
+        return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getAccountIds(): array
+    {
+        $result = $this->getAccounts()->getIds();
+
+        if ($this->getAccount()?->getId()) {
+            $result[] = $this->getAccount()?->getId();
+        }
+
+        return array_unique($result);
+    }
+
+    public function setAccounts(AccountCollection|array $accounts): static
+    {
+        $this->accounts = is_array($accounts) ? new AccountCollection($accounts) : $accounts;
+
+        return $this;
+    }
+
+    public function getAccounts(): AccountCollection
+    {
+        return $this->accounts ?: new AccountCollection();
     }
 }

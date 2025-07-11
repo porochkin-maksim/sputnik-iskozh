@@ -87,10 +87,14 @@ abstract class AbstractRequest extends FormRequest
         }
     }
 
-    public function getArray(string $key, array $default = []): array
+    public function getArray(string $key, array $default = [], string $callback = ''): array
     {
         if ( ! is_array($this->get($key))) {
             return $default;
+        }
+
+        if ($callback) {
+            return array_map($callback, $this->get($key));
         }
 
         return $this->get($key, $default);

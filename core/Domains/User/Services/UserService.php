@@ -54,7 +54,7 @@ readonly class UserService
         ;
 
         $model->roles()->sync($user->getRole()?->getId() ? [$user->getRole()?->getId()] : []);
-        $model->accounts()->sync($user->getAccount()?->getId() ? [$user->getAccount()?->getId()] : []);
+        $model->accounts()->sync($user->getAccountIds());
 
         $current = $this->getById($current->getId());
 

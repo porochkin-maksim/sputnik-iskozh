@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Users;
 
 use App\Http\Resources\Admin\Accounts\AccountResource;
+use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\UserLocator;
 use Core\Enums\DateTimeFormat;
@@ -31,6 +32,8 @@ readonly class UserResource extends AbstractResource
         $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
         $exData  = $this->user->getExData();
 
+        $curAccount = $this->user->getAccounts()?->getById((int) $this->user->getAccountId());
+
         $result = [
             'id'              => $this->user->getId(),
             'fullName'        => UserLocator::UserDecorator($this->user)->getFullName(),
@@ -42,7 +45,8 @@ readonly class UserResource extends AbstractResource
             'roleId'          => (int) ($this->user->getRole()?->getId()),
             'roleName'        => $this->user->getRole()?->getName(),
             'accountId'       => (int) ($this->user->getAccount()?->getId()),
-            'accountName'     => $this->user->getAccount()?->getNumber(),
+            'accountName'     => $curAccount?->getNumber(),
+            'accountIds'      => $this->user->getAccountIds(),
             'emailVerifiedAt' => $this->user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
 
             'ownershipDate'     => $this->user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
@@ -68,8 +72,15 @@ readonly class UserResource extends AbstractResource
             'viewUrl'    => $this->user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $this->user->getId()]) : null,
         ];
 
-        if ($this->user->getAccount() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
-            $result['account'] = new AccountResource($this->user->getAccount());
+        if ($curAccount && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            $result['account'] = new AccountResource($curAccount);
+        }
+
+        if ($this->user->getAccounts() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            $result['accounts'] = [];
+            foreach ($this->user->getAccounts() as $account) {
+                $result['accounts'][] = new AccountResource($account);
+            }
         }
 
         return $result;
