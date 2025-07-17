@@ -274,10 +274,13 @@ export default {
         },
         exportAction () {
             window.open(Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
-                type   : this.type,
-                period : this.periodId,
-                account: this.searchAccount,
-                status : this.payedStatus,
+                type        : this.type,
+                period_id   : this.periodId,
+                account_id  : this.accountId,
+                account     : this.searchAccount,
+                payed_status: this.payedStatus,
+                sort_field  : this.sortField,
+                sort_order  : this.sortOrder,
             }), '_blank');
         },
         onPaginationUpdate (skip) {

@@ -88,16 +88,6 @@ class InvoiceController extends Controller
             ->setWithClaims()
         ;
 
-        if ($request->getSortField() && $request->getSortOrder()) {
-            $searcher->setSortOrderProperty(
-                $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
-            );
-        }
-        else {
-            $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
-        }
-
         $this->extracted($request, $searcher);
 
         $invoices = $this->invoiceService->search($searcher);
@@ -214,6 +204,16 @@ class InvoiceController extends Controller
      */
     public function extracted(ListRequest $request, InvoiceSearcher $searcher): void
     {
+        if ($request->getSortField() && $request->getSortOrder()) {
+            $searcher->setSortOrderProperty(
+                $request->getSortField(),
+                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
+            );
+        }
+        else {
+            $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
+        }
+
         if ($request->getPayedStatus()) {
             if ($request->getPayedStatus() === 'unpayed') {
                 $searcher->addWhere(Invoice::PAYED, SearcherInterface::EQUALS, 0);
