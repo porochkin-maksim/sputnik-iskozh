@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->nullable()->references('id')->on('accounts')->restrictOnDelete();
             $table->foreignId('invoice_id')->nullable()->references('id')->on('invoices')->restrictOnDelete();
-            $table->decimal('cost')->default(0);
+            $table->decimal('cost', 20)->default(0);
             $table->boolean('moderated')->default(false);
             $table->boolean('verified')->default(false);
             $table->text('comment')->nullable();

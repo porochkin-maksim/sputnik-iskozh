@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('period_id')->references('id')->on('periods')->restrictOnDelete();
             $table->foreignId('account_id')->references('id')->on('accounts')->restrictOnDelete();
             $table->smallInteger('type', unsigned: true);
-            $table->decimal('cost');
-            $table->decimal('payed');
+            $table->decimal('cost', 20);
+            $table->decimal('payed', 20);
             $table->text('comment')->nullable();
             $table->timestamps();
         });

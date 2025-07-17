@@ -16,7 +16,7 @@ return new class extends Migration {
                 $table->smallInteger('type', unsigned: true);
                 $table->foreignId('period_id')->references('id')->on('periods')->restrictOnDelete();
                 $table->string('name');
-                $table->decimal('cost')->default(0);
+                $table->decimal('cost', 20)->default(0);
                 $table->boolean('active')->default(true);
                 $table->timestamps();
                 $table->softDeletes();
