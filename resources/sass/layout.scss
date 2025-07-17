@@ -57,6 +57,24 @@ footer,
             margin-right    : 5px;
         }
     }
+
+    &.social-contacts:not(.social-index) {
+        .social-link {
+            border        : 1px solid $default-primary;
+            border-radius : 0.5rem;
+        }
+    }
+
+    &.social-contacts {
+        flex-wrap       : wrap;
+        align-items     : center;
+        justify-content : center;
+
+        .social-link {
+            padding : 0.5rem;
+            margin  : 0.2rem;
+        }
+    }
 }
 
 .bg-wrapper {
@@ -108,13 +126,13 @@ footer,
 
 // Фиксируем ширину страницы для предотвращения "прыжков" при появлении скроллбара
 html {
-    overflow-y: scroll;
-    width: 100vw;
-    overflow-x: hidden;
+    overflow-y : scroll;
+    width      : 100vw;
+    overflow-x : hidden;
 }
 
 body {
-    overflow-y: scroll;
-    width: 100%;
-    position: relative;
+    overflow-y : scroll;
+    width      : 100%;
+    position   : relative;
 }

@@ -22,5 +22,10 @@ $qrPaymentFile = StaticFileLocator::StaticFileService()->qrPayment();
 @endsection
 
 @section(SectionNames::CONTENT)
+    <div class="d-flex justify-content-center border-bottom mb-3">
+        <div class="social social-contacts social-index d-flex">
+            @include(ViewNames::PARTIAL_SOCIAL)
+        </div>
+    </div>
     <index-page :qr-payment='@json($qrPaymentFile)'></index-page>
 @endsection
