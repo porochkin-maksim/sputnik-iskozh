@@ -19,9 +19,9 @@ return new class extends Migration {
             $table->foreignId('invoice_id')->references('id')->on('invoices')->restrictOnDelete();
             $table->foreignId('service_id')->references('id')->on('services')->restrictOnDelete();
             $table->string('name')->nullable();
-            $table->decimal('tariff')->default(0);
-            $table->decimal('cost')->default(0);
-            $table->decimal('payed')->default(0);
+            $table->decimal('tariff', 20)->default(0);
+            $table->decimal('cost', 20)->default(0);
+            $table->decimal('payed', 20)->default(0);
             $table->timestamps();
         });
     }
