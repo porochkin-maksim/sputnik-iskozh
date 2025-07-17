@@ -109,14 +109,16 @@ readonly class PaymentService
             Event::DELETE,
             HistoryType::INVOICE,
             $payment->getInvoiceId(),
-            HistoryType::CLAIM,
+            HistoryType::PAYMENT,
             $payment->getId(),
         );
+
+        $result = $this->paymentRepository->deleteById($id);
 
         if ($payment->getInvoiceId()) {
             PaymentsUpdatedEvent::dispatch($payment->getInvoiceId());
         }
 
-        return $this->paymentRepository->deleteById($id);
+        return $result;
     }
 }

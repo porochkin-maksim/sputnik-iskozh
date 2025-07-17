@@ -9,6 +9,9 @@ use App\Http\Resources\Admin\Payments\PaymentsListResource;
 use App\Models\Billing\Payment;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\Claim\Models\ClaimSearcher;
+use Core\Domains\Billing\Claim\Services\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
@@ -30,6 +33,7 @@ class PaymentController extends Controller
     private InvoiceService $invoiceService;
     private FileService    $fileService;
     private PeriodService  $periodService;
+    private ClaimService   $claimService;
 
     public function __construct()
     {
@@ -38,6 +42,7 @@ class PaymentController extends Controller
         $this->fileService    = PaymentLocator::FileService();
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->periodService  = PeriodLocator::PeriodService();
+        $this->claimService   = ClaimLocator::ClaimService();
     }
 
     public function create(int $invoiceId): JsonResponse
@@ -72,19 +77,30 @@ class PaymentController extends Controller
             abort(412);
         }
 
-        $payment = $this->paymentFactory->makeDefault()
-            ->setInvoiceId($invoiceId)
-            ->setInvoice($invoice)
-            ->setCost($invoice->getCost())
-            ->setModerated(true)
-            ->setVerified(true)
-        ;
+        $claims = $this->claimService->search(
+            ClaimSearcher::make()
+                ->setInvoiceId($invoiceId)
+                ->setWithService(),
+        )->getItems();
 
-        $payment = $this->paymentService->save($payment);
+        foreach ($claims as $claim) {
+            if (! $claim->getCost() || ! $claim->getDelta()) {
+                continue;
+            }
 
-        return response()->json([
-            'payment' => new PaymentResource($payment),
-        ]);
+            $payment = $this->paymentFactory->makeDefault()
+                ->setInvoiceId($invoiceId)
+                ->setInvoice($invoice)
+                ->setCost($claim->getDelta())
+                ->setModerated(true)
+                ->setVerified(true)
+                ->setName($claim->getName() ? : $claim->getService()->getName())
+            ;
+
+            $this->paymentService->save($payment);
+        }
+
+        return response()->json(true);
 
     }
 
@@ -162,7 +178,7 @@ class PaymentController extends Controller
         $searcher
             ->setWithFiles()
             ->setInvoiceId($invoiceId)
-            ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
         $payments = $this->paymentService->search($searcher);

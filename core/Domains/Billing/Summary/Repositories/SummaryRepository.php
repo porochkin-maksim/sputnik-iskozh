@@ -53,7 +53,7 @@ class SummaryRepository
             INNER JOIN services ON claims.service_id = services.id
             WHERE invoice_id IN ({$invoiceIdsString})
             GROUP BY service, services.type
-            ORDER BY services.type;
+            ORDER BY services.type, cost DESC;
             SQL;
 
         return DB::select($sql);

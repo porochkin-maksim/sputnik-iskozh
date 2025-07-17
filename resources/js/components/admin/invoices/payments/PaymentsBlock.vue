@@ -3,11 +3,14 @@
     <div class="d-flex mb-2">
         <button class="btn btn-success"
                 v-if="invoice.actions.payments.edit"
+                :disabled="loading"
                 v-on:click="makeAction">Добавить платёж
         </button>
         <button class="btn btn-outline-success ms-2"
                 v-if="!invoice.isPayed && !forcePayed"
-                v-on:click="makePayed">Оплатить всё
+                :disabled="loading"
+                v-on:click="makePayed">
+                <i class="fa fa-credit-card"></i>&nbsp;Оплатить всё
         </button>
     </div>
     <payments-list :invoice-id="invoice.id"
@@ -150,20 +153,23 @@ export default {
     },
     methods : {
         makePayed () {
-            if (!confirm('Создать платёж на сумму счёта?')) {
+            if (!confirm('Создать платежи для каждой неоплаченной услуги?')) {
                 return;
             }
+            this.loading = true;
             let uri = Url.Generator.makeUri(Url.Routes.adminPaymentAutoCreate, {
                 invoiceId: this.invoice.id,
             });
 
-            window.axios[Url.Routes.adminPaymentAutoCreate.method](uri).then(response => {
-                let text = 'Платёж ' + response.data.payment.id + ' создан';
+            window.axios[Url.Routes.adminPaymentAutoCreate.method](uri).then(() => {
+                let text = 'Счёт оплачен';
                 this.forcePayed = true;
                 this.showInfo(text);
                 this.onSaved();
             }).catch(response => {
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loading = false
             });
         },
         makeAction () {
