@@ -70,7 +70,13 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
             </td>
         </tr>
         <tr>
-            <th colspan="2">&nbsp;</th>
+            <td colspan="2">
+                <div class="d-flex justify-content-center">
+                    <div class="social social-contacts d-flex">
+                        @include(ViewNames::PARTIAL_SOCIAL)
+                    </div>
+                </div>
+            </td>
         </tr>
         <tr>
             <th colspan="2">График работы</th>
@@ -192,7 +198,9 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
         </tbody>
     </table>
 
-    <div class="row requests-block">
+    {!! Iframes::map() !!}
+
+    <div class="row requests-block mt-3">
         <div class="col-lg-4 col-md-6 col-12">
             <a class="card request-item d-flex align-items-center justify-content-center p-3"
                href="{{ route(RouteNames::PROPOSAL) }}">
@@ -221,6 +229,4 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
             </a>
         </div>
     </div>
-
-    {!! Iframes::map() !!}
 @endsection

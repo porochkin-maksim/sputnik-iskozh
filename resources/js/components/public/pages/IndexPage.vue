@@ -2,10 +2,6 @@
     <page-template>
         <template v-slot:main>
             <div v-if="news.length">
-                <h1 class="title">
-                    <a :href="Url.Routes.newsIndex.uri"
-                       class="text-decoration-none">Новости</a>
-                </h1>
                 <div class="custom-list news-list w-100">
                     <template v-for="(item, index) in news">
                         <news-list-item :news="item"
