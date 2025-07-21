@@ -156,7 +156,6 @@ class UsersController extends Controller
             ? $this->userService->getById($request->getId())
             : $this->userFactory->makeDefault()
                 ->setPassword(Str::random(8))
-                ->setEmailVerifiedAt(Carbon::now())
         ;
 
         if ( ! $user) {
@@ -216,6 +215,10 @@ class UsersController extends Controller
         }
 
         UserLocator::Notificator()->sendRestorePassword($user);
+
+        if ( ! $user->getEmailVerifiedAt()) {
+            $this->userService->save($user->setEmailVerifiedAt(Carbon::now()));
+        }
     }
 
     public function sendInviteWithPassword(DefaultRequest $request): void
@@ -231,6 +234,10 @@ class UsersController extends Controller
         }
 
         UserLocator::Notificator()->sendInviteNotification($user);
+
+        if ( ! $user->getEmailVerifiedAt()) {
+            $this->userService->save($user->setEmailVerifiedAt(Carbon::now()));
+        }
     }
 
     public function generateEmail(DefaultRequest $request): ?string
