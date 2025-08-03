@@ -1,5 +1,5 @@
 <template>
-    <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.account.number }}» ({{ localInvoice.typeName }}) </h4>
+    <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.account.number }}» | {{ localInvoice.displayName }} </h4>
     <div class="mb-2 d-flex align-items-center justify-content-between">
         <div>
             <a class="btn btn-sm border text-decoration-none me-2"
@@ -58,10 +58,12 @@ import Url              from '../../../utils/Url.js';
 import SearchSelect     from '../../common/form/SearchSelect.vue';
 import CountersBlock    from '../accounts/counters/CountersBlock.vue';
 import AccountActions   from '../accounts/AccountActions.js';
+import CustomInput      from '../../common/form/CustomInput.vue';
 
 export default {
     name      : 'InvoiceItemView',
     components: {
+        CustomInput,
         CountersBlock,
         SearchSelect,
         ClaimBlock,

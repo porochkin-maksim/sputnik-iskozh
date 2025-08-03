@@ -40,6 +40,8 @@ readonly class InvoiceResource extends AbstractResource
             'accountNumber' => $this->invoice->getAccount()?->getNumber(),
             'type'          => $this->invoice->getType()?->value,
             'typeName'      => $this->invoice->getType()?->name(),
+            'name'          => $this->invoice->getName(),
+            'displayName'   => $this->invoice->getName() ? sprintf('%s (%s)', $this->invoice->getName(), $this->invoice->getType()?->name()) : $this->invoice->getType()?->name(),
             'cost'          => $this->invoice->getCost(),
             'payed'         => $this->invoice->getPayed(),
             'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),

@@ -12,10 +12,11 @@ use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const PERIOD_ID  = RequestArgumentsEnum::PERIOD_ID;
-    private const ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
-    private const TYPE       = RequestArgumentsEnum::TYPE;
+    private const string ID         = RequestArgumentsEnum::ID;
+    private const string PERIOD_ID  = RequestArgumentsEnum::PERIOD_ID;
+    private const string ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
+    private const string TYPE       = RequestArgumentsEnum::TYPE;
+    private const string NAME       = RequestArgumentsEnum::NAME;
 
     public function rules(): array
     {
@@ -32,6 +33,10 @@ class SaveRequest extends AbstractRequest
                 'required',
                 'in:' . implode(',', InvoiceTypeEnum::values()),
             ],
+            self::NAME       => [
+                'string',
+                'max:191',
+            ],
         ];
     }
 
@@ -46,6 +51,8 @@ class SaveRequest extends AbstractRequest
 
             self::TYPE . '.required' => sprintf('Укажите «%s»', InvoiceComparator::TITLE_TYPE),
             self::TYPE . '.in'       => sprintf('Неверный «%s»', InvoiceComparator::TITLE_TYPE),
+
+            self::NAME . '.max' => sprintf('Слишком длинное «%s»', InvoiceComparator::TITLE_NAME),
         ];
     }
 
@@ -67,5 +74,10 @@ class SaveRequest extends AbstractRequest
     public function getType(): ?int
     {
         return $this->getIntOrNull(self::TYPE);
+    }
+
+    public function getName(): ?string
+    {
+        return $this->getStringOrNull('name');
     }
 }

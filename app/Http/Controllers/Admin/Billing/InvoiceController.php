@@ -162,6 +162,8 @@ class InvoiceController extends Controller
             abort(404);
         }
 
+        $invoice->setName($request->getName());
+
         $invoice = $this->invoiceService->save($invoice);
 
         return response()->json([
