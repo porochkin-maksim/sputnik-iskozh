@@ -20,6 +20,7 @@ class InvoiceDTO
     private ?float           $cost       = null;
     private ?float           $payed      = null;
     private ?string          $comment    = null;
+    private ?string          $name       = null;
 
     private ?ClaimCollection   $claims     = null;
     private ?PaymentCollection $payments   = null;
@@ -94,6 +95,18 @@ class InvoiceDTO
     public function setPayed(?float $payed): static
     {
         $this->payed = $payed;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

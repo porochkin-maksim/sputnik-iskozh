@@ -5,6 +5,10 @@
         <template v-slot:title>{{ id ? 'Редактирование счёта' : 'Добавление счёта' }}</template>
         <template v-slot:body>
             <div class="container-fluid">
+                <custom-input v-model="name"
+                               class="form-select form-select-sm"
+                               :label="'Название (опционально)'"
+                />
                 <label>Тип</label>
                 <simple-select v-model="type"
                                class="form-select form-select-sm"
@@ -37,6 +41,7 @@
 <script>
 import Url           from '../../../utils/Url.js';
 import SimpleSelect  from '../../common/form/SimpleSelect.vue';
+import CustomInput   from '../../common/form/CustomInput.vue';
 import ErrorsList    from '../../common/form/partial/ErrorsList.vue';
 import SearchSelect  from '../../common/form/SearchSelect.vue';
 import ViewDialog    from '../../common/ViewDialog.vue';
@@ -49,6 +54,7 @@ export default {
         SearchSelect,
         ErrorsList,
         SimpleSelect,
+        CustomInput,
     },
     mixins    : [
         ResponseError,
@@ -65,6 +71,7 @@ export default {
         this.periodId  = this.modelValue.periodId;
         this.accountId = this.modelValue.accountId;
         this.type      = this.modelValue.type;
+        this.name      = this.modelValue.name;
 
         this.showDialog = true;
     },
@@ -90,6 +97,7 @@ export default {
             form.append('period_id', this.periodId);
             form.append('account_id', this.accountId);
             form.append('type', this.type);
+            form.append('name', this.name);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminInvoiceSave.method](

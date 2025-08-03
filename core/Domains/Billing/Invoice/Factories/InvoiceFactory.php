@@ -14,7 +14,7 @@ readonly class InvoiceFactory
 {
     public function makeDefault(): InvoiceDTO
     {
-        return (new InvoiceDTO())
+        return new InvoiceDTO()
             ->setCost(0.00)
             ->setPayed(0.00);
     }
@@ -34,6 +34,7 @@ readonly class InvoiceFactory
             Invoice::TYPE       => $dto->getType()->value,
             Invoice::PAYED      => $dto->getPayed(),
             Invoice::COST       => $dto->getCost(),
+            Invoice::NAME       => $dto->getName(),
             Invoice::COMMENT    => $dto->getComment(),
         ]);
     }
@@ -49,6 +50,7 @@ readonly class InvoiceFactory
             ->setPayed($model->payed)
             ->setCost($model->cost)
             ->setType(InvoiceTypeEnum::tryFrom($model->type))
+            ->setName($model->name)
             ->setComment($model->comment)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);

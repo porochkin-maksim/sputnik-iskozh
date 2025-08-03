@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Billing;
 
@@ -19,26 +19,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?int    $type
  * @property ?float  $cost
  * @property ?float  $payed
+ * @property ?string $name
  * @property ?string $comment
  */
 class Invoice extends Model implements CastsInterface
 {
-    public const TABLE = 'invoices';
+    public const string TABLE = 'invoices';
 
     protected $table = self::TABLE;
 
-    public const ID         = 'id';
-    public const PERIOD_ID  = 'period_id';
-    public const ACCOUNT_ID = 'account_id';
-    public const TYPE       = 'type';
-    public const COST       = 'cost';
-    public const PAYED      = 'payed';
-    public const COMMENT    = 'comment';
+    public const string ID         = 'id';
+    public const string PERIOD_ID  = 'period_id';
+    public const string ACCOUNT_ID = 'account_id';
+    public const string TYPE       = 'type';
+    public const string COST       = 'cost';
+    public const string PAYED      = 'payed';
+    public const string NAME       = 'name';
+    public const string COMMENT    = 'comment';
 
-    public const CLAIMS   = 'claims';
-    public const PAYMENTS = 'payments';
-    public const ACCOUNT  = 'account';
-    public const PERIOD   = 'period';
+    public const string CLAIMS   = 'claims';
+    public const string PAYMENTS = 'payments';
+    public const string ACCOUNT  = 'account';
+    public const string PERIOD   = 'period';
 
     protected $guarded = [];
 

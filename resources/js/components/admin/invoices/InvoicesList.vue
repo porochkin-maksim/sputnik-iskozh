@@ -8,7 +8,7 @@
                         <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
-                    <th>Тип</th>
+                    <th>Название/Тип</th>
                     <th>Период</th>
                     <th class="cursor-pointer" @click="sort('account_sort')">
                         Участок
@@ -41,7 +41,7 @@
                             {{ invoice.id }}
                         </a>
                     </td>
-                    <td>{{ invoice.typeName }}</td>
+                    <td>{{ invoice.displayName }}</td>
                     <td>{{ invoice.periodName }}</td>
                     <td class="text-end">
                         <template v-if="invoice.accountUrl">
