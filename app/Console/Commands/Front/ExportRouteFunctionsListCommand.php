@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use JsonException;
 
-class ExportRouteListCommand extends Command
+class ExportRouteFunctionsListCommand extends Command
 {
     public function __construct(
         private readonly Router $router,
@@ -22,9 +22,9 @@ class ExportRouteListCommand extends Command
         parent::__construct();
     }
 
-    protected const string OUTPUT_FILE_PATH = '/js/routes.json';
+    protected const string OUTPUT_FILE_PATH = '/js/routes-functions.js';
 
-    protected $signature   = 'front:export-route-list-command';
+    protected $signature   = 'front:export-route-functions-list-command';
     protected $description = 'Экспортирует маршруты в файл для фронта';
 
     /**
@@ -32,13 +32,14 @@ class ExportRouteListCommand extends Command
      */
     public function handle(): void
     {
-        $routes = [];
+        $routes = [$this->drawBuildQueryUrl()];
 
         foreach ($this->getRoutes() as $route) {
-            $routes[Str::camel(Str::replace('.', '_', $route['name']))] = $route;
+            $name          = Str::camel(Str::replace('.', '_', $route['name']));
+            $routes[$name] = $this->drawRouteFunction($name, $route);
         }
 
-        File::put(resource_path(self::OUTPUT_FILE_PATH), json_encode($routes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        File::put(resource_path(self::OUTPUT_FILE_PATH), implode("\n\n", $routes));
         $this->line("Routes exported to " . self::OUTPUT_FILE_PATH);
     }
 
@@ -100,5 +101,40 @@ class ExportRouteListCommand extends Command
         }
 
         return $result;
+    }
+
+    private function drawRouteFunction(string $name, array $route): string
+    {
+        $arguments = implode(',', array_keys($route['args']));
+        $arguments = $arguments ? "$arguments, getParams = {}" : "getParams = {}";
+        $method    = $route['method'];
+        $uri       = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
+
+        $result = <<<JS
+            export function $name($arguments) {            
+                return window.axios.$method(makeQuery('$uri', getParams));
+            }
+            JS;
+
+        return $result;
+    }
+
+    private function drawBuildQueryUrl(): string
+    {
+        return $result = <<<JS
+            function makeQuery(uri, getParams = {}) {
+                let getQuery = [];
+                Object.keys(getParams).forEach(key => {
+                    if (getParams[key] && String(getParams[key]) !== '0') {
+                        getQuery = getQuery.concat([key + '=' + getParams[key]]);
+                    }
+                });
+                if (getQuery.length) {
+                    uri = uri + '?' + getQuery.join('&');
+                }
+                
+                return uri;
+            }
+            JS;
     }
 }
