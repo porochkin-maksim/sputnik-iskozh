@@ -4,6 +4,7 @@ namespace Core\Domains\Option\Factories;
 
 use App\Models\Infra\Option;
 use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\CounterReadingDay;
 use Core\Domains\Option\Models\DataDTO\DataDTOInterface;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
@@ -91,6 +92,7 @@ class OptionFactory
         return match ($type) {
             OptionEnum::SNT_ACCOUNTING      => new SntAccounting(),
             OptionEnum::COUNTER_READING_DAY => new CounterReadingDay(),
+            OptionEnum::CHAIRMAN_INFO       => new ChairmanInfo(),
             default                         => null,
         };
     }

@@ -7,9 +7,9 @@ use Core\Domains\Option\Models\OptionDTO;
 
 class DefaultComparator extends AbstractComparatorDTO
 {
-    public const TITLE_DATA = 'Данные';
+    public const string TITLE_DATA = 'Данные';
 
-    protected const KEYS_TO_TITLES = [
+    protected const array KEYS_TO_TITLES = [
         'data' => self::TITLE_DATA,
     ];
 
