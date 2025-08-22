@@ -8,9 +8,9 @@ use Core\Domains\Option\Models\OptionDTO;
 
 class CounterReadingDayComparator extends AbstractComparatorDTO
 {
-    public const TITLE_DAY = 'День снятия показаний счетчиков';
+    public const string TITLE_DAY = 'День снятия показаний счетчиков';
 
-    protected const KEYS_TO_TITLES = [
+    protected const array KEYS_TO_TITLES = [
         'day' => self::TITLE_DAY,
     ];
 

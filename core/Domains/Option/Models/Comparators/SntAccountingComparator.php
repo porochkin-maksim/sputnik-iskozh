@@ -8,15 +8,15 @@ use Core\Domains\Option\Models\OptionDTO;
 
 class SntAccountingComparator extends AbstractComparatorDTO
 {
-    public const TITLE_BANK = 'Банк';
-    public const TITLE_ACC  = 'Расчетный счет';
-    public const TITLE_CORR = 'Корреспондентский счет';
-    public const TITLE_BIK  = 'БИК';
-    public const TITLE_INN  = 'ИНН';
-    public const TITLE_KPP  = 'КПП';
-    public const TITLE_OGRN = 'ОГРН';
+    public const string TITLE_BANK = 'Банк';
+    public const string TITLE_ACC  = 'Расчетный счет';
+    public const string TITLE_CORR = 'Корреспондентский счет';
+    public const string TITLE_BIK  = 'БИК';
+    public const string TITLE_INN  = 'ИНН';
+    public const string TITLE_KPP  = 'КПП';
+    public const string TITLE_OGRN = 'ОГРН';
 
-    protected const KEYS_TO_TITLES = [
+    protected const array KEYS_TO_TITLES = [
         'bank' => self::TITLE_BANK,
         'acc'  => self::TITLE_ACC,
         'corr' => self::TITLE_CORR,

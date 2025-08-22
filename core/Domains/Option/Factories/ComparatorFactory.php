@@ -1,9 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Option\Models\Comparators;
+namespace Core\Domains\Option\Factories;
 
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\Comparators\ChairmanInfoComparator;
+use Core\Domains\Option\Models\Comparators\CounterReadingDayComparator;
+use Core\Domains\Option\Models\Comparators\DefaultComparator;
+use Core\Domains\Option\Models\Comparators\SntAccountingComparator;
+use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\CounterReadingDay;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
 use Core\Domains\Option\Models\OptionDTO;
@@ -24,6 +29,10 @@ class ComparatorFactory
         
         if ($type === OptionEnum::COUNTER_READING_DAY || $data instanceof CounterReadingDay) {
             return new CounterReadingDayComparator($entity);
+        }
+
+        if ($type === OptionEnum::CHAIRMAN_INFO || $data instanceof ChairmanInfo) {
+            return new ChairmanInfoComparator($entity);
         }
         
         // Для неизвестных типов или когда тип не указан, возвращаем стандартный сравнитель

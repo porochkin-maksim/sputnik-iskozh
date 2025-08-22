@@ -13,12 +13,14 @@ enum OptionEnum: int
 
     case SNT_ACCOUNTING      = 1;
     case COUNTER_READING_DAY = 2;
+    case CHAIRMAN_INFO       = 3;
 
     public function name(): string
     {
         return match ($this) {
             self::SNT_ACCOUNTING      => 'Реквизиты СНТ',
             self::COUNTER_READING_DAY => 'День снятия показаний счетчиков',
+            self::CHAIRMAN_INFO       => 'Председатель',
         };
     }
 }

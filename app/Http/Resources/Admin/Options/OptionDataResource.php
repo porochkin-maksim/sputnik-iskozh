@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Options;
 
-use Core\Domains\Option\Models\Comparators\ComparatorFactory;
+use Core\Domains\Option\Factories\ComparatorFactory;
 use Core\Domains\Option\Models\DataDTO\DataDTOInterface;
 use Core\Domains\Option\Models\OptionDTO;
 use Illuminate\Http\Request;

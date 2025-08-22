@@ -77,6 +77,36 @@ class PhoneHelper
         );
     }
 
+    public static function getPhoneNumberAsInternational(?string $string): ?string
+    {
+        if (null === $string) {
+            return null;
+        }
+        // Удаляем все нецифровые символы
+        $digits = preg_replace('/[^0-9]/', '', $string);
+
+        // Проверяем, что строка содержит 11 цифр и начинается с 7
+        if (strlen($digits) !== 11 || $digits[0] !== '7') {
+            return null;
+        }
+
+        // Форматируем номер в нужный вид
+        return sprintf(
+            '+%s%s%s%s%s%s%s%s%s%s%s',
+            $digits[0],  // 7
+            $digits[1],  // 9
+            $digits[2],  // 0
+            $digits[3],  // 0
+            $digits[4],  // 0
+            $digits[5],  // 0
+            $digits[6],  // 0
+            $digits[7],  // 0
+            $digits[8],  // 0
+            $digits[9],  // 0
+            $digits[10],  // 0
+        );
+    }
+
     /**
      * Извлекает первый номер телефона из строки и нормализует его
      */

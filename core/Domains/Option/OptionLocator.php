@@ -3,8 +3,8 @@
 namespace Core\Domains\Option;
 
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\Option\Factories\ComparatorFactory;
 use Core\Domains\Option\Factories\OptionFactory;
-use Core\Domains\Option\Models\Comparators\ComparatorFactory;
 use Core\Domains\Option\Repositories\OptionRepository;
 use Core\Domains\Option\Services\OptionService;
 

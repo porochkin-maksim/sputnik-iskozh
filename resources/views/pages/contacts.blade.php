@@ -2,8 +2,10 @@
 
 use Carbon\Carbon;
 use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
 use Core\Domains\Option\OptionLocator;
+use Core\Helpers\Phone\PhoneHelper;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
 use Core\Resources\Views\SectionNames;
@@ -20,8 +22,10 @@ $isWinter = $month >= 11 || $month <= 3;
 
 /**
  * @var SntAccounting $accountingData
+ * @var ChairmanInfo  $chairmanData
  */
 $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
+$chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -48,11 +52,13 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
             <th>Председатель</th>
             <td>
                 <div>
-                    Крылов Алексей Владимирович
+                    {{ $chairmanData->getFullName() }}
                 </div>
+                @if($chairmanData->getPhone())
                 <div>
-                    <a href="tel:+79001128403"><i class="fa fa-phone"></i> +7(900)112-84-03</a>
+                    <a href="tel:{{ PhoneHelper::getPhoneNumberAsInternational($chairmanData->getPhone()) }}"><i class="fa fa-phone"></i> {{ $chairmanData->getPhone() }}</a>
                 </div>
+                @endif
             </td>
         </tr>
         <tr>
@@ -189,7 +195,9 @@ $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCO
         </tr>
         <tr>
             <th>Кадастровая карта</th>
-            <td><a href="https://map.ru/pkk?kad=69:10:0205201&z=16"><i class="fa fa-map-marker"></i> https://map.ru/pkk?kad=69:10:0205201</a></td>
+            <td>
+                <a href="https://map.ru/pkk?kad=69:10:0205201&z=16"><i class="fa fa-map-marker"></i> https://map.ru/pkk?kad=69:10:0205201</a>
+            </td>
         </tr>
         <tr>
             <th>Горячая линия Россети</th>
