@@ -4,10 +4,10 @@
             <div>
                 <a :href="item.viewUrl"
                    class="text-decoration-none">
-                    <h5 class="d-inline-flex flex-md-row flex-column mt-2">
-                        <div>Счётчик «{{ item.number }}»&nbsp;</div>
-                        <div>{{ item.value.toLocaleString('ru-RU') }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
-                    </h5>
+                    <div>
+                        <h5 class="mb-0">Счётчик «{{ item.number }}»&nbsp;</h5>
+                    </div>
+                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
                 </a>
             </div>
         </template>

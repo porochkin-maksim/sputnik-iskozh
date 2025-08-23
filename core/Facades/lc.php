@@ -10,7 +10,9 @@ use Core\Domains\Counter\CounterLocator;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Services\UserDecorator;
 use Core\Domains\User\UserLocator;
+use Core\Session\SessionNames;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 abstract class lc
 {
@@ -55,7 +57,14 @@ abstract class lc
     public static function account(): AccountDTO
     {
         if ( ! isset(self::$account)) {
-            $account = Auth::id() ? AccountLocator::AccountService()->getByUserId(Auth::id()) : null;
+            $accountId = Session::get(SessionNames::ACCOUNT_ID);
+            $accounts  = Auth::id() ? AccountLocator::AccountService()->getByUserId(Auth::id()) : null;
+            if ($accountId && $accounts !== null && in_array($accountId, $accounts->getIds())) {
+                $account = AccountLocator::AccountService()->getById($accountId);
+            }
+            else {
+                $account = $accounts?->first();
+            }
             if ( ! $account) {
                 $account = AccountLocator::AccountFactory()->makeDefault();
             }

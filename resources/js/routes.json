@@ -1097,6 +1097,13 @@
         "uri": "\/privacy",
         "args": []
     },
+    "profileAccountSwitch": {
+        "name": "profile.account.switch",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/profile\/switch-account",
+        "args": []
+    },
     "profileCounterAddValue": {
         "name": "profile.counter.add-value",
         "displayName": "",
@@ -1147,6 +1154,13 @@
         "args": {
             "counter": "{counter}"
         }
+    },
+    "profileInvoicesIndex": {
+        "name": "profile.invoices.index",
+        "displayName": "\u0421\u0447\u0435\u0442\u0430",
+        "method": "get",
+        "uri": "\/home\/invoices",
+        "args": []
     },
     "profileSavePassword": {
         "name": "profile.save.password",

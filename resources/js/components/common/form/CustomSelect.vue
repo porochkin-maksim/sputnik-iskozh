@@ -14,7 +14,7 @@
             <option v-for="item in items"
                     :key="item.key !== undefined ? item.key : item"
                     :value="item.key !== undefined ? item.key : item"
-                    :selected="(item.key !== undefined ? item.key : item) === modelValue"
+                    :selected="(item.key !== undefined ? String(item.key) : String(item)) === String(modelValue)"
             >
                 {{ item.value !== undefined ? item.value : item }}
             </option>

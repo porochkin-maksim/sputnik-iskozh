@@ -62,9 +62,17 @@ use Illuminate\Support\Facades\Route;
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::HOME) }}">
-                    {{ \lc::userDecorator()->getDisplayName() }}
+                    <i class="fa fa-home"></i>  {{ \lc::userDecorator()->getDisplayName() }}
                 </a>
             </li>
+            @if (lc::roleDecorator()->canAccessAdmin())
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ route(RouteNames::ADMIN) }}">
+                        <i class="fa fa-gears"></i> Админка
+                    </a>
+                </li>
+            @endif
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::LOGOUT) }}">

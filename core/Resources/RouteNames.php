@@ -76,17 +76,17 @@ abstract class RouteNames
     public const string ACCOUNT_REGISTER      = 'account.register';
     public const string ACCOUNT_REGISTER_SAVE = 'account.register.save';
 
-    public const string PROFILE               = 'profile.show';
-    public const string PROFILE_SAVE          = 'profile.save';
-    public const string PROFILE_SAVE_EMAIL    = 'profile.save.email';
-    public const string PROFILE_SAVE_PASSWORD = 'profile.save.password';
-
+    public const string PROFILE                = 'profile.show';
+    public const string PROFILE_SAVE           = 'profile.save';
+    public const string PROFILE_SAVE_EMAIL     = 'profile.save.email';
+    public const string PROFILE_SAVE_PASSWORD  = 'profile.save.password';
+    public const string PROFILE_SWITCH_ACCOUNT = 'profile.account.switch';
 
     public const string PROFILE_INDEX             = 'profile.index';
     public const string PROFILE_COUNTERS          = 'profile.counters.index';
     public const string PROFILE_COUNTER_VIEW      = 'profile.counters.view';
     public const string PROFILE_COUNTER_INCREMENT = 'profile.counters.increment-save';
-    public const string PROFILE_PAYMENTS          = 'profile.payments.index';
+    public const string PROFILE_INVOICES          = 'profile.invoices.index';
 
     public const string PROFILE_COUNTERS_LIST     = 'profile.counter.list';
     public const string PROFILE_COUNTER_CREATE    = 'profile.counter.create';
@@ -223,7 +223,7 @@ abstract class RouteNames
             self::LOGOUT                              => 'Выйти',
 
             self::PROFILE_COUNTERS                    => 'Счётчики',
-            self::PROFILE_PAYMENTS                    => 'Платежи',
+            self::PROFILE_INVOICES                    => 'Счета',
 
             self::FILES                               => 'Файлы',
             self::NEWS                                => 'Новости',

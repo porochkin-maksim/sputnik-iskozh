@@ -6,6 +6,7 @@ use App\Models\Account\Account;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\Collections\AccountCollection;
+use Illuminate\Database\Eloquent\Collection;
 
 class AccountRepository
 {
@@ -42,10 +43,15 @@ class AccountRepository
         return $object;
     }
 
-    public function getByUserId(int $id): ?Account
+    /**
+     * @param int $id
+     *
+     * @return Collection|Account[]
+     */
+    public function getByUserId(int $id): Collection|array
     {
         $id = $this->accountToUserRepository->getAccountIdByUserId($id);
 
-        return Account::select()->with('users')->where('id', SearcherInterface::EQUALS, $id)->first();
+        return Account::select()->with('users')->where('id', SearcherInterface::EQUALS, $id)->get();
     }
 }

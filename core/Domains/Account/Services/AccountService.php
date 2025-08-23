@@ -50,11 +50,11 @@ readonly class AccountService
         return $current;
     }
 
-    public function getByUserId(int|string|null $id): ?AccountDTO
+    public function getByUserId(int|string|null $id): AccountCollection
     {
         $result = $this->accountRepository->getByUserId((int) $id);
 
-        return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
+        return $this->accountFactory->makeDtoFromObjects($result);
     }
 
     public function register(AccountDTO $dto): AccountDTO

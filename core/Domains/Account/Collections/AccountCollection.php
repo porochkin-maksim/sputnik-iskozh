@@ -33,4 +33,14 @@ class AccountCollection extends Collection implements CollectionInterface
             return 0;
         });
     }
+
+    public function hasMany(): bool
+    {
+        return $this->count() > 1;
+    }
+
+    public function searchById(?int $accountId): ?AccountDTO
+    {
+        return array_find($this->items, fn($account) => $account->getId() === $accountId);
+    }
 }
