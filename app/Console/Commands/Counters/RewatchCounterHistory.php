@@ -7,7 +7,7 @@ use Core\Domains\Counter\Jobs\RewatchCounterHistoryChainJob;
 use Core\Domains\Counter\Models\CounterSearcher;
 use Illuminate\Console\Command;
 
-class RunRewatchCounterHistory extends Command
+class RewatchCounterHistory extends Command
 {
     protected $signature   = 'counters:rewatch';
     protected $description = 'Запускает переобход счётчиков и их цепочек';
