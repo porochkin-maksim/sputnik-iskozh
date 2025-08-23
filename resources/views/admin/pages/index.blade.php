@@ -155,8 +155,8 @@ $authRole = lc::roleDecorator();
         @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
             <tr>
                 <th>
-                    <a href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
-                        {{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}
+                    <a href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
+                        {{ RouteNames::name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}
                     </a>
                 </th>
                 <td>

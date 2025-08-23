@@ -68,7 +68,7 @@ class TopPanelController extends Controller
         $result = null;
         if ($accountSearch) {
             $accounts = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$accountSearch}%"),
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::EQUALS, $accountSearch),
             )->getItems();
 
             if ($accounts->count() === 1) {

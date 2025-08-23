@@ -20,7 +20,7 @@
                     </button>
                     <button class="btn btn-sm btn-outline-success ms-2"
                             @click="editIncrement"
-                    >Автоприращение
+                    >Автопоказания
                     </button>
                 </div>
             </div>
@@ -131,7 +131,7 @@
                  v-model:hide="hideIncrementDialog"
                  @hidden="closeIncrementAction"
     >
-        <template v-slot:title>Изменение автоприращения</template>
+        <template v-slot:title>Изменение автопоказаний</template>
         <template v-slot:body>
             <div class="container-fluid">
                 <div class="mt-2">
@@ -140,7 +140,7 @@
                                   :type="'number'"
                                   :min="0"
                                   :step="1"
-                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :label="'Ежемесячное увеличение показаний на кВт'"
                                   :required="true"
                                   @focusout="calculateIncrement"
                     />

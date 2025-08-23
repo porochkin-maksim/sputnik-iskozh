@@ -24,4 +24,9 @@ class DefaultRequest extends AbstractRequest
     {
         return $this->getStringOrNull(self::SEARCH);
     }
+
+    public function getLastId(): ?int
+    {
+        return $this->getIntOrNull(RequestArgumentsEnum::LAST_ID);
+    }
 }

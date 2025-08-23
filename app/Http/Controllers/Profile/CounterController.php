@@ -189,7 +189,7 @@ class CounterController extends Controller
             ->setLimit($limit)
             ->setOffset($request->getOffset())
             ->setWithClaim()
-            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
+            ->descSort()
         ;
 
         $response = $this->counterHistoryService->search($searcher);

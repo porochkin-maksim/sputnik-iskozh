@@ -61,7 +61,6 @@ class AccountsController extends Controller
         if ( ! $account) {
             abort(404);
         }
-        $account = new AccountResource($account);
 
         return view('admin.pages.accounts.view', compact('account'));
     }

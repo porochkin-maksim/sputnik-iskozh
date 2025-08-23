@@ -59,5 +59,6 @@ export default {
     text         : 'text',
     token        : 'token',
     increment    : 'increment',
-    isInvoicing  : 'is_invoicing'
+    isInvoicing  : 'is_invoicing',
+    lastId       : 'lastId'
 }

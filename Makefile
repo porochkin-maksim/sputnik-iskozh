@@ -89,6 +89,7 @@ yarn: ## запуск yarn
 .PHONY: yarn-watch
 yarn-watch: ## прослушивать фронт
 	@./vendor/bin/sail artisan front:export-route-list-command
+	@./vendor/bin/sail artisan front:export-route-functions-list-command
 	@./vendor/bin/sail artisan front:export-request-arguments-command
 	@./vendor/bin/sail yarn run dev
 
