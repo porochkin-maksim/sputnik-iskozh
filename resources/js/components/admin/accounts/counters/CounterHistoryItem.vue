@@ -24,11 +24,10 @@
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="localHistory.date"
-                                  :errors="errors.date"
-                                  :type="'date'"
-                                  :label="'Дата показаний'"
-                                  :required="true"
+                    <label class="text-secondary">Дата показаний</label>
+                    <custom-calendar v-model="localHistory.date"
+                                     :error="errors.date"
+                                     :required="true"
                     />
                 </div>
                 <div class="mt-2">
@@ -74,10 +73,12 @@ import FileItem       from '../../../common/files/FileItem.vue';
 import Wrapper        from '../../../common/Wrapper.vue';
 import ResponseError  from '../../../../mixin/ResponseError.js';
 import Url            from '../../../../utils/Url.js';
+import CustomCalendar from '../../../common/form/CustomCalendar.vue';
 
 export default {
     emits     : ['historyUpdated'],
     components: {
+        CustomCalendar,
         SearchSelect,
         FileItem,
         ViewDialog,
@@ -117,9 +118,11 @@ export default {
 
         const date        = new Date();
         this.localHistory = this.history ? Object.assign({}, this.history) : { date: date.toISOString().split('T')[0] };
-        if (!this.history) {
+        if (this.counter && !this.history?.id) {
             this.localHistory.value = this.counter.value;
+            this.localHistory.date  = this.counter.date;
         }
+
         this.showDialog = true;
     },
     methods : {

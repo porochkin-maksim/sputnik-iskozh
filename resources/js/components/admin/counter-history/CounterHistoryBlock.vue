@@ -266,7 +266,7 @@ export default {
     },
     methods : {
         listAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryIndex, {}, {
+            let uri = Url.Generator.makeUri(Url.Routes.adminRequestsCounterHistoryIndex, {}, {
                 limit   : this.perPage,
                 skip    : this.skip,
                 verified: this.verifiedStatus,
@@ -276,7 +276,7 @@ export default {
 
             this.allCheck = false;
             this.checked  = [];
-            window.axios[Url.Routes.adminCounterHistoryList.method](Url.Routes.adminCounterHistoryList.uri, {
+            window.axios[Url.Routes.adminRequestsCounterHistoryList.method](Url.Routes.adminRequestsCounterHistoryList.uri, {
                 params: {
                     limit   : this.perPage,
                     skip    : this.skip,
@@ -356,8 +356,8 @@ export default {
             form.append('counter_id', this.counterId);
 
             this.clearResponseErrors();
-            window.axios[Url.Routes.adminCounterHistoryLink.method](
-                Url.Routes.adminCounterHistoryLink.uri,
+            window.axios[Url.Routes.adminRequestsCounterHistoryLink.method](
+                Url.Routes.adminRequestsCounterHistoryLink.uri,
                 form,
             ).then((response) => {
                 this.showInfo('Показания привязаны');
@@ -375,11 +375,11 @@ export default {
             if (!confirm(id ? 'Удалить показание?' : 'Удалить выделенные показания?')) {
                 return;
             }
-            let uri = Url.Generator.makeUri(Url.Routes.adminCounterHistoryDelete, {
+            let uri = Url.Generator.makeUri(Url.Routes.adminRequestsCounterHistoryDelete, {
                 historyId: id,
             });
 
-            window.axios[Url.Routes.adminCounterHistoryDelete.method](
+            window.axios[Url.Routes.adminRequestsCounterHistoryDelete.method](
                 uri,
             ).then((response) => {
                 if (response.data) {
@@ -403,8 +403,8 @@ export default {
             });
 
             this.clearResponseErrors();
-            window.axios[Url.Routes.adminCounterHistoryConfirm.method](
-                Url.Routes.adminCounterHistoryConfirm.uri,
+            window.axios[Url.Routes.adminRequestsCounterHistoryConfirm.method](
+                Url.Routes.adminRequestsCounterHistoryConfirm.uri,
                 form,
             ).then((response) => {
                 this.showInfo('Показания подтверждены');
@@ -427,8 +427,8 @@ export default {
             });
 
             this.clearResponseErrors();
-            window.axios[Url.Routes.adminCounterHistoryConfirmDelete.method](
-                Url.Routes.adminCounterHistoryConfirmDelete.uri,
+            window.axios[Url.Routes.adminRequestsCounterHistoryConfirmDelete.method](
+                Url.Routes.adminRequestsCounterHistoryConfirmDelete.uri,
                 form,
             ).then((response) => {
                 this.showInfo('Показания удалены');

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin\Account;
 
@@ -8,20 +8,14 @@ use App\Http\Requests\Admin\Counters\CreateRequest;
 use App\Http\Requests\Admin\Counters\SaveRequest;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Counters\CounterListResource;
-use App\Http\Resources\Admin\Periods\PeriodResource;
-use App\Models\Counter\CounterHistory;
-use Carbon\Carbon;
-use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
 use Core\Domains\Counter\Factories\CounterHistoryFactory;
-use Core\Domains\Counter\Models\CounterHistorySearcher;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
@@ -29,10 +23,11 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Core\Enums\DateTimeFormat;
 use Core\Requests\RequestArgumentsEnum;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Exception;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use lc;
@@ -46,7 +41,6 @@ class CounterController extends Controller
     private CounterHistoryFactory $counterHistoryFactory;
     private FileService           $fileService;
     private HistoryChangesService $historyChangesService;
-    private PeriodService         $periodService;
 
     public function __construct()
     {
@@ -57,7 +51,6 @@ class CounterController extends Controller
         $this->counterHistoryFactory = CounterLocator::CounterHistoryFactory();
         $this->fileService           = CounterLocator::FileService();
         $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
-        $this->periodService         = PeriodLocator::PeriodService();
     }
 
     public function list(int $accountId, DefaultRequest $request): JsonResponse
@@ -68,40 +61,15 @@ class CounterController extends Controller
 
         $result = $this->counterService->getByAccountId($accountId);
 
-        $period = null;
-        $limit  = $request->getLimit() ? : 12;
-
-        $searcher = CounterHistorySearcher::make()
-            ->setLimit($limit)
-            ->setOffset($request->getOffset())
-            ->setWithClaim()
-            ->setSortOrderProperty(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
-        ;
-
-        if ($request->getIntOrNull('periodId')) {
-            $period = $this->periodService->getById($request->getIntOrNull('periodId'));
-        }
-        if ($period) {
-            $searcher
-                ->addWhere(CounterHistory::DATE, SearcherInterface::GTE, $period->getStartAt()?->format(DateTimeFormat::DATE_DEFAULT))
-                ->addWhere(CounterHistory::DATE, SearcherInterface::LTE, $period->getEndAt()?->format(DateTimeFormat::DATE_DEFAULT))
-            ;
-        }
-        else {
-            $searcher->setLimit($limit);
-        }
-
         foreach ($result as $counter) {
-            $counter->setHistoryCollection(
-                $this->counterHistoryService->search(
-                    $searcher->setCounterId($counter->getId()),
-                )->getItems(),
-            );
+            $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
+            if ($lastHistory) {
+                $counter->setHistoryCollection(new CounterHistoryCollection([$lastHistory]));
+            }
         }
 
         return response()->json([
             ResponsesEnum::COUNTERS => new CounterListResource($result),
-            ResponsesEnum::PERIOD   => $period ? new PeriodResource($period) : null,
         ]);
     }
 
@@ -143,6 +111,25 @@ class CounterController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function view(int $accountId, int $counterId): View
+    {
+        $counter = $this->counterService->getById($counterId);
+
+        if ( ! $counter || $counter->getAccountId() !== $accountId) {
+            abort(404);
+        }
+
+        $account = $this->accountService->getById($accountId);
+        $counter->setAccount($account);
+
+        $history = $this->counterHistoryService->getLastByCounterId($counterId);
+        if ($history) {
+            $counter->setHistoryCollection(new CounterHistoryCollection([$history]));
+        }
+
+        return view(ViewNames::ADMIN_PAGES_COUNTER, compact('counter'));
     }
 
     public function save(int $accountId, SaveRequest $request): void

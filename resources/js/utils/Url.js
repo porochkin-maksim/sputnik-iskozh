@@ -1,4 +1,5 @@
-import Routes from '../routes.json';
+import Routes              from '../routes.json';
+import * as RouteFunctions from '../routes-functions';
 
 let Generator = {
     /**
@@ -29,4 +30,5 @@ let Generator = {
 export default {
     Routes,
     Generator,
+    RouteFunctions,
 };

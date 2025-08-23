@@ -25,7 +25,7 @@
                                   :type="'number'"
                                   :min="0"
                                   :step="1"
-                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :label="'Ежемесячное увеличение показаний на кВт'"
                                   :required="true"
                                   @focusout="calculateIncrement"
                     />
@@ -98,10 +98,13 @@ export default {
         Wrapper,
     },
     props     : {
-        account: Object,
-        counter: {
+        account : Object,
+        counter : {
             type   : Object,
             default: null,
+        },
+        showForm: {
+            default: false,
         },
     },
     mixins    : [
@@ -122,11 +125,9 @@ export default {
         };
     },
     created () {
-        this.vueId = 'uuid' + this.$_uid;
-
+        this.vueId        = 'uuid' + this.$_uid;
         this.localCounter = this.counter ? Object.assign({}, this.counter) : {};
-
-        this.showDialog = true;
+        this.showDialog   = this.showForm;
     },
     methods : {
         saveAction () {
@@ -182,6 +183,12 @@ export default {
     computed: {
         canSubmitAction () {
             return this.localCounter.number && (this.localCounter.id || this.localCounter.value);
+        },
+    },
+    watch   : {
+        showForm () {
+            this.localCounter = this.counter;
+            this.showDialog   = this.showForm;
         },
     },
 };

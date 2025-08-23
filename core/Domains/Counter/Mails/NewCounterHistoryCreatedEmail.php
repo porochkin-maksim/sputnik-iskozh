@@ -39,7 +39,7 @@ class NewCounterHistoryCreatedEmail extends Mailable
      */
     public function content(): Content
     {
-        $link    = route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX);
+        $link    = route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX);
         $content = <<<HTML
             <h3>Требуется подтвердить показания</h3>
             <p>Номер участка: {$this->account?->getNumber()}</p>

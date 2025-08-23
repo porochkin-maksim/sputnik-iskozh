@@ -119,9 +119,9 @@ $cutRouteNameFn = static function (string $routeName) {
                 @endif
 
                 @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
-                    <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}">
+                    <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
                         <i class="fa fa-tachometer me-2"></i>
-                        <span>{{ RouteNames::name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX) }}</span>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}</span>
                     </a>
                 @endif
 

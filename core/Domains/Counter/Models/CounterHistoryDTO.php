@@ -99,7 +99,7 @@ class CounterHistoryDTO
 
     public function getDate(): ?Carbon
     {
-        return $this->date;
+        return $this->date ? clone $this->date : null;
     }
 
     public function setDate(?Carbon $date): static

@@ -42,11 +42,6 @@
                     v-if="actions.payments.view"
                     v-model:count="paymentsCount"
                     v-model:reload="reload" />
-    <div class="border-top my-2"></div>
-    <counters-block v-if="account"
-                    :account="account"
-                    :period-id="invoice.periodId"
-    />
 </template>
 
 <script>

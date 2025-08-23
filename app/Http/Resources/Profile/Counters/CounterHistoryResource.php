@@ -32,7 +32,7 @@ readonly class CounterHistoryResource extends AbstractResource
             'before'     => $previous?->getValue(),
             'delta'      => $previous ? ($this->counterHistory->getValue() - $previous->getValue()) : null,
             'date'       => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'days'       => $previous ? $this->counterHistory->getDate()?->diffInDays($previous->getDate()) : null,
+            'days'       => $previous ? abs((int)$this->counterHistory->getDate()?->diffInDays($previous->getDate())) : null,
             'file'       => $this->counterHistory->getFile(),
             'actions'    => [
                 ResponsesEnum::CREATE => $canCreateNew,

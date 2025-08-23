@@ -22,66 +22,74 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-4">
-            <template v-if="account.actions.edit">
-                <div>
-                    <custom-input v-model="account.number"
-                                  :required="true"
-                                  :label="'Номер участка'"
-                    />
-                </div>
-                <div class="mt-2">
-                    <custom-input v-model="account.size"
-                                  :label="'Площадь (м²)'"
-                                  :type="'number'"
-                                  :min="0"
-                                  :step="1"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <custom-checkbox v-model="account.isInvoicing"
-                                     :label="'Выставлять счета'"
-                    />
-                </div>
-                <div>
-                    <custom-input v-model="account.cadastreNumber"
-                                  :label="'Кадастровый номер'"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <custom-input v-model="account.registryDate"
-                                  :label="'Дата регистрации'"
-                                  :type="'date'"
-                                  @change="clearError('registryDate')"
-                    />
-                </div>
-            </template>
-            <template v-else>
-                <h6>Данные участка</h6>
-                <account-info-list :account="account" />
-            </template>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-6">
-            <div class="mt-2"
-                 v-if="account.users && account.users.length">
-                <h6>Пользователи</h6>
-                <ul class="list-group">
-                    <li v-for="user in account.users"
-                        class="list-group-item">
-                        <a :href="user.viewUrl"
-                           v-if="user.actions.view">{{ user.fullName }}</a>
-                        <span v-else>{{ user.fullName }}</span>
-                    </li>
-                </ul>
+            <div class="row">
+                <div class="col-12">
+                    <template v-if="account.actions.edit">
+                        <div>
+                            <custom-input v-model="account.number"
+                                          :required="true"
+                                          :label="'Номер участка'"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <custom-input v-model="account.size"
+                                          :label="'Площадь (м²)'"
+                                          :type="'number'"
+                                          :min="0"
+                                          :step="1"
+                                          :required="true"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <custom-checkbox v-model="account.isInvoicing"
+                                             :label="'Выставлять счета'"
+                            />
+                        </div>
+                        <div>
+                            <custom-input v-model="account.cadastreNumber"
+                                          :label="'Кадастровый номер'"
+                                          :required="true"
+                            />
+                        </div>
+                        <div class="mt-2">
+                            <custom-input v-model="account.registryDate"
+                                          :label="'Дата регистрации'"
+                                          :type="'date'"
+                                          @change="clearError('registryDate')"
+                            />
+                        </div>
+                    </template>
+                    <template v-else>
+                        <h6>Данные участка</h6>
+                        <account-info-list :account="account" />
+                    </template>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mt-2"
+                         v-if="account.users && account.users.length">
+                        <h6>Пользователи</h6>
+                        <ul class="list-group">
+                            <li v-for="user in account.users"
+                                class="list-group-item">
+                                <a :href="user.viewUrl"
+                                   v-if="user.actions.view">{{ user.fullName }}</a>
+                                <span v-else>{{ user.fullName }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="mt-2 pt-2 border-top">
-        <counters-block :account="account" />
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <counters-block :account="account" />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

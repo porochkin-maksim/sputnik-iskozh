@@ -39,7 +39,7 @@
                                   :type="'number'"
                                   :min="0"
                                   :step="1"
-                                  :label="'Ежемесячное автоприращение показаний на кВт'"
+                                  :label="'Ежемесячное увеличение показаний на кВт'"
                                   :required="true"
                                   @focusout="calculateIncrement"
                     />

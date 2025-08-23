@@ -206,7 +206,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 });
                 Route::group(['prefix' => 'accounts'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'accounts'])->name(RouteNames::ADMIN_ACCOUNT_INDEX);
-                    Route::group(['prefix' => 'json'], static function () {
+                    Route::group(['prefix' => 'json'], static function () {//
                         Route::get('/view/{accountId}', [Controllers\Admin\Account\AccountsController::class, 'get'])->name(RouteNames::ADMIN_ACCOUNT_GET);
                         Route::get('/create', [Controllers\Admin\Account\AccountsController::class, 'create'])->name(RouteNames::ADMIN_ACCOUNT_CREATE);
                         Route::get('/list', [Controllers\Admin\Account\AccountsController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_LIST);
@@ -216,11 +216,23 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     Route::group(['prefix' => 'view/{accountId}'], static function () {
                         Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                         Route::group(['prefix' => 'json'], static function () {
-                            Route::post('/create', [Controllers\Admin\Account\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
-                            Route::get('/list', [Controllers\Admin\Account\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
-                            Route::post('/save', [Controllers\Admin\Account\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
-                            Route::post('/delete/{counterId}', [Controllers\Admin\Account\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_DELETE);
-                            Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
+                            Route::group(['prefix' => 'counters'], static function () {
+                                Route::post('/create', [Controllers\Admin\Account\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
+                                Route::get('/view/{counterId}', [Controllers\Admin\Account\CounterController::class, 'view'])->name(RouteNames::ADMIN_COUNTER_VIEW);
+                                Route::get('/list', [Controllers\Admin\Account\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
+                                Route::post('/save', [Controllers\Admin\Account\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
+                                Route::post('/delete/{counterId}', [Controllers\Admin\Account\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_DELETE);
+                                Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
+                            });
+                        });
+                    });
+                });
+                Route::group(['prefix' => 'counters'], static function () {
+                    Route::group(['prefix' => 'json'], static function () {
+                        Route::group(['prefix' => '{counterId}'], static function () {
+                            Route::group(['prefix' => 'history'], static function () {
+                                Route::get('/list', [Controllers\Admin\Account\CounterHistoryController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
+                            });
                         });
                     });
                 });
@@ -276,15 +288,15 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     });
                 });
                 Route::group(['prefix' => 'counter-history'], static function () {
-                    Route::get('/', [Controllers\Admin\PagesController::class, 'counterHistory'])->name(RouteNames::ADMIN_COUNTER_HISTORY_INDEX);
+                    Route::get('/', [Controllers\Admin\PagesController::class, 'counterHistory'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::post('/create-claim/{historyId}', [Controllers\Admin\Account\CounterController::class, 'createClaim'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CREATE_CLAIM);
+                        Route::post('/create-claim/{historyId}', [Controllers\Admin\Account\CounterController::class, 'createClaim'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_CREATE_CLAIM);
 
-                        Route::get('/list', [Controllers\Admin\Requests\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LIST);
-                        Route::post('/link', [Controllers\Admin\Requests\CounterController::class, 'link'])->name(RouteNames::ADMIN_COUNTER_HISTORY_LINK);
-                        Route::delete('/delete/{historyId}', [Controllers\Admin\Requests\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_DELETE);
-                        Route::post('/confirm', [Controllers\Admin\Requests\CounterController::class, 'confirm'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM);
-                        Route::post('/confirm-delete', [Controllers\Admin\Requests\CounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_COUNTER_HISTORY_CONFIRM_DELETE);
+                        Route::get('/list', [Controllers\Admin\Requests\CounterController::class, 'list'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_LIST);
+                        Route::post('/link', [Controllers\Admin\Requests\CounterController::class, 'link'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_LINK);
+                        Route::delete('/delete/{historyId}', [Controllers\Admin\Requests\CounterController::class, 'delete'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_DELETE);
+                        Route::post('/confirm', [Controllers\Admin\Requests\CounterController::class, 'confirm'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_CONFIRM);
+                        Route::post('/confirm-delete', [Controllers\Admin\Requests\CounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_CONFIRM_DELETE);
                     });
                 });
                 Route::get('error-logs', [Controllers\Admin\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');

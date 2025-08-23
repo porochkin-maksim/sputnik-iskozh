@@ -55,7 +55,7 @@
         <table class="table table-sm table-striped table-bordered">
             <thead>
             <tr class="text-center">
-                <th class="cursor-pointer text-end" @click="sort('id')">
+                <th class="cursor-pointer text-end" @click="sort('id')" colspan="2">
                     №
                     <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                     <i v-else class="fa fa-sort"></i>
@@ -77,6 +77,11 @@
             </thead>
             <tbody>
             <tr v-for="account in accounts" class="align-middle">
+                <td>
+                    <a :href="account.viewUrl" class="d-block w-100 text-center">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                </td>
                 <td class="text-end">
                     <a :href="account.viewUrl">
                         {{ account.id }}

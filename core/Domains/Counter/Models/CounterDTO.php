@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Counter\Models;
 
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
@@ -112,8 +113,14 @@ class CounterDTO
         return $this;
     }
 
-    public function getAccount(): ?AccountDTO
+    public function getAccount(bool $eagerLoad = false): ?AccountDTO
     {
+        if ( ! $this->account && $this->accountId) {
+            if ($eagerLoad) {
+                $this->account = AccountLocator::AccountService()->getById($this->accountId);
+            }
+        }
+
         return $this->account;
     }
 }

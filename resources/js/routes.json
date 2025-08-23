@@ -101,64 +101,11 @@
             "claimId": "{claimId}"
         }
     },
-    "adminCounterHistoryConfirm": {
-        "name": "admin.counter-history.confirm",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/counter-history\/json\/confirm",
-        "args": []
-    },
-    "adminCounterHistoryConfirmDelete": {
-        "name": "admin.counter-history.confirm-delete",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/counter-history\/json\/confirm-delete",
-        "args": []
-    },
-    "adminCounterHistoryCreateClaim": {
-        "name": "admin.counter-history.create-claim",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/counter-history\/json\/create-claim\/{historyId}",
-        "args": {
-            "historyId": "{historyId}"
-        }
-    },
-    "adminCounterHistoryDelete": {
-        "name": "admin.counter-history.delete",
-        "displayName": "",
-        "method": "delete",
-        "uri": "\/admin\/counter-history\/json\/delete\/{historyId}",
-        "args": {
-            "historyId": "{historyId}"
-        }
-    },
-    "adminCounterHistoryIndex": {
-        "name": "admin.counter-history.index",
-        "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",
-        "method": "get",
-        "uri": "\/admin\/counter-history",
-        "args": []
-    },
-    "adminCounterHistoryLink": {
-        "name": "admin.counter-history.link",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/counter-history\/json\/link",
-        "args": []
-    },
-    "adminCounterHistoryList": {
-        "name": "admin.counter-history.list",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/counter-history\/json\/list",
-        "args": []
-    },
     "adminCounterAddValue": {
         "name": "admin.counter.add-value",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/add-value",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/add-value",
         "args": {
             "accountId": "{accountId}"
         }
@@ -167,7 +114,7 @@
         "name": "admin.counter.create",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/create",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/create",
         "args": {
             "accountId": "{accountId}"
         }
@@ -176,9 +123,18 @@
         "name": "admin.counter.delete",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/delete\/{counterId}",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/delete\/{counterId}",
         "args": {
             "accountId": "{accountId}",
+            "counterId": "{counterId}"
+        }
+    },
+    "adminCounterHistoryList": {
+        "name": "admin.counter.history.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/counters\/json\/{counterId}\/history\/list",
+        "args": {
             "counterId": "{counterId}"
         }
     },
@@ -186,7 +142,7 @@
         "name": "admin.counter.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/list",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/list",
         "args": {
             "accountId": "{accountId}"
         }
@@ -195,9 +151,19 @@
         "name": "admin.counter.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/save",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/save",
         "args": {
             "accountId": "{accountId}"
+        }
+    },
+    "adminCounterView": {
+        "name": "admin.counter.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/view\/{counterId}",
+        "args": {
+            "accountId": "{accountId}",
+            "counterId": "{counterId}"
         }
     },
     "adminErrorLogsDetails": {
@@ -509,6 +475,59 @@
         "displayName": "",
         "method": "post",
         "uri": "\/admin\/queue\/stop",
+        "args": []
+    },
+    "adminRequestsCounterHistoryConfirm": {
+        "name": "admin.requests.counter-history.confirm",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/confirm",
+        "args": []
+    },
+    "adminRequestsCounterHistoryConfirmDelete": {
+        "name": "admin.requests.counter-history.confirm-delete",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/confirm-delete",
+        "args": []
+    },
+    "adminRequestsCounterHistoryCreateClaim": {
+        "name": "admin.requests.counter-history.create-claim",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/create-claim\/{historyId}",
+        "args": {
+            "historyId": "{historyId}"
+        }
+    },
+    "adminRequestsCounterHistoryDelete": {
+        "name": "admin.requests.counter-history.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/counter-history\/json\/delete\/{historyId}",
+        "args": {
+            "historyId": "{historyId}"
+        }
+    },
+    "adminRequestsCounterHistoryIndex": {
+        "name": "admin.requests.counter-history.index",
+        "displayName": "\u0421\u0447\u0451\u0442\u0447\u0438\u043a\u0438",
+        "method": "get",
+        "uri": "\/admin\/counter-history",
+        "args": []
+    },
+    "adminRequestsCounterHistoryLink": {
+        "name": "admin.requests.counter-history.link",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/counter-history\/json\/link",
+        "args": []
+    },
+    "adminRequestsCounterHistoryList": {
+        "name": "admin.requests.counter-history.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/counter-history\/json\/list",
         "args": []
     },
     "adminRoleCreate": {
