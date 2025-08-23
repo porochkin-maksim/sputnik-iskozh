@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import Url           from '../../../utils/Url.js';
-import ResponseError from '../../../mixin/ResponseError.js';
-import CustomInput   from '../../common/form/CustomInput.vue';
+import Url           from '../../utils/Url.js';
+import ResponseError from '../../mixin/ResponseError.js';
+import CustomInput   from '../common/form/CustomInput.vue';
 
 export default {
     components: {
