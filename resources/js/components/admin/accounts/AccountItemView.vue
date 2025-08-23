@@ -1,30 +1,9 @@
 <template>
-    <div class="d-flex align-items-center justify-content-between mb-2">
-        <div class="d-flex">
-            <div class="d-flex"
-                 v-if="account.actions.edit">
-                <button class="btn btn-success me-2"
-                        v-if="!loading"
-                        :disabled="!canSave"
-                        v-on:click="saveAction">Сохранить участок
-                </button>
-                <button class="btn border-0"
-                        disabled
-                        v-else>
-                    <i class="fa fa-spinner fa-spin"></i> Сохранение
-                </button>
-            </div>
-        </div>
-        <div class="d-flex">
-            <history-btn
-                class="btn-link underline-none"
-                :url="account.historyUrl" />
-        </div>
-    </div>
     <div class="row">
-        <div class="col-6">
-            <div class="row">
-                <div class="col-12">
+        <div class="col-lg-6 col-12">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5>Информация</h5>
                     <template v-if="account.actions.edit">
                         <div>
                             <custom-input v-model="account.number"
@@ -64,29 +43,58 @@
                         <h6>Данные участка</h6>
                         <account-info-list :account="account" />
                     </template>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <div class="mt-2"
-                         v-if="account.users && account.users.length">
-                        <h6>Пользователи</h6>
-                        <ul class="list-group">
-                            <li v-for="user in account.users"
-                                class="list-group-item">
-                                <a :href="user.viewUrl"
-                                   v-if="user.actions.view">{{ user.fullName }}</a>
-                                <span v-else>{{ user.fullName }}</span>
-                            </li>
-                        </ul>
+                    <div class="d-flex align-items-center justify-content-between mt-2">
+                        <div class="d-flex">
+                            <div class="d-flex"
+                                 v-if="account.actions.edit">
+                                <button class="btn btn-success me-2"
+                                        v-if="!loading"
+                                        :disabled="!canSave"
+                                        v-on:click="saveAction">Сохранить участок
+                                </button>
+                                <button class="btn border-0"
+                                        disabled
+                                        v-else>
+                                    <i class="fa fa-spinner fa-spin"></i> Сохранение
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <history-btn
+                                class="btn-link underline-none"
+                                :url="account.historyUrl" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6">
-            <div class="card">
+        <div class="col-lg-6 col-12">
+            <div class="card mb-2"
+                 v-if="account.users && account.users.length">
+                <div class="card-body">
+                    <h5>Пользователи</h5>
+                    <ol class=" mb-0 ps-3">
+                        <li v-for="user in account.users"
+                            class="">
+                            <a :href="user.viewUrl"
+                               v-if="user.actions.view">{{ user.fullName }}</a>
+                            <span v-else>{{ user.fullName }}</span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <div class="card mb-2">
                 <div class="card-body">
                     <counters-block :account="account" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <invoices-block :account="account" />
                 </div>
             </div>
         </div>
@@ -107,10 +115,12 @@ import Pagination      from '../../common/pagination/Pagination.vue';
 import SearchSelect    from '../../common/form/SearchSelect.vue';
 import CountersBlock   from './counters/CountersBlock.vue';
 import AccountInfoList from './AccountInfoList.vue';
+import InvoicesBlock   from './invoices/InvoicesBlock.vue';
 
 export default {
     name      : 'AccountItemView',
     components: {
+        InvoicesBlock,
         AccountInfoList,
         CountersBlock,
         SearchSelect, Pagination,

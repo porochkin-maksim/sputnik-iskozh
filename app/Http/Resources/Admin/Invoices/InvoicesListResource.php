@@ -14,7 +14,7 @@ readonly class InvoicesListResource extends AbstractResource
 {
     public function __construct(
         private InvoiceCollection $invoiceCollection,
-        private int               $totalInvoicesCount,
+        private ?int              $totalInvoicesCount = null,
     )
     {
     }

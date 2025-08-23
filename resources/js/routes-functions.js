@@ -28,6 +28,10 @@ export function adminAccountIndex(getParams = {}) {
     return window.axios.get(makeQuery('/admin/accounts', getParams));
 }
 
+export function adminAccountInvoiceList(accountId, getParams = {}) {            
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/invoices/list', getParams));
+}
+
 export function adminAccountList(getParams = {}) {            
     return window.axios.get(makeQuery('/admin/accounts/json/list', getParams));
 }
