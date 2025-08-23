@@ -36,7 +36,7 @@ Breadcrumbs::for(RouteNames::ADMIN_INVOICE_VIEW, static function (BreadcrumbTrai
 });
 
 Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_INDEX, static function (BreadcrumbTrail $trail) {
-    $trail->push('Участки', route(RouteNames::ADMIN));
+    $trail->push('Участки', route(RouteNames::ADMIN_ACCOUNT_INDEX));
 });
 Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_VIEW, static function (BreadcrumbTrail $trail, AccountDTO $account) {
     $trail->parent(RouteNames::ADMIN_ACCOUNT_INDEX);
