@@ -40,7 +40,7 @@ $season = match (Carbon::now()->month) {
      id="topNavBar">
     <div class="container-fluid main px-3">
         <a class="navbar-brand"
-           href="{{ url('/') }}">
+           href="{{ route(RouteNames::HOME) }}">
             <div class="logo"
                  style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
             {{ env('APP_NAME') }}

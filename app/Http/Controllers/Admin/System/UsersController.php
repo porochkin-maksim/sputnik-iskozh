@@ -68,7 +68,7 @@ class UsersController extends Controller
         }
 
         if ($id) {
-            $account = $this->accountService->getByUserId($user->getId());
+            $account = $this->accountService->getByUserId($user->getId())->first();
             $user->setAccount($account);
             $role = $this->roleService->getByUserId($user->getId());
             $user->setRole($role);

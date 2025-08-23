@@ -39,7 +39,7 @@ class UserComparator extends AbstractComparatorDTO
 
     public function __construct(UserDTO $entity)
     {
-        $account = $entity->getAccount(true);
+        $account = $entity->getAccount();
         $role    = $entity->getRole(true);
 
         $this->initProperties($entity, $entity->getId());
@@ -52,7 +52,7 @@ class UserComparator extends AbstractComparatorDTO
         ]);
 
         $this->expandedProperties = [
-            self::KEY_ACCOUNT => $account ? sprintf('id: %s, номер: %s', $account->getId(), $account->getNumber()) : null,
+            self::KEY_ACCOUNT => $account ? sprintf('id: %s, номер: %s', $account?->getId(), $account?->getNumber()) : null,
             self::KEY_ROLE    => $role ? sprintf('id: %s, название: %s', $role->getId(), $role->getName()) : null,
         ];
     }

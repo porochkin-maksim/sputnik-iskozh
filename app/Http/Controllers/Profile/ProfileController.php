@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Requests\Users\SaveProfileEmailRequest;
 use App\Http\Requests\Users\SaveProfilePasswordRequest;
 use App\Http\Requests\Users\SaveProfileRequest;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Resources\Views\ViewNames;
+use Core\Session\SessionNames;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class ProfileController extends Controller
 {
@@ -69,5 +72,20 @@ class ProfileController extends Controller
             DB::rollBack();
             throw $throwable;
         }
+    }
+
+    public function switchAccount(DefaultRequest $request): bool
+    {
+        $accountId = $request->getIntOrNull('accountId');
+
+        $account = \lc::user()->getAccounts()->searchById($accountId);
+
+        if ($account === null) {
+            return false;
+        }
+
+        Session::put(SessionNames::ACCOUNT_ID, $account->getId());
+
+        return true;
     }
 }

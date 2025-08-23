@@ -48,6 +48,7 @@ Route::group(['prefix' => 'home'], static function () {
             // Route::post('/', [Controllers\Profile\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
             // Route::post('/email', [Controllers\Profile\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
             Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
+            Route::post('/switch-account', [Controllers\Profile\ProfileController::class, 'switchAccount'])->name(RouteNames::PROFILE_SWITCH_ACCOUNT);
         });
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
@@ -66,9 +67,9 @@ Route::group(['prefix' => 'home'], static function () {
                 });
                 Route::get('/{counter}', [Controllers\Profile\CounterController::class, 'view'])->name(RouteNames::PROFILE_COUNTER_VIEW);
             });
-            // Route::group(['prefix' => 'payments'], static function () {
-            //     Route::get('/', [Controllers\Profile\PaymentController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS);
-            // });
+            Route::group(['prefix' => 'invoices'], static function () {
+                Route::get('/', [Controllers\Profile\InvoiceController::class, 'index'])->name(RouteNames::PROFILE_INVOICES);
+            });
         });
     });
 });

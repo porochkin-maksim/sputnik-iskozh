@@ -102,9 +102,9 @@ class CounterController extends Controller
 
     public function create(CreateRequest $request): void
     {
-        $account = $this->accountService->getByUserId(Auth::id());
+        $account = lc::account();
 
-        if ($account) {
+        if ($account->getId()) {
             DB::beginTransaction();
             $counter = $this->counterFactory->makeDefault()
                 ->setNumber($request->getNumber())

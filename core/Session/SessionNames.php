@@ -4,5 +4,6 @@ namespace Core\Session;
 
 enum SessionNames: string
 {
-    const COOKIE_AGREEMENT = 'cookie_agreement';
+    public const string COOKIE_AGREEMENT = 'cookie_agreement';
+    public const string ACCOUNT_ID       = 'account_id';
 }

@@ -154,7 +154,7 @@ class UserDTO
     public function getAccount(bool $load = false): ?AccountDTO
     {
         if ($load && ! $this->account) {
-            $result = AccountLocator::AccountService()->getByUserId($this->getId());
+            $result = AccountLocator::AccountService()->getByUserId($this->getId())->first();
             $this->setAccount($result);
         }
 
