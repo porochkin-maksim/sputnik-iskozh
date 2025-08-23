@@ -12,678 +12,686 @@ function makeQuery(uri, getParams = {}) {
     return uri;
 }
 
-export function adminAccountCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/json/create', getParams));
+export function adminAccountCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/json/create', getParams), postData);
 }
 
-export function adminAccountDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/accounts/json/'+id+'', getParams));
+export function adminAccountDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/accounts/json/'+id+'', getParams), postData);
 }
 
-export function adminAccountGet(accountId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams));
+export function adminAccountGet(accountId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams), postData);
 }
 
-export function adminAccountIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts', getParams));
+export function adminAccountIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts', getParams), postData);
 }
 
-export function adminAccountInvoiceList(accountId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/invoices/list', getParams));
+export function adminAccountInvoiceList(accountId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/invoices/list', getParams), postData);
 }
 
-export function adminAccountList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/json/list', getParams));
+export function adminAccountList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/json/list', getParams), postData);
 }
 
-export function adminAccountSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/accounts/json/save', getParams));
+export function adminAccountSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/accounts/json/save', getParams), postData);
 }
 
-export function adminAccountView(accountId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'', getParams));
+export function adminAccountView(accountId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'', getParams), postData);
 }
 
-export function adminClaimCreate(invoiceId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/create', getParams));
+export function adminClaimCreate(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/create', getParams), postData);
 }
 
-export function adminClaimDelete(invoiceId,id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/delete/'+id+'', getParams));
+export function adminClaimDelete(invoiceId,id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/delete/'+id+'', getParams), postData);
 }
 
-export function adminClaimList(invoiceId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/list', getParams));
+export function adminClaimList(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/list', getParams), postData);
 }
 
-export function adminClaimSave(invoiceId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/save', getParams));
+export function adminClaimSave(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/save', getParams), postData);
 }
 
-export function adminClaimView(invoiceId,claimId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/get/'+claimId+'', getParams));
+export function adminClaimView(invoiceId,claimId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/get/'+claimId+'', getParams), postData);
 }
 
-export function adminCounterAddValue(accountId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/add-value', getParams));
+export function adminCounterAddValue(accountId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/add-value', getParams), postData);
 }
 
-export function adminCounterCreate(accountId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/create', getParams));
+export function adminCounterCreate(accountId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/create', getParams), postData);
 }
 
-export function adminCounterDelete(accountId,counterId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/delete/'+counterId+'', getParams));
+export function adminCounterDelete(accountId,counterId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/delete/'+counterId+'', getParams), postData);
 }
 
-export function adminCounterHistoryList(counterId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/counters/json/'+counterId+'/history/list', getParams));
+export function adminCounterHistoryList(counterId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/counters/json/'+counterId+'/history/list', getParams), postData);
 }
 
-export function adminCounterList(accountId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/list', getParams));
+export function adminCounterList(accountId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/list', getParams), postData);
 }
 
-export function adminCounterSave(accountId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/save', getParams));
+export function adminCounterSave(accountId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/save', getParams), postData);
 }
 
-export function adminCounterView(accountId,counterId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/view/'+counterId+'', getParams));
+export function adminCounterView(accountId,counterId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/view/'+counterId+'', getParams), postData);
 }
 
-export function adminErrorLogsDetails(filename,index, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams));
+export function adminErrorLogsDetails(filename,index, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams), postData);
 }
 
-export function adminErrorLogsIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/error-logs', getParams));
+export function adminErrorLogsIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/error-logs', getParams), postData);
 }
 
-export function adminErrorLogsShow(filename, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'', getParams));
+export function adminErrorLogsShow(filename, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'', getParams), postData);
 }
 
-export function adminIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin', getParams));
+export function adminIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin', getParams), postData);
 }
 
-export function adminInvoiceCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/create', getParams));
+export function adminInvoiceCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/create', getParams), postData);
 }
 
-export function adminInvoiceCreateRegularInvoices(periodId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/invoices/json/create-regular-invoices/'+periodId+'', getParams));
+export function adminInvoiceCreateRegularInvoices(periodId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/invoices/json/create-regular-invoices/'+periodId+'', getParams), postData);
 }
 
-export function adminInvoiceDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/invoices/json/delete/'+id+'', getParams));
+export function adminInvoiceDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/invoices/json/delete/'+id+'', getParams), postData);
 }
 
-export function adminInvoiceExport(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/export', getParams));
+export function adminInvoiceExport(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/export', getParams), postData);
 }
 
-export function adminInvoiceGet(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/get/'+id+'', getParams));
+export function adminInvoiceGet(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/get/'+id+'', getParams), postData);
 }
 
-export function adminInvoiceGetAccountsCountWithoutRegular(periodId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/get-without-regular/'+periodId+'', getParams));
+export function adminInvoiceGetAccountsCountWithoutRegular(periodId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/get-without-regular/'+periodId+'', getParams), postData);
 }
 
-export function adminInvoiceIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices', getParams));
+export function adminInvoiceIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices', getParams), postData);
 }
 
-export function adminInvoiceList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/list', getParams));
+export function adminInvoiceList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/list', getParams), postData);
 }
 
-export function adminInvoiceSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/invoices/json/save', getParams));
+export function adminInvoiceSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/invoices/json/save', getParams), postData);
 }
 
-export function adminInvoiceView(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/view/'+id+'', getParams));
+export function adminInvoiceView(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/view/'+id+'', getParams), postData);
 }
 
-export function adminNewPaymentDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams));
+export function adminNewPaymentDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams), postData);
 }
 
-export function adminNewPaymentGetInvoices(accountId,periodId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/get-invoices/'+accountId+'/'+periodId+'', getParams));
+export function adminNewPaymentGetInvoices(accountId,periodId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/payments/json/get-invoices/'+accountId+'/'+periodId+'', getParams), postData);
 }
 
-export function adminNewPaymentIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/payments', getParams));
+export function adminNewPaymentIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/payments', getParams), postData);
 }
 
-export function adminNewPaymentList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/list', getParams));
+export function adminNewPaymentList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/payments/json/list', getParams), postData);
 }
 
-export function adminNewPaymentSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/invoices/payments/json/save', getParams));
+export function adminNewPaymentSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/invoices/payments/json/save', getParams), postData);
 }
 
-export function adminNewPaymentView(paymentId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/get/'+paymentId+'', getParams));
+export function adminNewPaymentView(paymentId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/payments/json/get/'+paymentId+'', getParams), postData);
 }
 
-export function adminOptionsIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/options', getParams));
+export function adminOptionsIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/options', getParams), postData);
 }
 
-export function adminOptionsList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/options/json/list', getParams));
+export function adminOptionsList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/options/json/list', getParams), postData);
 }
 
-export function adminOptionsSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/options/json/save', getParams));
+export function adminOptionsSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/options/json/save', getParams), postData);
 }
 
-export function adminPaymentAutoCreate(invoiceId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/auto-create', getParams));
+export function adminPaymentAutoCreate(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/auto-create', getParams), postData);
 }
 
-export function adminPaymentCreate(invoiceId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/create', getParams));
+export function adminPaymentCreate(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/create', getParams), postData);
 }
 
-export function adminPaymentDelete(invoiceId,id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams));
+export function adminPaymentDelete(invoiceId,id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams), postData);
 }
 
-export function adminPaymentList(invoiceId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/list', getParams));
+export function adminPaymentList(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/list', getParams), postData);
 }
 
-export function adminPaymentSave(invoiceId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/save', getParams));
+export function adminPaymentSave(invoiceId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/save', getParams), postData);
 }
 
-export function adminPaymentView(invoiceId,paymentId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams));
+export function adminPaymentView(invoiceId,paymentId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams), postData);
 }
 
-export function adminPeriodCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/periods/json/create', getParams));
+export function adminPeriodCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/periods/json/create', getParams), postData);
 }
 
-export function adminPeriodDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/periods/json/'+id+'', getParams));
+export function adminPeriodDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/periods/json/'+id+'', getParams), postData);
 }
 
-export function adminPeriodIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/periods', getParams));
+export function adminPeriodIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/periods', getParams), postData);
 }
 
-export function adminPeriodList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/periods/json/list', getParams));
+export function adminPeriodList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/periods/json/list', getParams), postData);
 }
 
-export function adminPeriodSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/periods/json/save', getParams));
+export function adminPeriodSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/periods/json/save', getParams), postData);
 }
 
-export function adminQueue(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/queue', getParams));
+export function adminQueue(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/queue', getParams), postData);
 }
 
-export function adminQueueClear(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/queue/clear', getParams));
+export function adminQueueClear(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/queue/clear', getParams), postData);
 }
 
-export function adminQueueStart(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/queue/start', getParams));
+export function adminQueueStart(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/queue/start', getParams), postData);
 }
 
-export function adminQueueStatus(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/queue/status', getParams));
+export function adminQueueStatus(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/queue/status', getParams), postData);
 }
 
-export function adminQueueStop(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/queue/stop', getParams));
+export function adminQueueStop(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/queue/stop', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryConfirm(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/counter-history/json/confirm', getParams));
+export function adminRequestsCounterHistoryConfirm(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/counter-history/json/confirm', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryConfirmDelete(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/counter-history/json/confirm-delete', getParams));
+export function adminRequestsCounterHistoryConfirmDelete(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/counter-history/json/confirm-delete', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryCreateClaim(historyId, getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/counter-history/json/create-claim/'+historyId+'', getParams));
+export function adminRequestsCounterHistoryCreateClaim(historyId, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/counter-history/json/create-claim/'+historyId+'', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryDelete(historyId, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/counter-history/json/delete/'+historyId+'', getParams));
+export function adminRequestsCounterHistoryDelete(historyId, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/counter-history/json/delete/'+historyId+'', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/counter-history', getParams));
+export function adminRequestsCounterHistoryIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/counter-history', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryLink(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/counter-history/json/link', getParams));
+export function adminRequestsCounterHistoryLink(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/counter-history/json/link', getParams), postData);
 }
 
-export function adminRequestsCounterHistoryList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/counter-history/json/list', getParams));
+export function adminRequestsCounterHistoryList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/counter-history/json/list', getParams), postData);
 }
 
-export function adminRoleCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/roles/json/create', getParams));
+export function adminRoleCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/roles/json/create', getParams), postData);
 }
 
-export function adminRoleDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/roles/json/'+id+'', getParams));
+export function adminRoleDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/roles/json/'+id+'', getParams), postData);
 }
 
-export function adminRoleIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/roles', getParams));
+export function adminRoleIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/roles', getParams), postData);
 }
 
-export function adminRoleList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/roles/json/list', getParams));
+export function adminRoleList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/roles/json/list', getParams), postData);
 }
 
-export function adminRoleSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/roles/json/save', getParams));
+export function adminRoleSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/roles/json/save', getParams), postData);
 }
 
-export function adminSelectsAccounts(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/json/selects/accounts', getParams));
+export function adminSelectsAccounts(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/json/selects/accounts', getParams), postData);
 }
 
-export function adminSelectsCounters(accountId, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/json/selects/counters/'+accountId+'', getParams));
+export function adminSelectsCounters(accountId, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/json/selects/counters/'+accountId+'', getParams), postData);
 }
 
-export function adminServiceCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/services/json/create', getParams));
+export function adminServiceCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/services/json/create', getParams), postData);
 }
 
-export function adminServiceDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/services/json/'+id+'', getParams));
+export function adminServiceDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/services/json/'+id+'', getParams), postData);
 }
 
-export function adminServiceIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/services', getParams));
+export function adminServiceIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/services', getParams), postData);
 }
 
-export function adminServiceList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/services/json/list', getParams));
+export function adminServiceList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/services/json/list', getParams), postData);
 }
 
-export function adminServiceSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/services/json/save', getParams));
+export function adminServiceSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/services/json/save', getParams), postData);
 }
 
-export function adminTopPanelIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/json/top-panel', getParams));
+export function adminTopPanelIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/json/top-panel', getParams), postData);
 }
 
-export function adminTopPanelSearch(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/json/top-panel', getParams));
+export function adminTopPanelSearch(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/json/top-panel', getParams), postData);
 }
 
-export function adminUserDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/admin/users/json/'+id+'', getParams));
+export function adminUserDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/admin/users/json/'+id+'', getParams), postData);
 }
 
-export function adminUserExport(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/users/export', getParams));
+export function adminUserExport(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/users/export', getParams), postData);
 }
 
-export function adminUserGenerateEmail(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/users/json/generate-email', getParams));
+export function adminUserGenerateEmail(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/users/json/generate-email', getParams), postData);
 }
 
-export function adminUserIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/users', getParams));
+export function adminUserIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/users', getParams), postData);
 }
 
-export function adminUserList(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/users/json/list', getParams));
+export function adminUserList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/users/json/list', getParams), postData);
 }
 
-export function adminUserSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/users/json/save', getParams));
+export function adminUserSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/users/json/save', getParams), postData);
 }
 
-export function adminUserSendInviteWithPassword(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/users/json/send-invite-password', getParams));
+export function adminUserSendInviteWithPassword(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/users/json/send-invite-password', getParams), postData);
 }
 
-export function adminUserSendRestorePassword(getParams = {}) {            
-    return window.axios.post(makeQuery('/admin/users/json/sendRestorePassword', getParams));
+export function adminUserSendRestorePassword(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/admin/users/json/sendRestorePassword', getParams), postData);
 }
 
-export function adminUserView(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/users/view/'+id+'', getParams));
+export function adminUserView(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/users/view/'+id+'', getParams), postData);
 }
 
-export function announcementsIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/announcements', getParams));
+export function announcementsIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/announcements', getParams), postData);
 }
 
-export function announcementsList(getParams = {}) {            
-    return window.axios.get(makeQuery('/announcements/json/list', getParams));
+export function announcementsList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/announcements/json/list', getParams), postData);
 }
 
-export function announcementsShow(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/announcements/'+id+'', getParams));
+export function announcementsShow(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/announcements/'+id+'', getParams), postData);
 }
 
-export function commonSummary(getParams = {}) {            
-    return window.axios.get(makeQuery('/json/summary', getParams));
+export function commonSummary(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/json/summary', getParams), postData);
 }
 
-export function commonSummaryDetailing(type, getParams = {}) {            
-    return window.axios.get(makeQuery('/json/summary/'+type+'', getParams));
+export function commonSummaryDetailing(type, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/json/summary/'+type+'', getParams), postData);
 }
 
-export function contacts(getParams = {}) {            
-    return window.axios.get(makeQuery('/contacts', getParams));
+export function contacts(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/contacts', getParams), postData);
 }
 
-export function cookieAgreement(getParams = {}) {            
-    return window.axios.post(makeQuery('/cookie-agreement', getParams));
+export function cookieAgreement(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/cookie-agreement', getParams), postData);
 }
 
-export function counter(getParams = {}) {            
-    return window.axios.get(makeQuery('/contacts/requests/counter', getParams));
+export function counter(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/contacts/requests/counter', getParams), postData);
 }
 
-export function counterCreate(getParams = {}) {            
-    return window.axios.post(makeQuery('/contacts/requests/counter', getParams));
+export function counterCreate(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/contacts/requests/counter', getParams), postData);
 }
 
-export function filesDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/files/json/delete/'+id+'', getParams));
+export function filesDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/files/json/delete/'+id+'', getParams), postData);
 }
 
-export function filesDown(id, getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/down/'+id+'', getParams));
+export function filesDown(id, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/down/'+id+'', getParams), postData);
 }
 
-export function filesEdit(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/files/json/edit/'+id+'', getParams));
+export function filesEdit(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/files/json/edit/'+id+'', getParams), postData);
 }
 
-export function filesIndex(folder, getParams = {}) {            
-    return window.axios.get(makeQuery('/files/'+folder+'', getParams));
+export function filesIndex(folder, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/files/'+folder+'', getParams), postData);
 }
 
-export function filesList(getParams = {}) {            
-    return window.axios.get(makeQuery('/files/json/list', getParams));
+export function filesList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/files/json/list', getParams), postData);
 }
 
-export function filesMove(getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/move', getParams));
+export function filesMove(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/move', getParams), postData);
 }
 
-export function filesReplace(getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/replace', getParams));
+export function filesReplace(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/replace', getParams), postData);
 }
 
-export function filesSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/save', getParams));
+export function filesSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/save', getParams), postData);
 }
 
-export function filesStore(getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/store', getParams));
+export function filesStore(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/store', getParams), postData);
 }
 
-export function filesUp(id, getParams = {}) {            
-    return window.axios.post(makeQuery('/files/json/up/'+id+'', getParams));
+export function filesUp(id, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/files/json/up/'+id+'', getParams), postData);
 }
 
-export function foldersDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/folders/json/delete/'+id+'', getParams));
+export function foldersDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/folders/json/delete/'+id+'', getParams), postData);
 }
 
-export function foldersList(getParams = {}) {            
-    return window.axios.get(makeQuery('/folders/json/list', getParams));
+export function foldersList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/folders/json/list', getParams), postData);
 }
 
-export function foldersSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/folders/json/save', getParams));
+export function foldersSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/folders/json/save', getParams), postData);
 }
 
-export function foldersShow(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/folders/json/show/'+id+'', getParams));
+export function foldersShow(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/folders/json/show/'+id+'', getParams), postData);
 }
 
-export function garbage(getParams = {}) {            
-    return window.axios.get(makeQuery('/garbage', getParams));
+export function garbage(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/garbage', getParams), postData);
 }
 
-export function home(getParams = {}) {            
-    return window.axios.get(makeQuery('/home', getParams));
+export function home(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/home', getParams), postData);
 }
 
-export function index(getParams = {}) {            
-    return window.axios.get(makeQuery('/', getParams));
+export function index(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/', getParams), postData);
 }
 
-export function infraHistoryChanges(getParams = {}) {            
-    return window.axios.get(makeQuery('/admin/history/changes', getParams));
+export function infraHistoryChanges(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/admin/history/changes', getParams), postData);
 }
 
-export function login(getParams = {}) {            
-    return window.axios.post(makeQuery('/login', getParams));
+export function login(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/login', getParams), postData);
 }
 
-export function logout(getParams = {}) {            
-    return window.axios.get(makeQuery('/logout', getParams));
+export function logout(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/logout', getParams), postData);
 }
 
-export function newsCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/news/json/create', getParams));
+export function newsCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/json/create', getParams), postData);
 }
 
-export function newsDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/news/json/delete/'+id+'', getParams));
+export function newsDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/news/json/delete/'+id+'', getParams), postData);
 }
 
-export function newsEdit(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/news/json/edit/'+id+'', getParams));
+export function newsEdit(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/json/edit/'+id+'', getParams), postData);
 }
 
-export function newsFileDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/news/json/file/delete/'+id+'', getParams));
+export function newsFileDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/news/json/file/delete/'+id+'', getParams), postData);
 }
 
-export function newsFileSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/news/json/file/save', getParams));
+export function newsFileSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/news/json/file/save', getParams), postData);
 }
 
-export function newsFileUpload(id, getParams = {}) {            
-    return window.axios.post(makeQuery('/news/json/file/upload/'+id+'', getParams));
+export function newsFileUpload(id, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/news/json/file/upload/'+id+'', getParams), postData);
 }
 
-export function newsIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/news', getParams));
+export function newsIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news', getParams), postData);
 }
 
-export function newsList(getParams = {}) {            
-    return window.axios.get(makeQuery('/news/json/list', getParams));
+export function newsList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/json/list', getParams), postData);
 }
 
-export function newsListAll(getParams = {}) {            
-    return window.axios.get(makeQuery('/news/json/list/all', getParams));
+export function newsListAll(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/json/list/all', getParams), postData);
 }
 
-export function newsListLocked(getParams = {}) {            
-    return window.axios.get(makeQuery('/news/json/list/locked', getParams));
+export function newsListLocked(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/json/list/locked', getParams), postData);
 }
 
-export function newsSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/news/json/save', getParams));
+export function newsSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/news/json/save', getParams), postData);
 }
 
-export function newsShow(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/news/'+id+'', getParams));
+export function newsShow(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/news/'+id+'', getParams), postData);
 }
 
-export function passwordConfirm(getParams = {}) {            
-    return window.axios.get(makeQuery('/password/confirm', getParams));
+export function passwordConfirm(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/password/confirm', getParams), postData);
 }
 
-export function passwordEmail(getParams = {}) {            
-    return window.axios.post(makeQuery('/password/email', getParams));
+export function passwordEmail(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/password/email', getParams), postData);
 }
 
-export function passwordRequest(getParams = {}) {            
-    return window.axios.get(makeQuery('/password/reset', getParams));
+export function passwordRequest(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/password/reset', getParams), postData);
 }
 
-export function passwordReset(token, getParams = {}) {            
-    return window.axios.get(makeQuery('/password/reset/'+token+'', getParams));
+export function passwordReset(token, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/password/reset/'+token+'', getParams), postData);
 }
 
-export function passwordSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/password/set', getParams));
+export function passwordSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/password/set', getParams), postData);
 }
 
-export function passwordSet(getParams = {}) {            
-    return window.axios.get(makeQuery('/password/set', getParams));
+export function passwordSet(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/password/set', getParams), postData);
 }
 
-export function passwordUpdate(getParams = {}) {            
-    return window.axios.post(makeQuery('/password/reset', getParams));
+export function passwordUpdate(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/password/reset', getParams), postData);
 }
 
-export function payment(getParams = {}) {            
-    return window.axios.get(makeQuery('/contacts/requests/payment', getParams));
+export function payment(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/contacts/requests/payment', getParams), postData);
 }
 
-export function paymentCreate(getParams = {}) {            
-    return window.axios.post(makeQuery('/contacts/requests/payment', getParams));
+export function paymentCreate(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/contacts/requests/payment', getParams), postData);
 }
 
-export function privacy(getParams = {}) {            
-    return window.axios.get(makeQuery('/privacy', getParams));
+export function privacy(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/privacy', getParams), postData);
 }
 
-export function profileCounterAddValue(getParams = {}) {            
-    return window.axios.post(makeQuery('/home/counters/json/add-value', getParams));
+export function profileAccountSwitch(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/profile/switch-account', getParams), postData);
 }
 
-export function profileCounterCreate(getParams = {}) {            
-    return window.axios.post(makeQuery('/home/counters/json/create', getParams));
+export function profileCounterAddValue(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/counters/json/add-value', getParams), postData);
 }
 
-export function profileCounterHistoryList(getParams = {}) {            
-    return window.axios.post(makeQuery('/home/counters/json/history', getParams));
+export function profileCounterCreate(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/counters/json/create', getParams), postData);
 }
 
-export function profileCounterList(getParams = {}) {            
-    return window.axios.get(makeQuery('/home/counters/json/list', getParams));
+export function profileCounterHistoryList(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/counters/json/history', getParams), postData);
 }
 
-export function profileCountersIncrementSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/home/counters/json/increment', getParams));
+export function profileCounterList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/home/counters/json/list', getParams), postData);
 }
 
-export function profileCountersIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/home/counters', getParams));
+export function profileCountersIncrementSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/counters/json/increment', getParams), postData);
 }
 
-export function profileCountersView(counter, getParams = {}) {            
-    return window.axios.get(makeQuery('/home/counters/'+counter+'', getParams));
+export function profileCountersIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/home/counters', getParams), postData);
 }
 
-export function profileSavePassword(getParams = {}) {            
-    return window.axios.post(makeQuery('/home/profile/password', getParams));
+export function profileCountersView(counter, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/home/counters/'+counter+'', getParams), postData);
 }
 
-export function proposal(getParams = {}) {            
-    return window.axios.get(makeQuery('/contacts/requests/proposal', getParams));
+export function profileInvoicesIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/home/invoices', getParams), postData);
 }
 
-export function proposalCreate(getParams = {}) {            
-    return window.axios.post(makeQuery('/contacts/requests/proposal', getParams));
+export function profileSavePassword(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/home/profile/password', getParams), postData);
 }
 
-export function regulation(getParams = {}) {            
-    return window.axios.get(makeQuery('/regulation', getParams));
+export function proposal(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/contacts/requests/proposal', getParams), postData);
 }
 
-export function reportsCreate(getParams = {}) {            
-    return window.axios.get(makeQuery('/reports/json/create', getParams));
+export function proposalCreate(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/contacts/requests/proposal', getParams), postData);
 }
 
-export function reportsDelete(id, getParams = {}) {            
-    return window.axios.delete(makeQuery('/reports/json/delete/'+id+'', getParams));
+export function regulation(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/regulation', getParams), postData);
 }
 
-export function reportsEdit(id, getParams = {}) {            
-    return window.axios.get(makeQuery('/reports/json/edit/'+id+'', getParams));
+export function reportsCreate(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/reports/json/create', getParams), postData);
 }
 
-export function reportsFileDelete(id, getParams = {}) {            
-    return window.axios.post(makeQuery('/reports/json/file/delete/'+id+'', getParams));
+export function reportsDelete(id, getParams = {}, postData = null) {            
+    return window.axios.delete(makeQuery('/reports/json/delete/'+id+'', getParams), postData);
 }
 
-export function reportsFileUpload(id, getParams = {}) {            
-    return window.axios.post(makeQuery('/reports/json/file/upload/'+id+'', getParams));
+export function reportsEdit(id, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/reports/json/edit/'+id+'', getParams), postData);
 }
 
-export function reportsIndex(getParams = {}) {            
-    return window.axios.get(makeQuery('/reports', getParams));
+export function reportsFileDelete(id, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/reports/json/file/delete/'+id+'', getParams), postData);
 }
 
-export function reportsList(getParams = {}) {            
-    return window.axios.get(makeQuery('/reports/json/list', getParams));
+export function reportsFileUpload(id, getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/reports/json/file/upload/'+id+'', getParams), postData);
 }
 
-export function reportsSave(getParams = {}) {            
-    return window.axios.post(makeQuery('/reports/json/save', getParams));
+export function reportsIndex(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/reports', getParams), postData);
 }
 
-export function requests(getParams = {}) {            
-    return window.axios.get(makeQuery('/contacts/requests', getParams));
+export function reportsList(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/reports/json/list', getParams), postData);
 }
 
-export function sanctumCsrfCookie(getParams = {}) {            
-    return window.axios.get(makeQuery('/sanctum/csrf-cookie', getParams));
+export function reportsSave(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/reports/json/save', getParams), postData);
 }
 
-export function search(getParams = {}) {            
-    return window.axios.get(makeQuery('/search', getParams));
+export function requests(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/contacts/requests', getParams), postData);
 }
 
-export function searchSite(getParams = {}) {            
-    return window.axios.post(makeQuery('/search/json/search', getParams));
+export function sanctumCsrfCookie(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/sanctum/csrf-cookie', getParams), postData);
 }
 
-export function sessionStore(getParams = {}) {            
-    return window.axios.post(makeQuery('/session', getParams));
+export function search(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/search', getParams), postData);
 }
 
-export function templateGet(getParams = {}) {            
-    return window.axios.post(makeQuery('/pages/json/edit', getParams));
+export function searchSite(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/search/json/search', getParams), postData);
 }
 
-export function templateUpdate(getParams = {}) {            
-    return window.axios.patch(makeQuery('/pages/json/edit', getParams));
+export function sessionStore(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/session', getParams), postData);
 }
 
-export function verificationNotice(getParams = {}) {            
-    return window.axios.get(makeQuery('/email/verify', getParams));
+export function templateGet(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/pages/json/edit', getParams), postData);
 }
 
-export function verificationResend(getParams = {}) {            
-    return window.axios.post(makeQuery('/email/resend', getParams));
+export function templateUpdate(getParams = {}, postData = null) {            
+    return window.axios.patch(makeQuery('/pages/json/edit', getParams), postData);
 }
 
-export function verificationVerify(id,hash, getParams = {}) {            
-    return window.axios.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams));
+export function verificationNotice(getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/email/verify', getParams), postData);
+}
+
+export function verificationResend(getParams = {}, postData = null) {            
+    return window.axios.post(makeQuery('/email/resend', getParams), postData);
+}
+
+export function verificationVerify(id,hash, getParams = {}, postData = null) {            
+    return window.axios.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams), postData);
 }

@@ -111,8 +111,8 @@ class ExportRouteFunctionsListCommand extends Command
         $uri       = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
 
         $result = <<<JS
-            export function $name($arguments) {            
-                return window.axios.$method(makeQuery('$uri', getParams));
+            export function $name($arguments, postData = null) {            
+                return window.axios.$method(makeQuery('$uri', getParams), postData);
             }
             JS;
 
