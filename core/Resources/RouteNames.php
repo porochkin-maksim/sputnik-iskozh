@@ -141,6 +141,8 @@ abstract class RouteNames
     public const string ADMIN_ACCOUNT_LIST   = 'admin.account.list';
     public const string ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
 
+    public const string ADMIN_ACCOUNT_INVOICE_LIST = 'admin.account.invoice.list';
+
     public const string ADMIN_COUNTER_CREATE    = 'admin.counter.create';
     public const string ADMIN_COUNTER_VIEW      = 'admin.counter.view';
     public const string ADMIN_COUNTER_SAVE      = 'admin.counter.save';

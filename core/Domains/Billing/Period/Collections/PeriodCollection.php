@@ -36,4 +36,6 @@ class PeriodCollection extends Collection implements CollectionInterface
             return ! $period->isClosed();
         });
     }
+
+
 }

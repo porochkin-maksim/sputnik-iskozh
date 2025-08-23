@@ -31,6 +31,15 @@
         "uri": "\/admin\/accounts",
         "args": []
     },
+    "adminAccountInvoiceList": {
+        "name": "admin.account.invoice.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/invoices\/list",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
     "adminAccountList": {
         "name": "admin.account.list",
         "displayName": "",

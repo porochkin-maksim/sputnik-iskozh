@@ -224,6 +224,9 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                                 Route::post('/delete/{counterId}', [Controllers\Admin\Account\CounterController::class, 'delete'])->name(RouteNames::ADMIN_COUNTER_DELETE);
                                 Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
                             });
+                            Route::group(['prefix' => 'invoices'], static function () {
+                                Route::get('/list', [Controllers\Admin\Account\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_INVOICE_LIST);
+                            });
                         });
                     });
                 });
