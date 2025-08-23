@@ -15,7 +15,7 @@
                            v-else></i>
                     </button>
                 </div>
-                <div class="card-body"
+                <div class="card-body pb-0"
                      v-if="showPasswordBlock">
                     <profile-password :user="user" />
                 </div>
@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import Url             from '../../../utils/Url.js';
-import ResponseError   from '../../../mixin/ResponseError.js';
+import Url             from '../../utils/Url.js';
+import ResponseError   from '../../mixin/ResponseError.js';
 import ProfilePassword from './ProfilePassword.vue';
 
 export default {

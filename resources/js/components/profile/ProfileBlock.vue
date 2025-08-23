@@ -68,10 +68,10 @@
 </template>
 
 <script>
-import Url             from '../../../utils/Url.js';
-import ResponseError   from '../../../mixin/ResponseError.js';
-import PageTemplate    from '../pages/SingleColumnPage.vue';
-import CustomInput     from '../../common/form/CustomInput.vue';
+import Url             from '../../utils/Url.js';
+import ResponseError   from '../../mixin/ResponseError.js';
+import PageTemplate    from '../public/pages/SingleColumnPage.vue';
+import CustomInput     from '../common/form/CustomInput.vue';
 import ProfileShow     from './ProfileShow.vue';
 import ProfileEmail    from './ProfileEmail.vue';
 import ProfilePassword from './ProfilePassword.vue';

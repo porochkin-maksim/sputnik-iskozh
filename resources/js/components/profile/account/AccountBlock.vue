@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import ResponseError  from '../../../../mixin/ResponseError.js';
+import ResponseError from '../../../mixin/ResponseError.js';
 
 export default {
     mixins    : [

@@ -88,14 +88,14 @@
 </template>
 
 <script>
-import Url            from '../../../../utils/Url.js';
-import ResponseError  from '../../../../mixin/ResponseError.js';
-import Wrapper        from '../../../common/Wrapper.vue';
-import CustomInput    from '../../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../../common/form/CustomCheckbox.vue';
-import ViewDialog     from '../../../common/ViewDialog.vue';
-import FileItem       from '../../../common/files/FileItem.vue';
-import SearchSelect   from '../../../common/form/SearchSelect.vue';
+import Url            from '../../../utils/Url.js';
+import ResponseError  from '../../../mixin/ResponseError.js';
+import Wrapper        from '../../common/Wrapper.vue';
+import CustomInput    from '../../common/form/CustomInput.vue';
+import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
+import ViewDialog     from '../../common/ViewDialog.vue';
+import FileItem       from '../../common/files/FileItem.vue';
+import SearchSelect   from '../../common/form/SearchSelect.vue';
 
 export default {
     name      : 'ProfileCountersBlock',
