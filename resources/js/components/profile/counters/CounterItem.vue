@@ -64,7 +64,8 @@
             </template>
         </div>
     </div>
-    <div class="row mt-2" v-if="chartData && chartData.length">
+    <div class="row mt-2"
+         v-if="chartData && chartData.length">
         <div class="col-12 col-md-8 col-lg-6">
             <h5 class="text-center">График показаний</h5>
             <counters-chart-block
@@ -191,8 +192,8 @@ export default {
     ],
     data () {
         return {
-            loaded : false,
-            pending: false,
+            loaded      : false,
+            pending     : false,
             selectedDate: null,
 
             showDialog: false,
@@ -235,7 +236,8 @@ export default {
         listAction () {
             this.pending = true;
             this.skip += this.limit;
-            window.axios[Url.Routes.profileCounterHistoryList.method](Url.Routes.profileCounterHistoryList.uri, {
+
+            Url.RouteFunctions.profileCounterHistoryList({
                 counter_id: this.counter.id,
                 skip      : this.skip,
             }).then(response => {
@@ -280,7 +282,7 @@ export default {
             form.append('value', this.value);
             form.append('file', this.file);
 
-            window.axios[Url.Routes.profileCounterAddValue.method](Url.Routes.profileCounterAddValue.uri, form).then(response => {
+            Url.RouteFunctions.profileCounterAddValue({}, form).then(response => {
                 this.onSuccessSubmit();
             }).catch(response => {
                 this.parseResponseErrors(response);
@@ -374,7 +376,7 @@ export default {
             return true;
         },
         canLoadMore () {
-            return this.total && this.skip < this.total;
+            return this.total && this.histories.length < this.total;
         },
         canSubmitIncrementAction () {
             return this.increment !== null;

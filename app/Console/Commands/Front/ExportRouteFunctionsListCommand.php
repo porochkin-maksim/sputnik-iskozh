@@ -109,9 +109,11 @@ class ExportRouteFunctionsListCommand extends Command
         $arguments = $arguments ? "$arguments, getParams = {}" : "getParams = {}";
         $method    = $route['method'];
         $uri       = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
+        $note      = $route['name'];
 
         $result = <<<JS
-            export function $name($arguments, postData = null) {            
+            export function $name($arguments, postData = null) {
+                // see $note
                 return window.axios.$method(makeQuery('$uri', getParams), postData);
             }
             JS;
@@ -122,19 +124,19 @@ class ExportRouteFunctionsListCommand extends Command
     private function drawBuildQueryUrl(): string
     {
         return $result = <<<JS
-            function makeQuery(uri, getParams = {}) {
-                let getQuery = [];
-                Object.keys(getParams).forEach(key => {
-                    if (getParams[key] && String(getParams[key]) !== '0') {
-                        getQuery = getQuery.concat([key + '=' + getParams[key]]);
-                    }
-                });
-                if (getQuery.length) {
-                    uri = uri + '?' + getQuery.join('&');
-                }
-                
-                return uri;
-            }
-            JS;
+                   function makeQuery(uri, getParams = {}) {
+                       let getQuery = [];
+                       Object.keys(getParams).forEach(key => {
+                           if (getParams[key] && String(getParams[key]) !== '0') {
+                               getQuery = getQuery.concat([key + '=' + getParams[key]]);
+                           }
+                       });
+                       if (getQuery.length) {
+                           uri = uri + '?' + getQuery.join('&');
+                       }
+                   
+                       return uri;
+                   }
+                   JS;
     }
 }
