@@ -29,14 +29,14 @@ enum ViewNames: string
 
     public const string PAGES_ANNOUNCEMENT_INDEX = 'pages.announcement.index';
 
-    public const string PAGES_HOME             = 'pages.home.index';
-    public const string PAGES_ACCOUNT_REGISTER = 'pages.home.register';
-    public const string PAGES_PROFILE          = 'pages.home.profile';
+    public const string PAGES_HOME             = 'home.pages.index';
+    public const string PAGES_ACCOUNT_REGISTER = 'home.pages.register';
+    public const string PAGES_PROFILE          = 'home.pages.profile';
 
-    public const string PAGES_PROFILE_COUNTERS      = 'pages.home.counters.index';
-    public const string PAGES_PROFILE_COUNTERS_VIEW = 'pages.home.counters.view';
+    public const string PAGES_PROFILE_COUNTERS      = 'home.pages.counters.index';
+    public const string PAGES_PROFILE_COUNTERS_VIEW = 'home.pages.counters.view';
 
-    public const string PAGES_PROFILE_INVOICES = 'pages.home.invoices';
+    public const string PAGES_PROFILE_INVOICES = 'home.pages.invoices';
 
     public const string ADMIN_PAGES_INDEX           = 'admin.pages.index';
     public const string ADMIN_PAGES_ROLES           = 'admin.pages.roles';

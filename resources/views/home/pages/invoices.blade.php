@@ -99,7 +99,7 @@ if (lc::account()->getId() && $period) {
         </div>
         <div class="d-flex flex-md-row flex-column-reverse align-items-center justify-content-md-between justify-content-center mb-3">
             <h3 class="text-dark mb-0 text-center mt-2 mt-md-0">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>
-            <form action="{{ route(RouteNames::HOME) }}"
+            <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
                   method="GET"
                   class="d-flex align-items-center">
                 <select name="period"
