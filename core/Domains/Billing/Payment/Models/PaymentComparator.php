@@ -4,18 +4,19 @@ namespace Core\Domains\Billing\Payment\Models;
 
 use App\Models\Billing\Payment;
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
+use Core\Enums\DateTimeFormat;
 
 class PaymentComparator extends AbstractComparatorDTO
 {
-    public const TITLE_INVOICE_ID = 'Счёт';
-    public const TITLE_ACCOUNT_ID = 'Участок';
-    public const TITLE_COST       = 'Стоимость';
-    public const TITLE_MODERATED  = 'Модерирован';
-    public const TITLE_VERIFIED   = 'Подтверждён';
-    public const TITLE_COMMENT    = 'Комментарий';
-    public const TITLE_NAME       = 'Название';
+    public const string TITLE_INVOICE_ID = 'Счёт';
+    public const string TITLE_ACCOUNT_ID = 'Участок';
+    public const string TITLE_COST       = 'Стоимость';
+    public const string TITLE_MODERATED  = 'Модерирован';
+    public const string TITLE_VERIFIED   = 'Подтверждён';
+    public const string TITLE_COMMENT    = 'Комментарий';
+    public const string TITLE_NAME       = 'Название';
 
-    protected const KEYS_TO_TITLES = [
+    protected const array KEYS_TO_TITLES = [
         Payment::INVOICE_ID => self::TITLE_INVOICE_ID,
         Payment::ACCOUNT_ID => self::TITLE_ACCOUNT_ID,
         Payment::COST       => self::TITLE_COST,
@@ -30,8 +31,7 @@ class PaymentComparator extends AbstractComparatorDTO
         $this->initProperties($entity, $entity->getId());
 
         $this->expandedProperties = [
-            // Payment::PERIOD_ID => $entity->getPeriodId(),
-            // Payment::ACCOUNT_ID   => $entity->getAccountId(),
+            Payment::PAYED_AT => $entity->getPayedAt()->format(DateTimeFormat::DATE_VIEW_FORMAT),
         ];
     }
 }

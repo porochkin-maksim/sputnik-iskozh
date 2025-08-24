@@ -14,7 +14,7 @@ readonly class PaymentFactory
 {
     public function makeDefault(): PaymentDTO
     {
-        return (new PaymentDTO())
+        return new PaymentDTO()
             ->setModerated(false)
             ->setVerified(false)
             ->setCost(0.00)
@@ -39,6 +39,7 @@ readonly class PaymentFactory
             Payment::COMMENT    => $dto->getComment(),
             Payment::NAME       => $dto->getName(),
             Payment::DATA       => $dto->getData(),
+            Payment::PAYED_AT   => $dto->getPayedAt() ?: $dto->getCreatedAt(),
         ]);
     }
 
@@ -58,6 +59,7 @@ readonly class PaymentFactory
             ->setUpdatedAt($model->updated_at)
             ->setName($model->name)
             ->setData($model->data)
+            ->setPayedAt($model->payed_at)
             ->setAccountNumber($model->account_number)
         ;
 

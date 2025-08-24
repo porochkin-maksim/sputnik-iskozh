@@ -7,6 +7,7 @@
                 <th class="text-center">Название</th>
                 <th class="text-center">Сумма</th>
                 <th class="text-center">Файлы</th>
+                <th class="text-center">Оплачен</th>
                 <th class="text-center">Создан</th>
                 <th></th>
             </tr>
@@ -27,6 +28,7 @@
                         </template>
                     </div>
                 </td>
+                <td class="text-center">{{ payment.payed }}</td>
                 <td class="text-center">{{ payment.created }}</td>
                 <td>
                     <div class="d-flex justify-content-center">

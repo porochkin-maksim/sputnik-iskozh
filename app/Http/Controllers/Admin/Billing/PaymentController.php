@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Payments\SaveRequest;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
 use App\Models\Billing\Payment;
+use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimLocator;
@@ -59,6 +60,8 @@ class PaymentController extends Controller
         $payment = $this->paymentFactory->makeDefault()
             ->setInvoiceId($invoiceId)
             ->setInvoice($invoice)
+            ->setPayedAt(Carbon::now())
+            ->setCost($invoice->getDelta())
         ;
 
         return response()->json([
@@ -155,6 +158,7 @@ class PaymentController extends Controller
             ->setCost($request->getCost())
             ->setName($request->getName())
             ->setComment($request->getComment())
+            ->setPayedAt($request->getPayedAt())
         ;
 
         $payment = $this->paymentService->save($payment);

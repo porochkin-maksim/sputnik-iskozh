@@ -1,13 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Billing;
 
+use App\Models\AbstractModel;
 use App\Models\Account\Account;
 use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\File\Enums\FileTypeEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,34 +23,34 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?string  $comment
  * @property ?string  $name
  * @property ?array   $data
+ * @property ?string  $account_number
+ * @property ?Carbon  $payed_at
  */
-class Payment extends Model implements CastsInterface
+class Payment extends AbstractModel
 {
-    public const TABLE = 'payments';
+    public const string TABLE = 'payments';
 
-    protected $table = self::TABLE;
+    public const string ID         = 'id';
+    public const string INVOICE_ID = 'invoice_id';
+    public const string ACCOUNT_ID = 'account_id';
+    public const string COST       = 'cost';
+    public const string MODERATED  = 'moderated';
+    public const string VERIFIED   = 'verified';
+    public const string COMMENT    = 'comment';
+    public const string NAME       = 'name';
+    public const string DATA       = 'data';
+    public const string PAYED_AT   = 'payed_at';
 
-    public const ID         = 'id';
-    public const INVOICE_ID = 'invoice_id';
-    public const ACCOUNT_ID = 'account_id';
-    public const COST       = 'cost';
-    public const MODERATED  = 'moderated';
-    public const VERIFIED   = 'verified';
-    public const COMMENT    = 'comment';
-    public const NAME       = 'name';
-    public const DATA       = 'data';
-
-    public const ACCOUNT = 'account';
-    public const INVOICE = 'invoice';
-    public const FILES   = 'files';
-
-    protected $guarded = [];
+    public const string ACCOUNT = 'account';
+    public const string INVOICE = 'invoice';
+    public const string FILES   = 'files';
 
     protected $casts = [
         self::COST      => self::CAST_FLOAT,
         self::MODERATED => self::CAST_BOOLEAN,
         self::VERIFIED  => self::CAST_BOOLEAN,
         self::DATA      => self::CAST_JSON,
+        self::PAYED_AT  => self::CAST_DATE,
     ];
 
     public function invoice(): BelongsTo

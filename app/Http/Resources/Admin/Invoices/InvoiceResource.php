@@ -47,8 +47,8 @@ readonly class InvoiceResource extends AbstractResource
             'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
             'advance'       => (float) $advance?->getPayed(),
             'isPayed'       => $this->invoice->isPayed(),
-            'created'       => $this->formatTimestampAt($this->invoice->getCreatedAt()),
-            'updated'       => $this->formatTimestampAt($this->invoice->getUpdatedAt()),
+            'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
+            'updated'       => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
             'actions'       => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),

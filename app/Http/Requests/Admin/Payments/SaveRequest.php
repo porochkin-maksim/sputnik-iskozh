@@ -3,20 +3,23 @@
 namespace App\Http\Requests\Admin\Payments;
 
 use App\Http\Requests\AbstractRequest;
+use Carbon\Carbon;
 use Core\Domains\Billing\Payment\Models\PaymentComparator;
+use Core\Enums\DateTimeFormat;
 use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const NAME       = RequestArgumentsEnum::NAME;
-    private const COST       = RequestArgumentsEnum::COST;
-    private const COMMENT    = RequestArgumentsEnum::COMMENT;
+    private const string ID      = RequestArgumentsEnum::ID;
+    private const string NAME    = RequestArgumentsEnum::NAME;
+    private const string COST    = RequestArgumentsEnum::COST;
+    private const string COMMENT = RequestArgumentsEnum::COMMENT;
+    private const string PAYED   = 'payedAt';
 
     public function rules(): array
     {
         return [
-            self::COST       => [
+            self::COST    => [
                 'required',
                 'numeric',
                 'min:0',
@@ -25,7 +28,7 @@ class SaveRequest extends AbstractRequest
                 'nullable',
                 'string',
             ],
-            self::COMMENT    => [
+            self::COMMENT => [
                 'nullable',
                 'string',
             ],
@@ -61,5 +64,10 @@ class SaveRequest extends AbstractRequest
     public function getComment(): ?string
     {
         return $this->getStringOrNull(self::COMMENT);
+    }
+
+    public function getPayedAt(): ?Carbon
+    {
+        return $this->getDateOrNull(self::PAYED);
     }
 }

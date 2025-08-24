@@ -24,8 +24,8 @@ readonly class PeriodResource extends AbstractResource
         return [
             'id'         => $this->period->getId(),
             'name'       => $this->period->getName(),
-            'startAt'    => $this->formatDateTimeOrNow($this->period->getStartAt()),
-            'endAt'      => $this->formatDateTimeOrNow($this->period->getEndAt()),
+            'startAt'    => $this->formatDateTimeOrNowForFront($this->period->getStartAt()),
+            'endAt'      => $this->formatDateTimeOrNowForFront($this->period->getEndAt()),
             'isClosed'   => $this->period->isClosed(),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PERIODS_VIEW),
