@@ -55,7 +55,7 @@
         <table class="table table-sm table-striped table-bordered">
             <thead>
             <tr class="text-center">
-                <th class="cursor-pointer text-end" @click="sort('id')" colspan="2">
+                <th class="cursor-pointer text-end" @click="sort('id')">
                     №
                     <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                     <i v-else class="fa fa-sort"></i>
