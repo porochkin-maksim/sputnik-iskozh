@@ -76,8 +76,7 @@ use Illuminate\Support\Facades\Route;
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::LOGOUT) }}">
-                    <span class="d-lg-none">{{ RouteNames::name(RouteNames::LOGOUT) }}</span>
-                    &nbsp;<i class="fa fa-sign-out"></i>
+                    <i class="fa fa-sign-out"></i>&nbsp;{{ RouteNames::name(RouteNames::LOGOUT) }}
                 </a>
             </li>
         @endguest
@@ -161,8 +160,7 @@ use Illuminate\Support\Facades\Route;
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::LOGOUT) }}">
-                    <span class="d-lg-none">{{ RouteNames::name(RouteNames::LOGOUT) }}</span>
-                    <i class="fa fa-sign-out"></i>
+                    <i class="fa fa-sign-out"></i>&nbsp;{{ RouteNames::name(RouteNames::LOGOUT) }}
                 </a>
             </li>
         @endguest

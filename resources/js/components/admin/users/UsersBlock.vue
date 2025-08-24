@@ -207,8 +207,8 @@ export default {
                 id: id,
             });
         },
-        listAction () {
-            const getParams = {
+        makeGetParams() {
+            return {
                 limit     : this.perPage,
                 skip      : this.skip,
                 sort_field: this.sortField,
@@ -216,6 +216,9 @@ export default {
                 search    : this.search || null,
                 isMember  : this.isMember ? 'true' : this.isNotMember ? 'false' : null,
             };
+        },
+        listAction () {
+            const getParams = this.makeGetParams();
 
             const uri = Url.Generator.makeUri(Url.Routes.adminUserIndex, {}, getParams);
             window.history.pushState({ state: this.routeState++ }, '', uri);
@@ -249,7 +252,9 @@ export default {
             this.searchAction();
         },
         exportAction () {
-            window.open(Url.Routes.adminUserExport.uri, '_blank');
+            const getParams = this.makeGetParams();
+            const uri       = Url.Generator.makeUri(Url.Routes.adminUserExport, {}, getParams);
+            window.open(uri, '_blank');
         },
         sort (field) {
             if (this.sortField === field) {

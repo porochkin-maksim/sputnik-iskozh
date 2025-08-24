@@ -28,6 +28,7 @@ use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
+use Core\Domains\User\Responses\SearchResponse;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Requests\RequestArgumentsEnum;
@@ -96,6 +97,32 @@ class UsersController extends Controller
             abort(403);
         }
 
+        $users = $this->getUsersList($request);
+
+        return response()->json(new UsersListResource(
+            $users->getItems(),
+            $users->getTotal(),
+        ));
+    }
+
+    public function export(ListRequest $request)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            abort(403);
+        }
+
+        $requestData = $request->toArray();
+        unset($requestData[RequestArgumentsEnum::SKIP], $requestData[RequestArgumentsEnum::LIMIT]);
+
+        $newRequest = new ListRequest($requestData);
+
+        $users = $this->getUsersList($newRequest)->getItems();
+
+        return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
+    }
+
+    private function getUsersList(ListRequest $request): SearchResponse
+    {
         $searcher = new UserSearcher();
         $searcher
             ->setWithAccounts()
@@ -130,29 +157,7 @@ class UsersController extends Controller
             $searcher->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_DESC);
         }
 
-        $users = $this->userService->search($searcher);
-
-        return response()->json(new UsersListResource(
-            $users->getItems(),
-            $users->getTotal(),
-        ));
-    }
-
-    public function export(ListRequest $request)
-    {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
-            abort(403);
-        }
-
-        $searcher = new UserSearcher();
-        $searcher
-            ->setWithAccounts()
-            ->setSortOrderProperty('account_sort', SearcherInterface::SORT_ORDER_ASC)
-        ;
-
-        $users = $this->userService->search($searcher)->getItems();
-
-        return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
+        return $this->userService->search($searcher);
     }
 
     public function save(SaveRequest $request): JsonResponse
