@@ -16,9 +16,11 @@ trait SearcherTrait
     private ?int $lastId = null;
 
     /** @var int[] $ids */
-    private ?array $ids    = null;
-    private array  $select = [];
-    private array  $with   = [];
+    private ?array $ids     = null;
+    private array  $select  = [];
+    private array  $with    = [];
+    /** @var string[] $groupBy */
+    private array  $groupBy = [];
 
     private ?WhereCollection $where       = null;
     private ?WhereCollection $orWhere     = null;
@@ -220,5 +222,17 @@ trait SearcherTrait
     public function getWhereIn(): array
     {
         return $this->whereIn;
+    }
+
+    public function getGroupsBy(): array
+    {
+        return $this->groupBy;
+    }
+
+    public function addGroupBy(string $groupBy): static
+    {
+        $this->groupBy[] = $groupBy;
+
+        return $this;
     }
 }

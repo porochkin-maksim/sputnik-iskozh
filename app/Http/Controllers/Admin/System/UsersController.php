@@ -12,6 +12,7 @@ use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
 use App\Models\Account\Account;
+use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
@@ -109,6 +110,14 @@ class UsersController extends Controller
                 ->addOrWhere(User::EMAIL, SearcherInterface::LIKE, "{$searchString}%")
                 ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%")
             ;
+        }
+        elseif ($request->get('isMember')) {
+            if ($request->getBool('isMember')) {
+                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+            }
+            else {
+                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NULL);
+            }
         }
 
         if ($request->getSortField() && $request->getSortOrder()) {

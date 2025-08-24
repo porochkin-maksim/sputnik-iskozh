@@ -154,7 +154,7 @@ use Illuminate\Support\Facades\Route;
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">
-                        <i class="fa fa-gears"></i>
+                        <i class="fa fa-gears"></i> Админка
                     </a>
                 </li>
             @endif
