@@ -7,20 +7,20 @@ use Core\Db\Searcher\Models\Order;
 
 interface SearcherInterface
 {
-    public const SORT_ORDER_ASC  = 'asc';
-    public const SORT_ORDER_DESC = 'desc';
+    public const string SORT_ORDER_ASC  = 'asc';
+    public const string SORT_ORDER_DESC = 'desc';
 
-    public const EQUALS      = '=';
-    public const IS_NULL     = 'IS NULL';
-    public const IS_NOT_NULL = 'NOT NULL';
-    public const GT          = '>';
-    public const GTE         = '>=';
-    public const LT          = '<';
-    public const LTE         = '<=';
-    public const IS_NOT      = '!=';
-    public const NOT_IN      = 'NOT_IN';
-    public const IN          = 'IN';
-    public const LIKE        = 'like';
+    public const string EQUALS      = '=';
+    public const string IS_NULL     = 'IS NULL';
+    public const string IS_NOT_NULL = 'NOT NULL';
+    public const string GT          = '>';
+    public const string GTE         = '>=';
+    public const string LT          = '<';
+    public const string LTE         = '<=';
+    public const string IS_NOT      = '!=';
+    public const string NOT_IN      = 'NOT_IN';
+    public const string IN          = 'IN';
+    public const string LIKE        = 'like';
 
     public function getIds(): ?array;
 
@@ -55,4 +55,9 @@ interface SearcherInterface
     public function getOrWhere(): WhereCollection;
 
     public function getWhereColumn(): WhereCollection;
+
+    /**
+     * @return string[]
+     */
+    public function getGroupsBy(): array;
 }

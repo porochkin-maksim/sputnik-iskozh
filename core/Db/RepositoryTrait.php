@@ -175,6 +175,8 @@ trait RepositoryTrait
                 foreach ($searcher->getSortProperties() as $sort) {
                     $query->orderBy($this->adaptFieldName($sort->getField()), $sort->getValue());
                 }
+            })->when($searcher->getGroupsBy(), function (Builder $query) use ($searcher) {
+                $query->groupBy(...$searcher->getGroupsBy());
             });
         }
 
