@@ -77,9 +77,12 @@ abstract class AbstractRequest extends FormRequest
         return is_numeric($this->get($key, $default)) ? (float) $this->get($key, $default) : null;
     }
 
-    public function getDateOrNull(string $key): ?Carbon
+    public function getDateOrNull(string $key, ?string $fromFormat = null): ?Carbon
     {
         try {
+            if ($fromFormat) {
+                return $this->get($key) ? Carbon::createFromFormat($fromFormat, $this->get($key)) : null;
+            }
             return $this->get($key) ? Carbon::parse($this->get($key)) : null;
         }
         catch (\Exception) {

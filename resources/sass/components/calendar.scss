@@ -1,88 +1,98 @@
 .custom-calendar {
-    position: relative;
-    width: 100%;
-    max-width: 320px;
+    position  : relative;
+    width     : 100%;
+    max-width : 320px;
 
     &__input {
-        cursor: pointer;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 38px;
+        cursor          : pointer;
+        background      : #fff;
+        display         : flex;
+        align-items     : center;
+        justify-content : space-between;
+        min-height      : 30px;
+
         &:focus, &--active {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+            border-color : #86b7fe;
+            box-shadow   : 0 0 0 0.2rem rgba(13, 110, 253, .25);
+        }
+
+        .form-control {
+            padding       : 0.29rem 0.75rem;
+            border-radius : 0.25rem;
         }
     }
 
     &__dropdown {
         @extend .dropdown-menu;
-        display: block;
-        min-width: 18rem;
-        padding: 0.5rem 0.75rem;
-        margin-top: 0.25rem;
-        z-index: 1000;
+        display    : block;
+        min-width  : 18rem;
+        padding    : 0.5rem 0.75rem;
+        margin-top : 0.25rem;
+        z-index    : 1000;
     }
 
     &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
+        display         : flex;
+        align-items     : center;
+        justify-content : space-between;
+        margin-bottom   : 0.5rem;
     }
 
     &__month-name {
-        font-weight: 500;
-        text-align: center;
-        flex: 1 1 auto;
+        font-weight : 500;
+        text-align  : center;
+        flex        : 1 1 auto;
     }
 
     &__nav-button {
         @extend .btn;
         @extend .btn-sm;
         @extend .btn-outline-secondary;
-        padding: 0.125rem 0.5rem;
+        padding : 0.125rem 0.5rem;
     }
 
     &__grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2px;
+        display   : flex;
+        flex-wrap : wrap;
+        gap       : 2px;
     }
 
     &__weekday, &__day {
-        width: calc(100% / 7);
-        text-align: center;
-        padding: 0.25rem 0;
-        font-size: 0.95rem;
+        width      : calc(100% / 7);
+        text-align : center;
+        padding    : 0.25rem 0;
+        font-size  : 0.95rem;
     }
 
     &__weekday {
-        color: #6c757d;
-        font-weight: 500;
-        background: #f8f9fa;
+        color       : #6c757d;
+        font-weight : 500;
+        background  : #f8f9fa;
     }
 
     &__day {
-        background: #fff;
-        border-radius: 0.25rem;
-        cursor: pointer;
-        transition: background 0.15s;
+        background    : #fff;
+        border-radius : 0.25rem;
+        cursor        : pointer;
+        transition    : background 0.15s;
+
         &:hover {
-            background: #e9ecef;
+            background : #e9ecef;
         }
+
         &--selected {
-            background: #0d6efd;
-            color: #fff;
+            background : #0d6efd;
+            color      : #fff;
         }
+
         &--today {
-            border: 1px solid #0d6efd;
+            border : 1px solid #0d6efd;
         }
+
         &--disabled {
-            color: #dee2e6;
-            background: transparent;
-            cursor: default;
+            color      : #dee2e6;
+            background : transparent;
+            cursor     : default;
         }
     }
 }

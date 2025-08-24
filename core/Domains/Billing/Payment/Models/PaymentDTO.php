@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Billing\Payment\Models;
 
+use Carbon\Carbon;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
@@ -20,6 +21,7 @@ class PaymentDTO
     private ?string $comment    = null;
     private ?string $name       = null;
     private ?array  $data       = null;
+    private ?Carbon $payed_at   = null;
 
     private ?string $account_number = null;
 
@@ -135,6 +137,18 @@ class PaymentDTO
     public function setData(?array $data): static
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    public function getPayedAt(): ?Carbon
+    {
+        return $this->payed_at;
+    }
+
+    public function setPayedAt(?Carbon $payed_at): static
+    {
+        $this->payed_at = $payed_at;
 
         return $this;
     }

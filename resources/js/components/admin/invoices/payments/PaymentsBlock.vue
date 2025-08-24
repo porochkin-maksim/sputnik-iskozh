@@ -26,21 +26,32 @@
     >
         <template v-slot:title>{{ payment.id ? (payment.actions.edit ? 'Редактирование платёжа' : 'Просмотр платёжа') : 'Добавление платежа' }}</template>
         <template v-slot:body>
-            <label>Стоимость</label>
-            <input type="number"
-                   step="0.01"
-                   class="form-control form-control-sm"
-                   :disabled="!payment.actions.edit || loading"
-                   v-model="payment.cost"
-            />
-            <label>Название платёжа</label>
+            <label><b>Название платёжа:</b></label>
             <input type="text"
                    class="form-control form-control-sm"
                    :disabled="!payment.actions.edit || loading"
                    placeholder="необязательно..."
                    v-model="payment.name"
             />
-            <label>Комментарий</label>
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <label><b>Стоимость:</b></label>
+                    <input type="number"
+                           step="0.01"
+                           class="form-control form-control-sm"
+                           :disabled="!payment.actions.edit || loading"
+                           v-model="payment.cost"
+                    />
+                </div>
+                <div class="col-6">
+                    <label><b>Дата платежа:</b></label>
+                    <custom-calendar v-model="payment.payed"
+                                     :disabled="!payment.actions.edit || loading"
+                                     @change="clearError('payed')"
+                    />
+                </div>
+            </div>
+            <label><b>Комментарий:</b></label>
             <textarea class="form-control form-control-sm"
                       style="min-height: 200px;"
                       :disabled="!payment.actions.edit || loading"
@@ -111,9 +122,10 @@ import ResponseError from '../../../../mixin/ResponseError.js';
 import Url           from '../../../../utils/Url.js';
 import ClaimsList    from '../claims/ClaimsList.vue';
 import FileItem      from '../../../common/files/FileItem.vue';
+import CustomCalendar from '../../../common/form/CustomCalendar.vue';
 
 export default {
-    components: { FileItem, ClaimsList, ViewDialog, PaymentsList },
+    components: { CustomCalendar, FileItem, ClaimsList, ViewDialog, PaymentsList },
     emits     : ['update:reload', 'update:count'],
     props     : {
         invoice: {
@@ -157,11 +169,7 @@ export default {
                 return;
             }
             this.loading = true;
-            let uri = Url.Generator.makeUri(Url.Routes.adminPaymentAutoCreate, {
-                invoiceId: this.invoice.id,
-            });
-
-            window.axios[Url.Routes.adminPaymentAutoCreate.method](uri).then(() => {
+            Url.RouteFunctions.adminPaymentAutoCreate(this.invoice.id).then(response => {
                 let text = 'Счёт оплачен';
                 this.forcePayed = true;
                 this.showInfo(text);
@@ -173,11 +181,7 @@ export default {
             });
         },
         makeAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminPaymentCreate, {
-                invoiceId: this.invoice.id,
-            });
-
-            window.axios[Url.Routes.adminPaymentCreate.method](uri).then(response => {
+            Url.RouteFunctions.adminPaymentCreate(this.invoice.id).then(response => {
                 this.payment    = response.data.payment;
                 this.showDialog = true;
             }).catch(response => {
@@ -185,11 +189,7 @@ export default {
             });
         },
         getAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminPaymentView, {
-                invoiceId: this.invoice.id,
-                paymentId: this.selectedId,
-            });
-            window.axios[Url.Routes.adminPaymentView.method](uri).then(response => {
+            Url.RouteFunctions.adminPaymentView(this.invoice.id, this.selectedId).then(response => {
                 this.payment         = response.data.payment;
                 this.payment.cost    = parseFloat(this.payment.cost).toFixed(2);
                 this.payment.comment = this.payment.comment ? String(this.payment.comment) : null;
@@ -205,18 +205,14 @@ export default {
             form.append('cost', parseFloat(this.payment.cost));
             form.append('name', this.payment.name);
             form.append('comment', String(this.payment.comment ? String(this.payment.comment) : null));
+            form.append('payedAt', this.payment.payed);
             this.files.forEach((file, index) => {
                 form.append('file' + index, file);
             });
 
             this.clearResponseErrors();
-            let uri = Url.Generator.makeUri(Url.Routes.adminPaymentSave, {
-                invoiceId: this.invoice.id,
-            });
-            window.axios[Url.Routes.adminPaymentSave.method](
-                uri,
-                form,
-            ).then((response) => {
+
+            Url.RouteFunctions.adminPaymentSave(this.invoice.id, {}, form).then((response) => {
                 let text = this.payment.id ? 'Платёж обновлен' : 'Платёж ' + response.data.payment.id + ' создан';
                 this.showInfo(text);
 

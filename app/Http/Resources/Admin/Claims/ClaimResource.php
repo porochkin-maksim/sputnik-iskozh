@@ -38,7 +38,7 @@ readonly class ClaimResource extends AbstractResource
             'serviceId'  => $this->claim->getServiceId(),
             'service'    => $name,
             'name'       => $this->claim->getName(),
-            'created'    => $this->formatTimestampAt($this->claim->getCreatedAt()),
+            'created'    => $this->formatDateTimeForRender($this->claim->getCreatedAt()),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ! $period?->isClosed(),
