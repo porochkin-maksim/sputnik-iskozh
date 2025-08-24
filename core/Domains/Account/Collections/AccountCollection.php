@@ -43,4 +43,18 @@ class AccountCollection extends Collection implements CollectionInterface
     {
         return array_find($this->items, fn($account) => $account->getId() === $accountId);
     }
+
+    /**
+     * @return string[]
+     */
+    public function getNumbers(): array
+    {
+        $result = [];
+
+        foreach ($this->items as $account) {
+            $result[] = $account->getNumber();
+        }
+
+        return $result;
+    }
 }

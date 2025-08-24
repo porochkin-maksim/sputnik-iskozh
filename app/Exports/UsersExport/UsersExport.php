@@ -12,7 +12,7 @@ class UsersExport implements WithMultipleSheets
     private array $headers;
     private array $groupedUsers = [];
 
-    private const PLOT_MEMBER = 'Пользователи';
+    private const string PLOT_MEMBER = 'Пользователи';
 
     public function __construct(
         private readonly UserCollection $users,
