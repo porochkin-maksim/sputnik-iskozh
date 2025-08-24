@@ -77,11 +77,6 @@
             </thead>
             <tbody>
             <tr v-for="account in accounts" class="align-middle">
-                <td>
-                    <a :href="account.viewUrl" class="d-block w-100 text-center">
-                        <i class="fa fa-eye"></i>
-                    </a>
-                </td>
                 <td class="text-end">
                     <a :href="account.viewUrl">
                         {{ account.id }}
@@ -115,6 +110,7 @@ import SearchSelect   from '../../common/form/SearchSelect.vue';
 import Pagination     from '../../common/pagination/Pagination.vue';
 import AccountItemAdd from './AccountItemAdd.vue';
 import SimpleSelect   from '../../common/form/SimpleSelect.vue';
+import { log10 }      from 'chart.js/helpers';
 
 export default {
     name      : 'AccountsBlock',
@@ -159,25 +155,18 @@ export default {
             });
         },
         listAction () {
-            let uri       = Url.Generator.makeUri(Url.Routes.adminAccountIndex, {}, {
+            const getParams = {
                 limit     : this.perPage,
                 skip      : this.skip,
                 search    : this.search,
                 sort_field: this.sortField,
                 sort_order: this.sortOrder,
-            });
+            };
+            const uri       = Url.Generator.makeUri(Url.Routes.adminAccountIndex, {}, getParams);
             window.history.pushState({ state: this.routeState++ }, '', uri);
 
-            window.axios[Url.Routes.adminAccountList.method](Url.Routes.adminAccountList.uri, {
-                params: {
-                    limit     : this.perPage,
-                    skip      : this.skip,
-                    search    : this.search,
-                    sort_field: this.sortField,
-                    sort_order: this.sortOrder,
-                },
-            }).then(response => {
-                this.accounts = [];
+            Url.RouteFunctions.adminAccountList(getParams).then(response => {
+                this.accounts    = [];
                 this.actions     = response.data.actions;
                 this.allAccounts = response.data.allAccounts;
                 this.accounts    = response.data.accounts;
