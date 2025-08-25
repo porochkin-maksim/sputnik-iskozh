@@ -45,100 +45,99 @@ if (lc::account()->getId() && $period) {
     $invoices = InvoiceLocator::InvoiceService()->search($invoiceSearcher)->getItems();
 }
 
-$account = lc::account();
+$account     = lc::account();
+$breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
 ?>
 
 @extends(ViewNames::LAYOUTS_PROFILE)
 
+@section(SectionNames::TITLE, $breadcrumbs->last()?->title)
+
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::PROFILE_INVOICES, $period) }}
     @if($account->getId())
         @if($invoices->count())
-            <table class="table table-borderless">
-                <thead class="text-center">
-                <tr>
-                    <th colspan="5">
-                        <h3 class="text-dark">Счета на участок "{{ $account->getNumber() }}" в периоде "{{ $period->getName() }}"</h3>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($invoices as $invoice)
-                    <tr class="text-end table-success border-success">
-                        <th class="text-start">Взнос</th>
-                        <th>Тариф</th>
-                        <th>Стоимость</th>
-                        <th>Оплачено</th>
-                        <th>Долг</th>
-                    </tr>
-                    @foreach($invoice->getClaims() as $claim)
-                        <tr>
-                            <td>{{ $claim->getName() ?: $services->getById($claim->getServiceId())->getName() }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPayed()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getDelta()) }}</td>
+            <h3 class="text-dark">
+                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center text-wrap">
+                    <span>Счета на участок "{{ $account->getNumber() }}" в периоде</span>
+                    <form action="{{ route(RouteNames::PROFILE_INVOICES) }}" class="d-inline-block">
+                        <select name="period"
+                                class="form-select form-select-sm me-2 d-inline-block fw-bold ms-2"
+                                style="width: auto;font-size: 1em;"
+                                onchange="this.form.submit()">
+                            @foreach($periods as $p)
+                                <option value="{{ $p->getId() }}" {{ $period && $period->getId() === $p->getId() ? 'selected' : '' }}>
+                                    {{ $p->getName() }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                    <tbody>
+                    @foreach($invoices as $invoice)
+                        <tr class="text-end table-success border-success">
+                            <th class="text-start">Взнос</th>
+                            <th>Тариф</th>
+                            <th>Стоимость</th>
+                            <th>Оплачено</th>
+                            <th>Долг</th>
                         </tr>
+                        @foreach($invoice->getClaims() as $claim)
+                            <tr>
+                                <td>{{ $claim->getName() ?: $services->getById($claim->getServiceId())->getName() }}</td>
+                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
+                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost()) }}</td>
+                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPayed()) }}</td>
+                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getDelta()) }}</td>
+                            </tr>
+                        @endforeach
+                        <tr class="table-info">
+                            <th class="text-end"
+                                colspan="2">Итого
+                            </th>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
+                        </tr>
+                        @if ($invoice->isPayed())
+                            <tr class="text-center table-success border-success text-success">
+                                <th colspan="5">Оплачено</th>
+                            </tr>
+                        @else
+                            <tr class="text-center">
+                                <td colspan="5">
+                                    <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
+                                        @if ($account->getFraction() === 1 || ! $account->getFraction())
+                                            <button class="btn btn-sm btn-success">Оплатить {{ MoneyService::parse($invoice->getDelta()) }}</button>
+                                        @else
+                                            <button class="btn btn-sm btn-outline-success mx-1 mb-2">
+                                                Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success mx-1 mb-2">
+                                                Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
-                    <tr class="table-info">
-                        <th class="text-end"
-                            colspan="2">Итого
-                        </th>
-                        <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost()) }}</td>
-                        <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
-                        <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
-                    </tr>
-                    @if ($invoice->isPayed())
-                        <tr class="text-center table-success border-success text-success">
-                            <th colspan="5">Оплачено</th>
-                        </tr>
-                    @else
-                        <tr class="text-center">
-                            <td colspan="5"
-                                class="pe-0">
-                                @if ($account->getFraction() === 1 || ! $account->getFraction())
-                                    <button class="btn btn-sm btn-success">Оплатить {{ MoneyService::parse($invoice->getDelta()) }}</button>
-                                @else
-                                    <button class="btn btn-sm btn-outline-success me-1">
-                                        Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
-                                    </button>
-                                    или
-                                    <button class="btn btn-sm btn-outline-success ms-1">
-                                        Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
-                                    </button>
-                                @endif
-                            </td>
-                        </tr>
-                    @endif
-                    <tr>
-                        <th colspan="4"></th>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <hr>
+            </div>
         @endif
     @endif
     @if($periods->count())
-        <div>
-            <hr>
-        </div>
         <div class="d-flex flex-md-row flex-column-reverse align-items-center justify-content-md-between justify-content-center mb-3">
             <h3 class="text-dark mb-0 text-center mt-2 mt-md-0">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>
-            <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
-                  method="GET"
-                  class="d-flex align-items-center">
-                <select name="period"
-                        class="form-select form-select-sm me-2"
-                        style="width: auto;"
-                        onchange="this.form.submit()">
-                    @foreach($periods as $p)
-                        <option value="{{ $p->getId() }}" {{ $period && $period->getId() === $p->getId() ? 'selected' : '' }}>
-                            {{ $p->getName() }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
         </div>
         <summary-block :period-id="{{ $period->getId() }}"
-                       :show-invoice="false"></summary-block>
+                       :show-invoice="false"/>
     @endif
 @endsection

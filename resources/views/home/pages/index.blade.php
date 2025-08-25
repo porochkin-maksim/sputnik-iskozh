@@ -39,13 +39,13 @@ use Core\Resources\Views\ViewNames;
                 <a class="card mt-2"
                    href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
                     <div class="card-body">
-                        Передать показания электроэнергии
+                        {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
                     </div>
                 </a>
                 <a class="card mt-2"
                    href="{{ route(RouteNames::PROFILE_INVOICES) }}">
                     <div class="card-body">
-                        Счета
+                        {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
                     </div>
                 </a>
             @endif

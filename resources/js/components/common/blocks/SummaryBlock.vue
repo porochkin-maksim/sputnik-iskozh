@@ -1,5 +1,5 @@
 <template>
-    <div v-if="summary">
+    <div v-if="summary" class="table-responsive">
         <table class="table table-sm table-bordered table-striped-columns text-center">
             <thead>
             <tr class="table-info">

@@ -7,7 +7,10 @@
 // this import. This is nice for IDE syntax and refactoring.
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
+use Core\Domains\Billing\Period\Models\PeriodDTO;
 use Core\Domains\Counter\Models\CounterDTO;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Resources\RouteNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
@@ -15,6 +18,26 @@ use Diglactic\Breadcrumbs\Breadcrumbs;
 //  with `$trail`. This is nice for IDE type checking and completion.
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
+// ЛК
+Breadcrumbs::for(RouteNames::HOME, static function (BreadcrumbTrail $trail) {
+    $trail->push('Мой кабинет', route(RouteNames::HOME));
+});
+Breadcrumbs::for(RouteNames::PROFILE_INVOICES, static function (BreadcrumbTrail $trail, ?PeriodDTO $period = null) {
+    $trail->parent(RouteNames::HOME);
+    $name = RouteNames::name(RouteNames::PROFILE_INVOICES);
+    $trail->push($period ? sprintf('%s периода "%s"', $name, $period->getName()) : $name);
+});
+Breadcrumbs::for(RouteNames::PROFILE_COUNTERS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::HOME);
+    $trail->push(RouteNames::name(RouteNames::PROFILE_COUNTERS), route(RouteNames::PROFILE_COUNTERS));
+});
+Breadcrumbs::for(RouteNames::PROFILE_COUNTER_VIEW, static function (BreadcrumbTrail $trail, CounterDTO $counter) {
+    $trail->parent(RouteNames::PROFILE_COUNTERS);
+    $trail->push('Счётчик ' . $counter->getNumber(), route(RouteNames::PROFILE_COUNTER_VIEW, [$counter->getUid()]));
+});
+
+
+// главная админки
 Breadcrumbs::for(RouteNames::ADMIN, static function (BreadcrumbTrail $trail) {
     $trail->push('Главная', route(RouteNames::ADMIN));
 });
@@ -35,6 +58,7 @@ Breadcrumbs::for(RouteNames::ADMIN_INVOICE_VIEW, static function (BreadcrumbTrai
     $trail->push('Счёт №' . $invoice->getId(), route(RouteNames::ADMIN_INVOICE_VIEW, $invoice->getId()));
 });
 
+// админка. участки
 Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_INDEX, static function (BreadcrumbTrail $trail) {
     $trail->push('Участки', route(RouteNames::ADMIN_ACCOUNT_INDEX));
 });

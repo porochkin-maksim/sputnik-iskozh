@@ -8,7 +8,7 @@ use Core\Resources\Views\ViewNames;
 
 @extends(ViewNames::LAYOUTS_ADMIN)
 
-@section('title', 'Детали ошибки')
+@section(SectionNames::TITLE 'Детали ошибки')
 
 @section(SectionNames::CONTENT)
     <div class="container-fluid">
