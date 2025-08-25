@@ -34,7 +34,7 @@
                             <ul class="dropdown-menu"
                                 :aria-labelledby="'dropDown'+counter.id+vueId">
                                 <li>
-                                    <a class="dropdown-item cursor-pointer"
+                                    <a class="dropdown-item cursor-pointer" v-if="counter.actions.edit"
                                        @click.prevent="editCounterAction(counter)">
                                         <i class="fa fa-edit"></i> Редактировать
                                     </a>

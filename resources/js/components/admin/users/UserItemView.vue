@@ -124,22 +124,17 @@
                         </template>
                     </template>
                     <template v-else>
-                        <template v-for="(account) in localUserAccounts">
-                            <tr>
-                                <th>
-                                    Участок
-                                </th>
-                                <td>
-                                    <template v-if="account.viewUrl">
-                                        <a :href="account.viewUrl">
-                                            {{ account.number }}
-                                        </a>
-                                    </template>
-                                    <template v-else>
-                                        {{ account.number }}
-                                    </template>
-                                </td>
-                            </tr>
+                        <template v-if="fractions && fractions.length && accounts && accounts.length">
+                            <template v-for="(fraction) in fractions">
+                                <tr>
+                                    <th>
+                                        <span v-html="renderAccountLink(fraction.accountId)"></span>
+                                    </th>
+                                    <td>
+                                        <i class="fa fa-user" :class="[fraction.value ? 'text-success' : 'text-light']"></i>&nbsp;{{ fraction.value ? (fraction.value * 100)+'%' : '' }}
+                                    </td>
+                                </tr>
+                            </template>
                         </template>
                     </template>
                     <tr>

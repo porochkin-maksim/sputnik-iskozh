@@ -7,7 +7,7 @@
                 v-on:click="makeAction">Добавить платёж
         </button>
         <button class="btn btn-outline-success ms-2"
-                v-if="!invoice.isPayed && !forcePayed"
+                v-if="invoice.actions.payments.edit && !invoice.isPayed && !forcePayed"
                 :disabled="loading"
                 v-on:click="makePayed">
                 <i class="fa fa-credit-card"></i>&nbsp;Оплатить всё
