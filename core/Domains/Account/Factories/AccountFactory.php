@@ -61,7 +61,9 @@ readonly class AccountFactory
             ->setIsInvoicing($model->is_invoicing)
             ->setSortValue($model->sort_value)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+            ->setFraction($model->pivot?->fraction)
+        ;
 
         if (isset($model->getRelations()[Account::USERS])) {
             foreach ($model->getRelation(Account::USERS) as $user) {

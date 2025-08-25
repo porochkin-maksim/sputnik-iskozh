@@ -45,6 +45,8 @@ readonly class UserResource extends AbstractResource
             'roleId'          => (int) ($this->user->getRole()?->getId()),
             'roleName'        => $this->user->getRole()?->getName(),
             'accountId'       => (int) ($this->user->getAccount()?->getId()),
+            'fraction'        => $this->user->getFraction(),
+            'fractionPercent' => $this->user->getFractionpercent(),
             'accountName'     => $curAccount?->getNumber(),
             'accountIds'      => $this->user->getAccountIds(),
             'emailVerifiedAt' => $this->user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),

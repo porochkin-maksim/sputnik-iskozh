@@ -2,6 +2,7 @@
 
 namespace App\Models\Account;
 
+use App\Models\AbstractModel;
 use App\Models\Billing\Invoice;
 use App\Models\Infra\ExData;
 use App\Models\Interfaces\CastsInterface;
@@ -28,27 +29,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $sort_value
  * @property ?User[] $users
  */
-class Account extends Model implements CastsInterface
+class Account extends AbstractModel
 {
     use SoftDeletes;
 
-    public const TABLE = 'accounts';
+    public const string TABLE = 'accounts';
 
-    protected $table = self::TABLE;
+    public const string ID              = 'id';
+    public const string NUMBER          = 'number';
+    public const string SIZE            = 'size';
+    public const string BALANCE         = 'balance';
+    public const string IS_VERIFIED     = 'is_verified';
+    public const string PRIMARY_USER_ID = 'primary_user_id';
+    public const string IS_INVOICING    = 'is_invoicing';
+    public const string SORT_VALUE      = 'sort_value';
 
-    public const ID              = 'id';
-    public const NUMBER          = 'number';
-    public const SIZE            = 'size';
-    public const BALANCE         = 'balance';
-    public const IS_VERIFIED     = 'is_verified';
-    public const PRIMARY_USER_ID = 'primary_user_id';
-    public const IS_INVOICING    = 'is_invoicing';
-    public const SORT_VALUE      = 'sort_value';
-
-    public const USERS   = 'users';
-    public const EX_DATA = 'exData';
-
-    protected $guarded = [];
+    public const string USERS   = 'users';
+    public const string EX_DATA = 'exData';
 
     protected $with = [self::EX_DATA];
 
@@ -67,7 +64,7 @@ class Account extends Model implements CastsInterface
             AccountToUser::TABLE,
             AccountToUser::ACCOUNT,
             AccountToUser::USER,
-        );
+        )->withPivot(AccountToUser::FRACTION);
     }
 
     public function invoices(): HasMany

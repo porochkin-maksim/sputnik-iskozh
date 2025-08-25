@@ -60,7 +60,7 @@ class TopPanelController extends Controller
         return response()->json($result);
     }
 
-    public function search(DefaultRequest $request): JsonResponse
+    public function search(DefaultRequest $request): ?string
     {
         $accountSearch = $request->getStringOrNull('account');
         $userSearch    = $request->getStringOrNull('user');
@@ -77,11 +77,14 @@ class TopPanelController extends Controller
             elseif ($accounts->count() > 1) {
                 $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
             }
+            else {
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
+            }
         }
         elseif ($userSearch) {
             $result = route(RouteNames::ADMIN_USER_INDEX, ['search' => $userSearch]);
         }
 
-        return response()->json($result);
+        return $result;
     }
 }

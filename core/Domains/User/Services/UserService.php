@@ -2,6 +2,8 @@
 
 namespace Core\Domains\User\Services;
 
+use App\Models\Account\Account;
+use App\Models\Account\AccountToUser;
 use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Core\Db\Searcher\SearcherInterface;
@@ -54,7 +56,16 @@ readonly class UserService
         ;
 
         $model->roles()->sync($user->getRole()?->getId() ? [$user->getRole()?->getId()] : []);
-        $model->accounts()->sync($user->getAccountIds());
+        $accountIds = [];
+        if ($user->getAccounts()->first()?->getFraction() !== null) {
+            foreach ($user->getAccounts() as $account) {
+                $accountIds[$account->getId()] = [AccountToUser::FRACTION => $account->getFraction()];
+            }
+
+        }else{
+            $accountIds = $user->getAccountIds();
+        }
+        $model->accounts()->sync($accountIds);
 
         $current = $this->getById($current->getId());
 

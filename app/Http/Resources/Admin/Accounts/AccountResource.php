@@ -34,6 +34,8 @@ readonly class AccountResource extends AbstractResource
             'size'        => $this->account->getSize(),
             'balance'     => $this->account->getBalance(),
             'isInvoicing' => $this->account->isInvoicing(),
+            'fraction'        => $this->account->getFraction(),
+            'fractionPercent' => $this->account->getFractionpercent(),
 
             'cadastreNumber' => $exData->getCadastreNumber(),
             'registryDate'   => $exData->getRegistryDate()?->format(DateTimeFormat::DATE_DEFAULT),

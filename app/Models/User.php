@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -102,7 +102,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
             AccountToUser::TABLE,
             AccountToUser::USER,
             AccountToUser::ACCOUNT,
-        );
+        )->withPivot(AccountToUser::FRACTION);
     }
 
     public function roles(): BelongsToMany

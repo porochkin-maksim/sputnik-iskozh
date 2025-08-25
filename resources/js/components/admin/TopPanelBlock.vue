@@ -55,7 +55,7 @@ export default {
             });
         },
         searchAction () {
-            window.axios[Url.Routes.adminTopPanelSearch.method](Url.Routes.adminTopPanelSearch.uri, {
+            Url.RouteFunctions.adminTopPanelSearch({}, {
                 account: this.account,
                 user   : this.user,
             }).then(response => {

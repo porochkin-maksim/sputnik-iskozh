@@ -95,6 +95,7 @@ readonly class UserFactory
             ->setAccountId($model->account_id)
             ->setOwnershipDate($model->{UserInfo::OWNERSHIP_DATE})
             ->setOwnershipDutyInfo($model->{UserInfo::OWNERSHIP_DUTY_INFO})
+            ->setFraction($model->pivot?->fraction)
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {

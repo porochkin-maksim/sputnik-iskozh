@@ -79,6 +79,7 @@
                             <a :href="user.viewUrl"
                                v-if="user.actions.view">{{ user.fullName }}</a>
                             <span v-else>{{ user.fullName }}</span>
+                            &nbsp;<i class="fa fa-user" :class="[user.fractionPercent ? 'text-success' : 'text-light']"></i>&nbsp;{{ user.fractionPercent }}
                         </li>
                     </ol>
                 </div>

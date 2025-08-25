@@ -73,9 +73,9 @@ class SaveRequest extends AbstractRequest
         return $this->getInt(self::ROLE);
     }
 
-    public function getAccountIds(): array
+    public function getFractions(): array
     {
-        return $this->getArray('account_ids', [], 'intval');
+        return $this->getArray('fractions');
     }
 
     public function getPhone(): ?string

@@ -25,6 +25,7 @@ class UserDTO
     private ?string $phone         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
+    private ?float  $fraction      = null;
 
     private ?string $ownershipDutyInfo = null;
     private ?Carbon $ownershipDate     = null;
@@ -35,7 +36,7 @@ class UserDTO
     private ?RoleDTO           $role            = null;
     private ?Carbon            $emailVerifiedAt = null;
     private ?UserExDataDTO     $exData          = null;
-    private ?AccountCollection $accounts       = null;
+    private ?AccountCollection $accounts        = null;
 
     public function __construct(
         private readonly ?User $user = null,
@@ -190,6 +191,35 @@ class UserDTO
         return $this->emailVerifiedAt;
     }
 
+    public function getFraction(): ?float
+    {
+        return $this->fraction;
+    }
+
+    public function setFraction(null|float|string $fraction): static
+    {
+        $this->fraction = is_string($fraction) ? (float) $fraction : $fraction;
+
+        return $this;
+    }
+
+    public function getFractionpercent(): ?string
+    {
+        if (!$this->getFraction()) {
+            return null;
+        }
+
+        $fractionPercent = $this->getFraction() * 100;
+        if (floor($fractionPercent) === $fractionPercent || fmod($fractionPercent, 1) === 0.00) {
+            $fractionPercent = number_format($fractionPercent);
+        }
+        else {
+            $fractionPercent = number_format($fractionPercent, 2);
+        }
+
+        return "$fractionPercent%";
+    }
+
     public function getExData(): UserExDataDTO
     {
         $this->exData = $this->exData ? : new UserExDataDTO();
@@ -263,6 +293,6 @@ class UserDTO
 
     public function getAccounts(): AccountCollection
     {
-        return $this->accounts ?: new AccountCollection();
+        return $this->accounts ? : new AccountCollection();
     }
 }

@@ -20,7 +20,7 @@
                                ref="search">
                         <button class="btn btn-light border"
                                 type="button"
-                                @click="search=null;listAction">
+                                @click="clearSearch">
                             <i class="fa fa-close"></i>
                         </button>
                     </div>
@@ -72,6 +72,7 @@
                 </th>
                 <th>Кадастр</th>
                 <th>Выставление счетов</th>
+                <th>Пользователи</th>
                 <th></th>
             </tr>
             </thead>
@@ -87,6 +88,23 @@
                 <td class="text-center">{{ account.cadastreNumber }}</td>
                 <td class="text-center">
                     <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
+                </td>
+                <td class="text-end">
+                    <ol v-if="account.users && account.users.length" class="mb-0 ps-0">
+                        <template v-for="user in account.users">
+                            <li class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    <template v-if="user?.viewUrl">
+                                        <a :href="user.viewUrl">{{ user.fullName }}</a>
+                                    </template>
+                                    <template v-else>{{ user.fullName }}</template>
+                                </span>
+                                <span>
+                                    <i class="fa fa-user" :class="[user.fractionPercent ? 'text-success' : 'text-light']"></i>&nbsp;{{ user.fractionPercent }}
+                                </span>
+                            </li>
+                        </template>
+                    </ol>
                 </td>
                 <td>
                     <history-btn :disabled="!account.historyUrl"
@@ -182,6 +200,10 @@ export default {
             this.listAction();
         },
         onCreatedEvent () {
+            this.listAction();
+        },
+        clearSearch () {
+            this.search = '';
             this.listAction();
         },
         sort (field) {

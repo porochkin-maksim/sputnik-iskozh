@@ -19,6 +19,7 @@ class AccountDTO
     private ?int    $primary_user_id = null;
     private ?bool   $is_invoicing    = null;
     private ?string $sort_value      = null;
+    private ?float  $fraction        = null;
 
     private ?AccountExDataDTO $exData = null;
 
@@ -113,6 +114,35 @@ class AccountDTO
         return $this;
     }
 
+    public function getFraction(): ?float
+    {
+        return $this->fraction;
+    }
+
+    public function setFraction(null|float|string $fraction): static
+    {
+        $this->fraction = is_string($fraction) ? (float) $fraction : $fraction;
+
+        return $this;
+    }
+
+    public function getFractionpercent(): ?string
+    {
+        if (!$this->getFraction()) {
+            return null;
+        }
+
+        $fractionPercent = $this->getFraction() * 100;
+        if (floor($fractionPercent) === $fractionPercent || fmod($fractionPercent, 1) === 0.00) {
+            $fractionPercent = number_format($fractionPercent);
+        }
+        else {
+            $fractionPercent = number_format($fractionPercent, 2);
+        }
+
+        return "$fractionPercent%";
+    }
+
     public function getExData(): AccountExDataDTO
     {
         $this->exData = $this->exData ? : new AccountExDataDTO();
@@ -149,7 +179,7 @@ class AccountDTO
 
     public function getSortValue(): ?string
     {
-        return $this->sort_value ?: $this->normalizePlotNumber();
+        return $this->sort_value ? : $this->normalizePlotNumber();
     }
 
     public function setSortValue(?string $sortValue): static

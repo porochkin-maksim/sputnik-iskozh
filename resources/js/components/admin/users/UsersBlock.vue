@@ -114,13 +114,16 @@
                 <td class="text-end">
                     <a :href="user.viewUrl">{{ user.id }}</a>
                 </td>
-                <td class="text-end">
+                <td>
                     <template v-for="account in user.accounts">
-                        <div>
-                            <template v-if="account?.viewUrl">
-                                <a :href="account.viewUrl">{{ account.number }}</a>
-                            </template>
-                            <template v-else>{{ account.number }}</template>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-user" :class="[account.fractionPercent ? 'text-success' : 'text-light']"></i>&nbsp;{{ account.fractionPercent }}&nbsp;</span>
+                            <span>
+                                <template v-if="account?.viewUrl">
+                                    <a :href="account.viewUrl">{{ account.number }}</a>
+                                </template>
+                                <template v-else>{{ account.number }}</template>
+                            </span>
                         </div>
                     </template>
                 </td>

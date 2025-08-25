@@ -57,4 +57,18 @@ class AccountCollection extends Collection implements CollectionInterface
 
         return $result;
     }
+
+    /**
+     * @return string[]
+     */
+    public function getNumbersWitchFraction(): array
+    {
+        $result = [];
+
+        foreach ($this->items as $account) {
+            $result[] = $account->getNumber() . ($account->getFractionpercent() ? " ({$account->getFractionpercent()})" : null);
+        }
+
+        return $result;
+    }
 }

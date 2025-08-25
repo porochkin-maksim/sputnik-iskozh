@@ -13,7 +13,7 @@ class ListRequest extends DefaultRequest
     public function rules(): array
     {
         return [
-            'limit'        => 'integer|min:1|max:100',
+            'limit'        => 'integer|min:1|max:1000',
             'skip'         => 'integer|min:0',
             'type'         => 'integer|in:0,' . implode(',', InvoiceTypeEnum::values()),
             'period_id'    => 'integer|min:0',

@@ -13,7 +13,7 @@ class ListRequest extends DefaultRequest
     public function rules(): array
     {
         return [
-            'limit'        => 'integer|min:1|max:100',
+            'limit'        => 'integer|min:1|max:1000',
             'skip'         => 'integer|min:0',
             'sort_field'   => 'string|in:id,sort_value,size',
             'sort_order'   => 'string|in:asc,desc',

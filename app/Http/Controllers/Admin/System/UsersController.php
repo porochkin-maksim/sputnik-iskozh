@@ -186,7 +186,11 @@ class UsersController extends Controller
             ->setOwnershipDate($request->getOwnershipDate())
         ;
 
-        $accounts = $request->getAccountIds() ? $this->accountService->getByIds($request->getAccountIds()) : new AccountCollection();
+        $fractions = $request->getFractions();
+        $accounts = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
+        foreach ($accounts as $account) {
+            $account->setFraction($user->getFraction() ? (float) $fractions[$account->getId()] : 0);
+        }
         $user->setAccounts($accounts);
 
         $user = $this->userService->save($user);

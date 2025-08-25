@@ -11,6 +11,7 @@
             :required="required"
             :placeholder="placeholder"
             :disabled="disabled"
+            :max="max"
             :min="min"
             :step="step"
             :name="name"
@@ -47,6 +48,7 @@ export default {
         'type',
         'label',
         'name',
+        'max',
         'min',
         'step',
         'placeholder',

@@ -43,7 +43,7 @@ class AccountsController extends Controller
         return response()->json(new AccountResource($this->accountFactory->makeDefault()));
     }
 
-    public function view(int $id)
+    public function view($id)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             abort(403);
@@ -60,6 +60,10 @@ class AccountsController extends Controller
 
         if ( ! $account) {
             abort(404);
+        }
+
+        foreach ($account->getUsers() as $user) {
+            $user->setAccount($account);
         }
 
         return view('admin.pages.accounts.view', compact('account'));
@@ -85,6 +89,7 @@ class AccountsController extends Controller
         }
 
         $searcher = AccountSearcher::make()
+            ->setWithUsers()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
         ;

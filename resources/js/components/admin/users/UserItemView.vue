@@ -6,7 +6,8 @@
                     @click="saveAction"
                     :disabled="loading"
             >
-                <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                <i class="fa"
+                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                 {{ localUser.id ? 'Сохранить' : 'Создать' }}
             </button>
             <a class="btn btn-outline-primary me-2"
@@ -32,7 +33,7 @@
                         <td>
                             <custom-input v-model="localUser.lastName"
                                           v-if="localUser.actions.edit"
-                                          :disabled="loading"                                          
+                                          :disabled="loading"
                                           @change="clearError('lastName')"
                             />
                             <span v-else>{{ localUser.lastName }}</span>
@@ -63,7 +64,8 @@
                     <tr>
                         <th>Почта</th>
                         <td>
-                            <div class="input-group w-100" v-if="localUser.actions.edit">
+                            <div class="input-group w-100"
+                                 v-if="localUser.actions.edit">
                                 <input class="form-control"
                                        v-model="localUser.email"
                                        :disabled="loading">
@@ -89,28 +91,36 @@
                         </td>
                     </tr>
                     <template v-if="localUser.actions.edit">
-                        <template v-for="(account, index) in localUserAccounts">
-                            <tr>
-                                <th>
-                                    <template v-if="account.viewUrl">
-                                        <a :href="account.viewUrl">
-                                            Участок {{ account.number }}
-                                        </a>
-                                    </template>
-                                    <template v-else>
-                                        Участок
-                                    </template>
-                                </th>
-                                <td v-if="index===0" :rowspan="localUserAccounts" class="align-top">
-                                    <search-select v-model="localUser.accountIds"
-                                                   :disabled="loading"
-                                                   :multiple="true"
-                                                   :prop-class="'form-control'"
-                                                   :items="accounts"
-                                                   :placeholder="'Участок'"
-                                    />
-                                </td>
-                            </tr>
+                        <tr>
+                            <th>
+                                Участки
+                            </th>
+                            <td class="align-top">
+                                <search-select v-model="accountIds"
+                                               :disabled="loading"
+                                               :multiple="true"
+                                               :prop-class="'form-control'"
+                                               :items="accounts"
+                                               :placeholder="'Участок'"
+                                />
+                            </td>
+                        </tr>
+                        <template v-if="fractions && fractions.length && accounts && accounts.length">
+                            <template v-for="(fraction) in fractions">
+                                <tr>
+                                    <th v-html="renderAccountLink(fraction.accountId)"></th>
+                                    <td>
+                                        <custom-input v-model="fraction.value"
+                                                      :disabled="loading"
+                                                      :label="'Доля владения (от 0 до 1)'"
+                                                      :type="'number'"
+                                                      :step="'0.1'"
+                                                      :max="1"
+                                                      :min="0"
+                                        />
+                                    </td>
+                                </tr>
+                            </template>
                         </template>
                     </template>
                     <template v-else>
@@ -146,7 +156,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <th colspan="2" class="text-center table-light">Дополнительно</th>
+                        <th colspan="2"
+                            class="text-center table-light">Дополнительно
+                        </th>
                     </tr>
                     <tr>
                         <th>Дата членства</th>
@@ -233,12 +245,12 @@
 </template>
 
 <script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import HistoryBtn    from '../../common/HistoryBtn.vue';
-import Url           from '../../../utils/Url.js';
-import CustomInput   from '../../common/form/CustomInput.vue';
-import Pagination    from '../../common/pagination/Pagination.vue';
-import SearchSelect  from '../../common/form/SearchSelect.vue';
+import ResponseError  from '../../../mixin/ResponseError.js';
+import HistoryBtn     from '../../common/HistoryBtn.vue';
+import Url            from '../../../utils/Url.js';
+import CustomInput    from '../../common/form/CustomInput.vue';
+import Pagination     from '../../common/pagination/Pagination.vue';
+import SearchSelect   from '../../common/form/SearchSelect.vue';
 import CustomCalendar from '../../common/form/CustomCalendar.vue';
 import CustomTextarea from '../../common/form/CustomTextarea.vue';
 
@@ -270,17 +282,28 @@ export default {
         },
     },
     created () {
+        this.vueId = 'uuid' + this.$_uid;
+
         this.localUser = {
             ...this.user,
-            accountIds: Array.isArray(this.user.accountIds)
-                ? this.user.accountIds.map(String)
-                : (this.user.accountId ? [String(this.user.accountId)] : []),
         };
-        this.vueId     = 'uuid' + this.$_uid;
+        this.accountIds = Array.isArray(this.user.accountIds)
+            ? this.user.accountIds.map(String)
+            : (this.user.accountId ? [String(this.user.accountId)] : []);
+        if (Array.isArray(this.user.accounts)) {
+            for (const account of this.user.accounts) {
+                this.fractions.push({
+                    accountId: account.id,
+                    value    : account.fraction,
+                });
+            }
+        }
     },
     data () {
         return {
-            localUser: {},
+            localUser : {},
+            accountIds: [],
+            fractions : [],
 
             actions   : this.user.actions,
             historyUrl: this.user.historyUrl,
@@ -289,7 +312,7 @@ export default {
             routeState: 0,
         };
     },
-    methods: {
+    methods : {
         saveAction () {
             if (!this.actions.edit) {
                 return;
@@ -301,12 +324,10 @@ export default {
             form.append('last_name', this.localUser.lastName);
             form.append('middle_name', this.localUser.middleName);
             form.append('email', this.localUser.email);
-            if (Array.isArray(this.localUser.accountIds)) {
-                for (const id of this.localUser.accountIds) {
-                    form.append('account_ids[]', id);
+            if (Array.isArray(this.fractions)) {
+                for (const fraction of this.fractions) {
+                    form.append('fractions['+fraction.accountId+']', fraction.value);
                 }
-            } else if (this.localUser.accountIds) {
-                form.append('account_ids[]', this.localUser.accountIds);
             }
             form.append('role_id', this.localUser.roleId);
             form.append('phone', this.localUser.phone);
@@ -318,10 +339,7 @@ export default {
             form.append('additional', this.localUser.additional);
 
             this.clearResponseErrors();
-            window.axios[Url.Routes.adminUserSave.method](
-                Url.Routes.adminUserSave.uri,
-                form,
-            ).then((response) => {
+            Url.RouteFunctions.adminUserSave({}, form).then((response) => {
                 let text = this.localUser.id ? 'Пользователь обновлён' : 'Пользователь ' + response.data.id + ' создан';
                 this.showInfo(text);
 
@@ -343,8 +361,8 @@ export default {
                 this.loading = false;
             });
         },
-        generateEmail() {
-            let form     = new FormData();
+        generateEmail () {
+            let form = new FormData();
             form.append('id', this.localUser.id);
             form.append('first_name', this.localUser.firstName);
             form.append('last_name', this.localUser.lastName);
@@ -428,19 +446,61 @@ export default {
                 id: null,
             });
         },
+        renderAccountLink (accountId) {
+            const uri = Url.Generator.makeUri(Url.Routes.adminAccountView, { accountId: accountId });
+
+            return '<a href=' + uri + '>Участок ' + this.getAccountNumberById(accountId) + '</a>';
+        },
+        getAccountNumberById (accountId) {
+            return this.accounts.find(account => String(account.key) === String(accountId))?.value;
+        },
+        getFractionByAccountId (accountId) {
+            console.log(accountId,this.fractions);
+
+            let result = null;
+            this.fractions.forEach(fraction => {
+                if (fraction.accountId === accountId) {
+                    result = fraction;
+                }
+            });
+
+            console.log(result);
+
+            return result;
+        },
     },
     computed: {
         canGenerateEmail () {
             return !this.localUser.id && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
         },
-        localUserAccounts() {
+        localUserAccounts () {
             let result = this.localUser.accounts;
             if (!result.length) {
                 result = [{}];
             }
 
             return result;
-        }
+        },
+    },
+    watch   : {
+        accountIds: {
+            handler (newAccountIds) {
+                let fractions = [];
+                newAccountIds.forEach(accountId => {
+                    let value = 0;
+                    this.fractions.forEach(fraction => {
+                        if (fraction.accountId === accountId) {
+                            value = fraction.value;
+                        }
+                    });
+                    fractions.push({
+                        accountId: accountId,
+                        value    : value,
+                    });
+                });
+            },
+            deep: true,
+        },
     },
 };
 </script>
