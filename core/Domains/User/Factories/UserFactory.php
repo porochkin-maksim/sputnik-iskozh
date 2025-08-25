@@ -93,8 +93,8 @@ readonly class UserFactory
             ->setUpdatedAt($model->updated_at)
             ->setEmailVerifiedAt($model->email_verified_at)
             ->setAccountId($model->account_id)
-            ->setOwnershipDate($model->{UserInfo::OWNERSHIP_DATE})
-            ->setOwnershipDutyInfo($model->{UserInfo::OWNERSHIP_DUTY_INFO})
+            ->setMembershipDate($model->{UserInfo::MEMBERSHIP_DATE})
+            ->setMembershipDutyInfo($model->{UserInfo::MEMBERSHIP_DUTY_INFO})
             ->setFraction($model->pivot?->fraction)
             ->setIsDeleted($model->deleted_at)
         ;

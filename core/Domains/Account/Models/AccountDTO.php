@@ -126,7 +126,7 @@ class AccountDTO
         return $this;
     }
 
-    public function getFractionpercent(): ?string
+    public function getFractionPercent(): ?string
     {
         if (!$this->getFraction()) {
             return null;

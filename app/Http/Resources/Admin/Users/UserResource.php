@@ -52,8 +52,8 @@ readonly class UserResource extends AbstractResource
             'emailVerifiedAt' => $user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
             'isDeleted'       => $user->isDeleted(),
 
-            'ownershipDate'     => $user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'ownershipDutyInfo' => $user->getOwnershipDutyInfo(),
+            'membershipDate'     => $user->getMembershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
+            'membershipDutyInfo' => $user->getMembershipDutyInfo(),
 
             'addPhone'     => $exData->getPhone(),
             'legalAddress' => $exData->getLegalAddress(),
@@ -62,7 +62,7 @@ readonly class UserResource extends AbstractResource
 
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => !$user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
+                ResponsesEnum::EDIT => ! $user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
                 ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
                 'account'           => [
                     ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),

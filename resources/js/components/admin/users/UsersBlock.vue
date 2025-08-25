@@ -127,6 +127,7 @@
                 </th>
                 <th>Телефон</th>
                 <th>Членство</th>
+                <th>Право</th>
             </tr>
             </thead>
             <tbody>
@@ -155,7 +156,7 @@
                 <td><span :data-copy="user.email"
                           class="text-primary cursor-pointer">{{ user.email }}</span></td>
                 <td>{{ user.phone }}</td>
-                <td>{{ $formatDate(user.ownershipDate) }}</td>
+                <td>{{ $formatDate(user.membershipDate) }}</td>
             </tr>
             </tbody>
         </table>

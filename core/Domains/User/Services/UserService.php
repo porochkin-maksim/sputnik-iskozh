@@ -46,13 +46,13 @@ readonly class UserService
         if ( ! $userInfo) {
             $userInfo = new UserInfo([UserInfo::USER_ID => $model->id]);
         }
-        $userInfo->ownership_date      = $user->getOwnershipDate();
-        $userInfo->ownership_duty_info = $user->getOwnershipDutyInfo();
+        $userInfo->membership_date      = $user->getMembershipDate();
+        $userInfo->membership_duty_info = $user->getMembershipDutyInfo();
         $userInfo->save();
 
         $current = $this->userFactory->makeDtoFromObject($model)
-            ->setOwnershipDate($user->getOwnershipDate())
-            ->setOwnershipDutyInfo($user->getOwnershipDutyInfo())
+            ->setMembershipDate($user->getMembershipDate())
+            ->setMembershipDutyInfo($user->getMembershipDutyInfo())
         ;
 
         $model->roles()->sync($user->getRole()?->getId() ? [$user->getRole()?->getId()] : []);

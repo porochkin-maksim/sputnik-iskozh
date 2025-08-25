@@ -141,10 +141,10 @@ class UsersController extends Controller
         else {
             if ($request->get('isMember')) {
                 if ($request->getBool('isMember')) {
-                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
                 }
                 else {
-                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NULL);
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NULL);
                 }
             }
 
@@ -189,14 +189,14 @@ class UsersController extends Controller
             ->setEmail($request->getEmail())
             ->setPhone($request->getPhone())
             ->setRole($this->roleService->getById($request->getRoleId()))
-            ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
-            ->setOwnershipDate($request->getOwnershipDate())
+            ->setMembershipDutyInfo($request->getMembershipDutyInfo())
+            ->setMembershipDate($request->getMembershipDate())
         ;
 
         $fractions = $request->getFractions();
         $accounts  = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
         foreach ($accounts as $account) {
-            $account->setFraction($user->getFraction() ? (float) $fractions[$account->getId()] : 0);
+            $account->setFraction((float) $fractions[$account->getId()]);
         }
         $user->setAccounts($accounts);
 

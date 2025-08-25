@@ -69,6 +69,8 @@ abstract class lc
                 $account = AccountLocator::AccountFactory()->makeDefault();
             }
 
+            $account->setFraction($account->getUsers()->getById(Auth::id())->getFraction());
+
             self::$account = $account;
         }
 

@@ -28,8 +28,8 @@ class UserDTO
     private ?float  $fraction      = null;
     private ?Carbon $isDeleted     = null;
 
-    private ?string $ownershipDutyInfo = null;
-    private ?Carbon $ownershipDate     = null;
+    private ?string $membershipDutyInfo = null;
+    private ?Carbon $membershipDate     = null;
 
     private ?int $account_id = null;
 
@@ -247,26 +247,26 @@ class UserDTO
         return $this;
     }
 
-    public function getOwnershipDutyInfo(): ?string
+    public function getMembershipDutyInfo(): ?string
     {
-        return $this->ownershipDutyInfo;
+        return $this->membershipDutyInfo;
     }
 
-    public function setOwnershipDutyInfo(?string $ownershipDutyInfo): static
+    public function setMembershipDutyInfo(?string $membershipDutyInfo): static
     {
-        $this->ownershipDutyInfo = $ownershipDutyInfo;
+        $this->membershipDutyInfo = $membershipDutyInfo;
 
         return $this;
     }
 
-    public function getOwnershipDate(): ?Carbon
+    public function getMembershipDate(): ?Carbon
     {
-        return $this->ownershipDate;
+        return $this->membershipDate;
     }
 
-    public function setOwnershipDate(mixed $ownershipDate): static
+    public function setMembershipDate(mixed $membershipDate): static
     {
-        $this->ownershipDate = DateTimeHelper::toCarbonOrNull($ownershipDate);
+        $this->membershipDate = DateTimeHelper::toCarbonOrNull($membershipDate);
 
         return $this;
     }

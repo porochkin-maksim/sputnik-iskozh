@@ -169,23 +169,23 @@
                     <tr>
                         <th>Дата членства</th>
                         <td>
-                            <custom-calendar v-model="localUser.ownershipDate"
+                            <custom-calendar v-model="localUser.membershipDate"
                                              v-if="localUser.actions.edit"
                                              :disabled="loading"
-                                             @change="clearError('ownershipDate')"
+                                             @change="clearError('membershipDate')"
                             />
-                            <span v-else>{{ $formatDate(localUser.ownershipDate) }}</span>
+                            <span v-else>{{ $formatDate(localUser.membershipDate) }}</span>
                         </td>
                     </tr>
                     <tr>
                         <th>Основание членства</th>
                         <td>
-                            <custom-input v-model="localUser.ownershipDutyInfo"
+                            <custom-input v-model="localUser.membershipDutyInfo"
                                           v-if="localUser.actions.edit"
                                           :disabled="loading"
                                           @change="clearError('phone')"
                             />
-                            <span v-else>{{ localUser.ownershipDutyInfo }}</span>
+                            <span v-else>{{ localUser.membershipDutyInfo }}</span>
                         </td>
                     </tr>
                     <tr>
@@ -337,8 +337,8 @@ export default {
             }
             form.append('role_id', this.localUser.roleId);
             form.append('phone', this.localUser.phone);
-            form.append('ownershipDate', this.localUser.ownershipDate);
-            form.append('ownershipDutyInfo', this.localUser.ownershipDutyInfo);
+            form.append('membershipDate', this.localUser.membershipDate);
+            form.append('membershipDutyInfo', this.localUser.membershipDutyInfo);
             form.append('add_phone', this.localUser.addPhone);
             form.append('legal_address', this.localUser.legalAddress);
             form.append('post_address', this.localUser.postAddress);

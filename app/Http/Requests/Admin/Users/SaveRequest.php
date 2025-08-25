@@ -83,14 +83,14 @@ class SaveRequest extends AbstractRequest
         return $this->getStringOrNull(self::PHONE);
     }
 
-    public function getOwnershipDate(): ?Carbon
+    public function getMembershipDate(): ?Carbon
     {
-        return $this->getDateOrNull('ownershipDate');
+        return $this->getDateOrNull('membershipDate');
     }
 
-    public function getOwnershipDutyInfo(): ?string
+    public function getMembershipDutyInfo(): ?string
     {
-        return $this->getStringOrNull('ownershipDutyInfo');
+        return $this->getStringOrNull('membershipDutyInfo');
     }
 
     public function getAddPhone(): ?string

@@ -259,11 +259,11 @@
 //                             $user = UserLocator::UserService()->save($user);
 //
 //                             $userExData    = ExDataLocator::ExDataService()->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId());
-//                             $ownershipDate = Str::replace('москва', '', Str::lower($protocolData['date'] ?? ''));
+//                             $membershipDate = Str::replace('москва', '', Str::lower($protocolData['date'] ?? ''));
 //                             $userExData->setData(
 //                                 $user->getExData()
-//                                     ->setOwnershipDate(DateTimeHelper::toCarbonOrNull($ownershipDate))
-//                                     ->setOwnershipDutyInfo($protocolData['protocol'] ?? null)
+//                                     ->setMembershipDate(DateTimeHelper::toCarbonOrNull($membershipDate))
+//                                     ->setMembershipDutyInfo($protocolData['protocol'] ?? null)
 //                                     ->jsonSerialize(),
 //                             );
 //                             $userExData = ExDataLocator::ExDataService()->save($userExData);

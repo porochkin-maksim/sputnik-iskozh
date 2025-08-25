@@ -66,7 +66,7 @@ class AccountCollection extends Collection implements CollectionInterface
         $result = [];
 
         foreach ($this->items as $account) {
-            $result[] = $account->getNumber() . ($account->getFractionpercent() ? " ({$account->getFractionpercent()})" : null);
+            $result[] = $account->getNumber() . ($account->getFractionPercent() ? " ({$account->getFractionPercent()})" : null);
         }
 
         return $result;

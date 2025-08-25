@@ -60,8 +60,8 @@ class UserRepository
     {
         $query->select(self::TABLE. '.*')
             ->leftJoin(UserInfo::TABLE, UserInfo::TABLE . '.' . UserInfo::USER_ID, SearcherInterface::EQUALS, User::TABLE . '.' . User::ID)
-            ->selectSub(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, UserInfo::OWNERSHIP_DATE)
-            ->selectSub(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DUTY_INFO, UserInfo::OWNERSHIP_DUTY_INFO)
+            ->selectSub(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, UserInfo::MEMBERSHIP_DATE)
+            ->selectSub(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DUTY_INFO, UserInfo::MEMBERSHIP_DUTY_INFO)
 
             // ->join(AccountToUser::TABLE, AccountToUser::TABLE . '.' . AccountToUser::USER, SearcherInterface::EQUALS, User::TABLE . '.' . User::ID)
             // ->join(Account::TABLE, Account::TABLE . '.' . Account::ID, SearcherInterface::EQUALS, AccountToUser::TABLE . '.' . AccountToUser::ACCOUNT)

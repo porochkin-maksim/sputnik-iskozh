@@ -18,8 +18,8 @@ return new class extends Migration
         Schema::create('user_info', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->date('ownership_date')->nullable();
-            $table->string('ownership_duty_info')->nullable();
+            $table->date('membership_date')->nullable();
+            $table->string('membership_duty_info')->nullable();
         });
 
         $users = UserLocator::UserService()->search(new UserSearcher()?->setWithExData())->getItems();
@@ -27,8 +27,8 @@ return new class extends Migration
         foreach ($users as $user) {
             $exData            = $user?->getExData();
             $id                = $user->getId();
-            $ownershipDate     = $exData?->getOwnershipDate()?->format("Y-m-d");
-            $ownershipDutyInfo = $exData?->getOwnershipDutyInfo();
+            $membershipDate     = $exData?->getMembershipDate()?->format("Y-m-d");
+            $membershipDutyInfo = $exData?->getMembershipDutyInfo();
 
             if ( ! $exData?->getId()) {
                 continue;
@@ -36,8 +36,8 @@ return new class extends Migration
 
             UserInfo::make([
                 UserInfo::USER_ID             => $id,
-                UserInfo::OWNERSHIP_DATE      => $ownershipDate,
-                UserInfo::OWNERSHIP_DUTY_INFO => $ownershipDutyInfo,
+                UserInfo::MEMBERSHIP_DATE      => $membershipDate,
+                UserInfo::MEMBERSHIP_DUTY_INFO => $membershipDutyInfo,
             ])->save();
         }
     }

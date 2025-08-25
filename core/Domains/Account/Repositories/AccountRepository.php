@@ -50,8 +50,8 @@ class AccountRepository
      */
     public function getByUserId(int $id): Collection|array
     {
-        $id = $this->accountToUserRepository->getAccountIdByUserId($id);
+        $ids = $this->accountToUserRepository->getAccountsIdsByUserId($id);
 
-        return Account::select()->with('users')->where('id', SearcherInterface::EQUALS, $id)->get();
+        return Account::select()->with(Account::USERS)->whereIn(Account::ID, $ids)->get();
     }
 }

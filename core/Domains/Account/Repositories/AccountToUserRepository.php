@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class AccountToUserRepository
 {
-    public function getAccountIdByUserId(int $id): ?int
+    /**
+     * @return int[]
+     */
+    public function getAccountsIdsByUserId(int $id): array
     {
         return DB::table(AccountToUser::TABLE)
             ->select(AccountToUser::ACCOUNT)
             ->where(AccountToUser::USER, SearcherInterface::EQUALS, $id)
             ->groupBy(AccountToUser::ACCOUNT)
             ->pluck(AccountToUser::ACCOUNT)
-            ->first();
+            ->toArray();
     }
 
     /**

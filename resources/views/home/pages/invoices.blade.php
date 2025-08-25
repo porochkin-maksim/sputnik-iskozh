@@ -44,18 +44,20 @@ if (lc::account()->getId() && $period) {
 
     $invoices = InvoiceLocator::InvoiceService()->search($invoiceSearcher)->getItems();
 }
+
+$account = lc::account();
 ?>
 
 @extends(ViewNames::LAYOUTS_PROFILE)
 
 @section(SectionNames::CONTENT)
-    @if(lc::account()->getId())
+    @if($account->getId())
         @if($invoices->count())
             <table class="table table-borderless">
                 <thead class="text-center">
                 <tr>
                     <th colspan="5">
-                        <h3 class="text-dark">Ваши платежи в периоде</h3>
+                        <h3 class="text-dark">Счета на участок "{{ $account->getNumber() }}" в периоде "{{ $period->getName() }}"</h3>
                     </th>
                 </tr>
                 </thead>
@@ -85,6 +87,28 @@ if (lc::account()->getId() && $period) {
                         <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
                         <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
                     </tr>
+                    @if ($invoice->isPayed())
+                        <tr class="text-center table-success border-success text-success">
+                            <th colspan="5">Оплачено</th>
+                        </tr>
+                    @else
+                        <tr class="text-center">
+                            <td colspan="5"
+                                class="pe-0">
+                                @if ($account->getFraction() === 1 || ! $account->getFraction())
+                                    <button class="btn btn-sm btn-success">Оплатить {{ MoneyService::parse($invoice->getDelta()) }}</button>
+                                @else
+                                    <button class="btn btn-sm btn-outline-success me-1">
+                                        Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
+                                    </button>
+                                    или
+                                    <button class="btn btn-sm btn-outline-success ms-1">
+                                        Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
+                                    </button>
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
                     <tr>
                         <th colspan="4"></th>
                     </tr>
