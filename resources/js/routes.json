@@ -680,6 +680,15 @@
         "uri": "\/admin\/users\/json\/list",
         "args": []
     },
+    "adminUserRestore": {
+        "name": "admin.user.restore",
+        "displayName": "",
+        "method": "patch",
+        "uri": "\/admin\/users\/json\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "adminUserSave": {
         "name": "admin.user.save",
         "displayName": "",

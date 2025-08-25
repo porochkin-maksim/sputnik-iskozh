@@ -2,6 +2,7 @@
 
 namespace Core\Db\Searcher;
 
+use App\Models\User;
 use Core\Db\Searcher\Collections\WhereCollection;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\Where;
@@ -15,12 +16,14 @@ trait SearcherTrait
     private ?int $offset = null;
     private ?int $lastId = null;
 
+    private ?bool $withTrashed = null;
+
     /** @var int[] $ids */
-    private ?array $ids     = null;
-    private array  $select  = [];
-    private array  $with    = [];
+    private ?array $ids    = null;
+    private array  $select = [];
+    private array  $with   = [];
     /** @var string[] $groupBy */
-    private array  $groupBy = [];
+    private array $groupBy = [];
 
     private ?WhereCollection $where       = null;
     private ?WhereCollection $orWhere     = null;
@@ -234,5 +237,17 @@ trait SearcherTrait
         $this->groupBy[] = $groupBy;
 
         return $this;
+    }
+
+    public function setWithDeleted(?bool $flag = true): static
+    {
+        $this->withTrashed = $flag;
+
+        return $this;
+    }
+
+    public function getWithTrashed(): ?bool
+    {
+        return $this->withTrashed;
     }
 }

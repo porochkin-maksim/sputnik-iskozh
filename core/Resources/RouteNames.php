@@ -112,6 +112,7 @@ abstract class RouteNames
     public const string ADMIN_USER_GENERATE_EMAIL = 'admin.user.generate-email';
     public const string ADMIN_USER_LIST           = 'admin.user.list';
     public const string ADMIN_USER_DELETE         = 'admin.user.delete';
+    public const string ADMIN_USER_RESTORE        = 'admin.user.restore';
     public const string ADMIN_USER_EXPORT         = 'admin.user.export';
 
     public const string ADMIN_OPTIONS_INDEX = 'admin.options.index';

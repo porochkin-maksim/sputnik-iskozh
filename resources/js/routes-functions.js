@@ -437,6 +437,11 @@ export function adminUserList(getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/admin/users/json/list', getParams), postData);
 }
 
+export function adminUserRestore(id, getParams = {}, postData = null) {
+    // see admin.user.restore
+    return window.axios.patch(makeQuery('/admin/users/json/'+id+'', getParams), postData);
+}
+
 export function adminUserSave(getParams = {}, postData = null) {
     // see admin.user.save
     return window.axios.post(makeQuery('/admin/users/json/save', getParams), postData);

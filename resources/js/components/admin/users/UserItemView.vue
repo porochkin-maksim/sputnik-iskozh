@@ -16,6 +16,11 @@
             </a>
         </div>
         <div class="d-flex">
+            <div class="me-2" v-if="actions.drop">
+                <button class="btn btn-sm btn-danger" v-if="!localUser.isDeleted" @click="dropAction">
+                    <i class="fa fa-trash"></i> Удалить
+                </button>
+            </div>
             <history-btn
                 :disabled="!localUser.id"
                 class="btn-link underline-none"
@@ -24,6 +29,12 @@
     </div>
     <div class="row">
         <div class="col-6">
+            <div v-if="localUser.isDeleted" class="alert alert-danger text-center mb-0 d-flex justify-content-center align-items-center">
+                <div>Пользователь удалён</div>
+                <button class="btn btn-sm btn-danger ms-2" v-if="localUser.isDeleted && actions.drop" @click="restoreAction">
+                    <i class="fa fa-rotate-left"></i> Восстановить
+                </button>
+            </div>
             <div class="form">
                 <table class="table table-responsive align-middle"
                        :class="localUser.actions.edit ? 'table-borderless' : ''">
@@ -374,7 +385,7 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
-        dropAction (id) {
+        dropAction () {
             if (!this.actions.drop) {
                 return;
             }
@@ -382,21 +393,39 @@ export default {
                 return;
             }
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminUserDelete, {
-                id: id,
-            });
-            window.axios[Url.Routes.adminUserDelete.method](
-                uri,
-            ).then((response) => {
+            Url.RouteFunctions.adminUserDelete(this.localUser.id).then((response) => {
                 this.dropped = response.data;
                 if (response.data) {
                     this.showInfo('Пользователь удалён');
                     setTimeout(() => {
-                        location.href = Url.Routes.adminUserIndex.uri;
+                        location.reload();
                     }, 2000);
                 }
                 else {
                     this.showDanger('Пользователь не удалён');
+                }
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        restoreAction () {
+            if (!this.actions.drop) {
+                return;
+            }
+            if (!confirm('Восстановить пользователя?')) {
+                return;
+            }
+
+            Url.RouteFunctions.adminUserRestore(this.localUser.id).then((response) => {
+                this.dropped = response.data;
+                if (response.data) {
+                    this.showInfo('Пользователь восстановлен');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+                else {
+                    this.showDanger('Пользователь не восстановлен');
                 }
             }).catch(response => {
                 this.parseResponseErrors(response);

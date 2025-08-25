@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Admin\Users;
 
 use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\UserLocator;
 use Core\Enums\DateTimeFormat;
@@ -29,30 +28,32 @@ readonly class UserResource extends AbstractResource
     {
         $access = lc::roleDecorator();
 
-        $canEdit = UserIdEnum::OWNER !== $this->user->getId() || lc::isSuperAdmin();
-        $exData  = $this->user->getExData();
+        $user    = $this->user;
+        $canEdit = UserIdEnum::OWNER !== $user->getId() || lc::isSuperAdmin();
+        $exData  = $user->getExData();
 
-        $curAccount = $this->user->getAccounts()?->getById((int) $this->user->getAccountId());
+        $curAccount = $user->getAccounts()?->getById((int) $user->getAccountId());
 
         $result = [
-            'id'              => $this->user->getId(),
-            'fullName'        => UserLocator::UserDecorator($this->user)->getFullName(),
-            'firstName'       => $this->user->getFirstName(),
-            'middleName'      => $this->user->getMiddleName(),
-            'lastName'        => $this->user->getLastName(),
-            'email'           => $this->user->getEmail(),
-            'phone'           => $this->user->getPhone() ? PhoneHelper::normalizePhone($this->user->getPhone()) : null,
-            'roleId'          => (int) ($this->user->getRole()?->getId()),
-            'roleName'        => $this->user->getRole()?->getName(),
-            'accountId'       => (int) ($this->user->getAccount()?->getId()),
-            'fraction'        => $this->user->getFraction(),
-            'fractionPercent' => $this->user->getFractionpercent(),
+            'id'              => $user->getId(),
+            'fullName'        => UserLocator::UserDecorator($user)->getFullName(),
+            'firstName'       => $user->getFirstName(),
+            'middleName'      => $user->getMiddleName(),
+            'lastName'        => $user->getLastName(),
+            'email'           => $user->getEmail(),
+            'phone'           => $user->getPhone() ? PhoneHelper::normalizePhone($user->getPhone()) : null,
+            'roleId'          => (int) ($user->getRole()?->getId()),
+            'roleName'        => $user->getRole()?->getName(),
+            'accountId'       => (int) ($user->getAccount()?->getId()),
+            'fraction'        => $user->getFraction(),
+            'fractionPercent' => $user->getFractionpercent(),
             'accountName'     => $curAccount?->getNumber(),
-            'accountIds'      => $this->user->getAccountIds(),
-            'emailVerifiedAt' => $this->user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
+            'accountIds'      => $user->getAccountIds(),
+            'emailVerifiedAt' => $user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
+            'isDeleted'       => $user->isDeleted(),
 
-            'ownershipDate'     => $this->user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'ownershipDutyInfo' => $this->user->getOwnershipDutyInfo(),
+            'ownershipDate'     => $user->getOwnershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
+            'ownershipDutyInfo' => $user->getOwnershipDutyInfo(),
 
             'addPhone'     => $exData->getPhone(),
             'legalAddress' => $exData->getLegalAddress(),
@@ -61,7 +62,7 @@ readonly class UserResource extends AbstractResource
 
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => $canEdit && $access->can(PermissionEnum::USERS_EDIT),
+                ResponsesEnum::EDIT => !$user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
                 ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
                 'account'           => [
                     ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
@@ -69,18 +70,18 @@ readonly class UserResource extends AbstractResource
             ],
             'historyUrl' => HistoryChangesLocator::route(
                 type     : HistoryType::USER,
-                primaryId: $this->user->getId(),
+                primaryId: $user->getId(),
             ),
-            'viewUrl'    => $this->user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $this->user->getId()]) : null,
+            'viewUrl'    => $user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $user->getId()]) : null,
         ];
 
         if ($curAccount && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
             $result['account'] = new AccountResource($curAccount);
         }
 
-        if ($this->user->getAccounts() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
+        if ($user->getAccounts() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
             $result['accounts'] = [];
-            foreach ($this->user->getAccounts() as $account) {
+            foreach ($user->getAccounts() as $account) {
                 $result['accounts'][] = new AccountResource($account);
             }
         }

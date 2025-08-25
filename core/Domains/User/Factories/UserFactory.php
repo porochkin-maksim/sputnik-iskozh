@@ -96,6 +96,7 @@ readonly class UserFactory
             ->setOwnershipDate($model->{UserInfo::OWNERSHIP_DATE})
             ->setOwnershipDutyInfo($model->{UserInfo::OWNERSHIP_DUTY_INFO})
             ->setFraction($model->pivot?->fraction)
+            ->setIsDeleted($model->deleted_at)
         ;
 
         if (isset($model->getRelations()[User::ACCOUNTS])) {

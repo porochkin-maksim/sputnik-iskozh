@@ -185,6 +185,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);
                         Route::post('/generate-email', [Controllers\Admin\System\UsersController::class, 'generateEmail'])->name(RouteNames::ADMIN_USER_GENERATE_EMAIL);
                         Route::delete('/{id}', [Controllers\Admin\System\UsersController::class, 'delete'])->name(RouteNames::ADMIN_USER_DELETE);
+                        Route::patch('/{id}', [Controllers\Admin\System\UsersController::class, 'restore'])->name(RouteNames::ADMIN_USER_RESTORE);
                         Route::post('/sendRestorePassword', [Controllers\Admin\System\UsersController::class, 'sendRestorePassword'])->name(RouteNames::ADMIN_USER_SEND_RESTORE_PASSWORD);
                         Route::post('/send-invite-password', [Controllers\Admin\System\UsersController::class, 'sendInviteWithPassword'])->name(RouteNames::ADMIN_USER_SEND_INVITE_WITH_PASSWORD);
                     });

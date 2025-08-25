@@ -138,12 +138,19 @@ class UsersController extends Controller
                 ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%")
             ;
         }
-        elseif ($request->get('isMember')) {
-            if ($request->getBool('isMember')) {
-                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+        else {
+            if ($request->get('isMember')) {
+                if ($request->getBool('isMember')) {
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+                }
+                else {
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NULL);
+                }
             }
-            else {
-                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NULL);
+
+            if ($request->getBool('isDeleted')) {
+                $searcher->addWhere(User::SOFT_DELETED, SearcherInterface::IS_NOT_NULL);
+                $searcher->setWithDeleted();
             }
         }
 
@@ -167,7 +174,7 @@ class UsersController extends Controller
         }
 
         $user = $request->getId()
-            ? $this->userService->getById($request->getId())
+            ? $this->userService->getById($request->getId(), true)
             : $this->userFactory->makeDefault()
                 ->setPassword(Str::random(8))
         ;
@@ -187,7 +194,7 @@ class UsersController extends Controller
         ;
 
         $fractions = $request->getFractions();
-        $accounts = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
+        $accounts  = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
         foreach ($accounts as $account) {
             $account->setFraction($user->getFraction() ? (float) $fractions[$account->getId()] : 0);
         }
@@ -218,6 +225,18 @@ class UsersController extends Controller
         }
 
         return $this->userService->deleteById($id);
+    }
+
+    public function restore(int $id): bool
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_DROP)) {
+            abort(403);
+        }
+
+        $user = User::withTrashed()->find($id);
+        $user?->restore();
+
+        return (bool) $user->id;
     }
 
     public function sendRestorePassword(DefaultRequest $request): void

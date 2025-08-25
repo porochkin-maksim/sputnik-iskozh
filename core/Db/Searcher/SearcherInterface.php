@@ -60,4 +60,6 @@ interface SearcherInterface
      * @return string[]
      */
     public function getGroupsBy(): array;
+
+    public function getWithTrashed(): ?bool;
 }

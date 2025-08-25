@@ -97,16 +97,17 @@ readonly class UserService
         return $result->setItems($collection);
     }
 
-    public function getById(?int $id): ?UserDTO
+    public function getById(?int $id, bool $withDeleted = false): ?UserDTO
     {
         if ( ! $id) {
             return null;
         }
 
-        $searcher = new UserSearcher();
-        $searcher
+        $searcher = new UserSearcher()
             ->setId($id)
+            ->setWithDeleted($withDeleted)
         ;
+
         $result = $this->userRepository->search($searcher)->getItems()->first();
 
         return $result ? $this->userFactory->makeDtoFromObject($result) : null;

@@ -193,6 +193,8 @@ trait RepositoryTrait
             $query->where($this->adaptFieldName('id'), SearcherInterface::GT, $searcher->getLastId());
         })->when($searcher->getIds() !== null, function (Builder $query) use ($searcher) {
             $query->whereIn($this->adaptFieldName('id'), $searcher->getIds());
+        })->when($searcher->getWithTrashed() !== null, function (Builder $query) use ($searcher) {
+            $query->withTrashed();
         });
 
         return $query;

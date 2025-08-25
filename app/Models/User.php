@@ -51,6 +51,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
     public const string REMEMBER_TOKEN    = 'remember_token';
     public const string EMAIL_VERIFIED_AT = 'email_verified_at';
     public const string TELEGRAM_ID       = 'telegram_id';
+    public const string SOFT_DELETED      = 'deleted_at';
 
     public const string ACCOUNTS = 'accounts';
     public const string ROLES    = 'roles';

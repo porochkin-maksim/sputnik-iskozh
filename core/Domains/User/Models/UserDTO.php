@@ -26,6 +26,7 @@ class UserDTO
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
     private ?float  $fraction      = null;
+    private ?Carbon $isDeleted     = null;
 
     private ?string $ownershipDutyInfo = null;
     private ?Carbon $ownershipDate     = null;
@@ -203,9 +204,21 @@ class UserDTO
         return $this;
     }
 
+    public function isDeleted(): ?Carbon
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(mixed $isDeleted): UserDTO
+    {
+        $this->isDeleted = DateTimeHelper::toCarbonOrNull($isDeleted);;
+
+        return $this;
+    }
+
     public function getFractionpercent(): ?string
     {
-        if (!$this->getFraction()) {
+        if ( ! $this->getFraction()) {
             return null;
         }
 

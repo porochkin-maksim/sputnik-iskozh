@@ -70,6 +70,11 @@
                                      :label="'Не члены СНТ'"
                     />
                 </div>
+                <div class="ms-2">
+                    <custom-checkbox v-model="isDeleted"
+                                     :label="'Удалён'"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -77,47 +82,64 @@
         <table class="table table-sm table-striped table-bordered">
             <thead>
             <tr class="text-start">
-            <th class="cursor-pointer text-end" @click="sort('id')">
+                <th class="cursor-pointer text-end"
+                    @click="sort('id')">
                     №
-                <i v-if="sortField === 'id'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                <i v-else class="fa fa-sort"></i>
+                    <i v-if="sortField === 'id'"
+                       :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else
+                       class="fa fa-sort"></i>
                 </th>
                 <th class="text-end">
                     Участок
                 </th>
-            <th class="cursor-pointer" @click="sort('last_name')">
+                <th class="cursor-pointer"
+                    @click="sort('last_name')">
                     Фамилия
-                <i v-if="sortField === 'last_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                <i v-else class="fa fa-sort"></i>
+                    <i v-if="sortField === 'last_name'"
+                       :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else
+                       class="fa fa-sort"></i>
                 </th>
-            <th class="cursor-pointer" @click="sort('first_name')">
+                <th class="cursor-pointer"
+                    @click="sort('first_name')">
                     Имя
-                <i v-if="sortField === 'first_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                <i v-else class="fa fa-sort"></i>
+                    <i v-if="sortField === 'first_name'"
+                       :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else
+                       class="fa fa-sort"></i>
                 </th>
-            <th class="cursor-pointer" @click="sort('middle_name')">
+                <th class="cursor-pointer"
+                    @click="sort('middle_name')">
                     Отчество
-                <i v-if="sortField === 'middle_name'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                <i v-else class="fa fa-sort"></i>
+                    <i v-if="sortField === 'middle_name'"
+                       :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else
+                       class="fa fa-sort"></i>
                 </th>
-            <th class="cursor-pointer" @click="sort('email')">
+                <th class="cursor-pointer"
+                    @click="sort('email')">
                     Почта
-                <i v-if="sortField === 'email'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                <i v-else class="fa fa-sort"></i>
+                    <i v-if="sortField === 'email'"
+                       :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
+                    <i v-else
+                       class="fa fa-sort"></i>
                 </th>
                 <th>Телефон</th>
-            <th>Членство</th>
+                <th>Членство</th>
             </tr>
             </thead>
             <tbody>
-        <tr v-for="(user) in users" class="text-start">
+            <tr v-for="(user) in users"
+                class="text-start">
                 <td class="text-end">
                     <a :href="user.viewUrl">{{ user.id }}</a>
                 </td>
                 <td>
                     <template v-for="account in user.accounts">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span><i class="fa fa-user" :class="[account.fractionPercent ? 'text-success' : 'text-light']"></i>&nbsp;{{ account.fractionPercent }}&nbsp;</span>
+                            <span><i class="fa fa-user"
+                                     :class="[account.fractionPercent ? 'text-success' : 'text-light']"></i>&nbsp;{{ account.fractionPercent }}&nbsp;</span>
                             <span>
                                 <template v-if="account?.viewUrl">
                                     <a :href="account.viewUrl">{{ account.number }}</a>
@@ -130,7 +152,8 @@
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.middleName }}</td>
-            <td><span :data-copy="user.email" class="text-primary cursor-pointer">{{ user.email }}</span></td>
+                <td><span :data-copy="user.email"
+                          class="text-primary cursor-pointer">{{ user.email }}</span></td>
                 <td>{{ user.phone }}</td>
                 <td>{{ $formatDate(user.ownershipDate) }}</td>
             </tr>
@@ -180,6 +203,7 @@ export default {
             accountId  : 0,
             isMember   : null,
             isNotMember: null,
+            isDeleted  : null,
             Url        : Url,
 
             search        : null,
@@ -198,6 +222,7 @@ export default {
         this.search      = urlParams.get('search') || '';
         this.isMember    = urlParams.get('isMember') === 'true' || null;
         this.isNotMember = urlParams.get('isMember') === 'false' || null;
+        this.isDeleted   = urlParams.get('isDeleted') === 'true' || null;
 
         this.listAction();
         if (this.search) {
@@ -210,7 +235,7 @@ export default {
                 id: id,
             });
         },
-        makeGetParams() {
+        makeGetParams () {
             return {
                 limit     : this.perPage,
                 skip      : this.skip,
@@ -218,6 +243,7 @@ export default {
                 sort_order: this.sortOrder,
                 search    : this.search || null,
                 isMember  : this.isMember ? 'true' : this.isNotMember ? 'false' : null,
+                isDeleted : this.isDeleted ? 'true' : null,
             };
         },
         listAction () {
@@ -288,6 +314,9 @@ export default {
             else if (!this.isMember && !this.isNotMember) {
                 this.listAction();
             }
+        },
+        isDeleted () {
+            this.listAction();
         },
     },
 };
