@@ -2,7 +2,9 @@
 
 namespace Core\Domains\User\Services;
 
+use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\User\Models\UserDTO;
+use Core\Resources\RouteNames;
 
 class UserDecorator
 {
@@ -56,5 +58,14 @@ class UserDecorator
         }
 
         return $this->getFullName() ? : $this->getEmail();
+    }
+
+    public function getAdminViewUrl(): ?string
+    {
+        if (\lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            return route(RouteNames::ADMIN_USER_VIEW, $this->user->getId());
+        }
+
+        return null;
     }
 }

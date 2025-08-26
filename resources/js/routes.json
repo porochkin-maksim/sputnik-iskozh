@@ -15,15 +15,6 @@
             "id": "{id}"
         }
     },
-    "adminAccountGet": {
-        "name": "admin.account.get",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/accounts\/json\/view\/{accountId}",
-        "args": {
-            "accountId": "{accountId}"
-        }
-    },
     "adminAccountIndex": {
         "name": "admin.account.index",
         "displayName": "\u0423\u0447\u0430\u0441\u0442\u043a\u0438",
@@ -35,7 +26,7 @@
         "name": "admin.account.invoice.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/invoices\/list",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/invoices\/json\/list",
         "args": {
             "accountId": "{accountId}"
         }
@@ -114,7 +105,7 @@
         "name": "admin.counter.add-value",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/add-value",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/add-value",
         "args": {
             "accountId": "{accountId}"
         }
@@ -123,7 +114,7 @@
         "name": "admin.counter.create",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/create",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/create",
         "args": {
             "accountId": "{accountId}"
         }
@@ -132,7 +123,7 @@
         "name": "admin.counter.delete",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/delete\/{counterId}",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/delete\/{counterId}",
         "args": {
             "accountId": "{accountId}",
             "counterId": "{counterId}"
@@ -151,7 +142,7 @@
         "name": "admin.counter.list",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/list",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/list",
         "args": {
             "accountId": "{accountId}"
         }
@@ -160,7 +151,7 @@
         "name": "admin.counter.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/save",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/save",
         "args": {
             "accountId": "{accountId}"
         }
@@ -169,7 +160,7 @@
         "name": "admin.counter.view",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/json\/counters\/view\/{counterId}",
+        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/view\/{counterId}",
         "args": {
             "accountId": "{accountId}",
             "counterId": "{counterId}"

@@ -2,10 +2,15 @@
 
 namespace Core\Domains\Infra\HistoryChanges\Decorator;
 
+use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Infra\Comparator\DTO\Changes;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
+use Core\Resources\RouteNames;
+use lc;
 
 readonly class HistoryChangesDecorator
 {
@@ -76,5 +81,48 @@ readonly class HistoryChangesDecorator
     private function getNewValue(string $value): string
     {
         return $value;
+    }
+
+    public function getPrimaryUrl(): ?string
+    {
+        $h = $this->historyChanges;
+
+        $accountId = null;
+        if ($h->getType() === HistoryType::COUNTER) {
+            $accountId = CounterLocator::CounterService()->getById($h->getPrimaryId())?->getAccountId();
+        }
+
+        $role = lc::roleDecorator();
+
+        return match ($h->getType()) {
+            HistoryType::PERIOD  => $role->can(PermissionEnum::PERIODS_VIEW) ? route(RouteNames::ADMIN_PERIOD_INDEX) : null,
+            HistoryType::ACCOUNT => $role->can(PermissionEnum::ACCOUNTS_VIEW) ? route(RouteNames::ADMIN_ACCOUNT_VIEW, $h->getPrimaryId()) : null,
+            HistoryType::INVOICE => $role->can(PermissionEnum::INVOICES_VIEW) ? route(RouteNames::ADMIN_INVOICE_VIEW, $h->getPrimaryId()) : null,
+            HistoryType::USER    => $role->can(PermissionEnum::USERS_VIEW) ? route(RouteNames::ADMIN_USER_VIEW, $h->getPrimaryId()) : null,
+            HistoryType::ROLE    => $role->can(PermissionEnum::ROLES_VIEW) ? route(RouteNames::ADMIN_ROLE_INDEX) : null,
+            HistoryType::COUNTER => $role->can(PermissionEnum::COUNTERS_VIEW) && $accountId ? route(RouteNames::ADMIN_COUNTER_VIEW, [$accountId, $h->getPrimaryId()]) : null,
+            HistoryType::OPTION  => $role->can(PermissionEnum::OPTIONS_VIEW) ? route(RouteNames::ADMIN_OPTIONS_INDEX, $h->getPrimaryId()) : null,
+            default              => null,
+        };
+    }
+
+    public function getReferenceUrl(): ?string
+    {
+        $h = $this->historyChanges;
+
+        $accountId = null;
+        if ($h->getReferenceType() === HistoryType::COUNTER_HISTORY) {
+            $accountId = CounterLocator::CounterService()->getById($h->getPrimaryId())?->getAccountId();
+        }
+
+        $role = lc::roleDecorator();
+
+        return match ($h->getType()) {
+            HistoryType::SERVICE         => $role->can(PermissionEnum::SERVICES_VIEW) ? route(RouteNames::ADMIN_SERVICE_INDEX) : null,
+            HistoryType::CLAIM,
+            HistoryType::PAYMENT         => $role->can(PermissionEnum::INVOICES_VIEW) ? route(RouteNames::ADMIN_INVOICE_VIEW, $accountId) : null,
+            HistoryType::COUNTER_HISTORY => $role->can(PermissionEnum::COUNTERS_VIEW) && $accountId && $h->getPrimaryId() ? route(RouteNames::ADMIN_COUNTER_VIEW, [$accountId, $h->getPrimaryId()]) : null,
+            default                      => null,
+        };
     }
 }

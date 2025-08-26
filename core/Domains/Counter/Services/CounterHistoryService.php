@@ -101,6 +101,8 @@ readonly class CounterHistoryService
 
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
+            HistoryType::COUNTER,
+            $history->getCounterId(),
             HistoryType::COUNTER_HISTORY,
             $history->getId(),
         );

@@ -43,10 +43,10 @@ readonly class ServiceService
 
         $this->historyChangesService->writeToHistory(
             $service->getId() ? Event::UPDATE : Event::CREATE,
+            HistoryType::PERIOD,
+            $current->getPeriodId(),
             HistoryType::SERVICE,
             $current->getId(),
-            null,
-            null,
             new ServiceComparator($current),
             new ServiceComparator($before),
         );
@@ -96,6 +96,8 @@ readonly class ServiceService
 
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
+            HistoryType::PERIOD,
+            $service->getPeriodId(),
             HistoryType::SERVICE,
             $service->getId(),
         );
@@ -108,7 +110,7 @@ readonly class ServiceService
         return $this->search(
             ServiceSearcher::make()
                 ->setPeriodId($periodId)
-                ->setType($case)
+                ->setType($case),
         )->getItems()->first();
     }
 }

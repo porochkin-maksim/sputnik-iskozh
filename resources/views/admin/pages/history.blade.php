@@ -14,7 +14,7 @@ use Core\Resources\RouteNames;
  * @var int                      $offset
  */
 ?>
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -157,6 +157,7 @@ use Core\Resources\RouteNames;
                     <thead class="table-light">
                     <tr class="text-center">
                         <th class="text-center">ID</th>
+                        <th class="text-center">Тип</th>
                         <th class="text-center">Дата</th>
                         <th class="text-center">Время</th>
                         <th class="text-center">Пользователь</th>
@@ -174,13 +175,24 @@ use Core\Resources\RouteNames;
                         @endphp
                         <tr>
                             <td class="text-center">{{ $historyChange->getId() }}</td>
+                            <td class="text-center">{{ $historyChange->getType()->name() }}</td>
                             <td class="text-center">{{ $createdAt->format(DateTimeFormat::DATE_VIEW_FORMAT) }}</td>
                             <td class="text-center">{{ $createdAt->format(DateTimeFormat::TIME_FULL) }}</td>
-                            <td class="text-center">
-                                {{ $user->getDisplayName() }}
+                            <td class="text-center text-nowrap">
+                                @if ($user->getAdminViewUrl())
+                                    <a href="{{ $user->getAdminViewUrl() }}" target="_blank">
+                                        {{ $user->getDisplayName() }}
+                                    </a>
+                                @else
+                                    {{ $user->getDisplayName() }}
+                                @endif
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-secondary">{{ $historyChange->getPrimaryId() }}</span>
+                                <span class="badge bg-secondary">
+                                    <a href="{{ $decorator->getPrimaryUrl() }}" style="color:white;" target="_blank">
+                                        {{ $historyChange->getPrimaryId() }}
+                                    </a>
+                                </span>
                             </td>
                             <td>
                                 @if($historyChange->getReferenceId())
