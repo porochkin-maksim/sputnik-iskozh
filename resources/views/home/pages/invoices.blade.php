@@ -75,7 +75,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                 </div>
             </h3>
             <div class="table-responsive">
-                <table class="table table-borderless mb-0">
+                <table class="table table-sm table-borderless mb-0">
                     <tbody>
                     @foreach($invoices as $invoice)
                         <tr class="text-end table-success border-success">
@@ -134,9 +134,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
         @endif
     @endif
     @if($periods->count())
-        <div class="d-flex flex-md-row flex-column-reverse align-items-center justify-content-md-between justify-content-center mb-3">
-            <h3 class="text-dark mb-0 text-center mt-2 mt-md-0">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>
-        </div>
+        <h3 class="text-dark text-center">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>
         <summary-block :period-id="{{ $period->getId() }}"
                        :show-invoice="false"/>
     @endif

@@ -14,7 +14,7 @@
             </thead>
             <tbody>
             <tr class="table-secondary">
-                <th class="d-flex justify-content-between">
+                <th class="d-flex flex-column flex-sm-row flex-wrap justify-content-between">
                     <span>
                         Доход
                     </span>
@@ -47,7 +47,7 @@
                 </tr>
             </template>
             <tr class="table-secondary">
-                <th class="d-flex justify-content-between">
+                <th class="d-flex flex-column flex-sm-row flex-wrap justify-content-between">
                     <span>
                         Расход
                     </span>

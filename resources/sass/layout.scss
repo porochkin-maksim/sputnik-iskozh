@@ -29,6 +29,14 @@ footer,
     margin    : 0 auto;
 }
 
+.home {
+    main,
+    footer,
+    .wrapper-container {
+        font-size : 0.8 * $font-size;
+    }
+}
+
 .admin {
     main,
     footer,

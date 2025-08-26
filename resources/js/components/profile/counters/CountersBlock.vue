@@ -1,16 +1,25 @@
 <template>
     <div v-if="counters && counters.length">
-        <template v-for="item in counters">
-            <div>
-                <a :href="item.viewUrl"
-                   class="text-decoration-none">
-                    <div>
-                        <h5 class="mb-0">Счётчик «{{ item.number }}»&nbsp;</h5>
+        <div class="row">
+            <div class="col-12 col-md-8 col-lg-6">
+                <template v-for="item in counters">
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-start">
+                                <a :href="item.viewUrl"
+                                   class="text-decoration-none d-block">
+                                    <h5 class="mb-1">Счётчик «{{ item.number }}»&nbsp;</h5>
+                                </a>
+                                <div class="text-end w-sm-25 w-100 d-flex flex-row flex-sm-column justify-content-between">
+                                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт</div>
+                                    <div>{{ $formatDate(item.date) }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
-                </a>
+                </template>
             </div>
-        </template>
+        </div>
     </div>
     <div v-if="loaded">
         <button class="btn btn-success mt-2"

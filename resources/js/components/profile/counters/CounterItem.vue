@@ -18,7 +18,7 @@
                             data-bs-placement="bottom"
                     >Добавить показания
                     </button>
-                    <button class="btn btn-sm btn-outline-success ms-2"
+                    <button class="btn btn-sm btn-outline-success ms-md-2 ms-0 "
                             @click="editIncrement"
                     >Автопоказания
                     </button>
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="row mt-2"
-         v-if="chartData && chartData.length">
+         v-if="chartData && chartData.length && false">
         <div class="col-12 col-md-8 col-lg-6">
             <h5 class="text-center">График показаний</h5>
             <counters-chart-block
