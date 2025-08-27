@@ -208,8 +208,8 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 });
                 Route::group(['prefix' => 'accounts'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'accounts'])->name(RouteNames::ADMIN_ACCOUNT_INDEX);
-                    Route::get('/view/{accountId}', [Controllers\Admin\Account\AccountsController::class, 'get'])->name(RouteNames::ADMIN_ACCOUNT_GET);
                     Route::group(['prefix' => 'json'], static function () {
+                        Route::get('/view/{accountId}', [Controllers\Admin\Account\AccountsController::class, 'get'])->name(RouteNames::ADMIN_ACCOUNT_GET);
                         Route::get('/create', [Controllers\Admin\Account\AccountsController::class, 'create'])->name(RouteNames::ADMIN_ACCOUNT_CREATE);
                         Route::get('/list', [Controllers\Admin\Account\AccountsController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_LIST);
                         Route::post('/save', [Controllers\Admin\Account\AccountsController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_SAVE);
@@ -219,7 +219,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                         Route::group(['prefix' => 'counters'], static function () {
                             Route::get('/view/{counterId}', [Controllers\Admin\Account\CounterController::class, 'view'])->name(RouteNames::ADMIN_COUNTER_VIEW);
-                            Route::group(['prefix' => 'json'], static function () {
+                        Route::group(['prefix' => 'json'], static function () {
                                 Route::post('/create', [Controllers\Admin\Account\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
                                 Route::get('/list', [Controllers\Admin\Account\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
                                 Route::post('/save', [Controllers\Admin\Account\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
@@ -227,7 +227,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                                 Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
                             });
                         });
-                        Route::group(['prefix' => 'invoices'], static function () {
+                            Route::group(['prefix' => 'invoices'], static function () {
                             Route::group(['prefix' => 'json'], static function () {
                                 Route::get('/list', [Controllers\Admin\Account\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_INVOICE_LIST);
                             });

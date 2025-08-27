@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Public\Requests\PaymentCreateRequest;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Payment\Services\FileService;
@@ -18,6 +20,7 @@ class PaymentsController extends Controller
     private PaymentFactory $paymentFactory;
     private FileService    $fileService;
     private AccountService $accountService;
+    private InvoiceService $invoiceService;
 
     public function __construct()
     {
@@ -25,6 +28,7 @@ class PaymentsController extends Controller
         $this->paymentFactory = PaymentLocator::PaymentFactory();
         $this->fileService    = PaymentLocator::FileService();
         $this->accountService = AccountLocator::AccountService();
+        $this->invoiceService = InvoiceLocator::InvoiceService();
     }
 
     public function create(PaymentCreateRequest $request): void
@@ -33,13 +37,26 @@ class PaymentsController extends Controller
         try {
             $payment = $this->paymentFactory->makeDefault();
 
-            if ($request->getAccount()) {
+            if ($request->getInvoice()) {
+                $invoice = $this->invoiceService->getById($request->getInvoice());
+                if ($invoice) {
+                    $payment->setInvoiceId($invoice->getId());
+                    $payment->setAccountId($invoice->getAccountId());
+                }
+            }
+            elseif ($request->getAccount()) {
                 $account = $this->accountService->findByNumber($request->getAccount());
                 if ($account) {
                     $payment->setAccountId($account->getId());
                 }
             }
-            $payment->setComment($request->getFullText());
+            if ( ! isset($invoice)) {
+                $payment->setComment($request->getFullText());
+            }
+            else {
+                $payment->setComment($request->getText());
+            }
+            $payment->setCost($request->getCost());
 
             $payment = $this->paymentService->save($payment);
 

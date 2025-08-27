@@ -57,6 +57,9 @@ class NewPaymentController
         if ( ! $payment) {
             abort(412);
         }
+        if ($payment->getInvoiceId()) {
+            $payment->setInvoice($this->invoiceService->getById($payment->getInvoiceId()));
+        }
 
         $accountSearcher = new AccountSearcher();
         $accountSearcher->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC);
@@ -133,7 +136,9 @@ class NewPaymentController
 
         $searcher = new PaymentSearcher();
         $searcher
-            ->setInvoiceId(null)
+            ->addOrWhere(Payment::VERIFIED, SearcherInterface::EQUALS, false)
+            ->addOrWhere(Payment::MODERATED, SearcherInterface::EQUALS, false)
+            ->addOrWhere(Payment::INVOICE_ID, SearcherInterface::EQUALS, null)
             ->setWithFiles()
             ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_ASC)
         ;

@@ -46,6 +46,7 @@ enum RequestArgumentsEnum: string
     public const string COST            = 'cost';
     public const string PAYED           = 'payed';
     public const string PERIOD_ID       = 'period_id';
+    public const string INVOICE         = 'invoice';
     public const string INVOICE_ID      = 'invoice_id';
     public const string SERVICE_ID      = 'service_id';
     public const string ACCOUNT_ID      = 'account_id';

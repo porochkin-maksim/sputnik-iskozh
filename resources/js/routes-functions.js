@@ -22,6 +22,11 @@ export function adminAccountDelete(id, getParams = {}, postData = null) {
     return window.axios.delete(makeQuery('/admin/accounts/json/'+id+'', getParams), postData);
 }
 
+export function adminAccountGet(accountId, getParams = {}, postData = null) {
+    // see admin.account.get
+    return window.axios.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams), postData);
+}
+
 export function adminAccountIndex(getParams = {}, postData = null) {
     // see admin.account.index
     return window.axios.get(makeQuery('/admin/accounts', getParams), postData);

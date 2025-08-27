@@ -11,7 +11,16 @@
                       :required="true"
                       :errors="errors.account"
                       :label="'Номер дачи и номер участка (например: 999/1 )'"
-                      :disabled="propAccount?.number"
+                      :disabled="loading || propAccount?.number || propInvoice?.id"
+                      @submit="sendForm"
+        />
+        <custom-input v-model="cost"
+                      :classes="'my-3'"
+                      @change="clearError('cost')"
+                      :required="true"
+                      :errors="errors.cost"
+                      :label="'Сумма платежа'"
+                      :disabled="loading"
                       @submit="sendForm"
         />
         <custom-textarea v-model="text"
@@ -20,6 +29,7 @@
                          :errors="errors.text"
                          :label="'Комментарий о платеже - когда и за что платили'"
                          :height="'100'"
+                         :disabled="loading || propInvoice?.id"
                          @submit="sendForm"
         />
         <div class="d-flex justify-content-end small"
@@ -31,7 +41,7 @@
                       @change="clearError('name')"
                       :errors="errors.name"
                       :label="'Ваше имя (по желанию)'"
-                      :disabled="propUser?.email"
+                      :disabled="loading || propUser?.email"
                       @submit="sendForm"
         />
         <custom-input v-model="email"
@@ -39,7 +49,7 @@
                       @change="clearError('email')"
                       :errors="errors.email"
                       :label="'Эл.почта (по желанию)'"
-                      :disabled="propUser?.email"
+                      :disabled="loading || propUser?.email"
                       @submit="sendForm"
         />
         <custom-input v-model="phone"
@@ -47,7 +57,7 @@
                       @change="clearError('phone')"
                       :errors="errors.phone"
                       :label="'Телефон (по желанию)'"
-                      :disabled="propUser?.phone"
+                      :disabled="loading || propUser?.phone"
                       @submit="sendForm"
         />
         <template v-if="files && files.length">
@@ -56,6 +66,7 @@
                     class="mb-2 d-flex justify-content-between">
                     <div>
                         <button class="btn btn-sm btn-danger"
+                                :disabled="loading"
                                 @click="removeFile(index)">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -73,6 +84,7 @@
         </template>
         <button class="btn btn-outline-secondary"
                 @click="chooseFiles"
+                :disabled="loading"
                 v-if="!fileCountExceed">
             <i class="fa fa-paperclip "></i>&nbsp;Файлы подтверждающие оплату
         </button>
@@ -83,12 +95,14 @@
                multiple>
         <div class="d-flex justify-content-end mt-2">
             <button type="submit"
-                    :disabled="disableSubmit"
-                    v-if="!pending"
+                    :disabled="isSubmitDisable"
+                    v-if="!loading"
                     @click="sendForm"
                     class="btn btn-success">Отправить
             </button>
-            <button class="btn border-0" disabled v-else>
+            <button class="btn border-0"
+                    disabled
+                    v-else>
                 <i class="fa fa-spinner fa-spin"></i> Отправка
             </button>
         </div>
@@ -100,7 +114,6 @@ import Url            from '../../../utils/Url.js';
 import ResponseError  from '../../../mixin/ResponseError.js';
 import CustomInput    from '../../common/form/CustomInput.vue';
 import CustomTextarea from '../../common/form/CustomTextarea.vue';
-import accountActions from '../../admin/accounts/AccountActions.js';
 
 export default {
     name      : 'PaymentForm',
@@ -114,15 +127,22 @@ export default {
     props     : {
         propAccount: {
             type   : Object,
-            default: {},
+            default: null,
         },
         propUser   : {
             type   : Object,
-            default: {},
+            default: null,
+        },
+        propInvoice   : {
+            type   : Object,
+            default: null,
         },
     },
     created () {
-        if (this.propAccount?.number) {
+        if (this.propInvoice?.id) {
+            this.account = this.propInvoice?.account.number;
+        }
+        else if (this.propAccount?.number) {
             this.account = this.propAccount?.number;
         }
         else {
@@ -150,26 +170,40 @@ export default {
             this.name = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
         }
 
-        this.text = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+        if (this.propInvoice?.delta) {
+            this.cost = this.propInvoice?.delta;
+        }
+        else {
+            this.cost = localStorage.getItem('requestCost') === 'null' ? '' : localStorage.getItem('requestCost');
+        }
+
+        if (this.propInvoice?.id) {
+            this.text = 'Оплата по счёту №' + this.propInvoice?.id + ' за период "' + this.propInvoice.period.name + '" за участок ' + this.propInvoice.account.number;
+        }
+        else {
+            this.text = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+        }
     },
     data () {
         return {
+            loading: false,
+
             Url,
             account: '',
             email  : '',
             phone  : '',
             name   : '',
             text   : '',
+            cost   : '',
 
             files: [],
 
             success: null,
-            pending: false,
         };
     },
     methods : {
         sendForm () {
-            this.pending = true;
+            this.loading = true;
             this.clearResponseErrors();
             let form = new FormData();
             form.append('email', this.email ? this.email : null);
@@ -177,12 +211,14 @@ export default {
             form.append('name', this.name ? this.name : null);
             form.append('account', this.account ? this.account : null);
             form.append('text', this.text ? this.text : null);
+            form.append('cost', this.cost ? this.cost : null);
+            form.append('invoice', this.propInvoice?.id ? this.propInvoice?.id : null);
 
             this.files.forEach((file, index) => {
                 form.append('file' + index, file);
             });
 
-            window.axios[Url.Routes.paymentCreate.method](Url.Routes.paymentCreate.uri, form).then(response => {
+            Url.RouteFunctions.paymentCreate({}, form).then(response => {
                 localStorage.removeItem('requestText');
                 this.success = true;
                 this.showSuccess('Платёж принят');
@@ -192,7 +228,7 @@ export default {
             }).catch(response => {
                 this.parseResponseErrors(response);
             }).finally(() => {
-                this.pending = false;
+                this.loading = false;
             });
         },
         chooseFiles () {
@@ -228,6 +264,9 @@ export default {
         text () {
             localStorage.setItem('requestText', this.text);
         },
+        cost () {
+            localStorage.setItem('requestCost', this.cost);
+        },
         account () {
             localStorage.setItem('requestAccount', this.account);
         },
@@ -237,10 +276,10 @@ export default {
             if (!this.propUser?.email) {
                 return null;
             }
-            return (this.propUser?.lastName + ' '  +this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
+            return (this.propUser?.lastName + ' ' + this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
         },
-        disableSubmit () {
-            return !this.files.length || !this.account || !this.text || this.pending || this.fileSizeExceed;
+        isSubmitDisable () {
+            return !this.files.length || !this.account || !this.text || this.loading || this.fileSizeExceed;
         },
         filesSize () {
             let result = 0;

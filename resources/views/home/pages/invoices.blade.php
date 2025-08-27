@@ -11,6 +11,8 @@ use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Enums\DateTimeFormat;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
@@ -60,7 +62,8 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
             <h3 class="text-dark">
                 <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center text-wrap">
                     <span>Счета на участок "{{ $account->getNumber() }}" в периоде</span>
-                    <form action="{{ route(RouteNames::PROFILE_INVOICES) }}" class="d-inline-block">
+                    <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
+                          class="d-inline-block">
                         <select name="period"
                                 class="form-select form-select-sm me-2 d-inline-block fw-bold ms-2"
                                 style="width: auto;font-size: 1em;"
@@ -111,16 +114,22 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                 <td colspan="5">
                                     <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
                                         @if ($account->getFraction() === 1 || ! $account->getFraction())
-                                            <button class="btn btn-sm btn-success">Оплатить {{ MoneyService::parse($invoice->getDelta()) }}</button>
+                                            <button class="btn btn-sm btn-success mb-2">
+                                                <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($invoice->getDelta()) }}
+                                            </button>
                                         @else
                                             <button class="btn btn-sm btn-outline-success mx-1 mb-2">
-                                                Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
+                                                <i class="fa fa-credit-card"></i> Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
                                             </button>
                                             <button class="btn btn-sm btn-outline-success mx-1 mb-2">
-                                                Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
+                                                <i class="fa fa-credit-card"></i> Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
                                             </button>
                                         @endif
                                     </div>
+                                    <a class="btn btn-sm btn-outline-primary mx-1 mb-2"
+                                       href="{{ route(RouteNames::PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}">
+                                        <i class="fa fa-envelope"></i> Сообщить о совершённом платеже
+                                    </a>
                                 </td>
                             </tr>
                         @endif
@@ -136,6 +145,6 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
     @if($periods->count())
         <h3 class="text-dark text-center">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>
         <summary-block :period-id="{{ $period->getId() }}"
-                       :show-invoice="false"/>
+                       :show-invoice="false" />
     @endif
 @endsection

@@ -1,7 +1,13 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Profile\Accounts\AccountResource;
+use App\Http\Resources\Profile\Invoices\InvoiceResource;
 use App\Http\Resources\Profile\Users\UserResource;
+use Core\Domains\Account\AccountLocator;
+use Core\Domains\Billing\Invoice\InvoiceLocator;
+use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
@@ -10,6 +16,19 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setUrl(route(RouteNames::PAYMENT));
 
+$invoiceUid = request()->get('invoice') ? UidFacade::findReferenceId(request()->get('invoice'), UidTypeEnum::INVOICE) : null;
+$invoice    = null;
+if ($invoiceUid) {
+    $invoice = InvoiceLocator::InvoiceService()->getById($invoiceUid);
+    if ($invoice) {
+        $period = PeriodLocator::PeriodService()->getById($invoice->getPeriodId());
+        $invoice->setPeriod($period);
+        $account = $invoice->getAccountId() === lc::account()->getId()
+            ? lc::account()
+            : AccountLocator::AccountService()->getById($invoice->getAccountId());
+        $invoice->setAccount($account);
+    }
+}
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -31,7 +50,9 @@ $openGraph->setUrl(route(RouteNames::PAYMENT));
                 <div>Отметку об оплате в членской книжке можно будет проставить потом.</div>
             </div>
             <payment-form :prop-account='@json(new AccountResource(lc::account()))'
-                          :prop-user='@json(new UserResource(lc::user()))'></payment-form>
+                          :prop-user='@json(new UserResource(lc::user()))'
+                          :prop-invoice='@json($invoice ? new InvoiceResource($invoice) : null)'
+            />
         </div>
     </div>
 @endsection

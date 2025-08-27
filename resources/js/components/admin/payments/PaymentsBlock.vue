@@ -132,11 +132,10 @@ export default {
             this.accounts = [];
             this.invoices = [];
             this.periods  = [];
-            let uri       = Url.Generator.makeUri(Url.Routes.adminNewPaymentView, {
-                paymentId: this.selectedId,
-            });
-            window.axios[Url.Routes.adminNewPaymentView.method](uri).then(response => {
+
+            Url.RouteFunctions.adminNewPaymentView(this.selectedId).then(response => {
                 this.payment         = response.data.payment;
+                this.periodId        = response.data.payment.invoice?.periodId;
                 this.accounts        = response.data.accounts;
                 this.periods         = response.data.periods;
                 this.payment.cost    = parseFloat(this.payment.cost).toFixed(2);
