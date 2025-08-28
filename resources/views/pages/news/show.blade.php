@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Core\Domains\News\Models\NewsDTO;
+use Core\Resources\RouteNames;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\Enums\OpenGraphType;
@@ -15,7 +16,8 @@ $openGraph->setType(OpenGraphType::ARTICLE)
     ->setTitle($news->getTitle())
     ->setUrl($news->url())
     ->setImage($news->getImages()->first()?->url())
-    ->setDescription($news->getDescription() ? : $news->getArticleAsText());
+    ->setDescription($news->getDescription() ? : $news->getArticleAsText())
+;
 
 ?>
 
@@ -30,6 +32,7 @@ $openGraph->setType(OpenGraphType::ARTICLE)
 @endsection
 
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::NEWS_SHOW, $news) }}
     <news-show :news='@json($news)'
                :edit='@json($edit)'
     ></news-show>

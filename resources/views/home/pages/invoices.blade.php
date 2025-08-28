@@ -127,7 +127,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                         @endif
                                     </div>
                                     <a class="btn btn-sm btn-outline-primary mx-1 mb-2"
-                                       href="{{ route(RouteNames::PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}">
+                                       href="{{ route(RouteNames::REQUESTS_PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}">
                                         <i class="fa fa-envelope"></i> Сообщить о совершённом платеже
                                     </a>
                                 </td>

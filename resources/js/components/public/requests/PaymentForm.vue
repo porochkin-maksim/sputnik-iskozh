@@ -181,7 +181,7 @@ export default {
             this.text = 'Оплата по счёту №' + this.propInvoice?.id + ' за период "' + this.propInvoice.period.name + '" за участок ' + this.propInvoice.account.number;
         }
         else {
-            this.text = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+            this.text = localStorage.getItem('requestPaymentText') === 'null' ? '' : localStorage.getItem('requestPaymentText');
         }
     },
     data () {
@@ -219,7 +219,7 @@ export default {
             });
 
             Url.RouteFunctions.paymentCreate({}, form).then(response => {
-                localStorage.removeItem('requestText');
+                localStorage.removeItem('requestPaymentText');
                 this.success = true;
                 this.showSuccess('Платёж принят');
                 setTimeout(() => {
@@ -262,7 +262,7 @@ export default {
             localStorage.setItem('requestName', this.name);
         },
         text () {
-            localStorage.setItem('requestText', this.text);
+            localStorage.setItem('requestPaymentText', this.text);
         },
         cost () {
             localStorage.setItem('requestCost', this.cost);

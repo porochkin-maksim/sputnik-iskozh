@@ -17,13 +17,13 @@ abstract class RouteNames
     public const string PASSWORD_SET  = 'password.set';
     public const string PASSWORD_SAVE = 'password.save';
 
-    public const string REQUESTS        = 'requests';
-    public const string PROPOSAL        = 'proposal';
-    public const string PROPOSAL_CREATE = 'proposal.create';
-    public const string PAYMENT         = 'payment';
-    public const string PAYMENT_CREATE  = 'payment.create';
-    public const string COUNTER         = 'counter';
-    public const string COUNTER_CREATE  = 'counter.create';
+    public const string REQUESTS                 = 'requests';
+    public const string REQUESTS_PROPOSAL        = 'proposal';
+    public const string REQUESTS_PROPOSAL_CREATE = 'proposal.create';
+    public const string REQUESTS_PAYMENT         = 'payment';
+    public const string REQUESTS_PAYMENT_CREATE  = 'payment.create';
+    public const string REQUESTS_COUNTER         = 'counter';
+    public const string REQUESTS_COUNTER_CREATE  = 'counter.create';
 
     public const string TEMPLATE_GET    = 'template.get';
     public const string TEMPLATE_UPDATE = 'template.update';
@@ -208,6 +208,7 @@ abstract class RouteNames
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
+            self::INDEX                               => 'Главная',
             self::CONTACTS                            => 'Контакты',
             self::GARBAGE                             => 'Вывоз мусора',
             self::PRIVACY                             => 'Политика обработки персональных данных',
@@ -215,9 +216,9 @@ abstract class RouteNames
             self::SEARCH                              => 'Поиск по сайту',
 
             self::REQUESTS                            => 'Обращения',
-            self::PROPOSAL                            => 'Предложения',
-            self::PAYMENT                             => 'Платежи',
-            self::COUNTER                             => 'Показания',
+            self::REQUESTS_PROPOSAL                   => 'Предложения',
+            self::REQUESTS_PAYMENT                    => 'Платежи',
+            self::REQUESTS_COUNTER                    => 'Показания',
 
             self::HOME                                => 'Личный кабинет',
             self::PROFILE                             => 'Профиль',

@@ -20,7 +20,8 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(lc::roleDecorator()->isSuperAdmin())
+    {{ Breadcrumbs::render(RouteNames::GARBAGE) }}
+    @if(lc::roleDecorator()->isSuperAdmin() && false)
         <page-editor :template="'{{ ViewNames::PAGES_GARBAGE }}'"></page-editor>
     @endif
     <h1 class="page-title">

@@ -74,6 +74,14 @@ footer,
     }
 
     &.social-contacts {
+        &.social-index {
+            .social-link {
+                padding : 0.2rem;
+            }
+        }
+    }
+
+    &.social-contacts {
         flex-wrap       : wrap;
         align-items     : center;
         justify-content : center;

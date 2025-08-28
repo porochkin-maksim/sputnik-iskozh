@@ -13,12 +13,12 @@ Route::get('/', [Controllers\Pages\PagesController::class, 'index'])->name(Route
 Route::get('/contacts', [Controllers\Pages\PagesController::class, 'contacts'])->name(RouteNames::CONTACTS);
 Route::group(['prefix' => 'contacts/requests'], static function () {
     Route::get('/', [Controllers\Pages\RequestsPagesController::class, 'index'])->name(RouteNames::REQUESTS);
-    Route::get('/proposal', [Controllers\Pages\RequestsPagesController::class, 'proposal'])->name(RouteNames::PROPOSAL);
-    Route::post('/proposal', [Controllers\Pages\Requests\ProposalController::class, 'create'])->name(RouteNames::PROPOSAL_CREATE);
-    Route::get('/payment', [Controllers\Pages\RequestsPagesController::class, 'payment'])->name(RouteNames::PAYMENT);
-    Route::post('/payment', [Controllers\Pages\Requests\PaymentsController::class, 'create'])->name(RouteNames::PAYMENT_CREATE);
-    Route::get('/counter', [Controllers\Pages\RequestsPagesController::class, 'counter'])->name(RouteNames::COUNTER);
-    Route::post('/counter', [Controllers\Pages\Requests\CounterController::class, 'create'])->name(RouteNames::COUNTER_CREATE);
+    Route::get('/proposal', [Controllers\Pages\RequestsPagesController::class, 'proposal'])->name(RouteNames::REQUESTS_PROPOSAL);
+    Route::post('/proposal', [Controllers\Pages\Requests\ProposalController::class, 'create'])->name(RouteNames::REQUESTS_PROPOSAL_CREATE);
+    Route::get('/payment', [Controllers\Pages\RequestsPagesController::class, 'payment'])->name(RouteNames::REQUESTS_PAYMENT);
+    Route::post('/payment', [Controllers\Pages\Requests\PaymentsController::class, 'create'])->name(RouteNames::REQUESTS_PAYMENT_CREATE);
+    Route::get('/counter', [Controllers\Pages\RequestsPagesController::class, 'counter'])->name(RouteNames::REQUESTS_COUNTER);
+    Route::post('/counter', [Controllers\Pages\Requests\CounterController::class, 'create'])->name(RouteNames::REQUESTS_COUNTER_CREATE);
 });
 
 Route::get('/garbage', [Controllers\Pages\PagesController::class, 'garbage'])->name(RouteNames::GARBAGE);

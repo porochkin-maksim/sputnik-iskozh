@@ -98,7 +98,7 @@ export default {
         this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
         this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
         this.name  = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
-        this.text  = localStorage.getItem('requestText') === 'null' ? '' : localStorage.getItem('requestText');
+        this.text  = localStorage.getItem('requestProposalText') === 'null' ? '' : localStorage.getItem('requestProposalText');
     },
     data () {
         return {
@@ -129,7 +129,7 @@ export default {
             });
 
             window.axios[Url.Routes.proposalCreate.method](Url.Routes.proposalCreate.uri, form).then(response => {
-                localStorage.removeItem('requestText');
+                localStorage.removeItem('requestProposalText');
                 this.success = true;
                 setTimeout(() => {
                     location.reload();
@@ -172,7 +172,7 @@ export default {
             localStorage.setItem('requestName', this.name);
         },
         text () {
-            localStorage.setItem('requestText', this.text);
+            localStorage.setItem('requestProposalText', this.text);
         },
     },
     computed: {

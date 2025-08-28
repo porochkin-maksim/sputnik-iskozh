@@ -14,7 +14,7 @@ use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
-$openGraph->setUrl(route(RouteNames::PAYMENT));
+$openGraph->setUrl(route(RouteNames::REQUESTS_PAYMENT));
 
 $invoiceUid = request()->get('invoice') ? UidFacade::findReferenceId(request()->get('invoice'), UidTypeEnum::INVOICE) : null;
 $invoice    = null;
@@ -38,6 +38,7 @@ if ($invoiceUid) {
 @endsection
 
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::REQUESTS_PAYMENT) }}
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}

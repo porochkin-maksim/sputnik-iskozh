@@ -17,6 +17,7 @@ $openGraph->setUrl(route(RouteNames::NEWS));
 @endsection
 
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::NEWS) }}
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}

@@ -10,7 +10,7 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
-$openGraph->setUrl(route(RouteNames::COUNTER));
+$openGraph->setUrl(route(RouteNames::REQUESTS_COUNTER));
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -20,6 +20,7 @@ $openGraph->setUrl(route(RouteNames::COUNTER));
 @endsection
 
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::REQUESTS_COUNTER) }}
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}

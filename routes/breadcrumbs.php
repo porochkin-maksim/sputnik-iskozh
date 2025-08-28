@@ -9,8 +9,8 @@ use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
 use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\Infra\Uid\UidTypeEnum;
+use Core\Domains\News\Enums\CategoryEnum;
+use Core\Domains\News\Models\NewsDTO;
 use Core\Resources\RouteNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
@@ -36,6 +36,54 @@ Breadcrumbs::for(RouteNames::PROFILE_COUNTER_VIEW, static function (BreadcrumbTr
     $trail->push('Счётчик ' . $counter->getNumber(), route(RouteNames::PROFILE_COUNTER_VIEW, [$counter->getUid()]));
 });
 
+// публичная часть
+Breadcrumbs::for(RouteNames::INDEX, static function (BreadcrumbTrail $trail) {
+    $trail->push(RouteNames::name(RouteNames::INDEX), route(RouteNames::INDEX));
+});
+Breadcrumbs::for(RouteNames::ANNOUNCEMENTS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::INDEX);
+    $trail->push(RouteNames::name(RouteNames::ANNOUNCEMENTS), route(RouteNames::ANNOUNCEMENTS));
+});
+Breadcrumbs::for(RouteNames::NEWS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::INDEX);
+    $trail->push(RouteNames::name(RouteNames::NEWS), route(RouteNames::NEWS));
+});
+Breadcrumbs::for(RouteNames::NEWS_SHOW, static function (BreadcrumbTrail $trail, NewsDTO $news) {
+    if ($news->getCategory() === CategoryEnum::ANNOUNCEMENT) {
+        $trail->parent(RouteNames::ANNOUNCEMENTS);
+    }else{
+        $trail->parent(RouteNames::NEWS);
+    }
+    $trail->push('#' . $news->getId(), route(RouteNames::NEWS_SHOW, $news->getId()));
+});
+Breadcrumbs::for(RouteNames::GARBAGE, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::INDEX);
+    $trail->push(RouteNames::name(RouteNames::GARBAGE), route(RouteNames::GARBAGE));
+});
+Breadcrumbs::for(RouteNames::FILES, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::INDEX);
+    $trail->push(RouteNames::name(RouteNames::FILES), route(RouteNames::FILES));
+});
+Breadcrumbs::for(RouteNames::CONTACTS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::INDEX);
+    $trail->push(RouteNames::name(RouteNames::CONTACTS), route(RouteNames::CONTACTS));
+});
+Breadcrumbs::for(RouteNames::REQUESTS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::CONTACTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS), route(RouteNames::REQUESTS));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_COUNTER, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_COUNTER), route(RouteNames::REQUESTS_COUNTER));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_PROPOSAL, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_PROPOSAL), route(RouteNames::REQUESTS_PROPOSAL));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_PAYMENT, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_PAYMENT), route(RouteNames::REQUESTS_PAYMENT));
+});
 
 // главная админки
 Breadcrumbs::for(RouteNames::ADMIN, static function (BreadcrumbTrail $trail) {

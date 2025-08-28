@@ -23,6 +23,7 @@ use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
 use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
@@ -59,7 +60,7 @@ class CounterController extends Controller
 
     public function view(string $counterUid): View
     {
-        $counterId = UidFacade::findReferenceId($counterUid);
+        $counterId = UidFacade::findReferenceId($counterUid, UidTypeEnum::COUNTER);
         if ( ! $counterId) {
             abort(404);
         }

@@ -6,7 +6,7 @@ use Core\Resources\Views\ViewNames;
 use Core\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
-$openGraph->setUrl(route(RouteNames::PROPOSAL));
+$openGraph->setUrl(route(RouteNames::REQUESTS_PROPOSAL));
 
 ?>
 
@@ -17,6 +17,7 @@ $openGraph->setUrl(route(RouteNames::PROPOSAL));
 @endsection
 
 @section(SectionNames::CONTENT)
+    {{ Breadcrumbs::render(RouteNames::REQUESTS_PROPOSAL) }}
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
             {{ RouteNames::name(Route::current()?->getName()) }}

@@ -35,7 +35,8 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
 @endsection
 
 @section(SectionNames::CONTENT)
-    @if(lc::roleDecorator()->isSuperAdmin())
+    {{ Breadcrumbs::render(RouteNames::CONTACTS) }}
+    @if(lc::roleDecorator()->isSuperAdmin() && false)
         <page-editor :template="'{{ ViewNames::PAGES_CONTACTS }}'"></page-editor>
     @endif
     <h1 class="page-title">
@@ -55,9 +56,10 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
                     {{ $chairmanData->getFullName() }}
                 </div>
                 @if($chairmanData->getPhone())
-                <div>
-                    <a href="tel:{{ PhoneHelper::getPhoneNumberAsInternational($chairmanData->getPhone()) }}"><i class="fa fa-phone"></i> {{ $chairmanData->getPhone() }}</a>
-                </div>
+                    <div>
+                        <a href="tel:{{ PhoneHelper::getPhoneNumberAsInternational($chairmanData->getPhone()) }}"><i class="fa fa-phone"></i> {{ $chairmanData->getPhone() }}
+                        </a>
+                    </div>
                 @endif
             </td>
         </tr>
@@ -211,8 +213,8 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
     <div class="row requests-block mt-3">
         <div class="col-lg-4 col-md-6 col-12">
             <a class="card request-item d-flex align-items-center justify-content-center p-3"
-               href="{{ route(RouteNames::PROPOSAL) }}">
-                <h3>{{ RouteNames::name(RouteNames::PROPOSAL) }}</h3>
+               href="{{ route(RouteNames::REQUESTS_PROPOSAL) }}">
+                <h3>{{ RouteNames::name(RouteNames::REQUESTS_PROPOSAL) }}</h3>
                 <div class="text-center">
                     Отправить идею или предложение по поводу улучшения жизни в СНТ
                 </div>
@@ -220,8 +222,8 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
         </div>
         <div class="col-lg-4 col-md-6 col-12">
             <a class="card request-item d-flex align-items-center justify-content-center p-3"
-               href="{{ route(RouteNames::PAYMENT) }}">
-                <h3>{{ RouteNames::name(RouteNames::PAYMENT) }}</h3>
+               href="{{ route(RouteNames::REQUESTS_PAYMENT) }}">
+                <h3>{{ RouteNames::name(RouteNames::REQUESTS_PAYMENT) }}</h3>
                 <div class="text-center">
                     Сообщить о платеже
                 </div>
@@ -229,8 +231,8 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
         </div>
         <div class="col-lg-4 col-md-6 col-12">
             <a class="card request-item d-flex align-items-center justify-content-center p-3"
-               href="{{ route(RouteNames::COUNTER) }}">
-                <h3>{{ RouteNames::name(RouteNames::COUNTER) }}</h3>
+               href="{{ route(RouteNames::REQUESTS_COUNTER) }}">
+                <h3>{{ RouteNames::name(RouteNames::REQUESTS_COUNTER) }}</h3>
                 <div class="text-center">
                     Отправить показания электроэнергии
                 </div>
