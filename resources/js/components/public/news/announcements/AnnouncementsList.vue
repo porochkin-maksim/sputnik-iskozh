@@ -1,12 +1,4 @@
 <template>
-    <template v-if="showPagination">
-        <div class="d-flex justify-content-center">
-            <pagination :total="total"
-                        :perPage="perPage"
-                        @update="onPaginationUpdate"
-            />
-        </div>
-    </template>
     <div class="custom-list w-100">
         <template v-for="(item, index) in news">
             <news-list-item :news="item"

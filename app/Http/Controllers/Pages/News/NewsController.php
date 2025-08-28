@@ -128,17 +128,15 @@ class NewsController extends Controller
 
     }
 
-    public function listAll(SearchRequest $request): JsonResponse
+    public function indexList(SearchRequest $request): JsonResponse
     {
         $searcher = $request->searcher();
         $searcher
+            ->setLimit(10)
+            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, false)
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->setWithFiles()
         ;
-
-        if ($request->getArray('exclude')) {
-            $searcher->addWhere('id', SearcherInterface::NOT_IN, $request->getArray('exclude'));
-        }
 
         if ( ! $this->canEdit()) {
             $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));

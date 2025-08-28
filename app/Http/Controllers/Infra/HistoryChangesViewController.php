@@ -12,7 +12,7 @@ use Core\Requests\RequestArgumentsEnum;
 
 class HistoryChangesViewController
 {
-    private const int MAX_LIMIT = 100;
+    private const int MAX_LIMIT = 1000;
 
     private HistoryChangesService $historyChangesService;
 

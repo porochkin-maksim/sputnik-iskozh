@@ -8,9 +8,9 @@ use Core\Requests\RequestArgumentsEnum;
 
 class SearchRequest extends AbstractRequest
 {
-    private const LIMIT  = RequestArgumentsEnum::LIMIT;
-    private const SKIP   = RequestArgumentsEnum::SKIP;
-    private const SEARCH = RequestArgumentsEnum::SEARCH;
+    private const string LIMIT  = RequestArgumentsEnum::LIMIT;
+    private const string SKIP   = RequestArgumentsEnum::SKIP;
+    private const string SEARCH = RequestArgumentsEnum::SEARCH;
 
     public function getLimit(): ?int
     {

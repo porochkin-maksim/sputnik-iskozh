@@ -146,6 +146,11 @@ $cutRouteNameFn = static function (string $routeName) {
                     <span>{{ RouteNames::name(RouteNames::ADMIN_ERRORS) }}</span>
                 </a>
                 @endif
+
+                <a class="@if(Route::is(RouteNames::HISTORY_CHANGES)) active-link @endif" href="{{ route(RouteNames::HISTORY_CHANGES) }}" target="_blank">
+                    <i class="fa fa-book me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::HISTORY_CHANGES) }}</span>
+                </a>
             </div>
         </div>
         <div class="col-10">

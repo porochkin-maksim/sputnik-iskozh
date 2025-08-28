@@ -2,6 +2,7 @@
 
 namespace Core\Domains\Infra\Comparator\DTO;
 
+use Carbon\Carbon;
 use ReflectionObject;
 
 #[\AllowDynamicProperties]
@@ -56,7 +57,12 @@ abstract class AbstractComparatorDTO
                 $reflectionProperty->setAccessible(true);
             }
 
-            $this->{$property} = $reflectionProperty->getValue($object);
+            if ($reflectionProperty->getValue($object) instanceof Carbon) {
+                $this->{$property} = $reflectionProperty->getValue($object)->format('Y-m-d H:i:s');
+            }
+            else {
+                $this->{$property} = $reflectionProperty->getValue($object);
+            }
 
             if ( ! $isPublic) {
                 $reflectionProperty->setAccessible(false);

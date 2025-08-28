@@ -2,7 +2,7 @@
     <page-template>
         <template v-slot:main>
             <template v-if="news.length">
-                <div class="custom-list news-list row w-100 ms-0">
+                <div class="index-news custom-list news-list row w-100 ms-0">
                     <template v-for="(item, index) in news">
                         <a class="col-md-6 col-12 text-decoration-none mb-2 px-0"
                                :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
@@ -104,6 +104,7 @@ import PageTemplate from './TwoColumnsPage.vue';
 import NewsListItem from '../news/list/NewsItem.vue';
 import BsSlider     from '../../common/BsSlider.vue';
 import FileItem     from '../news/FileItem.vue';
+import { newsListIndex } from '../../../routes-functions.js';
 
 export default {
     name      : 'IndexPage',
@@ -116,7 +117,8 @@ export default {
         qrPayment: null,
     },
     async created () {
-        await this.loadLockedNews();
+        this.loadLockedNews();
+        this.loadNews();
     },
     data () {
         return {
@@ -127,26 +129,15 @@ export default {
         };
     },
     methods : {
-        async loadLockedNews () {
+        loadLockedNews () {
             Url.RouteFunctions.newsListLocked().then(response => {
                 this.lockedNews = response.data.news;
             }).catch(response => {
                 this.parseResponseErrors(response);
-            }).then(() => {
-                this.loadNews();
             });
         },
-        async loadNews () {
-            let excludeIds = [];
-            this.lockedNews.forEach(news => {
-                excludeIds.push(news.id);
-            });
-
-            Url.RouteFunctions.newsListAll({
-                limit  : 8,
-                skip   : 0,
-                exclude: excludeIds,
-            }).then(response => {
+        loadNews () {
+            Url.RouteFunctions.newsListIndex().then(response => {
                 this.news = response.data.news;
             }).catch(response => {
                 this.parseResponseErrors(response);

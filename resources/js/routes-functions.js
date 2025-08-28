@@ -653,9 +653,9 @@ export function newsList(getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/news/json/list', getParams), postData);
 }
 
-export function newsListAll(getParams = {}, postData = null) {
-    // see news.list.all
-    return window.axios.get(makeQuery('/news/json/list/all', getParams), postData);
+export function newsListIndex(getParams = {}, postData = null) {
+    // see news.list.index
+    return window.axios.get(makeQuery('/news/json/list/index', getParams), postData);
 }
 
 export function newsListLocked(getParams = {}, postData = null) {

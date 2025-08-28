@@ -42,7 +42,7 @@ abstract class RouteNames
 
     public const string NEWS             = 'news.index';
     public const string NEWS_LIST        = 'news.list';
-    public const string NEWS_LIST_ALL    = 'news.list.all';
+    public const string NEWS_INDEX_LIST  = 'news.list.index';
     public const string NEWS_LIST_LOCKED = 'news.list.locked';
     public const string NEWS_CREATE      = 'news.create';
     public const string NEWS_SHOW        = 'news.show';
@@ -245,6 +245,7 @@ abstract class RouteNames
             self::ADMIN_REQUEST_COUNTER_HISTORY_INDEX => 'Счётчики',
             self::ADMIN_ERRORS                        => 'Журнал ошибок',
             self::ADMIN_QUEUE                         => 'Очереди',
+            self::HISTORY_CHANGES                     => 'История изменений',
 
             default                                   => $default,
         };

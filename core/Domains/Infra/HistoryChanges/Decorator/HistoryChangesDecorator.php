@@ -3,10 +3,13 @@
 namespace Core\Domains\Infra\HistoryChanges\Decorator;
 
 use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Infra\Comparator\DTO\Changes;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Resources\RouteNames;
@@ -89,7 +92,36 @@ readonly class HistoryChangesDecorator
 
         $accountId = null;
         if ($h->getType() === HistoryType::COUNTER) {
-            $accountId = CounterLocator::CounterService()->getById($h->getPrimaryId())?->getAccountId();
+            $accountId = CounterLocator::CounterService()->getById((int) $h->getPrimaryId())?->getAccountId();
+        }
+
+        if ($h->getType() === HistoryType::INVOICE) {
+            if ($h->getPrimaryId() === null) {
+                switch ($h->getReferenceType()) {
+                    case HistoryType::PAYMENT:
+                    {
+                        $id = PaymentLocator::PaymentService()->getById($h->getReferenceId())?->getInvoiceId();
+                        break;
+                    }
+                    case HistoryType::CLAIM:
+                    {
+                        $id = ClaimLocator::ClaimService()->getById($h->getReferenceId())?->getInvoiceId();
+                        break;
+                    }
+                    default:
+                    {
+                        $id = null;
+                    }
+                }
+
+                if ($id) {
+                    $h->setPrimaryId($id);
+                    HistoryChangesLocator::HistoryChangesService()->save($h);
+                }
+                else {
+                    return null;
+                }
+            }
         }
 
         $role = lc::roleDecorator();
@@ -112,7 +144,10 @@ readonly class HistoryChangesDecorator
 
         $accountId = null;
         if ($h->getReferenceType() === HistoryType::COUNTER_HISTORY) {
-            $accountId = CounterLocator::CounterService()->getById($h->getPrimaryId())?->getAccountId();
+            $accountId = CounterLocator::CounterService()->getById((int) $h->getPrimaryId())?->getAccountId();
+            if ( ! $accountId) {
+                return null;
+            }
         }
 
         $role = lc::roleDecorator();

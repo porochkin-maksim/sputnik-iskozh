@@ -94,7 +94,7 @@ Route::group(['prefix' => 'news'], static function () {
     Route::get('/{id}', [Controllers\Pages\News\NewsController::class, 'show'])->name(RouteNames::NEWS_SHOW);
     Route::group(['prefix' => 'json'], static function () {
         Route::get('/list', [Controllers\Pages\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
-        Route::get('/list/all', [Controllers\Pages\News\NewsController::class, 'listAll'])->name(RouteNames::NEWS_LIST_ALL);
+        Route::get('/list/index', [Controllers\Pages\News\NewsController::class, 'indexList'])->name(RouteNames::NEWS_INDEX_LIST);
         Route::get('/list/locked', [Controllers\Pages\News\NewsController::class, 'lockedNews'])->name(RouteNames::NEWS_LIST_LOCKED);
         Route::get('/create', [Controllers\Pages\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
         Route::post('/save', [Controllers\Pages\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);

@@ -18,7 +18,9 @@
                     </template>
                     {{ news.title ? news.title : 'Без названия' }}
                 </a>
-                <div class="date">{{ news.dossier.publishedAt }}</div>
+                <div class="date">
+                    <i class="fa fa-calendar"></i> {{ news.dossier.publishedAt }}
+                </div>
             </div>
 
             <div class="body">
