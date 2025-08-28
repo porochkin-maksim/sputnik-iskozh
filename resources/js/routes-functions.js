@@ -1,16 +1,22 @@
 function makeQuery(uri, getParams = {}) {
-    let getQuery = [];
-    Object.keys(getParams).forEach(key => {
-        if (getParams[key] && String(getParams[key]) !== '0') {
-            getQuery = getQuery.concat([key + '=' + getParams[key]]);
-        }
-    });
-    if (getQuery.length) {
-        uri = uri + '?' + getQuery.join('&');
-    }
-
-    return uri;
-}
+     let getQuery = [];
+     Object.keys(getParams).forEach(key => {
+         if (getParams[key]) {
+             if (Array.isArray(getParams[key])) {
+                 getParams[key].forEach((value, index) => {
+                     getQuery = getQuery.concat([key + '[]=' + value]);
+                 })
+             } else if (String(getParams[key]) !== '0') {
+                 getQuery = getQuery.concat([key + '=' + getParams[key]]);
+             }
+         }
+     });
+     if (getQuery.length) {
+         uri = uri + '?' + getQuery.join('&');
+     }
+ 
+     return uri;
+ }
 
 export function adminAccountCreate(getParams = {}, postData = null) {
     // see admin.account.create

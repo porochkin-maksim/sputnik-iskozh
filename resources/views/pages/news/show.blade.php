@@ -14,7 +14,7 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setType(OpenGraphType::ARTICLE)
     ->setTitle($news->getTitle())
-    ->setUrl($news->url())
+    ->setUrl($news->getUrl())
     ->setImage($news->getImages()->first()?->url())
     ->setDescription($news->getDescription() ? : $news->getArticleAsText())
 ;

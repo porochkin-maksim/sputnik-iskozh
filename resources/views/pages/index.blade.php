@@ -28,4 +28,6 @@ $qrPaymentFile = StaticFileLocator::StaticFileService()->qrPayment();
         </div>
     </div>
     <index-page :qr-payment='@json($qrPaymentFile)'></index-page>
+    <hr>
+    @include(ViewNames::PARTIAL_REQUESTS)
 @endsection

@@ -141,11 +141,11 @@ class NewsDTO implements \JsonSerializable
             'files'       => $this->getFiles(),
             'isLock'      => $this->isLock(),
             'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
-            'url'         => $this->url(),
+            'url'         => $this->getUrl(),
         ];
     }
 
-    public function url(): ?string
+    public function getUrl(): ?string
     {
         return NewsLocator::UrlFactory()->makeUrl($this);
     }

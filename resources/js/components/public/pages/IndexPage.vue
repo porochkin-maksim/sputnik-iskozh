@@ -1,17 +1,29 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <div v-if="news.length">
-                <div class="custom-list news-list w-100">
+            <template v-if="news.length">
+                <div class="custom-list news-list row w-100 ms-0">
                     <template v-for="(item, index) in news">
-                        <news-list-item :news="item"
-                                        :is-list="true"
-                                        :edit="false"
-                        />
-                        <hr v-if="index !== news.length - 1">
+                        <a class="col-md-6 col-12 text-decoration-none mb-2 px-0"
+                               :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
+                               :href="item.url"
+                            >
+                            <div class="custom-item news-item card h-100">
+                                <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
+                                    <div>
+                                        <a class="name">
+                                            {{ item.title ? item.title : 'Без названия' }}
+                                        </a>
+                                    </div>
+                                    <div class="date text-end mt-2">
+                                        <i class="fa fa-calendar"></i> {{ item.publishedAt }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </template>
                 </div>
-            </div>
+            </template>
         </template>
         <template v-slot:sub>
             <form :action="Url.Routes.search.uri" method="get">
@@ -25,29 +37,31 @@
                     </button>
                 </div>
             </form>
-            <hr>
             <template v-if="lockedNews && lockedNews.length">
-                <h1 class="title">
-                    Важное
-                </h1>
-                <div class="side-news">
+                <div class="side-news custom-list news-list row w-100 ms-0 mt-2">
                     <template v-for="(item, index) in lockedNews">
-                        <div class="custom-item news-item w-100">
-                            <div class="title">
-                                <div class="date">{{ item.dossier.publishedAt }}</div>
-                                <a class="name"
-                                   :href="item.url">
-                                    {{ item.title ? item.title : 'Без названия' }}
-                                </a>
+                        <a class="col-md-6 col-lg-12 col-12 text-decoration-none pe-lg-0 mb-2 px-0"
+                           :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
+                           :href="item.url"
+                        >
+                            <div class="custom-item news-item card h-100">
+                                <div class="title card-body h-100 d-flex flex-column justify-content-between p-2 pb-1">
+                                    <a class="name">
+                                        <i class="fa fa-bolt text-warning"></i>&nbsp;
+                                        {{ item.title ? item.title : 'Без названия' }}
+                                    </a>
+                                    <div class="date text-end mt-2">
+                                        <i class="fa fa-calendar"></i> {{ item.publishedAt }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <hr v-if="index !== item.length - 1">
+                        </a>
                     </template>
                 </div>
             </template>
-            <table class="table table-borderless small">
+            <table class="table table-bordered small">
                 <tbody>
-                <tr class="border-bottom">
+                <tr>
                     <th>График работы</th>
                 </tr>
                 <tr :class="!isWinter ? 'table-info' : ''">
@@ -64,7 +78,6 @@
                 </tr>
                 </tbody>
             </table>
-            <hr>
             <template v-if="qrPayment && qrPayment.url">
                 <a :href="qrPayment.url"
                    class="d-flex flex-column justify-content-center align-items-center"
@@ -75,19 +88,12 @@
                          alt="QR код">
                 </a>
                 <br>
-                <div class="text-center">
+                <div class="text-center mb-2">
                     <a :href="Url.Routes.contacts.uri">
                         Подробнее в разделе <b>"{{ Url.Routes.contacts.displayName }}"</b>
                     </a>
                 </div>
-                <hr>
             </template>
-            <h4>
-                <a :href="Url.Routes.proposal.uri"
-                   class="btn btn-sm btn-success w-lg-100">
-                    <i class="fa fa-envelope"></i>&nbsp;Написать&nbsp;предложение
-                </a>
-            </h4>
         </template>
     </page-template>
 </template>
@@ -95,20 +101,22 @@
 <script>
 import Url          from '../../../utils/Url.js';
 import PageTemplate from './TwoColumnsPage.vue';
-import NewsListItem from '../news/NewsItem.vue';
+import NewsListItem from '../news/list/NewsItem.vue';
+import BsSlider     from '../../common/BsSlider.vue';
+import FileItem     from '../news/FileItem.vue';
 
 export default {
     name      : 'IndexPage',
     components: {
+        FileItem, BsSlider,
         NewsListItem,
         PageTemplate,
     },
     props: {
         qrPayment: null,
     },
-    created () {
-        this.loadLockedNews();
-        this.loadNews();
+    async created () {
+        await this.loadLockedNews();
     },
     data () {
         return {
@@ -119,19 +127,25 @@ export default {
         };
     },
     methods : {
-        loadLockedNews () {
-            window.axios[Url.Routes.newsListLocked.method](Url.Routes.newsListLocked.uri, {}).then(response => {
+        async loadLockedNews () {
+            Url.RouteFunctions.newsListLocked().then(response => {
                 this.lockedNews = response.data.news;
             }).catch(response => {
                 this.parseResponseErrors(response);
+            }).then(() => {
+                this.loadNews();
             });
         },
-        loadNews () {
-            window.axios[Url.Routes.newsListAll.method](Url.Routes.newsListAll.uri, {
-                params: {
-                    limit: 5,
-                    skip : 0,
-                },
+        async loadNews () {
+            let excludeIds = [];
+            this.lockedNews.forEach(news => {
+                excludeIds.push(news.id);
+            });
+
+            Url.RouteFunctions.newsListAll({
+                limit  : 8,
+                skip   : 0,
+                exclude: excludeIds,
             }).then(response => {
                 this.news = response.data.news;
             }).catch(response => {

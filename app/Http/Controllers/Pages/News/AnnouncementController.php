@@ -55,7 +55,7 @@ class AnnouncementController extends Controller
         }
 
         if ($news->getCategory() !== CategoryEnum::ANNOUNCEMENT) {
-            return redirect($news->url());
+            return redirect($news->getUrl());
         }
 
         return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));

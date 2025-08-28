@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pages\News;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Public\News\IndexNewsListResource;
 use App\Models\News;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\File\Enums\FileTypeEnum;
@@ -61,7 +62,7 @@ class NewsController extends Controller
         }
 
         if ($news->getCategory() !== CategoryEnum::DEFAULT) {
-            return redirect($news->url());
+            return redirect($news->getUrl());
         }
 
         return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
@@ -109,7 +110,6 @@ class NewsController extends Controller
     {
         $searcher = $request->searcher();
         $searcher
-            ->setSelect([News::TITLE, News::ID, News::CATEGORY, News::PUBLISHED_AT,])
             ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
             ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true)
         ;
@@ -121,7 +121,7 @@ class NewsController extends Controller
         $news = $this->newsService->search($searcher);
 
         return response()->json([
-            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::NEWS  => new IndexNewsListResource($news->getItems()->toArray()),
             ResponsesEnum::TOTAL => $news->getTotal(),
             ResponsesEnum::EDIT  => false,
         ]);
@@ -136,6 +136,10 @@ class NewsController extends Controller
             ->setWithFiles()
         ;
 
+        if ($request->getArray('exclude')) {
+            $searcher->addWhere('id', SearcherInterface::NOT_IN, $request->getArray('exclude'));
+        }
+
         if ( ! $this->canEdit()) {
             $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
         }
@@ -143,7 +147,7 @@ class NewsController extends Controller
         $news = $this->newsService->search($searcher);
 
         return response()->json([
-            ResponsesEnum::NEWS  => $news->getItems(),
+            ResponsesEnum::NEWS  => new IndexNewsListResource($news->getItems()->toArray()),
             ResponsesEnum::TOTAL => $news->getTotal(),
             ResponsesEnum::EDIT  => false,
         ]);
