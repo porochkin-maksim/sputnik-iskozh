@@ -155,7 +155,6 @@ class AccountsController extends Controller
 
         $exData->setData($account->getExData()
             ->setCadastreNumber($request->getCadastreNumber())
-            ->setRegistryDate($request->getRegistryDate())
             ->jsonSerialize(),
         );
 

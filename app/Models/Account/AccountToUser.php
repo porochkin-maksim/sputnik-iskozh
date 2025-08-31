@@ -6,7 +6,8 @@ abstract class AccountToUser
 {
     public const string TABLE = 'account_to_user';
 
-    public const string ACCOUNT  = 'account';
-    public const string USER     = 'user';
-    public const string FRACTION = 'fraction';
+    public const string ACCOUNT    = 'account';
+    public const string USER       = 'user';
+    public const string FRACTION   = 'fraction';
+    public const string OWNER_DATE = 'ownerDate';
 }

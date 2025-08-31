@@ -64,7 +64,7 @@ class Account extends AbstractModel
             AccountToUser::TABLE,
             AccountToUser::ACCOUNT,
             AccountToUser::USER,
-        )->withPivot(AccountToUser::FRACTION);
+        )->withPivot([AccountToUser::FRACTION, AccountToUser::OWNER_DATE]);
     }
 
     public function invoices(): HasMany

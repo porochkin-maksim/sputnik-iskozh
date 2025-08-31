@@ -12,6 +12,20 @@ use Illuminate\Support\Str;
  */
 abstract class AbstractRequest extends FormRequest
 {
+    public static function make()
+    {
+        $request = request();
+        return new static(
+            $request->query->all(),
+            $request->request->all(),
+            $request->attributes->all(),
+            $request->cookies->all(),
+            $request->files->all(),
+            $request->server->all(),
+            $request->content
+        );
+    }
+
     public function authorize(): bool
     {
         return true;

@@ -31,6 +31,7 @@ use Core\Domains\User\Models\UserSearcher;
 use Core\Domains\User\Responses\SearchResponse;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -54,7 +55,7 @@ class UsersController extends Controller
         $this->exDataService  = ExDataLocator::ExDataService();
     }
 
-    public function view(?int $id = null)
+    public function view($id = null)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             abort(403);
@@ -65,6 +66,7 @@ class UsersController extends Controller
         $user = $id
             ? $this->userService->getById($id)
             : $this->userFactory->makeDefault();
+
         if ( ! $user) {
             abort(412);
         }
@@ -74,6 +76,18 @@ class UsersController extends Controller
             $user->setAccount($account);
             $role = $this->roleService->getByUserId($user->getId());
             $user->setRole($role);
+        }
+        else {
+            $accountId = DefaultRequest::make()->getIntOrNull('accountId');
+            if ($accountId) {
+                $account = $this->accountService->getById($accountId)
+                    ?->setFraction(1)
+                    ->setOwnerDate(now())
+                ;
+
+                $user->setAccount($account);
+                $user->setAccounts(new AccountCollection([$account]));
+            }
         }
         $user = new UserResource($user);
 
@@ -193,10 +207,12 @@ class UsersController extends Controller
             ->setMembershipDate($request->getMembershipDate())
         ;
 
-        $fractions = $request->getFractions();
-        $accounts  = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
+        $fractions  = $request->getFractions();
+        $ownerDates = $request->getOwnerDates();
+        $accounts   = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
         foreach ($accounts as $account) {
             $account->setFraction((float) $fractions[$account->getId()]);
+            $account->setOwnerDate(DateTimeHelper::toCarbonOrNull($ownerDates[$account->getId()]));
         }
         $user->setAccounts($accounts);
 

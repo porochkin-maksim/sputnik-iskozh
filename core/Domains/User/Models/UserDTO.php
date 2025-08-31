@@ -26,6 +26,7 @@ class UserDTO
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
     private ?float  $fraction      = null;
+    private ?Carbon $ownerDate     = null;
     private ?Carbon $isDeleted     = null;
 
     private ?string $membershipDutyInfo = null;
@@ -231,6 +232,18 @@ class UserDTO
         }
 
         return "$fractionPercent%";
+    }
+
+    public function getOwnerDate(): ?Carbon
+    {
+        return $this->ownerDate;
+    }
+
+    public function setOwnerDate(?Carbon $ownerDate): static
+    {
+        $this->ownerDate = $ownerDate;
+
+        return $this;
     }
 
     public function getExData(): UserExDataDTO

@@ -59,10 +59,13 @@ readonly class UserService
         $accountIds = [];
         if ($user->getAccounts()->first()?->getFraction() !== null) {
             foreach ($user->getAccounts() as $account) {
-                $accountIds[$account->getId()] = [AccountToUser::FRACTION => $account->getFraction()];
+                $accountIds[$account->getId()] = [
+                    AccountToUser::FRACTION   => $account->getFraction(),
+                    AccountToUser::OWNER_DATE => $account->getOwnerDate()?->format('Y-m-d'),
+                ];
             }
-
-        }else{
+        }
+        else {
             $accountIds = $user->getAccountIds();
         }
         $model->accounts()->sync($accountIds);
@@ -97,7 +100,7 @@ readonly class UserService
         return $result->setItems($collection);
     }
 
-    public function getById(?int $id, bool $withDeleted = false): ?UserDTO
+    public function getById(int|string|null $id, bool $withDeleted = false): ?UserDTO
     {
         if ( ! $id) {
             return null;

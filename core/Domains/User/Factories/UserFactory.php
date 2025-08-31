@@ -11,6 +11,7 @@ use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\Enums\UserIdEnum;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Models\UserExDataDTO;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Support\Facades\Hash;
 
 readonly class UserFactory
@@ -96,6 +97,7 @@ readonly class UserFactory
             ->setMembershipDate($model->{UserInfo::MEMBERSHIP_DATE})
             ->setMembershipDutyInfo($model->{UserInfo::MEMBERSHIP_DUTY_INFO})
             ->setFraction($model->pivot?->fraction)
+            ->setOwnerDate(DateTimeHelper::toCarbonOrNull($model->pivot?->ownerDate))
             ->setIsDeleted($model->deleted_at)
         ;
 

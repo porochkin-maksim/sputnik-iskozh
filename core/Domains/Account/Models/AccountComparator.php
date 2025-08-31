@@ -13,10 +13,8 @@ class AccountComparator extends AbstractComparatorDTO
     public const TITLE_IS_VERIFIED     = 'Подтверждён';
     public const TITLE_IS_INVOICING    = 'Выставление счетов';
     public const TITLE_CADASTRE_NUMBER = 'Кадастровый номер';
-    public const TITLE_REGISTRY_DATE   = 'Дата регистрации';
 
     private const KEY_CADASTRE_NUMBER = 'cadastreNumber';
-    private const KEY_REGISTRY_DATE   = 'registryDate';
 
     protected const KEYS_TO_TITLES = [
         Account::NUMBER           => self::TITLE_NUMBER,
@@ -24,7 +22,6 @@ class AccountComparator extends AbstractComparatorDTO
         Account::IS_VERIFIED      => self::TITLE_IS_VERIFIED,
         Account::IS_INVOICING     => self::TITLE_IS_INVOICING,
         self::KEY_CADASTRE_NUMBER => self::TITLE_CADASTRE_NUMBER,
-        self::KEY_REGISTRY_DATE   => self::TITLE_REGISTRY_DATE,
     ];
 
     public function __construct(AccountDTO $entity)
@@ -34,7 +31,6 @@ class AccountComparator extends AbstractComparatorDTO
         $this->initProperties($entity, $entity->getId());
         $this->addProperties([
             self::KEY_CADASTRE_NUMBER => $exData->getCadastreNumber(),
-            self::KEY_REGISTRY_DATE   => $exData->getRegistryDate()?->format(DateTimeFormat::DATE_DEFAULT),
         ]);
 
         $this->expandedProperties = [

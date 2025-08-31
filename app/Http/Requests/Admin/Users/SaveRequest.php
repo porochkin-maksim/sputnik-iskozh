@@ -78,6 +78,11 @@ class SaveRequest extends AbstractRequest
         return $this->getArray('fractions');
     }
 
+    public function getOwnerDates(): array
+    {
+        return $this->getArray('ownerDates');
+    }
+
     public function getPhone(): ?string
     {
         return $this->getStringOrNull(self::PHONE);

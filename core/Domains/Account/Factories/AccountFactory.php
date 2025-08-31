@@ -8,6 +8,7 @@ use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Account\Models\AccountExDataDTO;
 use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\UserLocator;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class AccountFactory
@@ -63,6 +64,7 @@ readonly class AccountFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at)
             ->setFraction($model->pivot?->fraction)
+            ->setOwnerDate(DateTimeHelper::toCarbonOrNull($model->pivot?->ownerDate))
         ;
 
         if (isset($model->getRelations()[Account::USERS])) {

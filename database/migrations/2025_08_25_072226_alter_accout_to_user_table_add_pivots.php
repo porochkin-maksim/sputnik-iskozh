@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        if (Schema::hasColumn('users', 'account_to_user')) {
+        if (Schema::hasColumn('account_to_user', 'fraction')) {
             return;
         }
 
@@ -24,7 +24,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        if ( ! Schema::hasColumn('users', 'account_to_user')) {
+        if ( ! Schema::hasColumn('account_to_user', 'fraction')) {
             return;
         }
 

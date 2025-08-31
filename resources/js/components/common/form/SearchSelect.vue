@@ -1,6 +1,5 @@
 <template>
-    <div class="dropdown-search"
-         :id="uid">
+    <div class="dropdown-search " :class="[label ? 'form-floating position-relative' : '']" :id="vueId">
         <!-- Input для поиска -->
         <input
             type="text"
@@ -8,16 +7,19 @@
             :placeholder="placeholder"
             :disabled="disabled"
             :value="inputDisplay"
+            :id="'input' + vueId"
             @input="searchQuery = $event.target.value"
             @focus="openList"
             @blur="closeOnBlur"
         >
+        <label :for="'input' + vueId" v-if="label">
+            {{ label }}<span v-if="required" class="text-danger">*</span>
+        </label>
         <span v-if="(multiple ? (selectedItems.length > 0) : (searchQuery && !disabled))"
               class="clear-icon"
-              @click.stop="clearSelection">
-        &times;
-      </span>
-
+              :class="[label ? 'labeled' : '']"
+              @click.stop="clearSelection"
+        >&times;</span>
         <!-- Выпадающий список -->
         <ul v-if="isOpen && filteredItems.length > 0"
             class="dropdown-menu show shadow-sm">
@@ -44,6 +46,8 @@ export default {
             type   : String,
             default: 'Поиск...', // Значение по умолчанию
         },
+        label      : String,
+        required   : Boolean,
         propClass  : {
             type   : String,
             default: 'form-control', // Значение по умолчанию
@@ -65,8 +69,11 @@ export default {
         return {
             searchQuery: '',
             isOpen     : false,
-            uid        : null,
+            vueId        : null,
         };
+    },
+    created () {
+        
     },
     computed: {
         filteredItems () {
@@ -138,7 +145,7 @@ export default {
         },
     },
     mounted () {
-        this.uid = 'uuid' + this._uid;
+        this.vueId = 'uuid' + this.$_uid;
         if (this.multiple) {
             // ничего не делаем
         } else {
@@ -160,7 +167,7 @@ export default {
         },
         closeOnBlur (event) {
             // Проверяем, кликнули ли вне области выпадающего списка
-            if (!event.target.closest(`#${this.uid}`)) {
+            if (!event.target.closest(`#${this.vueId}`)) {
                 this.isOpen = false;
                 // После потери фокуса показываем выбранные значения
                 this.searchQuery = '';
@@ -195,7 +202,7 @@ export default {
             }
         },
         handleClickOutside (event) {
-            if (!event.target.closest(`#${this.uid}`)) {
+            if (!event.target.closest(`#${this.vueId}`)) {
                 this.isOpen = false;
             }
         },
@@ -221,6 +228,10 @@ export default {
     font-size : 20px;
     color     : #aaa;
     cursor    : pointer;
+}
+
+.clear-icon.labeled {
+    top : 61%;
 }
 
 .dropdown-menu {

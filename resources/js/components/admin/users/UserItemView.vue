@@ -1,30 +1,17 @@
 <template>
     <div class="d-flex justify-content-between align-items-center mb-2">
         <div class="d-flex">
-            <button class="btn btn-success me-2"
-                    v-if="actions.edit"
-                    @click="saveAction"
-                    :disabled="loading"
-            >
-                <i class="fa"
-                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                {{ localUser.id ? 'Сохранить' : 'Создать' }}
-            </button>
             <a class="btn btn-outline-primary me-2"
                v-if="actions.edit && localUser.id"
                :href="getCreateLink()">Добавить пользователя
             </a>
         </div>
         <div class="d-flex">
-            <div class="me-2" v-if="actions.drop">
+            <div class="me-2" v-if="actions.drop && localUser.id">
                 <button class="btn btn-sm btn-danger" v-if="!localUser.isDeleted" @click="dropAction">
                     <i class="fa fa-trash"></i> Удалить
                 </button>
             </div>
-            <history-btn
-                :disabled="!localUser.id"
-                class="btn-link underline-none"
-                :url="historyUrl" />
         </div>
     </div>
     <div class="row">
@@ -35,51 +22,40 @@
                     <i class="fa fa-rotate-left"></i> Восстановить
                 </button>
             </div>
-            <div class="form">
-                <table class="table table-responsive align-middle"
-                       :class="localUser.actions.edit ? 'table-borderless' : ''">
-                    <tbody>
-                    <tr>
-                        <th>Фамилия</th>
-                        <td>
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5>Информация</h5>
+                    <div class="row mb-2">
+                        <div class="col-4 pe-1">
                             <custom-input v-model="localUser.lastName"
-                                          v-if="localUser.actions.edit"
                                           :disabled="loading"
+                                          :label="'Фамилия'"
                                           @change="clearError('lastName')"
                             />
-                            <span v-else>{{ localUser.lastName }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Имя</th>
-                        <td>
+                        </div>
+                        <div class="col-4 px-1">
                             <custom-input v-model="localUser.firstName"
-                                          v-if="localUser.actions.edit"
                                           :disabled="loading"
+                                          :label="'Имя'"
                                           @change="clearError('firstName')"
                             />
-                            <span v-else>{{ localUser.firstName }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Отчество</th>
-                        <td>
+                        </div>
+                        <div class="col-4 ps-1">
                             <custom-input v-model="localUser.middleName"
-                                          v-if="localUser.actions.edit"
                                           :disabled="loading"
+                                          :label="'Отчество'"
                                           @change="clearError('middleName')"
                             />
-                            <span v-else>{{ localUser.middleName }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Почта</th>
-                        <td>
-                            <div class="input-group w-100"
-                                 v-if="localUser.actions.edit">
-                                <input class="form-control"
-                                       v-model="localUser.email"
-                                       :disabled="loading">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6 pe-1">
+                            <div class="w-100" :class="[canGenerateEmail ? 'input-group' : '']">
+                                <custom-input v-model="localUser.email"
+                                              :disabled="loading"
+                                              :label="'Почта'"
+                                              @change="clearError('email')"
+                                />
                                 <button class="btn btn-success"
                                         v-if="canGenerateEmail"
                                         @click="generateEmail"
@@ -87,165 +63,159 @@
                                     <i class="fa fa-retweet"></i>
                                 </button>
                             </div>
-                            <span v-else>{{ localUser.email }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Телефон</th>
-                        <td>
-                            <custom-input v-model="localUser.phone"
-                                          v-if="localUser.actions.edit"
-                                          :disabled="loading"
-                                          @change="clearError('phone')"
-                            />
-                            <span v-else>{{ localUser.phone }}</span>
-                        </td>
-                    </tr>
-                    <template v-if="localUser.actions.edit">
-                        <tr>
-                            <th>
-                                Участки
-                            </th>
-                            <td class="align-top">
-                                <search-select v-model="accountIds"
-                                               :disabled="loading"
-                                               :multiple="true"
-                                               :prop-class="'form-control'"
-                                               :items="accounts"
-                                               :placeholder="'Участок'"
+                        </div>
+                        <div class="col-6 ps-1">
+                            <div class="w-100" :class="[canGenerateEmail ? 'input-group' : '']">
+                                <custom-input v-model="localUser.phone"
+                                              :disabled="loading"
+                                              :label="'Телефон'"
+                                              @change="clearError('phone')"
                                 />
-                            </td>
-                        </tr>
-                        <template v-if="fractions && fractions.length && accounts && accounts.length">
-                            <template v-for="(fraction) in fractions">
-                                <tr>
-                                    <th v-html="renderAccountLink(fraction.accountId)"></th>
-                                    <td>
-                                        <custom-input v-model="fraction.value"
-                                                      :disabled="loading"
-                                                      :label="'Доля владения (от 0 до 1)'"
-                                                      :type="'number'"
-                                                      :step="'0.1'"
-                                                      :max="1"
-                                                      :min="0"
-                                        />
-                                    </td>
-                                </tr>
-                            </template>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <template v-if="fractions && fractions.length && accounts && accounts.length">
-                            <template v-for="(fraction) in fractions">
-                                <tr>
-                                    <th>
-                                        <span v-html="renderAccountLink(fraction.accountId)"></span>
-                                    </th>
-                                    <td>
-                                        <i class="fa fa-user" :class="[fraction.value ? 'text-success' : 'text-light']"></i>&nbsp;{{ fraction.value ? (fraction.value * 100)+'%' : '' }}
-                                    </td>
-                                </tr>
-                            </template>
-                        </template>
-                    </template>
-                    <tr>
-                        <th>Роль</th>
-                        <td>
+                                <button class="btn btn-success"
+                                        v-if="canGenerateEmail"
+                                        @click="generateEmail"
+                                        :disabled="loading">
+                                    <i class="fa fa-retweet"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <h5>Дополнительно</h5>
+                    <div class="row mb-2">
+                        <div class="col-6 pe-1">
                             <search-select v-model="localUser.roleId"
                                            v-if="localUser.actions.edit"
                                            :disabled="loading"
                                            :prop-class="'form-control'"
                                            :items="roles"
+                                           :label="'Роль'"
                                            :placeholder="'Роль'"
                             />
-                            <span v-else>{{ localUser.roleName }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colspan="2"
-                            class="text-center table-light">Дополнительно
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Дата членства</th>
-                        <td>
+                        </div>
+                        <div class="col-6 ps-1">
+                            <custom-input v-model="localUser.addPhone"
+                                          :disabled="loading"
+                                          :label="'Дополнительный телефон'"
+                                          @change="clearError('addPhone')"
+                            />
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6 pe-1">
+                            <custom-input v-model="localUser.membershipDutyInfo"
+                                          :disabled="loading"
+                                          :label="'Основание членства'"
+                                          @change="clearError('membershipDutyInfo')"
+                            />
+                        </div>
+                        <div class="col-6 ps-1">
                             <custom-calendar v-model="localUser.membershipDate"
-                                             v-if="localUser.actions.edit"
                                              :disabled="loading"
+                                             :label="'Дата членства'"
                                              @change="clearError('membershipDate')"
                             />
-                            <span v-else>{{ $formatDate(localUser.membershipDate) }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Основание членства</th>
-                        <td>
-                            <custom-input v-model="localUser.membershipDutyInfo"
-                                          v-if="localUser.actions.edit"
-                                          :disabled="loading"
-                                          @change="clearError('phone')"
-                            />
-                            <span v-else>{{ localUser.membershipDutyInfo }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Дополнительный телефон</th>
-                        <td>
-                            <custom-input v-model="localUser.addPhone"
-                                          v-if="localUser.actions.edit"
-                                          :disabled="loading"
-                            />
-                            <span v-else>{{ localUser.addPhone }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Адрес по прописке</th>
-                        <td>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6 pe-1">
                             <custom-input v-model="localUser.legalAddress"
-                                          v-if="localUser.actions.edit"
                                           :disabled="loading"
+                                          :label="'Адрес по прописке'"
+                                          @change="clearError('legalAddress')"
                             />
-                            <span v-else>{{ localUser.legalAddress }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Адрес почтовый</th>
-                        <td>
+                        </div>
+                        <div class="col-6 ps-1">
                             <custom-input v-model="localUser.postAddress"
-                                          v-if="localUser.actions.edit"
-                                          :disabled="loading"
+                                             :disabled="loading"
+                                             :label="'Почтовый адрес'"
+                                             @change="clearError('postAddress')"
                             />
-                            <span v-else>{{ localUser.postAddress }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Примечание</th>
-                        <td>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
                             <custom-textarea v-model="localUser.additional"
-                                             v-if="localUser.actions.edit"
+                                             :label="'Комментарий'"
                                              :height="100"
                                              :disabled="loading"
                             />
-                            <span v-else>{{ localUser.additional }}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-2">
+                        <div class="d-flex">
+                            <button class="btn btn-success me-2"
+                                    v-if="actions.edit"
+                                    @click="saveAction"
+                                    :disabled="loading"
+                            >
+                                <i class="fa"
+                                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                                {{ localUser.id ? 'Сохранить' : 'Создать' }}
+                            </button>
+                        </div>
+                        <div class="d-flex">
+                            <history-btn
+                                :disabled="!localUser.id"
+                                class="btn-link underline-none"
+                                :url="historyUrl" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-6 pt-2"
-             v-if="localUser.id">
-            <ul class="list-group"
-                v-if="localUser.actions.edit">
-                <li class="list-group-item list-group-item-action cursor-pointer"
-                    @click="sendInvitePasswordEmail">
-                    <i class="fa fa-envelope"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
-                </li>
-                <li class="list-group-item list-group-item-action cursor-pointer"
-                    @click="sendRestorePasswordEmail">
-                    <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
-                </li>
-            </ul>
+        <div class="col-6">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="m-0">Участки</h5>
+                        <div class="w-75">
+                            <search-select v-model="accountIds"
+                                           :disabled="loading"
+                                           :multiple="true"
+                                           :prop-class="'form-control w-100'"
+                                           :items="accounts"
+                                           :placeholder="'Введите и выберите номера участков'"
+                            />
+                        </div>
+                    </div>
+                    <template v-if="fractions && fractions.length && accounts && accounts.length">
+                        <div v-for="(fraction) in fractions" class="row mb-2">
+                            <div class="col-3 pe-1 d-flex justify-content-center align-items-end pb-1">
+                                <h6 v-html="renderAccountLink(fraction.accountId)"></h6>
+                            </div>
+                            <div class="col-4 px-1">
+                                <custom-input v-model="fraction.value"
+                                              :disabled="loading"
+                                              :label="'Доля владения (от 0 до 1)'"
+                                              :type="'number'"
+                                              :step="'0.1'"
+                                              :max="1"
+                                              :min="0"
+                                />
+                            </div>
+                            <div class="col-5 ps-1">
+                                <custom-calendar v-model="fraction.date"
+                                                 :disabled="loading"
+                                                 :label="'Дата права'"
+                                />
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="card mb-2" v-if="localUser.id">
+                <div class="card-body">
+                    <h5>Уведомления</h5>
+                    <ul class="list-group" v-if="localUser.actions.edit">
+                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendInvitePasswordEmail">
+                            <i class="fa fa-envelope-o"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
+                        </li>
+                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendRestorePasswordEmail">
+                            <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -290,7 +260,7 @@ export default {
     created () {
         this.vueId = 'uuid' + this.$_uid;
 
-        this.localUser = {
+        this.localUser  = {
             ...this.user,
         };
         this.accountIds = Array.isArray(this.user.accountIds)
@@ -301,6 +271,7 @@ export default {
                 this.fractions.push({
                     accountId: account.id,
                     value    : account.fraction,
+                    date     : account.ownerDate,
                 });
             }
         }
@@ -332,7 +303,8 @@ export default {
             form.append('email', this.localUser.email);
             if (Array.isArray(this.fractions)) {
                 for (const fraction of this.fractions) {
-                    form.append('fractions['+fraction.accountId+']', fraction.value);
+                    form.append('fractions[' + fraction.accountId + ']', fraction.value);
+                    form.append('ownerDates[' + fraction.accountId + ']', fraction.date);
                 }
             }
             form.append('role_id', this.localUser.roleId);
@@ -473,37 +445,15 @@ export default {
         renderAccountLink (accountId) {
             const uri = Url.Generator.makeUri(Url.Routes.adminAccountView, { accountId: accountId });
 
-            return '<a href=' + uri + '>Участок ' + this.getAccountNumberById(accountId) + '</a>';
+            return '<a href=' + uri + ' class="text-decoration-none">' + this.getAccountNumberById(accountId) + '</a>';
         },
         getAccountNumberById (accountId) {
             return this.accounts.find(account => String(account.key) === String(accountId))?.value;
         },
-        getFractionByAccountId (accountId) {
-            console.log(accountId,this.fractions);
-
-            let result = null;
-            this.fractions.forEach(fraction => {
-                if (fraction.accountId === accountId) {
-                    result = fraction;
-                }
-            });
-
-            console.log(result);
-
-            return result;
-        },
     },
     computed: {
         canGenerateEmail () {
-            return !this.localUser.id && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
-        },
-        localUserAccounts () {
-            let result = this.localUser.accounts;
-            if (!result.length) {
-                result = [{}];
-            }
-
-            return result;
+            return (!this.localUser.id || !this.localUser.email) && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
         },
     },
     watch   : {
@@ -512,19 +462,29 @@ export default {
                 let fractions = [];
                 newAccountIds.forEach(accountId => {
                     let value = 0;
+                    let date  = null;
                     this.fractions.forEach(fraction => {
-                        if (fraction.accountId === accountId) {
+                        if (String(fraction.accountId) === String(accountId)) {
                             value = fraction.value;
+                            date  = fraction.date;
                         }
                     });
                     fractions.push({
                         accountId: accountId,
                         value    : value,
+                        date     : date,
                     });
                 });
+                this.fractions = fractions;
             },
             deep: true,
         },
     },
 };
 </script>
+
+<style scoped>
+td {
+    padding : 2px 0;
+}
+</style>

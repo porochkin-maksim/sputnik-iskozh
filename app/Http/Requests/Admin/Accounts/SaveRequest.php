@@ -70,11 +70,6 @@ class SaveRequest extends AbstractRequest
         return $this->getStringOrNull('cadastreNumber');
     }
 
-    public function getRegistryDate(): ?Carbon
-    {
-        return $this->getDateOrNull('registryDate');
-    }
-
     public function getIsInvoicing(): bool
     {
         return $this->getBool(self::IS_INVOICING);

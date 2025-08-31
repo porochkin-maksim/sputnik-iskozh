@@ -1,87 +1,82 @@
 <template>
-    <element-wrapper
-        :label="label"
-        :error="error"
-        :required="required"
-        :disabled="disabled"
-        :help="help"
-        :classes="'w-100'"
-    >
-        <div class="custom-calendar w-100"
-             ref="calendarRoot">
-            <div class="custom-calendar__input d-flex align-items-center position-relative">
-                <input
-                    type="text"
-                    class="form-control pe-5"
-                    :value="inputValue"
-                    :placeholder="'дд.мм.гггг'"
-                    :disabled="disabled"
-                    @input="onInput"
-                    @blur="onBlur"
-                    @keydown.enter.prevent="onBlur"
-                >
-                <i class="fa fa-calendar position-absolute end-0 me-3 text-secondary"
-                   style="cursor:pointer; z-index:2;"
-                   @click="toggleDropdown"
-                ></i>
-            </div>
-            <div v-if="isOpen"
-                 class="custom-calendar__dropdown p-2">
-                <div class="custom-calendar__header mb-2 d-flex align-items-center justify-content-between">
-                    <button class="btn btn-sm btn-outline-secondary px-2"
-                            @click="prevMonth"
-                            type="button">&lt;
-                    </button>
-                    <span class="custom-calendar__month-name flex-grow-1 text-center"
-                          style="cursor:pointer;"
-                          @click="toggleMonthYearSelect">
-                        {{ monthYearLabel }}
-                    </span>
-                    <button class="btn btn-sm btn-outline-secondary px-2"
-                            @click="nextMonth"
-                            type="button">&gt;
-                    </button>
-                </div>
-                <div v-if="isMonthYearSelectOpen" class="custom-calendar__month-year-select mb-2 d-flex justify-content-center align-items-center gap-2">
-                    <select v-model.number="tempYear" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
-                        <option v-for="year in yearsRange" :key="year" :value="year">{{ year }}</option>
-                    </select>
-                    <select v-model.number="tempMonth" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
-                        <option v-for="(m, idx) in months" :key="m" :value="idx">{{ m }}</option>
-                    </select>
-                    <button class="btn btn-sm btn-primary ms-2" @click="applyMonthYear">OK</button>
-                </div>
-                <table v-if="!isMonthYearSelectOpen" class="table table-bordered table-sm mb-0 text-center align-middle">
-                    <thead>
-                    <tr>
-                        <th v-for="d in weekdays"
-                            :key="d"
-                            class="bg-light text-secondary small">{{ d }}
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(week, wIdx) in weeks"
-                        :key="wIdx">
-                        <td v-for="(day, dIdx) in week"
-                            :key="dIdx"
-                            :class="[
-                                    'p-0',
-                                    day.isSelected ? 'bg-primary text-white' : '',
-                                    (!day.isSelected && day.isToday) ? 'text-info fw-bold' : '',
-                                    day.disabled ? 'bg-light text-muted' : 'cursor-pointer'
-                                ]"
-                            style="height:2.2em; min-width:2.2em; border-width: 1px;"
-                            @click="!day.disabled && selectDate(day.date)"
-                        >
-                            {{ day.text }}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="custom-calendar w-100"
+         ref="calendarRoot">
+        <div :class="[label ? 'form-floating' : '']" class="custom-calendar__input position-relative">
+            <input
+                type="text"
+                class="form-control pe-5 w-100"
+                :id="'input' + vueId"
+                :value="inputValue"
+                :placeholder="'дд.мм.гггг'"
+                :disabled="disabled"
+                @input="onInput"
+                @blur="onBlur"
+                @keydown.enter.prevent="onBlur"
+            >
+            <label :for="'input' + vueId" v-if="label">
+                {{ label }}<span v-if="required" class="text-danger">*</span>
+            </label>
+            <i class="fa fa-calendar position-absolute end-0 me-3 text-secondary" :class="[label ? 'mt-3' : 'mt-3']"
+               style="cursor:pointer; z-index:2;"
+               @click="toggleDropdown"
+            ></i>
         </div>
-    </element-wrapper>
+        <div v-if="isOpen"
+             class="custom-calendar__dropdown p-2">
+            <div class="custom-calendar__header mb-2 d-flex align-items-center justify-content-between">
+                <button class="btn btn-sm btn-outline-secondary px-2"
+                        @click="prevMonth"
+                        type="button">&lt;
+                </button>
+                <span class="custom-calendar__month-name flex-grow-1 text-center"
+                      style="cursor:pointer;"
+                      @click="toggleMonthYearSelect">
+                    {{ monthYearLabel }}
+                </span>
+                <button class="btn btn-sm btn-outline-secondary px-2"
+                        @click="nextMonth"
+                        type="button">&gt;
+                </button>
+            </div>
+            <div v-if="isMonthYearSelectOpen" class="custom-calendar__month-year-select mb-2 d-flex justify-content-center align-items-center gap-2">
+                <select v-model.number="tempYear" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
+                    <option v-for="year in yearsRange" :key="year" :value="year">{{ year }}</option>
+                </select>
+                <select v-model.number="tempMonth" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
+                    <option v-for="(m, idx) in months" :key="m" :value="idx">{{ m }}</option>
+                </select>
+                <button class="btn btn-sm btn-primary ms-2" @click="applyMonthYear">OK</button>
+            </div>
+            <table v-if="!isMonthYearSelectOpen" class="table table-bordered table-sm mb-0 text-center align-middle">
+                <thead>
+                <tr>
+                    <th v-for="d in weekdays"
+                        :key="d"
+                        class="bg-light text-secondary small">{{ d }}
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(week, wIdx) in weeks"
+                    :key="wIdx">
+                    <td v-for="(day, dIdx) in week"
+                        :key="dIdx"
+                        :class="[
+                                'p-0',
+                                day.isSelected ? 'bg-primary text-white' : '',
+                                (!day.isSelected && day.isToday) ? 'text-info fw-bold' : '',
+                                day.disabled ? 'bg-light text-muted' : 'cursor-pointer'
+                            ]"
+                        style="height:2.2em; min-width:2.2em; border-width: 1px;"
+                        @click="!day.disabled && selectDate(day.date)"
+                    >
+                        {{ day.text }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -107,22 +102,26 @@ export default {
         help      : String,
         disabled  : Boolean,
     },
+    created () {
+        this.vueId = 'uuid' + this.$_uid;
+    },
     data () {
         const today = new Date();
         return {
-            isOpen      : false,
+            vueId                : null,
+            isOpen               : false,
             isMonthYearSelectOpen: false,
-            tempMonth: today.getMonth(),
-            tempYear: today.getFullYear(),
-            selected    : null,
-            currentMonth: today.getMonth(),
-            currentYear : today.getFullYear(),
-            weekdays    : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-            months      : [
+            tempMonth            : today.getMonth(),
+            tempYear             : today.getFullYear(),
+            selected             : null,
+            currentMonth         : today.getMonth(),
+            currentYear          : today.getFullYear(),
+            weekdays             : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+            months               : [
                 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
                 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
             ],
-            inputValue  : '',
+            inputValue           : '',
         };
     },
     computed: {

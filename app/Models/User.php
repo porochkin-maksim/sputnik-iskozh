@@ -103,7 +103,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
             AccountToUser::TABLE,
             AccountToUser::USER,
             AccountToUser::ACCOUNT,
-        )->withPivot(AccountToUser::FRACTION);
+        )->withPivot([AccountToUser::FRACTION, AccountToUser::OWNER_DATE]);
     }
 
     public function roles(): BelongsToMany

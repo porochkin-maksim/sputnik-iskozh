@@ -47,6 +47,7 @@ readonly class UserResource extends AbstractResource
             'accountId'       => (int) ($user->getAccount()?->getId()),
             'fraction'        => $user->getFraction(),
             'fractionPercent' => $user->getFractionpercent(),
+            'ownerDate'       => $user->getOwnerDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'accountName'     => $curAccount?->getNumber(),
             'accountIds'      => $user->getAccountIds(),
             'emailVerifiedAt' => $user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),

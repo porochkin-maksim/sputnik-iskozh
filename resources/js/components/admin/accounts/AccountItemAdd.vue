@@ -31,11 +31,6 @@
                                   :label="'Кадастровый номер'"
                     />
                 </div>
-                <div class="mt-2">
-                    <custom-input v-model="registryDate"
-                                  :label="'Дата регистрации'"
-                    />
-                </div>
             </div>
         </template>
         <template v-slot:footer>
@@ -89,7 +84,6 @@ export default {
             this.size           = this.modelValue.size;
             this.isInvoicing    = this.modelValue.is_invoicing;
             this.cadastreNumber = this.modelValue.cadastreNumber;
-            this.registryDate   = this.modelValue.registryDate;
 
             this.showDialog = true;
             this.hideDialog = false;
@@ -123,7 +117,6 @@ export default {
             form.append('size', parseInt(this.size ? this.size : 0));
             form.append('is_invoicing', !!this.isInvoicing);
             form.append('cadastreNumber', this.cadastreNumber);
-            form.append('registryDate', this.registryDate);
 
             this.clearResponseErrors();
             window.axios[Url.Routes.adminAccountSave.method](
