@@ -70,6 +70,12 @@ footer,
         .social-link {
             border        : 1px solid $default-primary;
             border-radius : 0.5rem;
+
+            &:hover {
+                cursor           : pointer;
+                background-color : $default-light;
+            }
+
         }
     }
 
@@ -137,6 +143,13 @@ footer,
             cursor           : pointer;
             background-color : $default-light;
         }
+    }
+}
+
+.hover-plate {
+    &:hover {
+        cursor           : pointer;
+        background-color : $default-light;
     }
 }
 

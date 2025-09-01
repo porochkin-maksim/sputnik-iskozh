@@ -8,7 +8,7 @@
                                :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
                                :href="item.url"
                             >
-                            <div class="custom-item news-item card h-100">
+                            <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
                                     <div>
                                         <a class="name">
@@ -44,7 +44,7 @@
                            :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
                            :href="item.url"
                         >
-                            <div class="custom-item news-item card h-100">
+                            <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between p-2 pb-1">
                                     <a class="name">
                                         <i class="fa fa-bolt text-warning"></i>&nbsp;
