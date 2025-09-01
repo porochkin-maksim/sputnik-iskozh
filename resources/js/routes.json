@@ -815,7 +815,7 @@
     },
     "filesIndex": {
         "name": "files.index",
-        "displayName": "\u0424\u0430\u0439\u043b\u044b",
+        "displayName": "\u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u044b",
         "method": "get",
         "uri": "\/files\/{folder}",
         "args": {
@@ -871,6 +871,15 @@
         "displayName": "",
         "method": "delete",
         "uri": "\/folders\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "foldersInfo": {
+        "name": "folders.info",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/folders\/json\/info\/{id}",
         "args": {
             "id": "{id}"
         }

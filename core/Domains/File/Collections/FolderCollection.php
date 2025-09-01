@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, FolderDTO>
  */
-class Folders extends Collection implements CollectionInterface
+class FolderCollection extends Collection implements CollectionInterface
 {
     use CollectionTrait;
 

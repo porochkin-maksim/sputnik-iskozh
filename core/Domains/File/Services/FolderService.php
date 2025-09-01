@@ -2,7 +2,8 @@
 
 namespace Core\Domains\File\Services;
 
-use Core\Domains\File\Collections\Folders;
+use App\Models\File\Folder;
+use Core\Domains\File\Collections\FolderCollection;
 use Core\Domains\File\Factories\FolderFactory;
 use Core\Domains\File\Models\FileSearcher;
 use Core\Domains\File\Models\FolderDTO;
@@ -53,7 +54,7 @@ readonly class FolderService
         $result = new FolderSearchResponse();
         $result->setTotal($response->getTotal());
 
-        $collection = new Folders();
+        $collection = new FolderCollection();
         foreach ($response->getItems() as $item) {
             $collection->add($this->folderFactory->makeDtoFromObject($item));
         }
@@ -110,5 +111,23 @@ readonly class FolderService
         }
 
         return $result;
+    }
+
+    public function getWithParentsRecursively(int|string|null $id): FolderCollection
+    {
+        $curFolder = $id ? $this->getById((int) $id) : null;
+        if (!$curFolder) {
+            return new FolderCollection();
+        }
+
+        $folderStack = [$curFolder];
+        while ($curFolder->getParentId()) {
+            $curFolder = $this->getById($curFolder->getParentId());
+            if ($curFolder) {
+                $folderStack[] = $curFolder;
+            }
+        }
+
+        return new FolderCollection($folderStack);
     }
 }

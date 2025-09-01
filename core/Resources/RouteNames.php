@@ -71,6 +71,7 @@ abstract class RouteNames
     public const string FOLDERS_LIST   = 'folders.list';
     public const string FOLDERS_SAVE   = 'folders.save';
     public const string FOLDERS_SHOW   = 'folders.show';
+    public const string FOLDERS_INFO   = 'folders.info';
     public const string FOLDERS_DELETE = 'folders.delete';
 
     public const string ACCOUNT_REGISTER      = 'account.register';
@@ -227,7 +228,7 @@ abstract class RouteNames
             self::PROFILE_COUNTERS                    => 'Счётчики',
             self::PROFILE_INVOICES                    => 'Счета',
 
-            self::FILES                               => 'Файлы',
+            self::FILES                               => 'Документы',
             self::NEWS                                => 'Новости',
             self::ANNOUNCEMENTS                       => 'Объявления',
             self::REPORTS                             => 'Отчёты',

@@ -136,6 +136,7 @@ Route::group(['prefix' => 'folders'], static function () {
     Route::group(['prefix' => 'json'], static function () {
         Route::get('/list', [Controllers\Pages\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
         Route::get('/show/{id}', [Controllers\Pages\Files\FolderController::class, 'show'])->name(RouteNames::FOLDERS_SHOW);
+        Route::get('/info/{id?}', [Controllers\Pages\Files\FolderController::class, 'info'])->name(RouteNames::FOLDERS_INFO);
 
         Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
             Route::post('/save', [Controllers\Pages\Files\FolderController::class, 'save'])->name(RouteNames::FOLDERS_SAVE);

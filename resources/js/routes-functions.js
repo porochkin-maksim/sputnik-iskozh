@@ -568,6 +568,11 @@ export function foldersDelete(id, getParams = {}, postData = null) {
     return window.axios.delete(makeQuery('/folders/json/delete/'+id+'', getParams), postData);
 }
 
+export function foldersInfo(id, getParams = {}, postData = null) {
+    // see folders.info
+    return window.axios.get(makeQuery('/folders/json/info/'+id+'', getParams), postData);
+}
+
 export function foldersList(getParams = {}, postData = null) {
     // see folders.list
     return window.axios.get(makeQuery('/folders/json/list', getParams), postData);

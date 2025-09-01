@@ -35,7 +35,7 @@ class SearchResponse
         $result = [];
         try {
             foreach ($this->items as $item) {
-                $result[] = $item->id;
+                $result[] = $item->getId();
             }
         }
         catch (\Exception) {

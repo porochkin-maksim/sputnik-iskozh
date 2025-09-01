@@ -3,10 +3,10 @@
 namespace Core\Domains\File\Responses;
 
 use Core\Db\Searcher\Models\SearchResponse;
-use Core\Domains\File\Collections\Folders;
+use Core\Domains\File\Collections\FolderCollection;
 
 /**
- * @method Folders getItems()
+ * @method FolderCollection getItems()
  */
 class FolderSearchResponse extends SearchResponse
 {
