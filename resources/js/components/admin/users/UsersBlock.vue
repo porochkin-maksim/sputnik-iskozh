@@ -280,9 +280,9 @@ export default {
         searchAction () {
             clearTimeout(this.searchProgress);
             this.searchProgress = setTimeout(() => {
+                this.skip = 0;
                 this.listAction();
             }, 300);
-            this.progress       = true;
         },
         clearSearchAction () {
             this.search = null;

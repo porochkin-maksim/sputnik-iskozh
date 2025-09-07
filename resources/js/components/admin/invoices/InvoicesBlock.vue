@@ -64,15 +64,19 @@
                 <template v-if="computedAccounts && computedAccounts.length">
                     <div class="d-flex ms-2">
                         <div class="input-group input-group-sm">
+                            <button class="btn btn-light border"
+                                    @click="searchAction">
+                                <i class="fa fa-search"></i>
+                            </button>
                             <input class="form-control"
                                    v-model="searchAccount"
                                    name="users_search"
                                    placeholder="Участок..."
-                                   @keyup="listAction"
+                                   @keyup="searchAction"
                                    ref="search">
                             <button class="btn btn-light border"
                                     type="button"
-                                    @click="searchAccount=null;listAction">
+                                    @click="clearSearchAction">
                                 <i class="fa fa-close"></i>
                             </button>
                         </div>
@@ -271,6 +275,17 @@ export default {
             }).then(() => {
                 this.loaded = true;
             });
+        },
+        searchAction () {
+            clearTimeout(this.searchProgress);
+            this.searchProgress = setTimeout(() => {
+                this.skip = 0;
+                this.listAction();
+            }, 300);
+        },
+        clearSearchAction () {
+            this.searchAccount = null;
+            this.searchAction();
         },
         exportAction () {
             window.open(Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {

@@ -9,14 +9,14 @@
                 <div class="d-flex">
                     <div class="input-group input-group-sm">
                         <button class="btn btn-light border"
-                                @click="listAction">
+                                @click="searchAction">
                             <i class="fa fa-search"></i>
                         </button>
                         <input class="form-control"
                                v-model="search"
                                name="users_search"
                                placeholder="Поиск"
-                               @keyup="listAction"
+                               @keyup="searchAction"
                                ref="search">
                         <button class="btn btn-light border"
                                 type="button"
@@ -148,7 +148,9 @@ export default {
             perPage   : 25,
             skip      : 0,
             routeState: 0,
-            search    : null,
+
+            search        : null,
+            searchProgress: null,
 
             sortField: null,
             sortOrder: null,
@@ -195,15 +197,22 @@ export default {
                 this.parseResponseErrors(response);
             });
         },
+        searchAction () {
+            clearTimeout(this.searchProgress);
+            this.searchProgress = setTimeout(() => {
+                this.skip = 0;
+                this.listAction();
+            }, 300);
+        },
+        clearSearch () {
+            this.search = '';
+            this.listAction();
+        },
         onPaginationUpdate (skip) {
             this.skip = skip;
             this.listAction();
         },
         onCreatedEvent () {
-            this.listAction();
-        },
-        clearSearch () {
-            this.search = '';
             this.listAction();
         },
         sort (field) {
