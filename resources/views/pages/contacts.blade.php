@@ -49,6 +49,17 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
         <tr>
             <th colspan="2">Садоводческое Некоммерческое Товарищество "Спутник-Искож"</th>
         </tr>
+        @if($chairmanData->getEmail())
+        <tr>
+            <th>Почта</th>
+            <td>
+                <div>
+                    <a href="mailto:{{ $chairmanData->getEmail() }}"><i class="fa fa-envelope-o"></i> {{ $chairmanData->getEmail() }}
+                    </a>
+                </div>
+            </td>
+        </tr>
+        @endif
         <tr>
             <th>Председатель</th>
             <td>
