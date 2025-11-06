@@ -37,7 +37,7 @@ class NotifyAboutNewUnverifiedPaymentJob implements ShouldQueue
         }
 
         $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT);
-        $emails = array_unique(array_merge($emails, [env('ADMIN_EMAIL')]));
+        $emails = array_unique(array_merge($emails, [config('mail.emails.admin')]));
 
         foreach ($emails as $email) {
             $mail = new NewPaymentCreatedEmail(

@@ -18,6 +18,11 @@ function makeQuery(uri, getParams = {}) {
      return uri;
  }
 
+export function acquringInvoiceCreate(invoiceId,amount, getParams = {}, postData = null) {
+    // see acquring.invoice.create
+    return window.axios.post(makeQuery('/home/acquring/create/'+invoiceId+'/'+amount+'', getParams), postData);
+}
+
 export function adminAccountCreate(getParams = {}, postData = null) {
     // see admin.account.create
     return window.axios.get(makeQuery('/admin/accounts/json/create', getParams), postData);
@@ -881,4 +886,14 @@ export function verificationResend(getParams = {}, postData = null) {
 export function verificationVerify(id,hash, getParams = {}, postData = null) {
     // see verification.verify
     return window.axios.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams), postData);
+}
+
+export function webhookAcquringFailed(acquringId,salt, getParams = {}, postData = null) {
+    // see webhook.acquring.failed
+    return window.axios.delete(makeQuery('/webhook/acquring/failed/'+acquringId+'/'+salt+'', getParams), postData);
+}
+
+export function webhookAcquringSubmit(acquringId,salt, getParams = {}, postData = null) {
+    // see webhook.acquring.submit
+    return window.axios.delete(makeQuery('/webhook/acquring/submit/'+acquringId+'/'+salt+'', getParams), postData);
 }

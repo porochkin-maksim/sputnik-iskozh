@@ -1,4 +1,14 @@
 {
+    "acquringInvoiceCreate": {
+        "name": "acquring.invoice.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/acquring\/create\/{invoiceId}\/{amount}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "amount": "{amount}"
+        }
+    },
     "adminAccountCreate": {
         "name": "admin.account.create",
         "displayName": "",
@@ -1343,6 +1353,26 @@
         "args": {
             "id": "{id}",
             "hash": "{hash}"
+        }
+    },
+    "webhookAcquringFailed": {
+        "name": "webhook.acquring.failed",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/webhook\/acquring\/failed\/{acquringId}\/{salt}",
+        "args": {
+            "acquringId": "{acquringId}",
+            "salt": "{salt}"
+        }
+    },
+    "webhookAcquringSubmit": {
+        "name": "webhook.acquring.submit",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/webhook\/acquring\/submit\/{acquringId}\/{salt}",
+        "args": {
+            "acquringId": "{acquringId}",
+            "salt": "{salt}"
         }
     }
 }
