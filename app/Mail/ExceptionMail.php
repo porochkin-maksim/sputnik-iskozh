@@ -31,9 +31,9 @@ class ExceptionMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: env('MAIL_FROM_ADDRESS'),
-            to: env('ADMIN_EMAIL'),
-            subject: 'Ошибка ' . env('APP_NAME'),
+            from: config('mail.from.address'),
+            to: config('mail.emails.admin'),
+            subject: 'Ошибка ' . config('app.name'),
         );
     }
 
