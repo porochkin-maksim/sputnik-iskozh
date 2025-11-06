@@ -15,7 +15,7 @@ abstract class Emails
             self::POROCHKIN_MAKSIM,
             self::JIGANOVA_SVETLANA,
             // self::BRYSKINA_TATYANA,
-            env('MAIL_PRESS'),
+            // env('MAIL_PRESS') ?: '',
         ];
     }
 }

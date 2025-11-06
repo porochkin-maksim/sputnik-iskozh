@@ -31,6 +31,20 @@ class HistoryChangesService
         return $this->historyChangesFactory->makeDefault();
     }
 
+    public function addTextToHistory(
+        HistoryType $type,
+        int         $primaryId,
+        string      $text,
+    )
+    {
+        $this->writeToHistory(
+            Event::COMMON,
+            $type,
+            $primaryId,
+            text: $text,
+        );
+    }
+
     public function writeToHistory(
         Event                  $event,
         HistoryType            $type,
@@ -61,7 +75,8 @@ class HistoryChangesService
             ->setReferenceType($referenceType)
             ->setPrimaryId($primaryId)
             ->setReferenceId($referenceId)
-            ->setLog($logData);
+            ->setLog($logData)
+        ;
 
         CreateHistoryJob::dispatch($historyChanges);
     }

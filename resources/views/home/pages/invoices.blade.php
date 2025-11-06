@@ -4,6 +4,7 @@ use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Users\UserResource;
 use App\Models\Billing\Period;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Billing\Acquiring\AcquiringLocator;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
@@ -112,20 +113,32 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                         @else
                             <tr class="text-center">
                                 <td colspan="5">
-                                    <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
-                                        @if ($account->getFraction() === 1 || ! $account->getFraction())
-                                            <button class="btn btn-sm btn-success mb-2">
-                                                <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($invoice->getDelta()) }}
-                                            </button>
-                                        @else
-                                            <button class="btn btn-sm btn-outline-success mx-1 mb-2">
-                                                <i class="fa fa-credit-card"></i> Оплатить {{ $account->getFractionPercent() }}: {{ MoneyService::parse($invoice->getDelta() * $account->getFraction()) }}
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-success mx-1 mb-2">
-                                                <i class="fa fa-credit-card"></i> Оплатить 100%: {{ MoneyService::parse($invoice->getDelta()) }}
-                                            </button>
-                                        @endif
-                                    </div>
+                                    @if (AcquiringLocator::AcquiringService()->isAcquringAvailable())
+                                        @php
+                                            if ( ! $invoice->getPayed()) {
+                                                $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
+                                                    $invoice,
+                                                    MoneyService::toFloat(MoneyService::parse($invoice->getDelta())->multiply($account->getFraction() ?: 1)),
+                                                    lc::user()->getId(),
+                                                );
+                                            }
+                                            $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
+                                                $invoice,
+                                                $invoice->getDelta(),
+                                                lc::user()->getId(),
+                                            );
+                                        @endphp
+                                        <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
+                                            @foreach($acquiringWrappers as $wrapper)
+                                                <form method="POST" action="{{ route(RouteNames::ACQURING_INVOICE_CREATE, [$wrapper->getInvoice()->getId(), $wrapper->getAmount()]) }}" target="_blank">
+                                                    @csrf
+                                                    <button class="btn btn-sm btn-success mb-2 mx-1">
+                                                        <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($wrapper->getAmount()) }}
+                                                    </button>
+                                                </form>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                     <a class="btn btn-sm btn-outline-primary mx-1 mb-2"
                                        href="{{ route(RouteNames::REQUESTS_PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}">
                                         <i class="fa fa-envelope"></i> Сообщить о совершённом платеже

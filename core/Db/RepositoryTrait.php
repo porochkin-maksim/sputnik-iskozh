@@ -233,4 +233,13 @@ trait RepositoryTrait
 
         return (bool) $result;
     }
+
+    public function save($item): mixed
+    {
+        if ($this->modelClass() === get_class($item)) {
+            $item->save();
+        }
+
+        return $item;
+    }
 }

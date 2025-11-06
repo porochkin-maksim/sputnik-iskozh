@@ -14,7 +14,7 @@ class OpenGraphFactory
     {
         $openGraph = new OpenGraph();
         $openGraph->setType(OpenGraphType::WEBSITE)
-            ->setTitle(RouteNames::name(Route::current()?->getName(), env('APP_NAME')))
+            ->setTitle(RouteNames::name(Route::current()?->getName(), config('app.name')))
             ->setUrl(route(RouteNames::INDEX))
             ->setImage(StaticFileLocator::StaticFileService()->logoSnt()->getUrl())
             ->setDescription('Садоводческое некоммерческое товарищество Спутник-Искож г. Тверь');
