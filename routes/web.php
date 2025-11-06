@@ -56,6 +56,13 @@ Route::group(['prefix' => 'home'], static function () {
             // Route::group(['prefix' => 'json'], static function () {
             //     Route::post('/register', [Controllers\Profile\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
             // });
+            Route::post('/acquring/create/{invoiceId}/{amount}', [Controllers\Pages\Requests\AcquringController::class, 'create'])->name(RouteNames::ACQURING_INVOICE_CREATE)
+                ->where([
+                    'acquringId' => '[0-9]+',
+                    'amount'     => '^\d+(\.\d+)?$',
+                ])
+            ;
+
             Route::group(['prefix' => 'counters'], static function () {
                 Route::get('/', [Controllers\Profile\CounterController::class, 'index'])->name(RouteNames::PROFILE_COUNTERS);
                 Route::group(['prefix' => 'json'], static function () {
@@ -220,7 +227,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                         Route::group(['prefix' => 'counters'], static function () {
                             Route::get('/view/{counterId}', [Controllers\Admin\Account\CounterController::class, 'view'])->name(RouteNames::ADMIN_COUNTER_VIEW);
-                        Route::group(['prefix' => 'json'], static function () {
+                            Route::group(['prefix' => 'json'], static function () {
                                 Route::post('/create', [Controllers\Admin\Account\CounterController::class, 'create'])->name(RouteNames::ADMIN_COUNTER_CREATE);
                                 Route::get('/list', [Controllers\Admin\Account\CounterController::class, 'list'])->name(RouteNames::ADMIN_COUNTER_LIST);
                                 Route::post('/save', [Controllers\Admin\Account\CounterController::class, 'save'])->name(RouteNames::ADMIN_COUNTER_SAVE);
@@ -228,7 +235,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                                 Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
                             });
                         });
-                            Route::group(['prefix' => 'invoices'], static function () {
+                        Route::group(['prefix' => 'invoices'], static function () {
                             Route::group(['prefix' => 'json'], static function () {
                                 Route::get('/list', [Controllers\Admin\Account\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_INVOICE_LIST);
                             });
@@ -324,6 +331,22 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
     });
 });
 
+Route::group(['prefix' => 'webhook'], static function () {
+    Route::group(['prefix' => 'acquring'], static function () {
+        Route::any('/submit/{acquringId}/{salt}', [Controllers\Webhook\AcquiringController::class, 'submit'])->name(RouteNames::WEBHOOK_ACQURING_SUBMIT)
+            ->where([
+                'acquringId' => '[0-9]+',
+                'salt'       => '[^\/]+',
+            ])
+        ;
+        Route::any('/failed/{acquringId}/{salt}', [Controllers\Webhook\AcquiringController::class, 'failed'])->name(RouteNames::WEBHOOK_ACQURING_FAILED)
+            ->where([
+                'acquringId' => '[0-9]+',
+                'salt'       => '[^\/]+',
+            ])
+        ;
+    });
+});
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Route::get('reestr/read', [\App\Http\Controllers\Admin\ReestrController::class, 'read'])->name('reestr.read');
 });

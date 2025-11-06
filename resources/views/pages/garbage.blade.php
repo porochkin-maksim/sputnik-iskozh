@@ -32,7 +32,7 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
     <div>
         <div>
             <p>
-                Место сбора для вывоза мусора для {{ env('APP_NAME') }} находится справа от дороги по пути ко 2 участку.<br />
+                Место сбора для вывоза мусора для {{ config('app.name') }} находится справа от дороги по пути ко 2 участку.<br />
                 Там установлены специальные контейнеры для складирования мусора.
             </p>
             <p>
@@ -48,7 +48,7 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
         </div>
         <div class="alert alert-warning">
             <i class="fa fa-warning"></i> Место предназначено для сбора мусора
-            <b class="text-danger">только</b> {{ env('APP_NAME') }}
+            <b class="text-danger">только</b> {{ config('app.name') }}
         </div>
     </div>
 

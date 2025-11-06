@@ -31,7 +31,7 @@ $cutRouteNameFn = static function (string $routeName) {
         <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), env('APP_NAME')))</title>
+    <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), config('app.name')))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
@@ -49,7 +49,7 @@ $cutRouteNameFn = static function (string $routeName) {
            href="{{ url('/') }}">
             <div class="logo"
                  style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
-            {{ env('APP_NAME') }}
+            {{ config('app.name') }}
         </a>
         <button class="navbar-toggler"
                 type="button"

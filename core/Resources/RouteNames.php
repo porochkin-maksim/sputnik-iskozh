@@ -206,6 +206,11 @@ abstract class RouteNames
     public const string ADMIN_QUEUE_STOP   = 'admin.queue.stop';
     public const string ADMIN_QUEUE_CLEAR  = 'admin.queue.clear';
 
+    public const string ACQURING_INVOICE_CREATE = 'acquring.invoice.create';
+
+    public const string WEBHOOK_ACQURING_SUBMIT = 'webhook.acquring.submit';
+    public const string WEBHOOK_ACQURING_FAILED = 'webhook.acquring.failed';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
