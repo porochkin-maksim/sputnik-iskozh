@@ -4,16 +4,16 @@ namespace App\Http\Middleware\Enums;
 
 enum MiddlewareNames: string
 {
-    public const AUTH             = 'auth';
-    public const AUTH_BASIC       = 'auth.basic';
-    public const AUTH_SESSION     = 'auth.session';
-    public const CACHE_HEADERS    = 'cache.headers';
-    public const CAN              = 'can';
-    public const GUEST            = 'guest';
-    public const PASSWORD_CONFIRM = 'password.confirm';
-    public const PRECOGNITIVE     = 'precognitive';
-    public const SIGNED           = 'signed';
-    public const THROTTLE         = 'throttle';
-    public const VERIFIED         = 'verified';
-    public const ADMIN           = 'admin';
+    public const string AUTH             = 'auth';
+    public const string AUTH_BASIC       = 'auth.basic';
+    public const string AUTH_SESSION     = 'auth.session';
+    public const string CACHE_HEADERS    = 'cache.headers';
+    public const string CAN              = 'can';
+    public const string GUEST            = 'guest';
+    public const string PASSWORD_CONFIRM = 'password.confirm';
+    public const string PRECOGNITIVE     = 'precognitive';
+    public const string SIGNED           = 'signed';
+    public const string THROTTLE         = 'throttle';
+    public const string VERIFIED         = 'verified';
+    public const string ADMIN           = 'admin';
 }

@@ -8,6 +8,9 @@ use Core\Domains\Billing\Acquiring\AcquiringLocator;
 use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Billing\Payment\Collections\PaymentCollection;
+use Core\Domains\Billing\Payment\Models\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
@@ -32,22 +35,25 @@ if ( ! $period) {
     $period = PeriodLocator::PeriodService()->search(PeriodSearcher::make())->getItems()->first();
 }
 $invoices = new InvoiceCollection();
+$payments = new PaymentCollection();
 
 if (lc::account()->getId() && $period) {
-    $serviceSearcher = new ServiceSearcher();
-    $serviceSearcher->setPeriodId($period->getId());
-    $services = ServiceLocator::ServiceService()->search($serviceSearcher)->getItems();
+    $services = ServiceLocator::ServiceService()->search(
+        new ServiceSearcher()->setPeriodId($period->getId()),
+    )->getItems();
 
-    $invoiceSearcher = new InvoiceSearcher();
-    $invoiceSearcher->setWithPayments()
-        ->setWithClaims()
-        ->setPeriodId($period->getId())
-        ->setAccountId(lc::account()->getId())
-    ;
+    $invoices = InvoiceLocator::InvoiceService()->search(
+        new InvoiceSearcher()
+            ->setWithPayments()
+            ->setWithClaims()
+            ->setPeriodId($period->getId())
+            ->setAccountId(lc::account()->getId()),
+    )->getItems();
 
-    $invoices = InvoiceLocator::InvoiceService()->search($invoiceSearcher)->getItems();
+    $payments = PaymentLocator::PaymentService()->search(
+        new PaymentSearcher()->setInvoiceIds($invoices->getIds()),
+    )->getItems();
 }
-
 $account     = lc::account();
 $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
 ?>
@@ -62,7 +68,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
         @if($invoices->count())
             <h3 class="text-dark">
                 <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center text-wrap">
-                    <span>Счета на участок "{{ $account->getNumber() }}" в периоде</span>
+                    <span class="text-center">Счета на участок "{{ $account->getNumber() }}" в периоде</span>
                     <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
                           class="d-inline-block">
                         <select name="period"
@@ -79,17 +85,17 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                 </div>
             </h3>
             <div class="table-responsive">
-                <table class="table table-sm table-borderless mb-0">
+                <table class="table table-sm table-bordered  mb-0">
                     <tbody>
                     @foreach($invoices as $invoice)
-                        <tr class="text-end table-success border-success">
+                        <tr class="text-center table-success">
                             <th class="text-start">Взнос</th>
                             <th>Тариф</th>
                             <th>Стоимость</th>
                             <th>Оплачено</th>
                             <th>Долг</th>
                         </tr>
-                        @foreach($invoice->getClaims() as $claim)
+                        @foreach($invoice->getClaims()->sortByServiceTypes() as $claim)
                             <tr>
                                 <td>{{ $claim->getName() ?: $services->getById($claim->getServiceId())->getName() }}</td>
                                 <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
@@ -106,22 +112,39 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                             <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
                             <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
                         </tr>
-                        @if ($invoice->isPayed())
-                            <tr class="text-center table-success border-success text-success">
-                                <th colspan="5">Оплачено</th>
+                        @if($payments->count())
+                            <tr class="text-center border">
+                                <th colspan="5">Платежи</th>
                             </tr>
-                        @else
+                            @foreach($payments as $payment)
+                                <tr>
+                                    <td class="border-end-0"></td>
+                                    <td colspan="2" class="border-start-0">
+                                        {{ $payment->getCreatedAt()->translatedFormat('d F Y H:i') }}
+                                    </td>
+                                    <td class="border-end-0 text-end">
+                                        {{ MoneyService::parse($payment->getCost()) }}
+                                    </td>
+                                    <td class="border-start-0"></td>
+                                </tr>
+                            @endforeach
+                        @endif
+
+                        @if (!$invoice->isPayed())
                             <tr class="text-center">
                                 <td colspan="5">
                                     @if (AcquiringLocator::AcquiringService()->isAcquringAvailable())
                                         @php
                                             if ( ! $invoice->getPayed()) {
-                                                $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
-                                                    $invoice,
-                                                    MoneyService::toFloat(MoneyService::parse($invoice->getDelta())->multiply($account->getFraction() ?: 1)),
-                                                    lc::user()->getId(),
-                                                );
+                                                if (($account->getFraction() ?: 1) !== 1){
+                                                    $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
+                                                        $invoice,
+                                                        MoneyService::toFloat(MoneyService::parse($invoice->getDelta())->multiply($account->getFraction() ?: 1)),
+                                                        lc::user()->getId(),
+                                                    );
+                                                }
                                             }
+
                                             $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
                                                 $invoice,
                                                 $invoice->getDelta(),
@@ -130,7 +153,9 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                         @endphp
                                         <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
                                             @foreach($acquiringWrappers as $wrapper)
-                                                <form method="POST" action="{{ route(RouteNames::ACQURING_INVOICE_CREATE, [$wrapper->getInvoice()->getId(), $wrapper->getAmount()]) }}" target="_blank">
+                                                <form method="POST"
+                                                      action="{{ route(RouteNames::ACQURING_INVOICE_CREATE, [$wrapper->getInvoice()->getId(), $wrapper->getAmount()]) }}"
+                                                      target="_blank">
                                                     @csrf
                                                     <button class="btn btn-sm btn-success mb-2 mx-1">
                                                         <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($wrapper->getAmount()) }}

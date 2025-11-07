@@ -279,7 +279,7 @@ export default {
             return (this.propUser?.lastName + ' ' + this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
         },
         isSubmitDisable () {
-            return !this.files.length || !this.account || !this.text || this.loading || this.fileSizeExceed;
+            return !this.files.length || !this.account || !this.cost || !this.text || this.loading || this.fileSizeExceed;
         },
         filesSize () {
             let result = 0;

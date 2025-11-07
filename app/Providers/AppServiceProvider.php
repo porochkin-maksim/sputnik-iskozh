@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use Core\Env;
+use Carbon\Carbon;
+use env;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Env::init();
+        env::init();
+        Carbon::setLocale('ru');
     }
 }

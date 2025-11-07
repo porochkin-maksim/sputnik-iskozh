@@ -1,11 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Core;
-
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
-abstract class Env
+abstract class env
 {
     private static array|null $server = null;
 
