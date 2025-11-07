@@ -33,7 +33,7 @@ $openGraph = $openGraph ?? OpenGraphLocator::OpenGraphFactory()->default();
           content="index, nofollow, noarchive">
 @else
     <meta name="robots"
-          content="noindex">
+          content="noindex nofollow">
 @endif
 
 {!! $openGraph->toMetaTags() !!}

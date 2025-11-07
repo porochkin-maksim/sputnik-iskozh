@@ -15,25 +15,25 @@ $hasAccount = (bool) lc::account()->getId();
         <li class="nav-item">
             <a class="nav-link"
                href="{{ route(RouteNames::HOME) }}">
-                <i class="fa fa-user"></i> {{ \lc::userDecorator()->getDisplayName() }}
+                <i class="fa fa-user"></i> <span>{{ \lc::userDecorator()->getDisplayName() }}</span>
             </a>
         </li>
         @if ($hasAccount)
         <li class="nav-item">
             <a class="nav-link @if(Route::is(RouteNames::PROFILE_COUNTERS)) active @endif"
                href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
-                <i class="fa fa-tachometer"></i> {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
+                <i class="fa fa-tachometer"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link @if(Route::is(RouteNames::PROFILE_INVOICES)) active @endif"
-               href="">
-                <i class="fa fa-file-text"></i> {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
+               href="{{ route(RouteNames::PROFILE_INVOICES) }}">
+                <i class="fa fa-file-text"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> Вернуться На сайт
+                <i class="fa fa-mail-reply"></i> <span>Вернуться На сайт</span>
             </a>
         </li>
         @endif

@@ -19,7 +19,7 @@ $season = match (Carbon::now()->month) {
     default   => 'winter',
 };
 ?>
-        <!doctype html>
+<!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('layouts.partial.meta')
@@ -56,19 +56,22 @@ $season = match (Carbon::now()->month) {
         </button>
         <div class="collapse navbar-collapse"
              id="topMenuNavContent">
-            @include('layouts.partial.profile-nav')
+            @include('layouts.partial.profile.top-nav')
         </div>
     </div>
 </nav>
-@if(!App::isProduction()) <div style="background-color: red;height:5px;z-index:99999;" class="position-absolute w-100 top-0 left-0"></div> @endif
+@if(!App::isProduction())
+    <div style="background-color: red;height:5px;z-index:99999;"
+         class="position-absolute w-100 top-0 left-0"></div>
+@endif
 <main class="px-3 py-2">
     @yield(SectionNames::CONTENT)
 </main>
-<footer class="w-100">
-    <div class="d-flex justify-content-center py-3">
-
-    </div>
-</footer>
+@if (lc::account()->getId())
+    <footer class="w-100">
+        @include('layouts.partial.profile.footer-nav')
+    </footer>
+@endif
 <alerts-block :disable-errors-popup="true"></alerts-block>
 </body>
 </html>

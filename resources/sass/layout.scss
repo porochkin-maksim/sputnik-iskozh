@@ -48,6 +48,57 @@ footer,
     }
 }
 
+.home {
+    main {
+        @media (max-width : $lg) {
+            padding-bottom : 3 * $font-size !important;
+        }
+    }
+
+    footer {
+        height     : 3 * $font-size;
+        border-top : 1px solid $default-primary !important;
+
+        .bottom-nav {
+            display : none;
+        }
+
+        @media (max-width : $lg) {
+            position : fixed;
+            bottom   : 0;
+            width    : 100%;
+
+            .bottom-nav {
+                display : flex;
+                width   : 100%;
+                height  : 100%;
+
+                .nav-item {
+                    list-style   : none;
+                    width        : calc(33.3% - 1px);
+                    border-right : 1px solid $default-primary;
+                    padding-top  : calc(0.5 * $font-size);
+
+                    &:last-child {
+                        border-right : none;
+                    }
+
+                    .nav-link {
+                        display         : flex;
+                        flex-direction  : column;
+                        justify-content : center;
+                        align-items     : center;
+
+                        span {
+                            margin-top : 2px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .social {
     .social-link {
         display         : flex;
