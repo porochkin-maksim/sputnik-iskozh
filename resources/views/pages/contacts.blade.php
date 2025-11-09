@@ -5,6 +5,7 @@ use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
 use Core\Domains\Option\OptionLocator;
+use Core\Domains\StateSchedule\StateSchedule;
 use Core\Helpers\Phone\PhoneHelper;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\Iframes;
@@ -26,6 +27,8 @@ $isWinter = $month >= 11 || $month <= 3;
  */
 $accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
 $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
+$schedule       = StateSchedule::getScheduledDates(Carbon::now(), $isWinter ? 5 : 10);
+
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -50,15 +53,15 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
             <th colspan="2">Садоводческое Некоммерческое Товарищество "Спутник-Искож"</th>
         </tr>
         @if($chairmanData->getEmail())
-        <tr>
-            <th>Почта</th>
-            <td>
-                <div>
-                    <a href="mailto:{{ $chairmanData->getEmail() }}"><i class="fa fa-envelope-o"></i> {{ $chairmanData->getEmail() }}
-                    </a>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <th>Почта</th>
+                <td>
+                    <div>
+                        <a href="mailto:{{ $chairmanData->getEmail() }}"><i class="fa fa-envelope-o"></i> {{ $chairmanData->getEmail() }}
+                        </a>
+                    </div>
+                </td>
+            </tr>
         @endif
         <tr>
             <th>Председатель</th>
@@ -98,18 +101,9 @@ $chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN
             </td>
         </tr>
         <tr>
-            <th colspan="2">График работы</th>
-        </tr>
-        <tr @if(!$isWinter) class="table-info" @endif>
-            <th>01 апреля - 31 октября</th>
-            <td>Каждые четверг и воскресенье 12:00-14:00</td>
-        </tr>
-        <tr @if($isWinter) class="table-info" @endif>
-            <th>01 ноября - 31 марта</th>
-            <td>Каждые 1-ое и 3-е воскресенье месяца 12:00-14:00</td>
-        </tr>
-        <tr>
-            <th colspan="2">&nbsp;</th>
+            <td colspan="2">
+                <state-schedule :schedule='@json($schedule)'/>
+            </td>
         </tr>
         <tr>
             <th>ОГРН</th>

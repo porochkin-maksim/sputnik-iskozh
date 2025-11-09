@@ -5,9 +5,9 @@
                 <div class="index-news custom-list news-list row w-100 ms-0">
                     <template v-for="(item, index) in news">
                         <a class="col-md-6 col-12 text-decoration-none mb-2 px-0"
-                               :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
-                               :href="item.url"
-                            >
+                           :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
+                           :href="item.url"
+                        >
                             <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
                                     <div>
@@ -26,13 +26,21 @@
             </template>
         </template>
         <template v-slot:sub>
-            <form :action="Url.Routes.search.uri" method="get">
+            <form :action="Url.Routes.search.uri"
+                  method="get">
                 <div class="input-group">
-                    <button class="btn btn-light border" type="submit">
+                    <button class="btn btn-light border"
+                            type="submit">
                         <i class="fa fa-search"></i>
                     </button>
-                    <input class="form-control" v-model="search" name="q" placeholder="Поиск по сайту" ref="search">
-                    <button class="btn btn-light border" type="button" @click="search = null">
+                    <input class="form-control"
+                           v-model="search"
+                           name="q"
+                           placeholder="Поиск по сайту"
+                           ref="search">
+                    <button class="btn btn-light border"
+                            type="button"
+                            @click="search = null">
                         <i class="fa fa-close"></i>
                     </button>
                 </div>
@@ -48,7 +56,7 @@
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between p-2 pb-1">
                                     <a class="name">
                                         <i class="fa fa-bolt text-warning"></i>&nbsp;
-                                        {{ item.title ? item.title : 'Без названия' }}
+                                                                               {{ item.title ? item.title : 'Без названия' }}
                                     </a>
                                     <div class="date text-end mt-2">
                                         <i class="fa fa-calendar"></i> {{ item.publishedAt }}
@@ -59,25 +67,11 @@
                     </template>
                 </div>
             </template>
-            <table class="table table-bordered small">
-                <tbody>
-                <tr>
-                    <th>График работы</th>
-                </tr>
-                <tr :class="!isWinter ? 'table-info' : ''">
-                    <th>1 апреля - 31 октября</th>
-                </tr>
-                <tr :class="!isWinter ? 'table-info' : ''">
-                    <td>Каждые четверг и воскресенье 12:00-14:00</td>
-                </tr>
-                <tr :class="isWinter ? 'table-info' : ''">
-                    <th>1 ноября - 31 марта</th>
-                </tr>
-                <tr :class="isWinter ? 'table-info' : ''">
-                    <td>Каждые 1-ое и 3-е воскресенье месяца 12:00-14:00</td>
-                </tr>
-                </tbody>
-            </table>
+
+            <div class="mb-2">
+                <state-schedule :schedule="schedule"/>
+            </div>
+
             <template v-if="qrPayment && qrPayment.url">
                 <a :href="qrPayment.url"
                    class="d-flex flex-column justify-content-center align-items-center"
@@ -99,22 +93,28 @@
 </template>
 
 <script>
-import Url          from '../../../utils/Url.js';
-import PageTemplate from './TwoColumnsPage.vue';
-import NewsListItem from '../news/list/NewsItem.vue';
-import BsSlider     from '../../common/BsSlider.vue';
-import FileItem     from '../news/FileItem.vue';
+import Url               from '../../../utils/Url.js';
+import PageTemplate      from './TwoColumnsPage.vue';
+import NewsListItem      from '../news/list/NewsItem.vue';
+import BsSlider          from '../../common/BsSlider.vue';
+import FileItem          from '../news/FileItem.vue';
 import { newsListIndex } from '../../../routes-functions.js';
+import StateSchedule     from '../StateSchedule.vue';
 
 export default {
     name      : 'IndexPage',
     components: {
+        StateSchedule,
         FileItem, BsSlider,
         NewsListItem,
         PageTemplate,
     },
-    props: {
+    props     : {
         qrPayment: null,
+        schedule : {
+            type   : Array,
+            default: [],
+        },
     },
     async created () {
         this.loadLockedNews();

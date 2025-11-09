@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 
+use Carbon\Carbon;
+use Core\Domains\StateSchedule\StateSchedule;
 use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Core\Services\Images\StaticFileLocator;
@@ -8,6 +10,7 @@ use Core\Services\OpenGraph\OpenGraphLocator;
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 
 $qrPaymentFile = StaticFileLocator::StaticFileService()->qrPayment();
+$periods       = StateSchedule::getScheduledDates(Carbon::now(), 4);
 ?>
 
 @extends(ViewNames::LAYOUTS_APP)
@@ -27,7 +30,10 @@ $qrPaymentFile = StaticFileLocator::StaticFileService()->qrPayment();
             @include(ViewNames::PARTIAL_SOCIAL)
         </div>
     </div>
-    <index-page :qr-payment='@json($qrPaymentFile)'></index-page>
+    <index-page
+            :qr-payment='@json($qrPaymentFile)'
+            :schedule='@json($periods)'
+    />
     <hr>
     @include(ViewNames::PARTIAL_REQUESTS)
 @endsection
