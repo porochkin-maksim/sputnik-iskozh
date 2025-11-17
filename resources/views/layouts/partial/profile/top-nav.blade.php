@@ -33,7 +33,7 @@ $hasAccount = (bool) lc::account()->getId();
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> <span>Вернуться На сайт</span>
+                <i class="fa fa-mail-reply"></i> <span>Вернуться на главную</span>
             </a>
         </li>
         @endif
@@ -64,7 +64,7 @@ $hasAccount = (bool) lc::account()->getId();
         <li class="nav-item">
             <a class="nav-link"
                href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> Вернуться На сайт
+                <i class="fa fa-mail-reply"></i> Вернуться на главную
             </a>
         </li>
     </ul>
@@ -76,7 +76,7 @@ $hasAccount = (bool) lc::account()->getId();
                 {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
             </a>
         </li>
-        @if (lc::roleDecorator()->canAccessAdmin())
+        @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
             <li class="nav-item">
                 <a class="nav-link"
                    href="{{ route(RouteNames::ADMIN) }}">

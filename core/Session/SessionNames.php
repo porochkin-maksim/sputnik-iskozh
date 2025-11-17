@@ -6,4 +6,5 @@ enum SessionNames: string
 {
     public const string COOKIE_AGREEMENT = 'cookie_agreement';
     public const string ACCOUNT_ID       = 'account_id';
+    public const string IS_ANDROID       = 'is_android';
 }

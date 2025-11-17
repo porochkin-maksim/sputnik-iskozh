@@ -14,4 +14,9 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         //
     ];
+
+    protected function tokensMatch($request)
+    {
+        return \lc::isAndroid() || parent::tokensMatch($request);
+    }
 }

@@ -65,7 +65,7 @@ use Illuminate\Support\Facades\Route;
                     <i class="fa fa-home"></i>  {{ \lc::userDecorator()->getDisplayName() }}
                 </a>
             </li>
-            @if (lc::roleDecorator()->canAccessAdmin())
+            @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">
@@ -149,7 +149,7 @@ use Illuminate\Support\Facades\Route;
                     {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
                 </a>
             </li>
-            @if (lc::roleDecorator()->canAccessAdmin())
+            @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">

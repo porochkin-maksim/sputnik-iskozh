@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\App;
 
 ?>
 
-@if (App::isProduction())
+@if (App::isProduction() && !lc::isAndroid())
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
         (function (m, e, t, r, i, k, a) {

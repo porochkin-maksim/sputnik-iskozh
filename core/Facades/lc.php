@@ -126,4 +126,13 @@ abstract class lc
     {
         return self::RoleDecorator()->isSuperAdmin();
     }
+
+    public static function isAndroid(): bool
+    {
+        if ( ! Session::has(SessionNames::IS_ANDROID)) {
+            Session::put(SessionNames::IS_ANDROID, request()->header('X-Client-Type') === 'android-app');
+        }
+
+        return Session::get(SessionNames::IS_ANDROID);
+    }
 }
