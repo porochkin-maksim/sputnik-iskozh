@@ -33,7 +33,9 @@ $periods       = StateSchedule::getScheduledDates(Carbon::now(), 4);
     <index-page
             :qr-payment='@json($qrPaymentFile)'
             :schedule='@json($periods)'
-    />
+    ></index-page>
     <hr>
-    @include(ViewNames::PARTIAL_REQUESTS)
+    <div>
+        @include(ViewNames::PARTIAL_REQUESTS)
+    </div>
 @endsection
