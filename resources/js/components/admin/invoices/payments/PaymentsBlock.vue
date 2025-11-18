@@ -91,6 +91,7 @@
             <input class="d-none"
                    type="file"
                    ref="fileElem"
+                   accept="image/*,application/pdf"
                    @change="appendFiles"
                    multiple>
         </template>

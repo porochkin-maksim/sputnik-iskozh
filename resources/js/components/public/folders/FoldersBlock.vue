@@ -29,11 +29,13 @@
             </div>
             <input class="d-none"
                    type="file"
+                   accept="*/*"
                    ref="fileElem"
                    multiple
                    @change="uploadFile">
             <input class="d-none"
                    type="file"
+                   accept="*/*"
                    ref="replaceFileElem"
                    multiple
                    @change="uploadReplacedFile">

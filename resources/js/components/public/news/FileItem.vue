@@ -21,6 +21,7 @@
             <div class="d-none">
                 <input type="file"
                        ref="fileElem"
+                       accept="*/*"
                        @change="uploadReplacedFile">
             </div>
         </template>

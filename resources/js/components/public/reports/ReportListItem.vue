@@ -54,6 +54,7 @@
             <div class="d-none">
                 <input type="file"
                        ref="fileElem"
+                       accept="*/*"
                        @change="uploadFile">
             </div>
         </div>

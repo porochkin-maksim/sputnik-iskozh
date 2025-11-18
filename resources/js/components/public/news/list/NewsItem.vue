@@ -70,6 +70,7 @@
                     <input type="file"
                            ref="fileElem"
                            multiple
+                           accept="*/*"
                            @change="uploadFiles">
                 </div>
             </div>

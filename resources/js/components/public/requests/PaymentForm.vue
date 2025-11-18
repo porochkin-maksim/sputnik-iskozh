@@ -91,6 +91,7 @@
         <input class="d-none"
                type="file"
                ref="fileElem"
+               accept="image/*,application/pdf"
                @change="appendFiles"
                multiple>
         <div class="d-flex justify-content-end mt-2">
