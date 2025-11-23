@@ -268,10 +268,6 @@ class UsersController extends Controller
         }
 
         UserLocator::Notificator()->sendRestorePassword($user);
-
-        if ( ! $user->getEmailVerifiedAt()) {
-            $this->userService->save($user->setEmailVerifiedAt(Carbon::now()));
-        }
     }
 
     public function sendInviteWithPassword(DefaultRequest $request): void

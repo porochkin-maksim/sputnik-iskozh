@@ -207,12 +207,29 @@
                 <div class="card-body">
                     <h5>Уведомления</h5>
                     <ul class="list-group" v-if="localUser.actions.edit">
-                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendInvitePasswordEmail">
+                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendInvitePasswordEmail" v-if="!localUser.isRealEmail">
                             <i class="fa fa-envelope-o"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
                         </li>
-                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendRestorePasswordEmail">
+                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendRestorePasswordEmail" v-if="localUser.isRealEmail">
                             <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
                         </li>
+                        <template v-if="qrViewLink">
+                            <li class="list-group-item list-group-item-action border-0">
+                                <div><b>Просмотреть QR-код</b></div>
+                                <a :href="qrViewLink" target="_blank">
+                                    {{ qrViewLink }}
+                                </a>
+                                <div><b>Сгенерированная ссылка</b></div>
+                                <a :data-copy="tokenLink" @click.prevent="showInfo('Скопировано')" class="cursor-pointer">
+                                    {{ tokenLink }}
+                                </a>
+                            </li>
+                        </template>
+                        <template v-else>
+                            <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="makeLoginQrCode">
+                                <i class="fa fa-external-link"></i>&nbsp;Получить постоянную ссылку для входа (QR-код)
+                            </li>
+                        </template>
                     </ul>
                 </div>
             </div>
@@ -287,6 +304,9 @@ export default {
 
             loading   : null,
             routeState: 0,
+
+            qrViewLink: null,
+            tokenLink : null,
         };
     },
     methods : {
@@ -400,6 +420,20 @@ export default {
                     this.showDanger('Пользователь не восстановлен');
                 }
             }).catch(response => {
+                this.parseResponseErrors(response);
+            });
+        },
+        makeLoginQrCode () {
+            let pin = prompt('Установите пароль для постоянной ссылки для входа')
+            if (!pin) {
+                return;
+            }
+
+            Url.RouteFunctions.adminLoginLink(this.localUser.id, pin).then((response) => {
+                this.qrViewLink = response.data.qrLink;
+                this.tokenLink  = response.data.tokenLink;
+            }).catch(response => {
+                this.showDanger('Не получилось создать ссылку');
                 this.parseResponseErrors(response);
             });
         },

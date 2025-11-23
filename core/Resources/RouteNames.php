@@ -14,6 +14,11 @@ abstract class RouteNames
     public const string SEARCH      = 'search';
     public const string SITE_SEARCH = 'search.site';
 
+    public const string LOGING       = 'login';
+    public const string LOGING_DO    = 'login.do';
+    public const string LOGING_TOKEN = 'login.do';
+    public const string TOKEN        = 'token';
+
     public const string PASSWORD_SET  = 'password.set';
     public const string PASSWORD_SAVE = 'password.save';
 
@@ -142,6 +147,10 @@ abstract class RouteNames
     public const string ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
     public const string ADMIN_ACCOUNT_LIST   = 'admin.account.list';
     public const string ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
+
+    public const string ADMIN_LOGIN_LINK = 'admin.login-link';
+
+    public const string ADMIN_QR_VIEW = 'admin.qr.view';
 
     public const string ADMIN_ACCOUNT_INVOICE_LIST = 'admin.account.invoice.list';
 

@@ -298,6 +298,16 @@
             "id": "{id}"
         }
     },
+    "adminLoginLink": {
+        "name": "admin.login-link",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/qr\/login\/{userId}\/{pin}",
+        "args": {
+            "userId": "{userId}",
+            "pin": "{pin}"
+        }
+    },
     "adminNewPaymentDelete": {
         "name": "admin.new-payment.delete",
         "displayName": "",
@@ -460,6 +470,15 @@
         "method": "post",
         "uri": "\/admin\/periods\/json\/save",
         "args": []
+    },
+    "adminQrView": {
+        "name": "admin.qr.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/qr\/view\/{uid}",
+        "args": {
+            "uid": "{uid}"
+        }
     },
     "adminQueue": {
         "name": "admin.queue",
@@ -948,9 +967,18 @@
     "login": {
         "name": "login",
         "displayName": "",
-        "method": "post",
+        "method": "get",
         "uri": "\/login",
         "args": []
+    },
+    "loginDo": {
+        "name": "login.do",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/login\/{token}",
+        "args": {
+            "token": "{token}"
+        }
     },
     "logout": {
         "name": "logout",
@@ -1330,6 +1358,15 @@
         "method": "patch",
         "uri": "\/pages\/json\/edit",
         "args": []
+    },
+    "token": {
+        "name": "token",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/token\/{token}",
+        "args": {
+            "token": "{token}"
+        }
     },
     "verificationNotice": {
         "name": "verification.notice",

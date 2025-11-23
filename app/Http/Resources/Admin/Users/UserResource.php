@@ -51,6 +51,7 @@ readonly class UserResource extends AbstractResource
             'accountName'     => $curAccount?->getNumber(),
             'accountIds'      => $user->getAccountIds(),
             'emailVerifiedAt' => $user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
+            'isRealEmail'     => $user->isRealEmail(),
             'isDeleted'       => $user->isDeleted(),
 
             'membershipDate'     => $user->getMembershipDate()?->format(DateTimeFormat::DATE_DEFAULT),

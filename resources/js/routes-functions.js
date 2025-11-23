@@ -193,6 +193,11 @@ export function adminInvoiceView(id, getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/admin/invoices/view/'+id+'', getParams), postData);
 }
 
+export function adminLoginLink(userId,pin, getParams = {}, postData = null) {
+    // see admin.login-link
+    return window.axios.post(makeQuery('/admin/users/json/qr/login/'+userId+'/'+pin+'', getParams), postData);
+}
+
 export function adminNewPaymentDelete(id, getParams = {}, postData = null) {
     // see admin.new-payment.delete
     return window.axios.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams), postData);
@@ -291,6 +296,11 @@ export function adminPeriodList(getParams = {}, postData = null) {
 export function adminPeriodSave(getParams = {}, postData = null) {
     // see admin.period.save
     return window.axios.post(makeQuery('/admin/periods/json/save', getParams), postData);
+}
+
+export function adminQrView(uid, getParams = {}, postData = null) {
+    // see admin.qr.view
+    return window.axios.get(makeQuery('/admin/qr/view/'+uid+'', getParams), postData);
 }
 
 export function adminQueue(getParams = {}, postData = null) {
@@ -615,7 +625,12 @@ export function infraHistoryChanges(getParams = {}, postData = null) {
 
 export function login(getParams = {}, postData = null) {
     // see login
-    return window.axios.post(makeQuery('/login', getParams), postData);
+    return window.axios.get(makeQuery('/login', getParams), postData);
+}
+
+export function loginDo(token, getParams = {}, postData = null) {
+    // see login.do
+    return window.axios.post(makeQuery('/login/'+token+'', getParams), postData);
 }
 
 export function logout(getParams = {}, postData = null) {
@@ -871,6 +886,11 @@ export function templateGet(getParams = {}, postData = null) {
 export function templateUpdate(getParams = {}, postData = null) {
     // see template.update
     return window.axios.patch(makeQuery('/pages/json/edit', getParams), postData);
+}
+
+export function token(token, getParams = {}, postData = null) {
+    // see token
+    return window.axios.get(makeQuery('/token/'+token+'', getParams), postData);
 }
 
 export function verificationNotice(getParams = {}, postData = null) {

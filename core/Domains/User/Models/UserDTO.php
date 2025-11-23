@@ -321,4 +321,9 @@ class UserDTO
     {
         return $this->accounts ? : new AccountCollection();
     }
+
+    public function isRealEmail(): bool
+    {
+        return (bool) $this->getEmailVerifiedAt();
+    }
 }

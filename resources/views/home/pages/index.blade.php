@@ -31,10 +31,13 @@ use Core\Resources\Views\ViewNames;
                     <h5 class="text-dark"> Площадь: {{ lc::account()->getSize() }}м²</h5>
                 @endif
             </div>
+            @if(lc::user()->isRealEmail())
             <div>
                 <password-block :account='@json(new AccountResource(lc::account()))'
-                                :user='@json(new UserResource(lc::user()))'></password-block>
+                                :user='@json(new UserResource(lc::user()))'
+                />
             </div>
+            @endif
             @if(lc::account()->getId())
                 <a class="card mt-2"
                    href="{{ route(RouteNames::PROFILE_COUNTERS) }}">

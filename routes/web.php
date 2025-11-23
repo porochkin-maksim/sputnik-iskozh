@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\TokenController;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +35,8 @@ Route::group(['prefix' => 'pages'], static function () {
     });
 });
 
+Route::get('/token/{token}', [TokenController::class, 'token'])->name(RouteNames::TOKEN);
+
 Route::group(['prefix' => 'search'], static function () {
     Route::group(['prefix' => 'json'], static function () {
         Route::post('/search', [Controllers\Pages\SearchController::class, 'search'])->name(RouteNames::SITE_SEARCH);
@@ -51,7 +55,8 @@ Route::group(['prefix' => 'home'], static function () {
             Route::post('/switch-account', [Controllers\Profile\ProfileController::class, 'switchAccount'])->name(RouteNames::PROFILE_SWITCH_ACCOUNT);
         });
 
-        Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
+        // Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
+        Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
             // Route::get('/register', [Controllers\Profile\RegisterController::class, 'index'])->name(RouteNames::ACCOUNT_REGISTER);
             // Route::group(['prefix' => 'json'], static function () {
             //     Route::post('/register', [Controllers\Profile\RegisterController::class, 'register'])->name(RouteNames::ACCOUNT_REGISTER_SAVE);
@@ -155,7 +160,8 @@ Route::group(['prefix' => 'folders'], static function () {
 Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, 'download'])->where('filePath', '.*');
 
 Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-    Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
+    // Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
+    Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
         Route::group(['prefix' => '/json/summary'], static function () {
             Route::get('/', [Controllers\Common\SummaryController::class, 'summary'])->name(RouteNames::SUMMARY);
             Route::get('/{type}', [Controllers\Common\SummaryController::class, 'summaryDetailing'])->name(RouteNames::SUMMARY_DETAILING);
@@ -184,6 +190,9 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::delete('/{id}', [Controllers\Admin\System\RolesController::class, 'delete'])->name(RouteNames::ADMIN_ROLE_DELETE);
                     });
                 });
+                Route::group(['prefix' => 'qr'], static function () {
+                   Route::get('view/{uid}', [Controllers\Admin\System\QrCodeController::class, 'view'])->name(RouteNames::ADMIN_QR_VIEW);
+                });
                 Route::group(['prefix' => 'users'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'users'])->name(RouteNames::ADMIN_USER_INDEX);
                     Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
@@ -196,6 +205,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                         Route::patch('/{id}', [Controllers\Admin\System\UsersController::class, 'restore'])->name(RouteNames::ADMIN_USER_RESTORE);
                         Route::post('/sendRestorePassword', [Controllers\Admin\System\UsersController::class, 'sendRestorePassword'])->name(RouteNames::ADMIN_USER_SEND_RESTORE_PASSWORD);
                         Route::post('/send-invite-password', [Controllers\Admin\System\UsersController::class, 'sendInviteWithPassword'])->name(RouteNames::ADMIN_USER_SEND_INVITE_WITH_PASSWORD);
+                        Route::post('/qr/login/{userId}/{pin}', [Controllers\Admin\System\QrCodeController::class, 'makeLoginLink'])->name(RouteNames::ADMIN_LOGIN_LINK);
                     });
                 });
                 Route::group(['prefix' => 'options'], static function () {
