@@ -26,7 +26,7 @@ readonly class RoleService
     {
     }
 
-    public function save(RoleDTO $role)
+    public function save(RoleDTO $role): RoleDTO
     {
         $model = $this->roleRepository->getById($role->getId());
         if ($model) {
@@ -97,6 +97,10 @@ readonly class RoleService
 
         if ($result) {
             return $result;
+        }
+
+        if ( ! $id) {
+            return null;
         }
 
         $result = $this->roleRepository->getByUserId((int) $id);

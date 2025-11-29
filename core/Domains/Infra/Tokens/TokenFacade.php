@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 abstract class TokenFacade
 {
-    public static function save(array $data, ?string $id): string
+    public static function save(array $data, ?string $id = null): string
     {
         $model = Token::updateOrCreate(
             [Token::ID => $id ? : Str::uuid()->serialize()],
