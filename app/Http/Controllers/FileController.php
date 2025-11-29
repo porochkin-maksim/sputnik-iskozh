@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -11,18 +11,35 @@ use Core\Domains\File\FileLocator;
 use Core\Domains\File\Models\FileDTO;
 use Illuminate\Support\Facades\Storage;
 use lc;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
 {
-    public function download($filePath)
+    public function download($filePath): BinaryFileResponse
     {
-        if ( ! lc::isAuth()) {
-            abort(403);
-        }
         $storagePath = $filePath;
 
         if ( ! Storage::exists($storagePath)) {
+            if (Storage::exists('public/' . $storagePath)) {
+                $fullPath = Storage::path('public/' . $filePath);
+                $fileDto  = FileLocator::FileService()->getByPath('public/' . $filePath);
+
+                $filename        = $fileDto?->getName() ? : basename($filePath);
+                $encodedFilename = rawurlencode($filename); // Кодируем для UTF-8
+
+                $headers = [
+                    'Content-Type'        => Storage::mimeType($filePath),
+                    'Content-Disposition' => 'inline; filename="' . $filename . '"; filename*=UTF-8\'\'' . $encodedFilename,
+                ];
+
+                return response()->file($fullPath, $headers);
+
+            }
             abort(404, 'Файл не найден');
+        }
+
+        if ( ! lc::isAuth()) {
+            abort(403);
         }
 
         $fileDto = FileLocator::FileService()->getByPath($filePath);
@@ -34,9 +51,12 @@ class FileController extends Controller
 
         $fullPath = Storage::path($filePath);
 
+        $filename        = $fileDto->getName();
+        $encodedFilename = rawurlencode($filename);
+
         $headers = [
             'Content-Type'        => Storage::mimeType($filePath),
-            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"', // Заменили attachment на inline
+            'Content-Disposition' => 'inline; filename="' . $filename . '"; filename*=UTF-8\'\'' . $encodedFilename,
         ];
 
         return response()->file($fullPath, $headers);
