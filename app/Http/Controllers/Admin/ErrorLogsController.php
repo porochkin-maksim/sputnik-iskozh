@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class ErrorLogsController extends Controller
@@ -12,7 +13,7 @@ class ErrorLogsController extends Controller
     {
         $logsPath = storage_path('logs/errors');
         $errorLogs = collect(File::files($logsPath))
-            ->filter(fn($file) => str_contains($file->getFilename(), 'error'))
+            ->filter(fn(\SplFileInfo $file) => str_contains($file->getFilename(), 'error'))
             ->map(fn($file) => [
                 'name' => $file->getFilename(),
                 'size' => $file->getSize(),
@@ -73,6 +74,7 @@ class ErrorLogsController extends Controller
         }
 
         $content = File::get($logPath);
+        /** @var Collection $entries */
         $entries = collect(explode("\n", $content))
             ->filter()
             ->map(function ($entry) {
@@ -85,6 +87,7 @@ class ErrorLogsController extends Controller
             })
             ->filter()
             ->values()
+            ->sortByDesc('datetime')
         ;
 
         return $entries;

@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use Core\Domains\Counter\Jobs\AutoIncrementingCounterHistoriesJob;
 use Core\Queue\QueueEnum;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -33,9 +32,19 @@ class Kernel extends ConsoleKernel
         ;
 
         $schedule->command(sprintf('queue:work --queue=%s --stop-when-empty --sleep=3 --tries=3 --verbose', implode(',', QueueEnum::values())))
-            ->everySecond()
+            ->everyMinute()
             ->name('queue.work-normal')
             ->withoutOverlapping()
+        ;
+
+        $schedule->command('storage:logs:clear-unused-files')
+            ->dailyAt('03:00')
+            ->name('storage.logs.clear-unused-files')
+        ;
+
+        $schedule->command('db:clear-old-data')
+            ->monthly()
+            ->name('db.clear-old-data')
         ;
         // // Запускаем по 3 воркера на каждую очередь
         // $schedule->command('queue:worker:start --workers=3')
