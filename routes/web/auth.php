@@ -16,8 +16,8 @@ Auth::routes(
     ],
 );
 
-Route::get('/login', static fn() => redirect()->route(RouteNames::INDEX))->name(RouteNames::LOGING);
-Route::post('/login', [LoginController::class, 'login'])->name(RouteNames::LOGING_DO);
+Route::get('/login', static fn() => redirect()->route(RouteNames::INDEX));
+Route::post('/login', [LoginController::class, 'login'])->name(RouteNames::LOGING);
 Route::post('/login/{token}', [LoginController::class, 'token'])->name(RouteNames::LOGING_TOKEN);
 Route::get('/logout', LogoutController::class)->name(RouteNames::LOGOUT);
 Route::get('/password/set', [SetPasswordController::class, 'index'])->name(RouteNames::PASSWORD_SET);

@@ -625,7 +625,7 @@ export function infraHistoryChanges(getParams = {}, postData = null) {
 
 export function login(getParams = {}, postData = null) {
     // see login
-    return window.axios.get(makeQuery('/login', getParams), postData);
+    return window.axios.post(makeQuery('/login', getParams), postData);
 }
 
 export function loginDo(token, getParams = {}, postData = null) {

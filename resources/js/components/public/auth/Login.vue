@@ -72,11 +72,11 @@ export default {
 			this.showPassword = !this.showPassword;
 		},
 		loginAction() {
-			window.axios[Url.Routes.login.method](Url.Routes.login.uri, {
-				email :    this.email,
-				password : this.password,
+            Url.RouteFunctions.login({
+                email :    this.email,
+                password : this.password,
                 remember : this.remember,
-			}).then(response => {
+            }).then(response => {
 				location.reload();
 			}).catch(response => {
 				this.parseResponseErrors(response);

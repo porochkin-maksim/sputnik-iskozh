@@ -967,7 +967,7 @@
     "login": {
         "name": "login",
         "displayName": "",
-        "method": "get",
+        "method": "post",
         "uri": "\/login",
         "args": []
     },
