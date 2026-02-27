@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\TokenController;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;

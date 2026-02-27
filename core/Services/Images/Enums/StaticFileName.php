@@ -7,6 +7,7 @@ enum StaticFileName: string
     case LOGO_SNT        = 'logo-snt.jpg';
     case LOGO_SNT_ORANGE = 'logo-snt-orange.jpg';
     case LOGO_SNT_RED    = 'logo-snt-red.jpg';
+    case LOGO_MAX        = 'max.png';
     case QR_PAYMENT      = 'qr-payment.png';
     case REGULATION      = 'Устав-2025.pdf';
 

@@ -6,20 +6,21 @@ $isIndexPage = $isIndexPage ?? false;
 
 ?>
 
+<a class="social-link text-success" target="_blank" href="https://max.ru/join/B6YT7b2T85RTNJ2Nxh8g5D0qU8FYf-1NQEw6JbYVh3Q">
+    <div class="logo" style="background-image: url('{{ StaticFileLocator::StaticFileService()->maxLogo()->getUrl() }}')"></div>
+    <div>мах</div>
+</a>
 <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/ET8X52yidq0BmKq9WrKtqb">
     <div class="logo" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
     <div>Объявления</div>
-{{--    <i class="fa fa-whatsapp ms-1"></i>--}}
 </a>
 <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/Hfo9oClfdR6BX0dYs7VnG2">
     <div class="logo" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSntRed()->getUrl() }}')"></div>
     <div>Основной чат</div>
-{{--    <i class="fa fa-whatsapp ms-1 text-success"></i>--}}
 </a>
 <a class="social-link text-success" target="_blank" href="https://chat.whatsapp.com/FqC85651AFAFWuynQbF7UQ">
     <div class="logo" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSntOrange()->getUrl() }}')"></div>
     <div>Беседка</div>
-{{--    <i class="fa fa-whatsapp ms-1 text-success"></i>--}}
 </a>
 <a class="social-link text-primary" target="_blank" href="https://t.me/SputnikIskozh">
     <i class="fa fa-telegram me-2"></i> Телеграм

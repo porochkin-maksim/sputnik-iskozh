@@ -35,6 +35,11 @@ readonly class StaticFileService
         return $this->staticFileFactory->make(StaticFileName::LOGO_SNT_RED);
     }
 
+    public function maxLogo(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::LOGO_MAX);
+    }
+
     public function qrPayment(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::QR_PAYMENT);
