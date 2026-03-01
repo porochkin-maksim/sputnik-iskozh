@@ -61,7 +61,7 @@ class CounterHistory extends Model implements CastsInterface
     public function file(): HasOne
     {
         return $this->hasOne(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::COUNTER->value)
+            ->where(File::TYPE, FileTypeEnum::COUNTER_HISTORY->value)
         ;
     }
 

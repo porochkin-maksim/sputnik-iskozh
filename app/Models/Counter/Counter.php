@@ -3,12 +3,15 @@
 namespace App\Models\Counter;
 
 use App\Models\Account\Account;
+use App\Models\File\File;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -21,30 +24,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string  $number
  * @property bool    $is_invoicing
  * @property int     $increment
+ * @property ?Carbon $expire_at
  */
 class Counter extends Model implements CastsInterface
 {
     use SoftDeletes;
 
-    public const TABLE = 'counters';
+    public const string TABLE = 'counters';
 
     protected $table = self::TABLE;
 
-    public const ID           = 'id';
-    public const TYPE         = 'type';
-    public const ACCOUNT_ID   = 'account_id';
-    public const NUMBER       = 'number';
-    public const IS_INVOICING = 'is_invoicing';
-    public const INCREMENT    = 'increment';
+    public const string ID           = 'id';
+    public const string TYPE         = 'type';
+    public const string ACCOUNT_ID   = 'account_id';
+    public const string NUMBER       = 'number';
+    public const string IS_INVOICING = 'is_invoicing';
+    public const string INCREMENT    = 'increment';
+    public const string EXPIRE_AT    = 'expire_at';
 
-    public const ACCOUNT = 'account';
-    public const HISTORY = 'history';
+    public const string ACCOUNT  = 'account';
+    public const string HISTORY  = 'history';
+    public const string PASSPORT = 'passport';
 
     protected $guarded = [];
 
     protected $casts = [
         self::IS_INVOICING => self::CAST_BOOLEAN,
         self::INCREMENT    => self::CAST_INTEGER,
+        self::EXPIRE_AT    => self::CAST_DATETIME,
     ];
 
     public function history(): HasMany
@@ -59,5 +66,12 @@ class Counter extends Model implements CastsInterface
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, self::ACCOUNT_ID);
+    }
+
+    public function passport(): HasOne
+    {
+        return $this->hasOne(File::class, File::RELATED_ID, 'id')
+            ->where(File::TYPE, FileTypeEnum::COUNTER_PASSPORT->value)
+        ;
     }
 }

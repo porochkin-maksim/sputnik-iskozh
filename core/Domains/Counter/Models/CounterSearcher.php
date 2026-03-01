@@ -14,6 +14,14 @@ class CounterSearcher implements SearcherInterface
     public function __construct()
     {
         $this->setType(CounterTypeEnum::ELECTRICITY);
+        $this->setWithPassport();
+    }
+
+    public function setWithPassport(): static
+    {
+        $this->with[] = Counter::PASSPORT;
+
+        return $this;
     }
 
     public function setWithHistory(): static

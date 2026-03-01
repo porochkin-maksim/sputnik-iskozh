@@ -9,7 +9,8 @@
                 <th>Показание</th>
                 <th>Дата</th>
                 <th>Счета</th>
-                <th>Авто показания</th>
+                <th>Авто</th>
+                <th>Поверка</th>
                 <th></th>
             </tr>
             </thead>
@@ -20,7 +21,16 @@
                     <td>{{ counter.value }}</td>
                     <td>{{ counter.date }}</td>
                     <td>{{ counter.isInvoicing ? 'да' : 'нет' }}</td>
-                    <td>{{ counter.increment ? counter.increment : '-' }}</td>
+                    <td>{{ counter.increment ? '+' + counter.increment : '-' }}</td>
+                    <td>
+                        <div v-if="counter.expireAt">
+                            {{ $formatDate(counter.expireAt) }}
+                        </div>
+                        <file-item :file="counter.passport"
+                                   v-if="counter.passport"
+                                   :show-download="false"
+                                   :name="'Паспорт'" />
+                    </td>
                     <td>
                         <div class="dropdown">
                             <a class="btn btn-sm btn-light border"

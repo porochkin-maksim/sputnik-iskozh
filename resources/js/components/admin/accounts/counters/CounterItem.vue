@@ -39,6 +39,13 @@
                                   :required="true"
                     />
                 </div>
+                <div class="mt-2">
+                    <custom-calendar v-model="localCounter.expireAt"
+                                     :error="errors.expireAt"
+                                     :required="true"
+                                     :label="'Дата истечения поверки'"
+                    />
+                </div>
                 <div class="mt-2"
                      v-if="!localCounter?.id">
                     <div v-if="file">
@@ -60,6 +67,29 @@
                                ref="fileElem"
                                accept="image/*"
                                @change="appendFile"
+                        />
+                    </template>
+                </div>
+                <div class="mt-2">
+                    <template v-if="passportFile">
+                        <button class="btn btn-sm btn-danger"
+                                @click="removePassportFile">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        &nbsp;
+                        {{ passportFile.name }}
+                    </template>
+                    <template v-else>
+                        <button class="btn btn-outline-secondary w-100"
+                                @click="choosePassportFile"
+                                v-if="!passportFile">
+                            <i class="fa fa-paperclip "></i>&nbsp;Паспорт счётчика
+                        </button>
+                        <input class="d-none"
+                               type="file"
+                               ref="filePassportElem"
+                               accept="image/*, application/pdf"
+                               @change="appendPassportFile"
                         />
                     </template>
                 </div>
@@ -85,10 +115,12 @@ import ViewDialog         from '../../../common/ViewDialog.vue';
 import FileItem           from '../../../common/files/FileItem.vue';
 import SearchSelect       from '../../../common/form/SearchSelect.vue';
 import CounterHistoryItem from './CounterHistoryItem.vue';
+import CustomCalendar     from '../../../common/form/CustomCalendar.vue';
 
 export default {
     emits     : ['counterUpdated'],
     components: {
+        CustomCalendar,
         CounterHistoryItem,
         SearchSelect,
         FileItem,
@@ -121,7 +153,8 @@ export default {
 
             localCounter: {},
 
-            file: null,
+            file        : null,
+            passportFile: null,
         };
     },
     created () {
@@ -134,9 +167,11 @@ export default {
             let form = new FormData();
             form.append('id', this.localCounter.id);
             form.append('number', this.localCounter.number);
-            form.append('is_invoicing', this.localCounter.isInvoicing);
+            form.append('isInvoicing', this.localCounter.isInvoicing);
             form.append('value', this.localCounter.value);
+            form.append('expireAt', this.localCounter.expireAt);
             form.append('file', this.file);
+            form.append('passportFile', this.passportFile);
             form.append('increment', this.localCounter.increment);
 
             let route = this.localCounter?.id ? Url.Routes.adminCounterSave : Url.Routes.adminCounterCreate;
@@ -167,6 +202,7 @@ export default {
             this.showDialog = false;
             this.$emit('counterUpdated');
         },
+
         chooseFile () {
             this.$refs.fileElem.click();
         },
@@ -176,6 +212,17 @@ export default {
         removeFile () {
             this.file = null;
         },
+
+        choosePassportFile () {
+            this.$refs.filePassportElem.click();
+        },
+        appendPassportFile (event) {
+            this.passportFile = event.target.files[0];
+        },
+        removePassportFile () {
+            this.passportFile = null;
+        },
+
         calculateIncrement () {
             this.localCounter.increment = this.localCounter.increment < 0 ? this.localCounter.increment * -1 : this.localCounter.increment;
         },

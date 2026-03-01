@@ -10,24 +10,34 @@ use Illuminate\Http\UploadedFile;
 
 class FileService
 {
-    private const FILE_DIR = 'counters';
+    private const string FILE_DIR = 'counters';
 
     public function __construct(
-        private BaseFileService $fileService,
+        private readonly BaseFileService $fileService,
     )
     {
     }
 
-    public function store(UploadedFile $file, int $historyId): FileDTO
+    public function storeHistoryFile(UploadedFile $file, int $historyId): FileDTO
     {
         $dto = $this->fileService->store($file, self::FILE_DIR, false);
-        $dto->setType(FileTypeEnum::COUNTER)
+        $dto->setType(FileTypeEnum::COUNTER_HISTORY)
             ->setRelatedId($historyId)
         ;
 
         $this->fileService->save($dto);
 
         return $dto;
+    }
+
+    public function storePassportFile(UploadedFile $file, int $counterId): FileDTO
+    {
+        $dto = $this->fileService->store($file, self::FILE_DIR, false);
+        $dto->setType(FileTypeEnum::COUNTER_PASSPORT)
+            ->setRelatedId($counterId)
+        ;
+
+        return $this->fileService->save($dto);
     }
 
     public function getById(int $id): ?FileDTO
@@ -48,7 +58,7 @@ class FileService
     public function getByHistoryId(?int $historyId): ?FileDTO
     {
         $searcher = new FileSearcher();
-        $searcher->setType(FileTypeEnum::COUNTER)
+        $searcher->setType(FileTypeEnum::COUNTER_HISTORY)
             ->setRelatedId($historyId)
         ;
 

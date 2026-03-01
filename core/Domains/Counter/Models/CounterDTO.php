@@ -2,13 +2,16 @@
 
 namespace Core\Domains\Counter\Models;
 
+use Carbon\Carbon;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
+use Core\Domains\File\Models\FileDTO;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
+use Core\Helpers\DateTime\DateTimeHelper;
 
 class CounterDTO
 {
@@ -20,8 +23,10 @@ class CounterDTO
     private ?string          $number      = null;
     private ?bool            $isInvoicing = null;
     private ?int             $increment   = null;
+    private ?Carbon          $expireAt    = null;
 
     private ?AccountDTO               $account           = null;
+    private ?FileDTO                  $passportFile      = null;
     private ?CounterHistoryCollection $historyCollection = null;
 
     public function getId(): ?int
@@ -96,6 +101,30 @@ class CounterDTO
         return $this;
     }
 
+    public function setExpireAt(mixed $expireAt): static
+    {
+        $this->expireAt = DateTimeHelper::toCarbonOrNull($expireAt);
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?Carbon
+    {
+        return $this->expireAt;
+    }
+
+    public function setPassportFile(FileDTO $file): static
+    {
+        $this->passportFile = $file;
+
+        return $this;
+    }
+
+    public function getPasportFile(): ?FileDTO
+    {
+        return $this->passportFile;
+    }
+
     public function setHistoryCollection(CounterHistoryCollection $historyCollection): static
     {
         $this->historyCollection = $historyCollection;
@@ -103,7 +132,7 @@ class CounterDTO
         return $this;
     }
 
-    public function getHistoryCollection(): CounterHistoryCollection//
+    public function getHistoryCollection(): CounterHistoryCollection
     {
         return $this->historyCollection ? : new CounterHistoryCollection();
     }

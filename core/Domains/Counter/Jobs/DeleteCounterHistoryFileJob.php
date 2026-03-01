@@ -27,7 +27,7 @@ class DeleteCounterHistoryFileJob implements ShouldQueue
     {
         $fileSearcher = new FileSearcher();
         $fileSearcher->setRelatedId($this->counterHistoryId)
-            ->setType(FileTypeEnum::COUNTER)
+            ->setType(FileTypeEnum::COUNTER_HISTORY)
         ;
         $fileService = FileLocator::FileService();
         foreach ($fileService->search($fileSearcher)->getItems() as $file) {

@@ -4,20 +4,18 @@ namespace App\Http\Requests\Admin\Accounts;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
-use Carbon\Carbon;
 use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Enums\Regexp;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
+    private const string ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
 
-    private const ID           = RequestArgumentsEnum::ID;
-    private const NUMBER       = RequestArgumentsEnum::NUMBER;
-    private const SIZE         = RequestArgumentsEnum::SIZE;
-    private const IS_INVOICING = RequestArgumentsEnum::IS_INVOICING;
+    private const string ID           = 'id';
+    private const string NUMBER       = 'number';
+    private const string SIZE         = 'size';
+    private const string IS_INVOICING = 'is_invoicing';
 
     public function rules(): array
     {

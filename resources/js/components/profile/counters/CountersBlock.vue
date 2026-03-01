@@ -6,13 +6,22 @@
                     <div class="card mb-2">
                         <div class="card-body">
                             <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-start">
-                                <a :href="item.viewUrl"
-                                   class="text-decoration-none d-block">
-                                    <h5 class="mb-1">Счётчик «{{ item.number }}»&nbsp;</h5>
-                                </a>
+                                <div>
+                                    <a :href="item.viewUrl"
+                                       class="text-decoration-none d-block">
+                                        <h5 class="mb-1">Счётчик «{{ item.number }}»&nbsp;</h5>
+                                    </a>
+                                    <div v-if="item.expireAt">
+                                        Поверен до {{ $formatDate(item.expireAt) }}
+                                    </div>
+                                    <file-item :file="item.passport"
+                                               v-if="item.passport"
+                                               :name="'Паспорт'"
+                                    />
+                                </div>
                                 <div class="text-end w-sm-25 w-100 d-flex flex-row flex-sm-column justify-content-between">
                                     <div>{{ item.value.toLocaleString('ru-RU') }}кВт</div>
-                                    <div>{{ $formatDate(item.date) }}</div>
+                                    <div>от {{ $formatDate(item.date) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -62,27 +71,59 @@
                     />
                 </div>
                 <div class="mt-2">
-                    <div v-if="file">
-                        <button class="btn btn-sm btn-danger"
-                                @click="removeFile">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        &nbsp;
-                        {{ file.name }}
+                    <custom-calendar v-model="expire_at"
+                                     :error="errors.expire_at"
+                                     :required="true"
+                                     :label="'Дата истечения поверки'"
+                    />
+                </div>
+                <div class="mt-2">
+                    <div>
+                        <template v-if="file">
+                            <button class="btn btn-sm btn-danger"
+                                    @click="removeFile">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            &nbsp;
+                            {{ file.name }}
+                        </template>
+                        <template v-else>
+                            <button class="btn btn-outline-secondary w-100"
+                                    @click="chooseFile"
+                                    v-if="!file">
+                                <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
+                            </button>
+                            <input class="d-none"
+                                   type="file"
+                                   ref="fileElem"
+                                   accept="image/*"
+                                   @change="appendFile"
+                            />
+                        </template>
                     </div>
-                    <template v-else>
-                        <button class="btn btn-outline-secondary"
-                                @click="chooseFile"
-                                v-if="!file">
-                            <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
-                        </button>
-                        <input class="d-none"
-                               type="file"
-                               ref="fileElem"
-                               accept="image/*"
-                               @change="appendFile"
-                        />
-                    </template>
+                    <div class="mt-2">
+                        <template v-if="passportFile">
+                            <button class="btn btn-sm btn-danger"
+                                    @click="removePassportFile">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            &nbsp;
+                            {{ passportFile.name }}
+                        </template>
+                        <template v-else>
+                            <button class="btn btn-outline-secondary w-100"
+                                    @click="choosePassportFile"
+                                    v-if="!passportFile">
+                                <i class="fa fa-paperclip "></i>&nbsp;Паспорт счётчика
+                            </button>
+                            <input class="d-none"
+                                   type="file"
+                                   ref="filePassportElem"
+                                   accept="image/*, application/pdf"
+                                   @change="appendPassportFile"
+                            />
+                        </template>
+                    </div>
                 </div>
             </div>
         </template>
@@ -105,10 +146,12 @@ import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
 import ViewDialog     from '../../common/ViewDialog.vue';
 import FileItem       from '../../common/files/FileItem.vue';
 import SearchSelect   from '../../common/form/SearchSelect.vue';
+import CustomCalendar from '../../common/form/CustomCalendar.vue';
 
 export default {
     name      : 'ProfileCountersBlock',
     components: {
+        CustomCalendar,
         SearchSelect, FileItem, ViewDialog,
         CustomCheckbox,
         CustomInput,
@@ -128,10 +171,12 @@ export default {
             id       : null,
             number   : null,
             value    : null,
+            expire_at: null,
             increment: 0,
 
-            counters: null,
-            file    : null,
+            counters    : null,
+            file        : null,
+            passportFile: null,
 
             currentCounterId: null,
         };
@@ -162,7 +207,9 @@ export default {
             let form = new FormData();
             form.append('number', this.number);
             form.append('value', this.value);
+            form.append('expireAt', this.expire_at);
             form.append('file', this.file);
+            form.append('passportFile', this.passportFile);
             form.append('increment', this.increment);
 
             window.axios[Url.Routes.profileCounterCreate.method](Url.Routes.profileCounterCreate.uri, form).then(response => {
@@ -183,6 +230,7 @@ export default {
         closeAction () {
             this.showDialog = false;
         },
+
         chooseFile () {
             this.$refs.fileElem.click();
         },
@@ -192,6 +240,17 @@ export default {
         removeFile () {
             this.file = null;
         },
+
+        choosePassportFile () {
+            this.$refs.filePassportElem.click();
+        },
+        appendPassportFile (event) {
+            this.passportFile = event.target.files[0];
+        },
+        removePassportFile () {
+            this.passportFile = null;
+        },
+
         calculateIncrement () {
             this.increment = this.increment < 0 ? this.increment * -1 : this.increment;
         },
@@ -201,7 +260,7 @@ export default {
             return !this.counters || !this.counters.length || this.counters.length < 1;
         },
         canSubmitAction () {
-            return this.number && this.value && this.file;
+            return this.number && this.value && this.file && this.expire_at;
         },
     },
 };

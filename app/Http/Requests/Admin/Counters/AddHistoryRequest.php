@@ -5,17 +5,16 @@ namespace App\Http\Requests\Admin\Counters;
 use App\Http\Requests\AbstractRequest;
 use App\Models\Counter\Counter;
 use Carbon\Carbon;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class AddHistoryRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const COUNTER_ID = RequestArgumentsEnum::COUNTER_ID;
-    private const VALUE      = RequestArgumentsEnum::VALUE;
-    private const DATE       = RequestArgumentsEnum::DATE;
-    private const FILE       = RequestArgumentsEnum::FILE;
+    private const string ID         = 'id';
+    private const string COUNTER_ID = 'counter_id';
+    private const string VALUE      = 'value';
+    private const string DATE       = 'date';
+    private const string FILE       = 'file';
 
     public function rules(): array
     {

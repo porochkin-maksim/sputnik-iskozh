@@ -70,7 +70,7 @@ class CounterController extends Controller
 
             $history = $this->counterHistoryService->save($history);
 
-            $this->fileService->store($request->getFile(), $history->getId());
+            $this->fileService->storeHistoryFile($request->getFile(), $history->getId());
 
             $historyChanges = $this->historyChangesService->makeHistory()
                 ->setType(HistoryType::COUNTER)

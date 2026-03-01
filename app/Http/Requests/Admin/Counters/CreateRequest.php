@@ -3,28 +3,28 @@
 namespace App\Http\Requests\Admin\Counters;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class CreateRequest extends AbstractRequest
 {
-    private const NUMBER       = RequestArgumentsEnum::NUMBER;
-    private const VALUE        = 'value';
-    private const IS_INVOICING = 'is_invoicing';
-    private const FILE         = 'file';
+    private const string NUMBER        = 'number';
+    private const string VALUE         = 'value';
+    private const string IS_INVOICING  = 'isInvoicing';
+    private const string HISTORY_FILE  = 'file';
+    private const string PASSPORT_FILE = 'passportFile';
 
     public function rules(): array
     {
         return [
-            self::NUMBER => [
+            self::NUMBER       => [
                 'required',
                 Rule::unique('counters', 'number'),
             ],
-            self::VALUE  => [
+            self::VALUE        => [
                 'required',
             ],
-            self::FILE   => [
+            self::HISTORY_FILE => [
                 'required',
             ],
         ];
@@ -53,8 +53,13 @@ class CreateRequest extends AbstractRequest
         return $this->getBool(self::IS_INVOICING);
     }
 
-    public function getFile(): ?UploadedFile
+    public function getHistoryFile(): ?UploadedFile
     {
-        return $this->file(self::FILE);
+        return $this->file(self::HISTORY_FILE);
+    }
+
+    public function getPassportFile(): ?UploadedFile
+    {
+        return $this->file(self::PASSPORT_FILE);
     }
 }

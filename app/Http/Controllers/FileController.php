@@ -67,7 +67,7 @@ class FileController extends Controller
         if ($fileDto->getType() === FileTypeEnum::PAYMENT) {
             $this->checkPaymentAccess($fileDto);
         }
-        elseif ($fileDto->getType() === FileTypeEnum::COUNTER) {
+        elseif (in_array($fileDto->getType(), [FileTypeEnum::COUNTER_HISTORY, FileTypeEnum::COUNTER_PASSPORT], true)) {
             $this->checkCounterAccess($fileDto);
         }
         else {
@@ -106,12 +106,21 @@ class FileController extends Controller
             return;
         }
 
-        $counterHistory = CounterLocator::CounterHistoryService()->getById($fileDto->getRelatedId());
-        if ( ! $counterHistory) {
-            abort(404);
+        $counter = null;
+        if ($fileDto->getType() === FileTypeEnum::COUNTER_HISTORY) {
+            $counterHistory = CounterLocator::CounterHistoryService()->getById($fileDto->getRelatedId());
+            if ( ! $counterHistory) {
+                abort(404);
+            }
+            $counter = CounterLocator::CounterService()->getById($counterHistory->getCounterId());
+        }
+        if ($fileDto->getType() === FileTypeEnum::COUNTER_PASSPORT) {
+            $counter = CounterLocator::CounterService()->getById($fileDto->getRelatedId());
         }
 
-        $counter = CounterLocator::CounterService()->getById($counterHistory->getCounterId());
+        if ( ! $counter) {
+            abort(404);
+        }
 
         $account = lc::account();
         if (

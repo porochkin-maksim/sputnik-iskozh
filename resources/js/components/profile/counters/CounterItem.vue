@@ -1,9 +1,17 @@
 <template>
     <div class="row">
         <div class="col-12 col-md-8 col-lg-6">
-            <div class="border bg-light d-flex justify-content-between align-items-center p-2">
+            <div class="border bg-light d-flex justify-content-between align-items-start p-2">
                 <div>
-                    <b>Счётчик {{ counter.number }}</b>
+                    <div>
+                        <b>Счётчик {{ counter.number }}</b>
+                    </div>
+                    <div v-if="counter.expireAt">
+                        Поверен до {{ $formatDate(counter.expireAt) }}
+                    </div>
+                    <file-item :file="counter.passport"
+                               v-if="counter.passport"
+                               :name="'Паспорт'" />
                 </div>
                 <div class="d-flex flex-md-row flex-column">
                     <button v-if="canAddNewHistory"

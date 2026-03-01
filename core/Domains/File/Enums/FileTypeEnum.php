@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Core\Domains\File\Enums;
 
@@ -7,20 +7,22 @@ namespace Core\Domains\File\Enums;
  */
 enum FileTypeEnum: int
 {
-    case CONSTITUTION = 1;
-    case REPORT       = 2;
-    case NEWS         = 3;
-    case PAYMENT      = 4;
-    case COUNTER      = 5;
+    case CONSTITUTION     = 1;
+    case REPORT           = 2;
+    case NEWS             = 3;
+    case PAYMENT          = 4;
+    case COUNTER_HISTORY  = 5;
+    case COUNTER_PASSPORT = 6;
 
     public function name(): string
     {
         return match ($this) {
-            self::CONSTITUTION => 'Устав',
-            self::REPORT       => 'Отчёт',
-            self::NEWS         => 'Новость',
-            self::PAYMENT      => 'Платёж',
-            self::COUNTER      => 'Счётчик',
+            self::CONSTITUTION     => 'Устав',
+            self::REPORT           => 'Отчёт',
+            self::NEWS             => 'Новость',
+            self::PAYMENT          => 'Платёж',
+            self::COUNTER_HISTORY  => 'Показания счётчика',
+            self::COUNTER_PASSPORT => 'Паспорт счётчика',
         };
     }
 }
