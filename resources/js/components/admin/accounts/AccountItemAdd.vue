@@ -24,6 +24,7 @@
                 <div class="mt-2">
                     <custom-checkbox v-model="isInvoicing"
                                      :label="'Выставлять счета'"
+                                     switch-style
                     />
                 </div>
                 <div>
@@ -51,22 +52,14 @@
 import Url            from '../../../utils/Url.js';
 import CustomInput    from '../../common/form/CustomInput.vue';
 import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
-import CustomTextarea from '../../common/form/CustomTextarea.vue';
-import CustomSelect   from '../../common/form/CustomSelect.vue';
 import ResponseError  from '../../../mixin/ResponseError.js';
-import SimpleSelect   from '../../common/form/SimpleSelect.vue';
-import ErrorsList     from '../../common/form/partial/ErrorsList.vue';
 import HistoryBtn     from '../../common/HistoryBtn.vue';
 import ViewDialog     from '../../common/ViewDialog.vue';
 
 export default {
     emits     : ['updated'],
     components: {
-        ErrorsList,
-        SimpleSelect,
-        CustomTextarea,
         CustomCheckbox,
-        CustomSelect,
         CustomInput,
         HistoryBtn,
         ViewDialog,

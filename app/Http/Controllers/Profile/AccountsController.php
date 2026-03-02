@@ -7,11 +7,8 @@ use App\Http\Requests\Profile\Accounts\SaveRequest;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Services\AccountService;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class AccountsController extends Controller
 {
@@ -24,7 +21,7 @@ class AccountsController extends Controller
 
     public function index(): View
     {
-        return view(ViewNames::PAGES_HOME);
+        return view('home.pages.index');
     }
 
     public function show(int $id): JsonResponse
@@ -32,7 +29,7 @@ class AccountsController extends Controller
         $account = $this->accountService->getById($id);
 
         return response()->json([
-            ResponsesEnum::ACCOUNT => new AccountResource($account),
+            'account' => new AccountResource($account),
         ]);
     }
 

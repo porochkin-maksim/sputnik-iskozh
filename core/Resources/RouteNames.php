@@ -79,16 +79,10 @@ abstract class RouteNames
     public const string FOLDERS_INFO   = 'folders.info';
     public const string FOLDERS_DELETE = 'folders.delete';
 
-    public const string ACCOUNT_REGISTER      = 'account.register';
-    public const string ACCOUNT_REGISTER_SAVE = 'account.register.save';
-
     public const string PROFILE                = 'profile.show';
-    public const string PROFILE_SAVE           = 'profile.save';
-    public const string PROFILE_SAVE_EMAIL     = 'profile.save.email';
     public const string PROFILE_SAVE_PASSWORD  = 'profile.save.password';
     public const string PROFILE_SWITCH_ACCOUNT = 'profile.account.switch';
 
-    public const string PROFILE_INDEX             = 'profile.index';
     public const string PROFILE_COUNTERS          = 'profile.counters.index';
     public const string PROFILE_COUNTER_VIEW      = 'profile.counters.view';
     public const string PROFILE_COUNTER_INCREMENT = 'profile.counters.increment-save';

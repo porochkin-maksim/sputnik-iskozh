@@ -4,7 +4,7 @@
             <template v-if="computedStatuses && computedStatuses.length">
                 <simple-select v-model="verifiedStatus"
                                :class="'d-inline-block form-select-sm w-auto'"
-                               :items="computedStatuses"
+                               :options="computedStatuses"
                                @change="listAction"
                 />
             </template>
@@ -56,7 +56,7 @@
                 <div>
                     <simple-select v-model="perPage"
                                    :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="[15,25,50,100,500]"
+                                   :options="[15,25,50,100,500]"
                                    @change="listAction"
                     />
                 </div>
@@ -474,12 +474,12 @@ export default {
         computedStatuses () {
             return [
                 {
-                    'key'  : 'false',
-                    'value': 'Непроверенные',
+                    value: 'false',
+                    label: 'Непроверенные',
                 },
                 {
-                    'key'  : 'true',
-                    'value': 'Проверенные',
+                    value: 'true',
+                    label: 'Проверенные',
                 },
             ];
         },

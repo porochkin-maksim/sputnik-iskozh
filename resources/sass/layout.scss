@@ -162,7 +162,7 @@ footer,
     align-items      : center;
     justify-content  : center;
     cursor           : pointer;
-    z-index          : 100;
+    z-index          : 1040; // чуть ниже модалок
 }
 
 .wrapper-container {
@@ -175,7 +175,7 @@ footer,
     align-items     : center;
     justify-content : center;
     margin-top      : $font-size * 5;
-    z-index         : 101;
+    z-index         : 1045;
 }
 
 .admin-content-body {
@@ -204,15 +204,55 @@ footer,
     }
 }
 
-// Фиксируем ширину страницы для предотвращения "прыжков" при появлении скроллбара
+.form-floating > textarea.form-control {
+    height         : auto; // отменяем фиксированную высоту
+    min-height     : calc(3.5rem + calc(var(--bs-border-width) * 2)); // оставляем минимальную высоту как у поля ввода
+    line-height    : 1.5; // нормальный межстрочный интервал
+    padding-top    : 1.625rem; // оставляем место для метки
+    padding-bottom : 0.625rem;
+}
+
+.form-floating {
+    label {
+        color      : rgba(var(--bs-body-color-rgb), 0.65) !important;
+        transition : none !important;
+        transform  : scale(0.85) translateY(-0.5rem) translateX(0.15rem) !important;
+    }
+}
+
+.form-control:focus {
+    border-color : $default-primary;
+    box-shadow   : 0 0 0 0.2rem rgba($default-primary, 0.25);
+}
+
+.form-control > label {
+    color : $color-gray; // более мягкий цвет
+}
+
+// Чекбокс-переключатель (если используете)
+.form-switch .form-check-input:checked {
+    background-color : $default-primary;
+    border-color     : $default-primary;
+}
+
+// Кнопки
+.btn-primary {
+    background-color : $default-primary;
+    border-color     : $default-primary;
+
+    &:hover {
+        background-color : darken($default-primary, 7%);
+        border-color     : darken($default-primary, 10%);
+    }
+}
+
 html {
-    overflow-y : scroll;
-    width      : 100vw;
     overflow-x : hidden;
+    width      : 100vw;
 }
 
 body {
-    overflow-y : scroll;
+    overflow-y : auto;
     width      : 100%;
     position   : relative;
 }

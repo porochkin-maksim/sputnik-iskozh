@@ -1,223 +1,332 @@
 <template>
-    <div class="dropdown-search " :class="[label ? 'form-floating position-relative' : '']" :id="vueId">
-        <!-- Input для поиска -->
-        <input
-            type="text"
-            :class="propClass"
-            :placeholder="placeholder"
-            :disabled="disabled"
-            :value="inputDisplay"
-            :id="'input' + vueId"
-            @input="searchQuery = $event.target.value"
-            @focus="openList"
-            @blur="closeOnBlur"
+    <div ref="root"
+         class="dropdown-search">
+        <element-wrapper
+            :label="label"
+            :required="required"
+            :classes="classes"
+            :id="inputId"
+            :floating="true"
         >
-        <label :for="'input' + vueId" v-if="label">
-            {{ label }}<span v-if="required" class="text-danger">*</span>
-        </label>
-        <span v-if="(multiple ? (selectedItems.length > 0) : (searchQuery && !disabled))"
-              class="clear-icon"
-              :class="[label ? 'labeled' : '']"
-              @click.stop="clearSelection"
-        >&times;</span>
-        <!-- Выпадающий список -->
-        <ul v-if="isOpen && filteredItems.length > 0"
-            class="dropdown-menu show shadow-sm">
-            <li v-for="item in filteredItems"
+            <input
+                :id="inputId"
+                ref="inputRef"
+                type="text"
+                :class="inputClass"
+                :placeholder="placeholder"
+                :disabled="disabled"
+                :value="inputDisplay"
+                @input="onInput"
+                @focus="onFocus"
+                @blur="onBlur"
+                @keydown="onKeydown"
+                v-bind="$attrs"
+            />
+            <span
+                v-if="showClear"
+                class="clear-icon"
+                :class="label ? 'with-label' : ''"
+                @click.stop="clearSelection"
+            >
+                    &times;
+                </span>
+        </element-wrapper>
+
+        <errors-list v-if="error"
+                     :errors="error" />
+
+        <ul
+            v-if="isOpen && filteredItems.length"
+            ref="listRef"
+            class="dropdown-menu show shadow-sm"
+            @mousedown.prevent
+        >
+            <li
+                v-for="(item, index) in filteredItems"
                 :key="item.key"
-                @click.stop="selectItem(item)">
-                <template v-if="multiple">
-                    <input type="checkbox" class="form-check-input me-1" :checked="modelValue && modelValue.includes(item.key)" readonly>
-                </template>
+                :class="{ active: activeIndex === index }"
+                @click.stop="selectItem(item)"
+                @mouseenter="activeIndex = index"
+            >
+                <input
+                    v-if="multiple"
+                    type="checkbox"
+                    class="form-check-input me-1"
+                    :checked="isSelected(item)"
+                    @click.stop="selectItem(item)"
+                />
                 {{ item.value }}
             </li>
         </ul>
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        items      : {
-            type    : Array,
-            required: true,
-        },
-        placeholder: {
-            type   : String,
-            default: 'Поиск...', // Значение по умолчанию
-        },
-        label      : String,
-        required   : Boolean,
-        propClass  : {
-            type   : String,
-            default: 'form-control', // Значение по умолчанию
-        },
-        modelValue : {
-            type   : [String, Number, Array],
-            default: null,
-        },
-        disabled   : {
-            default: false,
-        },
-        multiple: {
-            type: Boolean,
-            default: false,
-        },
+<script setup>
+import {
+    ref,
+    computed,
+    nextTick,
+    onMounted,
+    onBeforeUnmount,
+}                     from 'vue';
+import { useId }      from 'vue';
+import ElementWrapper from './partial/ElementWrapper.vue';
+import ErrorsList     from './partial/ErrorsList.vue';
+
+const props = defineProps({
+    items      : {
+        type    : Array,
+        required: true,
     },
-    emits: ['update:modelValue', 'select'], // Для обновления v-model и передачи выбранного элемента
-    data () {
-        return {
-            searchQuery: '',
-            isOpen     : false,
-            vueId        : null,
-        };
+    modelValue : {
+        type   : [String, Number, Array, null],
+        default: null,
     },
-    created () {
-        
+    multiple   : {
+        type   : Boolean,
+        default: false,
     },
-    computed: {
-        filteredItems () {
-            let filtered = this.items.filter(
-                (item) =>
-                    item.value.toLowerCase().includes(this.searchQuery.toLowerCase()),
-            );
-            // Сортируем: выбранные элементы наверху
-            if (this.multiple && Array.isArray(this.modelValue)) {
-                filtered = filtered.sort((a, b) => {
-                    const aSel = this.modelValue.includes(a.key);
-                    const bSel = this.modelValue.includes(b.key);
-                    if (aSel === bSel) return 0;
-                    return aSel ? -1 : 1;
-                });
-            } else if (!this.multiple && this.modelValue !== null && this.modelValue !== undefined) {
-                filtered = filtered.sort((a, b) => {
-                    const aSel = String(a.key) === String(this.modelValue);
-                    const bSel = String(b.key) === String(this.modelValue);
-                    if (aSel === bSel) return 0;
-                    return aSel ? -1 : 1;
-                });
-            }
-            return filtered;
-        },
-        selectedItems() {
-            if (!this.multiple) return [];
-            if (!Array.isArray(this.modelValue)) return [];
-            return this.items.filter(item => this.modelValue.includes(item.key));
-        },
-        inputDisplay() {
-            // Если выпадающий список открыт — показываем searchQuery (для поиска)
-            if (this.isOpen) return this.searchQuery;
-            // Если закрыт — показываем выбранные значения
-            if (this.multiple) {
-                if (this.selectedItems.length === 0) return '';
-                return this.selectedItems.map(i => i.value).join(', ');
-            } else {
-                const selected = this.items.find(i => String(i.key) === String(this.modelValue));
-                return selected ? selected.value : '';
-            }
-        },
+    placeholder: {
+        type   : String,
+        default: 'Поиск...',
     },
-    watch   : {
-        modelValue (value) {
-            if (this.multiple) {
-                // ничего не делаем, inputDisplay сам обновится
-            } else {
-                this.filteredItems.forEach((item) => {
-                    if (String(item.key) === String(value)) {
-                        this.searchQuery = item.value;
-                    }
-                });
-            }
-        },
-        items: {
-            handler () {
-                if (this.multiple) {
-                    // ничего не делаем
-                } else {
-                    this.filteredItems.forEach((item) => {
-                        if (String(item.key) === String(this.modelValue)) {
-                            this.searchQuery = item.value;
-                        }
-                    });
-                }
-            },
-            deep: true,
-        },
+    label      : String,
+    required   : Boolean,
+    disabled   : Boolean,
+    inputClass : {
+        type   : String,
+        default: 'form-control',
     },
-    mounted () {
-        this.vueId = 'uuid' + this.$_uid;
-        if (this.multiple) {
-            // ничего не делаем
-        } else {
-            this.filteredItems.forEach((item) => {
-                if (String(item.key) === String(this.modelValue)) {
-                    this.searchQuery = item.value;
-                }
-            });
+    error      : [String, Array],
+    classes    : String,
+});
+
+const emit = defineEmits(['update:modelValue', 'select']);
+
+const inputId  = `search-select-${useId()}`;
+const root     = ref(null);
+const inputRef = ref(null);
+const listRef  = ref(null);
+
+const isOpen      = ref(false);
+const searchQuery = ref('');
+const activeIndex = ref(-1);
+
+// Нормализуем items: приводим к формату { key, value }
+const normalizedItems = computed(() => {
+    return props.items.map(item => {
+        // Объект с полями value и label
+        if (typeof item === 'object' && item !== null && 'value' in item && 'label' in item) {
+            return {
+                key  : item.value,
+                value: item.label,
+            };
         }
-        document.addEventListener('click', this.handleClickOutside);
-    },
-    unmounted () {
-        document.removeEventListener('click', this.handleClickOutside);
-    },
-    methods: {
-        openList () {
-            this.isOpen = true;
-            this.searchQuery = '';
-        },
-        closeOnBlur (event) {
-            // Проверяем, кликнули ли вне области выпадающего списка
-            if (!event.target.closest(`#${this.vueId}`)) {
-                this.isOpen = false;
-                // После потери фокуса показываем выбранные значения
-                this.searchQuery = '';
-            }
-        },
-        clearSelection () {
-            this.searchQuery = '';
-            if (this.multiple) {
-                this.$emit('update:modelValue', []);
-            } else {
-                this.$emit('update:modelValue', null);
-            }
-        },
-        selectItem (item) {
-            if (this.multiple) {
-                let newValue = Array.isArray(this.modelValue) ? [...this.modelValue] : [];
-                const idx = newValue.indexOf(item.key);
-                if (idx > -1) {
-                    newValue.splice(idx, 1); // убрать
-                } else {
-                    newValue.push(item.key); // добавить
-                }
-                this.$emit('update:modelValue', newValue);
-                this.$emit('select', item);
-                // не закрываем список, оставляем открытым
-                this.searchQuery = '';
-            } else {
-                this.$emit('update:modelValue', item.key); // Обновляем внешнее v-model
-                this.$emit('select', item); // Дополнительно эмитируем событие select
-                this.searchQuery = '';
-                this.isOpen      = false; // Закрываем список
-            }
-        },
-        handleClickOutside (event) {
-            if (!event.target.closest(`#${this.vueId}`)) {
-                this.isOpen = false;
-            }
-        },
-    },
+        // Объект только с value
+        else if (typeof item === 'object' && item !== null && 'value' in item) {
+            return {
+                key  : item.value,
+                value: String(item.value),
+            };
+        }
+        // Примитив
+        else {
+            return {
+                key  : item,
+                value: String(item),
+            };
+        }
+    });
+});
+
+const compareKeys = (a, b) => String(a) === String(b);
+
+const selectedKeys = computed(() => {
+    if (props.multiple) {
+        return Array.isArray(props.modelValue) ? props.modelValue : [];
+    }
+    else {
+        return props.modelValue !== null && props.modelValue !== undefined ? [props.modelValue] : [];
+    }
+});
+
+const isSelected = (item) => {
+    return selectedKeys.value.some(key => compareKeys(key, item.key));
 };
+
+const filteredItems = computed(() => {
+    const query  = searchQuery.value.toLowerCase();
+    let filtered = normalizedItems.value.filter(item =>
+        item.value.toLowerCase().includes(query),
+    );
+
+    if (selectedKeys.value.length) {
+        filtered = filtered.slice().sort((a, b) => {
+            const aSel = isSelected(a);
+            const bSel = isSelected(b);
+            if (aSel === bSel) {
+                return 0;
+            }
+            return aSel ? -1 : 1;
+        });
+    }
+    return filtered;
+});
+
+const inputDisplay = computed(() => {
+    if (isOpen.value) {
+        return searchQuery.value;
+    }
+    else {
+        if (!selectedKeys.value.length) {
+            return '';
+        }
+        if (props.multiple) {
+            const selectedItems = normalizedItems.value.filter(item => isSelected(item));
+            return selectedItems.map(i => i.value).join(', ');
+        }
+        else {
+            const selected = normalizedItems.value.find(item => compareKeys(item.key, selectedKeys.value[0]));
+            return selected ? selected.value : '';
+        }
+    }
+});
+
+const showClear = computed(() => {
+    if (props.disabled) {
+        return false;
+    }
+    return selectedKeys.value.length > 0 && !(isOpen.value && !props.multiple);
+});
+
+const onInput = (e) => {
+    searchQuery.value = e.target.value;
+    if (!isOpen.value) {
+        isOpen.value = true;
+    }
+    activeIndex.value = -1;
+};
+
+const onFocus = () => {
+    if (props.disabled) {
+        return;
+    }
+    isOpen.value      = true;
+    searchQuery.value = '';
+};
+
+const onBlur = () => {
+    setTimeout(() => {
+        if (!root.value?.contains(document.activeElement)) {
+            close();
+        }
+    }, 200);
+};
+
+const onKeydown = (e) => {
+    if (!isOpen.value) {
+        return;
+    }
+    const items = filteredItems.value;
+    if (!items.length) {
+        return;
+    }
+
+    switch (e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            activeIndex.value = (activeIndex.value + 1) % items.length;
+            scrollToActive();
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            activeIndex.value = (activeIndex.value - 1 + items.length) % items.length;
+            scrollToActive();
+            break;
+        case 'Enter':
+            e.preventDefault();
+            if (activeIndex.value >= 0) {
+                selectItem(items[activeIndex.value]);
+            }
+            break;
+        case 'Escape':
+            e.preventDefault();
+            close();
+            break;
+    }
+};
+
+const scrollToActive = () => {
+    nextTick(() => {
+        if (activeIndex.value >= 0 && listRef.value) {
+            const activeLi = listRef.value.children[activeIndex.value];
+            activeLi?.scrollIntoView({ block: 'nearest' });
+        }
+    });
+};
+
+const selectItem = (item) => {
+    if (props.multiple) {
+        const newValue = [...selectedKeys.value];
+        const idx      = newValue.findIndex(key => compareKeys(key, item.key));
+        if (idx > -1) {
+            newValue.splice(idx, 1);
+        }
+        else {
+            newValue.push(item.key);
+        }
+        emit('update:modelValue', newValue);
+        emit('select', item);
+        inputRef.value?.focus();
+    }
+    else {
+        emit('update:modelValue', item.key);
+        emit('select', item);
+        close();
+    }
+    searchQuery.value = '';
+    activeIndex.value = -1;
+};
+
+const clearSelection = () => {
+    if (props.multiple) {
+        emit('update:modelValue', []);
+    }
+    else {
+        emit('update:modelValue', null);
+    }
+    searchQuery.value = '';
+    activeIndex.value = -1;
+    inputRef.value?.focus();
+};
+
+const close = () => {
+    isOpen.value      = false;
+    searchQuery.value = '';
+    activeIndex.value = -1;
+};
+
+const handleClickOutside = (event) => {
+    if (root.value && !root.value.contains(event.target)) {
+        close();
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('mousedown', handleClickOutside);
+});
+
+defineOptions({ inheritAttrs: false });
 </script>
 
-<!-- Минимум стилей для адаптации к Bootstrap -->
 <style scoped>
 .dropdown-search {
     position : relative;
-}
-
-.form-control {
-    position : relative;
+    width    : 100%;
 }
 
 .clear-icon {
@@ -228,35 +337,44 @@ export default {
     font-size : 20px;
     color     : #aaa;
     cursor    : pointer;
+    z-index   : 5;
 }
 
-.clear-icon.labeled {
-    top : 61%;
+.clear-icon.with-label {
+    top : calc(50% + 6px);
 }
 
 .dropdown-menu {
-    padding    : 0;
-    max-height : 10rem;
-    overflow-y : auto;
-}
-
-.dropdown-menu.show {
-    display : block !important;
+    position      : absolute;
+    top           : 100%;
+    left          : 0;
+    right         : 0;
+    z-index       : 1000;
+    padding       : 0;
+    margin-top    : 2px;
+    max-height    : 10rem;
+    overflow-y    : auto;
+    border        : 1px solid rgba(0, 0, 0, .15);
+    border-radius : 0.25rem;
+    background    : #fff;
+    list-style    : none;
 }
 
 .dropdown-menu li {
-    cursor        : pointer;
     padding       : 0.25rem 0.75rem;
-    white-space   : nowrap;
+    cursor        : pointer;
     border-bottom : 1px solid #e0e0e0;
-    font-size     : 1rem;
+    white-space   : nowrap;
+    overflow      : hidden;
+    text-overflow : ellipsis;
 }
 
 .dropdown-menu li:last-child {
     border-bottom : none;
 }
 
-.dropdown-menu li:hover {
+.dropdown-menu li:hover,
+.dropdown-menu li.active {
     background-color : #f0f0f0;
 }
 </style>

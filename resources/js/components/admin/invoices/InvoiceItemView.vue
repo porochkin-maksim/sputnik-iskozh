@@ -50,7 +50,6 @@ import HistoryBtn       from '../../common/HistoryBtn.vue';
 import ClaimBlock       from './claims/ClaimBlock.vue';
 import PaymentsBlock    from './payments/PaymentsBlock.vue';
 import Url              from '../../../utils/Url.js';
-import SearchSelect     from '../../common/form/SearchSelect.vue';
 import CountersBlock    from '../accounts/counters/CountersBlock.vue';
 import AccountActions   from '../accounts/AccountActions.js';
 import CustomInput      from '../../common/form/CustomInput.vue';
@@ -60,7 +59,6 @@ export default {
     components: {
         CustomInput,
         CountersBlock,
-        SearchSelect,
         ClaimBlock,
         PaymentsBlock,
         HistoryBtn,

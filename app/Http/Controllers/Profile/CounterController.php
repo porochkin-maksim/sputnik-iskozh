@@ -10,8 +10,6 @@ use App\Http\Resources\Profile\Counters\CounterHistoryListResource;
 use App\Http\Resources\Profile\Counters\CounterListResource;
 use App\Models\Counter\Counter;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Factories\CounterFactory;
@@ -33,7 +31,6 @@ use lc;
 
 class CounterController extends Controller
 {
-    private AccountService        $accountService;
     private CounterService        $counterService;
     private CounterFactory        $counterFactory;
     private CounterHistoryService $counterHistoryService;
@@ -42,7 +39,6 @@ class CounterController extends Controller
 
     public function __construct()
     {
-        $this->accountService        = AccountLocator::AccountService();
         $this->counterService        = CounterLocator::CounterService();
         $this->counterFactory        = CounterLocator::CounterFactory();
         $this->counterHistoryService = CounterLocator::CounterHistoryService();
@@ -74,7 +70,7 @@ class CounterController extends Controller
             abort(404);
         }
 
-        return view(ViewNames::PAGES_PROFILE_COUNTERS_VIEW, compact('counter'));
+        return view('home.pages.counters.view', compact('counter'));
     }
 
     public function list(): JsonResponse
@@ -94,7 +90,7 @@ class CounterController extends Controller
         }
 
         return response()->json([
-            ResponsesEnum::COUNTERS => new CounterListResource($result),
+            'counters' => new CounterListResource($result),
         ]);
     }
 

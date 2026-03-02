@@ -29,6 +29,7 @@
                                 <custom-checkbox v-model="account.isInvoicing"
                                                  :disabled="loading"
                                                  :label="'Выставлять счета'"
+                                                 switch-style
                                 />
                             </div>
                             <div>
@@ -94,11 +95,9 @@ import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
 import CustomTextarea  from '../../common/form/CustomTextarea.vue';
 import CustomSelect    from '../../common/form/CustomSelect.vue';
 import ResponseError   from '../../../mixin/ResponseError.js';
-import SimpleSelect    from '../../common/form/SimpleSelect.vue';
 import ErrorsList      from '../../common/form/partial/ErrorsList.vue';
 import HistoryBtn      from '../../common/HistoryBtn.vue';
 import Pagination      from '../../common/pagination/Pagination.vue';
-import SearchSelect    from '../../common/form/SearchSelect.vue';
 import CountersBlock   from './counters/CountersBlock.vue';
 import AccountInfoList from './AccountInfoList.vue';
 import InvoicesBlock   from './invoices/InvoicesBlock.vue';
@@ -111,9 +110,9 @@ export default {
         InvoicesBlock,
         AccountInfoList,
         CountersBlock,
-        SearchSelect, Pagination,
+
+        Pagination,
         ErrorsList,
-        SimpleSelect,
         CustomTextarea,
         CustomCheckbox,
         CustomSelect,

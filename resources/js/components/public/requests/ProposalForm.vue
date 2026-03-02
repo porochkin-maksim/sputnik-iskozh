@@ -10,8 +10,7 @@
                          :errors="errors.text"
                          :label="'Ваше предложение'"
                          :required="true"
-                         :height="'300'"
-                         @submit="sendForm"
+                         :rows="6"
         />
         <div class="d-flex justify-content-end small"
              v-if="text && text.length">

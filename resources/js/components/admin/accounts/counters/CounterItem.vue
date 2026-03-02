@@ -17,6 +17,7 @@
                 <div class="mt-2">
                     <custom-checkbox v-model="localCounter.isInvoicing"
                                      :label="'Выставлять счета'"
+                                     switch-style
                     />
                 </div>
                 <div class="mt-2">
@@ -108,12 +109,10 @@
 <script>
 import Url                from '../../../../utils/Url.js';
 import ResponseError      from '../../../../mixin/ResponseError.js';
-import Wrapper            from '../../../common/Wrapper.vue';
 import CustomInput        from '../../../common/form/CustomInput.vue';
 import CustomCheckbox     from '../../../common/form/CustomCheckbox.vue';
 import ViewDialog         from '../../../common/ViewDialog.vue';
 import FileItem           from '../../../common/files/FileItem.vue';
-import SearchSelect       from '../../../common/form/SearchSelect.vue';
 import CounterHistoryItem from './CounterHistoryItem.vue';
 import CustomCalendar     from '../../../common/form/CustomCalendar.vue';
 
@@ -122,12 +121,10 @@ export default {
     components: {
         CustomCalendar,
         CounterHistoryItem,
-        SearchSelect,
         FileItem,
         ViewDialog,
         CustomCheckbox,
         CustomInput,
-        Wrapper,
     },
     props     : {
         account : Object,

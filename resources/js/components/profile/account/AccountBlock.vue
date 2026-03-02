@@ -15,23 +15,18 @@
     </div>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import {
+    defineProps,
+} from 'vue';
 
-export default {
-    mixins    : [
-        ResponseError,
-    ],
-    props: [
-        'account',
-    ],
-    data () {
-        return {
-
-        };
+const props = defineProps({
+    account: {
+        type   : Object,
+        default: {
+            number: '',
+            size  : 0,
+        },
     },
-};
+});
 </script>
-
-<style scoped>
-</style>

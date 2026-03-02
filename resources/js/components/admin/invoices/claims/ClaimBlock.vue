@@ -24,7 +24,7 @@
                 <simple-select v-model="claim.serviceId"
                                :disabled="selectedId || loading"
                                :class="'form-select-sm border'"
-                               :items="servicesSelect"
+                               :options="servicesSelect"
                                :label="'Услуга'"
                                @change="onServiceIdChanged"
                 />

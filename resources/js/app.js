@@ -2,11 +2,8 @@ import './bootstrap';
 import './utils/common.js';
 import './utils/menus/vertical-menu.js';
 
-import 'primevue/resources/themes/aura-light-noir/theme.css';
-
 import { createApp } from 'vue';
 
-import PrimeVue     from 'primevue/config';
 import VueUidPlugin from 'vue-uid';
 import Vuex         from 'vuex';
 import store        from './store/index.js';
@@ -71,7 +68,6 @@ app.config.globalProperties.$formatDate = formatDate;
 
 app.config.devtools = import.meta.env.DEV;
 
-app.use(PrimeVue);
 app.use(Vuex);
 app.use(store);
 app.use(VueUidPlugin);

@@ -47,9 +47,6 @@ Route::group(['prefix' => 'home'], static function () {
         Route::get('/', [Controllers\Profile\AccountsController::class, 'index'])->name(RouteNames::HOME);
 
         Route::group(['prefix' => 'profile'], static function () {
-            // Route::get('/', [Controllers\Profile\ProfileController::class, 'show'])->name(RouteNames::PROFILE);
-            // Route::post('/', [Controllers\Profile\ProfileController::class, 'save'])->name(RouteNames::PROFILE_SAVE);
-            // Route::post('/email', [Controllers\Profile\ProfileController::class, 'saveEmail'])->name(RouteNames::PROFILE_SAVE_EMAIL);
             Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
             Route::post('/switch-account', [Controllers\Profile\ProfileController::class, 'switchAccount'])->name(RouteNames::PROFILE_SWITCH_ACCOUNT);
         });

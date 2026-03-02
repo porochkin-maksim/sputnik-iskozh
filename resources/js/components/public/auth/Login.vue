@@ -1,87 +1,81 @@
 <template>
-	<div>
-		<div>
-			<custom-input v-model="email"
-			              :errors="errors.email"
-			              :type="'email'"
-                          :name="'email'"
-			              :placeholder="'Эл.почта'"
-			              :required="false"
-			/>
-		</div>
-		
-		<div class="mt-3 toggle-parent">
-			<custom-input v-model="password"
-			              @change="clearError('password')"
-			              :errors="errors.password"
-			              :type="[showPassword ? 'text' : 'password']"
-			              :placeholder="'Пароль'"
-                          :name="'password'"
-			              :required="false"
-                          @submit="loginAction"
-			/>
-			<span class="toggle fa"
-			      :class="[showPassword ? 'fa-eye-slash' : 'fa-eye']"
-			      @click="togglePassword"
-			></span>
-		</div>
-		
-		<div class="mt-3 d-flex justify-content-between align-items-center">
-			<div class="form-check">
-				<input v-model="remember"
-				       type="checkbox"
-				       class="form-check-input"/>
-				<label for="customCheck1"
-				       class="form-check-label">Запомнить</label>
-			</div>
-			<slot name="restore"></slot>
-		</div>
-		
-		<div class="d-grid my-3">
-			<button type="submit"
-			        @click="loginAction"
-			        class="btn btn-success">Войти
-			</button>
-		</div>
-	</div>
+    <form @submit.prevent="loginAction">
+        <custom-input
+            v-model="email"
+            @change="clearError('email')"
+            :errors="errors.email"
+            type="email"
+            name="email"
+            label="Эл.почта"
+            :required="true"
+            autocomplete="username"
+        />
+        <div class="mt-3 toggle-parent">
+            <custom-input
+                v-model="password"
+                @change="clearError('password')"
+                :errors="errors.password"
+                :type="showPassword ? 'text' : 'password'"
+                label="Пароль"
+                name="password"
+                :required="true"
+                autocomplete="current-password"
+            />
+            <span
+                class="toggle fa"
+                :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                @click="togglePassword"
+            ></span>
+        </div>
+        <div class="mt-3 d-flex justify-content-between align-items-center">
+            <div class="form-check">
+                <input
+                    v-model="remember"
+                    type="checkbox"
+                    class="form-check-input"
+                    id="remember"
+                />
+                <label for="remember" class="form-check-label">Запомнить</label>
+            </div>
+            <slot name="restore"></slot>
+        </div>
+        <div class="d-grid my-3">
+            <button type="submit" class="btn btn-success">Войти</button>
+        </div>
+    </form>
 </template>
 
-<script>
-import Url           from '../../../utils/Url.js';
-import CustomInput   from '../../common/form/CustomInput.vue';
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import { ref }              from 'vue';
+import { useStore }         from 'vuex';
+import Url                  from '@utils/Url.js';
+import CustomInput          from '@common/form/CustomInput.vue';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-	name :       'Login',
-	components : {
-		CustomInput,
-	},
-	mixins :     [
-		ResponseError,
-	],
-	data() {
-		return {
-			showPassword : false,
-			email :        '',
-			password :     '',
-			remember :     true,
-		};
-	},
-	methods : {
-		togglePassword() {
-			this.showPassword = !this.showPassword;
-		},
-		loginAction() {
-            Url.RouteFunctions.login({
-                email :    this.email,
-                password : this.password,
-                remember : this.remember,
-            }).then(response => {
-				location.reload();
-			}).catch(response => {
-				this.parseResponseErrors(response);
-			});
-		},
-	},
+const store                                       = useStore();
+const { errors, clearError, parseResponseErrors } = useResponseError();
+
+const showPassword = ref(false);
+const email        = ref('');
+const password     = ref('');
+const remember     = ref(true);
+
+const togglePassword = () => {
+    showPassword.value = !showPassword.value;
+};
+
+const loginAction = () => {
+    Url.RouteFunctions.login({}, {
+        email   : email.value,
+        password: password.value,
+        remember: remember.value,
+    })
+        .then(() => {
+            store.dispatch('auth/closeModal');
+            location.reload();
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        });
 };
 </script>

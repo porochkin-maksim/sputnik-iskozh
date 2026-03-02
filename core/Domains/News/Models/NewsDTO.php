@@ -140,7 +140,7 @@ class NewsDTO implements \JsonSerializable
             'category'    => $this->getCategory()->value,
             'files'       => $this->getFiles(),
             'isLock'      => $this->isLock(),
-            'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_DEFAULT),
+            'publishedAt' => $this->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_MAIN),
             'url'         => $this->getUrl(),
         ];
     }

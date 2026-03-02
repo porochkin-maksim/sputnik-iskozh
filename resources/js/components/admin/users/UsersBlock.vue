@@ -44,7 +44,7 @@
                 <div>
                     <simple-select v-model="perPage"
                                    :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="[15,25,50,100]"
+                                   :options="[15,25,50,100]"
                                    @change="listAction"
                     />
                 </div>
@@ -63,16 +63,19 @@
                 <div>
                     <custom-checkbox v-model="isMember"
                                      :label="'Члены СНТ'"
+                                     switch-style
                     />
                 </div>
                 <div class="ms-2">
                     <custom-checkbox v-model="isNotMember"
                                      :label="'Не члены СНТ'"
+                                     switch-style
                     />
                 </div>
                 <div class="ms-2">
                     <custom-checkbox v-model="isDeleted"
                                      :label="'Удалён'"
+                                     switch-style
                     />
                 </div>
             </div>
@@ -176,13 +179,12 @@ import Url            from '../../../utils/Url.js';
 import HistoryBtn     from '../../common/HistoryBtn.vue';
 import Pagination     from '../../common/pagination/Pagination.vue';
 import SimpleSelect   from '../../common/form/SimpleSelect.vue';
-import SearchSelect   from '../../common/form/SearchSelect.vue';
 import CustomInput    from '../../common/form/CustomInput.vue';
 import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
 
 export default {
     name      : 'UsersBlock',
-    components: { CustomCheckbox, CustomInput, SearchSelect, SimpleSelect, Pagination, HistoryBtn },
+    components: { CustomCheckbox, CustomInput, SimpleSelect, Pagination, HistoryBtn },
     mixins    : [
         ResponseError,
     ],

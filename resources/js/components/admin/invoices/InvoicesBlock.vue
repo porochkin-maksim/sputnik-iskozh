@@ -31,7 +31,7 @@
                 <div>
                     <simple-select v-model="perPage"
                                    :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="[15,25,50,100]"
+                                   :options="[15,25,50,100]"
                                    @change="listAction"
                     />
                 </div>
@@ -50,14 +50,14 @@
                 <template v-if="computedPeriods && computedPeriods.length">
                     <simple-select v-model="periodId"
                                    :class="'d-inline-block form-select-sm w-auto'"
-                                   :items="computedPeriods"
+                                   :options="computedPeriods"
                                    @change="listAction"
                     />
                 </template>
                 <template v-if="computedTypes && computedTypes.length">
                     <simple-select v-model="type"
                                    :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="computedTypes"
+                                   :options="computedTypes"
                                    @change="listAction"
                     />
                 </template>
@@ -85,7 +85,7 @@
                 <template v-if="computedPayedStatus && computedPayedStatus.length">
                     <simple-select v-model="payedStatus"
                                    :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="computedPayedStatus"
+                                   :options="computedPayedStatus"
                                    @change="listAction"
                     />
                 </template>
@@ -124,17 +124,13 @@ import InvoiceItemEdit from './InvoiceItemEdit.vue';
 import HistoryBtn      from '../../common/HistoryBtn.vue';
 import Pagination      from '../../common/pagination/Pagination.vue';
 import SimpleSelect    from '../../common/form/SimpleSelect.vue';
-import SearchSelect    from '../../common/form/SearchSelect.vue';
 import InvoicesList    from './InvoicesList.vue';
-import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
 import SummaryBlock    from '../../common/blocks/SummaryBlock.vue';
 
 export default {
     name      : 'InvoicesBlock',
     components: {
-        CustomCheckbox,
         InvoicesList,
-        SearchSelect,
         SimpleSelect,
         Pagination,
         HistoryBtn,
@@ -267,7 +263,7 @@ export default {
                 this.historyUrl    = response.data.historyUrl;
 
                 if (!this.periodId && this.periods.length) {
-                    this.periodId = this.periods[0].key;
+                    this.periodId = this.periods[0].value;
                     this.listAction();
                 }
             }).catch(response => {
@@ -312,44 +308,44 @@ export default {
         computedTypes () {
             return [
                 {
-                    'key'  : 0,
-                    'value': 'Все типы',
+                    value: 0,
+                    label: 'Все типы',
                 },
             ].concat(this.types);
         },
         computedPeriods () {
             return [
                 {
-                    'key'  : 0,
-                    'value': 'Все периоды',
+                    value: 0,
+                    label: 'Все периоды',
                 },
             ].concat(this.periods);
         },
         computedAccounts () {
             return [
                 {
-                    'key'  : 0,
-                    'value': 'Все участки',
+                    value: 0,
+                    label: 'Все участки',
                 },
             ].concat(this.accounts);
         },
         computedPayedStatus () {
             return [
                 {
-                    'key'  : 'all',
-                    'value': 'Все статусы',
+                    value: 'all',
+                    label: 'Все статусы',
                 },
                 {
-                    'key'  : 'payed',
-                    'value': 'Оплаченные',
+                    value: 'payed',
+                    label: 'Оплаченные',
                 },
                 {
-                    'key'  : 'unpayed',
-                    'value': 'Неоплаченные',
+                    value: 'unpayed',
+                    label: 'Неоплаченные',
                 },
                 {
-                    'key'  : 'partial',
-                    'value': 'Частично оплаченные',
+                    value: 'partial',
+                    label: 'Частично оплаченные',
                 },
             ];
         },

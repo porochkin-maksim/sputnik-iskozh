@@ -12,13 +12,13 @@
                 <label>Тип</label>
                 <simple-select v-model="type"
                                class="form-select form-select-sm"
-                               :items="types"
+                               :options="types"
                                :label="'Тип'"
                 />
                 <label>Период</label>
                 <simple-select v-model="periodId"
                                class="form-select form-select-sm"
-                               :items="periods"
+                               :options="periods"
                                :label="'Период'"
                 />
                 <label>Участок</label>

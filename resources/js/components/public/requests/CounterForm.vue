@@ -26,7 +26,7 @@
             <label class="small text-secondary">Счётчик</label>
             <simple-select v-model="counter"
                            class="period"
-                           :items="computedCounters"
+                           :options="computedCounters"
                            @change="onCounterChange"
             />
         </template>
@@ -261,8 +261,8 @@ export default {
 
             return this.propCounters.map(item => {
                 return {
-                    key  : item.id,
-                    value: item.number,
+                    value: item.id,
+                    label: item.number,
                 };
             });
         },

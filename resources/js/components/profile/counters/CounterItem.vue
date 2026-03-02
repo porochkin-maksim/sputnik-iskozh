@@ -7,7 +7,7 @@
                         <b>Счётчик {{ counter.number }}</b>
                     </div>
                     <div v-if="counter.expireAt">
-                        Поверен до {{ $formatDate(counter.expireAt) }}
+                        Поверен до {{ formatDate(counter.expireAt) }}
                     </div>
                     <file-item :file="counter.passport"
                                v-if="counter.passport"
@@ -38,7 +38,7 @@
                         <b>Показания:</b> {{ history.value.toLocaleString('ru-RU') }}{{ history.delta === null ? '' : ' (' + history.delta.toLocaleString('ru-RU') + 'кВт)' }}
                     </div>
                     <div class="mt-1">
-                        <b>Дата:</b> {{ $formatDate(history.date) }}{{ history.days === null ? '' : ' (+' + history.days + ' дней)' }}
+                        <b>Дата:</b> {{ formatDate(history.date) }}{{ history.days === null ? '' : ' (+' + history.days + ' дней)' }}
                     </div>
                     <div class="mt-1">
                         <b>Статус:</b>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="mt-1"
                          v-if="history.claim">
-                        <b>Оплачено:</b> {{ $formatMoney(history.claim.payed) }}/{{ $formatMoney(history.claim.cost) }} по тарифу {{ $formatMoney(history.claim.tariff) }}
+                        <b>Оплачено:</b> {{ formatMoney(history.claim.payed) }}/{{ formatMoney(history.claim.cost) }} по тарифу {{ formatMoney(history.claim.tariff) }}
                     </div>
                     <div class="mt-1">
                         <file-item :file="history.file"
@@ -92,8 +92,8 @@
                 <div class="mt-2">
                     <custom-input v-model="value"
                                   :errors="errors.value"
-                                  :type="'number'"
-                                  :label="'Текущие показания на счётчике'"
+                                  type="number"
+                                  label="Текущие показания на счётчике"
                                   :required="true"
                     />
                 </div>
@@ -146,10 +146,10 @@
                 <div class="mt-2">
                     <custom-input v-model="increment"
                                   :errors="errors.increment"
-                                  :type="'number'"
+                                  type="number"
                                   :min="0"
                                   :step="1"
-                                  :label="'Ежемесячное увеличение показаний на кВт'"
+                                  label="Ежемесячное увеличение показаний на кВт"
                                   :required="true"
                                   @focusout="calculateIncrement"
                     />
@@ -172,223 +172,217 @@
     </view-dialog>
 </template>
 
-<script>
-import Url                from '../../../utils/Url.js';
-import ResponseError      from '../../../mixin/ResponseError.js';
-import Wrapper            from '../../common/Wrapper.vue';
-import CustomInput        from '../../common/form/CustomInput.vue';
-import CustomCheckbox     from '../../common/form/CustomCheckbox.vue';
-import ViewDialog         from '../../common/ViewDialog.vue';
-import FileItem           from '../../common/files/FileItem.vue';
-import SearchSelect       from '../../common/form/SearchSelect.vue';
-import CountersChartBlock from '../../common/blocks/CountersChartBlock.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    onMounted,
+    defineProps,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import CustomInput          from '@common/form/CustomInput.vue';
+import ViewDialog           from '@common/ViewDialog.vue';
+import FileItem             from '@common/files/FileItem.vue';
+import CountersChartBlock   from '@common/blocks/CountersChartBlock.vue';
+import {
+    ApiProfileCounterHistoryList,
+    ApiProfileCounterAddValue,
+    ApiProfileCountersIncrementSave,
+}                           from '@api';
 
-export default {
-    name      : 'ProfileCounterItem',
-    components: {
-        CountersChartBlock,
-        SearchSelect, FileItem, ViewDialog,
-        CustomCheckbox,
-        CustomInput,
-        Wrapper,
+const props = defineProps({
+    counter: {
+        type    : Object,
+        required: true,
     },
-    props     : [
-        'counter',
-    ],
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            loaded      : false,
-            pending     : false,
-            selectedDate: null,
+});
 
-            showDialog: false,
-            hideDialog: false,
+const { errors, parseResponseErrors, showSuccess } = useResponseError();
+const { formatMoney, formatDate }                  = useFormat();
 
-            value: null,
-
-            histories: [],
-            file     : null,
-
-            mode            : null,
-            currentCounterId: null,
-
-            skip : 0,
-            total: null,
-            limit: 0,
-
-            showIncrementDialog: false,
-            hideIncrementDialog: false,
-            increment          : null,
-
-            chartData   : [],
-            chartOptions: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-            },
-        };
-    },
-    created () {
-        this.increment = this.counter.increment ? this.counter.increment : 0;
-        this.listAction();
-    },
-    methods : {
-        loadMore () {
-            this.listAction();
-        },
-        listAction () {
-            this.pending = true;
-            this.skip += this.limit;
-
-            Url.RouteFunctions.profileCounterHistoryList({
-                counter_id: this.counter.id,
-                skip      : this.skip,
-            }).then(response => {
-                response.data.histories?.forEach(history => {
-                    let exists = false;
-                    this.histories.forEach(item => {
-                        if (item.id === history.id) {
-                            exists = true;
-                        }
-                    });
-                    if (!exists) {
-                        this.histories.push(history);
-                    }
-
-                    this.chartData = this.histories
-                        .filter(item => item.date && item.delta && !isNaN(parseFloat(item.delta)))
-                        .map(item => ({
-                            date : item.date,
-                            value: parseFloat(item.delta),
-                        }))
-                        .sort((a, b) => new Date(a.date) - new Date(b.date));
-                });
-                this.total = response.data.total;
-                this.limit = response.data.limit;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loaded  = true;
-                this.pending = false;
-            });
-        },
-        submitAction () {
-            if (this.pending) {
-                return;
-            }
-            this.addHistoryValueAction();
-        },
-        addHistoryValueAction () {
-            this.pending = true;
-            let form     = new FormData();
-            form.append('counter_id', this.counter.id);
-            form.append('value', this.value);
-            form.append('file', this.file);
-
-            Url.RouteFunctions.profileCounterAddValue({}, form).then(response => {
-                this.onSuccessSubmit();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.pending = false;
-            });
-        },
-        onSuccessSubmit () {
-            this.showDialog = false;
-            this.hideDialog = true;
-            this.file       = null;
-            this.mode       = null;
-            location.reload();
-        },
-        addHistoryValue () {
-            if (!this.canAddNewHistory) {
-                return;
-            }
-            const lastHistory = this.histories[0];
-            if (lastHistory) {
-                this.value = lastHistory.value + lastHistory.delta;
-            }
-            else {
-                this.value = this.counter.value;
-            }
-            this.showDialog = true;
-        },
-        closeAction () {
-            this.showDialog = false;
-        },
-        chooseFile () {
-            this.$refs.fileElem.click();
-        },
-        appendFile (event) {
-            this.file = event.target.files[0];
-        },
-        removeFile () {
-            this.file = null;
-        },
-        editIncrement () {
-            this.showIncrementDialog = true;
-        },
-        closeIncrementAction () {
-            this.showIncrementDialog = false;
-        },
-        calculateIncrement () {
-            this.increment = this.increment < 0 ? this.increment * -1 : this.increment;
-        },
-        saveIncrementAction () {
-            if (this.pending) {
-                return;
-            }
-            this.pending = true;
-            let form     = new FormData();
-            form.append('id', this.counter.id);
-            form.append('increment', this.increment);
-
-            window.axios[Url.Routes.profileCountersIncrementSave.method](Url.Routes.profileCountersIncrementSave.uri, form)
-                .then(response => {
-                    this.onIncrementSuccessSubmit();
-                })
-                .catch(response => {
-                    this.parseResponseErrors(response);
-                })
-                .then(() => {
-                    this.pending = false;
-                });
-        },
-        onIncrementSuccessSubmit () {
-            this.showSuccess('Данные сохранены');
-            this.showIncrementDialog = false;
-            this.hideIncrementDialog = true;
-            this.$emit('increment-updated');
-        },
-    },
-    computed: {
-        Url () {
-            return Url;
-        },
-        canSubmitAction () {
-            return this.value && this.file;
-        },
-        canAddNewHistory () {
-            if (!this.loaded || !this.histories) {
-                return false;
-            }
-            const lastHistory = this.histories[0];
-            if (lastHistory) {
-                return lastHistory.actions.create;
-            }
-            return true;
-        },
-        canLoadMore () {
-            return this.total && this.histories.length < this.total;
-        },
-        canSubmitIncrementAction () {
-            return this.increment !== null;
+const loaded              = ref(false);
+const pending             = ref(false);
+const showDialog          = ref(false);
+const hideDialog          = ref(false);
+const showIncrementDialog = ref(false);
+const hideIncrementDialog = ref(false);
+const value               = ref(null);
+const file                = ref(null);
+const fileElem            = ref(null);
+const histories           = ref([]);
+const skip                = ref(0);
+const total               = ref(null);
+const limit               = ref(0);
+const increment           = ref(props.counter.increment || 0);
+const chartData           = ref([]);
+const chartOptions        = {
+    scales: {
+        y: {
+            beginAtZero: true,
         },
     },
 };
+
+onMounted(() => {
+    listAction();
+});
+
+const loadMore = () => {
+    listAction();
+};
+
+const listAction = () => {
+    pending.value = true;
+    skip.value += limit.value;
+
+    ApiProfileCounterHistoryList({
+        counter_id: props.counter.id,
+        skip      : skip.value,
+    })
+        .then(response => {
+            response.data.histories?.forEach(history => {
+                const exists = histories.value.some(item => item.id === history.id);
+                if (!exists) {
+                    histories.value.push(history);
+                }
+            });
+
+            chartData.value = histories.value
+                .filter(item => item.date && item.delta && !isNaN(parseFloat(item.delta)))
+                .map(item => ({
+                    date : item.date,
+                    value: parseFloat(item.delta),
+                }))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            total.value = response.data.total;
+            limit.value = response.data.limit;
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        })
+        .finally(() => {
+            loaded.value  = true;
+            pending.value = false;
+        });
+};
+
+const submitAction = () => {
+    if (pending.value) {
+        return;
+    }
+    addHistoryValueAction();
+};
+
+const addHistoryValueAction = () => {
+    pending.value = true;
+    const form    = new FormData();
+    form.append('counter_id', props.counter.id);
+    form.append('value', value.value);
+    form.append('file', file.value);
+
+    ApiProfileCounterAddValue({}, form)
+        .then(() => {
+            onSuccessSubmit();
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        })
+        .finally(() => {
+            pending.value = false;
+        });
+};
+
+const onSuccessSubmit = () => {
+    showDialog.value = false;
+    hideDialog.value = true;
+    file.value       = null;
+    location.reload();
+};
+
+const addHistoryValue = () => {
+    if (!canAddNewHistory.value) {
+        return;
+    }
+
+    const lastHistory = histories.value[0];
+    if (lastHistory) {
+        value.value = lastHistory.value + lastHistory.delta;
+    }
+    else {
+        value.value = props.counter.value;
+    }
+    showDialog.value = true;
+};
+
+const closeAction = () => {
+    showDialog.value = false;
+};
+
+const chooseFile = () => {
+    fileElem.value?.click();
+};
+
+const appendFile = (event) => {
+    file.value = event.target.files[0];
+};
+
+const removeFile = () => {
+    file.value = null;
+};
+
+const editIncrement = () => {
+    showIncrementDialog.value = true;
+};
+
+const closeIncrementAction = () => {
+    showIncrementDialog.value = false;
+};
+
+const calculateIncrement = () => {
+    increment.value = increment.value < 0 ? increment.value * -1 : increment.value;
+};
+
+const saveIncrementAction = () => {
+    if (pending.value) {
+        return;
+    }
+
+    pending.value = true;
+    const form    = new FormData();
+    form.append('id', props.counter.id);
+    form.append('increment', increment.value);
+
+    ApiProfileCountersIncrementSave({}, {
+        id       : props.counter.id,
+        increment: increment.value,
+    })
+        .then(() => {
+            onIncrementSuccessSubmit();
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        })
+        .finally(() => {
+            pending.value = false;
+        });
+};
+
+const onIncrementSuccessSubmit = () => {
+    showSuccess('Данные сохранены');
+    showIncrementDialog.value = false;
+    hideIncrementDialog.value = true;
+};
+
+const canSubmitAction          = computed(() => value.value && file.value);
+const canAddNewHistory         = computed(() => {
+    if (!loaded.value || !histories.value) {
+        return false;
+    }
+    const lastHistory = histories.value[0];
+    return lastHistory ? lastHistory.actions.create : true;
+});
+const canLoadMore              = computed(() => total.value && histories.value.length < total.value);
+const canSubmitIncrementAction = computed(() => increment.value !== null);
 </script>

@@ -7,7 +7,6 @@ use Core\Resources\Views\SectionNames;
 use Core\Resources\Views\ViewNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
-
 /**
  * @var CounterDTO $counter
  */
@@ -20,5 +19,5 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_COUNTER_VIEW, $counter)
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::PROFILE_COUNTER_VIEW, $counter) }}
-    <profile-counter-item :counter='@json(new CounterResource($counter))'></profile-counter-item>
+    <counter-item :counter='@json(new CounterResource($counter))'></counter-item>
 @endsection

@@ -140,7 +140,7 @@ use Illuminate\Support\Facades\Route;
     <ul class="navbar-nav ms-auto">
         @guest
             <li class="nav-item">
-                <auth-block></auth-block>
+                <auth-block :has-modal="true"></auth-block>
             </li>
         @else
             <li class="nav-item">

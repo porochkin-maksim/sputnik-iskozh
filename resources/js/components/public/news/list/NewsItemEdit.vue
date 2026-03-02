@@ -18,18 +18,18 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="">
-                        <custom-input v-model="published_at"
+                        <custom-calendar v-model="published_at"
                                       :errors="errors.published_at"
-                                      :type="'datetime-local'"
-                                      :placeholder="'Время публикации'"
+                                      :label="'Время публикации'"
                                       :required="true"
+                                      with-time
                                       @change="clearError('published_at')"
                         />
                     </div>
                     <div class="">
                         <custom-select v-model="category"
                                        :errors="errors.category"
-                                       :items="categories"
+                                       :options="categories"
                                        :required="false"
                                        @change="clearError('category')"
                         />
@@ -40,6 +40,7 @@
                                          :label="'Закрепить на главной'"
                                          :required="true"
                                          @change="clearError('lock')"
+                                         switch-style
                         />
                     </div>
                     <div class="">
@@ -71,10 +72,12 @@ import ResponseError  from '../../../../mixin/ResponseError.js';
 import HtmlEditor     from '../../../common/editors/HtmlEditor.vue';
 import CustomCheckbox from '../../../common/form/CustomCheckbox.vue';
 import CustomTextarea from '../../../common/form/CustomTextarea.vue';
+import CustomCalendar from '../../../common/form/CustomCalendar.vue';
 
 export default {
     emits     : ['updated'],
     components: {
+        CustomCalendar,
         CustomTextarea,
         CustomCheckbox,
         CustomSelect,

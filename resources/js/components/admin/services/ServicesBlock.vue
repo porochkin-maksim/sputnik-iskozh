@@ -35,7 +35,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.key && parseInt(s.periodId) === parseInt(period.key))"
+                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.value && parseInt(s.periodId) === parseInt(period.value))"
                         :key="service.id">
                         <td>{{ service.id }}</td>
                         <td>{{ service.name }}</td>

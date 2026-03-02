@@ -136,7 +136,7 @@
                         <div class="col-12">
                             <custom-textarea v-model="localUser.additional"
                                              :label="'Комментарий'"
-                                             :height="100"
+                                             :rows="3"
                                              :disabled="loading"
                             />
                         </div>
@@ -482,7 +482,7 @@ export default {
             return '<a href=' + uri + ' class="text-decoration-none">' + this.getAccountNumberById(accountId) + '</a>';
         },
         getAccountNumberById (accountId) {
-            return this.accounts.find(account => String(account.key) === String(accountId))?.value;
+            return this.accounts.find(account => String(account.value) === String(accountId))?.label;
         },
     },
     computed: {

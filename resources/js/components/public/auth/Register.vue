@@ -1,99 +1,52 @@
 <template>
-    <div v-if="registerSuccessMessage"
-         class="alert alert-success"
-         v-html="registerSuccessMessage" />
-    <form @submit.prevent="registerAction"
-          v-else>
-        <div>
-            <custom-input v-model="login"
-                          :errors="errors.login"
-                          :type="'email'"
-                          :placeholder="'Эл.почта'"
-                          :required="true"
-            />
-        </div>
-
+    <div v-if="registerSuccessMessage" class="alert alert-success" v-html="registerSuccessMessage" />
+    <form v-else @submit.prevent="registerAction">
+        <custom-input v-model="login" :errors="errors.login" type="email" placeholder="Эл.почта" :required="true" />
         <div class="mt-3 toggle-parent">
-            <custom-input v-model="password"
-                          @change="clearError('password')"
-                          :errors="errors.password"
-                          :type="[showPassword ? 'text' : 'password']"
-                          :placeholder="'Пароль'"
-                          :required="true"
-            />
-            <span class="toggle fa"
-                  :class="[showPassword ? 'fa-eye' : 'fa-eye-slash']"
-                  @click="togglePassword"
-            ></span>
+            <custom-input v-model="password" @change="clearError('password')" :errors="errors.password"
+                          :type="showPassword ? 'text' : 'password'" placeholder="Пароль" :required="true" />
+            <span class="toggle fa" :class="showPassword ? 'fa-eye' : 'fa-eye-slash'" @click="togglePassword"></span>
         </div>
-
         <div class="mt-3">
-            <custom-input v-model="passwordConfirm"
-                          @change="clearError('password')"
-                          :type="[showPassword ? 'text' : 'password']"
-                          :placeholder="'Повторите пароль'"
-                          :required="true"
-            />
+            <custom-input v-model="passwordConfirm" @change="clearError('password')"
+                          :type="showPassword ? 'text' : 'password'" placeholder="Повторите пароль" :required="true" />
         </div>
-
         <div class="d-grid my-3">
-            <button type="submit"
-                    class="btn btn-success">Зарегистрироваться
-            </button>
+            <button type="submit" class="btn btn-success">Зарегистрироваться</button>
         </div>
     </form>
 </template>
 
-<script>
-import CustomInput   from '../../common/form/CustomInput.vue';
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import { ref }              from 'vue';
+import { useStore }         from 'vuex';
+import CustomInput          from '@common/form/CustomInput.vue';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    name      : 'Register',
-    components: {
-        CustomInput,
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            registerSuccessMessage: null,
-            showPassword          : false,
+const store                                       = useStore();
+const { errors, clearError, parseResponseErrors } = useResponseError();
 
-            login          : null,
-            password       : null,
-            passwordConfirm: null,
-        };
-    },
-    methods : {
-        togglePassword () {
-            this.showPassword = !this.showPassword;
-        },
-        registerAction (e) {
-            window.axios.post('/register', {
-                email                : this.login,
-                password             : this.password,
-                password_confirmation: this.passwordConfirm,
-            }).then(response => {
-                this.registerSuccessMessage = response.data;
-                setTimeout(() => location.reload(), 3000);
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    computed: {
-        confirmedStatus () {
-            switch (true) {
-                case !this.password || !this.passwordConfirm:
-                    return null;
-                case this.password === this.passwordConfirm:
-                    return true;
-                default:
-                    return false;
-            }
-        },
-    },
+const registerSuccessMessage = ref(null);
+const showPassword           = ref(false);
+const login                  = ref('');
+const password               = ref('');
+const passwordConfirm        = ref('');
+
+const togglePassword = () => {
+    showPassword.value = !showPassword.value;
+};
+
+const registerAction = () => {
+    window.axios.post('/register', {
+        email                : login.value,
+        password             : password.value,
+        password_confirmation: passwordConfirm.value,
+    }).then(response => {
+        registerSuccessMessage.value = response.data;
+        store.dispatch('auth/closeModal');
+        setTimeout(() => location.reload(), 3000);
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
 };
 </script>

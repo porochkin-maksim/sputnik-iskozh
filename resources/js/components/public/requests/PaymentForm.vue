@@ -28,9 +28,8 @@
                          :required="true"
                          :errors="errors.text"
                          :label="'Комментарий о платеже - когда и за что платили'"
-                         :height="'100'"
+                         :rows="2"
                          :disabled="loading || propInvoice?.id"
-                         @submit="sendForm"
         />
         <div class="d-flex justify-content-end small"
              v-if="text && text.length">

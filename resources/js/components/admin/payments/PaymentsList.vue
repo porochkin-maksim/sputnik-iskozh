@@ -1,6 +1,7 @@
 <template>
     <div v-if="payments && payments.length">
         <table class="table table-bordered table-striped-columns align-middle table-striped ">
+            <thead>
             <tr class="text-center">
                 <th>№</th>
                 <th>Участок</th>
@@ -9,6 +10,8 @@
                 <th>Файл</th>
                 <th></th>
             </tr>
+            </thead>
+            <tbody>
             <tr v-for="(payment) in payments">
                 <td>{{ payment.id }}</td>
                 <td class="text-end">{{ payment.accountNumber }}</td>
@@ -40,6 +43,7 @@
                     </button>
                 </td>
             </tr>
+            </tbody>
         </table>
     </div>
 </template>

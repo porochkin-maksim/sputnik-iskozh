@@ -39,9 +39,8 @@
             <div>
                 <simple-select v-model="perPage"
                                :class="'d-inline-block form-select-sm w-auto ms-2'"
-                               :items="[15,25,50,100]"
-                               @change="listAction"
-                />
+                               :options="[15,25,50,100]"
+                               @change="listAction" />
             </div>
             <div class=" d-flex align-items-center justify-content-center mx-2">
                 Всего: {{ total }}
@@ -124,15 +123,13 @@
 import ResponseError  from '../../../mixin/ResponseError.js';
 import Url            from '../../../utils/Url.js';
 import HistoryBtn     from '../../common/HistoryBtn.vue';
-import SearchSelect   from '../../common/form/SearchSelect.vue';
 import Pagination     from '../../common/pagination/Pagination.vue';
 import AccountItemAdd from './AccountItemAdd.vue';
 import SimpleSelect   from '../../common/form/SimpleSelect.vue';
-import { log10 }      from 'chart.js/helpers';
 
 export default {
     name      : 'AccountsBlock',
-    components: { SimpleSelect, AccountItemAdd, Pagination, SearchSelect, HistoryBtn },
+    components: { SimpleSelect, AccountItemAdd, Pagination, HistoryBtn },
     mixins    : [
         ResponseError,
     ],

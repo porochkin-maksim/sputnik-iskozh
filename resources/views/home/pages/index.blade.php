@@ -20,8 +20,9 @@ use Core\Resources\Views\ViewNames;
                     <h5 class="text-dark d-flex align-items-center"> Участок:
                         @if (lc::user()->getAccounts()->hasMany())
                             <div class="d-inline-block">
-                                <account-switcher :accounts='@json(new AccountsSelectResource(lc::user()->getAccounts(), false))'
-                                                  :selected='{{ lc::account()->getId() }}'
+                                <account-switcher
+                                        :accounts='@json(new AccountsSelectResource(lc::user()->getAccounts(), false))'
+                                        :selected='{{ lc::account()->getId() }}'
                                 />
                             </div>
                         @else
@@ -32,11 +33,11 @@ use Core\Resources\Views\ViewNames;
                 @endif
             </div>
             @if(lc::user()->isRealEmail())
-            <div>
-                <password-block :account='@json(new AccountResource(lc::account()))'
-                                :user='@json(new UserResource(lc::user()))'
-                />
-            </div>
+                <div>
+                    <password-block :account='@json(new AccountResource(lc::account()))'
+                                    :user='@json(new UserResource(lc::user()))'
+                    />
+                </div>
             @endif
             @if(lc::account()->getId())
                 <a class="card mt-2"

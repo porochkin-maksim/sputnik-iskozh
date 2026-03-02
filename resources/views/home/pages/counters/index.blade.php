@@ -14,5 +14,5 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_COUNTERS);
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::PROFILE_COUNTERS) }}
-    <profile-counters-block></profile-counters-block>
+    <counters-block></counters-block>
 @endsection

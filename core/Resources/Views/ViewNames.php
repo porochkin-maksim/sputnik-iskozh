@@ -31,9 +31,7 @@ enum ViewNames: string
 
     public const string PAGES_ANNOUNCEMENT_INDEX = 'pages.announcement.index';
 
-    public const string PAGES_HOME             = 'home.pages.index';
     public const string PAGES_ACCOUNT_REGISTER = 'home.pages.register';
-    public const string PAGES_PROFILE          = 'home.pages.profile';
 
     public const string PAGES_PROFILE_COUNTERS      = 'home.pages.counters.index';
     public const string PAGES_PROFILE_COUNTERS_VIEW = 'home.pages.counters.view';

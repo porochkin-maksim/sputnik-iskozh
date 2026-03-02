@@ -27,7 +27,7 @@ $season = match (Carbon::now()->month) {
 
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), config('app.name')))</title>
 
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss', 'resources/js/profile.js'])
 
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)

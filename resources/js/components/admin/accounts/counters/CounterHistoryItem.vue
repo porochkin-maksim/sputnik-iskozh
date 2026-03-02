@@ -67,10 +67,7 @@
 <script>
 import CustomInput    from '../../../common/form/CustomInput.vue';
 import ViewDialog     from '../../../common/ViewDialog.vue';
-import CustomCheckbox from '../../../common/form/CustomCheckbox.vue';
-import SearchSelect   from '../../../common/form/SearchSelect.vue';
 import FileItem       from '../../../common/files/FileItem.vue';
-import Wrapper        from '../../../common/Wrapper.vue';
 import ResponseError  from '../../../../mixin/ResponseError.js';
 import Url            from '../../../../utils/Url.js';
 import CustomCalendar from '../../../common/form/CustomCalendar.vue';
@@ -79,12 +76,9 @@ export default {
     emits     : ['historyUpdated'],
     components: {
         CustomCalendar,
-        SearchSelect,
         FileItem,
         ViewDialog,
-        CustomCheckbox,
         CustomInput,
-        Wrapper,
     },
     props     : {
         counter: {

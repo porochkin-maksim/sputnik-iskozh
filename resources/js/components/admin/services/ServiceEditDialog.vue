@@ -27,12 +27,12 @@
                 <label>Период</label>
                 <simple-select v-model="periodId"
                                class="form-control"
-                               :items="periods"
+                               :options="periods"
                                :disabled="!actions?.period" />
                 <label>Тип</label>
                 <simple-select v-model="type"
                                class="form-control"
-                               :items="actions && actions.type === false ? types.all : (types.available && types.available[periodId] || [])"
+                               :options="actions && actions.type === false ? types.all : (types.available && types.available[periodId] || [])"
                                :disabled="!actions?.type" />
             </div>
         </template>

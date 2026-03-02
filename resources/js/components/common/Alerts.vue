@@ -1,101 +1,116 @@
 <template>
-    <!-- Контейнер для вывода ошибок -->
-    <div class="error-container"
-         v-if="!disableErrorsPopup && errors && errors.length">
+    <div
+        v-if="!disableErrorsPopup && errors.length"
+        class="error-container"
+        role="alert"
+        aria-live="assertive"
+    >
         <ul class="error-list cursor-pointer"
             @click="removeErrors">
-            <li v-for="value in errors"
-                :key="value.id"
+            <li v-for="error in errors"
+                :key="error.id"
                 class="error-item">
-                <span class="error-text">{{ value.text }}</span>
+                <span class="error-text">{{ error.text }}</span>
             </li>
         </ul>
     </div>
 
-    <!-- Контейнер для уведомлений -->
-    <div class="notification-container"
-         v-if="messages && messages.length">
+    <div
+        v-if="messages.length"
+        class="notification-container"
+        role="status"
+        aria-live="polite"
+    >
         <transition-group name="slide-fade">
-            <div v-for="value in messages"
-                 :key="value.id"
-                 class="message"
-                 :class="['', 'border-' + value.type]"
-                 @click="removeMessage(value.id)">
-                <span class="message-text">{{ value.text }}</span>
+            <div
+                v-for="msg in messages"
+                :key="msg.id"
+                class="message cursor-pointer"
+                :class="'border-' + msg.type"
+                @click="removeMessage(msg.id)"
+            >
+                <span class="message-text">{{ msg.text }}</span>
             </div>
         </transition-group>
     </div>
 </template>
-```
 
-#### JS-код
-
-```javascript
-<script>
+<script setup>
 import {
-    mapGetters,
-    mapActions,
-} from 'vuex';
+    computed,
+    watch,
+    onBeforeUnmount,
+    defineOptions,
+}                   from 'vue';
+import { useStore } from 'vuex';
 
-export default {
-    name: 'AlertsBlock',
-    props: {
-        disableErrorsPopup: {
-            default: false,
-        },
+defineOptions({
+    name: 'AlertsBlock' // или любое другое имя, под которым вы регистрируете компонент
+});
+
+const props = defineProps({
+    disableErrorsPopup: {
+        type   : Boolean,
+        default: false,
     },
-    data () {
-        return {
-            timeoutIds: {},
-        };
-    },
-    computed: {
-        ...mapGetters('alerts', ['allMessages', 'allErrors']),
-        messages () {
-            return this.allMessages.map((value) => ({
-                ...value,
-                timeoutId: this.timeoutIds[value.id],
-            })).reverse();
-        },
-        errors () {
-            return this.allErrors.map((value) => ({
-                ...value,
-                timeoutId: this.timeoutIds[value.id],
-            }));
-        },
-    },
-    watch   : {
-        messages (newMessages) {
-            newMessages.forEach((value) => {
-                if (!this.timeoutIds[value.id]) {
-                    this.timeoutIds[value.id] = setTimeout(() => {
-                        this.removeMessage(value.id);
-                    }, 5000);
-                }
-            });
-        },
-    },
-    beforeUnmount () {
-        Object.values(this.timeoutIds).forEach(clearTimeout);
-    },
-    methods: {
-        ...mapActions('alerts', ['removeMessage', 'removeErrors']),
-    },
-};
+});
+
+const store = useStore();
+
+const allMessages = computed(() => store.getters['alerts/allMessages'] || []);
+const allErrors   = computed(() => store.getters['alerts/allErrors'] || []);
+
+const removeMessage = (id) => store.dispatch('alerts/removeMessage', id);
+const removeErrors  = () => store.dispatch('alerts/removeErrors');
+
+// Хранилище таймеров для автоматического скрытия
+const timeouts = new Map();
+
+const messages = computed(() => allMessages.value.slice().reverse());
+const errors   = computed(() => allErrors.value);
+
+// Автоматическое скрытие через 5 секунд
+watch(messages, (newMessages, oldMessages) => {
+    // Очистка таймеров для удалённых сообщений
+    oldMessages.forEach(msg => {
+        if (!newMessages.find(m => m.id === msg.id)) {
+            const timeout = timeouts.get(msg.id);
+            if (timeout) {
+                clearTimeout(timeout);
+                timeouts.delete(msg.id);
+            }
+        }
+    });
+
+    // Установка таймеров для новых сообщений
+    newMessages.forEach(msg => {
+        if (!timeouts.has(msg.id)) {
+            const timeout = setTimeout(() => {
+                removeMessage(msg.id);
+                timeouts.delete(msg.id);
+            }, 5000);
+            timeouts.set(msg.id, timeout);
+        }
+    });
+}, { deep: true });
+
+// Очистка всех таймеров при размонтировании
+onBeforeUnmount(() => {
+    timeouts.forEach(timeout => clearTimeout(timeout));
+    timeouts.clear();
+});
 </script>
 
 <style scoped>
-.slide-fade-enter-active {
+/* Анимация для уведомлений (остаётся локальной) */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
     transition : all 0.3s ease;
 }
 
-.slide-fade-leave-active {
-    transition : all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter, .slide-fade-leave-to {
-    transform : translateY(10px);
+.slide-fade-enter-from,
+.slide-fade-leave-to {
     opacity   : 0;
+    transform : translateX(30px);
 }
 </style>
-

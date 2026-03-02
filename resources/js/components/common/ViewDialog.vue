@@ -1,115 +1,160 @@
 <template>
-    <div class="modal fade"
-         tabindex="-1"
-         ref="modal"
-         data-bs-backdrop="false"
-    >
-        <div class="modal-dialog"
-             :class="modalClass">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <slot name="title"></slot>
-                    </h5>
-                    <button type="button"
+    <Teleport to="body">
+        <div
+            ref="modalElement"
+            class="modal fade"
+            tabindex="-1"
+            :data-bs-backdrop="backdrop ? 'true' : 'false'"
+        >
+            <div class="modal-dialog" :class="modalClass">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <slot name="title"></slot>
+                        </h5>
+                        <button
+                            type="button"
                             class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body"
-                     v-if="$slots.body">
-                    <slot name="body"></slot>
-                </div>
-                <div class="modal-footer"
-                     v-if="$slots.footer">
-                    <slot name="footer"></slot>
+                            @click="closeWithForce"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div v-if="$slots.body" class="modal-body">
+                        <slot name="body"></slot>
+                    </div>
+                    <div v-if="$slots.footer" class="modal-footer">
+                        <slot name="footer"></slot>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </Teleport>
 </template>
 
-<script>
-export default {
-    name : 'ViewDialog',
-    props: {
-        show      : {
-            type   : Boolean,
-            default: false,
-        },
-        hide      : {
-            type   : Boolean,
-            default: false,
-        },
-        modalClass: {
-            type   : String,
-            default: '',
-        },
-    },
-    emits: ['update:show', 'update:hide', 'hidden', 'shown'],
-    data () {
-        return {
-            modal: null,
-        };
-    },
-    mounted () {
-        this.modal = new bootstrap.Modal(this.$refs.modal, {
-            keyboard: false,
-        });
+<script setup>
+import {
+    ref,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+}                     from 'vue';
+import * as bootstrap from 'bootstrap'; // или window.bootstrap, если глобально
 
-        this.$refs.modal.addEventListener('hidden.bs.modal', () => {
-            this.$emit('update:hide', false);
-            this.$emit('hidden');
-            // Очищаем классы модального окна
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow     = '';
-            document.body.style.paddingRight = '';
-        });
-
-        this.$refs.modal.addEventListener('shown.bs.modal', () => {
-            this.$emit('update:show', true);
-            this.$emit('update:hide', false);
-            this.$emit('shown');
-        });
-
-        if (this.show) {
-            this.modal.show();
-        }
+const props = defineProps({
+    show          : {
+        type   : Boolean,
+        default: false,
     },
-    beforeUnmount () {
-        if (this.modal) {
-            this.modal.hide();
-            this.modal.dispose();
-            this.modal = null;
-            // Очищаем классы модального окна
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow     = '';
-            document.body.style.paddingRight = '';
-        }
+    hide          : {
+        type   : Boolean,
+        default: false,
     },
-    methods: {
-        onModalClick (event) {
+    modalClass    : {
+        type   : String,
+        default: '',
+    },
+    backdrop      : {
+        type   : Boolean,
+        default: true,
+    },
+    askBeforeClose: {
+        type   : Boolean,
+        default: false,
+    },
+    confirmMessage: {
+        type   : String,
+        default: 'Закрыть окно? Несохранённые данные будут потеряны.',
+    },
+});
+
+const emit = defineEmits(['update:show', 'update:hide', 'hidden', 'shown']);
+
+const modalElement = ref(null);
+let modalInstance  = null;
+let isShown        = ref(false);
+let forceClose     = ref(false);
+
+watch(isShown, (val) => {
+    if (val) {
+        forceClose.value = false;
+    }
+});
+
+onMounted(() => {
+    if (!modalElement.value) {
+        return;
+    }
+
+    modalInstance = new bootstrap.Modal(modalElement.value, {
+        keyboard: true,
+        backdrop: props.backdrop ? true : 'static',
+    });
+
+    modalElement.value.addEventListener('shown.bs.modal', () => {
+        isShown.value = true;
+        emit('update:show', true);
+        emit('update:hide', false);
+        emit('shown');
+    });
+
+    modalElement.value.addEventListener('hide.bs.modal', (event) => {
+        if (forceClose.value || !props.askBeforeClose) {
             return;
-            const dialogElement = event.target.closest('.modal-dialog');
-            if (!dialogElement) {
-                this.modal.hide();
-                this.$emit('update:hide', true);
-            }
-        },
-    },
-    watch  : {
-        show: function (value) {
-            if (value) {
-                this.modal.show();
-                this.$emit('update:show', false);
-            }
-        },
-        hide: function (value) {
-            if (value) {
-                this.modal.hide();
-                this.$emit('update:hide', false);
-            }
-        },
-    },
+        }
+        event.preventDefault();
+        if (confirm(props.confirmMessage)) {
+            forceClose.value = true;
+            modalInstance.hide();
+        }
+    });
+
+    modalElement.value.addEventListener('hidden.bs.modal', () => {
+        isShown.value    = false;
+        forceClose.value = false;
+        emit('update:show', false);
+        emit('update:hide', false);
+        emit('hidden');
+    });
+
+    if (props.show) {
+        modalInstance.show();
+    }
+});
+
+watch(() => props.show, (newVal) => {
+    if (!modalInstance) {
+        return;
+    }
+    if (newVal && !isShown.value) {
+        modalInstance.show();
+    }
+    else if (!newVal && isShown.value) {
+        forceClose.value = true;
+        modalInstance.hide();
+    }
+});
+
+watch(() => props.hide, (newVal) => {
+    if (!modalInstance || !newVal) {
+        return;
+    }
+    forceClose.value = true;
+    modalInstance.hide();
+    emit('update:hide', false);
+});
+
+const closeWithForce = () => {
+    forceClose.value = true;
+    if (modalInstance) {
+        modalInstance.hide();
+    }
 };
+
+onBeforeUnmount(() => {
+    if (modalInstance) {
+        modalInstance.hide();
+        modalInstance.dispose();
+        modalInstance = null;
+    }
+});
 </script>

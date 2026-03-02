@@ -13,77 +13,76 @@
             </tr>
             </thead>
             <tbody>
+            <!-- Доход -->
             <tr class="table-secondary">
                 <th class="d-flex flex-column flex-sm-row flex-wrap justify-content-between">
-                    <span>
-                        Доход
-                    </span>
-                    <a href=""
+                    <span>Доход</span>
+                    <a href="#"
                        v-if="!summaryIncome"
                        @click.prevent="showDetailsIncome">Подробнее</a>
-                    <a href=""
+                    <a href="#"
                        v-else
-                       @click.prevent="summaryIncome=null">Скрыть</a>
+                       @click.prevent="summaryIncome = null">Скрыть</a>
                 </th>
-                <td class="text-end">{{ $formatMoney(summary.incomeCost) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.incomePayed) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.deltaIncome) }}</td>
+                <td class="text-end">{{ formatMoney(summary.incomeCost) }}</td>
+                <td class="text-end">{{ formatMoney(summary.incomePayed) }}</td>
+                <td class="text-end">{{ formatMoney(summary.deltaIncome) }}</td>
                 <template v-if="showInvoice">
                     <td>Регулярных</td>
                     <td>{{ summary.regularCount }}</td>
                 </template>
             </tr>
             <template v-if="summaryIncome">
-                <tr v-for="item in summaryIncome"
-                    class="">
+                <tr v-for="item in summaryIncome" :key="item.id" class="">
                     <td class="text-start">{{ item.service }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.cost)) }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.payed)) }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.delta)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.cost)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.payed)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.delta)) }}</td>
                     <template v-if="showInvoice">
                         <td></td>
                         <td></td>
                     </template>
                 </tr>
             </template>
+
+            <!-- Расход -->
             <tr class="table-secondary">
                 <th class="d-flex flex-column flex-sm-row flex-wrap justify-content-between">
-                    <span>
-                        Расход
-                    </span>
-                    <a href=""
+                    <span>Расход</span>
+                    <a href="#"
                        v-if="!summaryOutcome"
                        @click.prevent="showDetailsOutcome">Подробнее</a>
-                    <a href=""
+                    <a href="#"
                        v-else
-                       @click.prevent="summaryOutcome=null">Скрыть</a>
+                       @click.prevent="summaryOutcome = null">Скрыть</a>
                 </th>
-                <td class="text-end">{{ $formatMoney(summary.outcomeCost) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.outcomePayed) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.deltaOutcome) }}</td>
+                <td class="text-end">{{ formatMoney(summary.outcomeCost) }}</td>
+                <td class="text-end">{{ formatMoney(summary.outcomePayed) }}</td>
+                <td class="text-end">{{ formatMoney(summary.deltaOutcome) }}</td>
                 <template v-if="showInvoice">
                     <td>Доходных</td>
                     <td>{{ summary.incomeCount }}</td>
                 </template>
             </tr>
             <template v-if="summaryOutcome">
-                <tr v-for="item in summaryOutcome"
-                    class="">
+                <tr v-for="item in summaryOutcome" :key="item.id" class="">
                     <td class="text-start">{{ item.service }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.cost)) }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.payed)) }}</td>
-                    <td class="text-end">{{ $formatMoney(parseFloat(item.delta)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.cost)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.payed)) }}</td>
+                    <td class="text-end">{{ formatMoney(parseFloat(item.delta)) }}</td>
                     <template v-if="showInvoice">
                         <td></td>
                         <td></td>
                     </template>
                 </tr>
             </template>
+
+            <!-- Итого -->
             <tr class="table-info">
                 <th class="text-end">Итого:</th>
-                <td class="text-end">{{ $formatMoney(summary.deltaCost) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.deltaPayed) }}</td>
-                <td class="text-end">{{ $formatMoney(summary.delta) }}</td>
+                <td class="text-end">{{ formatMoney(summary.deltaCost) }}</td>
+                <td class="text-end">{{ formatMoney(summary.deltaPayed) }}</td>
+                <td class="text-end">{{ formatMoney(summary.delta) }}</td>
                 <template v-if="showInvoice">
                     <td>Расходных</td>
                     <td>{{ summary.outcomeCount }}</td>
@@ -94,112 +93,97 @@
     </div>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
+<script setup>
+import {
+    ref,
+    watch,
+    onMounted,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import Url                  from '@utils/Url.js';
 
-export default {
-    name  : 'SummaryBlock',
-    mixins: [
-        ResponseError,
-    ],
-    props : {
-        type         : {
-            type   : Number,
-            default: null,
-        },
-        periodId     : {
-            type   : Number,
-            default: null,
-        },
-        accountId    : {
-            type   : Number,
-            default: null,
-        },
-        accountSearch: {
-            type   : String,
-            default: null,
-        },
-        showInvoice  : {
-            type   : Boolean,
-            default: true,
-        },
+const props = defineProps({
+    type         : {
+        type   : Number,
+        default: null,
     },
-    data () {
-        return {
-            summary       : null,
-            summaryIncome : null,
-            summaryOutcome: null,
-        };
+    periodId     : {
+        type   : Number,
+        default: null,
     },
-    created () {
-        this.summaryAction();
+    accountId    : {
+        type   : Number,
+        default: null,
     },
-    methods: {
-        summaryAction () {
-            this.summaryOutcome = null;
-            this.summaryIncome  = null;
-            let uri             = Url.Generator.makeUri(Url.Routes.commonSummary, {}, {
-                type      : this.type,
-                period_id : this.periodId,
-                account_id: this.accountId,
-                search    : this.accountSearch,
-            });
+    accountSearch: {
+        type   : String,
+        default: null,
+    },
+    showInvoice  : {
+        type   : Boolean,
+        default: true,
+    },
+});
 
-            window.axios[Url.Routes.commonSummary.method](uri).then(response => {
-                this.summary = response.data;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        showDetailsIncome () {
-            this.summaryIncome = [];
-            let uri            = Url.Generator.makeUri(Url.Routes.commonSummaryDetailing, {
-                type: 'income',
-            }, {
-                type      : this.type,
-                period_id : this.periodId,
-                account_id: this.accountId,
-                search    : this.accountSearch,
-            });
+const { parseResponseErrors } = useResponseError();
+const { formatMoney }         = useFormat();
 
-            window.axios[Url.Routes.commonSummaryDetailing.method](uri).then(response => {
-                this.summaryIncome = response.data;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        showDetailsOutcome () {
-            this.summaryOutcome = [];
-            let uri             = Url.Generator.makeUri(Url.Routes.commonSummaryDetailing, {
-                type: 'outcome',
-            }, {
-                type      : this.type,
-                period_id : this.periodId,
-                account_id: this.accountId,
-                search    : this.accountSearch,
-            });
+const summary        = ref(null);
+const summaryIncome  = ref(null);
+const summaryOutcome = ref(null);
 
-            window.axios[Url.Routes.commonSummaryDetailing.method](uri).then(response => {
-                this.summaryOutcome = response.data;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    watch  : {
-        type () {
-            this.summaryAction();
-        },
-        periodId () {
-            this.summaryAction();
-        },
-        accountId () {
-            this.summaryAction();
-        },
-        accountSearch () {
-            this.summaryAction();
-        },
-    },
+const buildParams = () => {
+    return {
+        type      : props.type,
+        period_id : props.periodId,
+        account_id: props.accountId,
+        search    : props.accountSearch,
+    };
 };
+
+const summaryAction = () => {
+    summaryIncome.value  = null;
+    summaryOutcome.value = null;
+
+    Url.RouteFunctions.commonSummary(buildParams())
+        .then(response => {
+            summary.value = response.data;
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        });
+};
+
+const showDetailsIncome = () => {
+    summaryIncome.value = [];
+    Url.RouteFunctions.commonSummaryDetailing('income')
+        .then(response => {
+            summaryIncome.value = response.data;
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        });
+};
+
+const showDetailsOutcome = () => {
+    summaryOutcome.value = [];
+
+    Url.RouteFunctions.commonSummaryDetailing('outcome')
+        .then(response => {
+            summaryOutcome.value = response.data;
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        });
+};
+
+// Следим за изменениями параметров
+watch(() => props.type, summaryAction);
+watch(() => props.periodId, summaryAction);
+watch(() => props.accountId, summaryAction);
+watch(() => props.accountSearch, summaryAction);
+
+// Загружаем данные при монтировании
+onMounted(summaryAction);
 </script>
