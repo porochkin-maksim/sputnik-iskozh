@@ -4,9 +4,7 @@ namespace Core\Db;
 
 use Core\Cache\CacheLocator;
 use Core\Db\Searcher\BaseSearcher;
-use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\SearchResponse;
-use Core\Db\Searcher\Models\Where;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,38 +15,18 @@ trait RepositoryTrait
 {
     abstract protected function modelClass(): string;
 
+    /**
+     * @deprecated
+     */
     public function getById(?int $id): ?Model
     {
-        $result     = null;
-        $modelClass = $this->modelClass();
-
-        if ($id && class_exists($this->modelClass())) {
-            $cacheKey = $this->cacheKey($id);
-
-            if (CacheLocator::LocalCache()->has($cacheKey)) {
-                $result = CacheLocator::LocalCache()->get($cacheKey);
-            }
-            else {
-                /** @var Model $model */
-                $model  = new $modelClass;
-                $result = $this->getQuery($model::query())->find($id);
-
-                if ($result) {
-                    CacheLocator::LocalCache()->set($cacheKey, $result);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    private function cacheKey($key): string
-    {
-        return Hash::make($this->modelClass() . $key);
+        return $this->getModelById($id);
     }
 
     /**
      * @param int[] $ids
+     *
+     * @deprecated
      */
     public function getByIds(
         array              $ids,
@@ -67,7 +45,35 @@ trait RepositoryTrait
         return $result;
     }
 
+    /**
+     * @deprecated
+     */
     public function search(SearcherInterface $searcher): SearchResponse
+    {
+        return $this->searchModels($searcher);
+    }
+
+    protected function getModelById(?int $id): ?Model
+    {
+        if ( ! $id) {
+            return null;
+        }
+        $cacheKey = $this->cacheKey($id);
+        if (CacheLocator::LocalCache()->has($cacheKey)) {
+            return CacheLocator::LocalCache()->get($cacheKey);
+        }
+        $modelClass = $this->modelClass();
+        $query      = (new $modelClass)::query();
+        $query      = $this->getQuery($query);
+        $model      = $query->find($id);
+        if ($model) {
+            CacheLocator::LocalCache()->set($cacheKey, $model);
+        }
+
+        return $model;
+    }
+
+    protected function searchModels(SearcherInterface $searcher): SearchResponse
     {
         $result = new SearchResponse();
 
@@ -84,13 +90,26 @@ trait RepositoryTrait
 
         $result->setItems($items);
 
+        CacheLocator::LocalCache()->set($cacheKey, $result);
+
         return $result;
     }
 
-    // для переопределения
-    private function getQuery(Builder $query): Builder
+    protected function deleteModelById(int $id): bool
     {
-        return $query;
+        return $this->deleteModelsByIds([$id]) > 0;
+    }
+
+    protected function deleteModelsByIds(array $ids): int
+    {
+        $modelClass = $this->modelClass();
+        $deleted    = (new $modelClass)::whereIn('id', $ids)->delete();
+        $localCache = CacheLocator::LocalCache();
+        foreach ($ids as $id) {
+            $localCache->drop($this->cacheKey($id));
+        }
+
+        return $deleted;
     }
 
     protected function buildSearchQuery(?SearcherInterface $searcher = null): Builder
@@ -200,7 +219,12 @@ trait RepositoryTrait
         return $query;
     }
 
-    private function adaptFieldName(string $field): string
+    protected function getQuery(Builder $query): Builder
+    {
+        return $query;
+    }
+
+    protected function adaptFieldName(string $field): string
     {
         if (Str::contains($field, '.')) {
             return $field;
@@ -209,37 +233,8 @@ trait RepositoryTrait
         return sprintf("%s.%s", static::TABLE, $field);
     }
 
-    public function deleteById(int $id): bool
+    private function cacheKey($key): string
     {
-        return $this->deleteByIds([$id]);
-    }
-
-    /**
-     * @param int[] $ids
-     */
-    public function deleteByIds(array $ids): bool
-    {
-        $result     = false;
-        $modelClass = $this->modelClass();
-
-        if (class_exists($this->modelClass())) {
-            $result = (new $modelClass)::whereIn('id', $ids)->delete();
-        }
-
-        foreach ($ids as $id) {
-            $cacheKey = $this->cacheKey($id);
-            CacheLocator::LocalCache()->drop($cacheKey);
-        }
-
-        return (bool) $result;
-    }
-
-    public function save($item): mixed
-    {
-        if ($this->modelClass() === get_class($item)) {
-            $item->save();
-        }
-
-        return $item;
+        return Hash::make($this->modelClass() . $key);
     }
 }
