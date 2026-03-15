@@ -26,7 +26,6 @@ class CounterLocator
     {
         if ( ! isset(self::$counterService)) {
             self::$counterService = new CounterService(
-                self::CounterFactory(),
                 self::CounterRepository(),
                 HistoryChangesLocator::HistoryChangesService(),
             );
@@ -47,7 +46,9 @@ class CounterLocator
     public static function CounterRepository(): CounterRepository
     {
         if ( ! isset(self::$counterRepository)) {
-            self::$counterRepository = new CounterRepository();
+            self::$counterRepository = new CounterRepository(
+                self::CounterFactory(),
+            );
         }
 
         return self::$counterRepository;
