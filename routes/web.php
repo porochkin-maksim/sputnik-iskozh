@@ -44,7 +44,7 @@ Route::group(['prefix' => 'search'], static function () {
 
 Route::group(['prefix' => 'home'], static function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-        Route::get('/', [Controllers\Profile\AccountsController::class, 'index'])->name(RouteNames::HOME);
+        Route::get('/', [Controllers\Profile\HomeController::class, 'index'])->name(RouteNames::HOME);
 
         Route::group(['prefix' => 'profile'], static function () {
             Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
@@ -76,7 +76,7 @@ Route::group(['prefix' => 'home'], static function () {
                 Route::get('/{counter}', [Controllers\Profile\CounterController::class, 'view'])->name(RouteNames::PROFILE_COUNTER_VIEW);
             });
             Route::group(['prefix' => 'invoices'], static function () {
-                Route::get('/', [Controllers\Profile\InvoiceController::class, 'index'])->name(RouteNames::PROFILE_INVOICES);
+                Route::get('/', [Controllers\Profile\HomeController::class, 'invoices'])->name(RouteNames::PROFILE_INVOICES);
             });
         });
     });

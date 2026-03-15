@@ -10,6 +10,8 @@ use Core\Domains\User\UserLocator;
 use Core\Session\SessionNames;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use lc;
+use Throwable;
 
 class ProfileController extends Controller
 {
@@ -20,29 +22,24 @@ class ProfileController extends Controller
         $this->userService = UserLocator::UserService();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function savePassword(SaveProfilePasswordRequest $request): void
     {
-        DB::beginTransaction();
-
-        try {
-            $user = \lc::user();
+        DB::transaction(function () use ($request) {
+            $user = lc::user();
             $user->setPassword($request->getPassword());
 
             $this->userService->save($user);
-
-            DB::commit();
-        }
-        catch (\Throwable $throwable) {
-            DB::rollBack();
-            throw $throwable;
-        }
+        });
     }
 
     public function switchAccount(DefaultRequest $request): bool
     {
         $accountId = $request->getIntOrNull('accountId');
 
-        $account = \lc::user()->getAccounts()->searchById($accountId);
+        $account = lc::user()->getAccounts()->searchById($accountId);
 
         if ($account === null) {
             return false;
