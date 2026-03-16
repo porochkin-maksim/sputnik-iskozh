@@ -3,6 +3,7 @@
 namespace Core\Domains\Infra\HistoryChanges\Services;
 
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
+use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
 use Core\Domains\Infra\Comparator\Services\Comparator;
 use Core\Domains\Infra\HistoryChanges\Collections\HistoryChangesCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
@@ -14,7 +15,6 @@ use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Responses\SearchResponse;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
-use lc;
 
 class HistoryChangesService
 {
@@ -31,18 +31,27 @@ class HistoryChangesService
         return $this->historyChangesFactory->makeDefault();
     }
 
-    public function addTextToHistory(
-        HistoryType $type,
-        int         $primaryId,
-        string      $text,
-    )
+    public function logChanges(
+        Event             $event,
+        HistoryType       $type,
+        ChangesCollection $changes,
+        ?int              $primaryId,
+        ?HistoryType      $referenceType = null,
+        ?int              $referenceId = null,
+    ): void
     {
-        $this->writeToHistory(
-            Event::COMMON,
-            $type,
-            $primaryId,
-            text: $text,
-        );
+        $logData = new LogData($event, $changes, null);
+
+        $historyChanges = $this->historyChangesFactory->makeDefault();
+        $historyChanges
+            ->setType($type)
+            ->setReferenceType($referenceType)
+            ->setPrimaryId($primaryId)
+            ->setReferenceId($referenceId)
+            ->setLog($logData)
+        ;
+
+        CreateHistoryJob::dispatch($historyChanges);
     }
 
     public function writeToHistory(

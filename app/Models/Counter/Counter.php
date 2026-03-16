@@ -54,6 +54,20 @@ class Counter extends Model implements CastsInterface
         self::EXPIRE_AT    => self::CAST_DATETIME,
     ];
 
+    public const string TITLE_TYPE         = 'Тип';
+    public const string TITLE_ACCOUNT_ID   = 'Участок';
+    public const string TITLE_NUMBER       = 'Номер';
+    public const string TITLE_IS_INVOICING = 'Выставлять счета';
+    public const string TITLE_INCREMENT    = 'Автоприращение (кВт)';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::TYPE         => self::TITLE_TYPE,
+        self::ACCOUNT_ID   => self::TITLE_ACCOUNT_ID,
+        self::NUMBER       => self::TITLE_NUMBER,
+        self::IS_INVOICING => self::TITLE_IS_INVOICING,
+        self::INCREMENT    => self::TITLE_INCREMENT,
+    ];
+
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
