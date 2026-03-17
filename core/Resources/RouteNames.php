@@ -36,15 +36,6 @@ abstract class RouteNames
     public const string SESSION_STORE    = 'session.store';
     public const string COOKIE_AGREEMENT = 'cookie_agreement';
 
-    public const string REPORTS             = 'reports.index';
-    public const string REPORTS_LIST        = 'reports.list';
-    public const string REPORTS_CREATE      = 'reports.create';
-    public const string REPORTS_EDIT        = 'reports.edit';
-    public const string REPORTS_SAVE        = 'reports.save';
-    public const string REPORTS_DELETE      = 'reports.delete';
-    public const string REPORTS_FILE_UPLOAD = 'reports.file.upload';
-    public const string REPORTS_FILE_DELETE = 'reports.file.delete';
-
     public const string NEWS             = 'news.index';
     public const string NEWS_LIST        = 'news.list';
     public const string NEWS_INDEX_LIST  = 'news.list.index';
@@ -239,7 +230,6 @@ abstract class RouteNames
             self::FILES                               => 'Документы',
             self::NEWS                                => 'Новости',
             self::ANNOUNCEMENTS                       => 'Объявления',
-            self::REPORTS                             => 'Отчёты',
 
             // админка
             self::ADMIN                               => 'О системе',

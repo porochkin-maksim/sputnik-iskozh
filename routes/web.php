@@ -82,21 +82,6 @@ Route::group(['prefix' => 'home'], static function () {
     });
 });
 
-Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-    Route::group(['prefix' => 'reports'], static function () {
-        Route::get('/', [Controllers\Reports\ReportsController::class, 'index'])->name(RouteNames::REPORTS);
-        Route::group(['prefix' => 'json'], static function () {
-            Route::get('/list', [Controllers\Reports\ReportsController::class, 'list'])->name(RouteNames::REPORTS_LIST);
-            Route::get('/create', [Controllers\Reports\ReportsController::class, 'create'])->name(RouteNames::REPORTS_CREATE);
-            Route::post('/save', [Controllers\Reports\ReportsController::class, 'save'])->name(RouteNames::REPORTS_SAVE);
-            Route::get('/edit/{id}', [Controllers\Reports\ReportsController::class, 'edit'])->name(RouteNames::REPORTS_EDIT);
-            Route::delete('/delete/{id}', [Controllers\Reports\ReportsController::class, 'delete'])->name(RouteNames::REPORTS_DELETE);
-            Route::post('/file/upload/{id}', [Controllers\Reports\ReportsController::class, 'uploadFile'])->name(RouteNames::REPORTS_FILE_UPLOAD);
-            Route::post('/file/delete/{id}', [Controllers\Pages\Files\FileController::class, 'delete'])->name(RouteNames::REPORTS_FILE_DELETE);
-        });
-    });
-});
-
 Route::group(['prefix' => 'news'], static function () {
     Route::get('/', [Controllers\Pages\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
     Route::get('/{id}', [Controllers\Pages\News\NewsController::class, 'show'])->name(RouteNames::NEWS_SHOW);
