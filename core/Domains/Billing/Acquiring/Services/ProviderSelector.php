@@ -10,7 +10,7 @@ use Core\Domains\Billing\Acquiring\Providers\ProviderInterface;
 class ProviderSelector
 {
     private const array PROBABILITIES = [
-        ProviderEnum::VTB->value => 100,
+        // ProviderEnum::VTB->value => 100,
     ];
 
     /**

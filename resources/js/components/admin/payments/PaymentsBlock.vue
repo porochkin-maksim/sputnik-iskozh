@@ -1,231 +1,346 @@
 <template>
-    <h5>Новые платежи</h5>
-    <payments-list v-model:selected-id="selectedId"
-                   v-model:reload="reloadList"
-    />
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
-                 @hidden="closeAction"
-                 v-if="payment && (payment.actions.edit || payment.actions.view)"
-    >
-        <template v-slot:title>{{ payment.actions.edit ? 'Привязка платёжа' : 'Просмотр платёжа' }}</template>
-        <template v-slot:body>
-            <div class="container-fluid">
-                <template v-if="payment.actions.edit">
-                    <template v-if="accounts.length">
-                        <label>Участок</label>
-                        <search-select
-                            v-model="payment.accountId"
-                            :prop-class="'form-control mb-2'"
-                            :items="accounts"
-                            :placeholder="'Участок...'"
-                            @update:model-value="getInvoices"
+    <div>
+        <h5>Новые платежи</h5>
+
+        <!-- Индикатор загрузки -->
+        <loading-spinner
+            v-if="isLoading"
+            size="md"
+            color="primary"
+            text="Загрузка платежей..."
+            wrapper-class="py-4"
+        />
+
+        <payments-list
+            v-else
+            v-model:selected-id="selectedId"
+            v-model:reload="reloadList"
+        />
+
+        <view-dialog
+            v-model:show="showDialog"
+            v-model:hide="hideDialog"
+            @hidden="closeAction"
+            v-if="payment && (payment.actions.edit || payment.actions.view)"
+        >
+            <template #title>
+                {{ payment.actions.edit ? 'Привязка платёжа' : 'Просмотр платёжа' }}
+            </template>
+
+            <template #body>
+                <div class="container-fluid">
+                    <!-- Режим редактирования -->
+                    <template v-if="payment.actions.edit">
+                        <!-- Участок -->
+                        <div class="mb-2">
+                            <search-select
+                                v-model="payment.accountId"
+                                :items="accounts"
+                                label="Участок"
+                                placeholder="Участок..."
+                                @update:modelValue="getInvoices"
+                                :disabled="invoicesLoading"
+                            />
+                        </div>
+
+                        <!-- Период -->
+                        <div v-if="periods.length" class="mb-2">
+                            <search-select
+                                v-model="periodId"
+                                :items="periods"
+                                label="Период"
+                                placeholder="Период..."
+                                @update:modelValue="getInvoices"
+                                :disabled="invoicesLoading"
+                            />
+                        </div>
+
+                        <!-- Счёт -->
+                        <div v-if="invoices.length" class="mb-2">
+                            <search-select
+                                v-model="payment.invoiceId"
+                                :items="invoices"
+                                label="Счёт"
+                                placeholder="Счёт..."
+                                :disabled="invoicesLoading"
+                            />
+                        </div>
+
+                        <!-- Индикатор загрузки счетов -->
+                        <loading-spinner
+                            v-if="invoicesLoading"
+                            size="sm"
+                            color="primary"
+                            :show-text="false"
+                            wrapper-class="py-2"
                         />
                     </template>
-                    <label>Период</label>
-                    <search-select v-if="periods.length"
-                                   v-model="periodId"
-                                   :prop-class="'form-control mb-2'"
-                                   :items="periods"
-                                   :placeholder="'Период...'"
-                                   @update:model-value="getInvoices"
-                    />
-                    <template v-if="invoices.length">
-                        <label>Счёт</label>
-                        <search-select
-                            v-model="payment.invoiceId"
-                            :prop-class="'form-control mb-2'"
-                            :items="invoices"
-                            :placeholder="'Счёт...'"
+
+                    <!-- Стоимость -->
+                    <div class="mb-2">
+                        <custom-input
+                            v-model="payment.cost"
+                            :errors="errors?.cost"
+                            label="Стоимость"
+                            type="number"
+                            step="0.01"
+                            :disabled="!payment.actions.edit"
+                            @update:modelValue="clearError('cost')"
                         />
+                    </div>
+
+                    <!-- Название -->
+                    <div class="mb-2">
+                        <custom-input
+                            v-model="payment.name"
+                            :errors="errors?.name"
+                            label="Название платежа"
+                            type="text"
+                            placeholder="необязательно..."
+                            :disabled="!payment.actions.edit"
+                            @update:modelValue="clearError('name')"
+                        />
+                    </div>
+
+                    <!-- Комментарий -->
+                    <div class="mb-2">
+                        <custom-textarea
+                            v-model="payment.comment"
+                            :errors="errors?.comment"
+                            label="Комментарий"
+                            :rows="4"
+                            :disabled="!payment.actions.edit"
+                            @update:modelValue="clearError('comment')"
+                        />
+                    </div>
+
+                    <!-- Существующие файлы -->
+                    <template v-if="payment.files?.length">
+                        <div class="mb-2">
+                            <label class="form-label">Прикреплённые файлы</label>
+                            <file-item
+                                v-for="(file, index) in payment.files"
+                                :key="file.id"
+                                :file="file"
+                                :edit="true"
+                                :index="index"
+                                :use-up-sort="index !== 0"
+                                :use-down-sort="index !== payment.files.length - 1"
+                                class="mb-2"
+                                @updated="onFileUpdated"
+                            />
+                        </div>
                     </template>
-                </template>
-                <label>Стоимость</label>
-                <input type="number"
-                       step="0.01"
-                       class="form-control form-control-sm"
-                       :disabled="!payment.actions.edit"
-                       v-model="payment.cost"
-                />
-                <label>Название платёжа</label>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       :disabled="!payment.actions.edit"
-                       placeholder="необязательно..."
-                       v-model="payment.name"
-                />
-                <label>Комментарий</label>
-                <textarea class="form-control form-control-sm"
-                          style="min-height: 200px;"
-                          :disabled="!payment.actions.edit"
-                          v-model="payment.comment"
-                ></textarea>
-                <template v-for="(file, index) in payment.files">
-                    <file-item :file="file"
-                               :edit="true"
-                               :index="index"
-                               :use-up-sort="index!==0"
-                               :use-down-sort="index!==payment.files.length-1"
-                               class="mt-2"
-                    />
-                </template>
-            </div>
-        </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
+                </div>
+            </template>
+
+            <template #footer>
+                <button
                     v-if="payment.actions.edit"
-                    :disabled="!canSave"
-                    @click="saveAction">
-                {{ payment.id ? 'Сохранить' : 'Создать' }} платёж
-            </button>
-        </template>
-    </view-dialog>
+                    class="btn btn-success"
+                    :disabled="!canSave || saving"
+                    @click="saveAction"
+                >
+                    <i class="fa" :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                    {{ payment.id ? 'Сохранить' : 'Создать' }} платёж
+                </button>
+            </template>
+        </view-dialog>
+    </div>
 </template>
 
-<script>
-import PaymentsList  from './PaymentsList.vue';
-import ViewDialog    from '../../common/ViewDialog.vue';
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
-import FileItem      from '../../common/files/FileItem.vue';
-import SearchSelect  from '../../common/form/SearchSelect.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    defineProps,
+    defineEmits,
+    defineOptions,
+    onMounted,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import PaymentsList         from './PaymentsList.vue';
+import ViewDialog           from '../../common/ViewDialog.vue';
+import FileItem             from '../../common/files/FileItem.vue';
+import SearchSelect         from '../../common/form/SearchSelect.vue';
+import CustomInput          from '../../common/form/CustomInput.vue';
+import CustomTextarea       from '@common/form/CustomTextarea.vue';
+import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import {
+    ApiAdminNewPaymentView,
+    ApiAdminNewPaymentSave,
+    ApiAdminNewPaymentGetInvoices,
+}                           from '@api';
 
-export default {
-    name      : 'PaymentsBlock',
-    components: { SearchSelect, FileItem, ViewDialog, PaymentsList },
-    emits     : ['update:reload'],
-    props     : {
-        reload: {
-            type   : Boolean,
-            default: false,
-        },
+defineOptions({
+    name: 'PaymentsBlock',
+});
+
+const props = defineProps({
+    reload: {
+        type   : Boolean,
+        default: false,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-    },
-    data () {
-        return {
-            paymentsCount: 0,
-            reloadList   : false,
-            paymentId    : null,
-            payment      : null,
-            selectedId   : null,
+});
 
-            accounts: [],
-            invoices: [],
-            periods : [],
+const emit = defineEmits(['update:reload']);
 
-            periodId: null,
+const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            loading: false,
+const reloadList      = ref(false);
+const payment         = ref(null);
+const selectedId      = ref(null);
+const accounts        = ref([]);
+const invoices        = ref([]);
+const periods         = ref([]);
+const periodId        = ref(null);
+const isLoading       = ref(false);
+const invoicesLoading = ref(false);
+const saving          = ref(false);
+const showDialog      = ref(false);
+const hideDialog      = ref(false);
 
-            showDialog: false,
-            hideDialog: false,
-        };
-    },
-    methods : {
-        getAction () {
-            this.periodId = null;
-            this.accounts = [];
-            this.invoices = [];
-            this.periods  = [];
+// Получение платежа
+const getAction = async () => {
+    periodId.value = null;
+    accounts.value = [];
+    invoices.value = [];
+    periods.value  = [];
 
-            Url.RouteFunctions.adminNewPaymentView(this.selectedId).then(response => {
-                this.payment         = response.data.payment;
-                this.periodId        = response.data.payment.invoice?.periodId;
-                this.accounts        = response.data.accounts;
-                this.periods         = response.data.periods;
-                this.payment.cost    = parseFloat(this.payment.cost).toFixed(2);
-                this.payment.comment = this.payment.comment ? String(this.payment.comment) : null;
-                this.showDialog      = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.payment.id);
-            form.append('name', this.payment.name);
-            form.append('cost', parseFloat(this.payment.cost));
-            form.append('comment', this.payment.comment);
-            form.append('account_id', parseFloat(this.payment.accountId));
-            form.append('invoice_id', parseFloat(this.payment.invoiceId));
-
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminNewPaymentSave.method](
-                Url.Routes.adminNewPaymentSave.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Платёж привязан');
-
-                this.payment = null;
-                this.onSaved();
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось привязать платёж';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading    = false;
-                this.selectedId = null;
-            });
-        },
-        closeAction () {
-            this.payment    = null;
-            this.selectedId = null;
-        },
-        onSaved () {
-            this.closeAction();
-            this.reloadList = true;
-            this.$emit('update:reload', true);
-        },
-        getInvoices () {
-            this.invoices = [];
-            if (!this.periodId || !this.payment.accountId) {
-                return;
-            }
-
-            let uri = Url.Generator.makeUri(Url.Routes.adminNewPaymentGetInvoices, {
-                accountId: this.payment.accountId,
-                periodId : this.periodId,
-            });
-            window.axios[Url.Routes.adminNewPaymentGetInvoices.method](uri).then(response => {
-                this.invoices = response.data.invoices;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    computed: {
-        canSave () {
-            return this.payment && this.payment.cost > 0 && this.payment.accountId;
-        },
-    },
-    watch   : {
-        reload (value) {
-            if (value) {
-                this.reloadList = true;
-            }
-        },
-        selectedId () {
-            if (this.selectedId) {
-                this.getAction();
-            }
-            else {
-                this.payment = null;
-            }
-        },
-        hideDialog () {
-            this.closeAction();
-        },
-        reloadList () {
-            this.$emit('update:reload', this.reloadList);
-        },
-    },
+    try {
+        const response        = await ApiAdminNewPaymentView(selectedId.value);
+        payment.value         = response.data.payment;
+        periodId.value        = response.data.payment.invoice?.periodId;
+        accounts.value        = response.data.accounts || [];
+        periods.value         = response.data.periods || [];
+        payment.value.cost    = parseFloat(payment.value.cost).toFixed(2);
+        payment.value.comment = payment.value.comment ? String(payment.value.comment) : null;
+        showDialog.value      = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
 };
+
+// Сохранение
+const saveAction = async () => {
+    saving.value = true;
+
+    const data = {
+        id        : payment.value.id,
+        name      : payment.value.name || '',
+        cost      : parseFloat(payment.value.cost),
+        comment   : payment.value.comment || '',
+        account_id: payment.value.accountId,
+        invoice_id: payment.value.invoiceId,
+    };
+
+    try {
+        await ApiAdminNewPaymentSave({}, data);
+        showInfo('Платёж привязан');
+        payment.value = null;
+        onSaved();
+    }
+    catch (error) {
+        const message = error?.response?.data?.message || 'Не получилось привязать платёж';
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        saving.value     = false;
+        selectedId.value = null;
+    }
+};
+
+// Закрытие
+const closeAction = () => {
+    payment.value    = null;
+    selectedId.value = null;
+    periodId.value   = null;
+    showDialog.value = false;
+};
+
+// После сохранения
+const onSaved = () => {
+    closeAction();
+    reloadList.value = true;
+    emit('update:reload', true);
+};
+
+// Получение счетов с автоматическим сбросом выбранного счёта
+const getInvoices = async () => {
+    // Если не хватает данных, сбрасываем счёт
+    if (!periodId.value || !payment.value?.accountId) {
+        if (payment.value) {
+            payment.value.invoiceId = null;
+        }
+        invoices.value = [];
+        return;
+    }
+
+    invoicesLoading.value = true;
+    // Сбрасываем выбранный счёт перед загрузкой нового списка
+    if (payment.value) {
+        payment.value.invoiceId = null;
+    }
+    invoices.value = [];
+
+    try {
+        const response = await ApiAdminNewPaymentGetInvoices(
+            payment.value.accountId,
+            periodId.value,
+        );
+        invoices.value = response.data.invoices || [];
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        invoicesLoading.value = false;
+    }
+};
+
+// Обновление файла
+const onFileUpdated = () => {
+    getAction();
+};
+
+// Возможность сохранения
+const canSave = computed(() => {
+    return payment.value &&
+        payment.value.cost > 0 &&
+        payment.value.invoiceId; // обязателен выбранный счёт
+});
+
+// Следим за перезагрузкой
+watch(() => props.reload, (value) => {
+    if (value) {
+        reloadList.value = true;
+    }
+});
+
+// Следим за выбранным ID
+watch(selectedId, (value) => {
+    if (value) {
+        getAction();
+    }
+    else {
+        payment.value = null;
+    }
+});
+
+// Следим за скрытием диалога
+watch(hideDialog, () => {
+    closeAction();
+});
+
+// Следим за перезагрузкой списка
+watch(reloadList, (value) => {
+    emit('update:reload', value);
+});
+
+onMounted(() => {
+    // Инициализация при необходимости
+});
 </script>
