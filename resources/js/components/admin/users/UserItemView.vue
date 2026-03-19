@@ -1,524 +1,613 @@
 <template>
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <div class="d-flex">
-            <a class="btn btn-outline-primary me-2"
-               v-if="actions.edit && localUser.id"
-               :href="getCreateLink()">Добавить пользователя
-            </a>
-        </div>
-        <div class="d-flex">
-            <div class="me-2" v-if="actions.drop && localUser.id">
-                <button class="btn btn-sm btn-danger" v-if="!localUser.isDeleted" @click="dropAction">
-                    <i class="fa fa-trash"></i> Удалить
-                </button>
+    <div>
+        <!-- Верхняя панель с кнопками -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex">
+                <a
+                    v-if="actions.edit && localUser.id"
+                    class="btn btn-outline-primary me-2"
+                    :href="getCreateLink()"
+                >
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    Добавить пользователя
+                </a>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <div v-if="localUser.isDeleted" class="alert alert-danger text-center mb-0 d-flex justify-content-center align-items-center">
-                <div>Пользователь удалён</div>
-                <button class="btn btn-sm btn-danger ms-2" v-if="localUser.isDeleted && actions.drop" @click="restoreAction">
-                    <i class="fa fa-rotate-left"></i> Восстановить
-                </button>
-            </div>
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h5>Информация</h5>
-                    <div class="row mb-2">
-                        <div class="col-4 pe-1">
-                            <custom-input v-model="localUser.lastName"
-                                          :disabled="loading"
-                                          :label="'Фамилия'"
-                                          @change="clearError('lastName')"
-                            />
-                        </div>
-                        <div class="col-4 px-1">
-                            <custom-input v-model="localUser.firstName"
-                                          :disabled="loading"
-                                          :label="'Имя'"
-                                          @change="clearError('firstName')"
-                            />
-                        </div>
-                        <div class="col-4 ps-1">
-                            <custom-input v-model="localUser.middleName"
-                                          :disabled="loading"
-                                          :label="'Отчество'"
-                                          @change="clearError('middleName')"
-                            />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6 pe-1">
-                            <div class="w-100" :class="[canGenerateEmail ? 'input-group' : '']">
-                                <custom-input v-model="localUser.email"
-                                              :disabled="loading"
-                                              :label="'Почта'"
-                                              @change="clearError('email')"
-                                />
-                                <button class="btn btn-success"
-                                        v-if="canGenerateEmail"
-                                        @click="generateEmail"
-                                        :disabled="loading">
-                                    <i class="fa fa-retweet"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-6 ps-1">
-                            <div class="w-100" :class="[canGenerateEmail ? 'input-group' : '']">
-                                <custom-input v-model="localUser.phone"
-                                              :disabled="loading"
-                                              :label="'Телефон'"
-                                              @change="clearError('phone')"
-                                />
-                                <button class="btn btn-success"
-                                        v-if="canGenerateEmail"
-                                        @click="generateEmail"
-                                        :disabled="loading">
-                                    <i class="fa fa-retweet"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <h5>Дополнительно</h5>
-                    <div class="row mb-2">
-                        <div class="col-6 pe-1">
-                            <search-select v-model="localUser.roleId"
-                                           v-if="localUser.actions.edit"
-                                           :disabled="loading"
-                                           :prop-class="'form-control'"
-                                           :items="roles"
-                                           :label="'Роль'"
-                                           :placeholder="'Роль'"
-                            />
-                        </div>
-                        <div class="col-6 ps-1">
-                            <custom-input v-model="localUser.addPhone"
-                                          :disabled="loading"
-                                          :label="'Дополнительный телефон'"
-                                          @change="clearError('addPhone')"
-                            />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6 pe-1">
-                            <custom-input v-model="localUser.membershipDutyInfo"
-                                          :disabled="loading"
-                                          :label="'Основание членства'"
-                                          @change="clearError('membershipDutyInfo')"
-                            />
-                        </div>
-                        <div class="col-6 ps-1">
-                            <custom-calendar v-model="localUser.membershipDate"
-                                             :disabled="loading"
-                                             :label="'Дата членства'"
-                                             @change="clearError('membershipDate')"
-                            />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6 pe-1">
-                            <custom-input v-model="localUser.legalAddress"
-                                          :disabled="loading"
-                                          :label="'Адрес по прописке'"
-                                          @change="clearError('legalAddress')"
-                            />
-                        </div>
-                        <div class="col-6 ps-1">
-                            <custom-input v-model="localUser.postAddress"
-                                             :disabled="loading"
-                                             :label="'Почтовый адрес'"
-                                             @change="clearError('postAddress')"
-                            />
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-12">
-                            <custom-textarea v-model="localUser.additional"
-                                             :label="'Комментарий'"
-                                             :rows="3"
-                                             :disabled="loading"
-                            />
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between mt-2">
-                        <div class="d-flex">
-                            <button class="btn btn-success me-2"
-                                    v-if="actions.edit"
-                                    @click="saveAction"
-                                    :disabled="loading"
-                            >
-                                <i class="fa"
-                                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                                {{ localUser.id ? 'Сохранить' : 'Создать' }}
-                            </button>
-                        </div>
-                        <div class="d-flex">
-                            <history-btn
-                                :disabled="!localUser.id"
-                                class="btn-link underline-none"
-                                :url="historyUrl" />
-                        </div>
-                    </div>
+            <div class="d-flex">
+                <div class="me-2" v-if="actions.drop && localUser.id">
+                    <button
+                        class="btn btn-sm btn-danger"
+                        v-if="!localUser.isDeleted"
+                        @click="dropAction"
+                        :disabled="saving"
+                    >
+                        <i class="fa fa-trash"></i> Удалить
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="col-6">
-            <div class="card mb-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="m-0">Участки</h5>
-                        <div class="w-75">
-                            <search-select v-model="accountIds"
-                                           :disabled="loading"
-                                           :multiple="true"
-                                           :prop-class="'form-control w-100'"
-                                           :items="accounts"
-                                           :placeholder="'Введите и выберите номера участков'"
-                            />
-                        </div>
-                    </div>
-                    <template v-if="fractions && fractions.length && accounts && accounts.length">
-                        <div v-for="(fraction) in fractions" class="row mb-2">
-                            <div class="col-3 pe-1 d-flex justify-content-center align-items-end pb-1">
-                                <h6 v-html="renderAccountLink(fraction.accountId)"></h6>
+
+        <div class="row">
+            <!-- Левая колонка: основная информация -->
+            <div class="col-6">
+                <!-- Блок удалённого пользователя -->
+                <div
+                    v-if="localUser.isDeleted"
+                    class="alert alert-danger text-center mb-0 d-flex justify-content-center align-items-center"
+                >
+                    <div>Пользователь удалён</div>
+                    <button
+                        class="btn btn-sm btn-danger ms-2"
+                        v-if="localUser.isDeleted && actions.drop"
+                        @click="restoreAction"
+                        :disabled="saving"
+                    >
+                        <i class="fa fa-rotate-left"></i> Восстановить
+                    </button>
+                </div>
+
+                <!-- Основная карточка -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5>Информация</h5>
+
+                        <!-- ФИО -->
+                        <div class="row mb-2">
+                            <div class="col-4 pe-1">
+                                <custom-input
+                                    v-model="localUser.lastName"
+                                    :disabled="saving"
+                                    label="Фамилия"
+                                    @update:modelValue="clearError('lastName')"
+                                />
                             </div>
                             <div class="col-4 px-1">
-                                <custom-input v-model="fraction.value"
-                                              :disabled="loading"
-                                              :label="'Доля владения (от 0 до 1)'"
-                                              :type="'number'"
-                                              :step="'0.1'"
-                                              :max="1"
-                                              :min="0"
+                                <custom-input
+                                    v-model="localUser.firstName"
+                                    :disabled="saving"
+                                    label="Имя"
+                                    @update:modelValue="clearError('firstName')"
                                 />
                             </div>
-                            <div class="col-5 ps-1">
-                                <custom-calendar v-model="fraction.date"
-                                                 :disabled="loading"
-                                                 :label="'Дата права'"
+                            <div class="col-4 ps-1">
+                                <custom-input
+                                    v-model="localUser.middleName"
+                                    :disabled="saving"
+                                    label="Отчество"
+                                    @update:modelValue="clearError('middleName')"
                                 />
                             </div>
                         </div>
-                    </template>
+
+                        <!-- Почта и телефон -->
+                        <div class="row mb-2">
+                            <div class="col-6 pe-1">
+                                <div class="input-group">
+                                    <custom-input
+                                        v-model="localUser.email"
+                                        :disabled="saving"
+                                        label="Почта"
+                                        @update:modelValue="clearError('email')"
+                                    />
+                                    <button
+                                        v-if="canGenerateEmail"
+                                        class="btn btn-success"
+                                        @click="generateEmail"
+                                        :disabled="saving"
+                                    >
+                                        <i class="fa fa-retweet"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-6 ps-1">
+                                <custom-input
+                                    v-model="localUser.phone"
+                                    :disabled="saving"
+                                    label="Телефон"
+                                    @update:modelValue="clearError('phone')"
+                                />
+                            </div>
+                        </div>
+
+                        <h5>Дополнительно</h5>
+
+                        <!-- Роль и доп. телефон -->
+                        <div class="row mb-2">
+                            <div class="col-6 pe-1">
+                                <search-select
+                                    v-if="localUser.actions?.edit"
+                                    v-model="localUser.roleId"
+                                    :disabled="saving"
+                                    :items="roles"
+                                    label="Роль"
+                                    placeholder="Роль"
+                                />
+                            </div>
+                            <div class="col-6 ps-1">
+                                <custom-input
+                                    v-model="localUser.addPhone"
+                                    :disabled="saving"
+                                    label="Дополнительный телефон"
+                                    @update:modelValue="clearError('addPhone')"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Основание членства и дата -->
+                        <div class="row mb-2">
+                            <div class="col-6 pe-1">
+                                <custom-input
+                                    v-model="localUser.membershipDutyInfo"
+                                    :disabled="saving"
+                                    label="Основание членства"
+                                    @update:modelValue="clearError('membershipDutyInfo')"
+                                />
+                            </div>
+                            <div class="col-6 ps-1">
+                                <custom-calendar
+                                    v-model="localUser.membershipDate"
+                                    :disabled="saving"
+                                    label="Дата членства"
+                                    @update:modelValue="clearError('membershipDate')"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Адреса -->
+                        <div class="row mb-2">
+                            <div class="col-6 pe-1">
+                                <custom-input
+                                    v-model="localUser.legalAddress"
+                                    :disabled="saving"
+                                    label="Адрес по прописке"
+                                    @update:modelValue="clearError('legalAddress')"
+                                />
+                            </div>
+                            <div class="col-6 ps-1">
+                                <custom-input
+                                    v-model="localUser.postAddress"
+                                    :disabled="saving"
+                                    label="Почтовый адрес"
+                                    @update:modelValue="clearError('postAddress')"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Комментарий -->
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <custom-textarea
+                                    v-model="localUser.additional"
+                                    label="Комментарий"
+                                    :rows="3"
+                                    :disabled="saving"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Кнопки сохранения и история -->
+                        <div class="d-flex align-items-center justify-content-between mt-2">
+                            <div class="d-flex">
+                                <button
+                                    v-if="actions.edit"
+                                    class="btn btn-success me-2"
+                                    @click="saveAction"
+                                    :disabled="saving"
+                                >
+                                    <i class="fa" :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                                    {{ localUser.id ? 'Сохранить' : 'Создать' }}
+                                </button>
+                            </div>
+                            <div class="d-flex">
+                                <history-btn
+                                    :disabled="!localUser.id"
+                                    class="btn-link underline-none"
+                                    :url="historyUrl"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card mb-2" v-if="localUser.id">
-                <div class="card-body">
-                    <h5>Уведомления</h5>
-                    <ul class="list-group" v-if="localUser.actions.edit">
-                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendInvitePasswordEmail" v-if="!localUser.isRealEmail">
-                            <i class="fa fa-envelope-o"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
-                        </li>
-                        <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="sendRestorePasswordEmail" v-if="localUser.isRealEmail">
-                            <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
-                        </li>
-                        <template v-if="qrViewLink">
-                            <li class="list-group-item list-group-item-action border-0">
-                                <div><b>Просмотреть QR-код</b></div>
-                                <a :href="qrViewLink" target="_blank">
-                                    {{ qrViewLink }}
-                                </a>
-                                <div><b>Сгенерированная ссылка</b></div>
-                                <a :data-copy="tokenLink" @click.prevent="showInfo('Скопировано')" class="cursor-pointer">
-                                    {{ tokenLink }}
-                                </a>
-                            </li>
+
+            <!-- Правая колонка: участки и уведомления -->
+            <div class="col-6">
+                <!-- Блок участков -->
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="m-0">Участки</h5>
+                            <div class="w-75">
+                                <search-select
+                                    v-model="accountIds"
+                                    :disabled="saving"
+                                    multiple
+                                    :items="accounts"
+                                    placeholder="Введите и выберите номера участков"
+                                />
+                            </div>
+                        </div>
+
+                        <template v-if="fractions.length && accounts.length">
+                            <div
+                                v-for="(fraction, index) in fractions"
+                                :key="fraction.accountId"
+                                class="row mb-2"
+                            >
+                                <div class="col-3 pe-1 d-flex justify-content-center align-items-end pb-1">
+                                    <h6 v-html="renderAccountLink(fraction.accountId)"></h6>
+                                </div>
+                                <div class="col-4 px-1">
+                                    <custom-input
+                                        v-model="fraction.value"
+                                        :disabled="saving"
+                                        label="Доля владения (от 0 до 1)"
+                                        type="number"
+                                        step="0.1"
+                                        max="1"
+                                        min="0"
+                                    />
+                                </div>
+                                <div class="col-5 ps-1">
+                                    <custom-calendar
+                                        v-model="fraction.date"
+                                        :disabled="saving"
+                                        label="Дата права"
+                                    />
+                                </div>
+                            </div>
                         </template>
-                        <template v-else>
-                            <li class="list-group-item list-group-item-action cursor-pointer border-0" @click="makeLoginQrCode">
+                    </div>
+                </div>
+
+                <!-- Блок уведомлений и QR -->
+                <div class="card mb-2" v-if="localUser.id">
+                    <div class="card-body">
+                        <h5>Уведомления</h5>
+                        <ul class="list-group" v-if="localUser.actions?.edit">
+                            <li
+                                class="list-group-item list-group-item-action cursor-pointer border-0"
+                                @click="sendInvitePasswordEmail"
+                                v-if="!localUser.isRealEmail"
+                            >
+                                <i class="fa fa-envelope-o"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
+                            </li>
+                            <li
+                                class="list-group-item list-group-item-action cursor-pointer border-0"
+                                @click="sendRestorePasswordEmail"
+                                v-if="localUser.isRealEmail"
+                            >
+                                <i class="fa fa-wrench"></i>&nbsp;Выслать ссылку на восстановление пароля
+                            </li>
+                            <template v-if="qrViewLink">
+                                <li class="list-group-item list-group-item-action border-0">
+                                    <div><b>Просмотреть QR-код</b></div>
+                                    <a :href="qrViewLink" target="_blank">{{ qrViewLink }}</a>
+                                    <div><b>Сгенерированная ссылка</b></div>
+                                    <a
+                                        :data-copy="tokenLink"
+                                        @click.prevent="showInfo('Скопировано')"
+                                        class="cursor-pointer"
+                                    >{{ tokenLink }}</a>
+                                </li>
+                            </template>
+                            <li
+                                v-else
+                                class="list-group-item list-group-item-action cursor-pointer border-0"
+                                @click="makeLoginQrCode"
+                            >
                                 <i class="fa fa-external-link"></i>&nbsp;Получить постоянную ссылку для входа (QR-код)
                             </li>
-                        </template>
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-import ResponseError  from '../../../mixin/ResponseError.js';
-import HistoryBtn     from '../../common/HistoryBtn.vue';
-import Url            from '../../../utils/Url.js';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import Pagination     from '../../common/pagination/Pagination.vue';
-import SearchSelect   from '../../common/form/SearchSelect.vue';
-import CustomCalendar from '../../common/form/CustomCalendar.vue';
-import CustomTextarea from '../../common/form/CustomTextarea.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    defineProps,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import CustomInput          from '../../common/form/CustomInput.vue';
+import SearchSelect         from '../../common/form/SearchSelect.vue';
+import CustomCalendar       from '../../common/form/CustomCalendar.vue';
+import CustomTextarea       from '../../common/form/CustomTextarea.vue';
+import {
+    ApiAdminUserSave,
+    ApiAdminUserDelete,
+    ApiAdminUserRestore,
+    ApiAdminUserGenerateEmail,
+    ApiAdminLoginLink,
+    ApiAdminUserSendRestorePassword,
+    ApiAdminUserSendInviteWithPassword,
+}                           from '@api';
+import Url                  from '@utils/Url.js';
 
-export default {
-    name      : 'UserItemView',
-    components: {
-        CustomTextarea,
-        CustomCalendar,
-        SearchSelect,
-        Pagination,
-        CustomInput,
-        HistoryBtn,
+defineOptions({
+    name: 'UserItemView',
+});
+
+const props = defineProps({
+    user    : {
+        type   : Object,
+        default: () => ({}),
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : {
-        user    : {
-            type   : Object,
-            default: {},
-        },
-        accounts: {
-            type   : Array,
-            default: [],
-        },
-        roles   : {
-            type   : Array,
-            default: [],
-        },
+    accounts: {
+        type   : Array,
+        default: () => [],
     },
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-
-        this.localUser  = {
-            ...this.user,
-        };
-        this.accountIds = Array.isArray(this.user.accountIds)
-            ? this.user.accountIds.map(String)
-            : (this.user.accountId ? [String(this.user.accountId)] : []);
-        if (Array.isArray(this.user.accounts)) {
-            for (const account of this.user.accounts) {
-                this.fractions.push({
-                    accountId: account.id,
-                    value    : account.fraction,
-                    date     : account.ownerDate,
-                });
-            }
-        }
+    roles   : {
+        type   : Array,
+        default: () => [],
     },
-    data () {
-        return {
-            localUser : {},
-            accountIds: [],
-            fractions : [],
+});
 
-            actions   : this.user.actions,
-            historyUrl: this.user.historyUrl,
+const { clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            loading   : null,
-            routeState: 0,
+const localUser  = ref({ ...props.user });
+const accountIds = ref([]);
+const fractions  = ref([]);
+const actions    = ref(props.user.actions || {});
+const historyUrl = ref(props.user.historyUrl);
+const saving     = ref(false);
+const routeState = ref(0);
+const qrViewLink = ref(null);
+const tokenLink  = ref(null);
 
-            qrViewLink: null,
-            tokenLink : null,
-        };
-    },
-    methods : {
-        saveAction () {
-            if (!this.actions.edit) {
-                return;
-            }
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.localUser.id);
-            form.append('first_name', this.localUser.firstName);
-            form.append('last_name', this.localUser.lastName);
-            form.append('middle_name', this.localUser.middleName);
-            form.append('email', this.localUser.email);
-            if (Array.isArray(this.fractions)) {
-                for (const fraction of this.fractions) {
-                    form.append('fractions[' + fraction.accountId + ']', fraction.value);
-                    form.append('ownerDates[' + fraction.accountId + ']', fraction.date);
-                }
-            }
-            form.append('role_id', this.localUser.roleId);
-            form.append('phone', this.localUser.phone);
-            form.append('membershipDate', this.localUser.membershipDate);
-            form.append('membershipDutyInfo', this.localUser.membershipDutyInfo);
-            form.append('add_phone', this.localUser.addPhone);
-            form.append('legal_address', this.localUser.legalAddress);
-            form.append('post_address', this.localUser.postAddress);
-            form.append('additional', this.localUser.additional);
+// Инициализация accountIds и fractions
+const initFractions = () => {
+    // accountIds из user
+    if (Array.isArray(props.user.accountIds)) {
+        accountIds.value = props.user.accountIds.map(String);
+    }
+    else if (props.user.accountId) {
+        accountIds.value = [String(props.user.accountId)];
+    }
+    else {
+        accountIds.value = [];
+    }
 
-            this.clearResponseErrors();
-            Url.RouteFunctions.adminUserSave({}, form).then((response) => {
-                let text = this.localUser.id ? 'Пользователь обновлён' : 'Пользователь ' + response.data.id + ' создан';
-                this.showInfo(text);
-
-                this.localUser = response.data;
-
-                let uri = Url.Generator.makeUri(Url.Routes.adminUserView, {
-                    id: this.localUser.id,
-                });
-                window.history.pushState({ state: this.routeState++ }, '', uri);
-
-                this.actions = response.data.actions;
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' пользователя';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        generateEmail () {
-            let form = new FormData();
-            form.append('id', this.localUser.id);
-            form.append('first_name', this.localUser.firstName);
-            form.append('last_name', this.localUser.lastName);
-            form.append('middle_name', this.localUser.middleName);
-
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminUserGenerateEmail.method](
-                Url.Routes.adminUserGenerateEmail.uri,
-                form,
-            ).then((response) => {
-                this.localUser.email = response.data;
-            }).catch(response => {
-                this.showDanger('Что-то пошло не так');
-                this.parseResponseErrors(response);
-            });
-        },
-        dropAction () {
-            if (!this.actions.drop) {
-                return;
-            }
-            if (!confirm('Удалить пользователя?')) {
-                return;
-            }
-
-            Url.RouteFunctions.adminUserDelete(this.localUser.id).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Пользователь удалён');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }
-                else {
-                    this.showDanger('Пользователь не удалён');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        restoreAction () {
-            if (!this.actions.drop) {
-                return;
-            }
-            if (!confirm('Восстановить пользователя?')) {
-                return;
-            }
-
-            Url.RouteFunctions.adminUserRestore(this.localUser.id).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Пользователь восстановлен');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }
-                else {
-                    this.showDanger('Пользователь не восстановлен');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        makeLoginQrCode () {
-            let pin = prompt('Установите пароль для постоянной ссылки для входа')
-            if (!pin) {
-                return;
-            }
-
-            Url.RouteFunctions.adminLoginLink(this.localUser.id, pin).then((response) => {
-                this.qrViewLink = response.data.qrLink;
-                this.tokenLink  = response.data.tokenLink;
-            }).catch(response => {
-                this.showDanger('Не получилось создать ссылку');
-                this.parseResponseErrors(response);
-            });
-        },
-        sendRestorePasswordEmail () {
-            if (!confirm('Отправить письмо для сброса пароля?')) {
-                return;
-            }
-            let form = new FormData();
-            form.append('id', this.localUser.id);
-
-            window.axios[Url.Routes.adminUserSendRestorePassword.method](
-                Url.Routes.adminUserSendRestorePassword.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Письмо отправлено');
-            }).catch(response => {
-                this.showDanger('Письмо не отправлено');
-                this.parseResponseErrors(response);
-            });
-        },
-        sendInvitePasswordEmail () {
-            if (!confirm('Отправить пригласительное письмо для установки пароля?')) {
-                return;
-            }
-            let form = new FormData();
-            form.append('id', this.localUser.id);
-
-            window.axios[Url.Routes.adminUserSendInviteWithPassword.method](
-                Url.Routes.adminUserSendInviteWithPassword.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Письмо отправлено');
-            }).catch(response => {
-                this.showDanger('Письмо не отправлено');
-                this.parseResponseErrors(response);
-            });
-        },
-        getCreateLink () {
-            return Url.Generator.makeUri(Url.Routes.adminUserView, {
-                id: null,
-            });
-        },
-        renderAccountLink (accountId) {
-            const uri = Url.Generator.makeUri(Url.Routes.adminAccountView, { accountId: accountId });
-
-            return '<a href=' + uri + ' class="text-decoration-none">' + this.getAccountNumberById(accountId) + '</a>';
-        },
-        getAccountNumberById (accountId) {
-            return this.accounts.find(account => String(account.value) === String(accountId))?.label;
-        },
-    },
-    computed: {
-        canGenerateEmail () {
-            return (!this.localUser.id || !this.localUser.email) && this.localUser.lastName && this.localUser.firstName && this.localUser.middleName;
-        },
-    },
-    watch   : {
-        accountIds: {
-            handler (newAccountIds) {
-                let fractions = [];
-                newAccountIds.forEach(accountId => {
-                    let value = 0;
-                    let date  = null;
-                    this.fractions.forEach(fraction => {
-                        if (String(fraction.accountId) === String(accountId)) {
-                            value = fraction.value;
-                            date  = fraction.date;
-                        }
-                    });
-                    fractions.push({
-                        accountId: accountId,
-                        value    : value,
-                        date     : date,
-                    });
-                });
-                this.fractions = fractions;
-            },
-            deep: true,
-        },
-    },
+    // fractions из user.accounts
+    if (Array.isArray(props.user.accounts)) {
+        fractions.value = props.user.accounts.map(account => ({
+            accountId: account.id,
+            value    : account.fraction,
+            date     : account.ownerDate,
+        }));
+    }
+    else {
+        fractions.value = [];
+    }
 };
+
+onMounted(initFractions);
+
+// Вычисляемое свойство для проверки возможности генерации email
+const canGenerateEmail = computed(() => {
+    return (!localUser.value.id || !localUser.value.email) &&
+        localUser.value.lastName &&
+        localUser.value.firstName &&
+        localUser.value.middleName;
+});
+
+// Сохранение пользователя
+const saveAction = async () => {
+    if (!actions.value.edit) {
+        return;
+    }
+
+    saving.value   = true;
+    const formData = new FormData();
+    formData.append('id', localUser.value.id || '');
+    formData.append('first_name', localUser.value.firstName || '');
+    formData.append('last_name', localUser.value.lastName || '');
+    formData.append('middle_name', localUser.value.middleName || '');
+    formData.append('email', localUser.value.email || '');
+
+    // Доли
+    fractions.value.forEach(fraction => {
+        formData.append(`fractions[${fraction.accountId}]`, fraction.value);
+        formData.append(`ownerDates[${fraction.accountId}]`, fraction.date);
+    });
+
+    formData.append('role_id', localUser.value.roleId || '');
+    formData.append('phone', localUser.value.phone || '');
+    formData.append('membershipDate', localUser.value.membershipDate || '');
+    formData.append('membershipDutyInfo', localUser.value.membershipDutyInfo || '');
+    formData.append('add_phone', localUser.value.addPhone || '');
+    formData.append('legal_address', localUser.value.legalAddress || '');
+    formData.append('post_address', localUser.value.postAddress || '');
+    formData.append('additional', localUser.value.additional || '');
+
+    try {
+        const response = await ApiAdminUserSave({}, formData);
+        const message  = localUser.value.id ? 'Пользователь обновлён' : `Пользователь ${response.data.id} создан`;
+        showInfo(message);
+
+        localUser.value = response.data;
+        actions.value   = response.data.actions || {};
+
+        // Обновляем URL
+        const uri = Url.Generator.makeUri(Url.Routes.adminUserView, { id: localUser.value.id });
+        window.history.pushState({ state: routeState.value++ }, '', uri);
+    }
+    catch (error) {
+        const message = error?.response?.data?.message || 'Не удалось сохранить пользователя';
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        saving.value = false;
+    }
+};
+
+// Генерация email
+const generateEmail = async () => {
+    const formData = new FormData();
+    formData.append('id', localUser.value.id || '');
+    formData.append('first_name', localUser.value.firstName || '');
+    formData.append('last_name', localUser.value.lastName || '');
+    formData.append('middle_name', localUser.value.middleName || '');
+
+    try {
+        const response        = await ApiAdminUserGenerateEmail({}, formData);
+        localUser.value.email = response.data;
+    }
+    catch (error) {
+        showDanger('Что-то пошло не так');
+        parseResponseErrors(error);
+    }
+};
+
+// Удаление пользователя
+const dropAction = async () => {
+    if (!actions.value.drop) {
+        return;
+    }
+    if (!confirm('Удалить пользователя?')) {
+        return;
+    }
+
+    try {
+        const response = await ApiAdminUserDelete(localUser.value.id);
+        if (response.data) {
+            showInfo('Пользователь удалён');
+            setTimeout(() => location.reload(), 2000);
+        }
+        else {
+            showDanger('Пользователь не удалён');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Восстановление пользователя
+const restoreAction = async () => {
+    if (!actions.value.drop) {
+        return;
+    }
+    if (!confirm('Восстановить пользователя?')) {
+        return;
+    }
+
+    try {
+        const response = await ApiAdminUserRestore(localUser.value.id);
+        if (response.data) {
+            showInfo('Пользователь восстановлен');
+            setTimeout(() => location.reload(), 2000);
+        }
+        else {
+            showDanger('Пользователь не восстановлен');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Создание QR-кода для входа
+const makeLoginQrCode = async () => {
+    const pin = prompt('Установите пароль для постоянной ссылки для входа');
+    if (!pin) {
+        return;
+    }
+
+    try {
+        const response   = await ApiAdminLoginLink(localUser.value.id, pin);
+        qrViewLink.value = response.data.qrLink;
+        tokenLink.value  = response.data.tokenLink;
+    }
+    catch (error) {
+        showDanger('Не получилось создать ссылку');
+        parseResponseErrors(error);
+    }
+};
+
+// Отправка письма для сброса пароля
+const sendRestorePasswordEmail = async () => {
+    if (!confirm('Отправить письмо для сброса пароля?')) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('id', localUser.value.id);
+
+    try {
+        await ApiAdminUserSendRestorePassword({}, formData);
+        showInfo('Письмо отправлено');
+    }
+    catch (error) {
+        showDanger('Письмо не отправлено');
+        parseResponseErrors(error);
+    }
+};
+
+// Отправка пригласительного письма
+const sendInvitePasswordEmail = async () => {
+    if (!confirm('Отправить пригласительное письмо для установки пароля?')) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('id', localUser.value.id);
+
+    try {
+        await ApiAdminUserSendInviteWithPassword({}, formData);
+        showInfo('Письмо отправлено');
+    }
+    catch (error) {
+        showDanger('Письмо не отправлено');
+        parseResponseErrors(error);
+    }
+};
+
+// Вспомогательные функции
+const getCreateLink = () => {
+    return Url.Generator.makeUri(Url.Routes.adminUserView, { id: null });
+};
+
+const getAccountNumberById = (accountId) => {
+    const account = props.accounts.find(a => String(a.value) === String(accountId));
+    return account?.label || '';
+};
+
+const renderAccountLink = (accountId) => {
+    const uri   = Url.Generator.makeUri(Url.Routes.adminAccountView, { accountId });
+    const label = getAccountNumberById(accountId);
+    return `<a href="${uri}" class="text-decoration-none">${label}</a>`;
+};
+
+// Следим за изменениями accountIds и обновляем fractions
+watch(accountIds, (newIds) => {
+    const newFractions = [];
+    newIds.forEach(id => {
+        let existing = fractions.value.find(f => String(f.accountId) === String(id));
+        newFractions.push({
+            accountId: id,
+            value    : existing?.value || 0,
+            date     : existing?.date || null,
+        });
+    });
+    fractions.value = newFractions;
+}, { deep: true });
 </script>
 
 <style scoped>
 td {
     padding : 2px 0;
+}
+
+.cursor-pointer {
+    cursor : pointer;
 }
 </style>
