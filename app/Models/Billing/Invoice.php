@@ -49,6 +49,24 @@ class Invoice extends Model implements CastsInterface
         self::PAYED => self::CAST_FLOAT,
     ];
 
+    public const string TITLE_PERIOD_ID  = 'Период';
+    public const string TITLE_ACCOUNT_ID = 'Участок';
+    public const string TITLE_TYPE       = 'Тип';
+    public const string TITLE_PAYED      = 'Оплачено';
+    public const string TITLE_COST       = 'Стоимость';
+    public const string TITLE_COMMENT    = 'Комментарий';
+    public const string TITLE_NAME       = 'Название';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::PERIOD_ID  => self::TITLE_PERIOD_ID,
+        self::ACCOUNT_ID => self::TITLE_ACCOUNT_ID,
+        self::NAME       => self::TITLE_NAME,
+        self::TYPE       => self::TITLE_TYPE,
+        self::PAYED      => self::TITLE_PAYED,
+        self::COST       => self::TITLE_COST,
+        self::COMMENT    => self::TITLE_COMMENT,
+    ];
+
     public function claims(): HasMany
     {
         return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::SERVICE);

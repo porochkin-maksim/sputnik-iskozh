@@ -8,7 +8,7 @@ use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 /**
  * @method InvoiceCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class InvoiceSearchResponse extends BaseSearchResponse
 {
 
 }

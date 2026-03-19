@@ -28,12 +28,14 @@ readonly class PaymentResource extends AbstractResource
 
         $period = $this->payment->getInvoice()?->getPeriod();
 
-        $hasAcquiring = AcquiringLocator::AcquiringService()->search(
-            new AcquiringSearcher()
-                ->setPaymentId($this->payment->getId())
-                ->setStatus(StatusEnum::PAYED)
-            ,
-        )->getItems()->first()?->getId();
+        $hasAcquiring = $this->payment->getId()
+            ? AcquiringLocator::AcquiringService()->search(
+                new AcquiringSearcher()
+                    ->setPaymentId($this->payment->getId())
+                    ->setStatus(StatusEnum::PAYED)
+                ,
+            )->getItems()->first()?->getId()
+            : false;
 
         return [
             'id'            => $this->payment->getId(),

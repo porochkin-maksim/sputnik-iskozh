@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
 use App\Models\Billing\Service;
 use App\Models\Counter\Counter;
 use App\Models\User;
+use App\Observers\Billing\InvoiceObserver;
 use App\Observers\Billing\PeriodObserver;
 use App\Observers\Billing\ServiceObserver;
 use App\Observers\Counter\CounterObserver;
@@ -20,5 +22,6 @@ class ObserverServiceProvider extends ServiceProvider
         Counter::observe(CounterObserver::class);
         Period::observe(PeriodObserver::class);
         Service::observe(ServiceObserver::class);
+        Invoice::observe(InvoiceObserver::class);
     }
 }

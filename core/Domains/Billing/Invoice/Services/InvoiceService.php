@@ -4,102 +4,36 @@ namespace Core\Domains\Billing\Invoice\Services;
 
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Collections\AccountCollection;
-use Core\Domains\Account\Jobs\UpdateSntBalanceJob;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Domains\Billing\Invoice\Events\InvoiceCreatedEvent;
-use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
-use Core\Domains\Billing\Invoice\Models\InvoiceComparator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Repositories\InvoiceRepository;
-use Core\Domains\Billing\Invoice\Responses\SearchResponse;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Domains\Billing\Invoice\Responses\InvoiceSearchResponse;
 
 readonly class InvoiceService
 {
     public function __construct(
-        private InvoiceFactory        $invoiceFactory,
-        private InvoiceRepository     $invoiceRepository,
-        private HistoryChangesService $historyChangesService,
+        private InvoiceRepository $invoiceRepository,
     )
     {
     }
 
-    public function save(InvoiceDTO $invoice): InvoiceDTO
+    public function search(InvoiceSearcher $searcher): InvoiceSearchResponse
     {
-        $model = $this->invoiceRepository->getById($invoice->getId());
-        if ($model) {
-            $before = $this->invoiceFactory->makeDtoFromObject($model);
-        }
-        else {
-            $before = new InvoiceDTO();
-        }
-
-        $model   = $this->invoiceRepository->save($this->invoiceFactory->makeModelFromDto($invoice, $model));
-        $current = $this->invoiceFactory->makeDtoFromObject($model);
-
-        $this->historyChangesService->writeToHistory(
-            $invoice->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::INVOICE,
-            $current->getId(),
-            null,
-            null,
-            new InvoiceComparator($current),
-            new InvoiceComparator($before),
-        );
-
-        if ( ! $invoice->getId()) {
-            InvoiceCreatedEvent::dispatch($current->getId());
-            $current = $this->getById($current->getId());
-        }
-
-        return $current;
-    }
-
-    public function search(InvoiceSearcher $searcher): SearchResponse
-    {
-        $response = $this->invoiceRepository->search($searcher);
-
-        $result = new SearchResponse();
-        $result->setTotal($response->getTotal());
-
-        $collection = new InvoiceCollection();
-        foreach ($response->getItems() as $item) {
-            $collection->add($this->invoiceFactory->makeDtoFromObject($item));
-        }
-
-        return $result->setItems($collection);
+        return $this->invoiceRepository->search($searcher);
     }
 
     public function getById(?int $id): ?InvoiceDTO
     {
-        if ( ! $id) {
-            return null;
-        }
-
-        $searcher = new InvoiceSearcher();
-        $searcher->setId($id);
-        $result = $this->invoiceRepository->search($searcher)->getItems()->first();
-
-        return $result ? $this->invoiceFactory->makeDtoFromObject($result) : null;
+        return $this->invoiceRepository->getById($id);
     }
 
-    public function deleteById(int $id): bool
+    public function save(InvoiceDTO $invoice): InvoiceDTO
     {
-        $invoice = $this->getById($id);
+        return $this->invoiceRepository->save($invoice);
+    }
 
-        if ( ! $invoice) {
-            return false;
-        }
-
-        $this->historyChangesService->writeToHistory(
-            Event::DELETE,
-            HistoryType::INVOICE,
-            $invoice->getId(),
-        );
-
+    public function deleteById(?int $id): bool
+    {
         return $this->invoiceRepository->deleteById($id);
     }
 

@@ -87,7 +87,7 @@ class PaymentController extends Controller
         )->getItems();
 
         foreach ($claims as $claim) {
-            if (! $claim->getCost() || ! $claim->getDelta()) {
+            if ( ! $claim->getCost() || ! $claim->getDelta()) {
                 continue;
             }
 
@@ -107,14 +107,16 @@ class PaymentController extends Controller
 
     }
 
-    public function get(int $invoiceId, int $paymentId): JsonResponse
+    public function get(mixed $invoiceId, mixed $paymentId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
-        if ( ! $invoiceId || ! $paymentId) {
+        if ( ! $invoiceId || ! $paymentId || ! is_numeric($invoiceId) || ! is_numeric($paymentId)) {
             abort(412);
         }
+        $invoiceId = (int) $invoiceId;
+        $paymentId = (int) $paymentId;
 
         $payment = $this->paymentService->getById($paymentId);
         $invoice = $this->fetchInvoice($invoiceId);
@@ -130,13 +132,13 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function save(int $invoiceId, SaveRequest $request): JsonResponse
+    public function save(mixed $invoiceId, SaveRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
-        $invoice = $this->invoiceService->getById($invoiceId);
+        $invoice = $this->invoiceService->getById(is_numeric($invoiceId) ? (int) $invoiceId : null);
         if ( ! $invoice) {
             abort(412);
         }
@@ -172,11 +174,16 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function list(int $invoiceId): JsonResponse
+    public function list(mixed $invoiceId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
+
+        if ( ! $invoiceId || ! is_numeric($invoiceId)) {
+            abort(412);
+        }
+        $invoiceId = (int) $invoiceId;
 
         $searcher = new PaymentSearcher();
         $searcher

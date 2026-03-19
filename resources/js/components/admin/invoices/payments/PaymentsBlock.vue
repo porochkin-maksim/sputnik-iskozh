@@ -1,309 +1,434 @@
 <template>
-    <h5>Платежи</h5>
-    <div class="d-flex mb-2">
-        <button class="btn btn-success"
+    <div>
+        <h5>Платежи</h5>
+
+        <div class="d-flex mb-2">
+            <button
+                class="btn btn-success"
                 v-if="invoice.actions.payments.edit"
                 :disabled="loading"
-                v-on:click="makeAction">Добавить платёж
-        </button>
-        <button class="btn btn-outline-success ms-2"
+                @click="makeAction"
+            >
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Добавить платёж
+            </button>
+
+            <button
+                class="btn btn-outline-success ms-2"
                 v-if="invoice.actions.payments.edit && !invoice.isPayed && !forcePayed"
                 :disabled="loading"
-                v-on:click="makePayed">
-                <i class="fa fa-credit-card"></i>&nbsp;Оплатить всё
-        </button>
-    </div>
-    <payments-list :invoice-id="invoice.id"
-                   v-model:selected-id="selectedId"
-                   v-model:reload="reloadList"
-                   v-model:count="paymentsCount"
-                   @update:count="onUpdatedCount"
-    />
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
-                 @hidden="closeAction"
-                 v-if="payment && (payment.actions.edit || payment.actions.view)"
-    >
-        <template v-slot:title>{{ payment.id ? (payment.actions.edit ? 'Редактирование платёжа' : 'Просмотр платёжа') : 'Добавление платежа' }}</template>
-        <template v-slot:body>
-            <label><b>Название платёжа:</b></label>
-            <input type="text"
-                   class="form-control form-control-sm"
-                   :disabled="!payment.actions.edit || loading"
-                   placeholder="необязательно..."
-                   v-model="payment.name"
-            />
-            <div class="row align-items-center">
-                <div class="col-6">
-                    <label><b>Стоимость:</b></label>
-                    <input type="number"
-                           step="0.01"
-                           class="form-control form-control-sm"
-                           :disabled="!payment.actions.edit || loading"
-                           v-model="payment.cost"
+                @click="makePayed"
+            >
+                <i class="fa fa-credit-card" aria-hidden="true"></i>
+                Оплатить всё
+            </button>
+        </div>
+
+        <payments-list
+            :invoice-id="invoice.id"
+            v-model:selected-id="selectedId"
+            v-model:reload="reloadList"
+            v-model:count="paymentsCount"
+            @update:count="onUpdatedCount"
+        />
+
+        <view-dialog
+            v-model:show="showDialog"
+            v-model:hide="hideDialog"
+            @hidden="closeAction"
+            v-if="payment && (payment.actions.edit || payment.actions.view)"
+        >
+            <template #title>
+                {{ payment.id ? (payment.actions.edit ? 'Редактирование платёжа' : 'Просмотр платёжа') : 'Добавление платежа' }}
+            </template>
+
+            <template #body>
+                <!-- Название платежа -->
+                <div class="mb-3">
+                    <custom-input
+                        v-model="payment.name"
+                        :errors="errors?.name"
+                        label="Название платежа"
+                        type="text"
+                        :disabled="!payment.actions.edit || loading"
+                        placeholder="необязательно..."
+                        @update:modelValue="clearError('name')"
                     />
                 </div>
-                <div class="col-6">
-                    <label><b>Дата платежа:</b></label>
-                    <custom-calendar v-model="payment.payed"
-                                     :disabled="!payment.actions.edit || loading"
-                                     @change="clearError('payed')"
+
+                <!-- Стоимость и дата -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <custom-input
+                            v-model="payment.cost"
+                            :errors="errors?.cost"
+                            label="Стоимость"
+                            type="number"
+                            step="0.01"
+                            :disabled="!payment.actions.edit || loading"
+                            @update:modelValue="clearError('cost')"
+                        />
+                    </div>
+                    <div class="col-6">
+                        <custom-calendar
+                            v-model="payment.payed"
+                            :error="errors?.payed"
+                            label="Дата платежа"
+                            :disabled="!payment.actions.edit || loading"
+                            @update:modelValue="clearError('payed')"
+                        />
+                    </div>
+                </div>
+
+                <!-- Комментарий -->
+                <div class="mb-3">
+                    <custom-textarea
+                        v-model="payment.comment"
+                        :errors="errors?.comment"
+                        label="Комментарий"
+                        :disabled="!payment.actions.edit || loading"
+                        :rows="4"
+                        @update:modelValue="clearError('comment')"
                     />
                 </div>
-            </div>
-            <label><b>Комментарий:</b></label>
-            <textarea class="form-control form-control-sm"
-                      style="min-height: 200px;"
-                      :disabled="!payment.actions.edit || loading"
-                      v-model="payment.comment"
-            ></textarea>
-            <template v-for="(file, index) in payment.files">
-                <file-item
-                    :file="file"
-                    :edit="true"
-                    :index="index"
-                    :use-up-sort="index!==0"
-                    :use-down-sort="index!==payment.files.length-1"
-                    class="mt-2"
+
+                <!-- Существующие файлы -->
+                <template v-if="payment.files?.length">
+                    <div class="mb-3">
+                        <label class="form-label">Прикреплённые файлы</label>
+                        <file-item
+                            v-for="(file, index) in payment.files"
+                            :key="file.id"
+                            :file="file"
+                            :edit="true"
+                            :index="index"
+                            :use-up-sort="index !== 0"
+                            :use-down-sort="index !== payment.files.length - 1"
+                            class="mb-2"
+                            @updated="onFileUpdated"
+                        />
+                    </div>
+                </template>
+
+                <!-- Новые файлы -->
+                <template v-if="files.length">
+                    <div class="mb-3">
+                        <label class="form-label">Новые файлы</label>
+                        <ul class="list-unstyled">
+                            <li v-for="(file, index) in files"
+                                :key="index"
+                                class="mb-2 d-flex justify-content-between align-items-center p-2 border rounded"
+                            >
+                                <div>
+                                    <button
+                                        class="btn btn-sm btn-danger me-2"
+                                        @click="removeFile(index)"
+                                        type="button"
+                                    >
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                    {{ index + 1 }}. {{ file.name }}
+                                </div>
+                                <span class="text-secondary small">
+                                    {{ (file.size / (1024 * 1024)).toFixed(2) }} MB
+                                </span>
+                            </li>
+                        </ul>
+                        <div class="d-flex justify-content-end small">
+                            <span :class="fileSizeExceed ? 'text-danger' : 'text-secondary'">
+                                Общий размер: {{ filesSize }} MB
+                            </span>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Кнопка добавления файлов -->
+                <button
+                    v-if="!fileCountExceed"
+                    class="btn btn-outline-secondary w-100"
+                    @click="chooseFiles"
+                    :disabled="loading"
+                    type="button"
+                >
+                    <i class="fa fa-paperclip me-2" aria-hidden="true"></i>
+                    Добавить файлы
+                </button>
+
+                <input
+                    ref="fileElem"
+                    type="file"
+                    class="d-none"
+                    accept="image/*,application/pdf"
+                    @change="appendFiles"
+                    multiple
                 />
             </template>
-            <template v-if="files && files.length">
-                <ul class="list-unstyled mt-2">
-                    <li v-for="(file, index) in files"
-                        class="mb-2 d-flex justify-content-between">
-                        <div>
-                            <button class="btn btn-sm btn-danger"
-                                    @click="removeFile(index)">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                            &nbsp;
-                            {{ index + 1 }}. {{ file.name }}
-                        </div>
-                        <span class="text-secondary">
-                        {{ (file.size / (1024 * 1024)).toFixed(2) }}MB
-                    </span>
-                    </li>
-                </ul>
-                <div class="d-flex justify-content-end small">
-                    <span :class="[fileSizeExceed ? 'text-danger' : 'text-secondary']">Размер файлов: {{ filesSize }}MB</span>
+
+            <template #footer v-if="payment.actions.edit">
+                <div class="d-flex justify-content-end w-100">
+                    <button
+                        class="btn btn-success"
+                        :disabled="!canSave || loading"
+                        @click="saveAction"
+                    >
+                        <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        {{ payment.id ? 'Сохранить' : 'Создать' }}
+                    </button>
                 </div>
             </template>
-            <input class="d-none"
-                   type="file"
-                   ref="fileElem"
-                   accept="image/*,application/pdf"
-                   @change="appendFiles"
-                   multiple>
-        </template>
-        <template v-slot:footer
-                  v-if="payment.actions.edit">
-            <div class="d-flex justify-content-between w-100">
-                <button class="btn btn-outline-secondary"
-                        @click="chooseFiles"
-                        :disabled="loading"
-                        v-if="!fileCountExceed">
-                    <i class="fa fa-paperclip "></i>&nbsp;Файлы подтверждающие платёж
-                </button>
-                <button class="btn btn-success"
-                        :disabled="!canSave || loading"
-                        @click="saveAction">
-                    <i class="fa"
-                       :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                    {{ payment.id ? 'Сохранить' : 'Создать' }} платёж
-                </button>
-            </div>
-        </template>
-    </view-dialog>
+        </view-dialog>
+    </div>
 </template>
 
-<script>
-import PaymentsList  from './PaymentsList.vue';
-import ViewDialog    from '../../../common/ViewDialog.vue';
-import ResponseError from '../../../../mixin/ResponseError.js';
-import Url           from '../../../../utils/Url.js';
-import ClaimsList    from '../claims/ClaimsList.vue';
-import FileItem      from '../../../common/files/FileItem.vue';
-import CustomCalendar from '../../../common/form/CustomCalendar.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    defineProps,
+    defineEmits,
+    defineOptions,
+    onMounted,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import PaymentsList         from './PaymentsList.vue';
+import ViewDialog           from '../../../common/ViewDialog.vue';
+import FileItem             from '../../../common/files/FileItem.vue';
+import CustomInput          from '../../../common/form/CustomInput.vue';
+import CustomCalendar       from '../../../common/form/CustomCalendar.vue';
+import {
+    ApiAdminPaymentAutoCreate,
+    ApiAdminPaymentCreate,
+    ApiAdminPaymentView,
+    ApiAdminPaymentSave,
+}                           from '@api';
+import CustomTextarea       from '@common/form/CustomTextarea.vue';
 
-export default {
-    components: { CustomCalendar, FileItem, ClaimsList, ViewDialog, PaymentsList },
-    emits     : ['update:reload', 'update:count'],
-    props     : {
-        invoice: {
-            type   : Object,
-            default: {},
-        },
-        reload : {
-            type   : Boolean,
-            default: false,
-        },
-        count  : {
-            type   : Number,
-            default: 0,
-        },
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-    },
-    data () {
-        return {
-            paymentsCount: 0,
-            reloadList   : false,
-            paymentId    : null,
-            payment      : null,
-            selectedId   : null,
-            files        : [],
+defineOptions({
+    name: 'PaymentsBlock',
+});
 
-            loading: false,
-
-            showDialog: false,
-            hideDialog: false,
-            forcePayed: false,
-        };
+const props = defineProps({
+    invoice: {
+        type    : Object,
+        required: true,
     },
-    methods : {
-        makePayed () {
-            if (!confirm('Создать платежи для каждой неоплаченной услуги?')) {
-                return;
-            }
-            this.loading = true;
-            Url.RouteFunctions.adminPaymentAutoCreate(this.invoice.id).then(response => {
-                let text = 'Счёт оплачен';
-                this.forcePayed = true;
-                this.showInfo(text);
-                this.onSaved();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false
-            });
-        },
-        makeAction () {
-            Url.RouteFunctions.adminPaymentCreate(this.invoice.id).then(response => {
-                this.payment    = response.data.payment;
-                this.showDialog = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        getAction () {
-            Url.RouteFunctions.adminPaymentView(this.invoice.id, this.selectedId).then(response => {
-                this.payment         = response.data.payment;
-                this.payment.cost    = parseFloat(this.payment.cost).toFixed(2);
-                this.payment.comment = this.payment.comment ? String(this.payment.comment) : null;
-                this.showDialog      = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.payment.id);
-            form.append('cost', parseFloat(this.payment.cost));
-            form.append('name', this.payment.name);
-            form.append('comment', String(this.payment.comment ? String(this.payment.comment) : null));
-            form.append('payedAt', this.payment.payed);
-            this.files.forEach((file, index) => {
-                form.append('file' + index, file);
-            });
-
-            this.clearResponseErrors();
-
-            Url.RouteFunctions.adminPaymentSave(this.invoice.id, {}, form).then((response) => {
-                let text = this.payment.id ? 'Платёж обновлен' : 'Платёж ' + response.data.payment.id + ' создан';
-                this.showInfo(text);
-
-                this.payment = null;
-                this.onSaved();
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' платёж';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading    = false;
-                this.selectedId = null;
-                this.files      = [];
-            });
-        },
-        closeAction () {
-            this.payment    = null;
-            this.selectedId = null;
-        },
-        onSaved () {
-            this.reloadList = true;
-            this.$emit('update:reload', true);
-        },
-        chooseFiles () {
-            this.$refs.fileElem.click();
-        },
-        appendFiles (event) {
-            for (let i = 0; i < event.target.files.length; i++) {
-                if (!this.fileCountExceed) {
-                    this.files.push(event.target.files[i]);
-                }
-            }
-        },
-        removeFile (index) {
-            let result = [];
-            for (let i = 0; i < this.files.length; i++) {
-                if (i !== index) {
-                    result.push(this.files[i]);
-                }
-            }
-            this.files = result;
-        },
-        onUpdatedCount (value) {
-            this.paymentsCount = value;
-            this.$emit('update:count', this.paymentsCount);
-        },
+    reload : {
+        type   : Boolean,
+        default: false,
     },
-    computed: {
-        canSave () {
-            return this.payment && this.payment.cost >= 0;
-        },
-        filesSize () {
-            let result = 0;
-            this.files.forEach(file => {
-                result += file.size;
-            });
-            return (result / (1024 * 1024)).toFixed(2);
-        },
-        fileSizeExceed () {
-            return this.filesSize > 20;
-        },
-        fileCountExceed () {
-            return this.files.length > 4;
-        },
+    count  : {
+        type   : Number,
+        default: 0,
     },
-    watch   : {
-        reload (value) {
-            if (value) {
-                this.reloadList = true;
-            }
-        },
-        selectedId () {
-            if (this.selectedId) {
-                this.getAction();
-            }
-            else {
-                this.payment = null;
-            }
-        },
-        hideDialog () {
-            this.closeAction();
-        },
-        reloadList () {
-            this.$emit('update:reload', this.reloadList);
-        },
-        paymentsCount () {
-            this.$emit('update:count', this.paymentsCount);
-        },
-    },
+});
+
+const emit = defineEmits(['update:reload', 'update:count']);
+
+const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { formatMoney }                                                   = useFormat();
+
+const paymentsCount = ref(0);
+const reloadList    = ref(false);
+const payment       = ref(null);
+const selectedId    = ref(null);
+const files         = ref([]);
+const loading       = ref(false);
+const showDialog    = ref(false);
+const hideDialog    = ref(false);
+const forcePayed    = ref(false);
+const fileElem      = ref(null);
+
+// Вычисляемые свойства
+const canSave = computed(() => {
+    return payment.value && payment.value.cost >= 0;
+});
+
+const filesSize = computed(() => {
+    const total = files.value.reduce((acc, file) => acc + file.size, 0);
+    return (total / (1024 * 1024)).toFixed(2);
+});
+
+const fileSizeExceed = computed(() => {
+    return parseFloat(filesSize.value) > 20;
+});
+
+const fileCountExceed = computed(() => {
+    return files.value.length > 4;
+});
+
+// Инициализация
+const init = () => {
+    paymentsCount.value = props.count || 0;
 };
+
+// Оплатить всё
+const makePayed = async () => {
+    if (!confirm('Создать платежи для каждой неоплаченной услуги?')) {
+        return;
+    }
+
+    loading.value = true;
+    try {
+        const response   = await ApiAdminPaymentAutoCreate(props.invoice.id);
+        forcePayed.value = true;
+        showInfo('Счёт оплачен');
+        onSaved();
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+// Добавить платёж
+const makeAction = async () => {
+    try {
+        const response   = await ApiAdminPaymentCreate(props.invoice.id);
+        payment.value    = response.data.payment;
+        showDialog.value = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Получить платёж
+const getAction = async () => {
+    try {
+        const response        = await ApiAdminPaymentView(props.invoice.id, selectedId.value);
+        payment.value         = response.data.payment;
+        payment.value.cost    = parseFloat(payment.value.cost).toFixed(2);
+        payment.value.comment = payment.value.comment ? String(payment.value.comment) : null;
+        showDialog.value      = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Сохранить платёж
+const saveAction = async () => {
+    loading.value = true;
+
+    const formData = new FormData();
+    formData.append('id', payment.value.id);
+    formData.append('cost', parseFloat(payment.value.cost));
+    formData.append('name', payment.value.name || '');
+    formData.append('comment', payment.value.comment ? String(payment.value.comment) : '');
+    formData.append('payedAt', payment.value.payed);
+
+    files.value.forEach((file, index) => {
+        formData.append(`file${index}`, file);
+    });
+
+    try {
+        const response = await ApiAdminPaymentSave(props.invoice.id, {}, formData);
+
+        const message = payment.value.id ? 'Платёж обновлён' : `Платёж ${response.data.payment.id} создан`;
+        showInfo(message);
+
+        payment.value = null;
+        onSaved();
+        showDialog.value = false;
+    }
+    catch (error) {
+        const message = error?.response?.data?.message ||
+            `Не удалось ${payment.value.id ? 'сохранить' : 'создать'} платёж`;
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value    = false;
+        selectedId.value = null;
+        files.value      = [];
+    }
+};
+
+// Закрыть диалог
+const closeAction = () => {
+    payment.value    = null;
+    selectedId.value = null;
+    files.value      = [];
+};
+
+// После сохранения
+const onSaved = () => {
+    reloadList.value = true;
+    emit('update:reload', true);
+};
+
+// Выбрать файлы
+const chooseFiles = () => {
+    fileElem.value?.click();
+};
+
+// Добавить файлы
+const appendFiles = (event) => {
+    const newFiles = Array.from(event.target.files);
+    for (const file of newFiles) {
+        if (!fileCountExceed.value) {
+            files.value.push(file);
+        }
+    }
+    // Очищаем input, чтобы можно было выбрать те же файлы снова
+    event.target.value = '';
+};
+
+// Удалить файл
+const removeFile = (index) => {
+    files.value = files.value.filter((_, i) => i !== index);
+};
+
+// Обновление количества
+const onUpdatedCount = (value) => {
+    paymentsCount.value = value;
+    emit('update:count', value);
+};
+
+// Обновление файла
+const onFileUpdated = () => {
+    // Можно перезагрузить список или обновить данные
+    // Пока просто вызываем getAction для обновления
+    if (selectedId.value) {
+        getAction();
+    }
+};
+
+// Следим за перезагрузкой
+watch(() => props.reload, (value) => {
+    if (value) {
+        reloadList.value = true;
+    }
+});
+
+// Следим за выбранным ID
+watch(selectedId, (value) => {
+    if (value) {
+        getAction();
+    }
+    else {
+        payment.value = null;
+    }
+});
+
+// Следим за скрытием диалога
+watch(hideDialog, () => {
+    closeAction();
+});
+
+// Следим за перезагрузкой списка
+watch(reloadList, (value) => {
+    emit('update:reload', value);
+});
+
+// Следим за количеством
+watch(paymentsCount, (value) => {
+    emit('update:count', value);
+});
+
+onMounted(init);
 </script>
