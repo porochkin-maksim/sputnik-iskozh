@@ -4,19 +4,19 @@ namespace App\Http\Requests\Admin\Services;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Billing\Period;
+use App\Models\Billing\Service;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Models\ServiceComparator;
 use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID        = RequestArgumentsEnum::ID;
-    private const NAME      = RequestArgumentsEnum::NAME;
-    private const TYPE      = RequestArgumentsEnum::TYPE;
-    private const COST      = RequestArgumentsEnum::COST;
-    private const ACTIVE    = RequestArgumentsEnum::ACTIVE;
-    private const PERIOD_ID = RequestArgumentsEnum::PERIOD_ID;
+    private const string ID        = RequestArgumentsEnum::ID;
+    private const string NAME      = RequestArgumentsEnum::NAME;
+    private const string TYPE      = RequestArgumentsEnum::TYPE;
+    private const string COST      = RequestArgumentsEnum::COST;
+    private const string ACTIVE    = RequestArgumentsEnum::ACTIVE;
+    private const string PERIOD_ID = RequestArgumentsEnum::PERIOD_ID;
 
     public function rules(): array
     {
@@ -45,19 +45,19 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::NAME . '.required' => sprintf('Укажите «%s»', ServiceComparator::TITLE_NAME),
-            self::NAME . '.string'   => sprintf('Укажите «%s»', ServiceComparator::TITLE_NAME),
-            self::NAME . '.max'      => sprintf('«%s» слишком длинное', ServiceComparator::TITLE_NAME),
+            self::NAME . '.required' => sprintf('Укажите «%s»', Service::TITLE_NAME),
+            self::NAME . '.string'   => sprintf('Укажите «%s»', Service::TITLE_NAME),
+            self::NAME . '.max'      => sprintf('«%s» слишком длинное', Service::TITLE_NAME),
 
-            self::TYPE . '.required' => sprintf('Укажите «%s»', ServiceComparator::TITLE_TYPE),
-            self::TYPE . '.in'       => sprintf('Неверный «%s»', ServiceComparator::TITLE_TYPE),
+            self::TYPE . '.required' => sprintf('Укажите «%s»', Service::TITLE_TYPE),
+            self::TYPE . '.in'       => sprintf('Неверный «%s»', Service::TITLE_TYPE),
 
-            self::PERIOD_ID . '.required' => sprintf('Укажите «%s»', ServiceComparator::TITLE_PERIOD_ID),
-            self::PERIOD_ID . '.exists'   => sprintf('Указанный «%s» не существует', ServiceComparator::TITLE_PERIOD_ID),
+            self::PERIOD_ID . '.required' => sprintf('Укажите «%s»', Service::TITLE_PERIOD_ID),
+            self::PERIOD_ID . '.exists'   => sprintf('Указанный «%s» не существует', Service::TITLE_PERIOD_ID),
 
-            self::COST . '.required' => sprintf('Укажите «%s»', ServiceComparator::TITLE_COST),
-            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', ServiceComparator::TITLE_COST),
-            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', ServiceComparator::TITLE_COST),
+            self::COST . '.required' => sprintf('Укажите «%s»', Service::TITLE_COST),
+            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', Service::TITLE_COST),
+            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', Service::TITLE_COST),
         ];
     }
 

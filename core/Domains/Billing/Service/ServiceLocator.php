@@ -5,7 +5,6 @@ namespace Core\Domains\Billing\Service;
 use Core\Domains\Billing\Service\Factories\ServiceFactory;
 use Core\Domains\Billing\Service\Repositories\ServiceRepository;
 use Core\Domains\Billing\Service\Services\ServiceService;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 abstract class ServiceLocator
 {
@@ -17,9 +16,7 @@ abstract class ServiceLocator
     {
         if ( ! isset(self::$serviceService)) {
             self::$serviceService = new ServiceService(
-                self::ServiceFactory(),
                 self::ServiceRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -38,7 +35,9 @@ abstract class ServiceLocator
     public static function ServiceRepository(): ServiceRepository
     {
         if ( ! isset(self::$serviceRepository)) {
-            self::$serviceRepository = new ServiceRepository();
+            self::$serviceRepository = new ServiceRepository(
+                self::ServiceFactory(),
+            );
         }
 
         return self::$serviceRepository;

@@ -11,7 +11,7 @@ readonly class ServiceFactory
 {
     public function makeDefault(): ServiceDTO
     {
-        return (new ServiceDTO())
+        return new ServiceDTO()
             ->setId(null)
             ->setPeriodId(null)
             ->setType(ServiceTypeEnum::TARGET_FEE)

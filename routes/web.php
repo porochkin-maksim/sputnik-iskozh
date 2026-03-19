@@ -249,10 +249,10 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::group(['prefix' => 'services'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'services'])->name(RouteNames::ADMIN_SERVICE_INDEX);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::get('/create', [Controllers\Admin\System\ServicesController::class, 'create'])->name(RouteNames::ADMIN_SERVICE_CREATE);
-                        Route::get('/list', [Controllers\Admin\System\ServicesController::class, 'list'])->name(RouteNames::ADMIN_SERVICE_LIST);
-                        Route::post('/save', [Controllers\Admin\System\ServicesController::class, 'save'])->name(RouteNames::ADMIN_SERVICE_SAVE);
-                        Route::delete('/{id}', [Controllers\Admin\System\ServicesController::class, 'delete'])->name(RouteNames::ADMIN_SERVICE_DELETE);
+                        Route::get('/create', [Controllers\Admin\Billing\ServiceController::class, 'create'])->name(RouteNames::ADMIN_SERVICE_CREATE);
+                        Route::get('/list', [Controllers\Admin\Billing\ServiceController::class, 'list'])->name(RouteNames::ADMIN_SERVICE_LIST);
+                        Route::post('/save', [Controllers\Admin\Billing\ServiceController::class, 'save'])->name(RouteNames::ADMIN_SERVICE_SAVE);
+                        Route::delete('/{id}', [Controllers\Admin\Billing\ServiceController::class, 'delete'])->name(RouteNames::ADMIN_SERVICE_DELETE);
                     });
                 });
                 Route::group(['prefix' => 'invoices'], static function () {

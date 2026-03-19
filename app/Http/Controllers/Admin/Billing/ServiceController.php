@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin\System;
+namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Services\SaveRequest;
@@ -18,11 +18,10 @@ use Core\Domains\Billing\Service\Factories\ServiceFactory;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Service\Services\ServiceService;
-use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
 
-class ServicesController extends Controller
+class ServiceController extends Controller
 {
     private ServiceFactory $serviceFactory;
     private ServiceService $serviceService;
@@ -42,7 +41,7 @@ class ServicesController extends Controller
         }
 
         return response()->json([
-            ResponsesEnum::SERVICE => new ServiceResource($this->serviceFactory->makeDefault()),
+            'service' => new ServiceResource($this->serviceFactory->makeDefault()),
         ]);
     }
 
@@ -97,7 +96,7 @@ class ServicesController extends Controller
         $service = $this->serviceService->save($service);
 
         return response()->json([
-            ResponsesEnum::SERVICE => new ServiceResource($service),
+            'service' => new ServiceResource($service),
         ]);
     }
 

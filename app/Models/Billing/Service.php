@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Billing;
 
@@ -23,24 +23,38 @@ class Service extends Model implements CastsInterface
 {
     use SoftDeletes;
 
-    public const TABLE = 'services';
+    public const string TABLE = 'services';
 
     protected $table = self::TABLE;
 
-    public const ID        = 'id';
-    public const TYPE      = 'type';
-    public const PERIOD_ID = 'period_id';
-    public const NAME      = 'name';
-    public const COST      = 'cost';
-    public const ACTIVE    = 'active';
+    public const string ID        = 'id';
+    public const string TYPE      = 'type';
+    public const string PERIOD_ID = 'period_id';
+    public const string NAME      = 'name';
+    public const string COST      = 'cost';
+    public const string ACTIVE    = 'active';
 
-    public const PERIOD    = 'period';
+    public const string PERIOD = 'period';
 
     protected $guarded = [];
 
     protected $casts = [
         self::COST   => self::CAST_FLOAT,
         self::ACTIVE => self::CAST_BOOLEAN,
+    ];
+
+    public const string TITLE_TYPE      = 'Тип';
+    public const string TITLE_PERIOD_ID = 'Период';
+    public const string TITLE_NAME      = 'Название';
+    public const string TITLE_COST      = 'Стоимость';
+    public const string TITLE_ACTIVE    = 'Активен';
+
+    public const array PROPERTIES_TO_TITLES = [
+        Service::TYPE      => self::TITLE_TYPE,
+        Service::PERIOD_ID => self::TITLE_PERIOD_ID,
+        Service::NAME      => self::TITLE_NAME,
+        Service::COST      => self::TITLE_COST,
+        Service::ACTIVE    => self::TITLE_ACTIVE,
     ];
 
     public function period(): BelongsTo

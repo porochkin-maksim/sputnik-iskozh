@@ -4,15 +4,23 @@ namespace Core\Domains\Billing\Service\Repositories;
 
 use App\Models\Billing\Service;
 use Core\Db\RepositoryTrait;
+use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Billing\Service\Collections\ServiceCollection;
+use Core\Domains\Billing\Service\Factories\ServiceFactory;
+use Core\Domains\Billing\Service\Models\ServiceDTO;
+use Core\Domains\Billing\Service\Responses\ServiceSearchResponse;
 
 class ServiceRepository
 {
-    private const TABLE = Service::TABLE;
 
-    use RepositoryTrait {
-        getById as traitGetById;
-        getByIds as traitGetByIds;
+    use RepositoryTrait;
+
+    private const string TABLE = Service::TABLE;
+
+    public function __construct(
+        private readonly ServiceFactory $factory,
+    )
+    {
     }
 
     protected function modelClass(): string
@@ -20,18 +28,36 @@ class ServiceRepository
         return Service::class;
     }
 
-    public function getById(?int $id): ?Service
+    public function search(SearcherInterface $searcher): ServiceSearchResponse
     {
-        /** @var ?Service $result */
-        $result = $this->traitGetById($id);
+        $response   = $this->searchModels($searcher);
+        $collection = new ServiceCollection();
+        foreach ($response->getItems() as $model) {
+            $collection->add($this->factory->makeDtoFromObject($model));
+        }
+
+        $result = new ServiceSearchResponse();
+        $result->setTotal($response->getTotal())
+            ->setItems($collection)
+        ;
 
         return $result;
     }
 
-    public function save(Service $service): Service
+    public function getById(?int $id): ?ServiceDTO
     {
-        $service->save();
+        /** @var null|Service $model */
+        $model = $this->getModelById($id);
 
-        return $service;
+        return $model ? $this->factory->makeDtoFromObject($model) : null;
+    }
+
+    public function save(ServiceDTO $dto): ServiceDTO
+    {
+        $model = $this->getModelById($dto->getId());
+        $model = $this->factory->makeModelFromDto($dto, $model);
+        $model->save();
+
+        return $this->factory->makeDtoFromObject($model);
     }
 }

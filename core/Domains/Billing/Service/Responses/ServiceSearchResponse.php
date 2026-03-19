@@ -8,7 +8,7 @@ use Core\Domains\Billing\Service\Collections\ServiceCollection;
 /**
  * @method ServiceCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class ServiceSearchResponse extends BaseSearchResponse
 {
 
 }
