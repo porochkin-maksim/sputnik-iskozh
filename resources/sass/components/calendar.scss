@@ -1,11 +1,9 @@
 // calendar.scss
-// Стили для кастомного календаря (компонент CustomCalendar)
-
 .custom-calendar {
     position : relative;
     width    : 100%;
 
-    // Контейнер поля ввода
+    // Поле ввода (дополняет Bootstrap)
     &__input {
         cursor          : pointer;
         background      : #fff;
@@ -13,29 +11,30 @@
         align-items     : center;
         justify-content : space-between;
         min-height      : 30px;
+        border-radius   : 0.25rem;
 
-        &:focus-within {
-            border-color : $default-primary; // используем переменную
-            box-shadow   : 0 0 0 0.2rem rgba($default-primary, 0.25);
+        &.labeled {
+            padding : 1.625rem 0.75rem 0.625rem;
         }
 
-        .form-control {
-            padding       : 0.29rem 0.75rem;
-            border-radius : 0.25rem;
-            // Убираем возможное дублирование границ
-            &:focus {
-                box-shadow : none; // Bootstrap уже даёт свой, но оставим
-            }
+        &:focus {
+            box-shadow : none; // отключаем тень Bootstrap, чтобы не перебивала нашу
+            height     : calc(3.5rem + 2px); // высота как у обычного инпута с floating label
+        }
+
+        // Подсветка при фокусе любого элемента внутри (иконка тоже)
+        &:focus-within {
+            border-color : $default-primary;
+            box-shadow   : 0 0 0 0.2rem rgba($default-primary, 0.25);
         }
     }
 
     // Выпадающий календарь
     &__dropdown {
         position         : absolute;
-        top              : 100%; // чтобы появиться сразу под полем
+        top              : 100%;
         left             : 0;
         z-index          : 1000;
-        display          : block;
         min-width        : 18rem;
         padding          : 0.5rem 0.75rem;
         margin-top       : 0.25rem;
@@ -45,7 +44,7 @@
         box-shadow       : 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
     }
 
-    // Заголовок с навигацией
+    // Заголовок
     &__header {
         display         : flex;
         align-items     : center;
@@ -53,7 +52,6 @@
         margin-bottom   : 0.5rem;
     }
 
-    // Название месяца
     &__month-name {
         font-weight : 500;
         text-align  : center;
@@ -65,9 +63,6 @@
         }
     }
 
-    // Кнопки навигации (можно переопределить Bootstrap btn, но оставим как есть)
-    // Используем стандартные Bootstrap классы, поэтому не пишем здесь.
-
     // Сетка дней
     &__grid {
         display   : flex;
@@ -75,7 +70,6 @@
         gap       : 2px;
     }
 
-    // Ячейки заголовка дней недели и дни
     &__weekday,
     &__day {
         width      : calc(100% / 7);
@@ -86,7 +80,7 @@
     }
 
     &__weekday {
-        color       : $color-gray; // используем переменную
+        color       : $color-gray;
         font-weight : 500;
         background  : #f8f9fa;
     }
@@ -104,10 +98,6 @@
         &--selected {
             background-color : $color-success !important;
             color            : #fff !important;
-
-            &:hover {
-                background : darken($default-primary, 10%);
-            }
         }
 
         &--today {

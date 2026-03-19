@@ -12,7 +12,8 @@
                 <input
                     :id="inputId"
                     type="text"
-                    class="form-control pe-5 pt-4"
+                    class="form-control custom-calendar__input pe-5"
+                    :class="label ? 'labeled' : ''"
                     :value="displayText"
                     :placeholder="placeholder"
                     :disabled="disabled"
@@ -26,8 +27,8 @@
                 />
                 <i
                     class="fa fa-calendar position-absolute end-0 me-3 text-secondary cursor-pointer"
-                    :class="{ 'mt-3': label }"
-                    style="z-index:2; top:20%; transform:translateY(-50%);"
+                    style="z-index:2; transform:translateY(-50%);"
+                    :style="[label ? 'top:65%' : 'top:50%;']"
                     @click="toggleDropdown"
                 ></i>
             </div>
@@ -202,6 +203,7 @@ const parseModelValue = (val) => {
 
 watch(() => props.modelValue, (val) => {
     parseModelValue(val);
+    inputText.value = '';
 }, { immediate: true });
 
 // Отображаемое значение в поле (синхронизируется с датой/временем)
@@ -237,6 +239,7 @@ watch([selectedDate, selectedHour, selectedMinute], () => {
 // Применение времени (закрывает календарь)
 const applyTime = () => {
     close();
+    inputText.value = '';
 };
 
 // Ручной ввод
@@ -273,12 +276,11 @@ const parseInputString = (str) => {
 const onBlur = () => {
     const val = inputText.value.trim();
     if (val === '') {
-        calendarSelectDate(null);
-        if (props.withTime) {
-            selectedHour.value   = '00';
-            selectedMinute.value = '00';
+        // Если была выбрана дата, восстанавливаем её отображение
+        if (selectedDate.value) {
+            inputText.value = displayText.value;
         }
-        inputText.value = '';
+        // Если даты не было, ничего не делаем (оставляем пустым)
         return;
     }
 
@@ -302,6 +304,7 @@ const onBlur = () => {
         }
     }
     else {
+        // Невалидный ввод – восстанавливаем предыдущее значение
         inputText.value = displayText.value;
     }
 };
@@ -344,6 +347,7 @@ const applyMonthYear = ({ year: y, month: m }) => {
 const handleDateSelect = (date) => {
     calendarSelectDate(date);
     goToDate(date);
+    inputText.value = '';
     if (!props.withTime) {
         close();
     }
@@ -365,6 +369,7 @@ const goToToday = () => {
         selectedHour.value   = String(today.getHours()).padStart(2, '0');
         selectedMinute.value = String(today.getMinutes()).padStart(2, '0');
     }
+    inputText.value = '';
     if (!props.withTime) {
         close();
     }
@@ -376,6 +381,7 @@ const clearDate = () => {
         selectedHour.value   = '00';
         selectedMinute.value = '00';
     }
+    inputText.value = '';
     close();
 };
 
