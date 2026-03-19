@@ -2,6 +2,7 @@
 
 namespace App\Models\Billing;
 
+use App\Models\Counter\Counter;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -21,15 +22,15 @@ class Period extends Model implements CastsInterface
 {
     use SoftDeletes;
 
-    public const TABLE = 'periods';
+    public const string TABLE = 'periods';
 
     protected $table = self::TABLE;
 
-    public const ID        = 'id';
-    public const NAME      = 'name';
-    public const START_AT  = 'start_at';
-    public const END_AT    = 'end_at';
-    public const IS_CLOSED = 'is_closed';
+    public const string ID        = 'id';
+    public const string NAME      = 'name';
+    public const string START_AT  = 'start_at';
+    public const string END_AT    = 'end_at';
+    public const string IS_CLOSED = 'is_closed';
 
     protected $guarded = [];
 
@@ -37,5 +38,15 @@ class Period extends Model implements CastsInterface
         self::START_AT  => self::CAST_DATETIME,
         self::END_AT    => self::CAST_DATETIME,
         self::IS_CLOSED => 'boolean',
+    ];
+
+    public const string TITLE_NAME     = 'Название';
+    public const string TITLE_START_AT = 'Начало';
+    public const string TITLE_END_AT   = 'Окончание';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::NAME     => self::TITLE_NAME,
+        self::START_AT => self::TITLE_START_AT,
+        self::END_AT   => self::TITLE_END_AT,
     ];
 }

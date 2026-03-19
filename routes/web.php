@@ -203,10 +203,10 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::group(['prefix' => 'periods'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'periods'])->name(RouteNames::ADMIN_PERIOD_INDEX);
                     Route::group(['prefix' => 'json'], static function () {
-                        Route::get('/create', [Controllers\Admin\System\PeriodController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);
-                        Route::get('/list', [Controllers\Admin\System\PeriodController::class, 'list'])->name(RouteNames::ADMIN_PERIOD_LIST);
-                        Route::post('/save', [Controllers\Admin\System\PeriodController::class, 'save'])->name(RouteNames::ADMIN_PERIOD_SAVE);
-                        Route::delete('/{id}', [Controllers\Admin\System\PeriodController::class, 'delete'])->name(RouteNames::ADMIN_PERIOD_DELETE);
+                        Route::get('/create', [Controllers\Admin\Billing\PeriodController::class, 'create'])->name(RouteNames::ADMIN_PERIOD_CREATE);
+                        Route::get('/list', [Controllers\Admin\Billing\PeriodController::class, 'list'])->name(RouteNames::ADMIN_PERIOD_LIST);
+                        Route::post('/save', [Controllers\Admin\Billing\PeriodController::class, 'save'])->name(RouteNames::ADMIN_PERIOD_SAVE);
+                        Route::delete('/{id}', [Controllers\Admin\Billing\PeriodController::class, 'delete'])->name(RouteNames::ADMIN_PERIOD_DELETE);
                     });
                 });
                 Route::group(['prefix' => 'accounts'], static function () {

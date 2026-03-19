@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin\System;
+namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Periods\SaveRequest;
@@ -49,7 +49,9 @@ class PeriodController extends Controller
             ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC);
         $periods = $this->periodService->search($searcher);
 
-        return response()->json(new PeriodsListResource($periods->getItems()));
+        return response()->json(
+            new PeriodsListResource($periods->getItems())
+        );
     }
 
     public function save(SaveRequest $request): JsonResponse

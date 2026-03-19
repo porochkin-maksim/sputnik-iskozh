@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Periods;
 
+use Core\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -21,6 +22,7 @@ readonly class PeriodResource extends AbstractResource
     public function jsonSerialize(): array
     {
         $access = lc::roleDecorator();
+
         return [
             'id'         => $this->period->getId(),
             'name'       => $this->period->getName(),
@@ -29,12 +31,13 @@ readonly class PeriodResource extends AbstractResource
             'isClosed'   => $this->period->isClosed(),
             'actions'    => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PERIODS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT) && !$this->period->isClosed(),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP) && !$this->period->isClosed(),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT) && ! $this->period->isClosed(),
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP) && ! $this->period->isClosed(),
             ],
+            'receiptUrl' => route(RouteNames::DOCUMENT_RECEIPT_BLANK, ['period' => $this->period->getId()]),
             'historyUrl' => $this->period->getId()
                 ? HistoryChangesLocator::route(
-                    type: HistoryType::PERIOD,
+                    type     : HistoryType::PERIOD,
                     primaryId: $this->period->getId(),
                 ) : null,
         ];

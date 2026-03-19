@@ -5,6 +5,8 @@ namespace App\Observers;
 use App\Models\Interfaces\CastsInterface;
 use Core\Domains\Infra\Comparator\DTO\Changes;
 use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,51 @@ abstract class AbstractObserver
      * Должен возвращать массив [поле_модели => человеческое название]
      */
     abstract protected function getPropertyTitles(): array;
+
+    abstract protected function getHistoryType(): HistoryType;
+
+    public function created(Model $item): void
+    {
+        $changes = $this->makeChanges($item);
+
+        $this->historyChangesService->logChanges(
+            Event::CREATE,
+            $this->getHistoryType(),
+            $changes,
+            $item->id,
+        );
+    }
+
+    public function updated(Model $item): void
+    {
+        $changes = $this->makeChanges($item);
+
+        $this->historyChangesService->logChanges(
+            Event::UPDATE,
+            $this->getHistoryType(),
+            $changes,
+            $item->id,
+        );
+    }
+
+    public function deleted(Model $item): void
+    {
+        $this->historyChangesService->writeToHistory(
+            Event::DELETE,
+            $this->getHistoryType(),
+            $item->id,
+        );
+    }
+
+    public function forceDeleted(Model $item): void
+    {
+        $this->deleted($item);
+    }
+
+    public function restored(Model $item): void
+    {
+        //
+    }
 
     /**
      * Формирует коллекцию изменений

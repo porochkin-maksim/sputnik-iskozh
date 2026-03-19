@@ -25,7 +25,7 @@
                     v-bind="$attrs"
                 />
                 <i
-                    class="fa fa-calendar position-absolute end-0 me-3 text-secondary"
+                    class="fa fa-calendar position-absolute end-0 me-3 text-secondary cursor-pointer"
                     :class="{ 'mt-3': label }"
                     style="z-index:2; top:20%; transform:translateY(-50%);"
                     @click="toggleDropdown"

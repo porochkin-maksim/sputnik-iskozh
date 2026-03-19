@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace App\Observers\Counter;
+namespace App\Observers\Billing;
 
-use App\Models\Counter\Counter;
+use App\Models\Billing\Period;
 use App\Observers\AbstractObserver;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 
-class CounterObserver extends AbstractObserver
+class PeriodObserver extends AbstractObserver
 {
     protected function getHistoryType(): HistoryType
     {
-        return HistoryType::COUNTER;
+        return HistoryType::PERIOD;
     }
 
     protected function getPropertyTitles(): array
     {
-        return Counter::PROPERTIES_TO_TITLES;
+        return Period::PROPERTIES_TO_TITLES;
     }
 }

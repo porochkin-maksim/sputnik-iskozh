@@ -100,9 +100,9 @@ trait RepositoryTrait
         return $this->deleteModelById($id);
     }
 
-    protected function deleteModelById(int $id): bool
+    protected function deleteModelById(?int $id): bool
     {
-        return $this->deleteModelsByIds([$id]) > 0;
+        return $id && $this->deleteModelsByIds([$id]) > 0;
     }
 
     protected function deleteModelsByIds(array $ids): int

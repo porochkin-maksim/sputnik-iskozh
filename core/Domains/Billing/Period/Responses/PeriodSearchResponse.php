@@ -8,7 +8,7 @@ use Core\Domains\Billing\Period\Collections\PeriodCollection;
 /**
  * @method PeriodCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class PeriodSearchResponse extends BaseSearchResponse
 {
 
 }

@@ -3,32 +3,32 @@
 namespace App\Http\Requests\Admin\Periods;
 
 use App\Http\Requests\AbstractRequest;
+use App\Models\Billing\Period;
 use Carbon\Carbon;
-use Core\Domains\Billing\Period\Models\PeriodComparator;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID        = RequestArgumentsEnum::ID;
-    private const NAME      = RequestArgumentsEnum::NAME;
-    private const START_AT  = RequestArgumentsEnum::START_AT;
-    private const END_AT    = RequestArgumentsEnum::END_AT;
-    private const IS_CLOSED = 'is_closed';
+    private const string ID        = RequestArgumentsEnum::ID;
+    private const string NAME      = RequestArgumentsEnum::NAME;
+    private const string START_AT  = RequestArgumentsEnum::START_AT;
+    private const string END_AT    = RequestArgumentsEnum::END_AT;
+    private const string IS_CLOSED = 'is_closed';
 
     public function rules(): array
     {
         return [
-            self::NAME      => [
+            self::NAME     => [
                 'required',
                 'string',
                 'max:255',
             ],
-            self::START_AT  => [
+            self::START_AT => [
                 'required',
                 'date',
             ],
-            self::END_AT    => [
+            self::END_AT   => [
                 'required',
                 'date',
             ],
@@ -38,15 +38,15 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::NAME . '.required' => sprintf('Укажите «%s»', PeriodComparator::TITLE_NAME),
-            self::NAME . '.string'   => sprintf('Укажите «%s»', PeriodComparator::TITLE_NAME),
-            self::NAME . '.max'      => sprintf('«%s» слишком длинное', PeriodComparator::TITLE_NAME),
+            self::NAME . '.required' => sprintf('Укажите «%s»', Period::TITLE_NAME),
+            self::NAME . '.string'   => sprintf('Укажите «%s»', Period::TITLE_NAME),
+            self::NAME . '.max'      => sprintf('«%s» слишком длинное', Period::TITLE_NAME),
 
-            self::START_AT . '.required' => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
-            self::START_AT . '.date'     => sprintf('Укажите «%s»', PeriodComparator::TITLE_START_AT),
+            self::START_AT . '.required' => sprintf('Укажите «%s»', Period::TITLE_START_AT),
+            self::START_AT . '.date'     => sprintf('Укажите «%s»', Period::TITLE_START_AT),
 
-            self::END_AT . '.required' => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
-            self::END_AT . '.date'     => sprintf('Укажите «%s»', PeriodComparator::TITLE_END_AT),
+            self::END_AT . '.required' => sprintf('Укажите «%s»', Period::TITLE_END_AT),
+            self::END_AT . '.date'     => sprintf('Укажите «%s»', Period::TITLE_END_AT),
         ];
     }
 
