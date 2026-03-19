@@ -4,6 +4,7 @@ namespace Core\Domains\Billing\Claim\Models;
 
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Service\Models\ServiceDTO;
+use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Common\Traits\TimestampsTrait;
 
 class ClaimDTO
@@ -115,8 +116,12 @@ class ClaimDTO
         return $this->getCost() - $this->getPayed();
     }
 
-    public function getService(): ?ServiceDTO
+    public function getService(bool $lazyLoad = false): ?ServiceDTO
     {
+        if ( ! $this->service && $lazyLoad) {
+            $this->service = ServiceLocator::ServiceService()->getById($this->getServiceId());
+        }
+
         return $this->service;
     }
 

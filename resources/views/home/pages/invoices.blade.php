@@ -32,7 +32,7 @@ $period   = PeriodLocator::PeriodService()->getById($periodId);
 
 $period = $period ? : PeriodLocator::PeriodService()->getCurrentPeriod();
 if ( ! $period) {
-    $period = PeriodLocator::PeriodService()->search(PeriodSearcher::make())->getItems()->first();
+    $period = $periods->first();
 }
 $invoices = new InvoiceCollection();
 $payments = new PaymentCollection();
@@ -171,6 +171,13 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                 </td>
                             </tr>
                         @endif
+                        <tr class="text-center">
+                            <td colspan="5">
+                                <a href="{{ route(RouteNames::DOCUMENT_RECEIPT_INVOICE, ['uid' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}" target="_blank" class="btn btn-outline-danger">
+                                    <i class="fa fa-file-pdf-o text-danger"></i> Получить квитанцию
+                                </a>
+                            </td>
+                        </tr>
                     @endforeach
                     </tbody>
                 </table>

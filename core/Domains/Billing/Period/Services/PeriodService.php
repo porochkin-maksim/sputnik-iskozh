@@ -109,11 +109,19 @@ readonly class PeriodService
         $searcher = new PeriodSearcher();
         $searcher
             ->addWhere(Period::START_AT, SearcherInterface::LTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
-           ->addWhere(Period::END_AT, SearcherInterface::GTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
+            ->addWhere(Period::END_AT, SearcherInterface::GTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
         ;
 
-        $result = $this->periodRepository->search($searcher)->getItems()->first();
+        return $this->search($searcher)->getItems()->first();
+    }
 
-        return $result ? $this->periodFactory->makeDtoFromObject($result) : null;
+    public function getLast(): ?PeriodDTO
+    {
+        $searcher = new PeriodSearcher()
+            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setLimit(1)
+        ;
+
+        return $this->search($searcher)->getItems()->first();
     }
 }

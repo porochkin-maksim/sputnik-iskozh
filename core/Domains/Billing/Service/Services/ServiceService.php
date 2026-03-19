@@ -113,4 +113,11 @@ readonly class ServiceService
                 ->setType($case),
         )->getItems()->first();
     }
+
+    public function getByPeriodId(?int $periodId): ServiceCollection
+    {
+        $searcher = new ServiceSearcher()->setPeriodId($periodId);
+
+        return $this->search($searcher)->getItems();
+    }
 }

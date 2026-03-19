@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\DB;
 readonly class ClaimService
 {
     public function __construct(
-        private ClaimFactory    $claimFactory,
-        private ClaimRepository $claimRepository,
+        private ClaimFactory          $claimFactory,
+        private ClaimRepository       $claimRepository,
         private HistoryChangesService $historyChangesService,
     )
     {
@@ -65,8 +65,8 @@ readonly class ClaimService
     {
         return $this->claimFactory->makeDtoFromObject(
             $this->claimRepository->save($this->claimFactory->makeModelFromDto(
-                $claim, $this->claimRepository->getById($claim->getId())
-            ))
+                $claim, $this->claimRepository->getById($claim->getId()),
+            )),
         );
     }
 
@@ -141,5 +141,15 @@ readonly class ClaimService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function getByInvoiceId(?int $invoiceId): ClaimCollection
+    {
+        $sarcher = new ClaimSearcher()
+            ->setInvoiceId($invoiceId)
+            ->setWithService()
+        ;
+
+        return $this->search($sarcher)->getItems();
     }
 }

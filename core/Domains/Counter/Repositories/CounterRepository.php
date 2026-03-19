@@ -59,9 +59,4 @@ class CounterRepository
 
         return $this->factory->makeDtoFromObject($model);
     }
-
-    public function deleteById(int $id): bool
-    {
-        return $this->deleteModelById($id);
-    }
 }

@@ -15,16 +15,16 @@ class RequestsPagesController extends Controller
 
     public function proposal(): View
     {
-        return view(ViewNames::PAGES_PROPOSAL);
+        return view('pages.contacts.proposal');
     }
 
     public function payment(): View
     {
-        return view(ViewNames::PAGES_PAYMENT);
+        return view('pages.contacts.payment');
     }
 
     public function counter(): View
     {
-        return view(ViewNames::PAGES_COUNTER);
+        return view('pages.contacts.counter');
     }
 }

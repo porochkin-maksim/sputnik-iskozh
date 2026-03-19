@@ -125,6 +125,11 @@ Route::group(['prefix' => 'files'], static function () {
     });
 });
 
+Route::group(['prefix' => 'document'], static function () {
+    Route::get('/invoice-receipt/blank', [Controllers\Common\Documents\ReceiptController::class, 'makeForBlank'])->name(RouteNames::DOCUMENT_RECEIPT_BLANK);
+    Route::get('/invoice-receipt/{uid}', [Controllers\Common\Documents\ReceiptController::class, 'makeForInvoice'])->name(RouteNames::DOCUMENT_RECEIPT_INVOICE);
+});
+
 Route::group(['prefix' => 'folders'], static function () {
     Route::group(['prefix' => 'json'], static function () {
         Route::get('/list', [Controllers\Pages\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
@@ -141,7 +146,6 @@ Route::group(['prefix' => 'folders'], static function () {
 Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, 'download'])->where('filePath', '.*');
 
 Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-    // Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
     Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
         Route::group(['prefix' => '/json/summary'], static function () {
             Route::get('/', [Controllers\Common\SummaryController::class, 'summary'])->name(RouteNames::SUMMARY);
@@ -254,6 +258,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                 Route::group(['prefix' => 'invoices'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'invoices'])->name(RouteNames::ADMIN_INVOICE_INDEX);
                     Route::get('/view/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'view'])->name(RouteNames::ADMIN_INVOICE_VIEW);
+                    Route::get('/view/{id}/invoice-receipt', [Controllers\Common\Documents\ReceiptController::class, 'makeByInvoiceId'])->name(RouteNames::ADMIN_DOCUMENT_RECEIPT_INVOICE);
                     Route::get('/export', [Controllers\Admin\Billing\InvoiceController::class, 'export'])->name(RouteNames::ADMIN_INVOICE_EXPORT);
                     Route::group(['prefix' => 'json'], static function () {
                         Route::get('/get-without-regular/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'getAccountCountWithoutRegular'])->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR);

@@ -89,6 +89,10 @@ abstract class RouteNames
     public const string SUMMARY           = 'common.summary';
     public const string SUMMARY_DETAILING = 'common.summary.detailing';
 
+    public const string DOCUMENT_RECEIPT_BLANK         = 'document.receipt.blank';
+    public const string DOCUMENT_RECEIPT_INVOICE       = 'document.receipt.invoice';
+    public const string ADMIN_DOCUMENT_RECEIPT_INVOICE = 'admin.document.receipt.invoice';
+
     public const string ADMIN = 'admin.index';
 
     public const string ADMIN_ROLE_INDEX  = 'admin.role.index';

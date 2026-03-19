@@ -105,6 +105,11 @@ export function ApiAdminCounterView(accountId,counterId, getParams = {}, postDat
     return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/view/'+counterId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminDocumentReceiptInvoice(id, getParams = {}, postData = null) {
+    // see admin.document.receipt.invoice
+    return window.axios.get(makeQuery('/admin/invoices/view/'+id+'/invoice-receipt', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminErrorLogsDetails(filename,index, getParams = {}, postData = null) {
     // see admin.error-logs.details
     return window.axios.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams), prepareRequestData(postData));
@@ -510,6 +515,16 @@ export function ApiCounterCreate(getParams = {}, postData = null) {
     return window.axios.post(makeQuery('/contacts/requests/counter', getParams), prepareRequestData(postData));
 }
 
+export function ApiDocumentReceiptBlank(getParams = {}, postData = null) {
+    // see document.receipt.blank
+    return window.axios.get(makeQuery('/document/invoice-receipt/blank', getParams), prepareRequestData(postData));
+}
+
+export function ApiDocumentReceiptInvoice(uid, getParams = {}, postData = null) {
+    // see document.receipt.invoice
+    return window.axios.get(makeQuery('/document/invoice-receipt/'+uid+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiFilesDelete(id, getParams = {}, postData = null) {
     // see files.delete
     return window.axios.delete(makeQuery('/files/json/delete/'+id+'', getParams), prepareRequestData(postData));
@@ -793,46 +808,6 @@ export function ApiProposalCreate(getParams = {}, postData = null) {
 export function ApiRegulation(getParams = {}, postData = null) {
     // see regulation
     return window.axios.get(makeQuery('/regulation', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsCreate(getParams = {}, postData = null) {
-    // see reports.create
-    return window.axios.get(makeQuery('/reports/json/create', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsDelete(id, getParams = {}, postData = null) {
-    // see reports.delete
-    return window.axios.delete(makeQuery('/reports/json/delete/'+id+'', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsEdit(id, getParams = {}, postData = null) {
-    // see reports.edit
-    return window.axios.get(makeQuery('/reports/json/edit/'+id+'', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsFileDelete(id, getParams = {}, postData = null) {
-    // see reports.file.delete
-    return window.axios.post(makeQuery('/reports/json/file/delete/'+id+'', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsFileUpload(id, getParams = {}, postData = null) {
-    // see reports.file.upload
-    return window.axios.post(makeQuery('/reports/json/file/upload/'+id+'', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsIndex(getParams = {}, postData = null) {
-    // see reports.index
-    return window.axios.get(makeQuery('/reports', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsList(getParams = {}, postData = null) {
-    // see reports.list
-    return window.axios.get(makeQuery('/reports/json/list', getParams), prepareRequestData(postData));
-}
-
-export function ApiReportsSave(getParams = {}, postData = null) {
-    // see reports.save
-    return window.axios.post(makeQuery('/reports/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiRequests(getParams = {}, postData = null) {

@@ -4,7 +4,9 @@ namespace Core\Domains\Option\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\DataDTOInterface;
+use Core\Domains\Option\Models\DataDTO\SntAccounting;
 use JsonSerializable;
 
 class OptionDTO implements JsonSerializable
@@ -39,6 +41,12 @@ class OptionDTO implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @return null|DataDTOInterface
+     *
+     * @see SntAccounting
+     * @see ChairmanInfo
+     */
     public function getData(): ?DataDTOInterface
     {
         return $this->data;

@@ -95,6 +95,11 @@ trait RepositoryTrait
         return $result;
     }
 
+    public function deleteById(?int $id): bool
+    {
+        return $this->deleteModelById($id);
+    }
+
     protected function deleteModelById(int $id): bool
     {
         return $this->deleteModelsByIds([$id]) > 0;

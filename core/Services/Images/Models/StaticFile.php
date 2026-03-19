@@ -41,13 +41,12 @@ readonly class StaticFile implements JsonSerializable
         return $this->url;
     }
 
-    public function toImage(): string
+    public function getBase64(): string
     {
-        return <<<HTML
-<a href="{$this->url}" data-lightbox="{$this->getName()}" class="d-block w-100">
-    <image src="{$this->url}"></image>
-</a>
-HTML;
+        $path    = $this->getStoragePath();
+        $content = file_get_contents($path);
+
+        return 'data:image/' . pathinfo($path, PATHINFO_EXTENSION) . ';base64,' . base64_encode($content);
     }
 
     public function jsonSerialize(): array

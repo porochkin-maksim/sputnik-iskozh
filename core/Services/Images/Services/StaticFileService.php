@@ -15,6 +15,16 @@ readonly class StaticFileService
     {
     }
 
+    public function signatureDirector(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::SIGNATURE_DIRECTOR);
+    }
+
+    public function stampSnt(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::STAMP_SNT);
+    }
+
     public function regulation(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::REGULATION);

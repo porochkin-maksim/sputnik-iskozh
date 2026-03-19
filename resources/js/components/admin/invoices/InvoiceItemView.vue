@@ -10,6 +10,9 @@
             <history-btn
                 class="btn-link underline-none"
                 :url="localInvoice.historyUrl" />
+            <a :href="invoice.receiptUrl" target="_blank" v-if="invoice.receiptUrl" class="text-decoration-none">
+                <i class="fa fa-file-pdf-o text-danger"></i> Квитанция
+            </a>
         </div>
         <button class="btn btn-sm text-danger"
                 v-if="canDrop"

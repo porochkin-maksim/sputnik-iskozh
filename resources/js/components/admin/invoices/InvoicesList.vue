@@ -31,6 +31,7 @@
                         <i v-if="sortField === 'updated_at'" :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
                         <i v-else class="fa fa-sort"></i>
                     </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -57,6 +58,11 @@
                         {{ invoice.advance ? $formatMoney(-invoice.advance) : $formatMoney(invoice.delta) }}
                     </td>
                     <td>{{ invoice.updated }}</td>
+                    <td>
+                        <a :href="invoice.receiptUrl" target="_blank" v-if="invoice.receiptUrl">
+                            <i class="fa fa-file-pdf-o text-danger"></i>
+                        </a>
+                    </td>
                 </tr>
             </template>
             </tbody>

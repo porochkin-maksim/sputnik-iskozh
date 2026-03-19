@@ -34,7 +34,7 @@ class AccountCollection extends Collection implements CollectionInterface
         });
     }
 
-    public function hasMany(): bool
+    public function hasSeveral(): bool
     {
         return $this->count() > 1;
     }

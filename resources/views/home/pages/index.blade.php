@@ -18,7 +18,7 @@ use Core\Resources\Views\ViewNames;
                 <h3 class="text-dark">{{ lc::userDecorator()->getFullName() }}</h3>
                 @if(lc::account()->getId())
                     <h5 class="text-dark d-flex align-items-center"> Участок:
-                        @if (lc::user()->getAccounts()->hasMany())
+                        @if (lc::user()->getAccounts()->hasSeveral())
                             <div class="d-inline-block">
                                 <account-switcher
                                         :accounts='@json(new AccountsSelectResource(lc::user()->getAccounts(), false))'

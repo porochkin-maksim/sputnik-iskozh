@@ -72,6 +72,9 @@ readonly class InvoiceResource extends AbstractResource
             'accountUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
                 : null,
+            'receiptUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
+                ? route(RouteNames::ADMIN_DOCUMENT_RECEIPT_INVOICE, ['id' => $this->invoice?->getId()])
+                : null,
             'account'       => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];
     }
