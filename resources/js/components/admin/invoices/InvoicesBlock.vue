@@ -245,7 +245,7 @@ const computedPayedStatus = computed(() => [
 
 const makeRegularAction = async () => {
     try {
-        const countResponse = await ApiAdminInvoiceGetAccountsCountWithoutRegular({ periodId: periodId.value });
+        const countResponse = await ApiAdminInvoiceGetAccountsCountWithoutRegular(periodId.value);
         const count         = countResponse.data;
 
         if (count === 0) {
@@ -257,7 +257,7 @@ const makeRegularAction = async () => {
             return;
         }
 
-        await ApiAdminInvoiceCreateRegularInvoices({ periodId: periodId.value });
+        await ApiAdminInvoiceCreateRegularInvoices(periodId.value);
         await listAction();
     }
     catch (error) {

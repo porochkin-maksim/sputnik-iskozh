@@ -9,6 +9,7 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -105,8 +106,8 @@ abstract class AbstractObserver
 
         if ($model instanceof CastsInterface) {
             $value = match ($model->getCasts()[$field] ?? null) {
-                CastsInterface::CAST_DATE     => $value->format('d.m.Y'),
-                CastsInterface::CAST_DATETIME => $value->format('d.m.Y H:i'),
+                CastsInterface::CAST_DATE     => DateTimeHelper::toCarbonOrNull($value)?->format('d.m.Y'),
+                CastsInterface::CAST_DATETIME => DateTimeHelper::toCarbonOrNull($value)?->format('d.m.Y H:i'),
                 CastsInterface::CAST_BOOLEAN  => (bool) $value,
                 default                       => $value,
             };

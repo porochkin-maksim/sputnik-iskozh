@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Services;
 
+use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectResource;
@@ -52,7 +53,8 @@ readonly class ServicesListResource extends AbstractResource
             });
         }
 
-        $result['periods'] = new SelectResource($periods);
+        $result['periods']     = new SelectResource($periods);
+        $result['periodsInfo'] = new PeriodsListResource($this->periodCollection);
 
         foreach ($this->serviceCollection as $service) {
             $result[ResponsesEnum::SERVICES][] = new ServiceResource($service);

@@ -128,7 +128,6 @@ import {
     onMounted,
     defineProps,
     defineEmits,
-    defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
@@ -139,10 +138,6 @@ import {
     ApiAdminPaymentList,
     ApiAdminPaymentDelete,
 }                           from '@api';
-
-defineOptions({
-    name: 'PaymentsList',
-});
 
 const props = defineProps({
     invoiceId : {

@@ -20,9 +20,9 @@
                 :url="historyUrl" />
         </div>
         <div>
-            <div v-for="period in periods" :key="period.value">
-                <div class="fw-bold mb-2">
-                    Период «{{ period.value }}»
+            <div v-for="period in periodsInfo.periods" :key="period.id">
+                <div class="mb-2">
+                    <b>Период «{{ period.name }}»</b> <span class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
                 </div>
                 <table class="table table-sm">
                     <thead>
@@ -35,7 +35,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.value && parseInt(s.periodId) === parseInt(period.value))"
+                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.id && parseInt(s.periodId) === parseInt(period.id))"
                         :key="service.id">
                         <td>{{ service.id }}</td>
                         <td>{{ service.name }}</td>
@@ -111,10 +111,11 @@ defineOptions({
 });
 
 const { parseResponseErrors, showInfo } = useResponseError();
-const { formatMoney }                   = useFormat();
+const { formatMoney, formatDate }       = useFormat();
 
 const services        = ref([]);
 const periods         = ref([]);
+const periodsInfo     = ref([]);
 const types           = ref([]);
 const historyUrl      = ref(null);
 const loaded          = ref(false);
@@ -125,12 +126,13 @@ const vueId           = ref('uuid-' + Date.now() + '-' + Math.random().toString(
 
 const listAction = async () => {
     try {
-        const response   = await ApiAdminServiceList();
-        services.value   = response.data.services || [];
-        actions.value    = response.data.actions;
-        types.value      = response.data.types;
-        periods.value    = response.data.periods;
-        historyUrl.value = response.data.historyUrl;
+        const response    = await ApiAdminServiceList();
+        services.value    = response.data.services || [];
+        actions.value     = response.data.actions;
+        types.value       = response.data.types;
+        periods.value     = response.data.periods;
+        periodsInfo.value = response.data.periodsInfo;
+        historyUrl.value  = response.data.historyUrl;
     }
     catch (error) {
         parseResponseErrors(error);

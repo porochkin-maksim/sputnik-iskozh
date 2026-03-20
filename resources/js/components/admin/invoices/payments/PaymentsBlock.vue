@@ -187,7 +187,6 @@ import {
     watch,
     defineProps,
     defineEmits,
-    defineOptions,
     onMounted,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
@@ -204,10 +203,6 @@ import {
     ApiAdminPaymentSave,
 }                           from '@api';
 import CustomTextarea       from '@common/form/CustomTextarea.vue';
-
-defineOptions({
-    name: 'PaymentsBlock',
-});
 
 const props = defineProps({
     invoice: {
