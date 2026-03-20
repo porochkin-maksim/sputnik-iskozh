@@ -10,7 +10,7 @@ use ReflectionClass;
 
 class ExportRequestArgumentsCommand extends Command
 {
-    protected const OUTPUT_FILE_PATH = '/js/utils/request-arguments.js';
+    protected const string OUTPUT_FILE_PATH = '/js/utils/request-arguments.js';
 
     protected $signature   = 'front:export-request-arguments-command';
     protected $description = 'Экспортирует названия аргументов в файл для фронта';

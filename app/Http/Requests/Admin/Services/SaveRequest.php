@@ -6,17 +6,16 @@ use App\Http\Requests\AbstractRequest;
 use App\Models\Billing\Period;
 use App\Models\Billing\Service;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID        = RequestArgumentsEnum::ID;
-    private const string NAME      = RequestArgumentsEnum::NAME;
-    private const string TYPE      = RequestArgumentsEnum::TYPE;
-    private const string COST      = RequestArgumentsEnum::COST;
-    private const string ACTIVE    = RequestArgumentsEnum::ACTIVE;
-    private const string PERIOD_ID = RequestArgumentsEnum::PERIOD_ID;
+    private const string ID        = 'id';
+    private const string NAME      = 'name';
+    private const string TYPE      = 'type';
+    private const string COST      = 'cost';
+    private const string ACTIVE    = 'active';
+    private const string PERIOD_ID = 'period_id';
 
     public function rules(): array
     {

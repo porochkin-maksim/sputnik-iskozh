@@ -6,17 +6,16 @@ use App\Http\Requests\AbstractRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Core\Helpers\Phone\PhoneHelper;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID          = RequestArgumentsEnum::ID;
-    private const string LAST_NAME   = RequestArgumentsEnum::LAST_NAME;
-    private const string FIRST_NAME  = RequestArgumentsEnum::FIRST_NAME;
-    private const string MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
-    private const string EMAIL       = RequestArgumentsEnum::EMAIL;
-    private const string PHONE       = RequestArgumentsEnum::PHONE;
+    private const string ID          = 'id';
+    private const string LAST_NAME   = 'last_name';
+    private const string FIRST_NAME  = 'first_name';
+    private const string MIDDLE_NAME = 'middle_name';
+    private const string EMAIL       = 'email';
+    private const string PHONE       = 'phone';
     private const string ROLE        = 'role_id';
 
     public function rules(): array

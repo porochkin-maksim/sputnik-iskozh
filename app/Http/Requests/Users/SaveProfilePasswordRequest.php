@@ -3,13 +3,11 @@
 namespace App\Http\Requests\Users;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Domains\User\Models\UserDTO;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Requests\Rules;
 
 class SaveProfilePasswordRequest extends AbstractRequest
 {
-    private const PASSWORD = RequestArgumentsEnum::PASSWORD;
+    private const string PASSWORD = 'password';
 
     public function rules(): array
     {

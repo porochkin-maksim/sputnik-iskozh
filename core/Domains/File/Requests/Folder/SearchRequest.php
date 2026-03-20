@@ -8,9 +8,9 @@ use Core\Requests\RequestArgumentsEnum;
 
 class SearchRequest extends AbstractRequest
 {
-    private const LIMIT     = RequestArgumentsEnum::LIMIT;
-    private const PARENT_ID = RequestArgumentsEnum::PARENT_ID;
-    private const UID       = RequestArgumentsEnum::UID;
+    private const string LIMIT     = RequestArgumentsEnum::LIMIT;
+    private const string PARENT_ID = 'parent_id';
+    private const string UID       = 'uid';
 
     public function dto(): FolderSearcher
     {

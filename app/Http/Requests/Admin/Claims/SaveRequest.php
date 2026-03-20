@@ -6,17 +6,16 @@ use App\Http\Requests\AbstractRequest;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Service;
 use Core\Domains\Billing\Claim\Models\ClaimComparator;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const INVOICE_ID = RequestArgumentsEnum::INVOICE_ID;
-    private const SERVICE_ID = RequestArgumentsEnum::SERVICE_ID;
-    private const TARIFF     = RequestArgumentsEnum::TARIFF;
-    private const COST       = RequestArgumentsEnum::COST;
-    private const NAME       = RequestArgumentsEnum::NAME;
+    private const string ID         = 'id';
+    private const string INVOICE_ID = 'invoice_id';
+    private const string SERVICE_ID = 'service_id';
+    private const string TARIFF     = 'tariff';
+    private const string COST       = 'cost';
+    private const string NAME       = 'name';
 
     public function rules(): array
     {

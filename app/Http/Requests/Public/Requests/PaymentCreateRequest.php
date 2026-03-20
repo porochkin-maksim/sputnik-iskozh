@@ -3,17 +3,16 @@
 namespace App\Http\Requests\Public\Requests;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 
 class PaymentCreateRequest extends AbstractRequest
 {
-    private const string EMAIL   = RequestArgumentsEnum::EMAIL;
-    private const string PHONE   = RequestArgumentsEnum::PHONE;
-    private const string NAME    = RequestArgumentsEnum::NAME;
-    private const string TEXT    = RequestArgumentsEnum::TEXT;
-    private const string ACCOUNT = RequestArgumentsEnum::ACCOUNT;
-    private const string INVOICE = RequestArgumentsEnum::INVOICE;
-    private const string COST    = RequestArgumentsEnum::COST;
+    private const string EMAIL   = 'email';
+    private const string PHONE   = 'phone';
+    private const string NAME    = 'name';
+    private const string TEXT    = 'text';
+    private const string ACCOUNT = 'account';
+    private const string INVOICE = 'invoice';
+    private const string COST    = 'cost';
 
     public function attributes(): array
     {

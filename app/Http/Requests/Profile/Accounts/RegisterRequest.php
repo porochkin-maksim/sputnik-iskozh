@@ -6,15 +6,14 @@ use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Enums\Regexp;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends AbstractRequest
 {
-    private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
+    private const string ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
 
-    private const NUMBER = RequestArgumentsEnum::NUMBER;
-    private const SIZE   = 'size';
+    private const string NUMBER = 'number';
+    private const string SIZE   = 'size';
 
     public function rules(): array
     {

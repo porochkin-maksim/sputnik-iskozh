@@ -291,9 +291,9 @@ class UsersController extends Controller
 
     public function generateEmail(DefaultRequest $request): ?string
     {
-        $lastName   = $request->getStringOrNull(RequestArgumentsEnum::LAST_NAME);
-        $firstName  = $request->getStringOrNull(RequestArgumentsEnum::FIRST_NAME);
-        $middleName = $request->getStringOrNull(RequestArgumentsEnum::MIDDLE_NAME);
+        $lastName   = $request->getStringOrNull('last_name');
+        $firstName  = $request->getStringOrNull('first_name');
+        $middleName = $request->getStringOrNull('middle_name');
 
         return Str::slug($lastName) . '.' . Str::slug($firstName) . '@' . Str::slug($middleName) . '.ru';
     }

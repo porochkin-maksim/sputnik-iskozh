@@ -4,19 +4,17 @@ namespace App\Http\Requests\Admin\Payments;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
-use App\Models\Billing\Invoice;
 use Core\Domains\Billing\Payment\Models\PaymentComparator;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class LinkRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const NAME       = RequestArgumentsEnum::NAME;
-    private const COST       = RequestArgumentsEnum::COST;
-    private const COMMENT    = RequestArgumentsEnum::COMMENT;
-    private const ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
-    private const INVOICE_ID = RequestArgumentsEnum::INVOICE_ID;
+    private const string ID         = 'id';
+    private const string NAME       = 'name';
+    private const string COST       = 'cost';
+    private const string COMMENT    = 'comment';
+    private const string ACCOUNT_ID = 'account_id';
+    private const string INVOICE_ID = 'invoice_id';
 
     public function rules(): array
     {

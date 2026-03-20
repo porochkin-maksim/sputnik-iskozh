@@ -23,7 +23,6 @@ use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Contracts\View\View;
@@ -227,7 +226,7 @@ class CounterController extends Controller
             abort(403);
         }
 
-        $comment = $request->getStringOrNull(RequestArgumentsEnum::COMMENT);
+        $comment = $request->getStringOrNull('comment');
 
         DB::beginTransaction();
 

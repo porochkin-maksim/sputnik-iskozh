@@ -21,7 +21,6 @@ use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -131,7 +130,7 @@ class CounterController extends Controller
 
         if ($counter && $counter->getAccountId() === lc::account()->getId()) {
             DB::beginTransaction();
-            $counter->setIncrement($request->getInt(RequestArgumentsEnum::INCREMENT));
+            $counter->setIncrement($request->getInt('increment'));
 
             $this->counterService->save($counter);
             DB::commit();
@@ -170,7 +169,7 @@ class CounterController extends Controller
     {
         $limit = 4;
 
-        $counterId = $request->getInt(RequestArgumentsEnum::COUNTER_ID);
+        $counterId = $request->getInt('counter_id');
 
         $counter = $this->counterService->getById($counterId);
         if ( ! $counter || $counter->getAccountId() !== lc::account()->getId()) {

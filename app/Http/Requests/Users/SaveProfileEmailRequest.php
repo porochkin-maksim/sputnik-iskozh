@@ -4,13 +4,11 @@ namespace App\Http\Requests\Users;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\User;
-use Core\Domains\User\Models\UserDTO;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveProfileEmailRequest extends AbstractRequest
 {
-    private const EMAIL = RequestArgumentsEnum::EMAIL;
+    private const string EMAIL = 'email';
 
     public function rules(): array
     {

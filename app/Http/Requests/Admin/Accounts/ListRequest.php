@@ -4,11 +4,12 @@ namespace App\Http\Requests\Admin\Accounts;
 
 use App\Http\Requests\DefaultRequest;
 use App\Http\Requests\SortFieldTrait;
-use Core\Requests\RequestArgumentsEnum;
 
 class ListRequest extends DefaultRequest
 {
     use SortFieldTrait;
+
+    private const string ACCOUNT_ID = 'account_id';
 
     public function rules(): array
     {
@@ -19,8 +20,6 @@ class ListRequest extends DefaultRequest
             'sort_order'   => 'string|in:asc,desc',
         ];
     }
-
-    private const string ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
 
     public function getAccountId(): ?int
     {

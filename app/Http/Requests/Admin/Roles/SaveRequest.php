@@ -5,17 +5,13 @@ namespace App\Http\Requests\Admin\Roles;
 use App\Http\Requests\AbstractRequest;
 use App\Models\Access\Role;
 use Core\Domains\Access\Models\RoleComparator;
-use Core\Domains\Enums\Regexp;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
-
-    private const ID          = RequestArgumentsEnum::ID;
-    private const NAME        = RequestArgumentsEnum::NAME;
-    private const PERMISSIONS = RequestArgumentsEnum::PERMISSIONS;
+    private const string ID          = 'id';
+    private const string NAME        = 'name';
+    private const string PERMISSIONS = 'permissions';
 
     public function rules(): array
     {

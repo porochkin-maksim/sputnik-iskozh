@@ -4,7 +4,6 @@ namespace Core\Domains\User\Notifications;
 
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Enums\DateTimeFormat;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\RouteNames;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -40,6 +39,6 @@ class InviteNotification extends Notification
             'expires' => now()->addWeek()->format(DateTimeFormat::DATE_TIME_DEFAULT),
         ]);
 
-        return route(RouteNames::PASSWORD_SET, [RequestArgumentsEnum::TOKEN => $token]);
+        return route(RouteNames::PASSWORD_SET, ['token' => $token]);
     }
 }

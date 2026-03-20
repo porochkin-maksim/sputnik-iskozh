@@ -6,14 +6,13 @@ use App\Http\Requests\AbstractRequest;
 use App\Models\Billing\Period;
 use Carbon\Carbon;
 use Core\Helpers\DateTime\DateTimeHelper;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID        = RequestArgumentsEnum::ID;
-    private const string NAME      = RequestArgumentsEnum::NAME;
-    private const string START_AT  = RequestArgumentsEnum::START_AT;
-    private const string END_AT    = RequestArgumentsEnum::END_AT;
+    private const string ID        = 'id';
+    private const string NAME      = 'name';
+    private const string START_AT  = 'start_at';
+    private const string END_AT    = 'end_at';
     private const string IS_CLOSED = 'is_closed';
 
     public function rules(): array

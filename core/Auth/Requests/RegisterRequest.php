@@ -4,13 +4,12 @@ namespace Core\Auth\Requests;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\User\Models\UserDTO;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Requests\Rules;
 
 class RegisterRequest extends AbstractRequest
 {
-    private const LOGIN    = RequestArgumentsEnum::EMAIL;
-    private const PASSWORD = RequestArgumentsEnum::PASSWORD;
+    private const string LOGIN    = 'email';
+    private const string PASSWORD = 'password';
 
     public function rules(): array
     {

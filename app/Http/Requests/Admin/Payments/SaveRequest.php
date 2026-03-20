@@ -5,15 +5,13 @@ namespace App\Http\Requests\Admin\Payments;
 use App\Http\Requests\AbstractRequest;
 use Carbon\Carbon;
 use Core\Domains\Billing\Payment\Models\PaymentComparator;
-use Core\Enums\DateTimeFormat;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID      = RequestArgumentsEnum::ID;
-    private const string NAME    = RequestArgumentsEnum::NAME;
-    private const string COST    = RequestArgumentsEnum::COST;
-    private const string COMMENT = RequestArgumentsEnum::COMMENT;
+    private const string ID      = 'id';
+    private const string NAME    = 'name';
+    private const string COST    = 'cost';
+    private const string COMMENT = 'comment';
     private const string PAYED   = 'payedAt';
 
     public function rules(): array
