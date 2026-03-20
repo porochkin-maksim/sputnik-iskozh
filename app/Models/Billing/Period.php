@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Billing;
 
-use App\Models\Counter\Counter;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

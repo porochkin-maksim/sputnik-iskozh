@@ -233,7 +233,7 @@ class CounterController extends Controller
         $result = $this->counterService->deleteById($counterId);
         if ($result && $comment) {
             $this->historyChangesService->writeToHistory(
-                Event::COMMON,
+                Event::DELETE,
                 HistoryType::COUNTER,
                 $counterId,
                 text: sprintf('Удалён по причине: %s', $comment),

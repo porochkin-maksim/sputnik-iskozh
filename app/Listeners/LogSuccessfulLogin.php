@@ -21,7 +21,7 @@ class LogSuccessfulLogin
         );
 
         HistoryChangesLocator::HistoryChangesService()->writeToHistory(
-            Event::COMMON,
+            Event::AUTH,
             HistoryType::USER,
             $event->user->id,
             text: $text,

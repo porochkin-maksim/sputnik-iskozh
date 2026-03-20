@@ -51,6 +51,6 @@ readonly class CounterService
             ->setSortOrderProperty(Counter::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
 
-        return $this->counterRepository->search($searcher)->getItems()->first();
+        return $this->counterRepository->search($searcher)->getItems();
     }
 }

@@ -176,7 +176,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
                     });
                 });
                 Route::group(['prefix' => 'qr'], static function () {
-                   Route::get('view/{uid}', [Controllers\Admin\System\QrCodeController::class, 'view'])->name(RouteNames::ADMIN_QR_VIEW);
+                    Route::get('view/{uid}', [Controllers\Admin\System\QrCodeController::class, 'view'])->name(RouteNames::ADMIN_QR_VIEW);
                 });
                 Route::group(['prefix' => 'users'], static function () {
                     Route::get('/', [Controllers\Admin\PagesController::class, 'users'])->name(RouteNames::ADMIN_USER_INDEX);

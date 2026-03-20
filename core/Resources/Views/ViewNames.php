@@ -25,7 +25,6 @@ enum ViewNames: string
     public const string PAGES_FILES_INDEX   = 'pages.files.index';
     public const string PAGES_NEWS_INDEX    = 'pages.news.index';
     public const string PAGES_NEWS_SHOW     = 'pages.news.show';
-    public const string PAGES_REPORTS_INDEX = 'pages.reports.index';
 
     public const string PARTIAL_REQUESTS = 'pages.partial.requests';
 

@@ -7,7 +7,7 @@ use Core\Enums\DateTimeFormat;
 readonly class Dossier implements \JsonSerializable
 {
     public function __construct(
-        private NewsDTO $report
+        private NewsDTO $news,
     )
     {
     }
@@ -15,8 +15,8 @@ readonly class Dossier implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'createdAt'   => $this->report->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
-            'publishedAt' => $this->report->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+            'createdAt'   => $this->news->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
+            'publishedAt' => $this->news->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
         ];
     }
 }

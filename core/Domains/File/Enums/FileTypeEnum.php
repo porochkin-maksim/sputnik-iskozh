@@ -8,7 +8,6 @@ namespace Core\Domains\File\Enums;
 enum FileTypeEnum: int
 {
     case CONSTITUTION     = 1;
-    case REPORT           = 2;
     case NEWS             = 3;
     case PAYMENT          = 4;
     case COUNTER_HISTORY  = 5;
@@ -18,7 +17,6 @@ enum FileTypeEnum: int
     {
         return match ($this) {
             self::CONSTITUTION     => 'Устав',
-            self::REPORT           => 'Отчёт',
             self::NEWS             => 'Новость',
             self::PAYMENT          => 'Платёж',
             self::COUNTER_HISTORY  => 'Показания счётчика',

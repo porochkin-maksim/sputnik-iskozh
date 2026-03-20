@@ -12,43 +12,43 @@ use Core\Domains\News\Services\NewsService;
 
 class NewsLocator
 {
-    private static NewsService    $reportService;
-    private static NewsFactory    $reportFactory;
-    private static NewsRepository $reportRepository;
+    private static NewsService    $newsService;
+    private static NewsFactory    $newsFactory;
+    private static NewsRepository $newsRepository;
     private static FileService    $fileService;
     private static FileRepository $fileRepository;
     private static UrlFactory     $urlFactory;
 
     public static function NewsService(): NewsService
     {
-        if ( ! isset(self::$reportService)) {
-            self::$reportService = new NewsService(
+        if ( ! isset(self::$newsService)) {
+            self::$newsService = new NewsService(
                 self::NewsFactory(),
                 self::NewsRepository(),
             );
         }
 
-        return self::$reportService;
+        return self::$newsService;
     }
 
     public static function NewsFactory(): NewsFactory
     {
-        if ( ! isset(self::$reportFactory)) {
-            self::$reportFactory = new NewsFactory(
+        if ( ! isset(self::$newsFactory)) {
+            self::$newsFactory = new NewsFactory(
                 FileLocator::FileFactory(),
             );
         }
 
-        return self::$reportFactory;
+        return self::$newsFactory;
     }
 
     public static function NewsRepository(): NewsRepository
     {
-        if ( ! isset(self::$reportRepository)) {
-            self::$reportRepository = new NewsRepository();
+        if ( ! isset(self::$newsRepository)) {
+            self::$newsRepository = new NewsRepository();
         }
 
-        return self::$reportRepository;
+        return self::$newsRepository;
     }
 
     public static function FileService(): FileService

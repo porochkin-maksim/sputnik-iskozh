@@ -142,12 +142,6 @@
                            :sort-order="sortOrder"
                            @sort="onSort" />
 
-            <!-- Сообщение при пустом списке -->
-            <div v-if="invoices.length === 0" class="alert alert-info text-center my-3">
-                <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
-                Счета не найдены
-            </div>
-
             <!-- Редактирование счёта -->
             <invoice-item-edit v-if="invoice && actions.edit"
                                :model-value="invoice"

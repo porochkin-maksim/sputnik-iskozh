@@ -20,8 +20,6 @@ enum ResponsesEnum: string
     public const OPTIONS    = 'options';
     public const PERIOD     = 'period';
     public const PERIODS    = 'periods';
-    public const REPORT     = 'report';
-    public const REPORTS    = 'reports';
     public const SERVICE    = 'service';
     public const SERVICES   = 'services';
     public const TOTAL      = 'total';

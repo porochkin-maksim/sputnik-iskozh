@@ -12,6 +12,7 @@ enum Event: int
     case CREATE = 1;
     case UPDATE = 2;
     case DELETE = 3;
+    case AUTH   = 4;
 
     public function name(): string
     {
@@ -20,6 +21,7 @@ enum Event: int
             self::CREATE => 'Создание',
             self::UPDATE => 'Обновление',
             self::DELETE => 'Удаление',
+            self::AUTH   => 'Авторизация',
         };
     }
 }
