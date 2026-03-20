@@ -63,7 +63,7 @@ abstract class AbstractObserver
 
     public function forceDeleted(Model $item): void
     {
-        $this->deleted($item);
+        // $this->deleted($item);
     }
 
     public function restored(Model $item): void

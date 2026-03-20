@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Console\Commands\Back\Storage;
+namespace App\Console\Commands\Storage;
 
 use Illuminate\Console\Command;
 use Carbon\Carbon;
