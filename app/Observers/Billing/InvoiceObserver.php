@@ -4,10 +4,22 @@ namespace App\Observers\Billing;
 
 use App\Models\Billing\Invoice;
 use App\Observers\AbstractObserver;
+use Core\Domains\Billing\Jobs\CreateClaimsAndPaymentsForRegularInvoiceJob;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Illuminate\Database\Eloquent\Model;
 
 class InvoiceObserver extends AbstractObserver
 {
+    /**
+     * @var Invoice $item
+     */
+    public function created(Model $item): void
+    {
+        parent::created($item);
+
+        dispatch_sync(new CreateClaimsAndPaymentsForRegularInvoiceJob($item->id));
+    }
+
     protected function getHistoryType(): HistoryType
     {
         return HistoryType::INVOICE;
