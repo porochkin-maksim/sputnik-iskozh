@@ -36,10 +36,10 @@ class ReceiptController extends Controller
     public function makeForBlank(DefaultRequest $request): mixed
     {
         $periodId = $request->getIntOrNull('period');
-        $period   = $periodId ? $this->periodService->getById($periodId) : $this->periodService->getCurrentPeriod();
+        $period   = $periodId ? $this->periodService->getById($periodId) : $this->periodService->getActive();
 
         if ( ! $period) {
-            $period = $this->periodService->getLast();
+            $period = $this->periodService->getActive();
         }
 
         if ( ! $period) {

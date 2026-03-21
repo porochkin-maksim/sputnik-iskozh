@@ -84,7 +84,7 @@ class CheckClaimForCounterChangeJob implements ShouldQueue
             return;
         }
 
-        $period = PeriodLocator::PeriodService()->getCurrentPeriod();
+        $period = PeriodLocator::PeriodService()->getActive();
 
         if ( ! $period) {
             $this->deleteClaim($claim);

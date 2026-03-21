@@ -3,13 +3,11 @@
 namespace Core\Domains\Billing\Period\Services;
 
 use App\Models\Billing\Period;
-use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\Repositories\PeriodRepository;
 use Core\Domains\Billing\Period\Responses\PeriodSearchResponse;
-use Core\Enums\DateTimeFormat;
 
 readonly class PeriodService
 {
@@ -39,18 +37,7 @@ readonly class PeriodService
         return $this->periodRepository->deleteById($id);
     }
 
-    public function getCurrentPeriod(): ?PeriodDTO
-    {
-        $searcher = new PeriodSearcher();
-        $searcher
-            ->addWhere(Period::START_AT, SearcherInterface::LTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
-            ->addWhere(Period::END_AT, SearcherInterface::GTE, Carbon::now()->format(DateTimeFormat::DATE_TIME_DEFAULT))
-        ;
-
-        return $this->search($searcher)->getItems()->first();
-    }
-
-    public function getLast(): ?PeriodDTO
+    public function getActive(): ?PeriodDTO
     {
         $searcher = new PeriodSearcher()
             ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)

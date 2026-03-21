@@ -40,8 +40,15 @@ class ServiceController extends Controller
             abort(403);
         }
 
+        $period = $this->periodService->getActive();
+
+        $service = $this->serviceFactory->makeDefault()
+            ->setPeriodId($period?->getId())
+            ->setPeriod($period)
+        ;
+
         return response()->json([
-            'service' => new ServiceResource($this->serviceFactory->makeDefault()),
+            'service' => new ServiceResource($service),
         ]);
     }
 
@@ -58,11 +65,13 @@ class ServiceController extends Controller
             ->withPeriods()
             ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC);
+            ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC)
+        ;
         $services = $this->serviceService->search($searcher);
 
         $periodSearcher = PeriodSearcher::make()
-            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)
+        ;
 
         $periods = $this->periodService->search($periodSearcher);
 
@@ -82,7 +91,8 @@ class ServiceController extends Controller
             ? $this->serviceService->getById($request->getId())
             : $this->serviceFactory->makeDefault()
                 ->setPeriodId($request->getPeriodId())
-                ->setType(ServiceTypeEnum::tryFrom($request->getType()));
+                ->setType(ServiceTypeEnum::tryFrom($request->getType()))
+        ;
 
         if ( ! $service) {
             abort(404);
@@ -91,7 +101,8 @@ class ServiceController extends Controller
         $service
             ->setName($request->getName())
             ->setIsActive($request->getIsActive())
-            ->setCost($request->getCost());
+            ->setCost($request->getCost())
+        ;
 
         $service = $this->serviceService->save($service);
 

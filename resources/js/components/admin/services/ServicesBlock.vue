@@ -52,7 +52,7 @@
                                        role="button"
                                        :id="'dropDown'+index+vueId"
                                        data-bs-toggle="dropdown"
-                                       :class="{'disabled opacity-50': !(actions.edit || actions.drop)}"
+                                       :class="{'disabled opacity-0': !(service.actions.edit || service.actions.drop)}"
                                        aria-expanded="false">
                                         <i class="fa fa-bars"></i>
                                     </a>
@@ -171,7 +171,7 @@ const deleteAction = async (service) => {
     }
 
     try {
-        await ApiAdminServiceDelete({ id: service.id });
+        await ApiAdminServiceDelete(service.id);
         services.value = services.value.filter(s => s.id !== service.id);
         showInfo('Услуга удалена');
     }

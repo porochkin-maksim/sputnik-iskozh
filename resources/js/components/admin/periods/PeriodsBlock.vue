@@ -208,7 +208,7 @@ const deleteAction = async (period) => {
         return;
     }
     try {
-        await ApiAdminPeriodDelete({ id: period.id });
+        await ApiAdminPeriodDelete(period.id);
         periods.value = periods.value.filter(p => p.id !== period.id);
         showInfo('Период удален');
     }

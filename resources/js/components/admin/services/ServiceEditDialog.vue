@@ -36,7 +36,7 @@
 
                 <!-- Период -->
                 <div class="mt-2">
-                    <simple-select
+                    <custom-select
                         v-model="periodId"
                         :errors="errors?.period_id"
                         label="Период"
@@ -49,7 +49,7 @@
 
                 <!-- Тип -->
                 <div class="mt-2">
-                    <simple-select
+                    <custom-select
                         v-model="type"
                         :errors="errors?.type"
                         label="Тип"
@@ -94,9 +94,9 @@ import {
 import { useResponseError }    from '@composables/useResponseError';
 import ViewDialog              from '../../common/ViewDialog.vue';
 import CustomInput             from '@common/form/CustomInput.vue';
-import SimpleSelect            from '../../common/form/SimpleSelect.vue';
 import CustomCheckbox          from '@common/form/CustomCheckbox.vue';
 import { ApiAdminServiceSave } from '@api';
+import CustomSelect            from '@common/form/CustomSelect.vue';
 
 const props = defineProps({
     modelValue: {

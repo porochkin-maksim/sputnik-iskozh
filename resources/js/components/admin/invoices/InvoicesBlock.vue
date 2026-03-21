@@ -202,7 +202,6 @@ const payedStatus    = ref('all');
 const accountId      = ref(0);
 const searchAccount  = ref(null);
 const actions        = ref({});
-const summary        = ref(null);
 const sortField      = ref('id');
 const sortOrder      = ref('desc');
 const searchProgress = ref(null);

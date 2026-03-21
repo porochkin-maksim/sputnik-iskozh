@@ -46,6 +46,9 @@ readonly class ServicesListResource extends AbstractResource
         $periods = [];
 
         foreach ($this->periodCollection as $period) {
+            if ($period->isClosed()) {
+                continue;
+            }
             $periods[$period->getId()]        = $period->getName();
             $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
                 ServiceTypeEnum::TARGET_FEE->name() => true,

@@ -30,7 +30,7 @@ $periods = PeriodLocator::PeriodService()->search(
 $periodId = (int) request()->get('period', null);
 $period   = PeriodLocator::PeriodService()->getById($periodId);
 
-$period = $period ? : PeriodLocator::PeriodService()->getCurrentPeriod();
+$period = $period ? : PeriodLocator::PeriodService()->getActive();
 if ( ! $period) {
     $period = $periods->first();
 }

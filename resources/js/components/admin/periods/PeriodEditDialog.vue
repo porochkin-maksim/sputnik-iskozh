@@ -132,7 +132,6 @@ const resetForm = () => {
 // Закрытие диалога
 const closeDialog = () => {
     showDialog.value = false;
-    resetForm();
 };
 
 // Следим за изменением modelValue
