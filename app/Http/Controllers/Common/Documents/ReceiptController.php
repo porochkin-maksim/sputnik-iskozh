@@ -12,11 +12,10 @@ use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Service\Services\ServiceService;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
+use Illuminate\Support\Str;
 use Spatie\LaravelPdf\Facades\Pdf;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-/**
- * Контроллер генерации квитанций на оплату для участка
- */
 class ReceiptController extends Controller
 {
     private InvoiceService $invoiceService;
@@ -31,9 +30,9 @@ class ReceiptController extends Controller
     }
 
     /**
-     * Сгенерировать шаблон PDF-квитанции
+     * Сгенерировать шаблон PDF-квитанции (открывается в браузере)
      */
-    public function makeForBlank(DefaultRequest $request): mixed
+    public function makeForBlank(DefaultRequest $request): BinaryFileResponse
     {
         $periodId = $request->getIntOrNull('period');
         $period   = $periodId ? $this->periodService->getById($periodId) : $this->periodService->getActive();
@@ -48,17 +47,21 @@ class ReceiptController extends Controller
 
         $services = $this->serviceService->getByPeriodId($period->getId())->sortByTypes();
 
-        return Pdf::view('exports.documents.receipt.receipt', compact('period', 'services'))
+        $tempFile = sys_get_temp_dir() . '/receipt_blank_' . Str::uuid() . '.pdf';
+
+        Pdf::view('exports.documents.receipt.receipt', compact('period', 'services'))
             ->format('a4')
             ->portrait()
-            ->inline('Бланк квитанция.pdf')
+            ->save($tempFile)
         ;
+
+        return $this->makeResponse($tempFile, 'Бланк_квитанции.pdf');
     }
 
     /**
      * Сгенерировать PDF-квитанцию для счёта по uid счёта (зашифрованный id)
      */
-    public function makeForInvoice(mixed $uid): mixed
+    public function makeForInvoice(mixed $uid): BinaryFileResponse
     {
         $invoiceUid = $uid ? UidFacade::findReferenceId((string) $uid, UidTypeEnum::INVOICE) : null;
 
@@ -66,9 +69,9 @@ class ReceiptController extends Controller
     }
 
     /**
-     * Сгенерировать PDF-квитанцию для счёта по uid счёта (зашифрованный id)
+     * Сгенерировать PDF-квитанцию для счёта по ID (открывается в браузере)
      */
-    public function makeByInvoiceId(mixed $id): mixed
+    public function makeByInvoiceId(mixed $id): BinaryFileResponse
     {
         $invoice = $this->invoiceService->getById(is_numeric($id) ? (int) $id : null);
 
@@ -76,10 +79,23 @@ class ReceiptController extends Controller
             abort(404, 'Счёт не найден');
         }
 
-        return Pdf::view('exports.documents.receipt.receipt', compact('invoice'))
+        $tempFile = sys_get_temp_dir() . '/receipt_' . $invoice->getId() . '_' . Str::uuid() . '.pdf';
+
+        Pdf::view('exports.documents.receipt.receipt', compact('invoice'))
             ->format('a4')
             ->portrait()
-            ->inline('квитанция-' . $invoice->getId() . '.pdf')
+            ->save($tempFile)
         ;
+
+        return $this->makeResponse($tempFile, 'квитанция_' . $invoice->getId() . '.pdf');
+    }
+
+    private function makeResponse(string $tempFile, string $fileName): BinaryFileResponse
+    {
+        return response()->file($tempFile, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => sprintf('inline; filename="%s"', $fileName),
+        ])->deleteFileAfterSend();
     }
 }
+
