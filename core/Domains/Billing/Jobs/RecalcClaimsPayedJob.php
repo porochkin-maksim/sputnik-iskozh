@@ -56,6 +56,15 @@ class RecalcClaimsPayedJob implements ShouldQueue
             ->getTotalCostMoney()
         ;
 
+        // Находим авансовый claim (если есть)
+        $advanceClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
+
+        // Вычитаем из общей суммы уже оплаченное через авансовый claim
+        if ($advanceClaim && $advanceClaim->getPayed() > 0) {
+            $totalPayed = $totalPayed->subtract(MoneyService::parse($advanceClaim->getPayed()));
+        }
+
+        // Загружаем claims с сервисами для сортировки
         $claimSearcher = new ClaimSearcher();
         $claimSearcher
             ->setIds($claims->getIds())
@@ -63,94 +72,94 @@ class RecalcClaimsPayedJob implements ShouldQueue
             ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC)
         ;
 
-        $claims = ClaimLocator::ClaimService()->search($claimSearcher)->getItems();
-        $claims = $claims->sortByServiceTypes();
+        $sortedClaims = ClaimLocator::ClaimService()->search($claimSearcher)->getItems();
+        $sortedClaims = $sortedClaims->sortByServiceTypes();
 
-        foreach ($claims as $claim) {
-            $claim->setPayed(0);
+        // Сбрасываем payed у всех, кроме авансового
+        foreach ($sortedClaims as $claim) {
+            if ($claim->getId() !== $advanceClaim?->getId()) {
+                $claim->setPayed(0);
+            }
         }
 
-        $overpayedClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
-        $overpayedClaim?->setTariff(0)
-            ->setPayed(0)
-            ->setCost(0)
-        ;
-
-        foreach ($claims as $claim) {
-            if ($claim->getId() === $overpayedClaim?->getId()) {
+        // Распределяем оплату
+        $remaining = $totalPayed;
+        foreach ($sortedClaims as $claim) {
+            if ($claim->getId() === $advanceClaim?->getId()) {
                 continue;
             }
 
             $claimCost  = MoneyService::parse($claim->getCost());
             $claimPayed = MoneyService::parse(0);
 
-            // если оплачено больше чем стоимость claim
-            if ($totalPayed->subtract($claimCost)->isPositive()) {
-                // фиксируем, что claim оплачена полностью
-                $claimPayed = $claimPayed->add($claimCost);
+            if ($remaining->subtract($claimCost)->isPositive()) {
+                $claimPayed = $claimCost;
             }
             else {
-                // фиксируем, что claim оплачена частично
-                $claimPayed = $claimPayed->add($totalPayed);
+                $claimPayed = $remaining;
             }
 
-            // вычитаем из платежей стоимость claim
-            $totalPayed = $totalPayed->subtract($claimPayed);
-
+            $remaining = $remaining->subtract($claimPayed);
             $claim->setPayed(MoneyService::toFloat($claimPayed));
-            if ($totalPayed->isZero()) {
+
+            if ($remaining->isZero()) {
                 break;
             }
         }
 
-        // если платежей больше чем в счёте
-        if ($totalPayed->isPositive()) {
-            // фиксируем переплату как аванс
-            if ($overpayedClaim) {
-                $claim = $overpayedClaim;
-            } else {
-                $service = ServiceLocator::ServiceService()->search(
-                    ServiceSearcher::make()
-                        ->setPeriodId($invoice->getPeriodId())
-                        ->setActive(true)
-                        ->setType(ServiceTypeEnum::ADVANCE_PAYMENT),
-                )->getItems()->first();
+        // Обновляем или создаём авансовый claim
+        if ($remaining->isPositive()) {
+            $service = ServiceLocator::ServiceService()->search(
+                ServiceSearcher::make()
+                    ->setPeriodId($invoice->getPeriodId())
+                    ->setActive(true)
+                    ->setType(ServiceTypeEnum::ADVANCE_PAYMENT),
+            )->getItems()->first();
 
-                $claim = ClaimLocator::ClaimFactory()->makeDefault()
-                    ->setInvoiceId($invoice->getId())
-                    ->setServiceId($service->getId())
-                ;
+            if ($service) {
+                if ($advanceClaim) {
+                    $advanceClaim
+                        ->setTariff(MoneyService::toFloat($remaining))
+                        ->setCost(MoneyService::toFloat($remaining))
+                        ->setPayed(MoneyService::toFloat($remaining))
+                    ;
+                }
+                else {
+                    $advanceClaim = ClaimLocator::ClaimFactory()->makeDefault()
+                        ->setInvoiceId($invoice->getId())
+                        ->setServiceId($service->getId())
+                        ->setTariff(MoneyService::toFloat($remaining))
+                        ->setCost(MoneyService::toFloat($remaining))
+                        ->setPayed(MoneyService::toFloat($remaining))
+                    ;
+                    $sortedClaims->push($advanceClaim);
+                }
             }
-
-            $claim
-                ->setTariff(MoneyService::toFloat($totalPayed))
-                ->setCost(MoneyService::toFloat($totalPayed))
-                ->setPayed(MoneyService::toFloat($totalPayed))
+        }
+        elseif ($advanceClaim && $advanceClaim->getPayed() > 0) {
+            // Если остатка нет, но авансовый claim есть – обнуляем его
+            $advanceClaim
+                ->setTariff(0)
+                ->setCost(0)
+                ->setPayed(0)
             ;
-
-            if ( ! $overpayedClaim) {
-                $claims->push($claim);
-            }
         }
 
-        $claims = ClaimLocator::ClaimService()->saveCollection($claims);
+        // Сохраняем все claims
+        $savedClaims = ClaimLocator::ClaimService()->saveCollection($sortedClaims);
 
-        if ( ! $totalPayed->isPositive() && $overpayedClaim?->getId()) {
-            ClaimLocator::ClaimService()->deleteById($overpayedClaim->getId());
+        // Пересчитываем счёт
+        $totalCost     = MoneyService::parse(0);
+        $totalPayedSum = MoneyService::parse(0);
+        foreach ($savedClaims as $claim) {
+            $totalCost     = $totalCost->add(MoneyService::parse($claim->getCost()));
+            $totalPayedSum = $totalPayedSum->add(MoneyService::parse($claim->getPayed()));
         }
 
-        // пересчитываем счёт
-        $totalCost  = MoneyService::parse(0);
-        $totalPayed = MoneyService::parse(0);
-        foreach ($claims as $claim) {
-            $cost      = MoneyService::parse($claim->getCost());
-            $totalCost = $totalCost->add($cost);
-
-            $payed      = MoneyService::parse($claim->getPayed());
-            $totalPayed = $totalPayed->add($payed);
-        }
         $invoice->setCost(MoneyService::toFloat($totalCost));
-        $invoice->setPayed(MoneyService::toFloat($totalPayed));
+        $invoice->setPayed(MoneyService::toFloat($totalPayedSum));
+        $invoice->setAdvance((float) $advanceClaim?->getCost());
+        $invoice->setDebt((float) $sortedClaims->getDebt()?->getCost());
 
         InvoiceLocator::InvoiceService()->save($invoice);
     }

@@ -22,6 +22,8 @@ class InvoiceDTO
     private ?InvoiceTypeEnum $type       = null;
     private ?float           $cost       = null;
     private ?float           $payed      = null;
+    private ?float           $advance    = null;
+    private ?float           $debt       = null;
     private ?string          $comment    = null;
     private ?string          $name       = null;
 
@@ -98,6 +100,30 @@ class InvoiceDTO
     public function setPayed(?float $payed): static
     {
         $this->payed = $payed;
+
+        return $this;
+    }
+
+    public function getAdvance(): ?float
+    {
+        return $this->advance;
+    }
+
+    public function setAdvance(?float $advance): self
+    {
+        $this->advance = $advance;
+
+        return $this;
+    }
+
+    public function getDebt(): ?float
+    {
+        return $this->debt;
+    }
+
+    public function setDebt(?float $debt): self
+    {
+        $this->debt = $debt;
 
         return $this;
     }

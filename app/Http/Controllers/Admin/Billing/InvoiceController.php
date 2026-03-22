@@ -259,16 +259,16 @@ class InvoiceController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
-        $invoice = $this->invoiceService->getById($id);
+        $invoice = $this->invoiceService->search(new InvoiceSearcher()
+            ->setId($id)
+            ->setWithClaims()
+            ->setWithAccount()
+            ->setWithPeriod()
+            ->setLimit(1),
+        )->getItems()->first();
         if ( ! $invoice) {
             abort(404);
         }
-
-        $account = $this->accountService->getById($invoice->getAccountId());
-        $invoice->setAccount($account);
-
-        $period = $this->periodService->getById($invoice->getPeriodId());
-        $invoice->setPeriod($period);
 
         return $invoice;
     }

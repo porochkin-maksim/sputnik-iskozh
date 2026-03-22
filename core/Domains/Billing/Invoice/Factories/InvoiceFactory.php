@@ -34,6 +34,8 @@ readonly class InvoiceFactory
             Invoice::TYPE       => $dto->getType()->value,
             Invoice::PAYED      => $dto->getPayed(),
             Invoice::COST       => $dto->getCost(),
+            Invoice::ADVANCE    => $dto->getAdvance(),
+            Invoice::DEBT       => $dto->getDebt(),
             Invoice::NAME       => $dto->getName(),
             Invoice::COMMENT    => $dto->getComment(),
         ]);
@@ -49,6 +51,8 @@ readonly class InvoiceFactory
             ->setAccountId($model->account_id)
             ->setPayed($model->payed)
             ->setCost($model->cost)
+            ->setAdvance($model->advance)
+            ->setDebt($model->debt)
             ->setType(InvoiceTypeEnum::tryFrom($model->type))
             ->setName($model->name)
             ->setComment($model->comment)

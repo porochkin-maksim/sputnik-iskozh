@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?int    $type
  * @property ?float  $cost
  * @property ?float  $payed
+ * @property ?float  $advance
+ * @property ?float  $debt
  * @property ?string $name
  * @property ?string $comment
  */
@@ -34,6 +36,8 @@ class Invoice extends Model implements CastsInterface
     public const string TYPE       = 'type';
     public const string COST       = 'cost';
     public const string PAYED      = 'payed';
+    public const string ADVANCE    = 'advance';
+    public const string DEBT       = 'debt';
     public const string NAME       = 'name';
     public const string COMMENT    = 'comment';
 
@@ -45,8 +49,10 @@ class Invoice extends Model implements CastsInterface
     protected $guarded = [];
 
     protected $casts = [
-        self::COST  => self::CAST_FLOAT,
-        self::PAYED => self::CAST_FLOAT,
+        self::COST    => self::CAST_FLOAT,
+        self::PAYED   => self::CAST_FLOAT,
+        self::ADVANCE => self::CAST_FLOAT,
+        self::DEBT    => self::CAST_FLOAT,
     ];
 
     public const string TITLE_PERIOD_ID  = 'Период';
@@ -54,6 +60,8 @@ class Invoice extends Model implements CastsInterface
     public const string TITLE_TYPE       = 'Тип';
     public const string TITLE_PAYED      = 'Оплачено';
     public const string TITLE_COST       = 'Стоимость';
+    public const string TITLE_ADVANCE    = 'Аванс';
+    public const string TITLE_DEBT       = 'Долг';
     public const string TITLE_COMMENT    = 'Комментарий';
     public const string TITLE_NAME       = 'Название';
 
@@ -64,6 +72,8 @@ class Invoice extends Model implements CastsInterface
         self::TYPE       => self::TITLE_TYPE,
         self::PAYED      => self::TITLE_PAYED,
         self::COST       => self::TITLE_COST,
+        self::ADVANCE    => self::TITLE_ADVANCE,
+        self::DEBT       => self::TITLE_DEBT,
         self::COMMENT    => self::TITLE_COMMENT,
     ];
 

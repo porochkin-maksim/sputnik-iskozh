@@ -26,4 +26,14 @@ enum ServiceTypeEnum: int
             self::ADVANCE_PAYMENT => 'Аванс',
         };
     }
+
+    public function isAdvance(): bool
+    {
+        return $this === self::ADVANCE_PAYMENT;
+    }
+
+    public function isDebt(): bool
+    {
+        return $this === self::DEBT;
+    }
 }

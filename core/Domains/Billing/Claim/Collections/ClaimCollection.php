@@ -59,4 +59,9 @@ class ClaimCollection extends Collection implements CollectionInterface
     {
         return $this->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
     }
+
+    public function getDebt(): ?ClaimDTO
+    {
+        return $this->findByServiceType(ServiceTypeEnum::DEBT);
+    }
 }

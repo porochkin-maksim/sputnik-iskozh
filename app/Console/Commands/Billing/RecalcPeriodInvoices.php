@@ -9,27 +9,37 @@ use Illuminate\Console\Command;
 
 class RecalcPeriodInvoices extends Command
 {
-    protected $signature   = 'billing:invoices:recalc {--periodId= : Period id to recalculate}';
-    protected $description = 'Creates services for each period if they doesnt exist';
+    protected $signature   = 'billing:invoices:recalc {--period= : Период для пересчёта}';
+    protected $description = 'Запускает пересчёт счетов в периоде';
 
     public function handle(): void
     {
-        $periodId = (int) $this->option('periodId');
+        $periodId = (int) $this->option('period');
 
         if ( ! $periodId) {
-            $this->error("Please specify periodId {$periodId}");
+            $this->error("Период не указан или указан неверно");
 
             return;
         }
 
         $invoices = InvoiceLocator::InvoiceService()->search(
             InvoiceSearcher::make()
-                ->setPeriodId((int) $periodId),
+                ->setPeriodId($periodId),
         )->getItems();
 
-        foreach ($invoices as $invoice) {
-            $this->info("Recalculating claims for invoice #{$invoice->getId()}");
-            dispatch_sync(new RecalcClaimsPayedJob($invoice->getId()));
+        if ($invoices->isEmpty()) {
+            $this->info("Счета для периода {$periodId} не найдены");
+
+            return;
         }
+
+        $count = 0;
+        foreach ($invoices as $invoice) {
+            $this->info("Пересчёт счёта #{$invoice->getId()}");
+            dispatch(new RecalcClaimsPayedJob($invoice->getId()));
+            $count++;
+        }
+
+        $this->info("Отправлено {$count} заданий на пересчёт");
     }
-} 
+}

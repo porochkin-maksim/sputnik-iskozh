@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Invoices;
 
 use App\Http\Resources\Admin\Accounts\AccountResource;
+use Core\Services\Money\MoneyService;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -30,7 +31,24 @@ readonly class InvoiceResource extends AbstractResource
 
         $period = $this->invoice->getPeriod();
 
-        $advance = $this->invoice->getClaims()?->getAdvancePayment();
+        $claims = $this->invoice->getClaims();
+
+        $detailCost = null;
+        if ($claims) {
+            $advance = $claims?->getAdvancePayment();
+            $debt    = $claims?->getDebt();
+
+            $advanceCost = MoneyService::parse((float) $advance?->getCost());
+            $debtCost    = MoneyService::parse((float) $debt?->getCost());
+            $invoiceCost = MoneyService::parse((float) $this->invoice?->getCost());
+
+            $detailCost = [
+                'total'   => MoneyService::toFloat($invoiceCost),
+                'advance' => MoneyService::toFloat($advanceCost),
+                'debt'    => MoneyService::toFloat($debtCost),
+                'main'    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
+            ];
+        }
 
         return [
             'id'            => $this->invoice->getId(),
@@ -45,7 +63,8 @@ readonly class InvoiceResource extends AbstractResource
             'cost'          => $this->invoice->getCost(),
             'payed'         => $this->invoice->getPayed(),
             'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
-            'advance'       => (float) $advance?->getPayed(),
+            'advance'       => (float) $claims?->getAdvancePayment()?->getPayed(),
+            'detailCost'    => $detailCost,
             'isPayed'       => $this->invoice->isPayed(),
             'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
             'updated'       => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),

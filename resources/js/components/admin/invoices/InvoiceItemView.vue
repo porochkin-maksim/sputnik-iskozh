@@ -44,6 +44,19 @@
             </button>
         </div>
 
+        <table class="table table-borderless table-sm w-auto mb-0" v-if="localInvoice.detailCost">
+            <tbody>
+            <tr>
+                <th>Основа:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.main) }}</td>
+                <th>Долг:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.debt) }}</td>
+                <th>Аванс:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.advance) }}</td>
+            </tr>
+            </tbody>
+        </table>
+
         <!-- Статус оплаты -->
         <div class="alert p-3 mb-3"
              v-if="actions.view && localInvoice.cost !== undefined"
