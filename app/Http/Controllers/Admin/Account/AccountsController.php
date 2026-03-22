@@ -17,6 +17,7 @@ use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\Infra\ExData\Services\ExDataService;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -32,6 +33,15 @@ class AccountsController extends Controller
         $this->accountFactory = AccountLocator::AccountFactory();
         $this->accountService = AccountLocator::AccountService();
         $this->exDataService  = ExDataLocator::ExDataService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_ACCOUNTS);
+        }
+
+        abort(403);
     }
 
     public function create(): JsonResponse

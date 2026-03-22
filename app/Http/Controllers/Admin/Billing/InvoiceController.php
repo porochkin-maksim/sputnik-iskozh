@@ -29,6 +29,7 @@ use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 use Maatwebsite\Excel\Facades\Excel;
@@ -46,6 +47,15 @@ class InvoiceController extends Controller
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->periodService  = PeriodLocator::PeriodService();
         $this->accountService = AccountLocator::AccountService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_INVOICES);
+        }
+
+        abort(403);
     }
 
     public function view(int $id)

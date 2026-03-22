@@ -18,6 +18,7 @@ use Core\Domains\Billing\Service\Factories\ServiceFactory;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Service\Services\ServiceService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -32,6 +33,15 @@ class ServiceController extends Controller
         $this->serviceFactory = ServiceLocator::ServiceFactory();
         $this->serviceService = ServiceLocator::ServiceService();
         $this->periodService  = PeriodLocator::PeriodService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_SERVICES);
+        }
+
+        abort(403);
     }
 
     public function create(): JsonResponse

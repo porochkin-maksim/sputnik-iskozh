@@ -51,6 +51,15 @@ class CounterController extends Controller
         $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
     }
 
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::COUNTERS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_COUNTER_HISTORY);
+        }
+
+        abort(403);
+    }
+
     public function list(int $accountId, DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_VIEW)) {

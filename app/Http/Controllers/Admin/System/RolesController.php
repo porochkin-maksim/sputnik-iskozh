@@ -11,6 +11,7 @@ use Core\Domains\Access\Factories\RoleFactory;
 use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -23,6 +24,15 @@ class RolesController extends Controller
     {
         $this->roleFactory = RoleLocator::RoleFactory();
         $this->roleService = RoleLocator::RoleService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_ROLES);
+        }
+
+        abort(403);
     }
 
     public function create(): JsonResponse

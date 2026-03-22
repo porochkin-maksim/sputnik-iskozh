@@ -26,6 +26,7 @@ use Core\Domains\Billing\Payment\Services\PaymentService;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -42,6 +43,15 @@ class NewPaymentController
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->accountService = AccountLocator::AccountService();
         $this->periodService  = PeriodLocator::PeriodService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_PAYMENTS);
+        }
+
+        abort(403);
     }
 
     public function get(int $paymentId): JsonResponse

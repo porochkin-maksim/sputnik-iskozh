@@ -154,7 +154,7 @@ class ClaimController extends Controller
         ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(int $invoiceId, SaveRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
             abort(403);

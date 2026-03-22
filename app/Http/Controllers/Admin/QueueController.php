@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class QueueController extends Controller
 {
+    public function index()
+    {
+        return view(ViewNames::ADMIN_PAGES_QUEUE);
+    }
+
     public function status()
     {
         $output = [];

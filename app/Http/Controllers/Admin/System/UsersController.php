@@ -33,6 +33,7 @@ use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Requests\RequestArgumentsEnum;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use lc;
@@ -53,6 +54,15 @@ class UsersController extends Controller
         $this->accountService = AccountLocator::AccountService();
         $this->roleService    = RoleLocator::RoleService();
         $this->exDataService  = ExDataLocator::ExDataService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_USERS);
+        }
+
+        abort(403);
     }
 
     public function view($id = null)
