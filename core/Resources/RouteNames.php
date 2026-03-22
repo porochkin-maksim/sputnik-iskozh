@@ -159,6 +159,10 @@ abstract class RouteNames
     public const string ADMIN_INVOICE_EXPORT = 'admin.invoice.export';
     public const string ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
 
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX      = 'admin.invoice.import-payments.index';
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_PARSE_FILE = 'admin.invoice.import-payments.parse-file';
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_SAVE       = 'admin.invoice.import-payments.save';
+
     public const string ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
     public const string ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
 

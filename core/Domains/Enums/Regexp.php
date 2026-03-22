@@ -4,5 +4,5 @@ namespace Core\Domains\Enums;
 
 abstract class Regexp
 {
-    public const ACCOUNT_NAME = '/^([1-9]\d{0,2}(А)?)\/([1-3])$/';
+    public const string ACCOUNT_NAME = '/^([1-9]\d{0,2}(А)?)\/([1-3])$/u';
 }

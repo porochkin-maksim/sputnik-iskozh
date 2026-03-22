@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests;
 
@@ -33,13 +33,13 @@ abstract class AbstractRequest extends FormRequest
 
     public function getInt(string $key, mixed $default = null): int
     {
-        return (int) $this->get($key, $default);
+        return (int) $this->input($key, $default);
     }
 
     public function getBool(string $key): bool
     {
         if ($this->has($key)) {
-            if (in_array($this->get($key), [true, 'true'], true)) {
+            if (in_array($this->input($key), [true, 'true'], true)) {
                 return true;
             }
         }
@@ -50,7 +50,7 @@ abstract class AbstractRequest extends FormRequest
     public function getIntOrNull(string $key): ?int
     {
         if ($this->has($key)) {
-            if (in_array($this->get($key), [null, 'null'], true)) {
+            if (in_array($this->input($key), [null, 'null'], true)) {
                 return null;
             }
 
@@ -63,11 +63,11 @@ abstract class AbstractRequest extends FormRequest
     public function getString(string $key): string
     {
         if ($this->has($key)) {
-            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
+            if (in_array(Str::lower($this->input($key)), [null, 'null', 'nan'], true)) {
                 return '';
             }
 
-            return (string) $this->get($key);
+            return (string) $this->input($key);
         }
 
         return '';
@@ -76,11 +76,11 @@ abstract class AbstractRequest extends FormRequest
     public function getStringOrNull(string $key): ?string
     {
         if ($this->has($key)) {
-            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
+            if (in_array(Str::lower($this->input($key)), [null, 'null', 'nan'], true)) {
                 return null;
             }
 
-            return $this->get($key);
+            return $this->input($key);
         }
 
         return null;
@@ -88,16 +88,16 @@ abstract class AbstractRequest extends FormRequest
 
     public function getFloat(string $key, mixed $default = null): ?float
     {
-        return is_numeric($this->get($key, $default)) ? (float) $this->get($key, $default) : null;
+        return is_numeric($this->input($key, $default)) ? (float) $this->input($key, $default) : null;
     }
 
     public function getDateOrNull(string $key, ?string $fromFormat = null): ?Carbon
     {
         try {
             if ($fromFormat) {
-                return $this->get($key) ? Carbon::createFromFormat($fromFormat, $this->get($key)) : null;
+                return $this->input($key) ? Carbon::createFromFormat($fromFormat, $this->input($key)) : null;
             }
-            return $this->get($key) ? Carbon::parse($this->get($key)) : null;
+            return $this->input($key) ? Carbon::parse($this->input($key)) : null;
         }
         catch (\Exception) {
             return null;
@@ -106,14 +106,14 @@ abstract class AbstractRequest extends FormRequest
 
     public function getArray(string $key, array $default = [], string $callback = ''): array
     {
-        if ( ! is_array($this->get($key))) {
+        if ( ! is_array($this->input($key))) {
             return $default;
         }
 
         if ($callback) {
-            return array_map($callback, $this->get($key));
+            return array_map($callback, $this->input($key));
         }
 
-        return $this->get($key, $default);
+        return $this->input($key, $default);
     }
 }

@@ -185,6 +185,15 @@
             "counterId": "{counterId}"
         }
     },
+    "adminDocumentReceiptInvoice": {
+        "name": "admin.document.receipt.invoice",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/view\/{id}\/invoice-receipt",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "adminErrorLogsDetails": {
         "name": "admin.error-logs.details",
         "displayName": "",
@@ -264,6 +273,33 @@
         "displayName": "",
         "method": "get",
         "uri": "\/admin\/invoices\/json\/get-without-regular\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
+    "adminInvoiceImportPaymentsIndex": {
+        "name": "admin.invoice.import-payments.index",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/import-payments\/period-{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
+    "adminInvoiceImportPaymentsParseFile": {
+        "name": "admin.invoice.import-payments.parse-file",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/import-payments\/period-{periodId}\/parse-file",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
+    "adminInvoiceImportPaymentsSave": {
+        "name": "admin.invoice.import-payments.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/import-payments\/period-{periodId}\/save",
         "args": {
             "periodId": "{periodId}"
         }
@@ -815,6 +851,22 @@
         "uri": "\/contacts\/requests\/counter",
         "args": []
     },
+    "documentReceiptBlank": {
+        "name": "document.receipt.blank",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/document\/invoice-receipt\/blank",
+        "args": []
+    },
+    "documentReceiptInvoice": {
+        "name": "document.receipt.invoice",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/document\/invoice-receipt\/{uid}",
+        "args": {
+            "uid": "{uid}"
+        }
+    },
     "filesDelete": {
         "name": "files.delete",
         "displayName": "",
@@ -1244,70 +1296,6 @@
         "displayName": "\u0423\u0441\u0442\u0430\u0432",
         "method": "get",
         "uri": "\/regulation",
-        "args": []
-    },
-    "reportsCreate": {
-        "name": "reports.create",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/reports\/json\/create",
-        "args": []
-    },
-    "reportsDelete": {
-        "name": "reports.delete",
-        "displayName": "",
-        "method": "delete",
-        "uri": "\/reports\/json\/delete\/{id}",
-        "args": {
-            "id": "{id}"
-        }
-    },
-    "reportsEdit": {
-        "name": "reports.edit",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/reports\/json\/edit\/{id}",
-        "args": {
-            "id": "{id}"
-        }
-    },
-    "reportsFileDelete": {
-        "name": "reports.file.delete",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/reports\/json\/file\/delete\/{id}",
-        "args": {
-            "id": "{id}"
-        }
-    },
-    "reportsFileUpload": {
-        "name": "reports.file.upload",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/reports\/json\/file\/upload\/{id}",
-        "args": {
-            "id": "{id}"
-        }
-    },
-    "reportsIndex": {
-        "name": "reports.index",
-        "displayName": "\u041e\u0442\u0447\u0451\u0442\u044b",
-        "method": "get",
-        "uri": "\/reports",
-        "args": []
-    },
-    "reportsList": {
-        "name": "reports.list",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/reports\/json\/list",
-        "args": []
-    },
-    "reportsSave": {
-        "name": "reports.save",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/reports\/json\/save",
         "args": []
     },
     "requests": {

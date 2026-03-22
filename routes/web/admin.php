@@ -171,6 +171,13 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
             })->whereNumber('id');
 
             Route::get('/export', [Controllers\Admin\Billing\InvoiceController::class, 'export'])->name(RouteNames::ADMIN_INVOICE_EXPORT);
+
+            Route::group(['prefix' => '/import-payments/period-{periodId}'], static function () {
+                Route::get('/', [Controllers\Admin\Billing\PaymentImportController::class, 'index'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX);
+                Route::post('/parse-file', [Controllers\Admin\Billing\PaymentImportController::class, 'parseFile'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_PARSE_FILE);
+                Route::post('/save', [Controllers\Admin\Billing\PaymentImportController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_SAVE);
+            })->whereNumber('periodId');
+
             Route::group(['prefix' => 'json'], static function () {
                 Route::get('/get-without-regular/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'getAccountCountWithoutRegular'])
                     ->name(RouteNames::ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR)

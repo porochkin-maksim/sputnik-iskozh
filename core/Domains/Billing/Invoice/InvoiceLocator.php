@@ -4,13 +4,15 @@ namespace Core\Domains\Billing\Invoice;
 
 use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
 use Core\Domains\Billing\Invoice\Repositories\InvoiceRepository;
+use Core\Domains\Billing\Invoice\Services\InvoiceImportService;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 
 abstract class InvoiceLocator
 {
-    private static InvoiceService    $invoiceService;
-    private static InvoiceFactory    $invoiceFactory;
-    private static InvoiceRepository $invoiceRepository;
+    private static InvoiceService       $invoiceService;
+    private static InvoiceFactory       $invoiceFactory;
+    private static InvoiceRepository    $invoiceRepository;
+    private static InvoiceImportService $invoiceImportService;
 
     public static function InvoiceService(): InvoiceService
     {
@@ -41,5 +43,14 @@ abstract class InvoiceLocator
         }
 
         return self::$invoiceRepository;
+    }
+
+    public static function InvoiceImportService(): InvoiceImportService
+    {
+        if ( ! isset(self::$invoiceImportService)) {
+            self::$invoiceImportService = new InvoiceImportService();
+        }
+
+        return self::$invoiceImportService;
     }
 }

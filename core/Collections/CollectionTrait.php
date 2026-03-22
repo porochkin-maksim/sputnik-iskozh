@@ -4,16 +4,25 @@ namespace Core\Collections;
 
 trait CollectionTrait
 {
+    protected bool $checkClass = true;
+
     abstract public function checkItemInstance(mixed $item): bool;
 
     public function __construct($items = [])
     {
         foreach ($items as $item) {
-            if ( ! $this->checkItemInstance($item)) {
+            if ($this->checkClass && is_object($item) && ! $this->checkItemInstance($item)) {
                 throw new WrongClassException(get_class($item));
             }
         }
         parent::__construct($items);
+    }
+
+    public function setCheckClass(bool $checkClass): static
+    {
+        $this->checkClass = $checkClass;
+
+        return $this;
     }
 
     /**

@@ -120,13 +120,22 @@
                     </div>
                 </div>
 
-                <!-- Кнопка экспорта -->
-                <button class="btn btn-success"
-                        @click="exportAction"
-                        aria-label="Экспорт в Excel">
-                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline ms-1">Экспорт</span>
-                </button>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-outline-success"
+                                v-if="actions.edit && periodId"
+                                @click="importAction">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline ms-1">Импорт</span>
+                        </button>
+                        <button class="btn btn-success"
+                                @click="exportAction"
+                                aria-label="Экспорт в Excel">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline ms-1">Экспорт</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Сводка -->
@@ -358,6 +367,13 @@ const exportAction = () => {
         payed_status: payedStatus.value,
         sort_field  : sortField.value,
         sort_order  : sortOrder.value,
+    });
+    window.open(url, '_blank');
+};
+
+const importAction = () => {
+    const url = Url.Generator.makeUri(Url.Routes.adminInvoiceImportPaymentsIndex, {
+        periodId: periodId.value,
     });
     window.open(url, '_blank');
 };

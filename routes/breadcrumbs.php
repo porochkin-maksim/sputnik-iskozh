@@ -51,7 +51,8 @@ Breadcrumbs::for(RouteNames::NEWS, static function (BreadcrumbTrail $trail) {
 Breadcrumbs::for(RouteNames::NEWS_SHOW, static function (BreadcrumbTrail $trail, NewsDTO $news) {
     if ($news->getCategory() === CategoryEnum::ANNOUNCEMENT) {
         $trail->parent(RouteNames::ANNOUNCEMENTS);
-    }else{
+    }
+    else {
         $trail->parent(RouteNames::NEWS);
     }
     $trail->push('#' . $news->getId(), route(RouteNames::NEWS_SHOW, $news->getId()));
@@ -117,4 +118,8 @@ Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_VIEW, static function (BreadcrumbTrai
 Breadcrumbs::for(RouteNames::ADMIN_COUNTER_VIEW, static function (BreadcrumbTrail $trail, CounterDTO $counter) {
     $trail->parent(RouteNames::ADMIN_ACCOUNT_VIEW, $counter->getAccount(true));
     $trail->push('Счётчик №' . $counter->getNumber(), route(RouteNames::ADMIN_COUNTER_VIEW, [$counter->getAccountId(), $counter->getId()]));
+});
+Breadcrumbs::for(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, static function (BreadcrumbTrail $trail, PeriodDTO $periodDto) {
+    $trail->parent(RouteNames::ADMIN_INVOICE_INDEX, ['period' => $periodDto->getId()]);
+    $trail->push('Импорт платежей в счета периода ' . $periodDto->getName(), route(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, ['periodId' => $periodDto->getId()]));
 });

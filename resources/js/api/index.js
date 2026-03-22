@@ -160,6 +160,21 @@ export function ApiAdminInvoiceGetAccountsCountWithoutRegular(periodId, getParam
     return window.axios.get(makeQuery('/admin/invoices/json/get-without-regular/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminInvoiceImportPaymentsIndex(periodId, getParams = {}, postData = null) {
+    // see admin.invoice.import-payments.index
+    return window.axios.get(makeQuery('/admin/invoices/import-payments/period-'+periodId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminInvoiceImportPaymentsParseFile(periodId, getParams = {}, postData = null) {
+    // see admin.invoice.import-payments.parse-file
+    return window.axios.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/parse-file', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminInvoiceImportPaymentsSave(periodId, getParams = {}, postData = null) {
+    // see admin.invoice.import-payments.save
+    return window.axios.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/save', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminInvoiceIndex(getParams = {}, postData = null) {
     // see admin.invoice.index
     return window.axios.get(makeQuery('/admin/invoices', getParams), prepareRequestData(postData));
