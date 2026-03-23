@@ -18,10 +18,13 @@ use RuntimeException;
  */
 class CreateRegularPeriodInvoicesJob implements ShouldQueue
 {
+    private const int LIMIT = 50;
+
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private readonly int $periodId,
+        private readonly int   $periodId,
+        private readonly array $acountIds = [],
     )
     {
         $this->onQueue(QueueEnum::DEFAULT->value);
@@ -33,13 +36,23 @@ class CreateRegularPeriodInvoicesJob implements ShouldQueue
             throw new RuntimeException("Период не найден #{$this->periodId}");
         }
 
-        $accounts = InvoiceLocator::InvoiceService()->getAccountsWithoutRegularInvoice($this->periodId);
+        if ( ! $this->acountIds) {
+            $accountIds = InvoiceLocator::InvoiceService()->getAccountsWithoutRegularInvoice($this->periodId)->getIds();
+            if ( ! $accountIds) {
+                return;
+            }
+            foreach (array_chunk($accountIds, self::LIMIT) as $accountIdsChunk) {
+                dispatch(new self($this->periodId, $accountIdsChunk));
+            }
 
-        foreach ($accounts as $account) {
+            return;
+        }
+
+        foreach ($this->acountIds as $acountId) {
             $invoice = InvoiceLocator::InvoiceFactory()->makeDefault()
                 ->setType(InvoiceTypeEnum::REGULAR)
                 ->setPeriodId($this->periodId)
-                ->setAccountId($account->getId())
+                ->setAccountId($acountId)
             ;
 
             InvoiceLocator::InvoiceService()->save($invoice);

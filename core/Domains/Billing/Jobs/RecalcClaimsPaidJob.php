@@ -14,8 +14,10 @@ use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 use Core\Domains\Billing\Claim\Models\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimLocator;
 use Core\Queue\QueueEnum;
+use Core\Queue\UniqueForTrait;
 use Core\Services\Money\MoneyService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,8 +26,9 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Пересчитывает оплату claims в счёте по платежам
  */
-class RecalcClaimsPaidJob implements ShouldQueue
+class RecalcClaimsPaidJob implements ShouldQueue, ShouldBeUnique
 {
+    use UniqueForTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -33,6 +36,11 @@ class RecalcClaimsPaidJob implements ShouldQueue
     )
     {
         $this->onQueue(QueueEnum::DEFAULT->value);
+    }
+
+    public function uniqueId(): string
+    {
+        return "invoice_{$this->invoiceId}";
     }
 
     public function handle(): void
