@@ -8,6 +8,7 @@ use App\Models\Billing\Payment;
 use App\Models\Billing\Period;
 use App\Models\File\File;
 use App\Models\Infra\HistoryChanges;
+use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\File\Enums\FileTypeEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Illuminate\Console\Command;
@@ -15,13 +16,14 @@ use Illuminate\Support\Facades\DB;
 
 class DropPeriodData extends Command
 {
-    protected $signature   = 'billing:period:truncate {periodId : ID периода для очистки} {--force : Выполнить реальное удаление}';
+    protected $signature   = 'billing:period:truncate {--period= : ID периода для очистки} {--force : Выполнить реальное удаление} {--force-snt : Вместе со счетами СНТ}';
     protected $description = 'Очищает все сущности в период - услуги, платежи, счета, историю';
 
     public function handle(): void
     {
-        $periodId = (int) $this->argument('periodId');
+        $periodId = (int) $this->option('period');
         $force    = $this->option('force');
+        $withSnt  = $this->option('force-snt');
         $dryRun   = ! $force;
 
         if ($dryRun) {
@@ -39,7 +41,12 @@ class DropPeriodData extends Command
         $this->info('Начинаю сбор данных...');
 
         // Получаем ID счетов
-        $invoiceIds   = Invoice::where('period_id', $periodId)->pluck('id')->toArray();
+        $builder = Invoice::where('period_id', $periodId);
+        if ( ! $withSnt) {
+            $builder = $builder->where('account_id', '!=', AccountIdEnum::SNT->value);
+        }
+
+        $invoiceIds   = $builder->pluck('id')->toArray();
         $invoiceCount = count($invoiceIds);
 
         $paymentIds   = [];

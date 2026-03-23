@@ -129,8 +129,8 @@
                                 <th class="text-success"><i class="fa fa-file-excel-o"></i> К оплате</th>
                                 <th><i class="fa fa-database"></i> Оплачено</th>
                                 <th class="text-success"><i class="fa fa-file-excel-o"></i> Оплачено</th>
-                                <th><i class="fa fa-database"></i> Долг</th>
-                                <th class="text-success"><i class="fa fa-file-excel-o"></i> Долг</th>
+                                <th><i class="fa fa-database"></i> Осталось</th>
+                                <th class="text-success"><i class="fa fa-file-excel-o"></i> Осталось</th>
                                 <th>Сумма платежа</th>
                             </tr>
                             </thead>
