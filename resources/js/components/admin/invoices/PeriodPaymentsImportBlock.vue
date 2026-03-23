@@ -40,7 +40,8 @@
                     Загрузить файл Excel
                 </button>
                 <button
-                    class="btn btn-success"
+                    class="btn"
+                    :class="submitting || !canSubmit ? 'btn-success' : 'btn-danger'"
                     @click="submitPayments"
                     :disabled="submitting || !canSubmit"
                 >
@@ -69,110 +70,154 @@
         <!-- Шаг 2: предпросмотр и редактирование с вкладками -->
         <div v-if="importData && importData.length">
             <ul class="nav nav-tabs" role="tablist">
-                <template v-for="(districtData, idx) in importData" :key="districtData.district">
-                    <li v-if="districtData?.items?.length"
-                        class="nav-item"
-                        role="presentation">
-                        <button
-                            class="nav-link"
-                            :class="{ active: idx === activeTab }"
-                            :id="`tab-${districtData.district}`"
-                            data-bs-toggle="tab"
-                            :data-bs-target="`#district-${districtData.district}`"
-                            type="button"
-                            role="tab"
-                            @click="activeTab = idx"
-                            :disabled="submitting"
-                        >
-                            Район {{ districtData.district }} ({{ districtData.items.length }})
-                        </button>
-                    </li>
-                </template>
+                <li v-for="(districtData, idx) in importData" :key="districtData.district" class="nav-item"
+                    role="presentation">
+                    <button
+                        class="nav-link"
+                        :class="{ active: idx === activeTab }"
+                        :id="`tab-${districtData.district}`"
+                        data-bs-toggle="tab"
+                        :data-bs-target="`#district-${districtData.district}`"
+                        type="button"
+                        role="tab"
+                        @click="activeTab = idx"
+                        :disabled="submitting"
+                    >
+                        Участок {{ districtData.district }} ({{ districtData.items.length }})
+                    </button>
+                </li>
             </ul>
 
             <div class="tab-content">
-                <template
+                <div
                     v-for="(districtData, idx) in importData"
-                    :key="districtData.district">
-                    <div
-                        v-if="districtData?.items?.length"
-                        class="tab-pane fade"
-                        :class="{ show: idx === activeTab, active: idx === activeTab }"
-                        :id="`district-${districtData.district}`"
-                        role="tabpanel"
-                    >
-                        <div class="table-responsive mt-3">
-                            <table class="table table-sm table-bordered table-striped align-middle sticky-header">
-                                <thead>
-                                <tr class="text-center">
-                                    <th class="text-end">Участок</th>
-                                    <th>Счёт</th>
-                                    <th class="text-primary"><i class="fa fa-database"></i> Сумма</th>
-                                    <th class="text-success"><i class="fa fa-file-excel-o"></i> Сумма</th>
-                                    <th class="text-primary"><i class="fa fa-database"></i> Оплачено</th>
-                                    <th class="text-success"><i class="fa fa-file-excel-o"></i> Оплачено</th>
-                                    <th class="text-primary"><i class="fa fa-database"></i> Долг</th>
-                                    <th class="text-success"><i class="fa fa-file-excel-o"></i> Долг</th>
-                                    <th>Сумма платежа</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr
-                                    v-for="item in districtData.items"
-                                    :key="item.invoiceId"
+                    :key="districtData.district"
+                    class="tab-pane fade"
+                    :class="{ show: idx === activeTab, active: idx === activeTab }"
+                    :id="`district-${districtData.district}`"
+                    role="tabpanel"
+                >
+                    <!-- Панель автозаполнения для участка -->
+                    <div class="d-flex justify-content-between align-items-center mb-2 mt-2">
+                        <div class="w-50">
+                            <custom-select
+                                v-model="autoFillStrategy[districtData.district]"
+                                :options="fillStrategies"
+                                label="Автозаполнение"
+                                :disabled="submitting"
+                            />
+                        </div>
+                        <button
+                            class="btn btn-sm btn-outline-primary"
+                            @click="applyAutoFill(districtData.district)"
+                            :disabled="submitting"
+                        >
+                            Применить к участку
+                        </button>
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered table-striped align-middle sticky-header">
+                            <thead>
+                            <tr class="text-center">
+                                <th class="text-end">Участок</th>
+                                <th>Счёт</th>
+                                <th><i class="fa fa-database"></i> Аванс</th>
+                                <th><i class="fa fa-database"></i> Долг</th>
+                                <th><i class="fa fa-database"></i> Основа</th>
+                                <th><i class="fa fa-database"></i> К оплате</th>
+                                <th class="text-success"><i class="fa fa-file-excel-o"></i> К оплате</th>
+                                <th><i class="fa fa-database"></i> Оплачено</th>
+                                <th class="text-success"><i class="fa fa-file-excel-o"></i> Оплачено</th>
+                                <th><i class="fa fa-database"></i> Долг</th>
+                                <th class="text-success"><i class="fa fa-file-excel-o"></i> Долг</th>
+                                <th>Сумма платежа</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr
+                                v-for="item in districtData.items"
+                                :key="item.invoiceId"
+                                :class="[]"
+                            >
+                                <td class="text-end">
+                                    <a :href="item.accountUrl" target="_blank" v-if="item.accountUrl">
+                                        {{ item.accountNumber }}
+                                    </a>
+                                    <span v-else-if="item.accountNumber">
+                                        {{ item.accountNumber }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a :href="item.invoiceUrl" target="_blank" v-if="item.invoiceId">
+                                        №{{ item.invoiceId }}
+                                    </a>
+                                </td>
+                                <td class="text-end" :class="item.invoiceAdvance ? 'fw-bold' : 'text-secondary'"
+                                >
+                                    {{ formatMoney(item.invoiceAdvance) }}
+                                </td>
+                                <td class="text-end" :class="item.invoiceDebt ? 'fw-bold' : 'text-secondary'"
+                                >
+                                    {{ formatMoney(item.invoiceDebt) }}
+                                </td>
+                                <td class="text-end text-secondary"
+                                    :class="[item.changeInCost && item.invoiceMain !== item.invoiceCost ? 'text-danger fw-bold' : '']"
+                                >
+                                    {{ formatMoney(item.invoiceMain) }}
+                                </td>
+                                <td class="text-end text-secondary"
+                                    :class="[item.changeInCost ? 'table-danger text-danger fw-bold' : '']"
+                                >
+                                    {{ formatMoney(item.invoiceCost) }}
+                                </td>
+                                <td class="text-end text-secondary"
+                                    :class="[item.changeInCost ? 'table-danger text-danger fw-bold' : '']"
+                                >
+                                    {{ formatMoney(item.cost) }}
+                                </td>
+                                <td class="text-end"
+                                    :class="[item.invoicePaid ? 'text-success fw-bold' : item.changeInPaid ? 'text-danger fw-bold' : 'text-secondary']"
+                                >
+                                    {{ formatMoney(item.invoicePaid) }}
+                                </td>
+                                <td class="text-end"
+                                    :class="[item.paid ? 'text-success fw-bold' : item.changeInPaid ? 'text-danger fw-bold' : 'text-secondary']"
+                                >
+                                    {{ formatMoney(item.paid) }}
+                                </td>
+                                <td class="text-end"
+                                    :class="[item.invoiceDebt && item.changeInDelta ? 'fw-bold' : 'text-secondary']"
+                                >
+                                    {{ formatMoney(item.invoiceDebt) }}
+                                </td>
+                                <td class="text-end"
                                     :class="[
-                                        item.accountId || item.cost === 0 ? '' : 'table-danger',
-                                        item.cost > 0 ? '' : 'table-warning',
-                                        item.invoiceId ? '' : 'fw-bold text-danger',
+                                        item.debt && item.changeInDelta ? 'fw-bold' : 'text-secondary',
+                                        item.debt < 0 ? 'text-danger' : ''
                                     ]"
                                 >
-                                    <td class="text-end">
-                                        <a :href="item.accountUrl" target="_blank" v-if="item.accountUrl">
-                                            {{ item.accountNumber }}
-                                        </a>
-                                        <span v-else-if="item.accountNumber">
-                                            {{ item.accountNumber }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <a :href="item.invoiceUrl" target="_blank" v-if="item.invoiceId">
-                                            №{{ item.invoiceId }}
-                                        </a>
-                                    </td>
-                                    <td class="text-end text-secondary">{{ formatMoney(item.invoiceCost) }}</td>
-                                    <td class="text-end text-secondary">{{ formatMoney(item.cost) }}</td>
-                                    <td class="text-end">{{ formatMoney(item.invoicePaid) }}</td>
-                                    <td class="text-end fw-bold"
-                                        :class="[
-                                            item.paid === item.invoicePaid ? 'text-success' : '',
-                                            item.paid && ! item.invoicePaid ? 'text-success' : '',
-                                            ! item.paid && item.invoicePaid ? 'text-danger' : '',
-                                        ]"
-                                    >
-                                        {{ formatMoney(item.paid) }}
-                                    </td>
-                                    <td class="text-end text-secondary">{{ formatMoney(item.invoiceDebt) }}</td>
-                                    <td class="text-end text-secondary">{{ formatMoney(item.debt) }}</td>
-                                    <td>
-                                        <div class="w-100" v-if="item.accountId">
-                                            <custom-input
-                                                v-model="editedAmounts[getKey(districtData.district, item)]"
-                                                type="number"
-                                                step="0.01"
-                                                :min="0"
-                                                :max="Math.max(item.invoiceDebt, item.debt)"
-                                                :disabled="submitting"
-                                                required
-                                                @update:modelValue="validateAmount(districtData.district, item)"
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                    {{ formatMoney(item.debt) }}
+                                </td>
+                                <td>
+                                    <div class="w-100" v-if="item.accountId">
+                                        <custom-input
+                                            v-model="editedAmounts[getKey(districtData.district, item)]"
+                                            type="number"
+                                            step="0.01"
+                                            :min="0"
+                                            :max="Math.max(item.invoiceDebt, item.debt)"
+                                            :disabled="submitting"
+                                            required
+                                            @update:modelValue="validateAmount(districtData.district, item)"
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </template>
+                </div>
             </div>
         </div>
 
@@ -196,11 +241,11 @@ import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
 import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import CustomInput          from '@common/form/CustomInput.vue';
+import CustomSelect         from '@common/form/CustomSelect.vue';
 import {
     ApiAdminInvoiceImportPaymentsParseFile,
     ApiAdminInvoiceImportPaymentsSave,
 }                           from '@api';
-import { max }              from '@popperjs/core/lib/utils/math.js';
 
 defineOptions({
     name: 'PeriodPaymentsImportBlock',
@@ -225,7 +270,19 @@ const error            = ref(null);
 const activeTab        = ref(0);
 const loadingStartTime = ref(null);
 const loadingText      = ref('Обработка файла...');
-let loadingInterval    = null;
+const autoFillStrategy = ref({}); // ключ = district
+
+const fillStrategies = [
+    { value: 'manual', label: 'Ручной ввод' },
+    { value: 'difference', label: 'Разница "оплачено"' },
+    { value: 'invoiceDelta', label: 'Остаток из базы' },
+    { value: 'importDebt', label: 'Долг из импорта' },
+    { value: 'maxDebt', label: 'Максимальный долг' },
+    { value: 'minDebt', label: 'Минимальный долг' },
+    { value: 'zero', label: 'Обнулить' },
+];
+
+let loadingInterval = null;
 
 const columns = ref({
     accrued: 'E',
@@ -239,9 +296,7 @@ const isColumnsValid = computed(() => {
         columns.value.debt.trim() !== '';
 });
 
-const getKey = (district, item) => {
-    return `${district}:${item.invoiceId}`;
-};
+const getKey = (district, item) => `${district}:${item.invoiceId}`;
 
 const startTimer = (isSaving = false) => {
     loadingStartTime.value = Date.now();
@@ -254,32 +309,25 @@ const startTimer = (isSaving = false) => {
             clearInterval(loadingInterval);
             return;
         }
-        const elapsed = Math.floor((Date.now() - loadingStartTime.value) / 1000);
-        const minutes = Math.floor(elapsed / 60);
-        const seconds = elapsed % 60;
-        const timeStr = minutes > 0 ? `${minutes} мин ${seconds} сек` : `${seconds} сек`;
-
-        if (isSaving) {
-            loadingText.value = `Сохранение платежей... (${timeStr})`;
-        }
-        else {
-            loadingText.value = `Обработка файла... (${timeStr})`;
-        }
+        const elapsed     = Math.floor((Date.now() - loadingStartTime.value) / 1000);
+        const minutes     = Math.floor(elapsed / 60);
+        const seconds     = elapsed % 60;
+        const timeStr     = minutes > 0 ? `${minutes} мин ${seconds} сек` : `${seconds} сек`;
+        loadingText.value = isSaving
+            ? `Сохранение платежей... (${timeStr})`
+            : `Обработка файла... (${timeStr})`;
     }, 1000);
 };
 
 const stopTimer = () => {
     if (loadingInterval) {
         clearInterval(loadingInterval);
-        loadingInterval = null;
     }
     loadingStartTime.value = null;
     loadingText.value      = 'Обработка файла...';
 };
 
-const triggerFileInput = () => {
-    fileInput.value?.click();
-};
+const triggerFileInput = () => fileInput.value?.click();
 
 const uploadFile = async (event) => {
     const file = event.target.files[0];
@@ -303,12 +351,16 @@ const uploadFile = async (event) => {
         const response   = await ApiAdminInvoiceImportPaymentsParseFile(props.periodId, {}, formData);
         importData.value = response.data;
 
-        importData.value.forEach(districtData => {
-            districtData.items.forEach(item => {
-                const key                = getKey(districtData.district, item);
-                editedAmounts.value[key] = item.paid - item.invoicePaid > 0 ? item.paid - item.invoicePaid : 0;
-            });
-        });
+        // Инициализация стратегий и значений
+        for (const districtData of importData.value) {
+            const district = districtData.district;
+            // Устанавливаем стратегию по умолчанию
+            if (!autoFillStrategy.value[district]) {
+                autoFillStrategy.value[district] = 'difference';
+            }
+            // Применяем стратегию
+            applyAutoFill(district);
+        }
     }
     catch (err) {
         error.value = err.response?.data?.message || 'Ошибка при загрузке файла';
@@ -343,7 +395,6 @@ const canSubmit = computed(() => {
     if (!importData.value) {
         return false;
     }
-
     for (const districtData of importData.value) {
         for (const item of districtData.items) {
             const key    = getKey(districtData.district, item);
@@ -361,22 +412,26 @@ const submitPayments = async () => {
         return;
     }
 
+    if (!confirm('Сохранить данные? Это действие необратимо')) {
+        return;
+    }
+
     submitting.value = true;
     startTimer(true);
     const payload = { payments: [] };
 
-    importData.value.forEach(districtData => {
-        districtData.items.forEach(item => {
+    for (const districtData of importData.value) {
+        for (const item of districtData.items) {
             const key    = getKey(districtData.district, item);
             const amount = editedAmounts.value[key];
-            if (amount !== undefined && amount !== null && amount > 0) {
+            if (amount > 0) {
                 payload.payments.push({
                     invoice_id: item.invoiceId,
-                    amount    : amount,
+                    amount,
                 });
             }
-        });
-    });
+        }
+    }
 
     if (payload.payments.length === 0) {
         showInfo('Нет платежей для сохранения');
@@ -386,8 +441,8 @@ const submitPayments = async () => {
     }
 
     try {
-        await ApiAdminInvoiceImportPaymentsSave(props.periodId, {}, payload);
-        showInfo('Платежи успешно сохранены');
+        ApiAdminInvoiceImportPaymentsSave(props.periodId, {}, payload);
+        showInfo('Платежи будут сохранены в фоне');
         importData.value    = null;
         editedAmounts.value = {};
     }
@@ -400,6 +455,45 @@ const submitPayments = async () => {
         submitting.value = false;
         stopTimer();
     }
+};
+
+const applyAutoFill = (district) => {
+    const districtData = importData.value?.find(d => d.district === district);
+    if (!districtData) {
+        return;
+    }
+
+    const strategy = autoFillStrategy.value[district] || 'manual';
+    districtData.items.forEach(item => {
+        const key     = getKey(district, item);
+        let newAmount = 0;
+        switch (strategy) {
+            case 'difference':
+                newAmount = Math.max(0, item.paid - item.invoicePaid);
+                break;
+            case 'importDebt':
+                newAmount = item.debt;
+                break;
+            case 'invoiceDelta':
+                newAmount = item.invoiceDelta;
+                break;
+            case 'maxDebt':
+                newAmount = Math.max(item.invoiceDelta, item.debt);
+                break;
+            case 'minDebt':
+                newAmount = Math.min(item.invoiceDelta, item.debt);
+                break;
+            case 'zero':
+                newAmount = 0;
+                break;
+            default:
+                return;
+        }
+        if (newAmount < 0) {
+            newAmount = 0;
+        }
+        editedAmounts.value[key] = newAmount;
+    });
 };
 
 const handleBeforeUnload = (e) => {
@@ -430,18 +524,17 @@ onUnmounted(() => {
 }
 
 .period-payments-import-block .table-responsive {
-    max-height : 500px; /* ограничиваем высоту для появления скролла */
+    max-height : 800px;
     overflow-y : auto;
 }
 
 .period-payments-import-block thead th {
     position         : sticky;
     top              : 0;
-    background-color : #f8f9fa; /* цвет фона, чтобы не просвечивало содержимое */
+    background-color : #f8f9fa;
     z-index          : 10;
 }
 
-/* Для Bootstrap 5, если есть тень/граница */
 .period-payments-import-block thead th::after {
     content       : '';
     position      : absolute;
