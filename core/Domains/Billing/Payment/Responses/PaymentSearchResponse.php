@@ -8,7 +8,7 @@ use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 /**
  * @method PaymentCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class PaymentSearchResponse extends BaseSearchResponse
 {
 
 }

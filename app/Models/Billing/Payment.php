@@ -53,6 +53,24 @@ class Payment extends AbstractModel
         self::PAID_AT   => self::CAST_DATE,
     ];
 
+    public const string TITLE_INVOICE_ID = 'Счёт';
+    public const string TITLE_ACCOUNT_ID = 'Участок';
+    public const string TITLE_COST       = 'Стоимость';
+    public const string TITLE_MODERATED  = 'Модерирован';
+    public const string TITLE_VERIFIED   = 'Подтверждён';
+    public const string TITLE_COMMENT    = 'Комментарий';
+    public const string TITLE_NAME       = 'Название';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::INVOICE_ID => self::TITLE_INVOICE_ID,
+        self::ACCOUNT_ID => self::TITLE_ACCOUNT_ID,
+        self::COST       => self::TITLE_COST,
+        self::MODERATED  => self::TITLE_MODERATED,
+        self::VERIFIED   => self::TITLE_VERIFIED,
+        self::NAME       => self::TITLE_NAME,
+        self::COMMENT    => self::TITLE_COMMENT,
+    ];
+
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, self::INVOICE_ID);

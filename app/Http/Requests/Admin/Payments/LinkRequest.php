@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin\Payments;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
-use Core\Domains\Billing\Payment\Models\PaymentComparator;
+use App\Models\Billing\Payment;
 use Illuminate\Validation\Rule;
 
 class LinkRequest extends AbstractRequest
@@ -46,15 +46,15 @@ class LinkRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::COST . '.required' => sprintf('Укажите «%s»', PaymentComparator::TITLE_COST),
-            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', PaymentComparator::TITLE_COST),
-            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', PaymentComparator::TITLE_COST),
+            self::COST . '.required' => sprintf('Укажите «%s»', Payment::TITLE_COST),
+            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', Payment::TITLE_COST),
+            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', Payment::TITLE_COST),
 
-            self::ACCOUNT_ID . '.required' => sprintf('Укажите «%s»', PaymentComparator::TITLE_ACCOUNT_ID),
-            self::ACCOUNT_ID . '.exists'   => sprintf('Указанный «%s» не существует', PaymentComparator::TITLE_ACCOUNT_ID),
+            self::ACCOUNT_ID . '.required' => sprintf('Укажите «%s»', Payment::TITLE_ACCOUNT_ID),
+            self::ACCOUNT_ID . '.exists'   => sprintf('Указанный «%s» не существует', Payment::TITLE_ACCOUNT_ID),
 
-            self::INVOICE_ID . '.required' => sprintf('Укажите «%s»', PaymentComparator::TITLE_INVOICE_ID),
-            self::INVOICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', PaymentComparator::TITLE_INVOICE_ID),
+            self::INVOICE_ID . '.required' => sprintf('Укажите «%s»', Payment::TITLE_INVOICE_ID),
+            self::INVOICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', Payment::TITLE_INVOICE_ID),
         ];
     }
 

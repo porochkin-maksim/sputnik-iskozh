@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Admin\Payments;
 
 use App\Http\Requests\AbstractRequest;
+use App\Models\Billing\Payment;
 use Carbon\Carbon;
-use Core\Domains\Billing\Payment\Models\PaymentComparator;
 
 class SaveRequest extends AbstractRequest
 {
@@ -36,11 +36,11 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::COST . '.required' => sprintf('Укажите «%s»', PaymentComparator::TITLE_COST),
-            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', PaymentComparator::TITLE_COST),
-            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', PaymentComparator::TITLE_COST),
+            self::COST . '.required' => sprintf('Укажите «%s»', Payment::TITLE_COST),
+            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', Payment::TITLE_COST),
+            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', Payment::TITLE_COST),
 
-            self::COMMENT . '.string' => sprintf('Неверное значение «%s»', PaymentComparator::TITLE_COMMENT),
+            self::COMMENT . '.string' => sprintf('Неверное значение «%s»', Payment::TITLE_COMMENT),
         ];
     }
 
