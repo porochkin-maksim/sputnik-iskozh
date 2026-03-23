@@ -17,7 +17,6 @@ use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Claim\Events\ClaimsUpdatedEvent;
 use Core\Domains\Billing\Claim\ClaimLocator;
 use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
@@ -61,8 +60,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         $claimFactory   = ClaimLocator::ClaimFactory();
         $accountService = AccountLocator::AccountService();
 
-        $serviceSearcher = new ServiceSearcher();
-        $serviceSearcher
+        $serviceSearcher = new ServiceSearcher()
             ->setPeriodId($invoice->getPeriodId())
             ->setActive(true)
         ;
@@ -114,8 +112,6 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 
             PaymentLocator::PaymentService()->save($payment);
         }
-
-        ClaimsUpdatedEvent::dispatch($invoice->getId());
     }
 
     /**

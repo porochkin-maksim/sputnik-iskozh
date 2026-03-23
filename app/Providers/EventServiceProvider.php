@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Core\Domains\Billing\Payment\Subscribers\PaymentSubscriber;
-use Core\Domains\Billing\Claim\Subscribers\ClaimSubscriber;
 use Core\Domains\Counter\Subscribers\CounterSubscriber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -33,8 +31,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::subscribe(ClaimSubscriber::class);
-        Event::subscribe(PaymentSubscriber::class);
         Event::subscribe(CounterSubscriber::class);
     }
 

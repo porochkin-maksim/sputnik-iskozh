@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Claim extends Model implements CastsInterface
 {
-    public const TABLE = 'claims';
+    public const string TABLE = 'claims';
 
     protected $table = self::TABLE;
 
@@ -42,6 +42,20 @@ class Claim extends Model implements CastsInterface
         self::TARIFF => self::CAST_FLOAT,
         self::COST   => self::CAST_FLOAT,
         self::PAID   => self::CAST_FLOAT,
+    ];
+
+    public const string TITLE_INVOICE_ID = 'Счёт';
+    public const string TITLE_SERVICE_ID = 'Услуга';
+    public const string TITLE_TARIFF     = 'Тариф';
+    public const string TITLE_COST       = 'Стоимость';
+    public const string TITLE_PAID       = 'Оплачено';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::INVOICE_ID => self::TITLE_INVOICE_ID,
+        self::SERVICE_ID => self::TITLE_SERVICE_ID,
+        self::TARIFF     => self::TITLE_TARIFF,
+        self::COST       => self::TITLE_COST,
+        self::PAID       => self::TITLE_PAID,
     ];
 
     public function invoice(): BelongsTo

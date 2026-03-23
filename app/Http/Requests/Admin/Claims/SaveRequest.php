@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Admin\Claims;
 
 use App\Http\Requests\AbstractRequest;
+use App\Models\Billing\Claim;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Service;
-use Core\Domains\Billing\Claim\Models\ClaimComparator;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
@@ -49,19 +49,19 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::INVOICE_ID . '.required' => sprintf('Укажите «%s»', ClaimComparator::TITLE_INVOICE_ID),
-            self::INVOICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', ClaimComparator::TITLE_INVOICE_ID),
+            self::INVOICE_ID . '.required' => sprintf('Укажите «%s»', Claim::TITLE_INVOICE_ID),
+            self::INVOICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', Claim::TITLE_INVOICE_ID),
 
-            self::SERVICE_ID . '.required' => sprintf('Укажите «%s»', ClaimComparator::TITLE_SERVICE_ID),
-            self::SERVICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', ClaimComparator::TITLE_SERVICE_ID),
+            self::SERVICE_ID . '.required' => sprintf('Укажите «%s»', Claim::TITLE_SERVICE_ID),
+            self::SERVICE_ID . '.exists'   => sprintf('Указанный «%s» не существует', Claim::TITLE_SERVICE_ID),
 
-            self::TARIFF . '.required' => sprintf('Укажите «%s»', ClaimComparator::TITLE_TARIFF),
-            self::TARIFF . '.numeric'  => sprintf('«%s» должна быть числом', ClaimComparator::TITLE_TARIFF),
-            self::TARIFF . '.min'      => sprintf('«%s» должна быть больше :min', ClaimComparator::TITLE_TARIFF),
+            self::TARIFF . '.required' => sprintf('Укажите «%s»', Claim::TITLE_TARIFF),
+            self::TARIFF . '.numeric'  => sprintf('«%s» должна быть числом', Claim::TITLE_TARIFF),
+            self::TARIFF . '.min'      => sprintf('«%s» должна быть больше :min', Claim::TITLE_TARIFF),
 
-            self::COST . '.required' => sprintf('Укажите «%s»', ClaimComparator::TITLE_COST),
-            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', ClaimComparator::TITLE_COST),
-            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', ClaimComparator::TITLE_COST),
+            self::COST . '.required' => sprintf('Укажите «%s»', Claim::TITLE_COST),
+            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', Claim::TITLE_COST),
+            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', Claim::TITLE_COST),
         ];
     }
 

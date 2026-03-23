@@ -26,7 +26,7 @@ use Core\Domains\Billing\Service\Services\ServiceService;
 use Core\Domains\Billing\Claim\Factories\ClaimFactory;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
 use Core\Domains\Billing\Claim\Models\ClaimSearcher;
-use Core\Domains\Billing\Claim\Responses\SearchResponse;
+use Core\Domains\Billing\Claim\Responses\ClaimSearchResponse;
 use Core\Domains\Billing\Claim\Services\ClaimService;
 use Core\Domains\Billing\Claim\ClaimLocator;
 use Illuminate\Http\JsonResponse;
@@ -206,7 +206,7 @@ class ClaimController extends Controller
         return $this->claimService->deleteById($id);
     }
 
-    private function getInvoiceClaims(int $invoiceId): SearchResponse
+    private function getInvoiceClaims(int $invoiceId): ClaimSearchResponse
     {
         $searcher = new ClaimSearcher();
         $searcher

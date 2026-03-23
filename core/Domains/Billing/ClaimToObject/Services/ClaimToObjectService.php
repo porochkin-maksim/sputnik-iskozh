@@ -33,8 +33,8 @@ readonly class ClaimToObjectService
         return (bool) ClaimToObject::where(ClaimToObject::CLAIM_ID, $claim->getId())->first();
     }
 
-    public function drop(ClaimDTO $claim): void
+    public function drop(int $claimId): void
     {
-        ClaimToObject::where(ClaimToObject::CLAIM_ID, $claim->getId())->delete();
+        ClaimToObject::where(ClaimToObject::CLAIM_ID, $claimId)->delete();
     }
 }

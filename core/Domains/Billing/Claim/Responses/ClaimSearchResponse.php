@@ -8,7 +8,7 @@ use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 /**
  * @method ClaimCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class ClaimSearchResponse extends BaseSearchResponse
 {
 
 }
