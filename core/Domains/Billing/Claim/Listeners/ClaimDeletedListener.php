@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Claim\Listeners;
 
-use Core\Domains\Billing\Jobs\RecalcClaimsPayedJob;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 use Core\Domains\Billing\Claim\Events\ClaimDeletedEvent;
 use Core\Domains\Billing\ClaimToObject\ClaimToObjectLocator;
 
@@ -13,6 +13,6 @@ class ClaimDeletedListener
         ClaimToObjectLocator::ClaimToObjectService()->drop($event->claim);
 
         $invoiceId = $event->claim->getInvoiceId();
-        dispatch_sync(new RecalcClaimsPayedJob($invoiceId));
+        dispatch_sync(new RecalcClaimsPaidJob($invoiceId));
     }
 }

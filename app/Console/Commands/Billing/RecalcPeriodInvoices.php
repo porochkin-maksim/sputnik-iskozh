@@ -4,7 +4,7 @@ namespace App\Console\Commands\Billing;
 
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Jobs\RecalcClaimsPayedJob;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 use Illuminate\Console\Command;
 
 class RecalcPeriodInvoices extends Command
@@ -36,7 +36,7 @@ class RecalcPeriodInvoices extends Command
         $count = 0;
         foreach ($invoices as $invoice) {
             $this->info("Пересчёт счёта #{$invoice->getId()}");
-            dispatch(new RecalcClaimsPayedJob($invoice->getId()));
+            dispatch(new RecalcClaimsPaidJob($invoice->getId()));
             $count++;
         }
 

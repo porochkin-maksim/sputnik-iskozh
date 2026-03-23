@@ -19,8 +19,10 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
 {
     public function __construct(
         protected InvoiceCollection|array $invoices,
-        protected array $headers
-    ) {}
+        protected array                   $headers,
+    )
+    {
+    }
 
     public function headings(): array
     {
@@ -39,13 +41,13 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
             $row['account'] = $invoice->getAccount()?->getNumber();
             $row['type']    = $invoice->getType()?->name();
             $row['cost']    = $invoice->getCost();
-            $row['payed']   = $invoice->getPayed();
-            $row['delta']   = $invoice->getCost() - $invoice->getPayed();
+            $row['paid']    = $invoice->getPaid();
+            $row['delta']   = $invoice->getCost() - $invoice->getPaid();
 
             foreach ($invoice->getClaims() as $claim) {
-                $claimName = $claim->getService()?->getName() ?: $claim->getService()?->getType()?->name();
-                $row[$claimName . 'cost']  = $claim->getCost();
-                $row[$claimName . 'payed'] = $claim->getPayed();
+                $claimName                = $claim->getService()?->getName() ? : $claim->getService()?->getType()?->name();
+                $row[$claimName . 'cost'] = $claim->getCost();
+                $row[$claimName . 'paid'] = $claim->getPaid();
             }
 
             $result[] = $row;
@@ -57,27 +59,27 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
     public function styles(Worksheet $sheet): void
     {
         $lastColumn = $sheet->getHighestColumn();
-        $lastRow = $sheet->getHighestRow();
+        $lastRow    = $sheet->getHighestRow();
 
         // Стили для заголовков
         $headerStyle = [
-            'font' => [
-                'bold' => true,
-                'size' => 12,
+            'font'      => [
+                'bold'  => true,
+                'size'  => 12,
                 'color' => ['rgb' => 'FFFFFF'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER,
             ],
-            'borders' => [
+            'borders'   => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => '000000'],
+                    'color'       => ['rgb' => '000000'],
                 ],
             ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
                 'startColor' => [
                     'rgb' => '4472C4',
                 ],
@@ -86,10 +88,10 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
 
         // Стили для данных
         $dataStyle = [
-            'borders' => [
+            'borders'   => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => '000000'],
+                    'color'       => ['rgb' => '000000'],
                 ],
             ],
             'alignment' => [
@@ -99,15 +101,15 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
 
         // Применяем стили к заголовкам
         $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($headerStyle);
-        
+
         // Применяем стили к данным
         $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray($dataStyle);
-        
+
         // Устанавливаем фильтр
         $sheet->setAutoFilter('A1:' . $lastColumn . $lastRow);
-        
+
         // Автоматическая ширина столбцов
-        foreach(range('A', $lastColumn) as $column) {
+        foreach (range('A', $lastColumn) as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -118,7 +120,7 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $sheet->setTitle($this->title());
             },

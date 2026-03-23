@@ -60,7 +60,7 @@ class PaymentController extends Controller
         $payment = $this->paymentFactory->makeDefault()
             ->setInvoiceId($invoiceId)
             ->setAccountId($invoice->getAccountId())
-            ->setPayedAt(Carbon::now())
+            ->setPaidAt(Carbon::now())
             ->setCost($invoice->getDelta())
         ;
 
@@ -158,7 +158,7 @@ class PaymentController extends Controller
             ->setCost($request->getCost())
             ->setName($request->getName())
             ->setComment($request->getComment())
-            ->setPayedAt($request->getPayedAt())
+            ->setPaidAt($request->getPaidAt())
         ;
 
         $payment = $this->paymentService->save($payment);

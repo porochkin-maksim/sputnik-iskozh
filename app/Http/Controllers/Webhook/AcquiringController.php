@@ -53,7 +53,7 @@ class AcquiringController extends Controller
                 ->setAccountId($invoice?->getAccountId())
                 ->setModerated(true)
                 ->setVerified(true)
-                ->setPayedAt(Carbon::now())
+                ->setPaidAt(Carbon::now())
                 ->setComment(sprintf('Платёж на сумму %s при проведении оплаты через "%s"',
                     MoneyService::parse($acquiring->getAmount()),
                     $acquiring->getProvider()?->name(),
@@ -73,7 +73,7 @@ class AcquiringController extends Controller
 
             $acquiring
                 ->setPaymentId($payment->getId())
-                ->setStatus(StatusEnum::PAYED)
+                ->setStatus(StatusEnum::PAID)
             ;
 
             $this->acquiringService->save($acquiring);

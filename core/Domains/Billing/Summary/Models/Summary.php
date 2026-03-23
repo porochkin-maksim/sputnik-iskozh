@@ -7,9 +7,9 @@ use Core\Services\Money\MoneyService;
 class Summary implements \JsonSerializable
 {
     private float $incomeCost;
-    private float $incomePayed;
+    private float $incomePaid;
     private float $outcomeCost;
-    private float $outcomePayed;
+    private float $outcomePaid;
 
     private int $regularCount;
     private int $incomeCount;
@@ -17,10 +17,10 @@ class Summary implements \JsonSerializable
 
     public function __construct(array $data)
     {
-        $this->incomeCost   = abs((float) $data['incomeCost']);
-        $this->incomePayed  = abs((float) $data['incomePayed']);
-        $this->outcomeCost  = abs((float) $data['outcomeCost']);
-        $this->outcomePayed = abs((float) $data['outcomePayed']);
+        $this->incomeCost  = abs((float) $data['incomeCost']);
+        $this->incomePaid  = abs((float) $data['incomePaid']);
+        $this->outcomeCost = abs((float) $data['outcomeCost']);
+        $this->outcomePaid = abs((float) $data['outcomePaid']);
 
         $this->regularCount = (int) $data['regularCount'];
         $this->incomeCount  = (int) $data['incomeCount'];
@@ -29,23 +29,23 @@ class Summary implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
-        $incomeCost   = MoneyService::parse($this->incomeCost);
-        $incomePayed  = MoneyService::parse($this->incomePayed);
-        $outcomeCost  = MoneyService::parse($this->outcomeCost);
-        $outcomePayed = MoneyService::parse($this->outcomePayed);
+        $incomeCost  = MoneyService::parse($this->incomeCost);
+        $incomePaid  = MoneyService::parse($this->incomePaid);
+        $outcomeCost = MoneyService::parse($this->outcomeCost);
+        $outcomePaid = MoneyService::parse($this->outcomePaid);
 
         return [
-            'incomeCost'   => MoneyService::toFloat($incomeCost),
-            'incomePayed'  => MoneyService::toFloat($incomePayed),
-            'outcomeCost'  => MoneyService::toFloat($outcomeCost),
-            'outcomePayed' => MoneyService::toFloat($outcomePayed),
+            'incomeCost'  => MoneyService::toFloat($incomeCost),
+            'incomePaid'  => MoneyService::toFloat($incomePaid),
+            'outcomeCost' => MoneyService::toFloat($outcomeCost),
+            'outcomePaid' => MoneyService::toFloat($outcomePaid),
 
-            'deltaIncome'  => MoneyService::toFloat($incomeCost->subtract($incomePayed)),
-            'deltaOutcome' => MoneyService::toFloat($outcomeCost->subtract($outcomePayed)),
+            'deltaIncome'  => MoneyService::toFloat($incomeCost->subtract($incomePaid)),
+            'deltaOutcome' => MoneyService::toFloat($outcomeCost->subtract($outcomePaid)),
 
-            'deltaCost'  => MoneyService::toFloat($incomeCost->subtract($outcomeCost)),
-            'deltaPayed' => MoneyService::toFloat($incomePayed->subtract($outcomePayed)),
-            'delta'      => MoneyService::toFloat($incomeCost->subtract($outcomeCost)->subtract($incomePayed->subtract($outcomePayed))),
+            'deltaCost' => MoneyService::toFloat($incomeCost->subtract($outcomeCost)),
+            'deltaPaid' => MoneyService::toFloat($incomePaid->subtract($outcomePaid)),
+            'delta'     => MoneyService::toFloat($incomeCost->subtract($outcomeCost)->subtract($incomePaid->subtract($outcomePaid))),
 
             'regularCount' => $this->regularCount,
             'incomeCount'  => $this->incomeCount,

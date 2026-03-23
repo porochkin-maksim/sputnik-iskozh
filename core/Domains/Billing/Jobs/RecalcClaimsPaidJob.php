@@ -24,7 +24,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Пересчитывает оплату claims в счёте по платежам
  */
-class RecalcClaimsPayedJob implements ShouldQueue
+class RecalcClaimsPaidJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -50,8 +50,8 @@ class RecalcClaimsPayedJob implements ShouldQueue
             return;
         }
 
-        $claims     = $invoice->getClaims() ? : new ClaimCollection();
-        $totalPayed = ($invoice->getPayments() ? : new PaymentCollection())
+        $claims    = $invoice->getClaims() ? : new ClaimCollection();
+        $totalPaid = ($invoice->getPayments() ? : new PaymentCollection())
             ->getVerified()
             ->getTotalCostMoney()
         ;
@@ -60,8 +60,8 @@ class RecalcClaimsPayedJob implements ShouldQueue
         $advanceClaim = $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
 
         // Вычитаем из общей суммы уже оплаченное через авансовый claim
-        if ($advanceClaim && $advanceClaim->getPayed() > 0) {
-            $totalPayed = $totalPayed->subtract(MoneyService::parse($advanceClaim->getPayed()));
+        if ($advanceClaim && $advanceClaim->getPaid() > 0) {
+            $totalPaid = $totalPaid->subtract(MoneyService::parse($advanceClaim->getPaid()));
         }
 
         // Загружаем claims с сервисами для сортировки
@@ -75,32 +75,32 @@ class RecalcClaimsPayedJob implements ShouldQueue
         $sortedClaims = ClaimLocator::ClaimService()->search($claimSearcher)->getItems();
         $sortedClaims = $sortedClaims->sortByServiceTypes();
 
-        // Сбрасываем payed у всех, кроме авансового
+        // Сбрасываем paid у всех, кроме авансового
         foreach ($sortedClaims as $claim) {
             if ($claim->getId() !== $advanceClaim?->getId()) {
-                $claim->setPayed(0);
+                $claim->setPaid(0);
             }
         }
 
         // Распределяем оплату
-        $remaining = $totalPayed;
+        $remaining = $totalPaid;
         foreach ($sortedClaims as $claim) {
             if ($claim->getId() === $advanceClaim?->getId()) {
                 continue;
             }
 
-            $claimCost  = MoneyService::parse($claim->getCost());
-            $claimPayed = MoneyService::parse(0);
+            $claimCost = MoneyService::parse($claim->getCost());
+            $claimPaid = MoneyService::parse(0);
 
             if ($remaining->subtract($claimCost)->isPositive()) {
-                $claimPayed = $claimCost;
+                $claimPaid = $claimCost;
             }
             else {
-                $claimPayed = $remaining;
+                $claimPaid = $remaining;
             }
 
-            $remaining = $remaining->subtract($claimPayed);
-            $claim->setPayed(MoneyService::toFloat($claimPayed));
+            $remaining = $remaining->subtract($claimPaid);
+            $claim->setPaid(MoneyService::toFloat($claimPaid));
 
             if ($remaining->isZero()) {
                 break;
@@ -121,7 +121,7 @@ class RecalcClaimsPayedJob implements ShouldQueue
                     $advanceClaim
                         ->setTariff(MoneyService::toFloat($remaining))
                         ->setCost(MoneyService::toFloat($remaining))
-                        ->setPayed(MoneyService::toFloat($remaining))
+                        ->setPaid(MoneyService::toFloat($remaining))
                     ;
                 }
                 else {
@@ -130,18 +130,18 @@ class RecalcClaimsPayedJob implements ShouldQueue
                         ->setServiceId($service->getId())
                         ->setTariff(MoneyService::toFloat($remaining))
                         ->setCost(MoneyService::toFloat($remaining))
-                        ->setPayed(MoneyService::toFloat($remaining))
+                        ->setPaid(MoneyService::toFloat($remaining))
                     ;
                     $sortedClaims->push($advanceClaim);
                 }
             }
         }
-        elseif ($advanceClaim && $advanceClaim->getPayed() > 0) {
+        elseif ($advanceClaim && $advanceClaim->getPaid() > 0) {
             // Если остатка нет, но авансовый claim есть – обнуляем его
             $advanceClaim
                 ->setTariff(0)
                 ->setCost(0)
-                ->setPayed(0)
+                ->setPaid(0)
             ;
         }
 
@@ -149,15 +149,15 @@ class RecalcClaimsPayedJob implements ShouldQueue
         $savedClaims = ClaimLocator::ClaimService()->saveCollection($sortedClaims);
 
         // Пересчитываем счёт
-        $totalCost     = MoneyService::parse(0);
-        $totalPayedSum = MoneyService::parse(0);
+        $totalCost    = MoneyService::parse(0);
+        $totalPaidSum = MoneyService::parse(0);
         foreach ($savedClaims as $claim) {
-            $totalCost     = $totalCost->add(MoneyService::parse($claim->getCost()));
-            $totalPayedSum = $totalPayedSum->add(MoneyService::parse($claim->getPayed()));
+            $totalCost    = $totalCost->add(MoneyService::parse($claim->getCost()));
+            $totalPaidSum = $totalPaidSum->add(MoneyService::parse($claim->getPaid()));
         }
 
         $invoice->setCost(MoneyService::toFloat($totalCost));
-        $invoice->setPayed(MoneyService::toFloat($totalPayedSum));
+        $invoice->setPaid(MoneyService::toFloat($totalPaidSum));
         $invoice->setAdvance((float) $advanceClaim?->getCost());
         $invoice->setDebt((float) $sortedClaims->getDebt()?->getCost());
 

@@ -63,11 +63,11 @@
              :class="statusAlertClass">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa"
-                   :class="localInvoice.isPayed ? 'fa-check-circle text-success' : 'fa-times-circle text-secondary'"
+                   :class="localInvoice.isPaid ? 'fa-check-circle text-success' : 'fa-times-circle text-secondary'"
                    aria-hidden="true"></i>
                 <div>
                     <strong>Оплачено:</strong>
-                    {{ formatMoney(localInvoice.payed || 0) }} / {{ formatMoney(localInvoice.cost || 0) }}
+                    {{ formatMoney(localInvoice.paid || 0) }} / {{ formatMoney(localInvoice.cost || 0) }}
                     <span v-if="localInvoice.delta !== 0" class="ms-2" :class="deltaClass">
                         (Долг {{ formatMoney(Math.abs(localInvoice.delta)) }})
                     </span>
@@ -132,10 +132,10 @@ const isLoading     = ref(true);
 
 // Computed свойства для стилей
 const statusAlertClass = computed(() => {
-    if (!localInvoice.value.isPayed && localInvoice.value.cost === 0) {
+    if (!localInvoice.value.isPaid && localInvoice.value.cost === 0) {
         return 'alert-secondary';
     }
-    return localInvoice.value.isPayed ? 'alert-success' : 'alert-warning';
+    return localInvoice.value.isPaid ? 'alert-success' : 'alert-warning';
 });
 
 const deltaClass = computed(() => {

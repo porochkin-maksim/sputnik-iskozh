@@ -11,7 +11,7 @@ enum StatusEnum: int
     case NEW      = 1;
     case PROCESS  = 2;
     case CANCELED = 3;
-    case PAYED    = 4;
+    case PAID     = 4;
 
     public function name(): string
     {
@@ -19,7 +19,7 @@ enum StatusEnum: int
             self::NEW      => 'Новый',
             self::PROCESS  => 'В процессе',
             self::CANCELED => 'Отменён',
-            self::PAYED    => 'Оплачен',
+            self::PAID     => 'Оплачен',
         };
     }
 
@@ -30,7 +30,7 @@ enum StatusEnum: int
 
     public function isPaid(): bool
     {
-        return $this === self::PAYED;
+        return $this === self::PAID;
     }
 
     public function isProcess(): bool

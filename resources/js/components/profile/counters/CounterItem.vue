@@ -46,7 +46,7 @@
                     </div>
                     <div class="mt-1"
                          v-if="history.claim">
-                        <b>Оплачено:</b> {{ formatMoney(history.claim.payed) }}/{{ formatMoney(history.claim.cost) }} по тарифу {{ formatMoney(history.claim.tariff) }}
+                        <b>Оплачено:</b> {{ formatMoney(history.claim.paid) }}/{{ formatMoney(history.claim.cost) }} по тарифу {{ formatMoney(history.claim.tariff) }}
                     </div>
                     <div class="mt-1">
                         <file-item :file="history.file"

@@ -21,7 +21,7 @@ class PaymentDTO
     private ?string $comment    = null;
     private ?string $name       = null;
     private ?array  $data       = null;
-    private ?Carbon $payed_at   = null;
+    private ?Carbon $paid_at    = null;
 
     private ?string $account_number = null;
 
@@ -141,14 +141,14 @@ class PaymentDTO
         return $this;
     }
 
-    public function getPayedAt(): ?Carbon
+    public function getPaidAt(): ?Carbon
     {
-        return $this->payed_at;
+        return $this->paid_at;
     }
 
-    public function setPayedAt(?Carbon $payed_at): static
+    public function setPaidAt(?Carbon $paid_at): static
     {
-        $this->payed_at = $payed_at;
+        $this->paid_at = $paid_at;
 
         return $this;
     }

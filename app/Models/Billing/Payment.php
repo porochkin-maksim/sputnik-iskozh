@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?string  $name
  * @property ?array   $data
  * @property ?string  $account_number
- * @property ?Carbon  $payed_at
+ * @property ?Carbon  $paid_at
  */
 class Payment extends AbstractModel
 {
@@ -39,7 +39,7 @@ class Payment extends AbstractModel
     public const string COMMENT    = 'comment';
     public const string NAME       = 'name';
     public const string DATA       = 'data';
-    public const string PAYED_AT   = 'payed_at';
+    public const string PAID_AT    = 'paid_at';
 
     public const string ACCOUNT = 'account';
     public const string INVOICE = 'invoice';
@@ -50,7 +50,7 @@ class Payment extends AbstractModel
         self::MODERATED => self::CAST_BOOLEAN,
         self::VERIFIED  => self::CAST_BOOLEAN,
         self::DATA      => self::CAST_JSON,
-        self::PAYED_AT  => self::CAST_DATE,
+        self::PAID_AT   => self::CAST_DATE,
     ];
 
     public function invoice(): BelongsTo

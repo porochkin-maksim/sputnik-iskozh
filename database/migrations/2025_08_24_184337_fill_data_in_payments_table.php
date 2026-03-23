@@ -11,14 +11,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        if ( ! Schema::hasColumn('payments', 'payed_at')) {
+        if ( ! Schema::hasColumn('payments', 'paid_at')) {
             Schema::table('payments', static function (Blueprint $table) {
-                $table->date('payed_at')->nullable()->after('data');
+                $table->date('paid_at')->nullable()->after('data');
             });
         }
 
         Payment::all()->each(function (Payment $model) {
-            $model->update(['payed_at' => $model->created_at]);
+            $model->update(['paid_at' => $model->created_at]);
         });
     }
 
@@ -27,12 +27,12 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        if ( ! Schema::hasColumn('payments', 'payed_at')) {
+        if ( ! Schema::hasColumn('payments', 'paid_at')) {
             return;
         }
 
         Schema::create('payments', static function (Blueprint $table) {
-            $table->dropColumn('payed_at');
+            $table->dropColumn('paid_at');
         });
     }
 };

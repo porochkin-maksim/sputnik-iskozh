@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  $name
  * @property float   $tariff
  * @property float   $cost
- * @property float   $payed
+ * @property float   $paid
  */
 class Claim extends Model implements CastsInterface
 {
@@ -25,23 +25,23 @@ class Claim extends Model implements CastsInterface
 
     protected $table = self::TABLE;
 
-    public const ID         = 'id';
-    public const INVOICE_ID = 'invoice_id';
-    public const SERVICE_ID = 'service_id';
-    public const NAME       = 'name';
-    public const TARIFF     = 'tariff';
-    public const COST       = 'cost';
-    public const PAYED      = 'payed';
+    public const string ID         = 'id';
+    public const string INVOICE_ID = 'invoice_id';
+    public const string SERVICE_ID = 'service_id';
+    public const string NAME       = 'name';
+    public const string TARIFF     = 'tariff';
+    public const string COST       = 'cost';
+    public const string PAID       = 'paid';
 
-    public const INVOICE = 'invoice';
-    public const SERVICE = 'service';
+    public const string INVOICE = 'invoice';
+    public const string SERVICE = 'service';
 
     protected $guarded = [];
 
     protected $casts = [
         self::TARIFF => self::CAST_FLOAT,
         self::COST   => self::CAST_FLOAT,
-        self::PAYED  => self::CAST_FLOAT,
+        self::PAID   => self::CAST_FLOAT,
     ];
 
     public function invoice(): BelongsTo

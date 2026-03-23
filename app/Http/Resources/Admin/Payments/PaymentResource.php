@@ -32,7 +32,7 @@ readonly class PaymentResource extends AbstractResource
             ? AcquiringLocator::AcquiringService()->search(
                 new AcquiringSearcher()
                     ->setPaymentId($this->payment->getId())
-                    ->setStatus(StatusEnum::PAYED)
+                    ->setStatus(StatusEnum::PAID)
                 ,
             )->getItems()->first()?->getId()
             : false;
@@ -44,7 +44,7 @@ readonly class PaymentResource extends AbstractResource
             'comment'       => $this->payment->getComment(),
             'files'         => $this->payment->getFiles(),
             'created'       => $this->formatDateTimeForRender($this->payment->getCreatedAt()),
-            'payed'         => $this->formatDateForRender($this->payment->getPayedAt()),
+            'paid'          => $this->formatDateForRender($this->payment->getPaidAt()),
             'invoiceId'     => $this->payment->getInvoiceId(),
             'accountNumber' => $this->payment->getAccountNumber(),
             'accountId'     => $this->payment->getAccountId(),

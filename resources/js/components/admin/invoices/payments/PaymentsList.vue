@@ -42,7 +42,7 @@
                         </div>
                         <span v-else class="text-muted small">—</span>
                     </td>
-                    <td class="text-center">{{ payment.payed }}</td>
+                    <td class="text-center">{{ payment.paid }}</td>
                     <td class="text-center">{{ payment.created }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">

@@ -38,7 +38,7 @@
                         </span>
                     </th>
                     <td class="text-end">{{ formatMoney(summary.incomeCost) }}</td>
-                    <td class="text-end">{{ formatMoney(summary.incomePayed) }}</td>
+                    <td class="text-end">{{ formatMoney(summary.incomePaid) }}</td>
                     <td class="text-end">{{ formatMoney(summary.deltaIncome) }}</td>
                     <template v-if="showInvoice">
                         <td>Регулярных</td>
@@ -49,7 +49,7 @@
                     <tr v-for="item in summaryIncome" :key="item.id" class="">
                         <td class="text-start">{{ item.service }}</td>
                         <td class="text-end">{{ formatMoney(parseFloat(item.cost)) }}</td>
-                        <td class="text-end">{{ formatMoney(parseFloat(item.payed)) }}</td>
+                        <td class="text-end">{{ formatMoney(parseFloat(item.paid)) }}</td>
                         <td class="text-end">{{ formatMoney(parseFloat(item.delta)) }}</td>
                         <template v-if="showInvoice">
                             <td></td>
@@ -73,7 +73,7 @@
                         </span>
                     </th>
                     <td class="text-end">{{ formatMoney(summary.outcomeCost) }}</td>
-                    <td class="text-end">{{ formatMoney(summary.outcomePayed) }}</td>
+                    <td class="text-end">{{ formatMoney(summary.outcomePaid) }}</td>
                     <td class="text-end">{{ formatMoney(summary.deltaOutcome) }}</td>
                     <template v-if="showInvoice">
                         <td>Доходных</td>
@@ -84,7 +84,7 @@
                     <tr v-for="item in summaryOutcome" :key="item.id" class="">
                         <td class="text-start">{{ item.service }}</td>
                         <td class="text-end">{{ formatMoney(parseFloat(item.cost)) }}</td>
-                        <td class="text-end">{{ formatMoney(parseFloat(item.payed)) }}</td>
+                        <td class="text-end">{{ formatMoney(parseFloat(item.paid)) }}</td>
                         <td class="text-end">{{ formatMoney(parseFloat(item.delta)) }}</td>
                         <template v-if="showInvoice">
                             <td></td>
@@ -97,7 +97,7 @@
                 <tr class="table-info">
                     <th class="text-end">Итого:</th>
                     <td class="text-end">{{ formatMoney(summary.deltaCost) }}</td>
-                    <td class="text-end">{{ formatMoney(summary.deltaPayed) }}</td>
+                    <td class="text-end">{{ formatMoney(summary.deltaPaid) }}</td>
                     <td class="text-end">{{ formatMoney(summary.delta) }}</td>
                     <template v-if="showInvoice">
                         <td>Расходных</td>

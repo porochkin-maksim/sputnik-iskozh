@@ -94,7 +94,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
                 ->setCost(MoneyService::toFloat($cost))
-                ->setPayed(0.00)
+                ->setPaid(0.00)
             ;
 
             $claimService->save($claim);
@@ -156,7 +156,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
                 ->setInvoiceId($previousInvoice->getId()),
         )->getItems();
 
-        $debt = $previousInvoice->getCost() - $previousInvoice->getPayed();
+        $debt = $previousInvoice->getCost() - $previousInvoice->getPaid();
 
         /**
          * Если по нулям, то там может быть аванс

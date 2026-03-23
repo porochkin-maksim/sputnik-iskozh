@@ -100,7 +100,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                 <td>{{ $claim->getName() ?: $services->getById($claim->getServiceId())->getName() }}</td>
                                 <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getTariff()) }}</td>
                                 <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getCost()) }}</td>
-                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPayed()) }}</td>
+                                <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getPaid()) }}</td>
                                 <td class="text-end text-nowrap">{{ MoneyService::parse($claim->getDelta()) }}</td>
                             </tr>
                         @endforeach
@@ -109,7 +109,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                                 colspan="2">Итого
                             </th>
                             <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getCost()) }}</td>
-                            <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPayed()) }}</td>
+                            <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getPaid()) }}</td>
                             <td class="text-end text-nowrap">{{ MoneyService::parse($invoice->getDelta()) }}</td>
                         </tr>
                         @if($payments->count())
@@ -130,12 +130,12 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                             @endforeach
                         @endif
 
-                        @if (!$invoice->isPayed())
+                        @if (!$invoice->isPaid())
                             <tr class="text-center">
                                 <td colspan="5">
                                     @if (AcquiringLocator::AcquiringService()->isAcquringAvailable())
                                         @php
-                                            if ( ! $invoice->getPayed()) {
+                                            if ( ! $invoice->getPaid()) {
                                                 if (($account->getFraction() ?: 1) !== 1){
                                                     $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
                                                         $invoice,
@@ -173,7 +173,8 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                         @endif
                         <tr class="text-center">
                             <td colspan="5">
-                                <a href="{{ route(RouteNames::DOCUMENT_RECEIPT_INVOICE, ['uid' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}" target="_blank" class="btn btn-outline-danger">
+                                <a href="{{ route(RouteNames::DOCUMENT_RECEIPT_INVOICE, ['uid' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]) }}"
+                                   target="_blank" class="btn btn-outline-danger">
                                     <i class="fa fa-file-pdf-o text-danger"></i> Получить квитанцию
                                 </a>
                             </td>

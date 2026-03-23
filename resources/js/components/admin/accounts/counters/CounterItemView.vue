@@ -64,13 +64,13 @@
                         </td>
                         <td>
                             <a :href="history.invoiceUrl"
-                               class="text-decoration-none">{{ $formatMoney(history.claim.payed) }}</a>
+                               class="text-decoration-none">{{ $formatMoney(history.claim.paid) }}</a>
                         </td>
                     </template>
                     <template v-else>
                         <td>{{ $formatMoney(history.claim.tariff) }}</td>
                         <td>{{ $formatMoney(history.claim.cost) }}</td>
-                        <td>{{ $formatMoney(history.claim.payed) }}</td>
+                        <td>{{ $formatMoney(history.claim.paid) }}</td>
                     </template>
                 </template>
                 <template v-else-if="history.delta && actions.edit && counter.isInvoicing">

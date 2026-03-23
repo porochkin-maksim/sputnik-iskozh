@@ -226,16 +226,16 @@ class InvoiceController extends Controller
             $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
         }
 
-        if ($request->getPayedStatus()) {
-            if ($request->getPayedStatus() === 'unpayed') {
-                $searcher->addWhere(Invoice::PAYED, SearcherInterface::EQUALS, 0);
+        if ($request->getPaidStatus()) {
+            if ($request->getPaidStatus() === 'unpaid') {
+                $searcher->addWhere(Invoice::PAID, SearcherInterface::EQUALS, 0);
             }
-            elseif ($request->getPayedStatus() === 'payed') {
-                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::GTE, Invoice::COST);
+            elseif ($request->getPaidStatus() === 'paid') {
+                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::GTE, Invoice::COST);
             }
-            elseif ($request->getPayedStatus() === 'partial') {
-                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
-                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0)
+            elseif ($request->getPaidStatus() === 'partial') {
+                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::LT, Invoice::COST)
+                    ->addWhere(Invoice::PAID, SearcherInterface::GT, 0)
                 ;
             }
         }

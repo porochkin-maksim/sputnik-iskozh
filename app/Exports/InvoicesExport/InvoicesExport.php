@@ -29,7 +29,7 @@ class InvoicesExport implements WithMultipleSheets
         foreach ($this->invoices as $invoice) {
             foreach ($invoice->getClaims() as $claim) {
                 $claimName = $this->getClaimName($claim);
-                if (!in_array($claimName, $headers, true)) {
+                if ( ! in_array($claimName, $headers, true)) {
                     $claimHeaders[$claimName] = $claimName;
                 }
             }
@@ -39,10 +39,10 @@ class InvoicesExport implements WithMultipleSheets
             $headers[$key . 'cost'] = $claimHeader;
         }
 
-        $headers['payed'] = 'Оплачено';
+        $headers['paid'] = 'Оплачено';
 
         foreach ($claimHeaders as $key => $claimHeader) {
-            $headers[$key . 'payed'] = $claimHeader;
+            $headers[$key . 'paid'] = $claimHeader;
         }
 
         $headers['delta'] = 'Долг';
@@ -54,7 +54,7 @@ class InvoicesExport implements WithMultipleSheets
             $accountNumber = $invoice->getAccount()?->getNumber();
             if ($accountNumber) {
                 $plotNumber = $this->extractPlotNumber($accountNumber);
-                if (!isset($this->groupedInvoices[$plotNumber])) {
+                if ( ! isset($this->groupedInvoices[$plotNumber])) {
                     $this->groupedInvoices[$plotNumber] = [];
                 }
                 $this->groupedInvoices[$plotNumber][] = $invoice;
@@ -68,9 +68,10 @@ class InvoicesExport implements WithMultipleSheets
 
         // Сортируем все счета по номеру участка
         $sortedInvoices = $this->invoices->toArray();
-        usort($sortedInvoices, static function($a, $b) {
+        usort($sortedInvoices, static function ($a, $b) {
             $aNumber = $a->getAccount()?->getSortValue() ?? '';
             $bNumber = $b->getAccount()?->getSortValue() ?? '';
+
             return strnatcmp($aNumber, $bNumber);
         });
 
@@ -83,9 +84,10 @@ class InvoicesExport implements WithMultipleSheets
         // Добавляем листы по участкам
         foreach ($this->groupedInvoices as $plotNumber => $plotInvoices) {
             // Сортируем счета внутри листа по номеру участка
-            usort($plotInvoices, static function($a, $b) {
+            usort($plotInvoices, static function ($a, $b) {
                 $aNumber = $a->getAccount()?->getSortValue() ?? '';
                 $bNumber = $b->getAccount()?->getSortValue() ?? '';
+
                 return strnatcmp($aNumber, $bNumber);
             });
 
@@ -97,7 +99,7 @@ class InvoicesExport implements WithMultipleSheets
 
     private function getClaimName(ClaimDTO $claim): ?string
     {
-        return $claim->getService()?->getName() ?: $claim->getService()?->getType()?->name();
+        return $claim->getService()?->getName() ? : $claim->getService()?->getType()?->name();
     }
 
     private function extractPlotNumber(string $accountNumber): int
@@ -109,7 +111,7 @@ class InvoicesExport implements WithMultipleSheets
 
         // Берем последнюю часть и оставляем только цифры
         $plotNumber = preg_replace('/[^0-9]/', '', end($parts));
-        
+
         return (int) $plotNumber;
     }
 }

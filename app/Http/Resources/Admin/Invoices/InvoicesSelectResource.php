@@ -24,7 +24,7 @@ readonly class InvoicesSelectResource extends AbstractResource
             $name     = sprintf('№%s %s %s/%s от %s',
                 $invoice->getId(),
                 $invoice->getType()?->name(),
-                number_format($invoice->getPayed(), 2, ',', ' '),
+                number_format($invoice->getPaid(), 2, ',', ' '),
                 MoneyService::parse($invoice->getCost()),
                 $invoice->getCreatedAt()?->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT),
             );

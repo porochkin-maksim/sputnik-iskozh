@@ -12,7 +12,7 @@ class SaveRequest extends AbstractRequest
     private const string NAME    = 'name';
     private const string COST    = 'cost';
     private const string COMMENT = 'comment';
-    private const string PAYED   = 'payedAt';
+    private const string PAID    = 'paidAt';
 
     public function rules(): array
     {
@@ -64,8 +64,8 @@ class SaveRequest extends AbstractRequest
         return $this->getStringOrNull(self::COMMENT);
     }
 
-    public function getPayedAt(): ?Carbon
+    public function getPaidAt(): ?Carbon
     {
-        return $this->getDateOrNull(self::PAYED);
+        return $this->getDateOrNull(self::PAID);
     }
 }

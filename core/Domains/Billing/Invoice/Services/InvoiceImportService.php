@@ -71,7 +71,7 @@ class InvoiceImportService
                         InvoiceImportDTO::ACCOUNT_ID     => $account->getId(),
                         InvoiceImportDTO::INVOICE_ID     => $invoiceDTO->getId(),
                         InvoiceImportDTO::INVOICE_COST   => $invoiceDTO->getCost(),
-                        InvoiceImportDTO::INVOICE_PAID   => $invoiceDTO->getPayed(),
+                        InvoiceImportDTO::INVOICE_PAID   => $invoiceDTO->getPaid(),
                         InvoiceImportDTO::INVOICE_DEBT   => $invoiceDTO->getDelta(),
                     ],
                 ];

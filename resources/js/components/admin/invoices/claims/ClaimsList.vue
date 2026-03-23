@@ -32,7 +32,7 @@
                     <td>{{ claim.service }}</td>
                     <td class="text-end">{{ formatMoney(claim.tariff) }}</td>
                     <td class="text-end">{{ formatMoney(claim.cost) }}</td>
-                    <td class="text-end">{{ formatMoney(claim.payed) }}</td>
+                    <td class="text-end">{{ formatMoney(claim.paid) }}</td>
                     <td class="text-end">{{ formatMoney(claim.delta) }}</td>
                     <td class="text-center">{{ claim.created }}</td>
                     <td class="text-center">

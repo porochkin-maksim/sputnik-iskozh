@@ -20,7 +20,7 @@ readonly class InvoiceResource extends AbstractResource
         return [
             'id'      => $this->invoice->getId(),
             'cost'    => $this->invoice->getCost(),
-            'payed'   => $this->invoice->getPayed(),
+            'paid'    => $this->invoice->getPaid(),
             'delta'   => $this->invoice->getDelta(),
             'period'  => $this->invoice->getPeriod() ? new PeriodResource($this->invoice->getPeriod()) : null,
             'account' => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,

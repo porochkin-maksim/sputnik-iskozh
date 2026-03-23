@@ -86,10 +86,10 @@
                                    aria-label="Фильтр по типу" />
 
                     <!-- Статус оплаты -->
-                    <simple-select v-if="computedPayedStatus?.length"
-                                   v-model="payedStatus"
+                    <simple-select v-if="computedPaidStatus?.length"
+                                   v-model="paidStatus"
                                    class="form-select-sm w-auto"
-                                   :options="computedPayedStatus"
+                                   :options="computedPaidStatus"
                                    @change="listAction"
                                    aria-label="Фильтр по статусу оплаты" />
 
@@ -207,7 +207,7 @@ const skip           = ref(0);
 const routeState     = ref(0);
 const type           = ref(0);
 const periodId       = ref(null);
-const payedStatus    = ref('all');
+const paidStatus     = ref('all');
 const accountId      = ref(0);
 const searchAccount  = ref(null);
 const actions        = ref({});
@@ -223,7 +223,7 @@ const initFromUrl = () => {
     skip.value          = parseInt(urlParams.get('skip') || 0);
     type.value          = parseInt(urlParams.get('type') || 0);
     periodId.value      = parseInt(urlParams.get('period') || 0);
-    payedStatus.value   = urlParams.get('status') || 'all';
+    paidStatus.value    = urlParams.get('status') || 'all';
     sortField.value     = urlParams.get('sort_field') || 'id';
     sortOrder.value     = urlParams.get('sort_order') || 'desc';
     searchAccount.value = urlParams.get('search') || null;
@@ -244,10 +244,10 @@ const computedAccounts = computed(() => [
     ...accounts.value,
 ]);
 
-const computedPayedStatus = computed(() => [
+const computedPaidStatus = computed(() => [
     { value: 'all', label: 'Все статусы' },
-    { value: 'payed', label: 'Оплаченные' },
-    { value: 'unpayed', label: 'Неоплаченные' },
+    { value: 'paid', label: 'Оплаченные' },
+    { value: 'unpaid', label: 'Неоплаченные' },
     { value: 'partial', label: 'Частично оплаченные' },
 ]);
 
@@ -301,7 +301,7 @@ const listAction = async () => {
         period    : periodId.value,
         account   : accountId.value,
         search    : searchAccount.value,
-        status    : payedStatus.value,
+        status    : paidStatus.value,
         sort_field: sortField.value,
         sort_order: sortOrder.value,
     });
@@ -310,15 +310,15 @@ const listAction = async () => {
 
     try {
         const response = await ApiAdminInvoiceList({
-            limit       : perPage.value,
-            skip        : skip.value,
-            type        : type.value,
-            period_id   : periodId.value,
-            account_id  : accountId.value,
-            account     : searchAccount.value,
-            payed_status: payedStatus.value,
-            sort_field  : sortField.value,
-            sort_order  : sortOrder.value,
+            limit      : perPage.value,
+            skip       : skip.value,
+            type       : type.value,
+            period_id  : periodId.value,
+            account_id : accountId.value,
+            account    : searchAccount.value,
+            paid_status: paidStatus.value,
+            sort_field : sortField.value,
+            sort_order : sortOrder.value,
         });
 
         actions.value       = response.data.actions;
@@ -360,13 +360,13 @@ const clearSearchAction = () => {
 
 const exportAction = () => {
     const url = Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
-        type        : type.value,
-        period_id   : periodId.value,
-        account_id  : accountId.value,
-        account     : searchAccount.value,
-        payed_status: payedStatus.value,
-        sort_field  : sortField.value,
-        sort_order  : sortOrder.value,
+        type       : type.value,
+        period_id  : periodId.value,
+        account_id : accountId.value,
+        account    : searchAccount.value,
+        paid_status: paidStatus.value,
+        sort_field : sortField.value,
+        sort_order : sortOrder.value,
     });
     window.open(url, '_blank');
 };

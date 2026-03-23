@@ -175,7 +175,7 @@ const makeAction = async () => {
             claim.value        = response.data.claim;
             claim.value.tariff = parseFloat(claim.value.tariff).toFixed(2);
             claim.value.cost   = parseFloat(claim.value.cost).toFixed(2);
-            claim.value.payed  = parseFloat(claim.value.payed).toFixed(2);
+            claim.value.paid   = parseFloat(claim.value.paid).toFixed(2);
             await onServiceIdChanged(claim.value.serviceId);
             showDialog.value = true;
         }
@@ -197,7 +197,7 @@ const getAction = async () => {
         claim.value          = response.data.claim;
         claim.value.tariff   = parseFloat(claim.value.tariff).toFixed(2);
         claim.value.cost     = parseFloat(claim.value.cost).toFixed(2);
-        claim.value.payed    = parseFloat(claim.value.payed).toFixed(2);
+        claim.value.paid     = parseFloat(claim.value.paid).toFixed(2);
         showDialog.value     = true;
     }
     catch (error) {

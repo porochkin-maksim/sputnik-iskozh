@@ -15,7 +15,7 @@ readonly class ClaimFactory
         return (new ClaimDTO())
             ->setTariff(0.00)
             ->setCost(0.00)
-            ->setPayed(0.00);
+            ->setPaid(0.00);
     }
 
     public function makeModelFromDto(ClaimDTO $dto, ?Claim $model = null): Claim
@@ -33,7 +33,7 @@ readonly class ClaimFactory
             Claim::NAME       => $dto->getName(),
             Claim::TARIFF     => $dto->getTariff(),
             Claim::COST       => $dto->getCost(),
-            Claim::PAYED      => $dto->getPayed(),
+            Claim::PAID       => $dto->getPaid(),
         ]);
     }
 
@@ -47,7 +47,7 @@ readonly class ClaimFactory
             ->setServiceId($model->service_id)
             ->setName($model->name)
             ->setTariff($model->tariff)
-            ->setPayed($model->payed)
+            ->setPaid($model->paid)
             ->setCost($model->cost)
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);

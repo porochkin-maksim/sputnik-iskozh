@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Claim\Listeners;
 
-use Core\Domains\Billing\Jobs\RecalcClaimsPayedJob;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 use Core\Domains\Billing\Claim\Events\ClaimsUpdatedEvent;
 
 class ClaimsUpdatedListener
@@ -10,7 +10,7 @@ class ClaimsUpdatedListener
     public function handle(ClaimsUpdatedEvent $event): void
     {
         foreach ($event->getInvoiceIds() as $invoiceId) {
-            dispatch_sync(new RecalcClaimsPayedJob($invoiceId));
+            dispatch_sync(new RecalcClaimsPaidJob($invoiceId));
         }
     }
 }

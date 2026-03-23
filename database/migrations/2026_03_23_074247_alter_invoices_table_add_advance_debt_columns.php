@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         if ( ! Schema::hasColumn('invoices', 'advance')) {
             Schema::table('invoices', static function (Blueprint $table) {
-                $table->decimal('advance', 20)->after('payed')->default(0);
+                $table->decimal('advance', 20)->after('paid')->default(0);
             });
         }
 

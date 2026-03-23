@@ -31,7 +31,7 @@ class PaymentComparator extends AbstractComparatorDTO
         $this->initProperties($entity, $entity->getId());
 
         $this->expandedProperties = [
-            Payment::PAYED_AT => $entity->getPayedAt()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
+            Payment::PAID_AT => $entity->getPaidAt()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
         ];
     }
 }

@@ -13,41 +13,41 @@ class ListRequest extends DefaultRequest
     public function rules(): array
     {
         return [
-            'limit'        => 'integer|min:1|max:1000',
-            'skip'         => 'integer|min:0',
-            'type'         => 'integer|in:0,' . implode(',', InvoiceTypeEnum::values()),
-            'period_id'    => 'integer|min:0',
-            'account_id'   => 'integer|min:0',
-            'account'      => 'nullable|string|max:255',
-            'payed_status' => 'string|in:all,payed,unpayed,partial',
-            'sort_field'   => 'string|in:id,cost,payed,updated_at,account_sort',
-            'sort_order'   => 'string|in:asc,desc',
+            'limit'       => 'integer|min:1|max:1000',
+            'skip'        => 'integer|min:0',
+            'type'        => 'integer|in:0,' . implode(',', InvoiceTypeEnum::values()),
+            'period_id'   => 'integer|min:0',
+            'account_id'  => 'integer|min:0',
+            'account'     => 'nullable|string|max:255',
+            'paid_status' => 'string|in:all,paid,unpaid,partial',
+            'sort_field'  => 'string|in:id,cost,paid,updated_at,account_sort',
+            'sort_order'  => 'string|in:asc,desc',
         ];
     }
 
     public function getLimit(): int
     {
-        return (int)$this->input('limit', 25);
+        return (int) $this->input('limit', 25);
     }
 
     public function getOffset(): int
     {
-        return (int)$this->input('skip', 0);
+        return (int) $this->input('skip', 0);
     }
 
     public function getType(): ?int
     {
-        return $this->input('type') ? (int)$this->input('type') : null;
+        return $this->input('type') ? (int) $this->input('type') : null;
     }
 
     public function getPeriodId(): ?int
     {
-        return $this->input('period_id') ? (int)$this->input('period_id') : null;
+        return $this->input('period_id') ? (int) $this->input('period_id') : null;
     }
 
     public function getAccountId(): ?int
     {
-        return $this->input('account_id') ? (int)$this->input('account_id') : null;
+        return $this->input('account_id') ? (int) $this->input('account_id') : null;
     }
 
     public function getAccount(): ?string
@@ -55,8 +55,8 @@ class ListRequest extends DefaultRequest
         return $this->input('account');
     }
 
-    public function getPayedStatus(): ?string
+    public function getPaidStatus(): ?string
     {
-        return $this->input('payed_status');
+        return $this->input('paid_status');
     }
 }

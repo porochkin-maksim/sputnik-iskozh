@@ -27,7 +27,7 @@ $sntAccounting = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOU
 
 $blank = '_________';
 ?>
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -130,7 +130,7 @@ $blank = '_________';
                     <td>{{ $claim->getName() ?: $claim->getService(true)->getName() }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getTariff(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getCost(), 2) }}</td>
-                    <td class="text-end text-nowrap">{{ number_format($claim->getPayed(), 2) }}</td>
+                    <td class="text-end text-nowrap">{{ number_format($claim->getPaid(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getDelta(), 2) }}</td>
                 </tr>
             @endforeach
@@ -149,7 +149,7 @@ $blank = '_________';
             <tr>
                 <th class="text-end" colspan="2">Итого</th>
                 <td class="text-end text-nowrap">{{ number_format($invoice->getCost(), 2) }}</td>
-                <td class="text-end text-nowrap">{{ number_format($invoice->getPayed(), 2) }}</td>
+                <td class="text-end text-nowrap">{{ number_format($invoice->getPaid(), 2) }}</td>
                 <td class="text-end text-nowrap">{{ number_format($invoice->getDelta(), 2) }}</td>
             </tr>
         @else

@@ -53,7 +53,7 @@ readonly class ClaimService
         if (
             ! $claim->getId()
             || $current->getCost() !== $before->getCost()
-            || $current->getPayed() !== $before->getPayed()
+            || $current->getPaid() !== $before->getPaid()
         ) {
             ClaimsUpdatedEvent::dispatch($current->getInvoiceId());
         }

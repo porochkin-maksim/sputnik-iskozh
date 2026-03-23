@@ -16,7 +16,7 @@ readonly class InvoiceFactory
     {
         return new InvoiceDTO()
             ->setCost(0.00)
-            ->setPayed(0.00);
+            ->setPaid(0.00);
     }
 
     public function makeModelFromDto(InvoiceDTO $dto, ?Invoice $model = null): Invoice
@@ -32,7 +32,7 @@ readonly class InvoiceFactory
             Invoice::PERIOD_ID  => $dto->getPeriodId(),
             Invoice::ACCOUNT_ID => $dto->getAccountId(),
             Invoice::TYPE       => $dto->getType()->value,
-            Invoice::PAYED      => $dto->getPayed(),
+            Invoice::PAID       => $dto->getPaid(),
             Invoice::COST       => $dto->getCost(),
             Invoice::ADVANCE    => $dto->getAdvance(),
             Invoice::DEBT       => $dto->getDebt(),
@@ -49,7 +49,7 @@ readonly class InvoiceFactory
             ->setId($model->id)
             ->setPeriodId($model->period_id)
             ->setAccountId($model->account_id)
-            ->setPayed($model->payed)
+            ->setPaid($model->paid)
             ->setCost($model->cost)
             ->setAdvance($model->advance)
             ->setDebt($model->debt)

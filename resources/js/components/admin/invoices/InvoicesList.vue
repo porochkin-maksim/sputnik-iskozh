@@ -53,12 +53,12 @@
 
                 <th
                     class="cursor-pointer text-end"
-                    @click="sort('payed')"
+                    @click="sort('paid')"
                     scope="col"
                 >
                     Оплачено
                     <i
-                        v-if="sortField === 'payed'"
+                        v-if="sortField === 'paid'"
                         :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"
                         aria-hidden="true"
                     ></i>
@@ -91,7 +91,7 @@
                 :key="invoice.id"
                 class="text-center align-middle"
                 :class="[
-                        invoice.isPayed ? 'table-success' : '',
+                        invoice.isPaid ? 'table-success' : '',
                         invoice.cost === 0 ? 'table-warning' : '',
                         invoice.advance ? 'fw-bold' : ''
                     ]"
@@ -121,7 +121,7 @@
                 </td>
 
                 <td class="text-end fw-medium">
-                    {{ formatMoney(invoice.payed) }}
+                    {{ formatMoney(invoice.paid) }}
                 </td>
 
                 <td

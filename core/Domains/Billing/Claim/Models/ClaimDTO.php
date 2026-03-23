@@ -17,7 +17,7 @@ class ClaimDTO
     private ?string     $name       = null;
     private ?float      $tariff     = null;
     private ?float      $cost       = null;
-    private ?float      $payed      = null;
+    private ?float      $paid       = null;
     private ?ServiceDTO $service    = null;
     private ?InvoiceDTO $invoice    = null;
 
@@ -93,14 +93,14 @@ class ClaimDTO
         return $this;
     }
 
-    public function getPayed(): ?float
+    public function getPaid(): ?float
     {
-        return $this->payed;
+        return $this->paid;
     }
 
-    public function setPayed(?float $payed): static
+    public function setPaid(?float $paid): static
     {
-        $this->payed = $payed;
+        $this->paid = $paid;
 
         return $this;
     }
@@ -109,11 +109,11 @@ class ClaimDTO
 
     public function getDelta(): ?float
     {
-        if ($this->getCost() === null || $this->getPayed() === null) {
+        if ($this->getCost() === null || $this->getPaid() === null) {
             return null;
         }
 
-        return $this->getCost() - $this->getPayed();
+        return $this->getCost() - $this->getPaid();
     }
 
     public function getService(bool $lazyLoad = false): ?ServiceDTO

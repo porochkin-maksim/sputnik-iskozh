@@ -15,9 +15,9 @@
 
             <button
                 class="btn btn-outline-success ms-2"
-                v-if="invoice.actions.payments.edit && !invoice.isPayed && !forcePayed"
+                v-if="invoice.actions.payments.edit && !invoice.isPaid && !forcePaid"
                 :disabled="loading"
-                @click="makePayed"
+                @click="makePaid"
             >
                 <i class="fa fa-credit-card" aria-hidden="true"></i>
                 Оплатить всё
@@ -71,11 +71,11 @@
                     </div>
                     <div class="col-6">
                         <custom-calendar
-                            v-model="payment.payed"
-                            :error="errors?.payed"
+                            v-model="payment.paid"
+                            :error="errors?.paid"
                             label="Дата платежа"
                             :disabled="!payment.actions.edit || loading"
-                            @update:modelValue="clearError('payed')"
+                            @update:modelValue="clearError('paid')"
                         />
                     </div>
                 </div>
@@ -232,7 +232,7 @@ const files         = ref([]);
 const loading       = ref(false);
 const showDialog    = ref(false);
 const hideDialog    = ref(false);
-const forcePayed    = ref(false);
+const forcePaid     = ref(false);
 const fileElem      = ref(null);
 
 // Вычисляемые свойства
@@ -259,15 +259,15 @@ const init = () => {
 };
 
 // Оплатить всё
-const makePayed = async () => {
+const makePaid = async () => {
     if (!confirm('Создать платежи для каждой неоплаченной услуги?')) {
         return;
     }
 
     loading.value = true;
     try {
-        const response   = await ApiAdminPaymentAutoCreate(props.invoice.id);
-        forcePayed.value = true;
+        const response  = await ApiAdminPaymentAutoCreate(props.invoice.id);
+        forcePaid.value = true;
         showInfo('Счёт оплачен');
         onSaved();
     }
@@ -314,7 +314,7 @@ const saveAction = async () => {
     formData.append('cost', parseFloat(payment.value.cost));
     formData.append('name', payment.value.name || '');
     formData.append('comment', payment.value.comment ? String(payment.value.comment) : '');
-    formData.append('payedAt', payment.value.payed);
+    formData.append('paidAt', payment.value.paid);
 
     files.value.forEach((file, index) => {
         formData.append(`file${index}`, file);
