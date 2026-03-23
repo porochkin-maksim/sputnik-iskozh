@@ -27,17 +27,37 @@ abstract class AbstractObserver
      */
     abstract protected function getPropertyTitles(): array;
 
-    abstract protected function getHistoryType(): HistoryType;
+    abstract protected function getPrimaryHistoryType(): HistoryType;
+
+    protected function getPrimaryIdField(): ?string
+    {
+        return 'id';
+    }
+
+    protected function getReferenceHistoryType(): ?HistoryType
+    {
+        return null;
+    }
+
+    protected function getReferenceIdField(): ?string
+    {
+        return null;
+    }
 
     public function created(Model $item): void
     {
         $changes = $this->makeChanges($item);
 
+        $primaryId   = $this->getPrimaryIdField() ? $item->{$this->getPrimaryIdField()} : null;
+        $referenceId = $this->getReferenceIdField() ? $item->{$this->getReferenceIdField()} : null;
+
         $this->historyChangesService->logChanges(
             Event::CREATE,
-            $this->getHistoryType(),
+            $this->getPrimaryHistoryType(),
             $changes,
-            $item->id,
+            $primaryId,
+            $this->getReferenceHistoryType(),
+            $referenceId
         );
     }
 
@@ -45,20 +65,30 @@ abstract class AbstractObserver
     {
         $changes = $this->makeChanges($item);
 
+        $primaryId   = $this->getPrimaryIdField() ? $item->{$this->getPrimaryIdField()} : null;
+        $referenceId = $this->getReferenceIdField() ? $item->{$this->getReferenceIdField()} : null;
+
         $this->historyChangesService->logChanges(
             Event::UPDATE,
-            $this->getHistoryType(),
+            $this->getPrimaryHistoryType(),
             $changes,
-            $item->id,
+            $primaryId,
+            $this->getReferenceHistoryType(),
+            $referenceId
         );
     }
 
     public function deleted(Model $item): void
     {
+        $primaryId   = $this->getPrimaryIdField() ? $item->{$this->getPrimaryIdField()} : null;
+        $referenceId = $this->getReferenceIdField() ? $item->{$this->getReferenceIdField()} : null;
+
         $this->historyChangesService->writeToHistory(
             Event::DELETE,
-            $this->getHistoryType(),
-            $item->id,
+            $this->getPrimaryHistoryType(),
+            $primaryId,
+            $this->getReferenceHistoryType(),
+            $referenceId
         );
     }
 

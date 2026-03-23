@@ -8,7 +8,7 @@ use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 
 class ServiceObserver extends AbstractObserver
 {
-    protected function getHistoryType(): HistoryType
+    protected function getPrimaryHistoryType(): HistoryType
     {
         return HistoryType::SERVICE;
     }

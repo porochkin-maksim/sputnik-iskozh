@@ -56,7 +56,7 @@ class HistoryChangesService
 
     public function writeToHistory(
         Event                  $event,
-        HistoryType            $type,
+        HistoryType            $primaryType,
         ?int                   $primaryId,
         ?HistoryType           $referenceType = null,
         ?int                   $referenceId = null,
@@ -80,7 +80,7 @@ class HistoryChangesService
 
         $historyChanges = $this->historyChangesFactory->makeDefault();
         $historyChanges
-            ->setType($type)
+            ->setType($primaryType)
             ->setReferenceType($referenceType)
             ->setPrimaryId($primaryId)
             ->setReferenceId($referenceId)

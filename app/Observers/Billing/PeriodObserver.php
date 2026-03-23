@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PeriodObserver extends AbstractObserver
 {
-    protected function getHistoryType(): HistoryType
+    protected function getPrimaryHistoryType(): HistoryType
     {
         return HistoryType::PERIOD;
     }

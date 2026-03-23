@@ -17,10 +17,10 @@ class InvoiceObserver extends AbstractObserver
     {
         parent::created($item);
 
-        dispatch_sync(new CreateClaimsAndPaymentsForRegularInvoiceJob($item->id));
+        dispatch(new CreateClaimsAndPaymentsForRegularInvoiceJob($item->id));
     }
 
-    protected function getHistoryType(): HistoryType
+    protected function getPrimaryHistoryType(): HistoryType
     {
         return HistoryType::INVOICE;
     }
