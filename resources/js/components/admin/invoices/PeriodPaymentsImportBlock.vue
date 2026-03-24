@@ -138,7 +138,7 @@
                             <tr
                                 v-for="item in districtData.items"
                                 :key="item.invoiceId"
-                                :class="[]"
+                                :class="[item.accountId ? '' : 'table-danger']"
                             >
                                 <td class="text-end">
                                     <a :href="item.accountUrl" target="_blank" v-if="item.accountUrl">
@@ -285,9 +285,9 @@ const fillStrategies = [
 let loadingInterval = null;
 
 const columns = ref({
-    accrued: 'E',
-    paid   : 'T',
-    debt   : 'AI',
+    accrued: 'D',
+    paid   : 'E',
+    debt   : 'F',
 });
 
 const isColumnsValid = computed(() => {

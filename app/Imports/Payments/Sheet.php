@@ -5,9 +5,8 @@ namespace App\Imports\Payments;
 use Core\Domains\Enums\Regexp;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class Sheet implements ToArray, WithCalculatedFormulas, WithStartRow
+class Sheet implements ToArray, WithCalculatedFormulas
 {
     public const string ACCOUNT_NUMBER = 'account_number';
     public const string COST           = 'cost';
@@ -28,17 +27,6 @@ class Sheet implements ToArray, WithCalculatedFormulas, WithStartRow
         if ($accountNumberColumnIndex !== null) {
             $this->accountNumberColumnIndex = $accountNumberColumnIndex;
         }
-    }
-
-    /**
-     * Возвращает номер строки в Excel, с которой начинаются данные (1-based)
-     * Здесь нужно указать строку, после заголовков. Например, если заголовки в 3-й строке,
-     * то данные начинаются с 4-й.
-     */
-    public function startRow(): int
-    {
-        // Укажите правильный номер строки. Если заголовки в 5-й строке, то данные с 6-й.
-        return 6;
     }
 
     protected function sheetIndex(): int
