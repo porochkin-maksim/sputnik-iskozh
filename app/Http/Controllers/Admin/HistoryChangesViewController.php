@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\Controllers\Infra;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\DefaultRequest;
 use App\Models\Infra\HistoryChanges;

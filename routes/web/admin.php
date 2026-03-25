@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
-use App\Http\Controllers\Admin\SentEmailController;
+use App\Http\Controllers\Admin\System\SentEmailController;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\ViewNames;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], static function () {
     Route::group(['middleware' => MiddlewareNames::ADMIN], static function () {
         // история изменений
-        Route::get('/history/changes', Controllers\Infra\HistoryChangesViewController::class)->name(RouteNames::HISTORY_CHANGES);
+        Route::get('/history/changes', Controllers\Admin\HistoryChangesViewController::class)->name(RouteNames::HISTORY_CHANGES);
 
         Route::group(['prefix' => 'json'], static function () {
             Route::group(['prefix' => 'selects'], static function () {
@@ -298,9 +298,9 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
         ;
 
         // просмотр ошибок
-        Route::get('error-logs', [Controllers\Admin\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');
-        Route::get('error-logs/{filename}', [Controllers\Admin\ErrorLogsController::class, 'show'])->name('admin.error-logs.show');
-        Route::get('error-logs/{filename}/details/{index}', [Controllers\Admin\ErrorLogsController::class, 'details'])->name('admin.error-logs.details');
+        Route::get('error-logs', [Controllers\Admin\System\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');
+        Route::get('error-logs/{filename}', [Controllers\Admin\System\ErrorLogsController::class, 'show'])->name('admin.error-logs.show');
+        Route::get('error-logs/{filename}/details/{index}', [Controllers\Admin\System\ErrorLogsController::class, 'details'])->name('admin.error-logs.details');
 
         // Управление очередями
         Route::group(['prefix' => 'queue'], static function () {
