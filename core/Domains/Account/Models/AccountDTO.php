@@ -3,6 +3,7 @@
 namespace Core\Domains\Account\Models;
 
 use Carbon\Carbon;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\UserCollection;
@@ -181,8 +182,17 @@ class AccountDTO
         return $this;
     }
 
-    public function getUsers(): ?UserCollection
+    public function getUsers(bool $lazyLoad = false): ?UserCollection
     {
+        if ( ! $this->users && $lazyLoad) {
+            $this->users = AccountLocator::AccountService()->search(new AccountSearcher()
+                ->setWithUsers()
+                ->setId($this->getId()),
+            )->getItems()->first()
+                ->getUsers()
+            ;
+        }
+
         return $this->users;
     }
 

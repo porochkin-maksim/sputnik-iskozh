@@ -14,7 +14,7 @@ readonly class ServiceFactory
         return new ServiceDTO()
             ->setId(null)
             ->setPeriodId(null)
-            ->setType(ServiceTypeEnum::TARGET_FEE)
+            ->setType(ServiceTypeEnum::OTHER)
             ->setName('')
             ->setIsActive(true)
             ->setCost(0);

@@ -20,6 +20,8 @@ use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
 use Illuminate\Bus\Queueable;
@@ -35,6 +37,7 @@ use RuntimeException;
  */
 class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -44,7 +47,17 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::CREATE_CLAIMS_AND_PAYMENTS_FOR_REGULAR_INVOICE_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return $this->invoiceId;
+    }
+
+    protected function process(): void
     {
         $invoice = InvoiceLocator::InvoiceService()->getById($this->invoiceId);
         if ( ! $invoice) {
@@ -78,7 +91,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         $newClaims = new ClaimCollection();
 
         foreach ($oldDebts as $oldDebtClaim) {
-            $oldService     = $oldDebtClaim->getService();
+            $oldService = $oldDebtClaim->getService();
             if (Str::contains('(долг за период', $oldService?->getName())) {
                 $newServiceName = $oldService?->getName();
             }
@@ -106,6 +119,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
             if ( ! in_array($service->getType(), [
                 ServiceTypeEnum::MEMBERSHIP_FEE,
                 ServiceTypeEnum::TARGET_FEE,
+                ServiceTypeEnum::PERSONAL_FEE,
             ], true)) {
                 continue;
             }
