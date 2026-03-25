@@ -13,7 +13,7 @@ use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Claim\Models\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimLocator;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
-use Core\Domains\Infra\DbLock\LockLocator;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
 use Illuminate\Bus\Queueable;
@@ -21,15 +21,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Log;
-use Throwable;
 
 /**
  * Пересчитывает оплату claims в счёте по платежам
  */
 class RecalcClaimsPaidJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -44,54 +43,17 @@ class RecalcClaimsPaidJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    private static function getLockName(): LockNameEnum
+    protected static function getLockName(): LockNameEnum
     {
         return LockNameEnum::RECALC_CLAIMS_PAID_JOB;
     }
 
-    /**
-     * Диспатчит задачу только если она не была уже запущена для этого счёта
-     */
-    public static function dispatchIfNeeded(int $invoiceId, bool $sync = false): bool
+    protected function getIdentificator(): null|int|string
     {
-        $lockService = LockLocator::LockService();
-        $lockName    = self::getLockName();
-
-        // Проверяем доступность блокировки
-        if ( ! $lockService->isAvailable($lockName, $invoiceId)) {
-            return false;
-        }
-
-        // 1. Сначала создаём блокировку
-        $lockService->lock($lockName, 60, $invoiceId);
-
-        // 2. Диспатчим джобу
-        if ($sync) {
-            dispatch_sync(new self($invoiceId));
-        }
-        else {
-            dispatch(new self($invoiceId)->onQueue(QueueEnum::DEFAULT->value));
-        }
-
-        return true;
+        return $this->invoiceId;
     }
 
-    public function handle(): void
-    {
-        try {
-            $closure = fn() => $this->processRecalculation();
-
-            DB::transaction($closure);
-        }
-        finally {
-            $this->releaseLock();
-        }
-    }
-
-    /**
-     * Основная логика пересчёта
-     */
-    private function processRecalculation(): void
+    protected function process(): void
     {
         $searcher = new InvoiceSearcher();
         $searcher
@@ -201,30 +163,5 @@ class RecalcClaimsPaidJob implements ShouldQueue
         $invoice->setDebt((float) $sortedClaims->getDebt()?->getCost());
 
         InvoiceLocator::InvoiceService()->save($invoice);
-    }
-
-    /**
-     * Освобождает блокировку
-     */
-    private function releaseLock(): void
-    {
-        try {
-            LockLocator::LockService()->release(self::getLockName(), $this->invoiceId);
-        }
-        catch (Throwable $e) {
-            Log::error('Failed to release lock', [
-                'lock_name'  => self::getLockName()->value,
-                'invoice_id' => $this->invoiceId,
-                'error'      => $e->getMessage(),
-            ]);
-        }
-    }
-
-    /**
-     * Обработчик ошибок (вызывается после всех попыток)
-     */
-    public function failed(Throwable $exception): void
-    {
-        $this->releaseLock();
     }
 }

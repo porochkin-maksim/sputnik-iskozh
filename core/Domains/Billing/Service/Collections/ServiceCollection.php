@@ -64,6 +64,7 @@ class ServiceCollection extends Collection implements CollectionInterface
         ServiceTypeEnum::DEBT,
         ServiceTypeEnum::MEMBERSHIP_FEE,
         ServiceTypeEnum::TARGET_FEE,
+        ServiceTypeEnum::PERSONAL_FEE,
         ServiceTypeEnum::ELECTRIC_TARIFF,
         ServiceTypeEnum::OTHER,
         ServiceTypeEnum::ADVANCE_PAYMENT,

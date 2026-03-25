@@ -51,6 +51,7 @@ readonly class ServicesListResource extends AbstractResource
             }
             $periods[$period->getId()]        = $period->getName();
             $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
+                // ServiceTypeEnum::PERSONAL_FEE->name(),
                 ServiceTypeEnum::TARGET_FEE->name() => true,
                 default                             => false,
             });
@@ -64,6 +65,7 @@ readonly class ServicesListResource extends AbstractResource
 
             $type      = $service->getType();
             $available = match ($type) {
+                // ServiceTypeEnum::PERSONAL_FEE,
                 ServiceTypeEnum::TARGET_FEE => true,
                 default                     => false,
             };

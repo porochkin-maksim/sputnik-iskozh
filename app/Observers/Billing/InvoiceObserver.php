@@ -17,7 +17,7 @@ class InvoiceObserver extends AbstractObserver
     {
         parent::created($item);
 
-        dispatch(new CreateClaimsAndPaymentsForRegularInvoiceJob($item->id));
+        CreateClaimsAndPaymentsForRegularInvoiceJob::dispatchIfNeeded($item->id);
     }
 
     protected function getPrimaryHistoryType(): HistoryType
