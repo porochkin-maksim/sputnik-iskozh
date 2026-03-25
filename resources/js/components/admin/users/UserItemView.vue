@@ -119,7 +119,6 @@
                                     :disabled="saving"
                                     :items="roles"
                                     label="Роль"
-                                    placeholder="Роль"
                                 />
                             </div>
                             <div class="col-6 ps-1">

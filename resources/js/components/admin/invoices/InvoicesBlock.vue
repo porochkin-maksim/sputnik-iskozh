@@ -190,7 +190,7 @@ defineOptions({
     name: 'InvoicesBlock',
 });
 
-const { parseResponseErrors, showInfo } = useResponseError();
+const { parseResponseErrors, showInfo, showSuccess } = useResponseError();
 
 const invoice        = ref(null);
 const invoices       = ref([]);
@@ -265,8 +265,14 @@ const makeRegularAction = async () => {
             return;
         }
 
-        await ApiAdminInvoiceCreateRegularInvoices(periodId.value);
-        await listAction();
+        const response = await ApiAdminInvoiceCreateRegularInvoices(periodId.value);
+        if (response.data) {
+            await listAction();
+            showSuccess('Процесс выставления счетов запущен');
+        }
+        else {
+            showInfo('Процесс выставления счетов уже запущен');
+        }
     }
     catch (error) {
         parseResponseErrors(error);

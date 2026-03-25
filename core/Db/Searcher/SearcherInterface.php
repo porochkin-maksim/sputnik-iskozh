@@ -56,6 +56,8 @@ interface SearcherInterface
 
     public function getWhereColumn(): WhereCollection;
 
+    public function getWhereIn(): WhereCollection;
+
     /**
      * @return string[]
      */

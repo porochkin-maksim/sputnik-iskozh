@@ -37,7 +37,6 @@
                                 v-model="payment.accountId"
                                 :items="accounts"
                                 label="Участок"
-                                placeholder="Участок..."
                                 @update:modelValue="getInvoices"
                                 :disabled="invoicesLoading"
                             />
@@ -49,7 +48,6 @@
                                 v-model="periodId"
                                 :items="periods"
                                 label="Период"
-                                placeholder="Период..."
                                 @update:modelValue="getInvoices"
                                 :disabled="invoicesLoading"
                             />
@@ -61,7 +59,6 @@
                                 v-model="payment.invoiceId"
                                 :items="invoices"
                                 label="Счёт"
-                                placeholder="Счёт..."
                                 :disabled="invoicesLoading"
                             />
                         </div>
@@ -96,7 +93,6 @@
                             :errors="errors?.name"
                             label="Название платежа"
                             type="text"
-                            placeholder="необязательно..."
                             :disabled="!payment.actions.edit"
                             @update:modelValue="clearError('name')"
                         />

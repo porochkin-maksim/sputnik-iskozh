@@ -25,9 +25,9 @@ readonly class PaymentService
         return $this->paymentRepository->getById($id);
     }
 
-    public function save(PaymentDTO $counter): PaymentDTO
+    public function save(PaymentDTO $payment): PaymentDTO
     {
-        return $this->paymentRepository->save($counter);
+        return $this->paymentRepository->save($payment);
     }
 
     public function deleteById(?int $id): bool

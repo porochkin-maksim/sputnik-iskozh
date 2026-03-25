@@ -28,16 +28,94 @@
             </div>
         </div>
 
-        <!-- Шаг 1: загрузка файла -->
+        <!-- Режим загрузки -->
+        <div class="mb-3">
+            <div class="btn-group" role="group">
+                <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    :class="{ active: mode === 'single' }"
+                    @click="mode = 'single'"
+                >
+                    Один файл
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    :class="{ active: mode === 'diff' }"
+                    @click="mode = 'diff'"
+                >
+                    Сравнить два файла
+                </button>
+            </div>
+        </div>
+
+        <!-- Файлы для загрузки -->
+        <div class="mb-3">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <div class="border rounded p-2">
+                        <label class="form-label">Основной файл (последний)</label>
+                        <div class="input-group">
+                            <button
+                                class="btn btn-primary"
+                                @click="triggerFileInput('main')"
+                                :disabled="loading || !isColumnsValid"
+                            >
+                                <i class="fa fa-file-excel-o me-2"></i>
+                                Выбрать файл
+                            </button>
+                            <span class="form-control bg-light" v-if="files.main">
+                                {{ files.main.name }}
+                            </span>
+                        </div>
+                        <input
+                            ref="mainFileInput"
+                            type="file"
+                            class="d-none"
+                            accept=".xlsx, .xls, .csv"
+                            @change="onFileSelected('main', $event)"
+                        />
+                    </div>
+                </div>
+                <div class="col-md-6" v-if="mode === 'diff'">
+                    <div class="border rounded p-2">
+                        <label class="form-label">Предыдущий файл (для сравнения)</label>
+                        <div class="input-group">
+                            <button
+                                class="btn btn-secondary"
+                                @click="triggerFileInput('prev')"
+                                :disabled="loading || !isColumnsValid"
+                            >
+                                <i class="fa fa-file-excel-o me-2"></i>
+                                Выбрать файл
+                            </button>
+                            <span class="form-control bg-light" v-if="files.prev">
+                                {{ files.prev.name }}
+                            </span>
+                        </div>
+                        <input
+                            ref="prevFileInput"
+                            type="file"
+                            class="d-none"
+                            accept=".xlsx, .xls, .csv"
+                            @change="onFileSelected('prev', $event)"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка загрузки -->
         <div class="mb-3">
             <div class="btn-group">
                 <button
-                    class="btn btn-primary"
-                    @click="triggerFileInput"
-                    :disabled="loading || !isColumnsValid"
+                    class="btn btn-success"
+                    @click="uploadFiles"
+                    :disabled="loading || !canUpload"
                 >
-                    <i class="fa fa-file-excel-o me-2"></i>
-                    Загрузить файл Excel
+                    <i class="fa fa-upload me-2"></i>
+                    {{ loading ? 'Обработка...' : 'Загрузить и обработать' }}
                 </button>
                 <button
                     class="btn"
@@ -49,13 +127,6 @@
                     {{ submitting ? loadingText : 'Сохранить платежи' }}
                 </button>
             </div>
-            <input
-                ref="fileInput"
-                type="file"
-                class="d-none"
-                accept=".xlsx, .xls, .csv"
-                @change="uploadFile"
-            />
         </div>
 
         <!-- Индикатор загрузки -->
@@ -261,7 +332,15 @@ const props = defineProps({
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
 
-const fileInput        = ref(null);
+const mode  = ref('single'); // 'single' | 'diff'
+const files = ref({
+    main: null,
+    prev: null,
+});
+
+const mainFileInput = ref(null);
+const prevFileInput = ref(null);
+
 const loading          = ref(false);
 const submitting       = ref(false);
 const importData       = ref(null);
@@ -270,7 +349,7 @@ const error            = ref(null);
 const activeTab        = ref(0);
 const loadingStartTime = ref(null);
 const loadingText      = ref('Обработка файла...');
-const autoFillStrategy = ref({}); // ключ = district
+const autoFillStrategy = ref({});
 
 const fillStrategies = [
     { value: 'manual', label: 'Ручной ввод' },
@@ -281,8 +360,6 @@ const fillStrategies = [
     { value: 'minDebt', label: 'Минимальный долг' },
     { value: 'zero', label: 'Обнулить' },
 ];
-
-let loadingInterval = null;
 
 const columns = ref({
     accrued: 'D',
@@ -296,14 +373,25 @@ const isColumnsValid = computed(() => {
         columns.value.debt.trim() !== '';
 });
 
+const canUpload = computed(() => {
+    if (!isColumnsValid.value) {
+        return false;
+    }
+    if (mode.value === 'single') {
+        return !!files.value.main;
+    }
+    return !!files.value.main && !!files.value.prev;
+});
+
 const getKey = (district, item) => `${district}:${item.invoiceId}`;
+
+let loadingInterval = null;
 
 const startTimer = (isSaving = false) => {
     loadingStartTime.value = Date.now();
     if (loadingInterval) {
         clearInterval(loadingInterval);
     }
-
     loadingInterval = setInterval(() => {
         if (!loading.value && !submitting.value) {
             clearInterval(loadingInterval);
@@ -315,7 +403,7 @@ const startTimer = (isSaving = false) => {
         const timeStr     = minutes > 0 ? `${minutes} мин ${seconds} сек` : `${seconds} сек`;
         loadingText.value = isSaving
             ? `Сохранение платежей... (${timeStr})`
-            : `Обработка файла... (${timeStr})`;
+            : `Обработка файлов... (${timeStr})`;
     }, 1000);
 };
 
@@ -324,14 +412,28 @@ const stopTimer = () => {
         clearInterval(loadingInterval);
     }
     loadingStartTime.value = null;
-    loadingText.value      = 'Обработка файла...';
+    loadingText.value      = 'Обработка файлов...';
 };
 
-const triggerFileInput = () => fileInput.value?.click();
+const triggerFileInput = (type) => {
+    if (type === 'main') {
+        mainFileInput.value?.click();
+    }
+    else {
+        prevFileInput.value?.click();
+    }
+};
 
-const uploadFile = async (event) => {
+const onFileSelected = (type, event) => {
     const file = event.target.files[0];
     if (!file) {
+        return;
+    }
+    files.value[type] = file;
+};
+
+const uploadFiles = async () => {
+    if (!canUpload.value) {
         return;
     }
 
@@ -342,10 +444,14 @@ const uploadFile = async (event) => {
     editedAmounts.value = {};
 
     const formData = new FormData();
-    formData.append('file', file);
     formData.append('col_accrued', columns.value.accrued);
     formData.append('col_paid', columns.value.paid);
     formData.append('col_debt', columns.value.debt);
+    formData.append('mode', mode.value);
+    formData.append('file_main', files.value.main);
+    if (mode.value === 'diff') {
+        formData.append('file_prev', files.value.prev);
+    }
 
     try {
         const response   = await ApiAdminInvoiceImportPaymentsParseFile(props.periodId, {}, formData);
@@ -354,26 +460,30 @@ const uploadFile = async (event) => {
         // Инициализация стратегий и значений
         for (const districtData of importData.value) {
             const district = districtData.district;
-            // Устанавливаем стратегию по умолчанию
             if (!autoFillStrategy.value[district]) {
                 autoFillStrategy.value[district] = 'difference';
             }
-            // Применяем стратегию
             applyAutoFill(district);
         }
     }
     catch (err) {
-        error.value = err.response?.data?.message || 'Ошибка при загрузке файла';
+        error.value = err.response?.data?.message || 'Ошибка при загрузке файлов';
         parseResponseErrors(err);
     }
     finally {
         loading.value = false;
         stopTimer();
-        if (fileInput.value) {
-            fileInput.value.value = '';
+        // Очищаем файлы после загрузки (по желанию)
+        files.value = { main: null, prev: null };
+        if (mainFileInput.value) {
+            mainFileInput.value.value = '';
+        }
+        if (prevFileInput.value) {
+            prevFileInput.value.value = '';
         }
     }
 };
+
 
 const validateAmount = (district, item) => {
     const key  = getKey(district, item);
@@ -441,7 +551,7 @@ const submitPayments = async () => {
     }
 
     try {
-        ApiAdminInvoiceImportPaymentsSave(props.periodId, {}, payload);
+        await ApiAdminInvoiceImportPaymentsSave(props.periodId, {}, payload);
         showInfo('Платежи будут сохранены в фоне');
         importData.value    = null;
         editedAmounts.value = {};

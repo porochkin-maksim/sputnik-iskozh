@@ -26,9 +26,9 @@ readonly class ClaimService
         return $this->claimRepository->getById($id);
     }
 
-    public function save(ClaimDTO $counter): ClaimDTO
+    public function save(ClaimDTO $item): ClaimDTO
     {
-        return $this->claimRepository->save($counter);
+        return $this->claimRepository->save($item);
     }
 
     public function deleteById(?int $id): bool

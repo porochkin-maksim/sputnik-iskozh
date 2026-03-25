@@ -2,13 +2,18 @@
 
 namespace Core\Domains\Billing\Invoice\Services;
 
+use App\Observers\Billing\InvoiceObserver;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Repositories\InvoiceRepository;
 use Core\Domains\Billing\Invoice\Responses\InvoiceSearchResponse;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 
+/**
+ * @see InvoiceObserver
+ */
 readonly class InvoiceService
 {
     public function __construct(
@@ -44,5 +49,10 @@ readonly class InvoiceService
         })->toArray();
 
         return AccountLocator::AccountService()->getByIds($result);
+    }
+
+    public function recalcInvoice(int $invoiceId, bool $sync = false): bool
+    {
+        return RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId, $sync);
     }
 }

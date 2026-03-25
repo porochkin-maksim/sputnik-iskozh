@@ -80,4 +80,11 @@ class ServiceCollection extends Collection implements CollectionInterface
             return 0;
         });
     }
+
+    public function getByType(ServiceTypeEnum $type): self
+    {
+        return $this->filter(function (ServiceDTO $service) use ($type) {
+            return $service->getType() === $type;
+        });
+    }
 }

@@ -69,4 +69,9 @@ trait CollectionTrait
 
         return null;
     }
+
+    public function removeById(?int $id): ?object
+    {
+        return $this->reject(fn($item) => $item->getId() === $id);
+    }
 }

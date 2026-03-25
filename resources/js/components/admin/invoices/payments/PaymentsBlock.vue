@@ -51,7 +51,6 @@
                         label="Название платежа"
                         type="text"
                         :disabled="!payment.actions.edit || loading"
-                        placeholder="необязательно..."
                         @update:modelValue="clearError('name')"
                     />
                 </div>

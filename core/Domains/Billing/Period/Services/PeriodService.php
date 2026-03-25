@@ -27,9 +27,9 @@ readonly class PeriodService
         return $this->periodRepository->getById($id);
     }
 
-    public function save(PeriodDTO $counter): PeriodDTO
+    public function save(PeriodDTO $period): PeriodDTO
     {
-        return $this->periodRepository->save($counter);
+        return $this->periodRepository->save($period);
     }
 
     public function deleteById(?int $id): bool

@@ -9,10 +9,13 @@ use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceImportDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Payment\Factories\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\PaymentService;
+use Core\Domains\Billing\Jobs\SaveImportPaymentsJob;
 use Core\Domains\Billing\Period\Models\PeriodDTO;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
+use Core\Domains\Infra\DbLock\Jobs\LockedJob;
+use Core\Domains\Infra\DbLock\LockLocator;
+use Core\Domains\Infra\DbLock\Service\LockService;
+use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
 use Illuminate\Http\UploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,28 +24,27 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class InvoiceImportService
 {
     private InvoiceService $invoiceService;
-    private PaymentService $paymentService;
-    private PaymentFactory $paymentFactory;
+    private LockService    $lockService;
 
     public function __construct()
     {
         $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->paymentService = PaymentLocator::PaymentService();
-        $this->paymentFactory = PaymentLocator::PaymentFactory();
+        $this->lockService    = LockLocator::LockService();
     }
 
     /**
      * Парсит Excel-файл и возвращает структурированные данные для фронта
      */
     public function parseFile(
-        UploadedFile $file,
-        PeriodDTO    $period,
-        string       $colAccrued,
-        string       $colPaid,
-        string       $colDebt,
+        UploadedFile  $fileMain,
+        ?UploadedFile $filePrev,
+        PeriodDTO     $period,
+        string        $colAccrued,
+        string        $colPaid,
+        string        $colDebt,
     ): array
     {
-        $spreadsheet = IOFactory::load($file->getRealPath());
+        $spreadsheet = IOFactory::load($fileMain->getRealPath());
 
         // Импорт данных из Excel
         $import = new PaymentsImport(
@@ -51,9 +53,22 @@ class InvoiceImportService
             $colDebt,
             $spreadsheet->getSheetCount(),
         );
-        Excel::import($import, $file);
 
-        $sheetsData = $import->getSheetsData(); // массив строк из импорта
+        $importOld = new PaymentsImport(
+            $colAccrued,
+            $colPaid,
+            $colDebt,
+            $spreadsheet->getSheetCount(),
+        );
+
+        Excel::import($import, $fileMain);
+
+        if ($filePrev) {
+            Excel::import($importOld, $filePrev);
+        }
+
+        $sheetsData     = $import->getSheetsData();
+        $sheetsDataPrev = $importOld->getSheetsData();
 
         $invoices = $this->invoiceService->search(
             new InvoiceSearcher()
@@ -95,7 +110,7 @@ class InvoiceImportService
                 'district' => $district,
                 'items'    => [],
             ];
-            foreach ($rows as $row) {
+            foreach ($rows as $rowIndex => $row) {
                 $accountNumber = $row[Sheet::ACCOUNT_NUMBER];
 
                 /** @var null|array<string, mixed> $invoice */
@@ -111,9 +126,9 @@ class InvoiceImportService
                     InvoiceImportDTO::INVOICE_DELTA   => $invoice[InvoiceImportDTO::INVOICE_DELTA] ?? null,
                     InvoiceImportDTO::INVOICE_ADVANCE => $invoice[InvoiceImportDTO::INVOICE_ADVANCE] ?? null,
                     InvoiceImportDTO::INVOICE_DEBT    => $invoice[InvoiceImportDTO::INVOICE_DEBT] ?? null,
-                    InvoiceImportDTO::COST            => $row[Sheet::COST],
-                    InvoiceImportDTO::PAID            => $row[Sheet::PAID],
-                    InvoiceImportDTO::DEBT            => $row[Sheet::DEBT],
+                    InvoiceImportDTO::COST            => $row[Sheet::COST] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::COST] ?? 0),
+                    InvoiceImportDTO::PAID            => $row[Sheet::PAID] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::PAID] ?? 0),
+                    InvoiceImportDTO::DEBT            => $row[Sheet::DEBT] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::DEBT] ?? 0),
                 ]);
 
                 $sheetResult['items'][] = $dto;
@@ -130,23 +145,19 @@ class InvoiceImportService
      */
     public function savePayments(array $paymentsData): void
     {
-        foreach ($paymentsData as $paymentData) {
-            $invoiceId = (int) ($paymentData['invoice_id'] ?? 0);
-            $cost      = (float) ($paymentData['amount'] ?? 0);
+        $lockName = LockNameEnum::SAVE_IMPORT_PAYMENTS_JOB;
 
-            if ( ! $invoiceId || ! $cost || $cost <= 0) {
-                continue;
-            }
-
-            $payment = $this->paymentFactory->makeDefault()
-                ->setInvoiceId($invoiceId)
-                ->setCost($cost)
-                ->setVerified(true)
-                ->setModerated(true)
-                ->setName('Импортированный платёж')
-            ;
-
-            $this->paymentService->save($payment);
+        if ( ! $this->lockService->isAvailable($lockName)) {
+            abort(403, 'Задача уже запущена');
         }
+
+        $this->lockService->lock($lockName);
+
+        // Оборачиваем в LockedJob
+        dispatch(new LockedJob(
+            SaveImportPaymentsJob::class,
+            [$paymentsData],
+            $lockName,
+        )->onQueue(QueueEnum::DEFAULT->value));
     }
 }

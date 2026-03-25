@@ -2,7 +2,6 @@
 
 namespace Core\Db\Searcher;
 
-use App\Models\User;
 use Core\Db\Searcher\Collections\WhereCollection;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\Where;
@@ -28,7 +27,7 @@ trait SearcherTrait
     private ?WhereCollection $where       = null;
     private ?WhereCollection $orWhere     = null;
     private ?WhereCollection $whereColumn = null;
-    private array            $whereIn     = [];
+    private ?WhereCollection $whereIn     = null;
 
     private ?string $search = null;
 
@@ -198,6 +197,16 @@ trait SearcherTrait
         return $this->whereColumn;
     }
 
+    /** Выборка */
+    public function getWhereIn(): WhereCollection
+    {
+        if ( ! isset($this->whereIn)) {
+            $this->whereIn = new WhereCollection();
+        }
+
+        return $this->whereIn;
+    }
+
     public function addWhere(string $field, string $operator, mixed $value = null): static
     {
         $this->getWhere()->push(new Where($field, $operator, $value));
@@ -212,19 +221,18 @@ trait SearcherTrait
         return $this;
     }
 
+    public function addWhereIn(string $field, mixed $value = null): static
+    {
+        $this->getWhereIn()->push(new Where($field, '', $value));
+
+        return $this;
+    }
+
     public function addWhereColumn(string $field1, string $operator, mixed $field2 = null): static
     {
         $this->getWhereColumn()->push(new Where($field1, $operator, $field2));
 
         return $this;
-    }
-
-    /**
-     * @return Where[]
-     */
-    public function getWhereIn(): array
-    {
-        return $this->whereIn;
     }
 
     public function getGroupsBy(): array

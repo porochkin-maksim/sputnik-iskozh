@@ -199,13 +199,13 @@ class InvoiceController extends Controller
         return $this->invoiceService->getAccountsWithoutRegularInvoice($periodId)->count();
     }
 
-    public function createRegularInvoices(int $periodId): void
+    public function createRegularInvoices(int $periodId): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
-        dispatch(new CreateRegularPeriodInvoicesJob($periodId));
+        return CreateRegularPeriodInvoicesJob::dispatchIfNeeded($periodId);
     }
 
     /**

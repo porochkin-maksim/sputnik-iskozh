@@ -4,13 +4,22 @@ namespace App\Observers\Billing;
 
 use App\Models\Billing\Payment;
 use App\Observers\AbstractObserver;
-use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
+use Carbon\Carbon;
+use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Payment\Jobs\NotifyAboutNewUnverifiedPaymentJob;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentObserver extends AbstractObserver
 {
+    /**
+     * @var Payment $item
+     */
+    public function creating(Model $item): void
+    {
+        $item->paid_at = $item->paid_at ?: Carbon::now();
+    }
+
     /**
      * @var Payment $item
      */
@@ -23,7 +32,7 @@ class PaymentObserver extends AbstractObserver
             && $item->verified
             && $item->moderated
         ) {
-            dispatch(new RecalcClaimsPaidJob($item->invoice_id));
+            InvoiceLocator::InvoiceService()->recalcInvoice($item->invoice_id);
         }
         else {
             dispatch(new NotifyAboutNewUnverifiedPaymentJob($item->id));
@@ -43,7 +52,7 @@ class PaymentObserver extends AbstractObserver
             && $item->moderated
             && $item->getOriginal(Payment::COST) !== $item->getAttribute(Payment::COST)
         ) {
-            dispatch(new RecalcClaimsPaidJob($item->invoice_id));
+            InvoiceLocator::InvoiceService()->recalcInvoice($item->invoice_id);
         }
     }
 

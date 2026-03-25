@@ -195,6 +195,10 @@ trait RepositoryTrait
                 foreach ($searcher->getWhereColumn() as $where) {
                     $query->whereColumn($where->getField(), $where->getOperator(), $where->getValue());
                 }
+            })->when($searcher->getWhereIn(), function (Builder $query) use ($searcher) {
+                foreach ($searcher->getWhereIn() as $where) {
+                    $query->whereIn($where->getField(), $where->getValue());
+                }
             })->when($searcher->getSortProperties(), function (Builder $query) use ($searcher) {
                 foreach ($searcher->getSortProperties() as $sort) {
                     $query->orderBy($this->adaptFieldName($sort->getField()), $sort->getValue());

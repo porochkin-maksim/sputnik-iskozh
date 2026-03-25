@@ -33,18 +33,25 @@ class PaymentImportController extends Controller
     {
         $period = $this->fetchPeriod($periodId);
 
-        $file       = $request->file('file');
+        $fileMain   = $request->file('file_main');
+        $filePrev   = $request->file('file_prev');
+        $mode       = $request->getString('mode');
         $colAccrued = $request->input('col_accrued');
         $colPaid    = $request->input('col_paid');
         $colDebt    = $request->input('col_debt');
 
-        if ( ! $file) {
-            abort(412, 'Не передан файл');
+        if ( ! $fileMain) {
+            abort(412, 'Не передан основной файл');
+        }
+
+        if ($mode === 'diff' && ! $filePrev) {
+            abort(412, 'Не передан предыдущий файл');
         }
 
         try {
             $result = $this->paymentImportService->parseFile(
-                $file,
+                $fileMain,
+                $filePrev,
                 $period,
                 $colAccrued,
                 $colPaid,
@@ -63,10 +70,14 @@ class PaymentImportController extends Controller
         $this->paymentImportService->savePayments($request->getArray('payments'));
     }
 
-    private function fetchPeriod(int $periodId): ?PeriodDTO
+    private function fetchPeriod(int $periodId): PeriodDTO
     {
-        $period = $this->periodService->getActive();
-        if ($period?->getId() !== $periodId) {
+        $period = $this->periodService->getById($periodId);
+        if ( ! $period) {
+            abort(404, 'Период не найден');
+        }
+
+        if ($period->isClosed()) {
             abort(403, 'Период закрыт');
         }
 
