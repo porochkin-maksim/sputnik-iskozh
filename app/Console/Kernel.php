@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('schedule:clear-cache')->dailyAt('03:00');
 
         $this->scheduleQueues($schedule);
+        $this->scheduleLocksCleanup($schedule);
+        $this->scheduleResetAutoIncrement($schedule);
     }
 
     protected function commands(): void
@@ -46,16 +48,40 @@ class Kernel extends ConsoleKernel
             ->monthly()
             ->name('db.clear-old-data')
         ;
-        // // Запускаем по 3 воркера на каждую очередь
-        // $schedule->command('queue:worker:start --workers=3')
-        //     ->everyMinute()
-        //     ->name('queue.workers')
-        //     ->appendOutputTo(storage_path('logs/queue-workers.log'));
+    }
 
-        // $schedule->job(new AutoIncrementingCounterHistoriesJob())
-        //     ->dailyAt('08:30')
-        //     ->name('AutoIncrementingCounterHistoriesJob')
-        //     ->withoutOverlapping()
-        // ;
+    /**
+     * Расписание очистки блокировок
+     */
+    private function scheduleLocksCleanup(Schedule $schedule): void
+    {
+        // Очистка истекших блокировок каждый час
+        $schedule->command('db:clear-locks --expired-only --force')
+            ->hourly()
+            ->name('locks.clear-expired')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/locks-cleanup.log'))
+        ;
+
+        // Дополнительно: раз в сутки в 03:30 чистим старые активные блокировки (старше 24 часов)
+        $schedule->command('db:clear-locks --older-than=1440 --force')
+            ->dailyAt('03:30')
+            ->name('locks.clear-stale')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/locks-cleanup.log'))
+        ;
+    }
+
+    /**
+     * Расписание сброса AUTO_INCREMENT для всех таблиц
+     */
+    private function scheduleResetAutoIncrement(Schedule $schedule): void
+    {
+        $schedule->command('db:reset-auto-increment --force')
+            ->dailyAt('04:00')
+            ->name('db.reset-auto-increment')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/auto-increment-reset.log'))
+        ;
     }
 }

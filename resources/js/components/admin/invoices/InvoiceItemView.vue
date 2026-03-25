@@ -3,8 +3,9 @@
         <!-- Заголовок -->
         <h4 class="mb-3" v-if="localInvoice.id">
             Детали счёта №{{ localInvoice.id }}
+            для «{{ localInvoice.account?.number || '—' }}»
             <span class="text-muted fw-normal">
-                для «{{ localInvoice.account?.number || '—' }}» | {{ localInvoice.displayName || '—' }}
+                 | {{ localInvoice.periodName }} | {{ localInvoice.displayName || '—' }}
             </span>
         </h4>
 

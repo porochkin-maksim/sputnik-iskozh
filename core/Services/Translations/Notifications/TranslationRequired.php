@@ -2,38 +2,38 @@
 
 namespace Core\Services\Translations\Notifications;
 
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use InvalidArgumentException;
 
-class TranslationRequired extends Notification// implements ShouldQueue
+class TranslationRequired extends Notification implements ShouldQueue
 {
-    // use Queueable;
+    use Queueable;
 
     public function __construct(
         private readonly string $key,
     )
     {
+        if (empty($this->key)) {
+            throw new InvalidArgumentException('Translation key cannot be empty');
+        }
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject('Необходимо добавить перевод')
-            ->line($this->key)
             ->greeting(' ')
-            ->salutation(' ');
+            ->salutation(' ')
+            ->line('Требуется добавить перевод для следующего ключа:')
+            ->line("🔑 Ключ: {$this->key}")
+        ;
     }
 }

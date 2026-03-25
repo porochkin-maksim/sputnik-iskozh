@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Exceptions;
 
-use App\Mail\ExceptionMail;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use lc;
 use Throwable;
 

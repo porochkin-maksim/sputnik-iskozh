@@ -18,14 +18,12 @@ class RecalcPeriodInvoices extends Command
         $periodId   = (int) $this->option('period');
         $invoiceRaw = $this->option('invoice');
 
-        // Проверяем, что задан либо период, либо список счетов
         if ( ! $periodId && empty($invoiceRaw)) {
             $this->error('Необходимо указать --period или --invoice');
 
             return;
         }
 
-        // Формируем список ID счетов
         $invoiceIds = [];
         if ( ! empty($invoiceRaw)) {
             $invoiceIds = array_filter(
@@ -39,7 +37,6 @@ class RecalcPeriodInvoices extends Command
             }
         }
 
-        // Получаем счета
         $searcher = new InvoiceSearcher();
         if ($periodId) {
             $searcher->setPeriodId($periodId);
@@ -65,21 +62,34 @@ class RecalcPeriodInvoices extends Command
         $errors  = 0;
 
         $progressBar = $this->output->createProgressBar($invoices->count());
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
+        $progressBar->setMessage('Обработка...');
         $progressBar->start();
 
         foreach ($invoices as $invoice) {
-            $result = InvoiceLocator::InvoiceService()->recalcInvoice($invoice->getId(), true);
+            try {
+                $result = InvoiceLocator::InvoiceService()->recalcInvoice($invoice->getId(), true);
 
-            if ($result === true) {
-                $sent++;
-                $this->line("\n✅ Пересчёт счёта #{$invoice->getId()} отправлен");
+                if ($result === true) {
+                    $sent++;
+                    $progressBar->setMessage("✅ Счёт #{$invoice->getId()} отправлен");
+                }
+                elseif ($result === false) {
+                    $blocked++;
+                    $progressBar->setMessage("⏳ Счёт #{$invoice->getId()} уже в очереди");
+                }
+                else {
+                    $errors++;
+                    $progressBar->setMessage("❌ Ошибка счёта #{$invoice->getId()}");
+                }
             }
-            elseif ($result === false) {
-                $blocked++;
-                $this->warn("\n⏳ Счёт #{$invoice->getId()} уже в очереди (блокировка)");
+            catch (\Throwable $e) {
+                $errors++;
+                $progressBar->setMessage("❌ Исключение счёта #{$invoice->getId()}: " . $e->getMessage());
             }
 
             $progressBar->advance();
+            usleep(50000); // небольшая задержка для читаемости сообщений (50 мс)
         }
 
         $progressBar->finish();
