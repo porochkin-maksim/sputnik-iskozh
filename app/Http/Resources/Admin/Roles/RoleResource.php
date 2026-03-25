@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Roles;
 
+use App\Http\Resources\Admin\Users\UsersResource;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -29,6 +30,7 @@ readonly class RoleResource extends AbstractResource
                 ResponsesEnum::EDIT => $access->can(PermissionEnum::ROLES_EDIT),
                 ResponsesEnum::DROP => $access->can(PermissionEnum::ROLES_DROP),
             ],
+            'users'       => $this->role->getUsers() ? new UsersResource($this->role->getUsers()) : null,
         ];
     }
 }

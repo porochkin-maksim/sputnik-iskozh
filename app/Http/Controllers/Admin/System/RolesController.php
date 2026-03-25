@@ -50,7 +50,9 @@ class RolesController extends Controller
             abort(403);
         }
 
-        $searcher = new RoleSearcher();
+        $searcher = new RoleSearcher()
+            ->setWithUsers()
+        ;
         $roles    = $this->roleService->search($searcher);
 
         return response()->json(new RolesListResource($roles->getItems()));

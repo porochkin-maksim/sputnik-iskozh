@@ -194,6 +194,31 @@
             "id": "{id}"
         }
     },
+    "adminEmailsDestroy": {
+        "name": "admin.emails.destroy",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/emails\/{email}",
+        "args": {
+            "email": "{email}"
+        }
+    },
+    "adminEmailsIndex": {
+        "name": "admin.emails.index",
+        "displayName": "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u043f\u0438\u0441\u0435\u043c",
+        "method": "get",
+        "uri": "\/admin\/emails",
+        "args": []
+    },
+    "adminEmailsShow": {
+        "name": "admin.emails.show",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/emails\/{email}",
+        "args": {
+            "email": "{email}"
+        }
+    },
     "adminErrorLogsDetails": {
         "name": "admin.error-logs.details",
         "displayName": "",

@@ -110,6 +110,21 @@ export function ApiAdminDocumentReceiptInvoice(id, getParams = {}, postData = nu
     return window.axios.get(makeQuery('/admin/invoices/view/'+id+'/invoice-receipt', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminEmailsDestroy(email, getParams = {}, postData = null) {
+    // see admin.emails.destroy
+    return window.axios.delete(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminEmailsIndex(getParams = {}, postData = null) {
+    // see admin.emails.index
+    return window.axios.get(makeQuery('/admin/emails', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminEmailsShow(email, getParams = {}, postData = null) {
+    // see admin.emails.show
+    return window.axios.get(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminErrorLogsDetails(filename,index, getParams = {}, postData = null) {
     // see admin.error-logs.details
     return window.axios.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams), prepareRequestData(postData));

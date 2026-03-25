@@ -35,7 +35,7 @@
 
         <template v-else>
             <div class="row">
-                <div class="col-8">
+                <div class="col-4">
                     <table v-if="actions.view" class="table table-sm">
                         <thead>
                         <tr>
@@ -83,79 +83,93 @@
                 </div>
 
                 <!-- Правая панель с правами -->
-                <div v-if="selectedRole" class="col-4">
-                    <div class="input-group input-group-sm mb-2">
-                        <template v-if="selectedRole?.actions?.edit">
-                            <button
-                                class="btn btn-success"
-                                @click="saveAction"
-                                :disabled="!canSave || saving"
-                            >
-                                <i
-                                    class="fa"
-                                    :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"
-                                ></i>
-                            </button>
-                            <input
-                                type="text"
-                                class="form-control name"
-                                placeholder="Название"
-                                v-model="selectedRole.name"
-                                :disabled="saving"
-                            />
-                        </template>
-                        <template v-else>
-                            <div class="p-2 border w-100">{{ selectedRole.name }}</div>
-                        </template>
-                    </div>
-
-                    <!-- Разрешения -->
-                    <div v-for="(group, section) in permissions" :key="section">
-                        <ul class="list-group list-unstyled">
-                            <template v-if="selectedRole?.actions?.edit">
-                                <!-- Секция (группа) -->
-                                <li class="fw-bold mb-2">
+                <div v-if="selectedRole" class="col-8">
+                    <div class="d-flex">
+                        <div class="w-50 pe-2">
+                            <div v-if="selectedRole?.users?.length">
+                                <b>Участники</b>
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item" v-for="user in selectedRole?.users" :key="user.id">
+                                        <a :href="user.viewUrl">{{ user.fullName }}</a>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="w-50 ps-2">
+                            <div class="input-group input-group-sm mb-2">
+                                <template v-if="selectedRole?.actions?.edit">
+                                    <button
+                                        class="btn btn-success"
+                                        @click="saveAction"
+                                        :disabled="!canSave || saving"
+                                    >
+                                        <i
+                                            class="fa"
+                                            :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"
+                                        ></i>
+                                    </button>
                                     <input
-                                        class="form-check-input cursor-pointer"
-                                        type="checkbox"
-                                        :id="vueId + section"
-                                        :checked="isSectionChecked(section)"
+                                        type="text"
+                                        class="form-control name"
+                                        placeholder="Название"
+                                        v-model="selectedRole.name"
                                         :disabled="saving"
-                                        @change="onChangedSection(section)"
                                     />
-                                    <label :for="vueId + section" class="cursor-pointer ms-2">
-                                        {{ group[section] || section }}
-                                    </label>
-                                </li>
-                                <!-- Остальные элементы группы -->
-                                <li v-for="(label, code) in group" :key="code">
-                                    <template v-if="code !== section">
-                                        <input
-                                            class="form-check-input cursor-pointer"
-                                            type="checkbox"
-                                            :id="vueId + code"
-                                            :checked="isChecked(code)"
-                                            :disabled="saving"
-                                            @change="onChanged(code)"
-                                        />
-                                        <label :for="vueId + code" class="cursor-pointer ms-2">
-                                            {{ label }}
-                                        </label>
+                                </template>
+                                <template v-else>
+                                    <div class="p-2 border w-100">{{ selectedRole.name }}</div>
+                                </template>
+                            </div>
+
+                            <!-- Разрешения -->
+                            <div v-for="(group, section) in permissions" :key="section">
+                                <ul class="list-group list-unstyled">
+                                    <template v-if="selectedRole?.actions?.edit">
+                                        <!-- Секция (группа) -->
+                                        <li class="fw-bold mb-2">
+                                            <input
+                                                class="form-check-input cursor-pointer"
+                                                type="checkbox"
+                                                :id="vueId + section"
+                                                :checked="isSectionChecked(section)"
+                                                :disabled="saving"
+                                                @change="onChangedSection(section)"
+                                            />
+                                            <label :for="vueId + section" class="cursor-pointer ms-2">
+                                                {{ group[section] || section }}
+                                            </label>
+                                        </li>
+                                        <!-- Остальные элементы группы -->
+                                        <li v-for="(label, code) in group" :key="code">
+                                            <template v-if="code !== section">
+                                                <input
+                                                    class="form-check-input cursor-pointer"
+                                                    type="checkbox"
+                                                    :id="vueId + code"
+                                                    :checked="isChecked(code)"
+                                                    :disabled="saving"
+                                                    @change="onChanged(code)"
+                                                />
+                                                <label :for="vueId + code" class="cursor-pointer ms-2">
+                                                    {{ label }}
+                                                </label>
+                                            </template>
+                                        </li>
                                     </template>
-                                </li>
-                            </template>
-                            <template v-else>
-                                <!-- Режим просмотра -->
-                                <li v-for="(label, code) in group" :key="code">
-                                    <i
-                                        class="fa"
-                                        :class="isChecked(code) ? 'fa-check text-success' : 'fa-check text-light'"
-                                    ></i>
-                                    <span class="ms-2">{{ label }}</span>
-                                </li>
-                            </template>
-                        </ul>
-                        <hr />
+                                    <template v-else>
+                                        <!-- Режим просмотра -->
+                                        <li v-for="(label, code) in group" :key="code">
+                                            <i
+                                                class="fa"
+                                                :class="isChecked(code) ? 'fa-check text-success' : 'fa-check text-light'"
+                                            ></i>
+                                            <span class="ms-2">{{ label }}</span>
+                                        </li>
+                                    </template>
+                                </ul>
+                                <hr />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
