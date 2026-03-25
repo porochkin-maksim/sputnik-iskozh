@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
+use App\Http\Controllers\Admin\SentEmailController;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
 use Core\Resources\Views\ViewNames;
@@ -285,6 +286,16 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
                 Route::post('/confirm-delete', [Controllers\Admin\Requests\CounterController::class, 'confirmDelete'])->name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_CONFIRM_DELETE);
             });
         });
+
+        // просмотр истории отправки писем
+        Route::resource('emails', SentEmailController::class)
+            ->only(['index', 'show', 'destroy'])
+            ->names([
+                'index'   => 'admin.emails.index',
+                'show'    => 'admin.emails.show',
+                'destroy' => 'admin.emails.destroy',
+            ])
+        ;
 
         // просмотр ошибок
         Route::get('error-logs', [Controllers\Admin\ErrorLogsController::class, 'index'])->name('admin.error-logs.index');

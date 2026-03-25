@@ -140,6 +140,13 @@ $cutRouteNameFn = static function (string $routeName) {
                 </a>
                 @endif
 
+                @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
+                <a class="@if(Route::is('admin.emails.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_EMAILS) }}">
+                    <i class="fa fa-envelope me-2"></i>
+                    <span>{{ RouteNames::name(RouteNames::ADMIN_EMAILS) }}</span>
+                </a>
+                @endif
+
                 @if($authRole->canAccessAdmin())
                 <a class="@if(Route::is('admin.error-logs.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ERRORS) }}">
                     <i class="fa fa-exclamation-triangle me-2"></i>

@@ -201,6 +201,7 @@ abstract class RouteNames
     public const string ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
     public const string ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
     public const string ADMIN_ERRORS           = 'admin.error-logs.index';
+    public const string ADMIN_EMAILS           = 'admin.emails.index';
 
     public const string ADMIN_QUEUE        = 'admin.queue';
     public const string ADMIN_QUEUE_STATUS = 'admin.queue.status';
@@ -251,6 +252,7 @@ abstract class RouteNames
             self::ADMIN_NEW_PAYMENT_INDEX             => 'Новые платежи',
             self::ADMIN_REQUEST_COUNTER_HISTORY_INDEX => 'Счётчики',
             self::ADMIN_ERRORS                        => 'Журнал ошибок',
+            self::ADMIN_EMAILS                        => 'История писем',
             self::ADMIN_QUEUE                         => 'Очереди',
             self::HISTORY_CHANGES                     => 'История изменений',
 
