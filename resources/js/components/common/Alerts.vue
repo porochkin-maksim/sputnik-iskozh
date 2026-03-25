@@ -25,11 +25,14 @@
             <div
                 v-for="msg in messages"
                 :key="msg.id"
-                class="message cursor-pointer"
-                :class="'border-' + msg.type"
+                class="message cursor-pointer alert"
+                :class="['border-' + msg.type, 'alert-' + msg.type]"
                 @click="removeMessage(msg.id)"
             >
-                <span class="message-text">{{ msg.text }}</span>
+                <div class="message-icon" :class="'bg-' + msg.type">
+                    <i class="fa fa-info-circle"></i>
+                </div>
+                <div class="message-text">{{ msg.text }}</div>
             </div>
         </transition-group>
     </div>
@@ -45,7 +48,7 @@ import {
 import { useStore } from 'vuex';
 
 defineOptions({
-    name: 'AlertsBlock' // или любое другое имя, под которым вы регистрируете компонент
+    name: 'AlertsBlock',
 });
 
 const props = defineProps({
@@ -63,13 +66,12 @@ const allErrors   = computed(() => store.getters['alerts/allErrors'] || []);
 const removeMessage = (id) => store.dispatch('alerts/removeMessage', id);
 const removeErrors  = () => store.dispatch('alerts/removeErrors');
 
-// Хранилище таймеров для автоматического скрытия
 const timeouts = new Map();
 
 const messages = computed(() => allMessages.value.slice().reverse());
 const errors   = computed(() => allErrors.value);
 
-// Автоматическое скрытие через 5 секунд
+// Автоматическое скрытие
 watch(messages, (newMessages, oldMessages) => {
     // Очистка таймеров для удалённых сообщений
     oldMessages.forEach(msg => {
@@ -88,7 +90,7 @@ watch(messages, (newMessages, oldMessages) => {
             const timeout = setTimeout(() => {
                 removeMessage(msg.id);
                 timeouts.delete(msg.id);
-            }, 5000);
+            }, 15000);
             timeouts.set(msg.id, timeout);
         }
     });
