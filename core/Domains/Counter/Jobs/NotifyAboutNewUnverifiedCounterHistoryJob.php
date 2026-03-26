@@ -2,17 +2,17 @@
 
 namespace Core\Domains\Counter\Jobs;
 
-use App\Models\Counter\Counter;
-use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Mails\NewCounterHistoryCreatedEmail;
 use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 
 class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -32,7 +33,17 @@ class NotifyAboutNewUnverifiedCounterHistoryJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::NOTIFY_ABOUT_NEW_UNVERIFIED_COUNTER_HISTORY_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return $this->counterHistoryId;
+    }
+
+    public function process(): void
     {
         $counterHistory = CounterLocator::CounterHistoryService()->getById($this->counterHistoryId);
         if ( ! $counterHistory || $counterHistory->isVerified()) {

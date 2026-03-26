@@ -20,9 +20,11 @@ use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
 use Core\Domains\Billing\ClaimToObject\ClaimToObjectLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
 use Illuminate\Bus\Queueable;
@@ -37,6 +39,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CheckClaimForCounterChangeJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -46,7 +49,17 @@ class CheckClaimForCounterChangeJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::CHECK_CLAIM_FOR_COUNTER_CHANGE_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return $this->counterHistoryId;
+    }
+
+    public function process(): void
     {
         $claim = ClaimToObjectLocator::ClaimToObjectService()
             ->getByReference(ClaimObjectTypeEnum::COUNTER_HISTORY, $this->counterHistoryId)

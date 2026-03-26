@@ -48,6 +48,10 @@ abstract class AbstractObserver
     {
         $changes = $this->makeChanges($item);
 
+        if ( ! $changes->count()) {
+            return;
+        }
+
         $primaryId   = $this->getPrimaryIdField() ? $item->{$this->getPrimaryIdField()} : null;
         $referenceId = $this->getReferenceIdField() ? $item->{$this->getReferenceIdField()} : null;
 
@@ -57,13 +61,17 @@ abstract class AbstractObserver
             $changes,
             $primaryId,
             $this->getReferenceHistoryType(),
-            $referenceId
+            $referenceId,
         );
     }
 
     public function updated(Model $item): void
     {
         $changes = $this->makeChanges($item);
+
+        if ( ! $changes->count()) {
+            return;
+        }
 
         $primaryId   = $this->getPrimaryIdField() ? $item->{$this->getPrimaryIdField()} : null;
         $referenceId = $this->getReferenceIdField() ? $item->{$this->getReferenceIdField()} : null;
@@ -74,7 +82,7 @@ abstract class AbstractObserver
             $changes,
             $primaryId,
             $this->getReferenceHistoryType(),
-            $referenceId
+            $referenceId,
         );
     }
 
@@ -88,7 +96,7 @@ abstract class AbstractObserver
             $this->getPrimaryHistoryType(),
             $primaryId,
             $this->getReferenceHistoryType(),
-            $referenceId
+            $referenceId,
         );
     }
 
