@@ -24,7 +24,6 @@ const slots = useSlots();
 
 <script>
 export default {
-    name: 'PageTemplate',
     props: [
         'layoutClass',
         'subClass',

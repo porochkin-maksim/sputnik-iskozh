@@ -14,6 +14,6 @@ const slots = useSlots()
 <script>
 
 export default {
-    name: 'SingleColumnPage',
+
 };
 </script>

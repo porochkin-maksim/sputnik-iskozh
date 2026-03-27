@@ -98,7 +98,6 @@ import PageTemplate      from './TwoColumnsPage.vue';
 import NewsListItem      from '../news/list/NewsItem.vue';
 import BsSlider          from '../../common/BsSlider.vue';
 import FileItem          from '../news/FileItem.vue';
-import { newsListIndex } from '../../../routes-functions.js';
 import StateSchedule     from '../StateSchedule.vue';
 
 export default {
