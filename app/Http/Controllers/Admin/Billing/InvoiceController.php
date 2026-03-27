@@ -26,6 +26,7 @@ use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
@@ -179,6 +180,11 @@ class InvoiceController extends Controller
         return response()->json([
             'invoice' => new InvoiceResource($invoice),
         ]);
+    }
+
+    public function recalc(int $id): JsonResponse
+    {
+        return response()->json(RecalcClaimsPaidJob::dispatchSyncIfNeeded($id));
     }
 
     public function delete(int $id): bool

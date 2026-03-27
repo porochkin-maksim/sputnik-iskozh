@@ -16,13 +16,13 @@ if ( ! lc::account()->getId()) {
     <div class="nav-item">
         <a class="nav-link @if(Route::is(RouteNames::PROFILE_COUNTERS)) active @endif"
            href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
-            <i class="fa fa-tachometer"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}</span>
+            <i class="fa fa-bolt"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}</span>
         </a>
     </div>
     <div class="nav-item">
         <a class="nav-link @if(Route::is(RouteNames::PROFILE_INVOICES)) active @endif"
            href="{{ route(RouteNames::PROFILE_INVOICES) }}">
-            <i class="fa fa-file-text"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}</span>
+            <i class="fa fa-money"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}</span>
         </a>
     </div>
     <div class="nav-item">

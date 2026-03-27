@@ -4,6 +4,7 @@ namespace Core\Domains\Infra\DbLock\Enum;
 
 enum LockNameEnum: string
 {
+    case DELETE_FILES_JOB                                   = 'delete-files-job';
     case SAVE_IMPORT_PAYMENTS_JOB                           = 'save-import-payments-job';
     case RECALC_CLAIMS_PAID_JOB                             = 'recalc-claims-paid-job';
     case CREATE_REGULAR_PERIOD_INVOICES_JOB                 = 'create-regular-period-invoices-job';

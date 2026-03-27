@@ -3,12 +3,10 @@
 namespace App\Providers;
 
 use App\Listeners\LogSentEmailListener;
-use Core\Domains\Counter\Subscribers\CounterSubscriber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\LogSuccessfulLogin;
 
@@ -36,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::subscribe(CounterSubscriber::class);
+
     }
 
     /**

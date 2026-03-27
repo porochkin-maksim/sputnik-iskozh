@@ -191,6 +191,10 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
                 Route::get('/create', [Controllers\Admin\Billing\InvoiceController::class, 'create'])->name(RouteNames::ADMIN_INVOICE_CREATE);
                 Route::get('/list', [Controllers\Admin\Billing\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_INVOICE_LIST);
                 Route::post('/save', [Controllers\Admin\Billing\InvoiceController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_SAVE);
+                Route::post('/recalc/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'recalc'])
+                    ->name(RouteNames::ADMIN_INVOICE_RECALC)
+                    ->whereNumber('id')
+                ;
                 Route::delete('/delete/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'delete'])
                     ->name(RouteNames::ADMIN_INVOICE_DELETE)
                     ->whereNumber('id')

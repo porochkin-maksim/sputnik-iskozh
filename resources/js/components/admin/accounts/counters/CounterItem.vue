@@ -58,7 +58,7 @@
                         {{ file.name }}
                     </div>
                     <template v-else>
-                        <button class="btn btn-outline-secondary"
+                        <button class="btn btn-outline-secondary w-100"
                                 @click="chooseFile"
                                 v-if="!file">
                             <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
@@ -106,134 +106,179 @@
     </view-dialog>
 </template>
 
-<script>
-import Url                from '../../../../utils/Url.js';
-import ResponseError      from '../../../../mixin/ResponseError.js';
-import CustomInput        from '../../../common/form/CustomInput.vue';
-import CustomCheckbox     from '../../../common/form/CustomCheckbox.vue';
-import ViewDialog         from '../../../common/ViewDialog.vue';
-import FileItem           from '../../../common/files/FileItem.vue';
-import CounterHistoryItem from './CounterHistoryItem.vue';
-import CustomCalendar     from '../../../common/form/CustomCalendar.vue';
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    watch,
+}                              from 'vue';
+import CustomInput             from '../../../common/form/CustomInput.vue';
+import CustomCheckbox          from '../../../common/form/CustomCheckbox.vue';
+import ViewDialog              from '../../../common/ViewDialog.vue';
+import CustomCalendar          from '../../../common/form/CustomCalendar.vue';
+import { useResponseError }    from '@composables/useResponseError';
+import { ApiAdminCounterSave } from '@api';
 
-export default {
-    emits     : ['counterUpdated'],
-    components: {
-        CustomCalendar,
-        CounterHistoryItem,
-        FileItem,
-        ViewDialog,
-        CustomCheckbox,
-        CustomInput,
+const props = defineProps({
+    account : {
+        type   : Object,
+        default: null,
     },
-    props     : {
-        account : Object,
-        counter : {
-            type   : Object,
-            default: null,
-        },
-        showForm: {
-            default: false,
-        },
+    counter : {
+        type   : Object,
+        default: null,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            loading: false,
-
-            vueId: null,
-
-            showDialog: false,
-            hideDialog: false,
-
-            localCounter: {},
-
-            file        : null,
-            passportFile: null,
-        };
+    showForm: {
+        type   : Boolean,
+        default: false,
     },
-    created () {
-        this.vueId        = 'uuid' + this.$_uid;
-        this.localCounter = this.counter ? Object.assign({}, this.counter) : {};
-        this.showDialog   = this.showForm;
-    },
-    methods : {
-        saveAction () {
-            let form = new FormData();
-            form.append('id', this.localCounter.id);
-            form.append('number', this.localCounter.number);
-            form.append('isInvoicing', this.localCounter.isInvoicing);
-            form.append('value', this.localCounter.value);
-            form.append('expireAt', this.localCounter.expireAt);
-            form.append('file', this.file);
-            form.append('passportFile', this.passportFile);
-            form.append('increment', this.localCounter.increment);
+});
 
-            let route = this.localCounter?.id ? Url.Routes.adminCounterSave : Url.Routes.adminCounterCreate;
+const emit = defineEmits(['counterUpdated']);
 
-            let uri = Url.Generator.makeUri(route, {
-                accountId: this.account.id,
-            });
+const { parseResponseErrors, showInfo } = useResponseError();
 
-            window.axios[route.method](uri, form).then(response => {
-                this.onSuccessSubmit();
-                if (this.counter && this.counter.id) {
-                    this.showInfo('Счётчик обновлён');
-                }
-                else {
-                    this.showInfo('Счётчик добавлен');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        onSuccessSubmit () {
-            this.showDialog = false;
-            this.hideDialog = true;
-            this.file       = null;
-            this.$emit('counterUpdated');
-        },
-        closeAction () {
-            this.showDialog = false;
-            this.$emit('counterUpdated');
-        },
+// Состояния
+const loading          = ref(false);
+const showDialog       = ref(false);
+const hideDialog       = ref(false);
+const file             = ref(null);
+const passportFile     = ref(null);
+const fileElem         = ref(null);
+const filePassportElem = ref(null);
 
-        chooseFile () {
-            this.$refs.fileElem.click();
-        },
-        appendFile (event) {
-            this.file = event.target.files[0];
-        },
-        removeFile () {
-            this.file = null;
-        },
+// Локальный объект счётчика
+const localCounter = reactive({
+    id         : null,
+    number     : null,
+    isInvoicing: false,
+    increment  : 0,
+    value      : null,
+    expireAt   : null,
+});
 
-        choosePassportFile () {
-            this.$refs.filePassportElem.click();
-        },
-        appendPassportFile (event) {
-            this.passportFile = event.target.files[0];
-        },
-        removePassportFile () {
-            this.passportFile = null;
-        },
+// Ошибки валидации
+const errors = reactive({
+    number   : null,
+    increment: null,
+    value    : null,
+    expireAt : null,
+});
 
-        calculateIncrement () {
-            this.localCounter.increment = this.localCounter.increment < 0 ? this.localCounter.increment * -1 : this.localCounter.increment;
-        },
-    },
-    computed: {
-        canSubmitAction () {
-            return this.localCounter.number && (this.localCounter.id || this.localCounter.value);
-        },
-    },
-    watch   : {
-        showForm () {
-            this.localCounter = this.counter;
-            this.showDialog   = this.showForm;
-        },
-    },
+// Инициализация формы
+const initForm = () => {
+    if (props.counter) {
+        Object.assign(localCounter, props.counter);
+    }
+    else {
+        localCounter.id          = null;
+        localCounter.number      = null;
+        localCounter.isInvoicing = false;
+        localCounter.increment   = 0;
+        localCounter.value       = null;
+        localCounter.expireAt    = null;
+    }
+    showDialog.value = props.showForm;
 };
+
+// Валидация формы
+const canSubmitAction = computed(() => {
+    return localCounter.number && (localCounter.id || localCounter.value);
+});
+
+// Сохранение счётчика
+const saveAction = async () => {
+    loading.value    = true;
+    // Сброс ошибок
+    errors.number    = null;
+    errors.increment = null;
+    errors.value     = null;
+    errors.expireAt  = null;
+
+    const form = new FormData();
+    form.append('id', localCounter.id);
+    form.append('number', localCounter.number);
+    form.append('isInvoicing', localCounter.isInvoicing);
+    if (localCounter.value !== undefined && localCounter.value !== null) {
+        form.append('value', localCounter.value);
+    }
+    form.append('expireAt', localCounter.expireAt);
+    form.append('increment', localCounter.increment);
+    if (file.value) {
+        form.append('file', file.value);
+    }
+    if (passportFile.value) {
+        form.append('passportFile', passportFile.value);
+    }
+
+    try {
+        await ApiAdminCounterSave(props.account.id, {}, form);
+        onSuccessSubmit();
+        const message = localCounter.id ? 'Счётчик обновлён' : 'Счётчик добавлен';
+        showInfo(message);
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const onSuccessSubmit = () => {
+    showDialog.value   = false;
+    hideDialog.value   = true;
+    file.value         = null;
+    passportFile.value = null;
+    emit('counterUpdated');
+};
+
+const closeAction = () => {
+    showDialog.value = false;
+    emit('counterUpdated');
+};
+
+// Работа с файлами (фото)
+const chooseFile = () => {
+    fileElem.value?.click();
+};
+
+const appendFile = (event) => {
+    file.value = event.target.files[0];
+};
+
+const removeFile = () => {
+    file.value = null;
+};
+
+// Работа с паспортом
+const choosePassportFile = () => {
+    filePassportElem.value?.click();
+};
+
+const appendPassportFile = (event) => {
+    passportFile.value = event.target.files[0];
+};
+
+const removePassportFile = () => {
+    passportFile.value = null;
+};
+
+// Корректировка инкремента
+const calculateIncrement = () => {
+    if (localCounter.increment < 0) {
+        localCounter.increment = -localCounter.increment;
+    }
+};
+
+// Следим за showForm из props
+watch(() => props.showForm, (newVal) => {
+    if (newVal) {
+        initForm();
+    }
+});
+
+// Инициализация
+initForm();
 </script>

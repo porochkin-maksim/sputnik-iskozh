@@ -200,6 +200,11 @@ export function ApiAdminInvoiceList(getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/admin/invoices/json/list', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminInvoiceRecalc(id, getParams = {}, postData = null) {
+    // see admin.invoice.recalc
+    return window.axios.post(makeQuery('/admin/invoices/json/recalc/'+id+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminInvoiceSave(getParams = {}, postData = null) {
     // see admin.invoice.save
     return window.axios.post(makeQuery('/admin/invoices/json/save', getParams), prepareRequestData(postData));

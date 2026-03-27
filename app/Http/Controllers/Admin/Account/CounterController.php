@@ -149,9 +149,11 @@ class CounterController extends Controller
 
         $counter = $this->counterService->getById($request->getId());
 
-        if ( ! $counter || $counter->getAccountId() !== $accountId) {
+        if ($counter && $counter->getAccountId() !== $accountId) {
             abort(404);
         }
+
+        $counter = $counter ? : $this->counterFactory->makeDefault()->setAccountId($accountId);
 
         $counter
             ->setIsInvoicing($request->getIsInvoicing())

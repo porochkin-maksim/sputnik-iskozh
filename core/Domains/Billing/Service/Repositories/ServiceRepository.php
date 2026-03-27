@@ -12,7 +12,6 @@ use Core\Domains\Billing\Service\Responses\ServiceSearchResponse;
 
 class ServiceRepository
 {
-
     use RepositoryTrait;
 
     private const string TABLE = Service::TABLE;

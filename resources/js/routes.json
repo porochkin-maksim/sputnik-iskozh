@@ -343,6 +343,15 @@
         "uri": "\/admin\/invoices\/json\/list",
         "args": []
     },
+    "adminInvoiceRecalc": {
+        "name": "admin.invoice.recalc",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/recalc\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "adminInvoiceSave": {
         "name": "admin.invoice.save",
         "displayName": "",

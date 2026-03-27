@@ -153,6 +153,7 @@ abstract class RouteNames
     public const string ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
     public const string ADMIN_INVOICE_CREATE = 'admin.invoice.create';
     public const string ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
+    public const string ADMIN_INVOICE_RECALC = 'admin.invoice.recalc';
     public const string ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
     public const string ADMIN_INVOICE_GET    = 'admin.invoice.get';
     public const string ADMIN_INVOICE_LIST   = 'admin.invoice.list';

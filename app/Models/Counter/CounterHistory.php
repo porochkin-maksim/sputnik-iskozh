@@ -27,24 +27,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CounterHistory extends Model implements CastsInterface
 {
-    use SoftDeletes;
-
-    public const TABLE = 'counter_history';
+    public const string TABLE = 'counter_history';
 
     protected $table = self::TABLE;
 
-    public const ID             = 'id';
-    public const COUNTER_ID     = 'counter_id';
-    public const PREVIOUS_ID    = 'previous_id';
-    public const PREVIOUS_VALUE = 'previous_value';
-    public const VALUE          = 'value';
-    public const DATE           = 'date';
-    public const IS_VERIFIED    = 'is_verified';
+    public const string ID             = 'id';
+    public const string COUNTER_ID     = 'counter_id';
+    public const string PREVIOUS_ID    = 'previous_id';
+    public const string PREVIOUS_VALUE = 'previous_value';
+    public const string VALUE          = 'value';
+    public const string DATE           = 'date';
+    public const string IS_VERIFIED    = 'is_verified';
 
-    public const FILE     = 'file';
-    public const COUNTER  = 'counter';
-    public const PREVIOUS = 'previous';
-    public const CLAIM    = 'claim';
+    public const string FILE     = 'file';
+    public const string COUNTER  = 'counter';
+    public const string PREVIOUS = 'previous';
+    public const string CLAIM    = 'claim';
 
     protected $guarded = [];
     protected $with    = [self::FILE, self::PREVIOUS];
@@ -56,6 +54,18 @@ class CounterHistory extends Model implements CastsInterface
         self::PREVIOUS_VALUE => self::CAST_FLOAT,
         self::DATE           => self::CAST_DATETIME,
         self::IS_VERIFIED    => self::CAST_BOOLEAN,
+    ];
+
+    public const string TITLE_COUNTER_ID  = 'Счётчик';
+    public const string TITLE_VALUE       = 'Показание';
+    public const string TITLE_DATE        = 'Дата показания';
+    public const string TITLE_IS_VERIFIED = 'Подтверждён';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::COUNTER_ID  => self::TITLE_COUNTER_ID,
+        self::VALUE       => self::TITLE_VALUE,
+        self::DATE        => self::TITLE_DATE,
+        self::IS_VERIFIED => self::TITLE_IS_VERIFIED,
     ];
 
     public function file(): HasOne

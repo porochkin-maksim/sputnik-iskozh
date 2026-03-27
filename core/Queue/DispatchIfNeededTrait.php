@@ -10,6 +10,8 @@ use Throwable;
 
 trait DispatchIfNeededTrait
 {
+    protected const int TTL = 60;
+
     abstract protected static function getLockName(): LockNameEnum;
 
     abstract protected function process();
@@ -18,36 +20,54 @@ trait DispatchIfNeededTrait
 
     protected static function ttl(): int
     {
-        return 60;
+        return self::TTL;
     }
 
     /**
      * Диспатчит задачу только если она не была уже запущена для этого счёта
      */
-    public static function dispatchIfNeeded(null|int|string $id, bool $sync = false): bool
+    public static function dispatchIfNeeded(mixed ...$args): bool
     {
         $lockService = LockLocator::LockService();
         $lockName    = self::getLockName();
+        $job         = new self(...$args);
 
         // Проверяем доступность блокировки
-        if ( ! $lockService->isAvailable($lockName, $id)) {
+        if ( ! $lockService->isAvailable($lockName, $job->getIdentificator())) {
             return false;
         }
 
         // 1. Сначала создаём блокировку
-        $lockService->lock($lockName, self::ttl(), $id);
+        $lockService->lock($lockName, self::ttl(), $job->getIdentificator());
 
         // 2. Диспатчим джобу
-        if ($sync) {
-            dispatch_sync(new self($id));
-        }
-        else {
-            dispatch(new self($id));
-        }
+        dispatch($job);
 
         return true;
     }
 
+    /**
+     * Сейчас же диспатчит задачу только если она не была уже запущена для этого счёта
+     */
+    public static function dispatchSyncIfNeeded(mixed ...$args): bool
+    {
+        $lockService = LockLocator::LockService();
+        $lockName    = self::getLockName();
+        $job         = new self(...$args);
+
+        // Проверяем доступность блокировки
+        if ( ! $lockService->isAvailable($lockName, $job->getIdentificator())) {
+            return false;
+        }
+
+        // 1. Сначала создаём блокировку
+        $lockService->lock($lockName, self::ttl(), $job->getIdentificator());
+
+        // 2. Диспатчим джобу
+        dispatch_sync($job);
+
+        return true;
+    }
 
     public function handle(): void
     {

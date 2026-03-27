@@ -8,12 +8,14 @@ use App\Models\Billing\Payment;
 use App\Models\Billing\Period;
 use App\Models\Billing\Service;
 use App\Models\Counter\Counter;
+use App\Models\Counter\CounterHistory;
 use App\Models\User;
 use App\Observers\Billing\ClaimObserver;
 use App\Observers\Billing\InvoiceObserver;
 use App\Observers\Billing\PaymentObserver;
 use App\Observers\Billing\PeriodObserver;
 use App\Observers\Billing\ServiceObserver;
+use App\Observers\Counter\CounterHistoryObserver;
 use App\Observers\Counter\CounterObserver;
 use App\Observers\UserObserver;
 use Illuminate\Support\ServiceProvider;
@@ -29,5 +31,6 @@ class ObserverServiceProvider extends ServiceProvider
         Invoice::observe(InvoiceObserver::class);
         Claim::observe(ClaimObserver::class);
         Payment::observe(PaymentObserver::class);
+        CounterHistory::observe(CounterHistoryObserver::class);
     }
 }

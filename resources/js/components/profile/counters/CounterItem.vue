@@ -72,14 +72,10 @@
             </template>
         </div>
     </div>
-    <div class="row mt-2"
-         v-if="chartData && chartData.length && false">
+    <div class="row mt-2" v-if="histories && histories.length">
         <div class="col-12 col-md-8 col-lg-6">
             <h5 class="text-center">График показаний</h5>
-            <counters-chart-block
-                :chart-data="chartData"
-                :options="chartOptions"
-            />
+            <counter-item-chart-block :histories="histories"></counter-item-chart-block>
         </div>
     </div>
     <view-dialog v-model:show="showDialog"
@@ -178,18 +174,18 @@ import {
     computed,
     onMounted,
     defineProps,
-}                           from 'vue';
-import { useResponseError } from '@composables/useResponseError';
-import { useFormat }        from '@composables/useFormat';
-import CustomInput          from '@common/form/CustomInput.vue';
-import ViewDialog           from '@common/ViewDialog.vue';
-import FileItem             from '@common/files/FileItem.vue';
-import CountersChartBlock   from '@common/blocks/CountersChartBlock.vue';
+}                            from 'vue';
+import { useResponseError }  from '@composables/useResponseError';
+import { useFormat }         from '@composables/useFormat';
+import CustomInput           from '@common/form/CustomInput.vue';
+import ViewDialog            from '@common/ViewDialog.vue';
+import FileItem              from '@common/files/FileItem.vue';
+import CounterItemChartBlock from '@common/blocks/CounterItemChartBlock.vue';
 import {
     ApiProfileCounterHistoryList,
     ApiProfileCounterAddValue,
     ApiProfileCountersIncrementSave,
-}                           from '@api';
+}                            from '@api';
 
 const props = defineProps({
     counter: {
@@ -215,14 +211,6 @@ const skip                = ref(0);
 const total               = ref(null);
 const limit               = ref(0);
 const increment           = ref(props.counter.increment || 0);
-const chartData           = ref([]);
-const chartOptions        = {
-    scales: {
-        y: {
-            beginAtZero: true,
-        },
-    },
-};
 
 onMounted(() => {
     listAction();
@@ -247,14 +235,6 @@ const listAction = () => {
                     histories.value.push(history);
                 }
             });
-
-            chartData.value = histories.value
-                .filter(item => item.date && item.delta && !isNaN(parseFloat(item.delta)))
-                .map(item => ({
-                    date : item.date,
-                    value: parseFloat(item.delta),
-                }))
-                .sort((a, b) => new Date(a.date) - new Date(b.date));
 
             total.value = response.data.total;
             limit.value = response.data.limit;

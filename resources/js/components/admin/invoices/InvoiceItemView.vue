@@ -29,6 +29,11 @@
                     Квитанция
                 </a>
 
+                <button class="btn btn-outline-primary btn-sm" @click="recalcAction"
+                        :class="isRecalculating ? 'disabled' : ''">
+                    <i class="fa fa-refresh" :class="isRecalculating ? 'fa-spin' : ''"></i> Пересчитать
+                </button>
+
                 <!-- История -->
                 <history-btn v-if="localInvoice.historyUrl"
                              class="btn-link underline-none p-0"
@@ -107,6 +112,7 @@ import PaymentsBlock        from './payments/PaymentsBlock.vue';
 import {
     ApiAdminInvoiceGet,
     ApiAdminInvoiceDelete,
+    ApiAdminInvoiceRecalc,
 }                           from '@api';
 import Url                  from '@utils/Url.js';
 
@@ -124,12 +130,13 @@ const props = defineProps({
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
 
-const localInvoice  = ref({});
-const actions       = ref({});
-const reload        = ref(false);
-const claimsCount   = ref(0);
-const paymentsCount = ref(0);
-const isLoading     = ref(true);
+const localInvoice    = ref({});
+const actions         = ref({});
+const reload          = ref(false);
+const claimsCount     = ref(0);
+const paymentsCount   = ref(0);
+const isLoading       = ref(true);
+const isRecalculating = ref(false);
 
 // Computed свойства для стилей
 const statusAlertClass = computed(() => {
@@ -179,6 +186,27 @@ const dropAction = async () => {
     }
     catch (error) {
         parseResponseErrors(error);
+    }
+};
+
+// Пересчёт счёта
+const recalcAction = async () => {
+    isRecalculating.value = true;
+    try {
+        const response = await ApiAdminInvoiceRecalc(props.invoice.id);
+        if (response.data) {
+            await loadInvoice();
+            showInfo('Счёт пересчитан');
+        }
+        else {
+            showDanger('Не удалось пересчитать счёт');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        isRecalculating.value = false;
     }
 };
 

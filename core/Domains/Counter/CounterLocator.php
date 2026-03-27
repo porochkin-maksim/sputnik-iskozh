@@ -10,7 +10,6 @@ use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
 use Core\Domains\File\FileLocator;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 class CounterLocator
 {
@@ -27,7 +26,6 @@ class CounterLocator
         if ( ! isset(self::$counterService)) {
             self::$counterService = new CounterService(
                 self::CounterRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -58,9 +56,7 @@ class CounterLocator
     {
         if ( ! isset(self::$counterHistoryService)) {
             self::$counterHistoryService = new CounterHistoryService(
-                self::CounterHistoryFactory(),
                 self::CounterHistoryRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -79,7 +75,9 @@ class CounterLocator
     public static function CounterHistoryRepository(): CounterHistoryRepository
     {
         if ( ! isset(self::$counterHistoryRepository)) {
-            self::$counterHistoryRepository = new CounterHistoryRepository();
+            self::$counterHistoryRepository = new CounterHistoryRepository(
+                self::CounterHistoryFactory(),
+            );
         }
 
         return self::$counterHistoryRepository;

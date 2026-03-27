@@ -102,7 +102,7 @@ trait RepositoryTrait
 
     protected function deleteModelById(?int $id): bool
     {
-        return $id && $this->deleteModelsByIds([$id]) > 0;
+        return ($id ? $this->getModelById($id) : null)?->delete();
     }
 
     protected function deleteModelsByIds(array $ids): int

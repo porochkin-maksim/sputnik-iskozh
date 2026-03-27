@@ -3,7 +3,8 @@
                  v-model:hide="hideDialog"
                  @hidden="closeAction"
     >
-        <template v-slot:title>{{ localHistory?.id ? 'Изменение показаний счётчика' : 'Внесение показаний счётчика' }}</template>
+        <template v-slot:title>{{ localHistory?.id ? 'Изменение показаний счётчика' : 'Внесение показаний счётчика' }}
+        </template>
         <template v-slot:body>
             <div class="container-fluid">
                 <div v-if="counter.isInvoicing"
@@ -16,7 +17,7 @@
                     </template>
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="localHistory.value"
+                    <custom-input v-model="formData.value"
                                   :errors="errors.value"
                                   :type="'number'"
                                   :label="'Текущие показания на счётчике'"
@@ -25,7 +26,7 @@
                 </div>
                 <div class="mt-2">
                     <label class="text-secondary">Дата показаний</label>
-                    <custom-calendar v-model="localHistory.date"
+                    <custom-calendar v-model="formData.date"
                                      :error="errors.date"
                                      :required="true"
                     />
@@ -64,113 +65,141 @@
         </template>
     </view-dialog>
 </template>
-<script>
-import CustomInput    from '../../../common/form/CustomInput.vue';
-import ViewDialog     from '../../../common/ViewDialog.vue';
-import FileItem       from '../../../common/files/FileItem.vue';
-import ResponseError  from '../../../../mixin/ResponseError.js';
-import Url            from '../../../../utils/Url.js';
-import CustomCalendar from '../../../common/form/CustomCalendar.vue';
 
-export default {
-    emits     : ['historyUpdated'],
-    components: {
-        CustomCalendar,
-        FileItem,
-        ViewDialog,
-        CustomInput,
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    onMounted,
+}                           from 'vue';
+import CustomInput          from '../../../common/form/CustomInput.vue';
+import ViewDialog           from '../../../common/ViewDialog.vue';
+import CustomCalendar       from '../../../common/form/CustomCalendar.vue';
+import { useResponseError } from '@composables/useResponseError'; // если используется такой композабл, иначе импортируйте миксин
+import {
+    ApiAdminCounterAddValue,
+}                           from '@api';
+
+const { parseResponseErrors, showSuccess, showDanger } = useResponseError();
+
+const props = defineProps({
+    counter: {
+        type   : Object,
+        default: null,
     },
-    props     : {
-        counter: {
-            type   : Object,
-            default: null,
-        },
-        history: {
-            type   : Object,
-            default: null,
-        },
+    history: {
+        type   : Object,
+        default: null,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            loading: false,
+});
 
-            vueId: null,
+const emit = defineEmits(['historyUpdated']);
 
-            showDialog: false,
-            hideDialog: false,
+// Состояния
+const loading    = ref(false);
+const showDialog = ref(true);
+const hideDialog = ref(false);
+const file       = ref(null);
+const fileElem   = ref(null);
 
-            localHistory: {},
+// Форма
+const formData = reactive({
+    id   : null,
+    value: null,
+    date : '',
+});
 
-            file: null,
-        };
-    },
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
+// Ошибки (можно использовать простой объект)
+const errors = reactive({
+    value: null,
+    date : null,
+});
 
-        const date        = new Date();
-        this.localHistory = this.history ? Object.assign({}, this.history) : { date: date.toISOString().split('T')[0] };
-        if (this.counter && !this.history?.id) {
-            this.localHistory.value = this.counter.value;
-            this.localHistory.date  = this.counter.date;
-        }
+// Локальная копия истории для отображения в заголовке
+const localHistory = computed(() => props.history);
 
-        this.showDialog = true;
-    },
-    methods : {
-        saveAction () {
-            this.loading = true;
-
-            let form = new FormData();
-            form.append('counter_id', this.counter.id);
-            form.append('id', this.localHistory.id);
-            form.append('value', this.localHistory.value);
-            form.append('date', this.localHistory.date);
-            form.append('file', this.file);
-
-            let uri = Url.Generator.makeUri(Url.Routes.adminCounterAddValue, {
-                accountId: this.counter.accountId,
-            });
-            window.axios[Url.Routes.adminCounterAddValue.method](uri, form).then(response => {
-                this.onSuccessSubmit();
-                if (this.localHistory?.id) {
-                    this.showInfo('Показания обновлены');
-                }
-                else {
-                    this.showInfo('Показания добавлены');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        onSuccessSubmit () {
-            this.showDialog = false;
-            this.hideDialog = true;
-            this.file       = null;
-            this.$emit('historyUpdated');
-        },
-        closeAction () {
-            this.showDialog = false;
-            this.$emit('historyUpdated');
-        },
-        chooseFile () {
-            this.$refs.fileElem.click();
-        },
-        appendFile (event) {
-            this.file = event.target.files[0];
-        },
-        removeFile () {
-            this.file = null;
-        },
-    },
-    computed: {
-        canSubmitAction () {
-            return !this.loading && this.localHistory.value && this.localHistory.date;
-        },
-    },
+// Инициализация
+const initForm = () => {
+    if (props.history) {
+        formData.id    = props.history.id;
+        formData.value = props.history.value;
+        formData.date  = props.history.date;
+    }
+    else {
+        const date     = new Date();
+        formData.id    = null;
+        formData.value = props.counter?.value ?? null;
+        formData.date  = props.counter?.date ?? date.toISOString().split('T')[0];
+    }
 };
+
+// Валидация
+const canSubmitAction = computed(() => {
+    return !loading.value && formData.value && formData.date;
+});
+
+// Методы
+const saveAction = async () => {
+    loading.value = true;
+    errors.value  = null;
+    errors.date   = null;
+
+    const form = new FormData();
+    form.append('counter_id', props.counter.id);
+    form.append('id', formData.id);
+    form.append('value', formData.value);
+    form.append('date', formData.date);
+    if (file.value) {
+        form.append('file', file.value);
+    }
+
+    try {
+        await ApiAdminCounterAddValue(props.counter.accountId, {}, form);
+        onSuccessSubmit();
+        const message = formData.id ? 'Показания обновлены' : 'Показания добавлены';
+        // Используйте вашу систему уведомлений, например, showInfo
+        showSuccess(message);
+    }
+    catch (error) {
+        // Предполагаем, что есть метод parseResponseErrors (можно импортировать из composable)
+        if (typeof parseResponseErrors === 'function') {
+            parseResponseErrors(error);
+        }
+        else {
+            showDanger(error);
+        }
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const onSuccessSubmit = () => {
+    showDialog.value = false;
+    hideDialog.value = true;
+    file.value       = null;
+    emit('historyUpdated');
+};
+
+const closeAction = () => {
+    showDialog.value = false;
+    emit('historyUpdated');
+};
+
+const chooseFile = () => {
+    fileElem.value?.click();
+};
+
+const appendFile = (event) => {
+    file.value = event.target.files[0];
+};
+
+const removeFile = () => {
+    file.value = null;
+};
+
+onMounted(() => {
+    initForm();
+});
 </script>

@@ -53,6 +53,6 @@ readonly class InvoiceService
 
     public function recalcInvoice(int $invoiceId, bool $sync = false): bool
     {
-        return RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId, $sync);
+        return RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId);
     }
 }
