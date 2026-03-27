@@ -1,16 +1,17 @@
 <template>
     <ul class="list-group">
         <li class="list-group-item">Номер участка {{ account.number }}</li>
-        <li class="list-group-item">Площадь {{ account.size }}(м²)</li>
+        <li class="list-group-item">Площадь {{ account.size }} м²</li>
         <li class="list-group-item">{{ account.isInvoicing ? 'Выставляются счета' : 'Не выставляются счета' }}</li>
         <li class="list-group-item">Кадастровый номер {{ account.cadastreNumber }}</li>
     </ul>
 </template>
 
-<script>
-export default {
-    props: [
-        'account',
-    ],
-};
+<script setup>
+defineProps({
+    account: {
+        type    : Object,
+        required: true,
+    },
+});
 </script>

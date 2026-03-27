@@ -4,17 +4,17 @@
             <div class="card mb-2">
                 <div class="card-body">
                     <h5>Информация</h5>
-                    <template v-if="account.actions.edit">
+                    <template v-if="account.actions?.edit">
                         <div class="row">
                             <div class="col-6">
-                                <custom-input v-model="account.number"
+                                <custom-input v-model="formData.number"
                                               :required="true"
                                               :disabled="loading"
                                               :label="'Номер участка'"
                                 />
                             </div>
                             <div class="col-6">
-                                <custom-input v-model="account.size"
+                                <custom-input v-model="formData.size"
                                               :required="true"
                                               :disabled="loading"
                                               :label="'Площадь (м²)'"
@@ -26,14 +26,14 @@
                         </div>
                         <div>
                             <div class="mt-2">
-                                <custom-checkbox v-model="account.isInvoicing"
+                                <custom-checkbox v-model="formData.isInvoicing"
                                                  :disabled="loading"
                                                  :label="'Выставлять счета'"
                                                  switch-style
                                 />
                             </div>
                             <div>
-                                <custom-input v-model="account.cadastreNumber"
+                                <custom-input v-model="formData.cadastreNumber"
                                               :disabled="loading"
                                               :label="'Кадастровый номер'"
                                 />
@@ -48,31 +48,29 @@
                         <div class="d-flex">
                             <button class="btn btn-success me-2"
                                     :disabled="!canSave || loading"
-                                    v-on:click="saveAction"
-                            >
+                                    @click="saveAction">
                                 <i class="fa"
                                    :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                                 Сохранить
                             </button>
                         </div>
                         <div class="d-flex">
-                            <history-btn
-                                class="btn-link underline-none"
-                                :url="account.historyUrl" />
+                            <history-btn class="btn-link underline-none"
+                                         :url="account.historyUrl" />
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card mb-2">
                 <div class="card-body">
-                    <users-block :account="account" :users="account.users"/>
+                    <users-block :account="account" :users="account.users" />
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-12">
             <div class="card mb-2">
                 <div class="card-body">
-                    <counters-block :account="account"/>
+                    <counters-block :account="account" />
                 </div>
             </div>
         </div>
@@ -88,117 +86,98 @@
     </div>
 </template>
 
-<script>
-import Url             from '../../../utils/Url.js';
-import CustomInput     from '../../common/form/CustomInput.vue';
-import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
-import CustomTextarea  from '../../common/form/CustomTextarea.vue';
-import CustomSelect    from '../../common/form/CustomSelect.vue';
-import ResponseError   from '../../../mixin/ResponseError.js';
-import ErrorsList      from '../../common/form/partial/ErrorsList.vue';
-import HistoryBtn      from '../../common/HistoryBtn.vue';
-import Pagination      from '../../common/pagination/Pagination.vue';
-import CountersBlock   from './counters/CountersBlock.vue';
-import AccountInfoList from './AccountInfoList.vue';
-import InvoicesBlock   from './invoices/InvoicesBlock.vue';
-import UsersBlock      from './users/UsersBlock.vue';
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    onMounted,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import CustomInput             from '../../common/form/CustomInput.vue';
+import CustomCheckbox          from '../../common/form/CustomCheckbox.vue';
+import HistoryBtn              from '../../common/HistoryBtn.vue';
+import CountersBlock           from './counters/CountersBlock.vue';
+import AccountInfoList         from './AccountInfoList.vue';
+import InvoicesBlock           from './invoices/InvoicesBlock.vue';
+import UsersBlock              from './users/UsersBlock.vue';
+import { ApiAdminAccountSave } from '@api';
 
-export default {
-    name      : 'AccountItemView',
-    components: {
-        UsersBlock,
-        InvoicesBlock,
-        AccountInfoList,
-        CountersBlock,
+defineOptions({
+    name: 'AccountItemView',
+});
 
-        Pagination,
-        ErrorsList,
-        CustomTextarea,
-        CustomCheckbox,
-        CustomSelect,
-        CustomInput,
-        HistoryBtn,
+const props = defineProps({
+    modelValue: {
+        type    : Object,
+        required: true,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'modelValue',
-    ],
-    created () {
-        this.vueId   = 'uuid' + this.$_uid;
-        this.account = this.modelValue;
-    },
-    data () {
-        return {
-            account: {},
-            actions: null,
+});
 
-            vueId  : null,
-            loading: false,
-        };
-    },
-    methods : {
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.account.id);
-            form.append('number', this.account.number);
-            form.append('size', parseInt(this.account.size ? this.account.size : 0));
-            form.append('is_invoicing', !!this.account.isInvoicing);
-            form.append('cadastreNumber', this.account.cadastreNumber);
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminAccountSave.method](
-                Url.Routes.adminAccountSave.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Участок обновлён');
+// Состояния
+const loading = ref(false);
+const account = ref({});
 
-                this.actions    = response.data.actions;
-                this.historyUrl = response.data.historyUrl;
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось сохранить участок';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        dropAction () {
-            if (!this.id) {
-                this.dropped = true;
-                return;
-            }
-            if (!confirm('Удалить акаунт?')) {
-                return;
-            }
+// Форма
+const formData = reactive({
+    id            : null,
+    number        : '',
+    size          : null,
+    isInvoicing   : false,
+    cadastreNumber: '',
+});
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminAccountDelete, {
-                id: this.id,
-            });
-            window.axios[Url.Routes.adminAccountDelete.method](
-                uri,
-            ).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Участок удалён');
-                }
-                else {
-                    this.showDanger('Участок не удалён');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    computed: {
-        canSave () {
-            return this.account.number
-                && this.account.size && this.account.size >= 0;
-        },
-    },
+// Инициализация данных
+const initForm = () => {
+    account.value           = props.modelValue;
+    formData.id             = account.value.id;
+    formData.number         = account.value.number || '';
+    formData.size           = account.value.size || null;
+    formData.isInvoicing    = account.value.isInvoicing || false;
+    formData.cadastreNumber = account.value.cadastreNumber || '';
 };
+
+// Сохранение участка
+const saveAction = async () => {
+    loading.value = true;
+
+    const form = new FormData();
+    form.append('id', formData.id);
+    form.append('number', formData.number);
+    form.append('size', parseInt(formData.size ? formData.size : 0));
+    form.append('is_invoicing', !!formData.isInvoicing);
+    form.append('cadastreNumber', formData.cadastreNumber);
+
+    try {
+        const response = await ApiAdminAccountSave({}, form);
+
+        // Обновляем данные участка
+        account.value = {
+            ...account.value,
+            ...response.data,
+        };
+
+        showInfo('Участок обновлён');
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось сохранить участок';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+// Валидация формы
+const canSave = computed(() => {
+    return formData.number && formData.size !== null && formData.size >= 0;
+});
+
+onMounted(() => {
+    initForm();
+});
 </script>

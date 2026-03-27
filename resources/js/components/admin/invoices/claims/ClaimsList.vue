@@ -115,10 +115,6 @@ import {
     ApiAdminClaimDelete,
 }                           from '@api';
 
-defineOptions({
-    name: 'ClaimsList',
-});
-
 const props = defineProps({
     invoiceId : {
         type    : Number,

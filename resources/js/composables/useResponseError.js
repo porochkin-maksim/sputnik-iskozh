@@ -9,7 +9,7 @@ export function useResponseError () {
     const clearResponseErrors = () => {
         errors.value = {};
         store.dispatch('alerts/removeErrors').then(r => {
-            console.log(r);
+            r ? console.log(r) : '';
         });
     };
 
@@ -26,7 +26,7 @@ export function useResponseError () {
                     id  : key,
                     text: errors.value[key].join(','),
                 }).then(r => {
-                    console.log(r);
+                    r ? console.log(r) : '';
                 });
             });
         }
@@ -48,7 +48,7 @@ export function useResponseError () {
             text,
             type: 'info',
         }).then(r => {
-            console.log(r);
+            r ? console.log(r) : '';
         });
     };
 
@@ -58,7 +58,7 @@ export function useResponseError () {
             text,
             type: 'success',
         }).then(r => {
-            console.log(r);
+            r ? console.log(r) : '';
         });
     };
 
@@ -68,7 +68,7 @@ export function useResponseError () {
             text,
             type: 'danger',
         }).then(r => {
-            console.log(r);
+            r ? console.log(r) : '';
         });
     };
 

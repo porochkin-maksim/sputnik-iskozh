@@ -16,10 +16,8 @@
                     <i class="fa fa-refresh" :class="loading ? 'fa-spin' : ''"></i>
                     {{ loading ? 'Обновление...' : 'Обновить' }}
                 </button>
-
-                <history-btn
-                    class="btn-link underline-none"
-                    :url="counter?.historyUrl" />
+                <history-btn class="btn-link underline-none ms-2"
+                             :url="counter?.historyUrl" />
             </div>
         </div>
 
@@ -40,7 +38,7 @@
 
             <table class="table table-sm text-center align-middle">
                 <thead>
-                <tr>
+                <tr class="text-center">
                     <th>#</th>
                     <th>Дата</th>
                     <th>Показания</th>
@@ -57,7 +55,7 @@
                 <tbody>
                 <tr v-for="history in histories" :key="history.id">
                     <td class="text-center">{{ history.id }}</td>
-                    <td class="text-center">{{ $formatDate(history.date) }}</td>
+                    <td class="text-center">{{ formatDate(history.date) }}</td>
                     <td class="text-center">{{ history.value }}</td>
                     <td class="text-center">{{ history.days === null ? '' : history.days }}</td>
                     <td class="text-center">{{ history.delta === null ? '' : history.delta }}</td>
@@ -76,21 +74,21 @@
                         <template v-if="history.invoiceUrl">
                             <td class="text-center">
                                 <a :href="history.invoiceUrl"
-                                   class="text-decoration-none">{{ $formatMoney(history.claim.tariff) }}</a>
+                                   class="text-decoration-none">{{ formatMoney(history.claim.tariff) }}</a>
                             </td>
                             <td class="text-center">
                                 <a :href="history.invoiceUrl"
-                                   class="text-decoration-none">{{ $formatMoney(history.claim.cost) }}</a>
+                                   class="text-decoration-none">{{ formatMoney(history.claim.cost) }}</a>
                             </td>
                             <td class="text-center">
                                 <a :href="history.invoiceUrl"
-                                   class="text-decoration-none">{{ $formatMoney(history.claim.paid) }}</a>
+                                   class="text-decoration-none">{{ formatMoney(history.claim.paid) }}</a>
                             </td>
                         </template>
                         <template v-else>
-                            <td class="text-center">{{ $formatMoney(history.claim.tariff) }}</td>
-                            <td class="text-center">{{ $formatMoney(history.claim.cost) }}</td>
-                            <td class="text-center">{{ $formatMoney(history.claim.paid) }}</td>
+                            <td class="text-center">{{ formatMoney(history.claim.tariff) }}</td>
+                            <td class="text-center">{{ formatMoney(history.claim.cost) }}</td>
+                            <td class="text-center">{{ formatMoney(history.claim.paid) }}</td>
                         </template>
                     </template>
                     <template v-else-if="history.delta && actions.edit && counter.isInvoicing">
@@ -170,8 +168,8 @@ import {
     ref,
     onMounted,
     defineOptions,
-}                            from 'vue';
-import FileItem              from '../../../common/files/FileItem.vue';
+}               from 'vue';
+import FileItem from '../../../common/files/FileItem.vue';
 import CounterHistoryItem    from './CounterHistoryItem.vue';
 import HistoryBtn            from '../../../common/HistoryBtn.vue';
 import CounterItemChartBlock from '@common/blocks/CounterItemChartBlock.vue';
@@ -182,6 +180,7 @@ import {
     ApiAdminRequestsCounterHistoryDelete,
     ApiAdminRequestsCounterHistoryCreateClaim,
 }                            from '@api';
+import { useFormat } from '@composables/useFormat.js';
 
 defineOptions({
     name: 'CounterItemView',
@@ -195,6 +194,7 @@ const props = defineProps({
 });
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { formatDate, formatMoney }                                = useFormat();
 
 // Состояния
 const vueId           = ref('uuid_' + Date.now() + '_' + Math.random());

@@ -121,11 +121,8 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
                     ->whereNumber('id')
                 ;
             });
-            Route::group(['prefix' => 'view/{accountId}'], static function () {
-                Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])
-                    ->name(RouteNames::ADMIN_ACCOUNT_VIEW)
-                    ->whereNumber('accountId')
-                ;
+            Route::group(['prefix' => 'view/{accountId}', 'where' => ['accountId' => '[0-9]+']], static function () {
+                Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
                 Route::group(['prefix' => 'counters'], static function () {
                     Route::get('/view/{counterId}', [Controllers\Admin\Account\CounterController::class, 'view'])
                         ->name(RouteNames::ADMIN_COUNTER_VIEW)
@@ -147,7 +144,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
                         Route::get('/list', [Controllers\Admin\Account\InvoiceController::class, 'list'])->name(RouteNames::ADMIN_ACCOUNT_INVOICE_LIST);
                     });
                 });
-            });
+            })->whereNumber('accountId');
         });
 
         Route::group(['prefix' => 'counters'], static function () {

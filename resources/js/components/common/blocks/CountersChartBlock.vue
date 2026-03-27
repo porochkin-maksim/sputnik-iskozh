@@ -1,13 +1,10 @@
 <template>
     <div>
-        <div class="chart-container">
+        <div class="chart-container" v-if="chartData.length !== 0">
             <canvas ref="chartCanvas"></canvas>
         </div>
         <div class="text-end mt-2" v-if="totalSum > 0">
             <strong>Итого за период: {{ formatNumber(totalSum) }}</strong>
-        </div>
-        <div class="text-end mt-2 text-muted" v-else-if="chartData.length === 0">
-            <small>Нет данных для отображения графика</small>
         </div>
     </div>
 </template>

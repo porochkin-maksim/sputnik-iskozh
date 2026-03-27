@@ -1,172 +1,177 @@
 <template>
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <div class="d-flex align-items-center">
-            <template v-if="computedStatuses && computedStatuses.length">
-                <simple-select v-model="verifiedStatus"
-                               :class="'d-inline-block form-select-sm w-auto'"
-                               :options="computedStatuses"
-                               @change="listAction"
-                />
-            </template>
-            <template v-if="!isVerifiedStatus">
-                <template v-if="histories.length">
-                    <button class="btn btn-success ms-2"
-                            v-if="actions.edit"
-                            :disabled="!canSubmitAction"
-                            @click="confirmAction"
-                    >
-                        <i class="fa fa-check"></i> Подтвердить
-                    </button>
-                    <button class="btn btn-danger ms-2"
-                            v-if="actions.drop"
-                            :disabled="!canSubmitAction"
-                            @click="deleteAction"
-                    >
-                        <i class="fa fa-trash"></i> Удалить
-                    </button>
-                </template>
-            </template>
-            <template v-else>
-                <div class="d-flex ms-2">
-                    <div class="input-group input-group-sm">
-                        <input class="form-control"
-                               v-model="searchAccount"
-                               name="users_search"
-                               placeholder="Участок..."
-                               @keyup="listAction"
-                               ref="search">
-                        <button class="btn btn-light border"
-                                type="button"
-                                @click="clearSearch">
-                            <i class="fa fa-close"></i>
-                        </button>
+    <div>
+        <!-- Индикатор загрузки -->
+        <loading-spinner
+            v-if="loading && histories.length === 0"
+            size="lg"
+            color="primary"
+            text="Загрузка показаний..."
+            wrapper-class="py-5"
+        />
+
+        <template v-else>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center">
+                    <template v-if="computedStatuses && computedStatuses.length">
+                        <simple-select v-model="verifiedStatus"
+                                       :class="'d-inline-block form-select-sm w-auto'"
+                                       :options="computedStatuses"
+                                       @change="loadHistories"
+                        />
+                    </template>
+                    <template v-if="!isVerifiedStatus">
+                        <template v-if="histories.length">
+                            <button class="btn btn-success ms-2"
+                                    v-if="actions.edit"
+                                    :disabled="!canSubmitAction"
+                                    @click="confirmAction">
+                                <i class="fa fa-check"></i> Подтвердить
+                            </button>
+                            <button class="btn btn-danger ms-2"
+                                    v-if="actions.drop"
+                                    :disabled="!canSubmitAction"
+                                    @click="deleteAction">
+                                <i class="fa fa-trash"></i> Удалить
+                            </button>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <div class="d-flex ms-2">
+                            <div class="input-group input-group-sm">
+                                <input class="form-control"
+                                       v-model="searchAccount"
+                                       name="users_search"
+                                       placeholder="Участок..."
+                                       @keyup="searchAction"
+                                       ref="searchInput">
+                                <button class="btn btn-light border"
+                                        type="button"
+                                        @click="clearSearch">
+                                    <i class="fa fa-close"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="d-flex">
+                    <template v-if="isVerifiedStatus">
+                        <div>
+                            <pagination :total="total"
+                                        :per-page="perPage"
+                                        :prop-classes="'pagination-sm mb-0'"
+                                        @update="onPaginationUpdate" />
+                        </div>
+                        <div>
+                            <simple-select v-model="perPage"
+                                           :class="'d-inline-block form-select-sm w-auto ms-2'"
+                                           :options="[15, 25, 50, 100, 500]"
+                                           @change="loadHistories" />
+                        </div>
+                    </template>
+                    <div class="d-flex align-items-center justify-content-center text-nowrap mx-2">
+                        Всего: {{ total }}
                     </div>
                 </div>
-            </template>
-        </div>
-        <div class="d-flex">
-            <template v-if="isVerifiedStatus">
-                <div>
-                    <pagination :total="total"
-                                :perPage="perPage"
-                                :prop-classes="'pagination-sm mb-0'"
-                                @update="onPaginationUpdate"
-                    />
-                </div>
-                <div>
-                    <simple-select v-model="perPage"
-                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :options="[15,25,50,100,500]"
-                                   @change="listAction"
-                    />
-                </div>
-            </template>
-            <div class=" d-flex align-items-center justify-content-center text-nowrap mx-2">
-                Всего: {{ total }}
             </div>
-        </div>
+
+            <div v-if="histories.length">
+                <table class="table table-sm table-bordered align-middle">
+                    <thead>
+                    <tr class="text-center">
+                        <th v-if="actions.edit && canCheckAction && !isVerifiedStatus">
+                            <div>
+                                <input @change="onAllCheck"
+                                       v-model="allCheck"
+                                       type="checkbox"
+                                       class="form-check-input" />
+                            </div>
+                        </th>
+                        <th>Участок</th>
+                        <th>Счётчик</th>
+                        <th>Дата</th>
+                        <th>Показание</th>
+                        <th v-if="canCheckAction">Предыдущее</th>
+                        <th v-if="canCheckAction">Дельта</th>
+                        <th>Выставлять счета</th>
+                        <th>Файл</th>
+                        <th></th>
+                        <th v-if="actions.drop"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="history in histories" :key="history.id">
+                        <td v-if="actions.edit && canCheckAction && !isVerifiedStatus"
+                            class="text-center">
+                            <div>
+                                <input @change="onChanged(history.id)"
+                                       :checked="isChecked(history.id)"
+                                       type="checkbox"
+                                       class="form-check-input" />
+                            </div>
+                        </td>
+                        <template v-if="history.accountId && history.counterId">
+                            <td v-if="history.accountUrl"
+                                class="text-end">
+                                <a :href="history.accountUrl">{{ history.accountNumber }}</a>
+                            </td>
+                            <td v-else
+                                class="text-end">{{ history.accountNumber }}
+                            </td>
+                            <td>{{ history.counterNumber }}</td>
+                        </template>
+                        <template v-else>
+                            <td colspan="2"
+                                class="text-center">
+                                <button class="btn btn-sm border-0"
+                                        v-if="actions.edit"
+                                        @click="showLinkDialog(history.id)">
+                                    <i class="fa fa-link"></i>&nbsp;привязать
+                                </button>
+                            </td>
+                        </template>
+                        <td class="text-center">{{ formatDate(history.date) }}</td>
+                        <td class="text-end">{{ history.value }}</td>
+                        <td class="text-end" v-if="canCheckAction">{{ history.before ? history.before : 'начальное' }}
+                        </td>
+                        <td class="text-end" v-if="canCheckAction">{{ history.delta ? history.delta : '' }}</td>
+                        <td class="text-center">
+                            <i v-if="history.isInvoicing" class="fa fa-check text-success"></i>
+                            <i v-else class="fa fa-close text-danger"></i>
+                        </td>
+                        <td>
+                            <div v-if="history.file">
+                                <a :href="history.file.url"
+                                   class="text-decoration-none"
+                                   :data-lightbox="history.file.name"
+                                   :data-title="history.file.name"
+                                   target="_blank">{{ history.file.name }}</a>
+                            </div>
+                        </td>
+                        <td>
+                            <history-btn class="btn-link underline-none"
+                                         :url="history.historyUrl" />
+                        </td>
+                        <td v-if="actions.drop">
+                            <button class="btn btn-sm text-danger border-0"
+                                    v-if="actions.drop"
+                                    @click="dropAction(history.id)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-else-if="!loading && histories.length === 0" class="text-center text-muted py-3">
+                Нет показаний для отображения
+            </div>
+        </template>
     </div>
 
-    <div v-if="histories.length">
-        <table class="table table-sm table-bordered align-middle">
-            <thead>
-            <tr class="text-center">
-                <th v-if="actions.edit && canCheckAction && !isVerifiedStatus">
-                    <div>
-                        <input @change="onAllCheck"
-                               v-model="allCheck"
-                               type="checkbox"
-                               class="form-check-input" />
-                    </div>
-                </th>
-                <th>Участок</th>
-                <th>Счётчик</th>
-                <th>Дата</th>
-                <th>Показание</th>
-                <th v-if="canCheckAction">Предыдущее</th>
-                <th v-if="canCheckAction">Дельта</th>
-                <th>Выставлять счета</th>
-                <th>Файл</th>
-                <th></th>
-                <th v-if="actions.drop"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(history) in histories">
-                <td v-if="actions.edit && canCheckAction && !isVerifiedStatus"
-                    class="text-center">
-                    <div>
-                        <input @change="onChanged(history.id)"
-                               :checked="isChecked(history.id)"
-                               type="checkbox"
-                               class="form-check-input" />
-                    </div>
-                </td>
-                <template v-if="history.accountId && history.counterId">
-                    <td v-if="history.accountUrl"
-                        class="text-end">
-                        <a :href="history.accountUrl">{{ history.accountNumber }}</a>
-                    </td>
-                    <td v-else
-                        class="text-end">{{ history.accountNumber }}
-                    </td>
-                    <td>{{ history.counterNumber }}</td>
-                </template>
-                <template v-else>
-                    <td colspan="2"
-                        class="text-center">
-                        <button class="btn btn-sm border-0"
-                                v-if="actions.edit"
-                                @click="showLinkDialog(history.id)">
-                            <i class="fa fa-link"></i>&nbsp;привязать
-                        </button>
-                    </td>
-                </template>
-                <td class="text-center">{{ $formatDate(history.date) }}</td>
-                <td class="text-end">
-                    {{ history.value }}
-                </td>
-                <td class="text-end"
-                    v-if="canCheckAction">{{ history.before ? history.before : 'начальное' }}
-                </td>
-                <td class="text-end"
-                    v-if="canCheckAction">{{ history.delta ? history.delta : '' }}
-                </td>
-                <td class="text-center">
-                    <i v-if="history.isInvoicing"
-                       class="fa fa-check text-success"></i>
-                    <i v-else
-                       class="fa fa-close text-danger"></i>
-                </td>
-                <td>
-                    <div v-if="history.file">
-                        <a :href="history.file.url"
-                           class="text-decoration-none"
-                           :data-lightbox="history.file.name"
-                           :data-title="history.file.name"
-                           target="_blank">{{ history.file.name }}</a>
-                    </div>
-                </td>
-                <td>
-                    <history-btn
-                        class="btn-link underline-none"
-                        :url="history.historyUrl" />
-                </td>
-                <td v-if="actions.drop">
-                    <button class="btn btn-sm text-danger border-0"
-                            v-if="actions.drop"
-                            @click="dropAction(history.id)">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
-                 @hidden="closeLinkDialog"
-    >
+                 @hidden="closeLinkDialog">
         <template v-slot:title>Привязка показаний</template>
         <template v-slot:body>
             <div class="container-fluid">
@@ -204,291 +209,313 @@
     </view-dialog>
 </template>
 
-<script>
-import ResponseError      from '../../../mixin/ResponseError.js';
-import Url                from '../../../utils/Url.js';
-import HistoryBtn         from '../../common/HistoryBtn.vue';
-import ViewDialog         from '../../common/ViewDialog.vue';
-import SearchSelect       from '../../common/form/SearchSelect.vue';
-import Pagination         from '../../common/pagination/Pagination.vue';
-import SimpleSelect       from '../../common/form/SimpleSelect.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    defineOptions,
+}                           from 'vue';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import ViewDialog           from '../../common/ViewDialog.vue';
+import SearchSelect         from '../../common/form/SearchSelect.vue';
+import Pagination           from '../../common/pagination/Pagination.vue';
+import SimpleSelect         from '../../common/form/SimpleSelect.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
+import { useResponseError } from '@composables/useResponseError';
+import {
+    ApiAdminRequestsCounterHistoryList,
+    ApiAdminRequestsCounterHistoryDelete,
+    ApiAdminRequestsCounterHistoryConfirm,
+    ApiAdminRequestsCounterHistoryConfirmDelete,
+    ApiAdminRequestsCounterHistoryLink,
+    ApiAdminSelectsAccounts,
+    ApiAdminSelectsCounters,
+}                           from '@api';
+import { useFormat }        from '@composables/useFormat.js';
 
-export default {
-    name      : 'CounterHistoryBlock',
-    components: {
-        SimpleSelect,
-        Pagination,
-        HistoryBtn,
-        ViewDialog,
-        SearchSelect
-    },
-    emits     : ['update:reload', 'update:selectedId', 'update:count'],
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [],
-    data () {
-        return {
-            loaded        : false,
-            total         : null,
-            perPage       : 25,
-            skip          : 0,
-            routeState    : 0,
-            verifiedStatus: false,
+defineOptions({
+    name: 'CounterHistoryBlock',
+});
 
-            histories: [],
-            actions  : {},
-            allCheck : false,
-            checked  : [],
+const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count']);
 
-            showDialog: false,
-            hideDialog: false,
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { formatDate }                                = useFormat();
 
-            historyId: null,
-            accountId: null,
-            accounts : [],
-            counterId: null,
-            counters : [],
+// Состояния
+const loading        = ref(false);
+const total          = ref(null);
+const perPage        = ref(25);
+const skip           = ref(0);
+const routeState     = ref(0);
+const verifiedStatus = ref('false');
+const histories      = ref([]);
+const actions        = ref({});
+const allCheck       = ref(false);
+const checked        = ref([]);
+const showDialog     = ref(false);
+const hideDialog     = ref(false);
+const historyId      = ref(null);
+const accountId      = ref(null);
+const accounts       = ref([]);
+const counterId      = ref(null);
+const counters       = ref([]);
+const loadedCounters = ref(false);
+const searchAccount  = ref(null);
+let searchTimeout    = null;
 
-            loadedCounters: 'false',
-            searchAccount : null,
-        };
-    },
-    created () {
-        const urlParams     = new URLSearchParams(window.location.search);
-        this.perPage        = parseInt(urlParams.get('limit') || 25);
-        this.skip           = parseInt(urlParams.get('skip') || 0);
-        this.verifiedStatus = urlParams.get('verified') || 'false';
-        this.searchAccount  = urlParams.get('search') || null;
+// Вычисляемые свойства
+const computedStatuses = computed(() => [
+    { value: 'false', label: 'Непроверенные' },
+    { value: 'true', label: 'Проверенные' },
+]);
 
-        this.getAccounts();
-        this.listAction();
-    },
-    methods : {
-        listAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminRequestsCounterHistoryIndex, {}, {
-                limit   : this.perPage,
-                skip    : this.skip,
-                verified: this.verifiedStatus,
-                search  : this.searchAccount,
-            });
-            window.history.pushState({ state: this.routeState++ }, '', uri);
+const isVerifiedStatus = computed(() => verifiedStatus.value === 'true');
 
-            this.allCheck = false;
-            this.checked  = [];
-            window.axios[Url.Routes.adminRequestsCounterHistoryList.method](Url.Routes.adminRequestsCounterHistoryList.uri, {
-                params: {
-                    limit   : this.perPage,
-                    skip    : this.skip,
-                    verified: this.verifiedStatus,
-                    search  : this.searchAccount,
-                },
-            }).then(response => {
-                this.actions   = response.data.histories.actions;
-                this.histories = response.data.histories.histories;
-                this.total     = response.data.total;
-                this.$emit('update:count', this.histories.length);
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        getAccounts () {
-            this.accountId = null;
-            this.accounts  = [];
+const canCheckAction = computed(() => {
+    return histories.value.every(history => history.counterId !== null);
+});
 
-            window.axios[Url.Routes.adminSelectsAccounts.method](Url.Routes.adminSelectsAccounts.uri).then(response => {
-                this.accounts = response.data;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        getCounters () {
-            this.counterId = null;
-            this.counters  = [];
-            if (!this.accountId) {
-                return;
-            }
-            this.loadedCounters = false;
-            let uri             = Url.Generator.makeUri(Url.Routes.adminSelectsCounters, {
-                accountId: this.accountId,
-            });
-            window.axios[Url.Routes.adminSelectsCounters.method](uri).then(response => {
-                this.counters       = response.data;
-                this.loadedCounters = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        onAllCheck () {
-            if (this.allCheck) {
-                this.histories.forEach(item => {
-                    this.checked.push(String(item.id));
-                });
-            }
-            else {
-                this.checked = [];
-            }
-        },
-        isChecked (id) {
-            return this.checked.includes(String(id));
-        },
-        onChanged (id) {
-            if (this.checked.includes(String(id))) {
-                this.checked = this.checked.filter(item => String(item) !== String(id));
-            }
-            else {
-                this.checked.push(String(id));
-            }
-        },
-        showLinkDialog (id) {
-            this.historyId  = id;
-            this.showDialog = true;
-        },
-        closeLinkDialog () {
-            this.historyId  = null;
-            this.showDialog = false;
-            this.hideDialog = true;
-        },
-        linkAction () {
-            let form = new FormData();
-            form.append('id', this.historyId);
-            form.append('account_id', this.accountId);
-            form.append('counter_id', this.counterId);
+const canSubmitAction = computed(() => {
+    return checked.value.length && canCheckAction.value;
+});
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminRequestsCounterHistoryLink.method](
-                Url.Routes.adminRequestsCounterHistoryLink.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Показания привязаны');
-                this.listAction();
-                this.closeLinkDialog();
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось привязать показания';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            });
-        },
-        dropAction (id) {
-            if (!confirm(id ? 'Удалить показание?' : 'Удалить выделенные показания?')) {
-                return;
-            }
-            let uri = Url.Generator.makeUri(Url.Routes.adminRequestsCounterHistoryDelete, {
-                historyId: id,
-            });
+// Методы
+const loadHistories = async () => {
+    loading.value = true;
 
-            window.axios[Url.Routes.adminRequestsCounterHistoryDelete.method](
-                uri,
-            ).then((response) => {
-                if (response.data) {
-                    this.listAction();
-                    this.showInfo('Показания удалены');
-                }
-                else {
-                    this.showDanger('Показания не удалены');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        confirmAction () {
-            if (!confirm('Подтвердить выделенные показания?')) {
-                return;
-            }
-            let form = new FormData();
-            this.checked.forEach(id => {
-                form.append('ids[]', id);
-            });
+    const uri    = new URL(window.location.href);
+    const params = {
+        limit   : perPage.value,
+        skip    : skip.value,
+        verified: verifiedStatus.value,
+        search  : searchAccount.value,
+    };
+    Object.keys(params).forEach(key => {
+        if (params[key]) {
+            uri.searchParams.set(key, params[key]);
+        }
+        else {
+            uri.searchParams.delete(key);
+        }
+    });
+    window.history.pushState({ state: routeState.value++ }, '', uri.toString());
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminRequestsCounterHistoryConfirm.method](
-                Url.Routes.adminRequestsCounterHistoryConfirm.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Показания подтверждены');
-                this.listAction();
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось подтвердить показания';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            });
-        },
-        deleteAction () {
-            if (!confirm('Удалить выделенные показания?')) {
-                return;
-            }
-            let form = new FormData();
-            this.checked.forEach(id => {
-                form.append('ids[]', id);
-            });
+    allCheck.value = false;
+    checked.value  = [];
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminRequestsCounterHistoryConfirmDelete.method](
-                Url.Routes.adminRequestsCounterHistoryConfirmDelete.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Показания удалены');
-                this.listAction();
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось удалить показания';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            });
-        },
-        onPaginationUpdate (skip) {
-            this.skip = skip;
-            this.listAction();
-        },
-        clearSearch () {
-            this.searchAccount = '';
-            this.listAction();
-        },
-    },
-    watch   : {
-        reload (value) {
-            if (value === false) {
-                return;
-            }
-            this.listAction();
-            this.$emit('update:reload', false);
-        },
-    },
-    computed: {
-        canSubmitAction () {
-            return this.checked.length && this.canCheckAction;
-        },
-        canCheckAction () {
-            let result = true;
-            this.histories.forEach(history => {
-                result = result && history.counterId !== null;
-            });
-
-            return result;
-        },
-        computedStatuses () {
-            return [
-                {
-                    value: 'false',
-                    label: 'Непроверенные',
-                },
-                {
-                    value: 'true',
-                    label: 'Проверенные',
-                },
-            ];
-        },
-        isVerifiedStatus () {
-            return this.verifiedStatus === 'true';
-        },
-    },
+    try {
+        const response  = await ApiAdminRequestsCounterHistoryList({
+            limit   : perPage.value,
+            skip    : skip.value,
+            verified: verifiedStatus.value,
+            search  : searchAccount.value,
+        });
+        actions.value   = response.data.histories.actions;
+        histories.value = response.data.histories.histories || [];
+        total.value     = response.data.total;
+        emit('update:count', histories.value.length);
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
 };
-</script>
-<script setup
-        lang="ts">
+
+const getAccounts = async () => {
+    accountId.value = null;
+    accounts.value  = [];
+
+    try {
+        const response = await ApiAdminSelectsAccounts();
+        accounts.value = response.data;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const getCounters = async () => {
+    counterId.value = null;
+    counters.value  = [];
+
+    if (!accountId.value) {
+        return;
+    }
+
+    loadedCounters.value = false;
+    try {
+        const response       = await ApiAdminSelectsCounters(accountId.value);
+        counters.value       = response.data;
+        loadedCounters.value = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const onAllCheck = () => {
+    if (allCheck.value) {
+        checked.value = histories.value.map(item => String(item.id));
+    }
+    else {
+        checked.value = [];
+    }
+};
+
+const isChecked = (id) => {
+    return checked.value.includes(String(id));
+};
+
+const onChanged = (id) => {
+    const index = checked.value.indexOf(String(id));
+    if (index > -1) {
+        checked.value.splice(index, 1);
+    }
+    else {
+        checked.value.push(String(id));
+    }
+};
+
+const showLinkDialog = (id) => {
+    historyId.value  = id;
+    showDialog.value = true;
+};
+
+const closeLinkDialog = () => {
+    historyId.value  = null;
+    showDialog.value = false;
+    hideDialog.value = true;
+};
+
+const linkAction = async () => {
+    const form = new FormData();
+    form.append('id', historyId.value);
+    form.append('account_id', accountId.value);
+    form.append('counter_id', counterId.value);
+
+    try {
+        await ApiAdminRequestsCounterHistoryLink({}, form);
+        showInfo('Показания привязаны');
+        loadHistories();
+        closeLinkDialog();
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось привязать показания';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+};
+
+const dropAction = async (id) => {
+    if (!confirm(id ? 'Удалить показание?' : 'Удалить выделенные показания?')) {
+        return;
+    }
+
+    try {
+        const response = await ApiAdminRequestsCounterHistoryDelete(id);
+        if (response.data) {
+            loadHistories();
+            showInfo('Показания удалены');
+        }
+        else {
+            showDanger('Показания не удалены');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const confirmAction = async () => {
+    if (!confirm('Подтвердить выделенные показания?')) {
+        return;
+    }
+
+    const form = new FormData();
+    checked.value.forEach(id => {
+        form.append('ids[]', id);
+    });
+
+    try {
+        await ApiAdminRequestsCounterHistoryConfirm({}, form);
+        showInfo('Показания подтверждены');
+        loadHistories();
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось подтвердить показания';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+};
+
+const deleteAction = async () => {
+    if (!confirm('Удалить выделенные показания?')) {
+        return;
+    }
+
+    const form = new FormData();
+    checked.value.forEach(id => {
+        form.append('ids[]', id);
+    });
+
+    try {
+        await ApiAdminRequestsCounterHistoryConfirmDelete({}, form);
+        showInfo('Показания удалены');
+        await loadHistories();
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось удалить показания';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+};
+
+const onPaginationUpdate = (newSkip) => {
+    skip.value = newSkip;
+    loadHistories();
+};
+
+const searchAction = () => {
+    if (searchTimeout) {
+        clearTimeout(searchTimeout);
+    }
+    searchTimeout = setTimeout(() => {
+        skip.value = 0;
+        loadHistories();
+    }, 300);
+};
+
+const clearSearch = () => {
+    searchAccount.value = '';
+    loadHistories();
+};
+
+// Следим за изменением reload (если нужно)
+watch(() => emit('update:reload'), (value) => {
+    if (value === false) {
+        return;
+    }
+    loadHistories();
+    emit('update:reload', false);
+});
+
+// Инициализация из URL
+const initFromUrl = () => {
+    const urlParams      = new URLSearchParams(window.location.search);
+    perPage.value        = parseInt(urlParams.get('limit')) || 25;
+    skip.value           = parseInt(urlParams.get('skip')) || 0;
+    verifiedStatus.value = urlParams.get('verified') || 'false';
+    searchAccount.value  = urlParams.get('search') || null;
+};
+
+onMounted(() => {
+    initFromUrl();
+    getAccounts();
+    loadHistories();
+});
 </script>

@@ -1,19 +1,20 @@
 <template>
     <view-dialog v-model:show="showDialog"
                  v-model:hide="hideDialog"
-                 @hidden="onCloseDialog"
-    >
+                 @hidden="onCloseDialog">
         <template v-slot:title>Добавление участка</template>
         <template v-slot:body>
             <div class="container-fluid">
                 <div>
-                    <custom-input v-model="number"
+                    <custom-input v-model="formData.number"
+                                  :errors="errors.number"
                                   :required="true"
                                   :label="'Номер участка'"
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="size"
+                    <custom-input v-model="formData.size"
+                                  :errors="errors.size"
                                   :label="'Площадь (м²)'"
                                   :type="'number'"
                                   :min="0"
@@ -22,13 +23,14 @@
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-checkbox v-model="isInvoicing"
+                    <custom-checkbox v-model="formData.isInvoicing"
                                      :label="'Выставлять счета'"
                                      switch-style
                     />
                 </div>
                 <div>
-                    <custom-input v-model="cadastreNumber"
+                    <custom-input v-model="formData.cadastreNumber"
+                                  :errors="errors.cadastreNumber"
                                   :label="'Кадастровый номер'"
                     />
                 </div>
@@ -36,114 +38,150 @@
         </template>
         <template v-slot:footer>
             <button class="btn btn-success"
-                    :disabled="!canSave"
-                    v-if="!loading"
+                    :disabled="!canSave || loading"
                     @click="saveAction">
-                Создать
-            </button>
-            <button class="btn border-0" disabled v-else>
-                <i class="fa fa-spinner fa-spin"></i> Создание
+                <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ loading ? 'Создание...' : 'Создать' }}
             </button>
         </template>
     </view-dialog>
 </template>
 
-<script>
-import Url            from '../../../utils/Url.js';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
-import ResponseError  from '../../../mixin/ResponseError.js';
-import HistoryBtn     from '../../common/HistoryBtn.vue';
-import ViewDialog     from '../../common/ViewDialog.vue';
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    watch,
+    onMounted,
+}                              from 'vue';
+import CustomInput             from '../../common/form/CustomInput.vue';
+import CustomCheckbox          from '../../common/form/CustomCheckbox.vue';
+import ViewDialog              from '../../common/ViewDialog.vue';
+import { useResponseError }    from '@composables/useResponseError';
+import { ApiAdminAccountSave } from '@api';
 
-export default {
-    emits     : ['updated'],
-    components: {
-        CustomCheckbox,
-        CustomInput,
-        HistoryBtn,
-        ViewDialog,
+const props = defineProps({
+    modelValue: {
+        type   : Object,
+        default: null,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'modelValue',
-    ],
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-        if (this.modelValue) {
-            this.number         = this.modelValue.number;
-            this.size           = this.modelValue.size;
-            this.isInvoicing    = this.modelValue.is_invoicing;
-            this.cadastreNumber = this.modelValue.cadastreNumber;
+});
 
-            this.showDialog = true;
-            this.hideDialog = false;
-        }
-        else {
-            this.makeAction();
-        }
-    },
-    data () {
-        return {
-            id         : null,
-            number     : null,
-            size       : null,
-            isInvoicing: null,
-            historyUrl : null,
-            actions    : null,
+const emit = defineEmits(['updated']);
 
-            vueId  : null,
-            dropped: false,
-            loading: false,
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            showDialog: false,
-            hideDialog: false,
-        };
-    },
-    methods : {
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('number', this.number);
-            form.append('size', parseInt(this.size ? this.size : 0));
-            form.append('is_invoicing', !!this.isInvoicing);
-            form.append('cadastreNumber', this.cadastreNumber);
+// Состояния
+const loading    = ref(false);
+const showDialog = ref(false);
+const hideDialog = ref(false);
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminAccountSave.method](
-                Url.Routes.adminAccountSave.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Участок ' + response.data.account.id + ' создан');
+// Форма
+const formData = reactive({
+    number        : null,
+    size          : null,
+    isInvoicing   : false,
+    cadastreNumber: null,
+});
 
-                this.$emit('updated');
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' участок';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        onCloseDialog () {
-            this.loading = false;
-        },
-    },
-    computed: {
-        canSave () {
-            return this.number
-                && this.size && this.size >= 0;
-        },
-    },
+// Ошибки
+const errors = reactive({
+    number        : null,
+    size          : null,
+    cadastreNumber: null,
+});
+
+// Инициализация
+const initForm = () => {
+    if (props.modelValue) {
+        formData.number         = props.modelValue.number;
+        formData.size           = props.modelValue.size;
+        formData.isInvoicing    = props.modelValue.is_invoicing;
+        formData.cadastreNumber = props.modelValue.cadastreNumber;
+        showDialog.value        = true;
+        hideDialog.value        = false;
+    }
+    else {
+        resetForm();
+        showDialog.value = true;
+        hideDialog.value = false;
+    }
 };
+
+// Сброс формы
+const resetForm = () => {
+    formData.number         = null;
+    formData.size           = null;
+    formData.isInvoicing    = false;
+    formData.cadastreNumber = null;
+    errors.number           = null;
+    errors.size             = null;
+    errors.cadastreNumber   = null;
+};
+
+// Валидация
+const canSave = computed(() => {
+    return formData.number && formData.size !== null && formData.size >= 0;
+});
+
+// Сохранение
+const saveAction = async () => {
+    loading.value         = true;
+    errors.number         = null;
+    errors.size           = null;
+    errors.cadastreNumber = null;
+
+    const form = new FormData();
+    form.append('number', formData.number);
+    form.append('size', parseInt(formData.size ? formData.size : 0));
+    form.append('is_invoicing', !!formData.isInvoicing);
+    form.append('cadastreNumber', formData.cadastreNumber || '');
+
+    try {
+        const response = await ApiAdminAccountSave({}, form);
+        showInfo('Участок ' + response.data.account.id + ' создан');
+        emit('updated');
+        onCloseDialog();
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось создать участок';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+// Закрытие диалога
+const onCloseDialog = () => {
+    showDialog.value = false;
+    hideDialog.value = true;
+    loading.value    = false;
+    resetForm();
+};
+
+// Следим за modelValue
+watch(() => props.modelValue, (newVal) => {
+    if (newVal) {
+        initForm();
+    }
+}, { immediate: true });
+
+onMounted(() => {
+    if (props.modelValue) {
+        initForm();
+    }
+});
 </script>
 
 <style scoped>
-.index {width : 80px;}
+.index {
+    width : 80px;
+}
 
-.size {width : 50px;}
+.size {
+    width : 50px;
+}
 </style>

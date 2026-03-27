@@ -23,6 +23,7 @@ export default ({ mode }) => {
                 input  : [
                     'resources/sass/app.scss',
                     'resources/js/app.js',
+                    'resources/js/admin.js',
                     'resources/js/profile.js',
                 ],
                 refresh: true,

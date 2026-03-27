@@ -33,7 +33,7 @@ $cutRouteNameFn = static function (string $routeName) {
 <head>
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), config('app.name')))</title>
 
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss', 'resources/js/admin.js'])
 
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
@@ -91,7 +91,7 @@ $cutRouteNameFn = static function (string $routeName) {
                 @endif
 
                 @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
-                <a class="@if(Route::is('admin.account.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
+                <a class="@if(Route::is('admin.account*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
                     <i class="fa fa-home me-2"></i>
                     <span>{{ RouteNames::name(RouteNames::ADMIN_ACCOUNT_INDEX) }}</span>
                 </a>
@@ -119,7 +119,7 @@ $cutRouteNameFn = static function (string $routeName) {
                 @endif
 
                 @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
-                    <a class="@if(Route::is('admin.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
+                    <a class="@if(Route::is('admin.requests.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
                         <i class="fa fa-bolt me-2"></i>
                         <span>{{ RouteNames::name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}</span>
                     </a>

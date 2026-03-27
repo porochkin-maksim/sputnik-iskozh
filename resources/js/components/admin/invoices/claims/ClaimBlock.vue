@@ -119,10 +119,6 @@ import {
     ApiAdminClaimSave,
 }                           from '@api';
 
-defineOptions({
-    name: 'ClaimBlock',
-});
-
 const props = defineProps({
     invoice: {
         type    : Object,

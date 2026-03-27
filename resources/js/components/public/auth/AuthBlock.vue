@@ -48,7 +48,7 @@ import Restore      from './Restore.vue';
 import ViewDialog   from '../../common/ViewDialog.vue';
 
 defineOptions({
-    name: 'AuthBlock', // или любое другое имя, под которым вы регистрируете компонент
+    name: 'AuthBlock',
 });
 
 const props = defineProps({

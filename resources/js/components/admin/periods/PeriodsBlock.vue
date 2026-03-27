@@ -46,8 +46,8 @@
                     <tr v-for="(period, index) in periods" :key="period.id">
                         <td>{{ period.id }}</td>
                         <td>{{ period.name }}</td>
-                        <td class="text-nowrap">{{ $formatDate(period.startAt) }}</td>
-                        <td class="text-nowrap">{{ $formatDate(period.endAt) }}</td>
+                        <td class="text-nowrap">{{ formatDate(period.startAt) }}</td>
+                        <td class="text-nowrap">{{ formatDate(period.endAt) }}</td>
                         <td>
                             <span
                                 v-if="period.isClosed"
@@ -149,12 +149,14 @@ import {
     ApiAdminPeriodCreate,
     ApiAdminPeriodDelete,
 }                           from '@api';
+import { useFormat }        from '@composables/useFormat.js';
 
 defineOptions({
     name: 'PeriodsBlock',
 });
 
 const { parseResponseErrors, showInfo } = useResponseError();
+const { formatDate }                                = useFormat();
 
 const periods        = ref([]);
 const historyUrl     = ref(null);
