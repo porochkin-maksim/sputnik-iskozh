@@ -32,6 +32,7 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
+    @include('layouts.partial.access.import-roles')
 </head>
 <body class="d-flex flex-column h-100 {{ $season }} home"
       id="app"

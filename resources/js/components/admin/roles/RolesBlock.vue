@@ -3,7 +3,7 @@
         <!-- Верхняя панель -->
         <div class="d-flex align-items-center justify-content-between mb-2">
             <button
-                v-if="actions.edit"
+                v-if="has('roles', 'edit')"
                 class="btn btn-success"
                 @click="makeAction"
                 :disabled="isLoading"
@@ -13,7 +13,7 @@
             </button>
             <div v-else></div>
             <history-btn
-                v-if="actions.view"
+                v-if="has('roles', 'view')"
                 class="btn-link underline-none"
                 :url="historyUrl"
             />
@@ -36,7 +36,7 @@
         <template v-else>
             <div class="row">
                 <div class="col-4">
-                    <table v-if="actions.view" class="table table-sm">
+                    <table v-if="has('roles', 'view')" class="table table-sm">
                         <thead>
                         <tr>
                             <th>№</th>
@@ -47,10 +47,7 @@
                         <tbody>
                         <template v-for="r in roles"
                                   :key="r.id">
-                            <tr
-                                class="align-middle"
-                                v-if="r?.actions?.view"
-                            >
+                            <tr class="align-middle">
                                 <td>{{ r.id }}</td>
                                 <td class="w-100">
                                     <a href="#" @click.prevent="editAction(r)">
@@ -60,7 +57,7 @@
                                 <td>
                                     <button
                                         class="btn"
-                                        v-if="r?.actions?.drop"
+                                        v-if="has('roles', 'drop')"
                                         @click="dropAction(r.id)"
                                         :disabled="deleting === r.id"
                                     >
@@ -89,7 +86,8 @@
                             <div v-if="selectedRole?.users?.length">
                                 <b>Участники</b>
                                 <ol class="list-group list-group-numbered">
-                                    <li class="list-group-item" v-for="user in selectedRole?.users" :key="user.id">
+                                    <li class="list-group-item borderless" v-for="user in selectedRole?.users"
+                                        :key="user.id">
                                         <a :href="user.viewUrl">{{ user.fullName }}</a>
                                     </li>
                                 </ol>
@@ -97,7 +95,7 @@
                         </div>
                         <div class="w-50 ps-2">
                             <div class="input-group input-group-sm mb-2">
-                                <template v-if="selectedRole?.actions?.edit">
+                                <template v-if="has('roles', 'edit')">
                                     <button
                                         class="btn btn-success"
                                         @click="saveAction"
@@ -117,14 +115,14 @@
                                     />
                                 </template>
                                 <template v-else>
-                                    <div class="p-2 border w-100">{{ selectedRole.name }}</div>
+                                    <div class="fw-bold">{{ selectedRole.name }}</div>
                                 </template>
                             </div>
 
                             <!-- Разрешения -->
                             <div v-for="(group, section) in permissions" :key="section">
                                 <ul class="list-group list-unstyled">
-                                    <template v-if="selectedRole?.actions?.edit">
+                                    <template v-if="has('roles', 'edit')">
                                         <!-- Секция (группа) -->
                                         <li class="fw-bold mb-2">
                                             <input
@@ -158,12 +156,19 @@
                                     </template>
                                     <template v-else>
                                         <!-- Режим просмотра -->
+                                        <li class="fw-bold mb-2">
+                                            <label :for="vueId + section" class="cursor-pointer ms-2">
+                                                {{ group[section] || section }}
+                                            </label>
+                                        </li>
                                         <li v-for="(label, code) in group" :key="code">
-                                            <i
-                                                class="fa"
-                                                :class="isChecked(code) ? 'fa-check text-success' : 'fa-check text-light'"
-                                            ></i>
-                                            <span class="ms-2">{{ label }}</span>
+                                            <template v-if="code !== section">
+                                                <i
+                                                    class="fa"
+                                                    :class="isChecked(code) ? 'fa-check text-success' : 'fa-check text-light'"
+                                                ></i>
+                                                <span class="ms-2">{{ label }}</span>
+                                            </template>
                                         </li>
                                     </template>
                                 </ul>
@@ -187,6 +192,7 @@ import {
     defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
+import { usePermissions }   from '@composables/usePermissions';
 import HistoryBtn           from '../../common/HistoryBtn.vue';
 import LoadingSpinner       from '../../common/LoadingSpinner.vue';
 import {
@@ -207,6 +213,9 @@ const props = defineProps({
     },
 });
 
+
+const { has } = usePermissions();
+
 const emit = defineEmits(['update:checked']);
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
@@ -219,7 +228,6 @@ const deleting  = ref(null);
 const error     = ref(null);
 
 const roles      = ref([]);
-const actions    = ref({});
 const historyUrl = ref(null);
 
 const selectedRole = ref(null);
@@ -231,8 +239,6 @@ const loadList = async () => {
     error.value     = null;
     try {
         const response = await ApiAdminRoleList();
-
-        actions.value = response.data.actions || {};
 
         // Проверяем, где именно лежат роли
         let fetchedRoles = response.data.roles;
@@ -265,7 +271,7 @@ const loadList = async () => {
 
 // Создание новой роли
 const makeAction = async () => {
-    if (!actions.value.edit) {
+    if (!has('roles', 'edit')) {
         return;
     }
     try {
@@ -290,7 +296,7 @@ const editAction = (role) => {
 
 // Сохранение роли
 const saveAction = async () => {
-    if (!actions.value.edit || saving.value) {
+    if (!has('roles', 'edit') || saving.value) {
         return;
     }
 
@@ -321,7 +327,7 @@ const saveAction = async () => {
 
 // Удаление роли
 const dropAction = async (id) => {
-    if (!actions.value.drop) {
+    if (!has('roles', 'drop')) {
         return;
     }
     if (!confirm('Удалить роль?')) {

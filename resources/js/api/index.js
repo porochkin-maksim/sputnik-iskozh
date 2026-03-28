@@ -420,6 +420,16 @@ export function ApiAdminSelectsCounters(accountId, getParams = {}, postData = nu
     return window.axios.get(makeQuery('/admin/json/selects/counters/'+accountId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminSelectsPeriods(getParams = {}, postData = null) {
+    // see admin.selects.periods
+    return window.axios.get(makeQuery('/admin/json/selects/periods', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminSelectsServicesTypes(getParams = {}, postData = null) {
+    // see admin.selects.services-types
+    return window.axios.get(makeQuery('/admin/json/selects/services-types', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminServiceCreate(getParams = {}, postData = null) {
     // see admin.service.create
     return window.axios.get(makeQuery('/admin/services/json/create', getParams), prepareRequestData(postData));

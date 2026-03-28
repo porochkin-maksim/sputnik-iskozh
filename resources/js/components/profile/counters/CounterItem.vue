@@ -103,7 +103,7 @@
                         {{ file.name }}
                     </div>
                     <template v-else>
-                        <button class="btn btn-outline-secondary"
+                        <button class="btn btn-outline-secondary w-100"
                                 @click="chooseFile"
                                 v-if="!file">
                             <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика

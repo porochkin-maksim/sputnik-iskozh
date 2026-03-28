@@ -15,6 +15,10 @@ app.use(Vuex);
 app.use(store);
 app.use(VueUidPlugin);
 
+if (window.userPermissions) {
+    store.dispatch('permissions/setPermissions', window.userPermissions);
+}
+
 import Alerts          from '@common/Alerts.vue';
 import PasswordBlock   from '@components/profile/PasswordBlock.vue';
 import AccountSwitcher from '@components/profile/account/AccountSwitcher.vue';

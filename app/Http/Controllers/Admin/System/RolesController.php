@@ -11,6 +11,8 @@ use Core\Domains\Access\Factories\RoleFactory;
 use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\RoleLocator;
 use Core\Domains\Access\Services\RoleService;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -50,12 +52,14 @@ class RolesController extends Controller
             abort(403);
         }
 
-        $searcher = new RoleSearcher()
+        $roles = $this->roleService->search(new RoleSearcher()
             ->setWithUsers()
-        ;
-        $roles    = $this->roleService->search($searcher);
+        );
 
-        return response()->json(new RolesListResource($roles->getItems()));
+        return response()->json([
+            'roles'      => new RolesListResource($roles->getItems()),
+            'historyUrl' => HistoryChangesLocator::route(type: HistoryType::ROLE),
+        ]);
     }
 
     public function save(SaveRequest $request): JsonResponse

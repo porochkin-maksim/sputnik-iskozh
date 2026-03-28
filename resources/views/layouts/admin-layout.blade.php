@@ -19,7 +19,7 @@ $season = match (Carbon::now()->month) {
     default   => 'winter',
 };
 
-$authRole  = \lc::roleDecorator();
+$authRole = \lc::roleDecorator();
 
 $cutRouteNameFn = static function (string $routeName) {
     $parts = explode('.', $routeName);
@@ -38,6 +38,7 @@ $cutRouteNameFn = static function (string $routeName) {
     @stack(SectionNames::META)
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
+    @include('layouts.partial.access.import-roles')
 </head>
 <body class="d-flex flex-column h-100 {{ $season }} admin"
       id="app"
@@ -66,7 +67,9 @@ $cutRouteNameFn = static function (string $routeName) {
         </div>
     </div>
 </nav>
-@if(!App::isProduction()) <div style="background-color: red;height:5px;z-index:99999;" class="position-absolute w-100 top-0 left-0"></div> @endif
+@if(!App::isProduction())
+    <div style="background-color: red;height:5px;z-index:99999;" class="position-absolute w-100 top-0 left-0"></div>
+@endif
 <main class="px-3 py-2 w-100">
     <div class="row admin-content-body">
         <div class="col-2 admin-side-panel border-end">
@@ -77,84 +80,96 @@ $cutRouteNameFn = static function (string $routeName) {
                 </a>
 
                 @if($authRole->can(PermissionEnum::ROLES_VIEW))
-                <a class="@if(Route::is('admin.role.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ROLE_INDEX) }}">
-                    <i class="fa fa-users me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_ROLE_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.role.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_ROLE_INDEX) }}">
+                        <i class="fa fa-users me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_ROLE_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::USERS_VIEW))
-                <a class="@if(Route::is('admin.user.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_USER_INDEX) }}">
-                    <i class="fa fa-user me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_USER_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.user.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_USER_INDEX) }}">
+                        <i class="fa fa-user me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_USER_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
-                <a class="@if(Route::is('admin.account*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
-                    <i class="fa fa-home me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_ACCOUNT_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.account*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
+                        <i class="fa fa-home me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_ACCOUNT_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::PERIODS_VIEW))
-                <a class="@if(Route::is('admin.period.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_PERIOD_INDEX) }}">
-                    <i class="fa fa-calendar me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_PERIOD_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.period.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_PERIOD_INDEX) }}">
+                        <i class="fa fa-calendar me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_PERIOD_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::SERVICES_VIEW))
-                <a class="@if(Route::is('admin.service.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_SERVICE_INDEX) }}">
-                    <i class="fa fa-cogs me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_SERVICE_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.service.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_SERVICE_INDEX) }}">
+                        <i class="fa fa-cogs me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_SERVICE_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::INVOICES_VIEW))
-                <a class="@if(Route::is('admin.invoice.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_INVOICE_INDEX) }}">
-                    <i class="fa fa-money me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_INVOICE_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.invoice.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_INVOICE_INDEX) }}">
+                        <i class="fa fa-money me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_INVOICE_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::COUNTERS_VIEW))
-                    <a class="@if(Route::is('admin.requests.counter-history.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
+                    <a class="@if(Route::is('admin.requests.counter-history.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}">
                         <i class="fa fa-bolt me-2"></i>
                         <span>{{ RouteNames::name(RouteNames::ADMIN_REQUEST_COUNTER_HISTORY_INDEX) }}</span>
                     </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::PAYMENTS_VIEW))
-                <a class="@if(Route::is('admin.new-payment.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
-                    <i class="fa fa-credit-card me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}</span>
-                    <span id="new-payments-count"></span>
-                </a>
+                    <a class="@if(Route::is('admin.new-payment.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
+                        <i class="fa fa-credit-card me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}</span>
+                        <span id="new-payments-count"></span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
-                <a class="@if(Route::is('admin.options.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_OPTIONS_INDEX) }}">
-                    <i class="fa fa-sliders me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_OPTIONS_INDEX) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.options.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_OPTIONS_INDEX) }}">
+                        <i class="fa fa-sliders me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_OPTIONS_INDEX) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
-                <a class="@if(Route::is('admin.emails.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_EMAILS) }}">
-                    <i class="fa fa-envelope me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_EMAILS) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.emails.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_EMAILS) }}">
+                        <i class="fa fa-envelope me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_EMAILS) }}</span>
+                    </a>
                 @endif
 
                 @if($authRole->canAccessAdmin())
-                <a class="@if(Route::is('admin.error-logs.*')) active-link @endif" href="{{ route(RouteNames::ADMIN_ERRORS) }}">
-                    <i class="fa fa-exclamation-triangle me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::ADMIN_ERRORS) }}</span>
-                </a>
+                    <a class="@if(Route::is('admin.error-logs.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_ERRORS) }}">
+                        <i class="fa fa-exclamation-triangle me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_ERRORS) }}</span>
+                    </a>
                 @endif
 
-                <a class="@if(Route::is(RouteNames::HISTORY_CHANGES)) active-link @endif" href="{{ route(RouteNames::HISTORY_CHANGES) }}" target="_blank">
+                <a class="@if(Route::is(RouteNames::HISTORY_CHANGES)) active-link @endif"
+                   href="{{ route(RouteNames::HISTORY_CHANGES) }}" target="_blank">
                     <i class="fa fa-book me-2"></i>
                     <span>{{ RouteNames::name(RouteNames::HISTORY_CHANGES) }}</span>
                 </a>

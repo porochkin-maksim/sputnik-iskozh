@@ -197,12 +197,14 @@ abstract class RouteNames
     public const string ADMIN_REQUEST_COUNTER_HISTORY_CONFIRM_DELETE = 'admin.requests.counter-history.confirm-delete';
     public const string ADMIN_REQUEST_COUNTER_HISTORY_CREATE_CLAIM   = 'admin.requests.counter-history.create-claim';
 
-    public const string ADMIN_TOP_PANEL_INDEX  = 'admin.top-panel.index';
-    public const string ADMIN_TOP_PANEL_SEARCH = 'admin.top-panel.search';
-    public const string ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
-    public const string ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
-    public const string ADMIN_ERRORS           = 'admin.error-logs.index';
-    public const string ADMIN_EMAILS           = 'admin.emails.index';
+    public const string ADMIN_TOP_PANEL_INDEX        = 'admin.top-panel.index';
+    public const string ADMIN_TOP_PANEL_SEARCH       = 'admin.top-panel.search';
+    public const string ADMIN_SELECTS_ACCOUNTS       = 'admin.selects.accounts';
+    public const string ADMIN_SELECTS_PERIODS        = 'admin.selects.periods';
+    public const string ADMIN_SELECTS_COUNTERS       = 'admin.selects.counters';
+    public const string ADMIN_SELECTS_SERVICES_TYPES = 'admin.selects.services-types';
+    public const string ADMIN_ERRORS                 = 'admin.error-logs.index';
+    public const string ADMIN_EMAILS                 = 'admin.emails.index';
 
     public const string ADMIN_QUEUE        = 'admin.queue';
     public const string ADMIN_QUEUE_STATUS = 'admin.queue.status';

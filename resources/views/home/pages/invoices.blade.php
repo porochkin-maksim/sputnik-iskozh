@@ -29,11 +29,8 @@ $periods = PeriodLocator::PeriodService()->search(
 
 $periodId = (int) request()->get('period', null);
 $period   = PeriodLocator::PeriodService()->getById($periodId);
+$period   = $period ? : $periods->first();
 
-$period = $period ? : PeriodLocator::PeriodService()->getActive();
-if ( ! $period) {
-    $period = $periods->first();
-}
 $invoices = new InvoiceCollection();
 $payments = new PaymentCollection();
 
@@ -56,6 +53,7 @@ if (lc::account()->getId() && $period) {
 }
 $account     = lc::account();
 $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
+
 ?>
 
 @extends(ViewNames::LAYOUTS_PROFILE)
@@ -65,25 +63,25 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::PROFILE_INVOICES, $period) }}
     @if($account->getId())
+        <h3 class="text-dark">
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center text-wrap">
+                <span class="text-center">Счета на участок "{{ $account->getNumber() }}" в периоде</span>
+                <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
+                      class="d-inline-block">
+                    <select name="period"
+                            class="form-select form-select-sm me-2 d-inline-block fw-bold ms-2"
+                            style="width: auto;font-size: 1em;"
+                            onchange="this.form.submit()">
+                        @foreach($periods as $p)
+                            <option value="{{ $p->getId() }}" {{ $period && $period->getId() === $p->getId() ? 'selected' : '' }}>
+                                {{ $p->getName() }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+        </h3>
         @if($invoices->count())
-            <h3 class="text-dark">
-                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center text-wrap">
-                    <span class="text-center">Счета на участок "{{ $account->getNumber() }}" в периоде</span>
-                    <form action="{{ route(RouteNames::PROFILE_INVOICES) }}"
-                          class="d-inline-block">
-                        <select name="period"
-                                class="form-select form-select-sm me-2 d-inline-block fw-bold ms-2"
-                                style="width: auto;font-size: 1em;"
-                                onchange="this.form.submit()">
-                            @foreach($periods as $p)
-                                <option value="{{ $p->getId() }}" {{ $period && $period->getId() === $p->getId() ? 'selected' : '' }}>
-                                    {{ $p->getName() }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-                </div>
-            </h3>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered  mb-0">
                     <tbody>
@@ -183,10 +181,15 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                     </tbody>
                 </table>
             </div>
-            <div>
-                <hr>
-            </div>
+        @else
+            <hr>
+            <h6 class="text-center text-secondary m-0">
+                <i>счетов нет...</i>
+            </h6>
         @endif
+        <div>
+            <hr>
+        </div>
     @endif
     @if($periods->count())
         <h3 class="text-dark text-center">Статистика СНТ в периоде «{{ $period->getName() }}»</h3>

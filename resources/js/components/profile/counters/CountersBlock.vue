@@ -20,7 +20,7 @@
                                     />
                                 </div>
                                 <div
-                                    class="text-end w-sm-25 w-100 d-flex flex-row flex-sm-column justify-content-between">
+                                    class="text-end w-sm-25 d-flex flex-row flex-sm-column justify-content-between">
                                     <div>{{ item.value.toLocaleString('ru-RU') }}кВт</div>
                                     <div>от {{ formatDate(item.date) }}</div>
                                 </div>

@@ -691,6 +691,20 @@
             "accountId": "{accountId}"
         }
     },
+    "adminSelectsPeriods": {
+        "name": "admin.selects.periods",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/periods",
+        "args": []
+    },
+    "adminSelectsServicesTypes": {
+        "name": "admin.selects.services-types",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/services-types",
+        "args": []
+    },
     "adminServiceCreate": {
         "name": "admin.service.create",
         "displayName": "",

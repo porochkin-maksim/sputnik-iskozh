@@ -13,6 +13,22 @@ class RoleDecorator
     {
     }
 
+    public function getFrontendPermissions(): array
+    {
+        $result          = [];
+        $userPermissions = $this->role->getPermissions();
+
+        foreach (PermissionEnum::cases() as $permission) {
+            $section = $permission->sectionKey();
+            $action  = $permission->actionKey();
+            if (in_array($permission, $userPermissions)) {
+                $result[$section][$action] = true;
+            }
+        }
+
+        return $result;
+    }
+
     public function isSuperAdmin(): bool
     {
         return $this->can(...PermissionEnum::cases());

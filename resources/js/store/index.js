@@ -1,11 +1,13 @@
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 
-import alerts from './modules/alerts';
-import auth   from './modules/auth.js';
+import alerts      from './alerts';
+import auth        from './auth.js';
+import permissions from './permissions';
 
-export default new Vuex.Store({
+export default createStore({
     modules: {
         alerts,
         auth,
+        permissions,
     },
 });

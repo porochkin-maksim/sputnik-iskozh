@@ -63,7 +63,9 @@ app.use(Vuex);
 app.use(store);
 app.use(VueUidPlugin);
 
-// Компоненты админки
+if (window.userPermissions) {
+    store.dispatch('permissions/setPermissions', window.userPermissions);
+}
 
 import AlertsBlock        from '@common/Alerts.vue';
 import SummaryBlock       from '@common/blocks/SummaryBlock.vue';

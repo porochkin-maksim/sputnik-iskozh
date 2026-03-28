@@ -3,19 +3,20 @@ import './utils/common.js';
 import './utils/menus/vertical-menu.js';
 
 import { createApp } from 'vue';
-
-import VueUidPlugin from 'vue-uid';
-import Vuex         from 'vuex';
-import store        from './store/index.js';
+import VueUidPlugin  from 'vue-uid';
+import store         from './store/index.js';
 
 const app           = createApp({});
 app.config.devtools = import.meta.env.DEV;
 
-app.use(Vuex);
 app.use(store);
 app.use(VueUidPlugin);
 
+if (window.userPermissions) {
+    store.dispatch('permissions/setPermissions', window.userPermissions);
+}
 
+// ... импорты компонентов
 import AlertsBlock               from '@common/Alerts.vue';
 import TopPanelBlock             from '@components/admin/TopPanelBlock.vue';
 import AccountsBlock             from '@components/admin/accounts/AccountsBlock.vue';

@@ -15,7 +15,12 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
         Route::group(['prefix' => 'json'], static function () {
             Route::group(['prefix' => 'selects'], static function () {
                 Route::get('/accounts', [Controllers\Admin\SelectCollectionsController::class, 'accounts'])->name(RouteNames::ADMIN_SELECTS_ACCOUNTS);
-                Route::get('/counters/{accountId?}', [Controllers\Admin\SelectCollectionsController::class, 'counters'])->name(RouteNames::ADMIN_SELECTS_COUNTERS);
+                Route::get('/periods', [Controllers\Admin\SelectCollectionsController::class, 'periods'])->name(RouteNames::ADMIN_SELECTS_PERIODS);
+                Route::get('/services-types', [Controllers\Admin\SelectCollectionsController::class, 'servicesTypes'])->name(RouteNames::ADMIN_SELECTS_SERVICES_TYPES);
+                Route::get('/counters/{accountId?}', [Controllers\Admin\SelectCollectionsController::class, 'counters'])
+                    ->name(RouteNames::ADMIN_SELECTS_COUNTERS)
+                    ->whereNumber('id')
+                ;
             });
             Route::group(['prefix' => 'top-panel'], static function () {
                 Route::get('/', [Controllers\Admin\TopPanelController::class, 'index'])->name(RouteNames::ADMIN_TOP_PANEL_INDEX);
