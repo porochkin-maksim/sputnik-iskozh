@@ -8,7 +8,7 @@ use Core\Domains\Billing\Acquiring\Factories\AcquiringFactory;
 use Core\Domains\Billing\Acquiring\Models\AcquiringDTO;
 use Core\Domains\Billing\Acquiring\Repositories\AcquiringRepository;
 use Core\Domains\Billing\Acquiring\Models\AcquiringSearcher;
-use Core\Domains\Billing\Acquiring\Responses\SearchResponse;
+use Core\Domains\Billing\Acquiring\Responses\AcquiringSearchResponse;
 
 readonly class AcquiringService
 {
@@ -51,11 +51,11 @@ readonly class AcquiringService
         return $model ? $this->acquiringFactory->makeDtoFromObject($model) : null;
     }
 
-    public function search(AcquiringSearcher $searcher): SearchResponse
+    public function search(AcquiringSearcher $searcher): AcquiringSearchResponse
     {
         $response = $this->acquiringRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new AcquiringSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new AcquiringCollection();

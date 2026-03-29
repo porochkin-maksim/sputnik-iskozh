@@ -2,13 +2,13 @@
 
 namespace Core\Domains\Access\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\Access\Collections\RoleCollection;
 
 /**
  * @method RoleCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class AccessSearchResponse extends BaseSearchResponse
 {
 
 }

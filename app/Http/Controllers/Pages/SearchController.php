@@ -11,6 +11,7 @@ use Core\Domains\File\Responses\FileSearchResponse;
 use Core\Domains\File\Services\FileService;
 use Core\Domains\News\Models\NewsSearcher;
 use Core\Domains\News\NewsLocator;
+use Core\Domains\News\Responses\NewsSearchResponse;
 use Core\Domains\News\Services\NewsService;
 use Core\Enums\DateTimeFormat;
 use Core\Responses\ResponsesEnum;
@@ -44,7 +45,7 @@ class SearchController extends Controller
         return response()->json($result);
     }
 
-    private function searchNews(string $searching): \Core\Domains\News\Responses\SearchResponse
+    private function searchNews(string $searching): NewsSearchResponse
     {
         $canEdit = \lc::roleDecorator()->canNews();
 

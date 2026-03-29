@@ -64,10 +64,10 @@
 }
 
 .notification-container {
-    position : fixed;
-    bottom   : 20px;
-    right    : 20px;
-    width    : 320px;
+    position  : fixed;
+    bottom    : 20px;
+    right     : 20px;
+    min-width : 320px;
 
     .message {
         display     : flex;

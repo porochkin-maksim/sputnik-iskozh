@@ -2,13 +2,13 @@
 
 namespace Core\Domains\Account\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\Account\Collections\AccountCollection;
 
 /**
  * @method AccountCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class AccountSearchResponse extends BaseSearchResponse
 {
 
 }

@@ -4,15 +4,15 @@ namespace Core\Db\Searcher\Models;
 
 use Illuminate\Support\Collection;
 
-class SearchResponse
+class BaseSearchResponse
 {
     private Collection $items;
-    private int        $total;
+    private ?int       $total;
 
     public function __construct()
     {
         $this->items = new Collection();
-        $this->total = 0;
+        $this->total = null;
     }
 
     public function getItems(): Collection
@@ -46,7 +46,7 @@ class SearchResponse
 
     public function getTotal(): int
     {
-        return $this->total;
+        return $this->total ?? count($this->items);
     }
 
     public function setTotal(int $total): static

@@ -9,7 +9,7 @@ use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
-use Core\Domains\Account\Responses\SearchResponse;
+use Core\Domains\Account\Responses\AccountSearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
@@ -74,11 +74,11 @@ readonly class AccountService
         return $this->search($searcher)->getItems()->first();
     }
 
-    public function search(AccountSearcher $searcher): SearchResponse
+    public function search(AccountSearcher $searcher): AccountSearchResponse
     {
         $response = $this->accountRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new AccountSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new AccountCollection();

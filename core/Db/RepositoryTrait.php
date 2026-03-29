@@ -4,11 +4,10 @@ namespace Core\Db;
 
 use Core\Cache\CacheLocator;
 use Core\Db\Searcher\BaseSearcher;
-use Core\Db\Searcher\Models\SearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Db\Searcher\SearcherInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 trait RepositoryTrait
@@ -48,12 +47,12 @@ trait RepositoryTrait
     /**
      * @deprecated
      */
-    public function search(SearcherInterface $searcher): SearchResponse
+    public function search(SearcherInterface $searcher): BaseSearchResponse
     {
         return $this->searchModels($searcher);
     }
 
-    protected function getModelById(?int $id): ?Model
+    protected function getModelById(?int $id, ?SearcherInterface $searcher = null): ?Model
     {
         if ( ! $id) {
             return null;
@@ -63,9 +62,16 @@ trait RepositoryTrait
             return CacheLocator::LocalCache()->get($cacheKey);
         }
         $modelClass = $this->modelClass();
-        $query      = (new $modelClass)::query();
-        $query      = $this->getQuery($query);
-        $model      = $query->find($id);
+        if ($searcher) {
+            $query = $this->buildSearchQuery($searcher);
+            $query = $this->buildCommonQuery($query, $searcher);
+        }
+        else {
+            $query = (new $modelClass)::query();
+            $query = $this->getQuery($query);
+        }
+
+        $model = $query->find($id);
         if ($model) {
             CacheLocator::LocalCache()->set($cacheKey, $model);
         }
@@ -73,9 +79,9 @@ trait RepositoryTrait
         return $model;
     }
 
-    protected function searchModels(SearcherInterface $searcher): SearchResponse
+    protected function searchModels(SearcherInterface $searcher): BaseSearchResponse
     {
-        $result = new SearchResponse();
+        $result = new BaseSearchResponse();
 
         $cacheKey = md5(serialize($searcher));
         if (CacheLocator::LocalCache()->has($cacheKey)) {
@@ -228,11 +234,18 @@ trait RepositoryTrait
         return $query;
     }
 
+    /**
+     * функция для переопределения в наследниках
+     */
     protected function getQuery(Builder $query): Builder
     {
         return $query;
     }
 
+
+    /**
+     * функция для переопределения в наследниках
+     */
     protected function adaptFieldName(string $field): string
     {
         if (Str::contains($field, '.')) {
@@ -244,6 +257,6 @@ trait RepositoryTrait
 
     private function cacheKey($key): string
     {
-        return Hash::make($this->modelClass() . $key);
+        return md5($this->modelClass() . $key);
     }
 }

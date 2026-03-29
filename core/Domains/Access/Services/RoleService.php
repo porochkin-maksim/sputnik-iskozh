@@ -9,7 +9,7 @@ use Core\Domains\Access\Models\RoleComparator;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\Repositories\RoleRepository;
-use Core\Domains\Access\Responses\SearchResponse;
+use Core\Domains\Access\Responses\AccessSearchResponse;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
@@ -52,11 +52,11 @@ readonly class RoleService
         return $current;
     }
 
-    public function search(RoleSearcher $searcher): SearchResponse
+    public function search(RoleSearcher $searcher): AccessSearchResponse
     {
         $response = $this->roleRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new AccessSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new RoleCollection();

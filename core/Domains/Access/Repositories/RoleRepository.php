@@ -4,7 +4,6 @@ namespace Core\Domains\Access\Repositories;
 
 use App\Models\Access\Role;
 use Core\Db\RepositoryTrait;
-use Core\Db\Searcher\Models\SearchResponse;
 use Core\Db\Searcher\SearcherInterface;
 
 class RoleRepository

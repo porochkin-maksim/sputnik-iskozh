@@ -2,13 +2,13 @@
 
 namespace Core\Domains\Option\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\Option\Collections\OptionCollection;
 
 /**
  * @method OptionCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class OptionSearchResponse extends BaseSearchResponse
 {
 
 }

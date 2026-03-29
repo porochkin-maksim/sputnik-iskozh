@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Claim\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 
 /**

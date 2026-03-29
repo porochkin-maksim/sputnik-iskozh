@@ -28,7 +28,7 @@ use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
-use Core\Domains\User\Responses\SearchResponse;
+use Core\Domains\User\Responses\UserSearchResponse;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
 use Core\Helpers\DateTime\DateTimeHelper;
@@ -65,7 +65,7 @@ class UsersController extends Controller
         abort(403);
     }
 
-    public function view($id = null)
+    public function view(?int $id = null)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             abort(403);
@@ -92,7 +92,7 @@ class UsersController extends Controller
             if ($accountId) {
                 $account = $this->accountService->getById($accountId)
                     ?->setFraction(1)
-                    ->setOwnerDate(now())
+                    ->setOwnerDate(Carbon::now())
                 ;
 
                 $user->setAccount($account);
@@ -145,7 +145,7 @@ class UsersController extends Controller
         return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
-    private function getUsersList(ListRequest $request): SearchResponse
+    private function getUsersList(ListRequest $request): UserSearchResponse
     {
         $searcher = new UserSearcher();
         $searcher
@@ -163,7 +163,7 @@ class UsersController extends Controller
             ;
         }
         else {
-            if ($request->get('isMember')) {
+            if ($request->input('isMember')) {
                 if ($request->getBool('isMember')) {
                     $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
                 }
@@ -262,7 +262,7 @@ class UsersController extends Controller
         $user = User::withTrashed()->find($id);
         $user?->restore();
 
-        return (bool) $user->id;
+        return (bool) $user?->id;
     }
 
     public function sendRestorePassword(DefaultRequest $request): void

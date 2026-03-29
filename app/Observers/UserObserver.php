@@ -1,16 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Observers;
 
 use App\Models\User;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 
-class UserObserver
+class UserObserver extends AbstractObserver
 {
-    public function created(User $user): void
-    {
-        //
-    }
-
     public function updating(User $user): void
     {
         if ($user->email !== $user->getOriginal(User::EMAIL)) {
@@ -18,23 +14,13 @@ class UserObserver
         }
     }
 
-    public function updated(User $user): void
+    protected function getPropertyTitles(): array
     {
-        //
+        return User::PROPERTIES_TO_TITLES;
     }
 
-    public function deleted(User $user): void
+    protected function getPrimaryHistoryType(): HistoryType
     {
-        //
-    }
-
-    public function restored(User $user): void
-    {
-        //
-    }
-
-    public function forceDeleted(User $user): void
-    {
-        //
+        return HistoryType::USER;
     }
 }

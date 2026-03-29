@@ -59,7 +59,9 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
 
         Route::group(['prefix' => 'users'], static function () {
             Route::get('/', [Controllers\Admin\System\UsersController::class, 'index'])->name(RouteNames::ADMIN_USER_INDEX);
-            Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW);
+            Route::get('/view/{id?}', [Controllers\Admin\System\UsersController::class, 'view'])->name(RouteNames::ADMIN_USER_VIEW)
+                ->whereNumber('id')
+            ;
             Route::get('/export', [Controllers\Admin\System\UsersController::class, 'export'])->name(RouteNames::ADMIN_USER_EXPORT);
             Route::group(['prefix' => 'json'], static function () {
                 Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);

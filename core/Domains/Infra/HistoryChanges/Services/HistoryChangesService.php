@@ -13,7 +13,7 @@ use Core\Domains\Infra\HistoryChanges\Jobs\CreateHistoryJob;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Models\LogData;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
-use Core\Domains\Infra\HistoryChanges\Responses\SearchResponse;
+use Core\Domains\Infra\HistoryChanges\Responses\HistoryChangesSearchResponse;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesSearcher;
 
 class HistoryChangesService
@@ -99,11 +99,11 @@ class HistoryChangesService
         return $this->historyChangesFactory->makeDtoFromObject($model);
     }
 
-    public function search(HistoryChangesSearcher $searcher): SearchResponse
+    public function search(HistoryChangesSearcher $searcher): HistoryChangesSearchResponse
     {
         $response = $this->historyChangesRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new HistoryChangesSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new HistoryChangesCollection();

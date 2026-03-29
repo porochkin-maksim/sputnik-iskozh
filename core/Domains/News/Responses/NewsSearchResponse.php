@@ -2,13 +2,13 @@
 
 namespace Core\Domains\News\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\News\Collections\NewsCollection;
 
 /**
  * @method NewsCollection getItems()
  */
-class SearchResponse extends BaseSearchResponse
+class NewsSearchResponse extends BaseSearchResponse
 {
 
 }

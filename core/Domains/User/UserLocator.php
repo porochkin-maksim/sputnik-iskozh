@@ -2,7 +2,6 @@
 
 namespace Core\Domains\User;
 
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserDTO;
 use Core\Domains\User\Repositories\UserRepository;
@@ -21,9 +20,7 @@ class UserLocator
     {
         if ( ! isset(self::$UserService)) {
             self::$UserService = new UserService(
-                self::UserFactory(),
                 self::UserRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -42,7 +39,9 @@ class UserLocator
     public static function UserRepository(): UserRepository
     {
         if ( ! isset(self::$UserRepository)) {
-            self::$UserRepository = new UserRepository();
+            self::$UserRepository = new UserRepository(
+                self::UserFactory(),
+            );
         }
 
         return self::$UserRepository;

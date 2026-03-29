@@ -15,7 +15,7 @@ use Core\Domains\Option\Models\DataDTO\SntAccounting;
 use Core\Domains\Option\Models\OptionDTO;
 use Core\Domains\Option\Models\OptionSearcher;
 use Core\Domains\Option\Repositories\OptionRepository;
-use Core\Domains\Option\Responses\SearchResponse;
+use Core\Domains\Option\Responses\OptionSearchResponse;
 use Core\Domains\Option\Services\OptionService;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +67,7 @@ class OptionServiceTest extends TestCase
         $searcher = new OptionSearcher();
         $searcher->setId($invalidId);
 
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection());
 
         $this->repository
@@ -90,7 +90,7 @@ class OptionServiceTest extends TestCase
         $searcher = new OptionSearcher();
         $searcher->setId($id);
 
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection());
 
         $newDto = new OptionDTO();
@@ -136,7 +136,7 @@ class OptionServiceTest extends TestCase
         $dto->setData($dataDto);
         $dto->setType(OptionEnum::SNT_ACCOUNTING);
 
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection([$option]));
 
         $this->repository
@@ -183,7 +183,7 @@ class OptionServiceTest extends TestCase
         $searcher = new OptionSearcher();
         $searcher->setId($id);
 
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection([$option]));
 
         $this->repository
@@ -218,7 +218,7 @@ class OptionServiceTest extends TestCase
         $searcher = new OptionSearcher();
         $searcher->setId($id);
 
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection());
 
         $dto = new OptionDTO();
@@ -437,7 +437,7 @@ class OptionServiceTest extends TestCase
         $existingOption->data = ['test' => 'data'];
 
         // Настраиваем response от репозитория
-        $searchResponse = new SearchResponse();
+        $searchResponse = new OptionSearchResponse();
         $searchResponse->setItems(new Collection([$existingOption]));
 
         // Настраиваем ожидаемый вызов search
@@ -484,7 +484,7 @@ class OptionServiceTest extends TestCase
         $result = $this->service->all();
 
         // Проверяем результат
-        $this->assertInstanceOf(SearchResponse::class, $result);
+        $this->assertInstanceOf(OptionSearchResponse::class, $result);
         $items = $result->getItems();
         
         // Проверяем, что количество элементов равно количеству значений в enum
