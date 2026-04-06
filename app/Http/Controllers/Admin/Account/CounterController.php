@@ -153,20 +153,28 @@ class CounterController extends Controller
             abort(404);
         }
 
-        $counter = $counter ? : $this->counterFactory->makeDefault()->setAccountId($accountId);
+        DB::beginTransaction();
+        try {
+            $counter = $counter ? : $this->counterFactory->makeDefault()->setAccountId($accountId);
 
-        $counter
-            ->setIsInvoicing($request->getIsInvoicing())
-            ->setIncrement($request->getIncrement())
-            ->setNumber($request->getNumber())
-            ->setExpireAt($request->getExpireAt())
-        ;
+            $counter
+                ->setIsInvoicing($request->getIsInvoicing())
+                ->setIncrement($request->getIncrement())
+                ->setNumber($request->getNumber())
+                ->setExpireAt($request->getExpireAt())
+            ;
 
-        $this->counterService->save($counter);
+            $counter = $this->counterService->save($counter);
 
-        $passportFile = $request->getPassportFile();
-        if ($passportFile) {
-            $this->fileService->storePassportFile($passportFile, $counter->getId());
+            $passportFile = $request->getPassportFile();
+            if ($passportFile) {
+                $this->fileService->storePassportFile($passportFile, $counter->getId());
+            }
+            DB::commit();
+        }
+        catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 

@@ -101,27 +101,33 @@ class CounterController extends Controller
         }
 
         DB::beginTransaction();
-        $counter = $this->counterFactory->makeDefault()
-            ->setNumber($request->getNumber())
-            ->setAccountId($account->getId())
-            ->setIncrement($request->getIncrement())
-            ->setExpireAt($request->getExpireAt())
-        ;
+        try {
+            $counter = $this->counterFactory->makeDefault()
+                ->setNumber($request->getNumber())
+                ->setAccountId($account->getId())
+                ->setIncrement($request->getIncrement())
+                ->setExpireAt($request->getExpireAt())
+            ;
 
-        $counter = $this->counterService->save($counter);
+            $counter = $this->counterService->save($counter);
 
-        $history = $this->counterHistoryFactory->makeDefault()
-            ->setCounterId($counter->getId())
-            ->setValue($request->getValue())
-        ;
-        $history = $this->counterHistoryService->save($history);
+            $history = $this->counterHistoryFactory->makeDefault()
+                ->setCounterId($counter->getId())
+                ->setValue($request->getValue())
+            ;
+            $history = $this->counterHistoryService->save($history);
 
-        $this->fileService->storeHistoryFile($request->getHistoryFile(), $history->getId());
-        $passportFile = $request->getPassportFile();
-        if ($passportFile) {
-            $this->fileService->storePassportFile($passportFile, $counter->getId());
+            $this->fileService->storeHistoryFile($request->getHistoryFile(), $history->getId());
+            $passportFile = $request->getPassportFile();
+            if ($passportFile) {
+                $this->fileService->storePassportFile($passportFile, $counter->getId());
+            }
+            DB::commit();
         }
-        DB::commit();
+        catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function incrementSave(DefaultRequest $request): void

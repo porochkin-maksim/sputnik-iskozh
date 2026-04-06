@@ -20,17 +20,6 @@
                                      switch-style
                     />
                 </div>
-                <div class="mt-2">
-                    <custom-input v-model="localCounter.increment"
-                                  :errors="errors.increment"
-                                  :type="'number'"
-                                  :min="0"
-                                  :step="1"
-                                  :label="'Ежемесячное увеличение показаний на кВт'"
-                                  :required="true"
-                                  @focusout="calculateIncrement"
-                    />
-                </div>
                 <div class="mt-2"
                      v-if="!localCounter?.id">
                     <custom-input v-model="localCounter.value"
@@ -45,6 +34,17 @@
                                      :error="errors.expireAt"
                                      :required="true"
                                      :label="'Дата истечения поверки'"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="localCounter.increment"
+                                  :errors="errors.increment"
+                                  :type="'number'"
+                                  :min="0"
+                                  :step="1"
+                                  :label="'Ежемесячное увеличение показаний на кВт'"
+                                  :required="true"
+                                  @focusout="calculateIncrement"
                     />
                 </div>
                 <div class="mt-2"

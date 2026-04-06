@@ -54,17 +54,6 @@
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="form.increment"
-                                  :errors="errors.increment"
-                                  type="number"
-                                  :min="0"
-                                  :step="1"
-                                  label="Ежемесячное увеличение показаний на кВт"
-                                  :required="true"
-                                  @focusout="calculateIncrement"
-                    />
-                </div>
-                <div class="mt-2">
                     <custom-input v-model="form.value"
                                   :errors="errors.value"
                                   type="number"
@@ -77,6 +66,17 @@
                                      :error="errors.expire_at"
                                      :required="true"
                                      label="Дата истечения поверки"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="form.increment"
+                                  :errors="errors.increment"
+                                  type="number"
+                                  :min="0"
+                                  :step="1"
+                                  label="Ежемесячное увеличение показаний на кВт"
+                                  :required="true"
+                                  @focusout="calculateIncrement"
                     />
                 </div>
                 <div class="mt-2">
@@ -273,7 +273,7 @@ const calculateIncrement = () => {
 };
 
 const showAddCounterButton = computed(() => {
-    return !counters.value || !counters.value.length || counters.value.length < 1;
+    return !counters.value || !counters.value.length || counters.value.length < 2;
 });
 
 const canSubmitAction = computed(() => {
