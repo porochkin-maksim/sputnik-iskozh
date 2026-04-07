@@ -126,6 +126,14 @@ volume-rm: ## удалить "docker volumes" проекта
 remove-all: ## Удалить все контейнеры и образы
 	@docker compose down -v --rmi all
 
+.PHONY: create-domain
+create-domain: ## создать структуру домена в Core/Domains (используй: make create-domain NAME=SomeObject)
+	@if [ -z "$(NAME)" ]; then \
+		echo "Ошибка: не указано имя домена. Используйте: make create-domain NAME=SomeObject"; \
+		exit 1; \
+	fi
+	@./scripts/create-domain.sh -n $(NAME)
+
 # empty action
 %:
 	@:
