@@ -81,6 +81,7 @@ import PageEditor         from '@components/public/pages/PageEditor.vue';
 import CounterForm        from '@components/public/requests/CounterForm.vue';
 import PaymentForm        from '@components/public/requests/PaymentForm.vue';
 import ProposalForm       from '@components/public/requests/ProposalForm.vue';
+import HelpDeskForm       from '@components/public/requests/HelpDeskForm.vue';
 import SearchBlock        from '@components/public/search/SearchBlock.vue';
 
 app.component('alerts-block', AlertsBlock);
@@ -97,6 +98,7 @@ app.component('page-editor', PageEditor);
 app.component('counter-form', CounterForm);
 app.component('payment-form', PaymentForm);
 app.component('proposal-form', ProposalForm);
+app.component('help-desk-form', HelpDeskForm);
 app.component('search-block', SearchBlock);
 
 app.mount('#app');

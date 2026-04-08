@@ -52,7 +52,7 @@ trait RepositoryTrait
         return $this->searchModels($searcher);
     }
 
-    protected function getModelById(?int $id, ?SearcherInterface $searcher = null): ?Model
+    public function getModelById(?int $id, ?SearcherInterface $searcher = null): ?Model
     {
         if ( ! $id) {
             return null;

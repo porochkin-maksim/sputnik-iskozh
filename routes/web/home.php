@@ -15,7 +15,7 @@ Route::group(['prefix' => 'home'], static function () {
         });
 
         Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-            Route::post('/acquring/create/{invoiceId}/{amount}', [Controllers\Pages\Requests\AcquringController::class, 'create'])
+            Route::post('/acquring/create/{invoiceId}/{amount}', [Controllers\Public\Requests\AcquringController::class, 'create'])
                 ->name(RouteNames::ACQURING_INVOICE_CREATE)
                 ->whereNumber('invoiceId')
             ;

@@ -16,6 +16,7 @@ readonly class AccountResource extends AbstractResource
     public function jsonSerialize(): array
     {
         return [
+            'id'     => $this->account->getId(),
             'number' => $this->account->getNumber(),
             'size'   => $this->account->getSize(),
         ];

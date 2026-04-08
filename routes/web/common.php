@@ -4,105 +4,50 @@ use App\Http\Controllers;
 use App\Http\Middleware\Enums\MiddlewareNames;
 use Core\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
+use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
-Route::group(['prefix' => 'news'], static function () {
-    Route::get('/', [Controllers\Pages\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
-    Route::get('/{id}', [Controllers\Pages\News\NewsController::class, 'show'])
-        ->name(RouteNames::NEWS_SHOW)
-        ->whereNumber('id')
-    ;
-    Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Pages\News\NewsController::class, 'list'])->name(RouteNames::NEWS_LIST);
-        Route::get('/list/index', [Controllers\Pages\News\NewsController::class, 'indexList'])->name(RouteNames::NEWS_INDEX_LIST);
-        Route::get('/list/locked', [Controllers\Pages\News\NewsController::class, 'lockedNews'])->name(RouteNames::NEWS_LIST_LOCKED);
-        Route::get('/create', [Controllers\Pages\News\NewsController::class, 'create'])->name(RouteNames::NEWS_CREATE);
-        Route::post('/save', [Controllers\Pages\News\NewsController::class, 'save'])->name(RouteNames::NEWS_SAVE);
-        Route::get('/edit/{id}', [Controllers\Pages\News\NewsController::class, 'edit'])
-            ->name(RouteNames::NEWS_EDIT)
-            ->whereNumber('id')
-        ;
-        Route::delete('/delete/{id}', [Controllers\Pages\News\NewsController::class, 'delete'])
-            ->name(RouteNames::NEWS_DELETE)
-            ->whereNumber('id')
-        ;
-        Route::post('/file/save', [Controllers\Pages\News\NewsController::class, 'saveFile'])->name(RouteNames::NEWS_FILE_SAVE);
-        Route::post('/file/upload/{id}', [Controllers\Pages\News\NewsController::class, 'uploadFile'])
-            ->name(RouteNames::NEWS_FILE_UPLOAD)
-            ->whereNumber('id')
-        ;
-        Route::delete('/file/delete/{id}', [Controllers\Pages\News\NewsController::class, 'deleteFile'])
-            ->name(RouteNames::NEWS_FILE_DELETE)
-            ->whereNumber('id')
-        ;
+include 'common/news.php';
+include 'common/documents.php';
+
+Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
+    Route::group(['prefix' => '/json/summary'], static function () {
+        Route::get('/', [Controllers\Common\SummaryController::class, 'summary'])->name(RouteNames::SUMMARY);
+        Route::get('/{type}', [Controllers\Common\SummaryController::class, 'summaryDetailing'])->name(RouteNames::SUMMARY_DETAILING);
     });
 });
 
-Route::group(['prefix' => 'announcements'], static function () {
-    Route::get('/', [Controllers\Pages\News\AnnouncementController::class, 'index'])->name(RouteNames::ANNOUNCEMENTS);
-    Route::get('/{id}', [Controllers\Pages\News\AnnouncementController::class, 'show'])
-        ->name(RouteNames::ANNOUNCEMENTS_SHOW)
-        ->whereNumber('id')
-    ;
-    Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Pages\News\AnnouncementController::class, 'list'])->name(RouteNames::ANNOUNCEMENTS_LIST);
+Route::prefix('ajax')->name('ajax.')->group(function () {
+    Route::prefix('selects')->name('selects.')->group(function () {
+        Route::get('/accounts', [Controllers\Public\SelectsController::class, 'accounts'])->name('accounts');
     });
 });
 
-Route::group(['prefix' => 'document'], static function () {
-    Route::get('/invoice-receipt/blank', [Controllers\Common\Documents\ReceiptController::class, 'makeForBlank'])->name(RouteNames::DOCUMENT_RECEIPT_BLANK);
-    Route::get('/invoice-receipt/{uid}', [Controllers\Common\Documents\ReceiptController::class, 'makeForInvoice'])->name(RouteNames::DOCUMENT_RECEIPT_INVOICE);
+Route::group(['prefix' => 'contacts/requests'], static function () {
+    include 'common/help-desk.php';
+
+    Route::get('/', [Controllers\Public\RequestsPagesController::class, 'index'])->name(RouteNames::REQUESTS);
+    Route::get('/proposal', [Controllers\Public\RequestsPagesController::class, 'proposal'])->name(RouteNames::REQUESTS_PROPOSAL);
+    Route::post('/proposal', [Controllers\Public\Requests\ProposalController::class, 'create'])->name(RouteNames::REQUESTS_PROPOSAL_CREATE);
+    Route::get('/payment', [Controllers\Public\RequestsPagesController::class, 'payment'])->name(RouteNames::REQUESTS_PAYMENT);
+    Route::post('/payment', [Controllers\Public\Requests\PaymentsController::class, 'create'])->name(RouteNames::REQUESTS_PAYMENT_CREATE);
+    Route::get('/counter', [Controllers\Public\RequestsPagesController::class, 'counter'])->name(RouteNames::REQUESTS_COUNTER);
+    Route::post('/counter', [Controllers\Public\Requests\CounterController::class, 'create'])->name(RouteNames::REQUESTS_COUNTER_CREATE);
 });
 
-Route::group(['prefix' => 'folders'], static function () {
-    Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Pages\Files\FolderController::class, 'list'])->name(RouteNames::FOLDERS_LIST);
-        Route::get('/show/{id}', [Controllers\Pages\Files\FolderController::class, 'show'])
-            ->name(RouteNames::FOLDERS_SHOW)
-            ->whereNumber('id')
-        ;
-        Route::get('/info/{id?}', [Controllers\Pages\Files\FolderController::class, 'info'])->name(RouteNames::FOLDERS_INFO);
-
-        Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
-            Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-                Route::post('/save', [Controllers\Pages\Files\FolderController::class, 'save'])->name(RouteNames::FOLDERS_SAVE);
-                Route::delete('/delete/{id}', [Controllers\Pages\Files\FolderController::class, 'delete'])
-                    ->name(RouteNames::FOLDERS_DELETE)
-                    ->whereNumber('id')
-                ;
-            });
-        });
-    });
+Breadcrumbs::for(RouteNames::REQUESTS, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::CONTACTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS), route(RouteNames::REQUESTS));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_COUNTER, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_COUNTER), route(RouteNames::REQUESTS_COUNTER));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_PROPOSAL, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_PROPOSAL), route(RouteNames::REQUESTS_PROPOSAL));
+});
+Breadcrumbs::for(RouteNames::REQUESTS_PAYMENT, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::REQUESTS);
+    $trail->push(RouteNames::name(RouteNames::REQUESTS_PAYMENT), route(RouteNames::REQUESTS_PAYMENT));
 });
 
-Route::group(['prefix' => 'files'], static function () {
-    Route::get('/{folder?}', [Controllers\Pages\Files\FolderController::class, 'index'])->name(RouteNames::FILES);
-
-    Route::group(['prefix' => 'json'], static function () {
-        Route::get('/list', [Controllers\Pages\Files\FileController::class, 'list'])->name(RouteNames::FILES_LIST);
-
-        Route::group(['middleware' => MiddlewareNames::VERIFIED], static function () {
-            Route::post('/store', [Controllers\Pages\Files\FileController::class, 'store'])->name(RouteNames::FILES_STORE);
-            Route::post('/save', [Controllers\Pages\Files\FileController::class, 'save'])->name(RouteNames::FILES_SAVE);
-            Route::post('/replace', [Controllers\Pages\Files\FileController::class, 'replace'])->name(RouteNames::FILES_REPLACE);
-            Route::post('/up/{id}', [Controllers\Pages\Files\FileController::class, 'up'])
-                ->name(RouteNames::FILES_UP)
-                ->whereNumber('id')
-            ;
-            Route::post('/down/{id}', [Controllers\Pages\Files\FileController::class, 'down'])
-                ->name(RouteNames::FILES_DOWN)
-                ->whereNumber('id')
-            ;
-            Route::post('/move', [Controllers\Pages\Files\FileController::class, 'move'])->name(RouteNames::FILES_MOVE);
-            Route::get('/edit/{id}', [Controllers\Pages\Files\FileController::class, 'edit'])
-                ->name(RouteNames::FILES_EDIT)
-                ->whereNumber('id')
-            ;
-            Route::delete('/delete/{id}', [Controllers\Pages\Files\FileController::class, 'delete'])
-                ->name(RouteNames::FILES_DELETE)
-                ->whereNumber('id')
-            ;
-        });
-    });
-});
-
-Route::get('/storage/{filePath}', [App\Http\Controllers\FileController::class, 'download'])->where('filePath', '.*');

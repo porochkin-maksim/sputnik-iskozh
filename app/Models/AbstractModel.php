@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Models\Interfaces\CastsInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method null|static find($id)
+ */
 abstract class AbstractModel extends Model implements CastsInterface
 {
     public const string TABLE = '';

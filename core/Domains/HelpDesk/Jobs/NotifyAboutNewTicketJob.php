@@ -1,0 +1,57 @@
+<?php declare(strict_types=1);
+
+namespace Core\Domains\HelpDesk\Jobs;
+
+use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Access\RoleLocator;
+use Core\Domains\HelpDesk\HelpDeskServiceLocator;
+use Core\Domains\HelpDesk\Mails\NewTicketCreatedEmail;
+use Core\Domains\Infra\HistoryChanges\Enums\Event;
+use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Queue\QueueEnum;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
+
+class NotifyAboutNewTicketJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        private readonly int $ticketId,
+    )
+    {
+        $this->onQueue(QueueEnum::DEFAULT->value);
+    }
+
+    public function handle(): void
+    {
+        $ticket = HelpDeskServiceLocator::TicketService()->getById($this->ticketId);
+
+        if ( ! $ticket || ! $ticket->getStatus()?->isNew()) {
+            return;
+        }
+
+        $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT);
+        $emails = array_unique(array_merge($emails, [config('mail.emails.admin')]));
+
+        foreach ($emails as $email) {
+            $mail = new NewTicketCreatedEmail(
+                $email,
+                $ticket,
+            );
+            Mail::send($mail);
+
+            HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+                Event::COMMON,
+                HistoryType::TICKET,
+                $ticket->getId(),
+                text: 'Отправлено уведомление о новой заявке на почту ' . $email,
+            );
+        }
+    }
+}

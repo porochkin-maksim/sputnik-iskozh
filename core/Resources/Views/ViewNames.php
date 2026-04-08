@@ -14,26 +14,27 @@ enum ViewNames: string
     public const string PARTIAL_METRICS = 'layouts.partial.metrics';
     public const string PARTIAL_FOOTER  = 'layouts.partial.social';
 
-    public const string PAGES_INDEX         = 'pages.index';
-    public const string PAGES_CONTACTS      = 'pages.contacts';
-    public const string PAGES_PROPOSAL      = 'pages.contacts.proposal';
-    public const string PAGES_PAYMENT       = 'pages.contacts.payment';
-    public const string PAGES_COUNTER       = 'pages.contacts.counter';
-    public const string PAGES_GARBAGE       = 'pages.garbage';
-    public const string PAGES_PRIVACY       = 'pages.privacy';
-    public const string PAGES_SEARCH        = 'pages.search';
-    public const string PAGES_FILES_INDEX   = 'pages.files.index';
-    public const string PAGES_NEWS_INDEX    = 'pages.news.index';
-    public const string PAGES_NEWS_SHOW     = 'pages.news.show';
+    public const string PAGES_INDEX         = 'public.index';
+    public const string PAGES_CONTACTS      = 'public.contacts';
+    public const string PAGES_REQUESTS      = 'public.contacts.requests';
+    public const string PAGES_PROPOSAL      = 'public.contacts.proposal';
+    public const string PAGES_PAYMENT       = 'public.contacts.payment';
+    public const string PAGES_COUNTER       = 'public.contacts.counter';
+    public const string PAGES_GARBAGE       = 'public.garbage';
+    public const string PAGES_PRIVACY       = 'public.privacy';
+    public const string PAGES_SEARCH        = 'public.search';
+    public const string PAGES_FILES_INDEX   = 'public.files.index';
+    public const string PAGES_NEWS_INDEX    = 'public.news.index';
+    public const string PAGES_NEWS_SHOW     = 'public.news.show';
 
-    public const string PARTIAL_REQUESTS = 'pages.partial.requests';
+    public const string PARTIAL_REQUESTS = 'public.partial.requests';
 
-    public const string PAGES_ANNOUNCEMENT_INDEX = 'pages.announcement.index';
+    public const string PAGES_ANNOUNCEMENT_INDEX = 'public.announcement.index';
 
-    public const string PAGES_ACCOUNT_REGISTER = 'home.pages.register';
+    public const string PAGES_ACCOUNT_REGISTER = 'home.public.register';
 
-    public const string PAGES_PROFILE_COUNTERS      = 'home.pages.counters.index';
-    public const string PAGES_PROFILE_COUNTERS_VIEW = 'home.pages.counters.view';
+    public const string PAGES_PROFILE_COUNTERS      = 'home.public.counters.index';
+    public const string PAGES_PROFILE_COUNTERS_VIEW = 'home.public.counters.view';
 
     public const string PAGES_PROFILE_INVOICES = 'home.pages.invoices';
 

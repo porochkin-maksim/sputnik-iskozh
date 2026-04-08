@@ -44,6 +44,13 @@ form,
     }
 }
 
+.form-control,
+.form-floating {
+    &:disabled {
+        background-color : #f8f8f8;
+    }
+}
+
 .label-checkbox {
     cursor : pointer;
 }

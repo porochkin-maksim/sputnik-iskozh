@@ -56,13 +56,35 @@ class ClaimCollection extends Collection implements CollectionInterface
         return null;
     }
 
+    public function getByServiceType(ServiceTypeEnum $type): static
+    {
+        $result = new static();
+        foreach ($this as $claim) {
+            if ($claim->getService()?->getType() === $type) {
+                $result->add($claim);
+            }
+        }
+
+        return $result;
+    }
+
     public function getAdvancePayment(): ?ClaimDTO
     {
         return $this->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
     }
 
-    public function getDebt(): ?ClaimDTO
+    public function getDebts(): static
     {
-        return $this->findByServiceType(ServiceTypeEnum::DEBT);
+        return $this->getByServiceType(ServiceTypeEnum::DEBT);
+    }
+
+    public function getCost(): float
+    {
+        $result = 0;
+        foreach ($this as $claim) {
+            $result += (float) $claim->getCost();
+        }
+
+        return (float) $result;
     }
 }

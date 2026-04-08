@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Users\UserResource;
 use Core\Resources\RouteNames;

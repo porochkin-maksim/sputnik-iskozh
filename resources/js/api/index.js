@@ -140,6 +140,86 @@ export function ApiAdminErrorLogsShow(filename, getParams = {}, postData = null)
     return window.axios.get(makeQuery('/admin/error-logs/'+filename+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminHelpDeskIndex(getParams = {}, postData = null) {
+    // see admin.help-desk.index
+    return window.axios.get(makeQuery('/admin/help-desk', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettings(getParams = {}, postData = null) {
+    // see admin.help-desk.settings
+    return window.axios.get(makeQuery('/admin/help-desk/settings', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsCategoriesCreate(type, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.categories.create
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/create/'+type+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsCategoriesDelete(id, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.categories.delete
+    return window.axios.delete(makeQuery('/admin/help-desk/settings/ajax/categories/delete/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsCategoriesGet(id, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.categories.get
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/get/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsCategoriesList(getParams = {}, postData = null) {
+    // see admin.help-desk.settings.categories.list
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsCategoriesSave(getParams = {}, postData = null) {
+    // see admin.help-desk.settings.categories.save
+    return window.axios.post(makeQuery('/admin/help-desk/settings/ajax/categories/save', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsServicesCreate(categoryId, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.services.create
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/services/create/'+categoryId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsServicesDelete(id, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.services.delete
+    return window.axios.delete(makeQuery('/admin/help-desk/settings/ajax/services/delete/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsServicesList(categoryId, getParams = {}, postData = null) {
+    // see admin.help-desk.settings.services.list
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/services/'+categoryId+'/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsServicesSave(getParams = {}, postData = null) {
+    // see admin.help-desk.settings.services.save
+    return window.axios.post(makeQuery('/admin/help-desk/settings/ajax/services/save', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskSettingsTypesList(getParams = {}, postData = null) {
+    // see admin.help-desk.settings.types.list
+    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/types/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskTicketsDelete(id, getParams = {}, postData = null) {
+    // see admin.help-desk.tickets.delete
+    return window.axios.delete(makeQuery('/admin/help-desk/tickets/ajax/delete/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskTicketsList(getParams = {}, postData = null) {
+    // see admin.help-desk.tickets.list
+    return window.axios.get(makeQuery('/admin/help-desk/tickets/ajax/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskTicketsSave(getParams = {}, postData = null) {
+    // see admin.help-desk.tickets.save
+    return window.axios.post(makeQuery('/admin/help-desk/tickets/ajax/save', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminHelpDeskTicketsView(id, getParams = {}, postData = null) {
+    // see admin.help-desk.tickets.view
+    return window.axios.get(makeQuery('/admin/help-desk/tickets/view/'+id+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminIndex(getParams = {}, postData = null) {
     // see admin.index
     return window.axios.get(makeQuery('/admin', getParams), prepareRequestData(postData));
@@ -515,6 +595,11 @@ export function ApiAdminUserView(id, getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/admin/users/view/'+id+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAjaxSelectsAccounts(getParams = {}, postData = null) {
+    // see ajax.selects.accounts
+    return window.axios.get(makeQuery('/ajax/selects/accounts', getParams), prepareRequestData(postData));
+}
+
 export function ApiAnnouncementsIndex(getParams = {}, postData = null) {
     // see announcements.index
     return window.axios.get(makeQuery('/announcements', getParams), prepareRequestData(postData));
@@ -648,6 +733,31 @@ export function ApiFoldersShow(id, getParams = {}, postData = null) {
 export function ApiGarbage(getParams = {}, postData = null) {
     // see garbage
     return window.axios.get(makeQuery('/garbage', getParams), prepareRequestData(postData));
+}
+
+export function ApiHelpDesk(getParams = {}, postData = null) {
+    // see help-desk
+    return window.axios.get(makeQuery('/contacts/requests/help-desk', getParams), prepareRequestData(postData));
+}
+
+export function ApiHelpDeskCategory(type,category, getParams = {}, postData = null) {
+    // see help-desk.category
+    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiHelpDeskService(type,category,service, getParams = {}, postData = null) {
+    // see help-desk.service
+    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiHelpDeskTicket(type,category,service, getParams = {}, postData = null) {
+    // see help-desk.ticket
+    return window.axios.post(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiHelpDeskType(type, getParams = {}, postData = null) {
+    // see help-desk.type
+    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiHome(getParams = {}, postData = null) {

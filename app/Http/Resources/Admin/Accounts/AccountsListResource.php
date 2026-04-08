@@ -2,14 +2,18 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
-use lc;
 use App\Http\Resources\AbstractResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Responses\ResponsesEnum;
+use lc;
 
+/**
+ * @deprecated
+ */
 readonly class AccountsListResource extends AbstractResource
 {
     public function __construct(

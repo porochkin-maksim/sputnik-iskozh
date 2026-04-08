@@ -35,7 +35,7 @@
                           :classes="'my-3'"
                           @change="clearError('counter')"
                           :errors="errors.counter"
-                          :label="'Номер счётчика (по возможности)'"
+                          :label="'Номер счётчика'"
                           @submit="sendForm"
             />
         </template>

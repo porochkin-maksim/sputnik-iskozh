@@ -19,16 +19,12 @@ export function useResponseError () {
 
     const parseResponseErrors = (error) => {
         clearResponseErrors();
+        if (error.response && error.response.data && error.response.data.message) {
+            showDanger(error.response.data.message)
+        }
+
         if (error.response && error.response.data && error.response.data.errors) {
             errors.value = error.response.data.errors;
-            Object.keys(errors.value).forEach(key => {
-                store.dispatch('alerts/addError', {
-                    id  : key,
-                    text: errors.value[key].join(','),
-                }).then(r => {
-                    r ? console.log(r) : '';
-                });
-            });
         }
         else if (error.response) {
             switch (error.response.status) {

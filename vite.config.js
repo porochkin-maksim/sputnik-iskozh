@@ -39,6 +39,7 @@ export default ({ mode }) => {
                 vue           : 'vue/dist/vue.esm-bundler.js',
                 '@components' : '/resources/js/components',
                 '@common'     : '/resources/js/components/common',
+                '@form'       : '/resources/js/components/common/form',
                 '@composables': '/resources/js/composables',
                 '@utils'      : '/resources/js/utils',
                 '@api'        : '/resources/js/api',

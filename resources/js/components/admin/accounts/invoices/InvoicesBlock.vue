@@ -1,55 +1,59 @@
 <template>
-    <div>
-        <h5>Счета</h5>
+    <div class="card">
+        <div class="card-header bg-white">
+            <h5 class="m-0">Счета</h5>
+        </div>
 
-        <loading-spinner
-            v-if="loading && invoices.length === 0"
-            size="lg"
-            color="primary"
-            text="Загрузка счетов..."
-            wrapper-class="py-5"
-        />
+        <div class="card-body">
+            <loading-spinner
+                v-if="loading && invoices.length === 0"
+                size="lg"
+                color="primary"
+                text="Загрузка счетов..."
+                wrapper-class="py-5"
+            />
 
-        <template v-else>
-            <table class="table table-sm table-striped table-bordered mb-0"
-                   v-if="invoices && invoices.length">
-                <thead>
-                <tr class="text-center">
-                    <th>№</th>
-                    <th>Название/Тип</th>
-                    <th>Период</th>
-                    <th>Стоимость</th>
-                    <th>Оплачено</th>
-                    <th>Долг</th>
-                    <th>Обновлён</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="invoice in invoices" :key="invoice.id"
-                    class="text-center align-middle"
-                    :class="[invoice.isPaid ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
-                    <td class="text-end">
-                        <a :href="invoice.viewUrl">
-                            {{ invoice.id }}
-                        </a>
-                    </td>
-                    <td>{{ invoice.displayName }}</td>
-                    <td>{{ invoice.periodName }}</td>
-                    <td class="text-end">{{ formatMoney(invoice.advance ? invoice.cost - invoice.advance : invoice.cost) }}</td>
-                    <td class="text-end">{{ formatMoney(invoice.paid) }}</td>
-                    <td class="text-end"
-                        :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
-                        {{ invoice.advance ? formatMoney(-invoice.advance) : formatMoney(invoice.delta) }}
-                    </td>
-                    <td>{{ invoice.updated }}</td>
-                </tr>
-                </tbody>
-            </table>
+            <template v-else>
+                <table class="table table-sm table-striped table-bordered mb-0"
+                       v-if="invoices && invoices.length">
+                    <thead>
+                    <tr class="text-center">
+                        <th>№</th>
+                        <th>Название/Тип</th>
+                        <th>Период</th>
+                        <th>Стоимость</th>
+                        <th>Оплачено</th>
+                        <th>Долг</th>
+                        <th>Обновлён</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="invoice in invoices" :key="invoice.id"
+                        class="text-center align-middle"
+                        :class="[invoice.isPaid ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
+                        <td class="text-end">
+                            <a :href="invoice.viewUrl">
+                                {{ invoice.id }}
+                            </a>
+                        </td>
+                        <td>{{ invoice.displayName }}</td>
+                        <td>{{ invoice.periodName }}</td>
+                        <td class="text-end">{{ formatMoney(invoice.advance ? invoice.cost - invoice.advance : invoice.cost) }}</td>
+                        <td class="text-end">{{ formatMoney(invoice.paid) }}</td>
+                        <td class="text-end"
+                            :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
+                            {{ invoice.advance ? formatMoney(-invoice.advance) : formatMoney(invoice.delta) }}
+                        </td>
+                        <td>{{ invoice.updated }}</td>
+                    </tr>
+                    </tbody>
+                </table>
 
-            <div v-else-if="!loading && invoices.length === 0" class="text-center text-muted py-3">
-                Нет счетов для отображения
-            </div>
-        </template>
+                <div v-else-if="!loading && invoices.length === 0" class="text-center text-muted py-3">
+                    Нет счетов для отображения
+                </div>
+            </template>
+        </div>
     </div>
 </template>
 

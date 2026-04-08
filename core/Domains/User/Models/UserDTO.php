@@ -10,8 +10,8 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Domains\User\Services\UserDecorator;
 use Core\Helpers\DateTime\DateTimeHelper;
-use function PHPUnit\Framework\isArray;
 
 class UserDTO
 {
@@ -44,6 +44,11 @@ class UserDTO
         private readonly ?User $user = null,
     )
     {
+    }
+
+    public function getViewer(): UserDecorator
+    {
+        return new UserDecorator($this);
     }
 
     public function getModel(): ?User

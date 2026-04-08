@@ -33,6 +33,9 @@ import RolesBlock                from '@components/admin/roles/RolesBlock.vue';
 import ServicesBlock             from '@components/admin/services/ServicesBlock.vue';
 import UserItemView              from '@components/admin/users/UserItemView.vue';
 import UsersBlock                from '@components/admin/users/UsersBlock.vue';
+import TicketCategoryBlock       from '@components/admin/help-desk/TicketCategoryBlock.vue';
+import TicketsBlock              from '@components/admin/help-desk/TicketsBlock.vue';
+import TicketsView               from '@components/admin/help-desk/TicketsView.vue';
 
 app.component('alerts-block', AlertsBlock);
 app.component('top-panel-block', TopPanelBlock);
@@ -50,5 +53,8 @@ app.component('roles-block', RolesBlock);
 app.component('services-block', ServicesBlock);
 app.component('user-item-view', UserItemView);
 app.component('users-block', UsersBlock);
+app.component('help-desk-ticket-category-block', TicketCategoryBlock);
+app.component('help-desk-tickets-block', TicketsBlock);
+app.component('help-desk-ticket-view', TicketsView);
 
 app.mount('#app');

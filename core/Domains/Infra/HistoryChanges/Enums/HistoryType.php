@@ -20,6 +20,9 @@ enum HistoryType: int
     case COUNTER         = 9;
     case COUNTER_HISTORY = 10;
     case OPTION          = 11;
+    case TICKET          = 12;
+    case TICKET_CATEGORY = 13;
+    case TICKET_SERVICE  = 14;
 
     public function name(): string
     {
@@ -36,6 +39,9 @@ enum HistoryType: int
             self::COUNTER         => 'Счётчик',
             self::COUNTER_HISTORY => 'Показание счётчика',
             self::OPTION          => 'Опция',
+            self::TICKET          => 'Заявка',
+            self::TICKET_CATEGORY => 'Категория',
+            self::TICKET_SERVICE  => 'Услуга',
         };
     }
 }

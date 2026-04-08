@@ -35,6 +35,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool    $remember_token
  * @property string  $email_verified_at
  * @property int     $telegram_id
+ *
+ * @method null|static find($id)
  */
 class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {

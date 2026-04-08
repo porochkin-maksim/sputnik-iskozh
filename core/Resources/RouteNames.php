@@ -29,6 +29,11 @@ abstract class RouteNames
     public const string REQUESTS_PAYMENT_CREATE  = 'payment.create';
     public const string REQUESTS_COUNTER         = 'counter';
     public const string REQUESTS_COUNTER_CREATE  = 'counter.create';
+    public const string HELP_DESK                = 'help-desk';
+    public const string HELP_DESK_TYPE           = 'help-desk.type';
+    public const string HELP_DESK_CATEGORY       = 'help-desk.category';
+    public const string HELP_DESK_SERVICE        = 'help-desk.service';
+    public const string HELP_DESK_TICKET         = 'help-desk.ticket';
 
     public const string TEMPLATE_GET    = 'template.get';
     public const string TEMPLATE_UPDATE = 'template.update';
@@ -206,6 +211,11 @@ abstract class RouteNames
     public const string ADMIN_ERRORS                 = 'admin.error-logs.index';
     public const string ADMIN_EMAILS                 = 'admin.emails.index';
 
+    public const string ADMIN_HELP_DESK              = 'admin.help-desk';
+    public const string ADMIN_HELP_DESK_INDEX        = 'admin.help-desk.index';
+    public const string ADMIN_HELP_DESK_TICKETS_VIEW = 'admin.help-desk.tickets.view';
+    public const string ADMIN_HELP_DESK_SETTINGS     = 'admin.help-desk.settings';
+
     public const string ADMIN_QUEUE        = 'admin.queue';
     public const string ADMIN_QUEUE_STATUS = 'admin.queue.status';
     public const string ADMIN_QUEUE_START  = 'admin.queue.start';
@@ -227,6 +237,8 @@ abstract class RouteNames
             self::REGULATION                          => 'Устав',
             self::SEARCH                              => 'Поиск по сайту',
 
+            self::HELP_DESK,
+            self::ADMIN_HELP_DESK_INDEX               => 'Заявки',
             self::REQUESTS                            => 'Обращения',
             self::REQUESTS_PROPOSAL                   => 'Предложения',
             self::REQUESTS_PAYMENT                    => 'Платежи',
@@ -258,6 +270,8 @@ abstract class RouteNames
             self::ADMIN_EMAILS                        => 'История писем',
             self::ADMIN_QUEUE                         => 'Очереди',
             self::HISTORY_CHANGES                     => 'История изменений',
+            self::ADMIN_HELP_DESK                     => 'Учёт заявок',
+            self::ADMIN_HELP_DESK_SETTINGS            => 'Настройки',
 
             default                                   => $default,
         };

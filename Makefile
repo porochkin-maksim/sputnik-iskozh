@@ -45,6 +45,10 @@ restart: ## перезапуск приложения
 	@./vendor/bin/sail up -d
 	@./vendor/bin/sail artisan cache:clear-all
 
+.PHONY: clean
+clean: ## Остановить и удалить контейнеры и тома проекта (docker compose down -v)
+	@./vendor/bin/sail down --volumes --remove-orphans
+
 .PHONY: sail
 sail: ## запуск sail
 	@./vendor/bin/sail $(filter-out $@,$(MAKECMDGOALS))
@@ -90,12 +94,14 @@ yarn: ## запуск yarn
 yarn-watch: ## прослушивать фронт
 	@./vendor/bin/sail artisan front:export-route-list-command
 	@./vendor/bin/sail artisan front:export-route-functions-list-command
+	@./vendor/bin/sail artisan front:export-enum
 	@./vendor/bin/sail yarn run dev
 
 .PHONY: yarn-build
 yarn-build: ## собрать фронт
 	@./vendor/bin/sail artisan front:export-route-list-command
 	@./vendor/bin/sail artisan front:export-route-functions-list-command
+	@./vendor/bin/sail artisan front:export-enum
 	@./vendor/bin/sail yarn run build
 
 .PHONY: js-routes
@@ -132,7 +138,7 @@ create-domain: ## создать структуру домена в Core/Domains
 		echo "Ошибка: не указано имя домена. Используйте: make create-domain NAME=SomeObject"; \
 		exit 1; \
 	fi
-	@./scripts/create-domain.sh -n $(NAME)
+	@./scripts/generator/create-domain.sh -n $(NAME)
 
 # empty action
 %:

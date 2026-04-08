@@ -1,0 +1,17 @@
+
+.help-desk {
+    .service-item {
+        cursor     : pointer;
+        transition : all 0.2s ease-in-out;
+    }
+
+    .service-item:hover {
+        background-color : #e9ecef !important;
+        transform        : translateY(-2px);
+        box-shadow       : 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+    .transition-hover {
+        transition : all 0.2s ease-in-out;
+    }
+}

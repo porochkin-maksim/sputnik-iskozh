@@ -245,6 +245,134 @@
             "filename": "{filename}"
         }
     },
+    "adminHelpDeskIndex": {
+        "name": "admin.help-desk.index",
+        "displayName": "\u0417\u0430\u044f\u0432\u043a\u0438",
+        "method": "get",
+        "uri": "\/admin\/help-desk",
+        "args": []
+    },
+    "adminHelpDeskSettings": {
+        "name": "admin.help-desk.settings",
+        "displayName": "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings",
+        "args": []
+    },
+    "adminHelpDeskSettingsCategoriesCreate": {
+        "name": "admin.help-desk.settings.categories.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/categories\/create\/{type}",
+        "args": {
+            "type": "{type}"
+        }
+    },
+    "adminHelpDeskSettingsCategoriesDelete": {
+        "name": "admin.help-desk.settings.categories.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/categories\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminHelpDeskSettingsCategoriesGet": {
+        "name": "admin.help-desk.settings.categories.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/categories\/get\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminHelpDeskSettingsCategoriesList": {
+        "name": "admin.help-desk.settings.categories.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/categories\/list",
+        "args": []
+    },
+    "adminHelpDeskSettingsCategoriesSave": {
+        "name": "admin.help-desk.settings.categories.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/categories\/save",
+        "args": []
+    },
+    "adminHelpDeskSettingsServicesCreate": {
+        "name": "admin.help-desk.settings.services.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/services\/create\/{categoryId}",
+        "args": {
+            "categoryId": "{categoryId}"
+        }
+    },
+    "adminHelpDeskSettingsServicesDelete": {
+        "name": "admin.help-desk.settings.services.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/services\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminHelpDeskSettingsServicesList": {
+        "name": "admin.help-desk.settings.services.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/services\/{categoryId}\/list",
+        "args": {
+            "categoryId": "{categoryId}"
+        }
+    },
+    "adminHelpDeskSettingsServicesSave": {
+        "name": "admin.help-desk.settings.services.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/services\/save",
+        "args": []
+    },
+    "adminHelpDeskSettingsTypesList": {
+        "name": "admin.help-desk.settings.types.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/settings\/ajax\/types\/list",
+        "args": []
+    },
+    "adminHelpDeskTicketsDelete": {
+        "name": "admin.help-desk.tickets.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/help-desk\/tickets\/ajax\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminHelpDeskTicketsList": {
+        "name": "admin.help-desk.tickets.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/tickets\/ajax\/list",
+        "args": []
+    },
+    "adminHelpDeskTicketsSave": {
+        "name": "admin.help-desk.tickets.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/help-desk\/tickets\/ajax\/save",
+        "args": []
+    },
+    "adminHelpDeskTicketsView": {
+        "name": "admin.help-desk.tickets.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/help-desk\/tickets\/view\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "adminIndex": {
         "name": "admin.index",
         "displayName": "\u041e \u0441\u0438\u0441\u0442\u0435\u043c\u0435",
@@ -832,6 +960,13 @@
             "id": "{id}"
         }
     },
+    "ajaxSelectsAccounts": {
+        "name": "ajax.selects.accounts",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/ajax\/selects\/accounts",
+        "args": []
+    },
     "announcementsIndex": {
         "name": "announcements.index",
         "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",
@@ -1042,6 +1177,54 @@
         "method": "get",
         "uri": "\/garbage",
         "args": []
+    },
+    "helpDesk": {
+        "name": "help-desk",
+        "displayName": "\u0417\u0430\u044f\u0432\u043a\u0438",
+        "method": "get",
+        "uri": "\/contacts\/requests\/help-desk",
+        "args": []
+    },
+    "helpDeskCategory": {
+        "name": "help-desk.category",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/contacts\/requests\/help-desk\/{type}\/{category}",
+        "args": {
+            "type": "{type}",
+            "category": "{category}"
+        }
+    },
+    "helpDeskService": {
+        "name": "help-desk.service",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/contacts\/requests\/help-desk\/{type}\/{category}\/{service}",
+        "args": {
+            "type": "{type}",
+            "category": "{category}",
+            "service": "{service}"
+        }
+    },
+    "helpDeskTicket": {
+        "name": "help-desk.ticket",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/contacts\/requests\/help-desk\/{type}\/{category}\/{service}",
+        "args": {
+            "type": "{type}",
+            "category": "{category}",
+            "service": "{service}"
+        }
+    },
+    "helpDeskType": {
+        "name": "help-desk.type",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/contacts\/requests\/help-desk\/{type}",
+        "args": {
+            "type": "{type}"
+        }
     },
     "home": {
         "name": "home",

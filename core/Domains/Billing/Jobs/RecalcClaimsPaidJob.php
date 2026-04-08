@@ -160,7 +160,7 @@ class RecalcClaimsPaidJob implements ShouldQueue
         $invoice->setCost(MoneyService::toFloat($totalCost));
         $invoice->setPaid(MoneyService::toFloat($totalPaidSum));
         $invoice->setAdvance((float) $advanceClaim?->getCost());
-        $invoice->setDebt((float) $sortedClaims->getDebt()?->getCost());
+        $invoice->setDebt((float) $sortedClaims->getDebts()?->getCost());
 
         InvoiceLocator::InvoiceService()->save($invoice);
     }

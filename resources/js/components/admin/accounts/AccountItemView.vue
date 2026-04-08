@@ -2,8 +2,10 @@
     <div class="row">
         <div class="col-lg-6 col-12">
             <div class="card mb-2">
+                <div class="card-header bg-white">
+                    <h5 class="m-0">Информация</h5>
+                </div>
                 <div class="card-body">
-                    <h5>Информация</h5>
                     <template v-if="account.actions?.edit">
                         <div class="row">
                             <div class="col-6">
@@ -44,7 +46,9 @@
                         <h6>Данные участка</h6>
                         <account-info-list :account="account" />
                     </template>
-                    <div class="d-flex align-items-center justify-content-between mt-2">
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex">
                             <button class="btn btn-success me-2"
                                     :disabled="!canSave || loading"
@@ -61,27 +65,17 @@
                     </div>
                 </div>
             </div>
-            <div class="card mb-2">
-                <div class="card-body">
-                    <users-block :account="account" :users="account.users" />
-                </div>
+            <div class="mb-2">
+                <users-block :account="account" :users="account.users" />
             </div>
         </div>
-        <div class="col-lg-6 col-12">
-            <div class="card mb-2">
-                <div class="card-body">
-                    <counters-block :account="account" />
-                </div>
-            </div>
+        <div class="col-lg-6 col-12 mb-2">
+            <counters-block :account="account" />
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <invoices-block :account="account" />
-                </div>
-            </div>
+            <invoices-block :account="account" />
         </div>
     </div>
 </template>
@@ -93,8 +87,8 @@ import {
     computed,
     onMounted,
     defineOptions,
-}                           from 'vue';
-import { useResponseError } from '@composables/useResponseError';
+}                              from 'vue';
+import { useResponseError }    from '@composables/useResponseError';
 import CustomInput             from '../../common/form/CustomInput.vue';
 import CustomCheckbox          from '../../common/form/CustomCheckbox.vue';
 import HistoryBtn              from '../../common/HistoryBtn.vue';

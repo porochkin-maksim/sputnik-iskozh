@@ -9,27 +9,27 @@ use Core\Db\Searcher\Models\Where;
 trait SearcherTrait
 {
     /** @var Order[] */
-    private array $sortOrderProperties = [];
+    protected array $sortOrderProperties = [];
 
-    private ?int $limit  = null;
-    private ?int $offset = null;
-    private ?int $lastId = null;
+    protected ?int $limit  = null;
+    protected ?int $offset = null;
+    protected ?int $lastId = null;
 
-    private ?bool $withTrashed = null;
+    protected ?bool $withTrashed = null;
 
     /** @var int[] $ids */
-    private ?array $ids    = null;
-    private array  $select = [];
-    private array  $with   = [];
+    protected ?array $ids    = null;
+    protected array  $select = [];
+    protected array  $with   = [];
     /** @var string[] $groupBy */
-    private array $groupBy = [];
+    protected array $groupBy = [];
 
-    private ?WhereCollection $where       = null;
-    private ?WhereCollection $orWhere     = null;
-    private ?WhereCollection $whereColumn = null;
-    private ?WhereCollection $whereIn     = null;
+    protected ?WhereCollection $where       = null;
+    protected ?WhereCollection $orWhere     = null;
+    protected ?WhereCollection $whereColumn = null;
+    protected ?WhereCollection $whereIn     = null;
 
-    private ?string $search = null;
+    protected ?string $search = null;
 
     public static function make(): static
     {
@@ -118,6 +118,13 @@ trait SearcherTrait
     public function setSortOrderProperty(string $sortOrderProperty, string $order): static
     {
         $this->sortOrderProperties[] = new Order($sortOrderProperty, $order);
+
+        return $this;
+    }
+
+    public function setSortOrderPropertyIdDesc(): static
+    {
+        $this->sortOrderProperties[] = new Order('id', SearcherInterface::SORT_ORDER_DESC);
 
         return $this;
     }

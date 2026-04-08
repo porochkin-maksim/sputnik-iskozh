@@ -10,6 +10,9 @@ use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\User\Collections\UserCollection;
 use Core\Responses\ResponsesEnum;
 
+/**
+ * @deprecated
+ */
 readonly class UsersListResource extends AbstractResource
 {
     public function __construct(

@@ -95,6 +95,14 @@ $cutRouteNameFn = static function (string $routeName) {
                     </a>
                 @endif
 
+                @if($authRole->canAccessAdmin())
+                    <a class="@if(Route::is('admin.help-desk.*')) active-link @endif"
+                       href="{{ route(RouteNames::ADMIN_HELP_DESK_INDEX) }}">
+                        <i class="fa fa-bullhorn me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::ADMIN_HELP_DESK_INDEX) }}</span>
+                    </a>
+                @endif
+
                 @if($authRole->can(PermissionEnum::ACCOUNTS_VIEW))
                     <a class="@if(Route::is('admin.account*')) active-link @endif"
                        href="{{ route(RouteNames::ADMIN_ACCOUNT_INDEX) }}">
@@ -135,7 +143,7 @@ $cutRouteNameFn = static function (string $routeName) {
                     </a>
                 @endif
 
-                @if($authRole->can(PermissionEnum::PAYMENTS_VIEW))
+                @if($authRole->can(PermissionEnum::PAYMENTS_EDIT))
                     <a class="@if(Route::is('admin.new-payment.*')) active-link @endif"
                        href="{{ route(RouteNames::ADMIN_NEW_PAYMENT_INDEX) }}">
                         <i class="fa fa-credit-card me-2"></i>
@@ -175,7 +183,7 @@ $cutRouteNameFn = static function (string $routeName) {
                 </a>
             </div>
         </div>
-        <div class="col-10">
+        <div class="col-10 pe-4">
             <top-panel-block></top-panel-block>
             @yield(SectionNames::CONTENT)
         </div>

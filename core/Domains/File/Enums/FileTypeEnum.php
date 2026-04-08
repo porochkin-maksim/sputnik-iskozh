@@ -12,6 +12,8 @@ enum FileTypeEnum: int
     case PAYMENT          = 4;
     case COUNTER_HISTORY  = 5;
     case COUNTER_PASSPORT = 6;
+    case TICKET           = 7;
+    case TICKET_RESULT    = 8;
 
     public function name(): string
     {
@@ -21,6 +23,8 @@ enum FileTypeEnum: int
             self::PAYMENT          => 'Платёж',
             self::COUNTER_HISTORY  => 'Показания счётчика',
             self::COUNTER_PASSPORT => 'Паспорт счётчика',
+            self::TICKET           => 'Заявка',
+            self::TICKET_RESULT    => 'Результат по заявке',
         };
     }
 }

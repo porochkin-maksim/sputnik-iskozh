@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\Requests;
 
 use App\Http\Requests\Admin\Payments\LinkRequest;
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoicesSelectResource;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;

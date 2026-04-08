@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Common\CountersSelectResource;
 use App\Http\Resources\Common\SelectResource;
 use App\Models\Account\Account;

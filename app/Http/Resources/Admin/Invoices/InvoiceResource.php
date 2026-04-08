@@ -36,10 +36,10 @@ readonly class InvoiceResource extends AbstractResource
         $detailCost = null;
         if ($claims) {
             $advance = $claims?->getAdvancePayment();
-            $debt    = $claims?->getDebt();
+            $debts   = $claims?->getDebts();
 
             $advanceCost = MoneyService::parse((float) $advance?->getCost());
-            $debtCost    = MoneyService::parse((float) $debt?->getCost());
+            $debtCost    = MoneyService::parse((float) $debts?->getCost());
             $invoiceCost = MoneyService::parse((float) $this->invoice?->getCost());
 
             $detailCost = [

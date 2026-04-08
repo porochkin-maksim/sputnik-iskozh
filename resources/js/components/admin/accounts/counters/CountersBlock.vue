@@ -1,81 +1,87 @@
 <template>
-    <div>
-        <h5>Счётчики</h5>
+    <div class="card">
+        <div class="card-header bg-white">
+            <h5 class="m-0">Счётчики</h5>
+        </div>
 
-        <loading-spinner
-            v-if="loading && counters.length === 0"
-            size="lg"
-            color="primary"
-            text="Загрузка счётчиков..."
-            wrapper-class="py-5"
-        />
+        <div class="card-body">
+            <loading-spinner
+                v-if="loading && counters.length === 0"
+                size="lg"
+                color="primary"
+                text="Загрузка счётчиков..."
+                wrapper-class="py-5"
+            />
 
-        <template v-else>
-            <table class="table align-middle m-0 text-center"
-                   v-if="counters && counters.length">
-                <thead>
-                <tr>
-                    <th>Номер</th>
-                    <th>Показание</th>
-                    <th>Дата</th>
-                    <th>Счета</th>
-                    <th>Авто</th>
-                    <th>Поверка</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="counter in counters" :key="counter.id">
-                    <td><a :href="counter.viewUrl">{{ counter.number }}</a></td>
-                    <td>{{ counter.value }}</td>
-                    <td>{{ counter.date }}</td>
-                    <td>{{ counter.isInvoicing ? 'да' : 'нет' }}</td>
-                    <td>{{ counter.increment ? '+' + counter.increment : '-' }}</td>
-                    <td>
-                        <div v-if="counter.expireAt">
-                            {{ formatDate(counter.expireAt) }}
-                        </div>
-                        <file-item :file="counter.passport"
-                                   v-if="counter.passport"
-                                   :show-download="false"
-                                   :name="'Паспорт'" />
-                    </td>
-                    <td>
-                        <div class="dropdown">
-                            <a class="btn btn-sm btn-light border"
-                               href="#"
-                               role="button"
-                               :id="'dropDown' + counter.id + vueId"
-                               data-bs-toggle="dropdown"
-                               aria-expanded="false">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                            <ul class="dropdown-menu"
-                                :aria-labelledby="'dropDown' + counter.id + vueId">
-                                <li>
-                                    <a class="dropdown-item cursor-pointer"
-                                       v-if="counter.actions?.edit"
-                                       @click.prevent="editCounterAction(counter)">
-                                        <i class="fa fa-edit"></i> Редактировать
-                                    </a>
-                                </li>
-                                <li v-if="counter.actions?.drop">
-                                    <a class="dropdown-item cursor-pointer text-danger"
-                                       @click="dropCounterAction(counter)">
-                                        <i class="fa fa-trash"></i> Удалить
-                                    </a>
-                                </li>
-                                <li>
-                                    <history-btn class="dropdown-item btn btn-link text-decoration-none"
-                                                 :url="counter.historyUrl" />
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="d-flex align-items-center justify-content-between mt-2">
+            <template v-else>
+                <table class="table align-middle m-0 text-center"
+                       v-if="counters && counters.length">
+                    <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Показание</th>
+                        <th>Дата</th>
+                        <th>Счета</th>
+                        <th>Авто</th>
+                        <th>Поверка</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="counter in counters" :key="counter.id">
+                        <td><a :href="counter.viewUrl">{{ counter.number }}</a></td>
+                        <td>{{ counter.value }}</td>
+                        <td>{{ counter.date }}</td>
+                        <td>{{ counter.isInvoicing ? 'да' : 'нет' }}</td>
+                        <td>{{ counter.increment ? '+' + counter.increment : '-' }}</td>
+                        <td>
+                            <div v-if="counter.expireAt">
+                                {{ formatDate(counter.expireAt) }}
+                            </div>
+                            <file-item :file="counter.passport"
+                                       v-if="counter.passport"
+                                       :show-download="false"
+                                       :name="'Паспорт'" />
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <a class="btn btn-sm btn-light border"
+                                   href="#"
+                                   role="button"
+                                   :id="'dropDown' + counter.id + vueId"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                                <ul class="dropdown-menu"
+                                    :aria-labelledby="'dropDown' + counter.id + vueId">
+                                    <li>
+                                        <a class="dropdown-item cursor-pointer"
+                                           v-if="counter.actions?.edit"
+                                           @click.prevent="editCounterAction(counter)">
+                                            <i class="fa fa-edit"></i> Редактировать
+                                        </a>
+                                    </li>
+                                    <li v-if="counter.actions?.drop">
+                                        <a class="dropdown-item cursor-pointer text-danger"
+                                           @click="dropCounterAction(counter)">
+                                            <i class="fa fa-trash"></i> Удалить
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <history-btn class="dropdown-item btn btn-link text-decoration-none"
+                                                     :url="counter.historyUrl" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </template>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex">
                     <button class="btn btn-success me-2"
                             v-if="account?.actions?.counters?.edit && !period?.isClosed"
@@ -84,7 +90,7 @@
                     </button>
                 </div>
             </div>
-        </template>
+        </div>
     </div>
     <counter-item
         :account="account"

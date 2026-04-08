@@ -64,7 +64,10 @@ class FileController extends Controller
 
     private function checkAccess(FileDTO $fileDto): void
     {
-        if ($fileDto->getType() === FileTypeEnum::PAYMENT) {
+        if ($fileDto->getType() === FileTypeEnum::TICKET) {
+            $this->checkTicketAccess($fileDto);
+        }
+        elseif ($fileDto->getType() === FileTypeEnum::PAYMENT) {
             $this->checkPaymentAccess($fileDto);
         }
         elseif (in_array($fileDto->getType(), [FileTypeEnum::COUNTER_HISTORY, FileTypeEnum::COUNTER_PASSPORT], true)) {
@@ -127,6 +130,15 @@ class FileController extends Controller
             $account->getId()
             && $account->getId() === $counter?->getAccountId()
         ) {
+            return;
+        }
+
+        abort(403);
+    }
+
+    private function checkTicketAccess(FileDTO $fileDto): void
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::HELP_DESK_VIEW)) {
             return;
         }
 

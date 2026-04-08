@@ -57,9 +57,10 @@
 
                     <!-- Основная карточка -->
                     <div class="card mb-2">
-                        <div class="card-body">
+                        <div class="card-header bg-white">
                             <h5>Информация</h5>
-
+                        </div>
+                        <div class="card-body">
                             <!-- ФИО -->
                             <div class="row mb-2">
                                 <div class="col-4 pe-1">
