@@ -2,9 +2,8 @@
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -12,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $membership_duty_info
  * @property ?Carbon $membership_date
  */
-class UserInfo extends Model implements CastsInterface
+class UserInfo extends AbstractModel
 {
     public const string TABLE = 'user_info';
 

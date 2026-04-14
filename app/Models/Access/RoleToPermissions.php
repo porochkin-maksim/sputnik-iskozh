@@ -2,19 +2,19 @@
 
 namespace App\Models\Access;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AbstractModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $role
  * @property int $permission
  */
-class RoleToPermissions extends Model
+class RoleToPermissions extends AbstractModel
 {
-    public const TABLE = 'roles_to_permissions';
+    public const string TABLE = 'roles_to_permissions';
 
-    public const ROLE       = 'role';
-    public const PERMISSION = 'permission';
+    public const string ROLE       = 'role';
+    public const string PERMISSION = 'permission';
 
     protected $table = self::TABLE;
 

@@ -4,7 +4,6 @@ namespace App\Http\Requests\Admin\Roles;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Access\Role;
-use Core\Domains\Access\Models\RoleComparator;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
@@ -31,12 +30,12 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::NAME . '.required' => sprintf('Укажите «%s»', RoleComparator::TITLE_NAME),
-            self::NAME . '.string'   => sprintf('Укажите «%s»', RoleComparator::TITLE_NAME),
-            self::NAME . '.unique'   => sprintf('Значение для «%s» уже существует', RoleComparator::TITLE_NAME),
+            self::NAME . '.required' => sprintf('Укажите «%s»', Role::TITLE_NAME),
+            self::NAME . '.string'   => sprintf('Укажите «%s»', Role::TITLE_NAME),
+            self::NAME . '.unique'   => sprintf('Значение для «%s» уже существует', Role::TITLE_NAME),
 
-            self::PERMISSIONS . '.required' => sprintf('Укажите «%s»', RoleComparator::TITLE_PERMISSIONS),
-            self::PERMISSIONS . '.array'   => sprintf('Укажите «%s»', RoleComparator::TITLE_PERMISSIONS),
+            self::PERMISSIONS . '.required' => sprintf('Укажите «%s»', Role::TITLE_PERMISSIONS),
+            self::PERMISSIONS . '.array'    => sprintf('Укажите «%s»', Role::TITLE_PERMISSIONS),
         ];
     }
 

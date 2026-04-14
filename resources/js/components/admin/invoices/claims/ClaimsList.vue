@@ -44,7 +44,7 @@
                                          aria-label="История изменений" />
 
                             <!-- Дропдаун с действиями -->
-                            <div v-if="hasActions(claim)" class="dropdown">
+                            <div v-if="hasActions(claim) && canEdit" class="dropdown">
                                 <button class="btn btn-sm btn-light border"
                                         type="button"
                                         :id="'dropDown' + index + vueId"
@@ -105,6 +105,7 @@ import {
     defineProps,
     defineEmits,
     defineOptions,
+    computed,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
@@ -114,6 +115,7 @@ import {
     ApiAdminClaimList,
     ApiAdminClaimDelete,
 }                           from '@api';
+import { usePermissions }   from '@composables/usePermissions.js';
 
 const props = defineProps({
     invoiceId : {
@@ -138,6 +140,9 @@ const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count'])
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
+
+const canEdit = computed(() => has('invoice_services', 'edit'));
 
 const claims      = ref([]);
 const actions     = ref({});

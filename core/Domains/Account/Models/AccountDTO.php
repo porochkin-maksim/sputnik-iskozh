@@ -30,7 +30,6 @@ class AccountDTO
 
     public function __construct()
     {
-        $this->users = new UserCollection();
     }
 
     public function getId(): ?int
@@ -182,18 +181,31 @@ class AccountDTO
         return $this;
     }
 
+    public function setUsers(UserCollection|array|null $users): static
+    {
+        $this->users = is_array($users) ? new UserCollection($users) : $users;
+
+        return $this;
+    }
+
     public function getUsers(bool $lazyLoad = false): ?UserCollection
     {
         if ( ! $this->users && $lazyLoad) {
-            $this->users = AccountLocator::AccountService()->search(new AccountSearcher()
-                ->setWithUsers()
-                ->setId($this->getId()),
+            $this->users = AccountLocator::AccountService()->search(
+                new AccountSearcher()
+                    ->setWithUsers()
+                    ->setId($this->getId()),
             )->getItems()->first()
-                ->getUsers()
+                ?->getUsers()
             ;
         }
 
-        return $this->users;
+        return $this->users ? : new UserCollection();
+    }
+
+    public function hasUsers(): bool
+    {
+        return $this->users !== null;
     }
 
     public function isSnt(): bool

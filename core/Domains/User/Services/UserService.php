@@ -17,9 +17,9 @@ readonly class UserService
     {
     }
 
-    public function search(UserSearcher $searcher): UserSearchResponse
+    public function search(?UserSearcher $searcher = null): UserSearchResponse
     {
-        return $this->userRepository->search($searcher);
+        return $this->userRepository->search($searcher ?: new UserSearcher());
     }
 
     public function getById(int|string|null $id, bool $withDeleted = false): ?UserDTO

@@ -2,16 +2,14 @@
 
 namespace App\Models\Counter;
 
+use App\Models\AbstractModel;
 use App\Models\Billing\ClaimToObject;
 use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
 use Core\Domains\File\Enums\FileTypeEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -25,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $date
  * @property ?bool   $is_verified
  */
-class CounterHistory extends Model implements CastsInterface
+class CounterHistory extends AbstractModel
 {
     public const string TABLE = 'counter_history';
 
@@ -39,13 +37,13 @@ class CounterHistory extends Model implements CastsInterface
     public const string DATE           = 'date';
     public const string IS_VERIFIED    = 'is_verified';
 
-    public const string FILE     = 'file';
-    public const string COUNTER  = 'counter';
-    public const string PREVIOUS = 'previous';
-    public const string CLAIM    = 'claim';
+    public const string RELATION_FILE     = 'file';
+    public const string RELATION_COUNTER  = 'counter';
+    public const string RELATION_PREVIOUS = 'previous';
+    public const string RELATION_CLAIM    = 'claim';
 
     protected $guarded = [];
-    protected $with    = [self::FILE, self::PREVIOUS];
+    protected $with    = [self::RELATION_FILE, self::RELATION_PREVIOUS];
 
     protected $casts = [
         self::COUNTER_ID     => self::CAST_INTEGER,
@@ -78,8 +76,8 @@ class CounterHistory extends Model implements CastsInterface
     public function counter(): BelongsTo
     {
         return $this->belongsTo(Counter::class, self::COUNTER_ID)
-            ->with(Counter::ACCOUNT)
-            ->without(Counter::HISTORY)
+            ->with(Counter::RELATION_ACCOUNT)
+            ->without(Counter::RELATION_HISTORY)
         ;
     }
 

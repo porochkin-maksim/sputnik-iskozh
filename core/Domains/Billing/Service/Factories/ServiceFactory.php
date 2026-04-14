@@ -52,8 +52,8 @@ readonly class ServiceFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        if (isset($model->getRelations()[Service::PERIOD])) {
-            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Service::PERIOD)));
+        if (isset($model->getRelations()[Service::RELATION_PERIOD])) {
+            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Service::RELATION_PERIOD)));
         }
 
         return $result;

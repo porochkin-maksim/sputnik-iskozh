@@ -13,7 +13,7 @@ class NewsSearcher implements SearcherInterface
 
     public function setWithFiles(): static
     {
-        $this->with[] = News::FILES;
+        $this->with[] = News::RELATION_FILES;
 
         return $this;
     }

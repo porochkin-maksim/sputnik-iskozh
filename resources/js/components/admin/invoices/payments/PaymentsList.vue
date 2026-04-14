@@ -55,7 +55,7 @@
                             />
 
                             <!-- Дропдаун с действиями -->
-                            <div v-if="hasActions(payment)" class="dropdown">
+                            <div v-if="hasActions(payment) && canEdit" class="dropdown">
                                 <button
                                     class="btn btn-sm btn-light border"
                                     type="button"
@@ -128,12 +128,14 @@ import {
     onMounted,
     defineProps,
     defineEmits,
+    computed,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../../common/HistoryBtn.vue';
-import FileItem             from '../../../common/files/FileItem.vue';
-import LoadingSpinner       from '../../../common/LoadingSpinner.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import FileItem             from '@common/files/FileItem.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiAdminPaymentList,
     ApiAdminPaymentDelete,
@@ -162,6 +164,9 @@ const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count'])
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
+
+const canEdit = computed(() => has('payments', 'edit'));
 
 const payments    = ref([]);
 const actions     = ref({});

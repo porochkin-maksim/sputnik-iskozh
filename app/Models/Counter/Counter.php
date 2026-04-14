@@ -2,13 +2,12 @@
 
 namespace App\Models\Counter;
 
+use App\Models\AbstractModel;
 use App\Models\Account\Account;
 use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\File\Enums\FileTypeEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -26,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int     $increment
  * @property ?Carbon $expire_at
  */
-class Counter extends Model implements CastsInterface
+class Counter extends AbstractModel
 {
     use SoftDeletes;
 
@@ -42,9 +41,9 @@ class Counter extends Model implements CastsInterface
     public const string INCREMENT    = 'increment';
     public const string EXPIRE_AT    = 'expire_at';
 
-    public const string ACCOUNT  = 'account';
-    public const string HISTORY  = 'history';
-    public const string PASSPORT = 'passport';
+    public const string RELATION_ACCOUNT  = 'account';
+    public const string RELATION_HISTORY  = 'history';
+    public const string RELATION_PASSPORT = 'passport';
 
     protected $guarded = [];
 
@@ -71,7 +70,7 @@ class Counter extends Model implements CastsInterface
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
-            ->with(CounterHistory::CLAIM)
+            ->with(CounterHistory::RELATION_CLAIM)
             ->orderBy(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
             ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
         ;

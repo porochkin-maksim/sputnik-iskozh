@@ -59,20 +59,20 @@ readonly class InvoiceFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        if (isset($model->getRelations()[Invoice::CLAIMS])) {
-            $result->setClaims(ClaimLocator::ClaimFactory()->makeDtoFromObjects($model->getRelation(Invoice::CLAIMS)));
+        if (isset($model->getRelations()[Invoice::RELATION_CLAIMS])) {
+            $result->setClaims(ClaimLocator::ClaimFactory()->makeDtoFromObjects($model->getRelation(Invoice::RELATION_CLAIMS)));
         }
 
-        if (isset($model->getRelations()[Invoice::PAYMENTS])) {
-            $result->setPayments(PaymentLocator::PaymentFactory()->makeDtoFromObjects($model->getRelation(Invoice::PAYMENTS)));
+        if (isset($model->getRelations()[Invoice::RELATION_PAYMENTS])) {
+            $result->setPayments(PaymentLocator::PaymentFactory()->makeDtoFromObjects($model->getRelation(Invoice::RELATION_PAYMENTS)));
         }
 
-        if (isset($model->getRelations()[Invoice::ACCOUNT])) {
-            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Invoice::ACCOUNT)));
+        if (isset($model->getRelations()[Invoice::RELATION_ACCOUNT])) {
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Invoice::RELATION_ACCOUNT)));
         }
 
-        if (isset($model->getRelations()[Invoice::PERIOD])) {
-            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Invoice::PERIOD)));
+        if (isset($model->getRelations()[Invoice::RELATION_PERIOD])) {
+            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Invoice::RELATION_PERIOD)));
         }
 
         return $result;

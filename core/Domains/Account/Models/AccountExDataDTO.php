@@ -37,4 +37,4 @@ class AccountExDataDTO extends AbstractExData
             'cadastreNumber' => $this->cadastreNumber,
         ];
     }
-} 
+}

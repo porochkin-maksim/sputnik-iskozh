@@ -85,7 +85,7 @@
                         </th>
                         <th>Кадастр</th>
                         <th>Выставление счетов</th>
-                        <th>Пользователи</th>
+                        <th v-if="canUserView">Пользователи</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -102,7 +102,7 @@
                         <td class="text-center">
                             <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
                         </td>
-                        <td class="text-end">
+                        <td class="text-end" v-if="canUserView">
                             <ol v-if="account.users && account.users.length" class="mb-0 ps-0">
                                 <li v-for="user in account.users" :key="user.id"
                                     class="d-flex justify-content-between align-items-center">
@@ -146,11 +146,12 @@ import {
     defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
-import Pagination           from '../../common/pagination/Pagination.vue';
-import AccountItemAdd       from './AccountItemAdd.vue';
-import SimpleSelect         from '../../common/form/SimpleSelect.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import Pagination           from '@common/pagination/Pagination.vue';
+import SimpleSelect         from '@common/form/SimpleSelect.vue';
 import LoadingSpinner       from '@common/LoadingSpinner.vue';
+import AccountItemAdd       from './AccountItemAdd.vue';
 import {
     ApiAdminAccountCreate,
     ApiAdminAccountList,
@@ -161,6 +162,9 @@ defineOptions({
 });
 
 const { parseResponseErrors } = useResponseError();
+const { has }                 = usePermissions();
+
+const canUserView = computed(() => has('users', 'view'));
 
 // Состояния
 const loading     = ref(false);

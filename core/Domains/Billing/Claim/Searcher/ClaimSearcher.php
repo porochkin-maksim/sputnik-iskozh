@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\Billing\Claim\Models;
+namespace Core\Domains\Billing\Claim\Searcher;
 
 use App\Models\Billing\Claim;
 use Core\Db\Searcher\SearcherInterface;
@@ -19,7 +19,7 @@ class ClaimSearcher implements SearcherInterface
 
     public function setWithService(): static
     {
-        $this->with[] = Claim::SERVICE;
+        $this->with[] = Claim::RELATION_SERVICE;
 
         return $this;
     }

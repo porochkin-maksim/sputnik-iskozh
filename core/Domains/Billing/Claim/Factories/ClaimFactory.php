@@ -3,16 +3,16 @@
 namespace Core\Domains\Billing\Claim\Factories;
 
 use App\Models\Billing\Claim;
-use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
+use Core\Domains\Billing\Service\ServiceLocator;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class ClaimFactory
 {
     public function makeDefault(): ClaimDTO
     {
-        return (new ClaimDTO())
+        return new ClaimDTO()
             ->setTariff(0.00)
             ->setCost(0.00)
             ->setPaid(0.00);
@@ -53,8 +53,8 @@ readonly class ClaimFactory
             ->setUpdatedAt($model->updated_at);
 
 
-        if (isset($model->getRelations()[Claim::SERVICE])) {
-            $result->setService(ServiceLocator::ServiceFactory()->makeDtoFromObject($model->getRelation(Claim::SERVICE)));
+        if (isset($model->getRelations()[Claim::RELATION_SERVICE])) {
+            $result->setService(ServiceLocator::ServiceFactory()->makeDtoFromObject($model->getRelation(Claim::RELATION_SERVICE)));
         }
 
         return $result;

@@ -6,6 +6,8 @@ use Core\Requests\RequestArgumentsEnum;
 
 class DefaultRequest extends AbstractRequest
 {
+    use SortFieldTrait;
+
     private const string LIMIT  = RequestArgumentsEnum::LIMIT;
     private const string SKIP   = RequestArgumentsEnum::SKIP;
     private const string SEARCH = RequestArgumentsEnum::SEARCH;

@@ -109,10 +109,11 @@ import {
     onMounted,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
-import SimpleSelect         from '../../../common/form/SimpleSelect.vue';
-import CustomInput          from '../../../common/form/CustomInput.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import SimpleSelect         from '@common/form/SimpleSelect.vue';
+import CustomInput          from '@common/form/CustomInput.vue';
+import ViewDialog           from '@common/ViewDialog.vue';
 import ClaimsList           from './ClaimsList.vue';
-import ViewDialog           from '../../../common/ViewDialog.vue';
 import {
     ApiAdminClaimCreate,
     ApiAdminClaimView,
@@ -136,7 +137,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:count', 'update:reload']);
 
-const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
+const {
+          errors,
+          clearError,
+          parseResponseErrors,
+          showInfo,
+          showDanger,
+      }       = useResponseError();
+const { has } = usePermissions();
+
+const canEdit = computed(() => has('invoice_services', 'edit'));
 
 const claimCount     = ref(0);
 const actions        = ref({});

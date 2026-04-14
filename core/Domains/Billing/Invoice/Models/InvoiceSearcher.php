@@ -13,14 +13,14 @@ class InvoiceSearcher implements SearcherInterface
 
     public function setWithClaims(): static
     {
-        $this->with[] = Invoice::CLAIMS;
+        $this->with[] = Invoice::RELATION_CLAIMS;
 
         return $this;
     }
 
     public function setWithPayments(): static
     {
-        $this->with[] = Invoice::PAYMENTS;
+        $this->with[] = Invoice::RELATION_PAYMENTS;
 
         return $this;
     }
@@ -56,14 +56,14 @@ class InvoiceSearcher implements SearcherInterface
 
     public function setWithPeriod(): static
     {
-        $this->with[] = Invoice::PERIOD;
+        $this->with[] = Invoice::RELATION_PERIOD;
 
         return $this;
     }
 
     public function setWithAccount(): static
     {
-        $this->with[] = Invoice::ACCOUNT;
+        $this->with[] = Invoice::RELATION_ACCOUNT;
 
         return $this;
     }

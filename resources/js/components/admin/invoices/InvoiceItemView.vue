@@ -13,12 +13,14 @@
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
             <div class="d-flex flex-wrap align-items-center gap-2">
                 <!-- Ссылка на участок -->
-                <a v-if="localInvoice.account?.viewUrl"
-                   class="btn btn-sm btn-outline-primary"
-                   :href="localInvoice.account.viewUrl">
-                    <i class="fa fa-home me-1" aria-hidden="true"></i>
-                    Участок {{ localInvoice.account.number }} ({{ localInvoice.account.size }}м²)
-                </a>
+                <template>
+                    <a v-if="localInvoice.account?.viewUrl && canAccountView"
+                       class="btn btn-sm btn-outline-primary"
+                       :href="localInvoice.account.viewUrl">
+                        <i class="fa fa-home me-1" aria-hidden="true"></i>
+                        Участок {{ localInvoice.account?.number }} ({{ localInvoice.account?.size }}м²)
+                    </a>
+                </template>
 
                 <!-- Квитанция -->
                 <a v-if="localInvoice.receiptUrl"
@@ -30,6 +32,7 @@
                 </a>
 
                 <button class="btn btn-outline-primary btn-sm" @click="recalcAction"
+                        v-if="canEdit"
                         :class="isRecalculating ? 'disabled' : ''">
                     <i class="fa fa-refresh" :class="isRecalculating ? 'fa-spin' : ''"></i> Пересчитать
                 </button>
@@ -42,7 +45,7 @@
             </div>
 
             <!-- Кнопка удаления -->
-            <button v-if="canDrop"
+            <button v-if="canDelete"
                     class="btn btn-sm btn-outline-danger"
                     @click="dropAction">
                 <i class="fa fa-trash me-1" aria-hidden="true"></i>
@@ -106,7 +109,8 @@ import {
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
 import ClaimBlock           from './claims/ClaimBlock.vue';
 import PaymentsBlock        from './payments/PaymentsBlock.vue';
 import {
@@ -129,6 +133,12 @@ const props = defineProps({
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
+
+const canView        = computed(() => has('invoices', 'view'));
+const canEdit        = computed(() => has('invoices', 'edit'));
+const canDrop        = computed(() => has('invoices', 'drop'));
+const canAccountView = computed(() => has('accounts', 'view'));
 
 const localInvoice    = ref({});
 const actions         = ref({});
@@ -211,8 +221,8 @@ const recalcAction = async () => {
 };
 
 // Можно ли удалить
-const canDrop = computed(() => {
-    return actions.value.drop && claimsCount.value === 0 && paymentsCount.value === 0;
+const canDelete = computed(() => {
+    return canDrop && actions.value.drop && claimsCount.value === 0 && paymentsCount.value === 0;
 });
 
 // Следим за перезагрузкой

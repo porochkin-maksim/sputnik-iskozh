@@ -2,10 +2,9 @@
 
 namespace App\Models\Billing;
 
+use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?string $name
  * @property ?string $comment
  */
-class Invoice extends Model implements CastsInterface
+class Invoice extends AbstractModel
 {
     public const string TABLE = 'invoices';
 
@@ -41,10 +40,10 @@ class Invoice extends Model implements CastsInterface
     public const string NAME       = 'name';
     public const string COMMENT    = 'comment';
 
-    public const string CLAIMS   = 'claims';
-    public const string PAYMENTS = 'payments';
-    public const string ACCOUNT  = 'account';
-    public const string PERIOD   = 'period';
+    public const string RELATION_CLAIMS   = 'claims';
+    public const string RELATION_PAYMENTS = 'payments';
+    public const string RELATION_ACCOUNT  = 'account';
+    public const string RELATION_PERIOD   = 'period';
 
     protected $guarded = [];
 
@@ -79,7 +78,7 @@ class Invoice extends Model implements CastsInterface
 
     public function claims(): HasMany
     {
-        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::SERVICE);
+        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::RELATION_SERVICE);
     }
 
     public function payments(): HasMany

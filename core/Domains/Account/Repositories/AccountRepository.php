@@ -6,19 +6,20 @@ use App\Models\Account\Account;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\Collections\AccountCollection;
-use Illuminate\Database\Eloquent\Collection;
+use Core\Domains\Account\Factories\AccountFactory;
+use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Account\Models\AccountSearcher;
+use Core\Domains\Account\Responses\AccountSearchResponse;
 
 class AccountRepository
 {
-    private const TABLE = Account::TABLE;
+    use RepositoryTrait;
 
-    use RepositoryTrait {
-        getById as traitGetById;
-        getByIds as traitGetByIds;
-    }
+    private const string TABLE = Account::TABLE;
 
     public function __construct(
-        private AccountToUserRepository $accountToUserRepository
+        private readonly AccountFactory          $accountFactory,
+        private readonly AccountToUserRepository $accountToUserRepository,
     )
     {
     }
@@ -28,30 +29,58 @@ class AccountRepository
         return Account::class;
     }
 
-    public function getById(?int $id): ?Account
+    public function search(SearcherInterface $searcher): AccountSearchResponse
     {
-        /** @var ?Account $result */
-        $result = $this->traitGetById($id);
+        $response   = $this->searchModels($searcher);
+        $collection = new AccountCollection();
+        foreach ($response->getItems() as $model) {
+            $collection->add($this->accountFactory->makeDtoFromObject($model));
+        }
+
+        $result = new AccountSearchResponse();
+        $result->setTotal($response->getTotal())
+            ->setItems($collection->sortDefault())
+        ;
 
         return $result;
     }
 
-    public function save(Account $object): Account
+    public function getById(?int $id): ?AccountDTO
     {
-        $object->save();
+        /** @var ?Account $result */
+        $result = $this->getModelById($id);
 
-        return $object;
+        return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Collection|Account[]
-     */
-    public function getByUserId(int $id): Collection|array
+    public function getByIds(array $ids): AccountCollection
+    {
+        return $this->search(new AccountSearcher()->setIds($ids))->getItems();
+    }
+
+    public function save(AccountDTO $dto): AccountDTO
+    {
+        $model = $this->getModelById($dto->getId());
+        $model = $this->accountFactory->makeModelFromDto($dto, $model);
+        $model->save();
+
+        if ($dto->hasUsers()) {
+            $model->users()->sync($dto->getUsers()->getIds());
+        }
+
+        return $this->accountFactory->makeDtoFromObject($model);
+    }
+
+    public function getByUserId(int $id): AccountCollection
     {
         $ids = $this->accountToUserRepository->getAccountsIdsByUserId($id);
+        if ( ! $ids) {
+            return new AccountCollection();
+        }
 
-        return Account::select()->with(Account::USERS)->whereIn(Account::ID, $ids)->get();
+        return $this->search(AccountSearcher::make()
+            ->setIds($ids)
+            ->setWithUsers(),
+        )->getItems();
     }
 }

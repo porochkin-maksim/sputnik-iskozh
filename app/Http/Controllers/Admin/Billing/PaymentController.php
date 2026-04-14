@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 use Core\Domains\Billing\Claim\Services\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;

@@ -61,22 +61,22 @@ class CounterHistoryFactory
             ->setUpdatedAt($model->updated_at)
         ;
 
-        if (isset($model->getRelations()[CounterHistory::PREVIOUS])) {
-            $result->setPrevious($this->makeDtoFromObject($model->getRelation(CounterHistory::PREVIOUS)));
+        if (isset($model->getRelations()[CounterHistory::RELATION_PREVIOUS])) {
+            $result->setPrevious($this->makeDtoFromObject($model->getRelation(CounterHistory::RELATION_PREVIOUS)));
         }
 
-        if (isset($model->getRelations()[CounterHistory::FILE])) {
-            $result->setFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(CounterHistory::FILE)));
+        if (isset($model->getRelations()[CounterHistory::RELATION_FILE])) {
+            $result->setFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(CounterHistory::RELATION_FILE)));
         }
 
-        if (isset($model->getRelations()[CounterHistory::COUNTER])) {
-            $result->setCounter(CounterLocator::CounterFactory()->makeDtoFromObject($model->getRelation(CounterHistory::COUNTER)));
+        if (isset($model->getRelations()[CounterHistory::RELATION_COUNTER])) {
+            $result->setCounter(CounterLocator::CounterFactory()->makeDtoFromObject($model->getRelation(CounterHistory::RELATION_COUNTER)));
         }
 
-        if (isset($model->getRelations()[CounterHistory::CLAIM])) {
-            $claim = $model->getRelation(CounterHistory::CLAIM);
-            if (isset($claim->getRelations()[ClaimToObject::CLAIM])) {
-                $result->setClaim(ClaimLocator::ClaimFactory()->makeDtoFromObject($claim->getRelation(ClaimToObject::CLAIM)));
+        if (isset($model->getRelations()[CounterHistory::RELATION_CLAIM])) {
+            $claim = $model->getRelation(CounterHistory::RELATION_CLAIM);
+            if (isset($claim->getRelations()[ClaimToObject::RELATION_CLAIM])) {
+                $result->setClaim(ClaimLocator::ClaimFactory()->makeDtoFromObject($claim->getRelation(ClaimToObject::RELATION_CLAIM)));
             }
         }
 

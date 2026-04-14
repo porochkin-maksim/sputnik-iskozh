@@ -4,7 +4,6 @@ namespace App\Http\Requests\Admin\Accounts;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
-use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Enums\Regexp;
 use Illuminate\Validation\Rule;
 
@@ -37,14 +36,14 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::NUMBER . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_NUMBER),
-            self::NUMBER . '.string'   => sprintf('Укажите «%s»', AccountComparator::TITLE_NUMBER),
-            self::NUMBER . '.regex'    => sprintf('Неверный формат для «%s»', AccountComparator::TITLE_NUMBER),
-            self::NUMBER . '.unique'   => sprintf('Значение для «%s» уже существует', AccountComparator::TITLE_NUMBER),
+            self::NUMBER . '.required' => sprintf('Укажите «%s»', Account::TITLE_NUMBER),
+            self::NUMBER . '.string'   => sprintf('Укажите «%s»', Account::TITLE_NUMBER),
+            self::NUMBER . '.regex'    => sprintf('Неверный формат для «%s»', Account::TITLE_NUMBER),
+            self::NUMBER . '.unique'   => sprintf('Значение для «%s» уже существует', Account::TITLE_NUMBER),
 
-            self::SIZE . '.required' => sprintf('Укажите «%s»', AccountComparator::TITLE_SIZE),
-            self::SIZE . '.numeric'  => sprintf('Укажите число для «%s»', AccountComparator::TITLE_SIZE),
-            self::SIZE . '.min'      => sprintf('Минимальное значение для «%s» - :min', AccountComparator::TITLE_SIZE),
+            self::SIZE . '.required' => sprintf('Укажите «%s»', Account::TITLE_SIZE),
+            self::SIZE . '.numeric'  => sprintf('Укажите число для «%s»', Account::TITLE_SIZE),
+            self::SIZE . '.min'      => sprintf('Минимальное значение для «%s» - :min', Account::TITLE_SIZE),
         ];
     }
 

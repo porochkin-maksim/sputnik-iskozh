@@ -2,9 +2,8 @@
 
 namespace App\Models\Billing;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon  $end_at
  * @property boolean $is_closed
  */
-class Period extends Model implements CastsInterface
+class Period extends AbstractModel
 {
     use SoftDeletes;
 

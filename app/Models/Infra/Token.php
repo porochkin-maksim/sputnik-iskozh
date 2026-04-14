@@ -1,26 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AbstractModel;
 
 /**
  *
  * @property string $id
  * @property string $data
  */
-class Token extends Model implements CastsInterface
+class Token extends AbstractModel
 {
-    public const TABLE = 'tokens';
+    public const string TABLE = 'tokens';
 
     protected $table = self::TABLE;
 
     protected $keyType      = 'string';
     public    $incrementing = false;
 
-    public const ID   = 'id';
-    public const DATA = 'data';
+    public const string ID   = 'id';
+    public const string DATA = 'data';
 
     protected $guarded = [];
 }

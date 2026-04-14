@@ -4,9 +4,9 @@ namespace Core\Domains\Billing\Claim\Services;
 
 use Core\Domains\Billing\Claim\Collections\ClaimCollection;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
 use Core\Domains\Billing\Claim\Repositories\ClaimRepository;
 use Core\Domains\Billing\Claim\Responses\ClaimSearchResponse;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 
 readonly class ClaimService
 {

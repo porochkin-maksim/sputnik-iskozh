@@ -2,19 +2,22 @@
 
 namespace Core\Domains\Access\Services;
 
+use App\Models\Access\Role;
 use Core\Domains\Access\Collections\RoleCollection;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Factories\RoleFactory;
-use Core\Domains\Access\Models\RoleComparator;
 use Core\Domains\Access\Models\RoleDTO;
 use Core\Domains\Access\Models\RoleSearcher;
 use Core\Domains\Access\Repositories\RoleRepository;
 use Core\Domains\Access\Responses\AccessSearchResponse;
+use Core\Domains\Infra\Comparator\DTO\Changes;
+use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\User\Collections\UserCollection;
 use Core\Domains\User\Models\UserDTO;
+use Illuminate\Support\Str;
 
 readonly class RoleService
 {
@@ -29,25 +32,12 @@ readonly class RoleService
     public function save(RoleDTO $role): RoleDTO
     {
         $model = $this->roleRepository->getById($role->getId());
-        if ($model) {
-            $before = $this->roleFactory->makeDtoFromObject($model);
-        }
-        else {
-            $before = new RoleDTO();
-        }
+        $before = $model ? $this->roleFactory->makeDtoFromObject($model) : new RoleDTO();
 
         $model   = $this->roleRepository->save($this->roleFactory->makeModelFromDto($role, $model));
         $current = $this->roleFactory->makeDtoFromObject($model);
 
-        $this->historyChangesService->writeToHistory(
-            $role->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::ROLE,
-            $current->getId(),
-            null,
-            null,
-            new RoleComparator($current),
-            new RoleComparator($before),
-        );
+        $this->logPermissionsChanges($before, $current, $role->getId() ? Event::UPDATE : Event::CREATE);
 
         return $current;
     }
@@ -81,12 +71,6 @@ readonly class RoleService
         if ( ! $user) {
             return false;
         }
-
-        $this->historyChangesService->writeToHistory(
-            Event::DELETE,
-            HistoryType::ROLE,
-            $user->getId(),
-        );
 
         return $this->roleRepository->deleteById($id);
     }
@@ -133,5 +117,43 @@ readonly class RoleService
         });
 
         return array_values($emails);
+    }
+
+    private function logPermissionsChanges(RoleDTO $before, RoleDTO $current, Event $event): void
+    {
+        $oldValue = $this->formatPermissions($before);
+        $newValue = $this->formatPermissions($current);
+
+        if ($oldValue === $newValue) {
+            return;
+        }
+
+        $changes = new ChangesCollection();
+        $changes->add(new Changes(
+            Role::TITLE_PERMISSIONS,
+            $oldValue,
+            $newValue,
+        ));
+
+        $this->historyChangesService->logChanges(
+            $event,
+            HistoryType::ROLE,
+            $changes,
+            $current->getId(),
+        );
+    }
+
+    private function formatPermissions(RoleDTO $role): string
+    {
+        $groupedPermissions = [];
+        foreach ($role->getPermissions() as $permission) {
+            $groupedPermissions[$permission->sectionName()][] = Str::lower($permission->name());
+        }
+
+        foreach ($groupedPermissions as $key => $value) {
+            $groupedPermissions[$key] = sprintf("%s: %s", $key, implode(', ', $value));
+        }
+
+        return implode('; ', $groupedPermissions);
     }
 }

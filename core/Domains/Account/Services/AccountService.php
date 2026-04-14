@@ -4,66 +4,32 @@ namespace Core\Domains\Account\Services;
 
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Account\Factories\AccountFactory;
-use Core\Domains\Account\Models\AccountComparator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Account\Models\AccountSearcher;
 use Core\Domains\Account\Repositories\AccountRepository;
 use Core\Domains\Account\Responses\AccountSearchResponse;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 
 readonly class AccountService
 {
     public function __construct(
-        private AccountFactory        $accountFactory,
-        private AccountRepository     $accountRepository,
-        private HistoryChangesService $historyChangesService,
+        private AccountRepository $accountRepository,
     )
     {
     }
 
-    public function save(AccountDTO $service): AccountDTO
+    public function save(AccountDTO $account): AccountDTO
     {
-        $model = $this->accountRepository->getById($service->getId());
-        if ($model) {
-            $before = $this->accountFactory->makeDtoFromObject($model);
-        }
-        else {
-            $before = new AccountDTO();
-        }
-
-        $model   = $this->accountRepository->save($this->accountFactory->makeModelFromDto($service, $model));
-        $current = $this->accountFactory->makeDtoFromObject($model);
-
-        $this->historyChangesService->writeToHistory(
-            $service->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::ACCOUNT,
-            $current->getId(),
-            null,
-            null,
-            new AccountComparator($current),
-            new AccountComparator($before),
-        );
-
-        return $current;
+        return $this->accountRepository->save($account);
     }
 
     public function getByUserId(int|string|null $id): AccountCollection
     {
-        $result = $this->accountRepository->getByUserId((int) $id);
-
-        return $this->accountFactory->makeDtoFromObjects($result);
+        return $this->accountRepository->getByUserId((int) $id);
     }
 
     public function register(AccountDTO $dto): AccountDTO
     {
-        $account = $this->accountFactory->makeModelFromDto($dto);
-        $account = $this->accountRepository->save($account);
-        $account->users()->sync($dto->getUsers()?->getIds());
-
-        return $this->accountFactory->makeDtoFromObject($account);
+        return $this->accountRepository->save($dto);
     }
 
     public function findByNumber(string $number): ?AccountDTO
@@ -74,33 +40,19 @@ readonly class AccountService
         return $this->search($searcher)->getItems()->first();
     }
 
-    public function search(AccountSearcher $searcher): AccountSearchResponse
+    public function search(?AccountSearcher $searcher = null): AccountSearchResponse
     {
-        $response = $this->accountRepository->search($searcher);
-
-        $result = new AccountSearchResponse();
-        $result->setTotal($response->getTotal());
-
-        $collection = new AccountCollection();
-        foreach ($response->getItems() as $item) {
-            $collection->add($this->accountFactory->makeDtoFromObject($item));
-        }
-
-        return $result->setItems($collection->sortDefault());
+        return $this->accountRepository->search($searcher ?: new AccountSearcher());
     }
 
-    public function getById(int $id): ?AccountDTO
+    public function getById(int|string|null $id): ?AccountDTO
     {
-        $result = $this->accountRepository->getById($id);
-
-        return $result ? $this->accountFactory->makeDtoFromObject($result) : null;
+        return $this->accountRepository->getById((int) $id);
     }
 
     public function getByIds(array $ids): AccountCollection
     {
-        $result = $this->accountRepository->getByIds($ids);
-
-        return $this->accountFactory->makeDtoFromObjects($result);
+        return $this->accountRepository->getByIds($ids);
     }
 
     public function getSntAccount(): ?AccountDTO
@@ -118,12 +70,6 @@ readonly class AccountService
         if ( ! $account) {
             return false;
         }
-
-        $this->historyChangesService->writeToHistory(
-            Event::DELETE,
-            HistoryType::ACCOUNT,
-            $account->getId(),
-        );
 
         return $this->accountRepository->deleteById($id);
     }

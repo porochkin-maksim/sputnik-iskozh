@@ -1,7 +1,7 @@
 <template>
     <div v-if="normalizedErrors?.length"
          class="form">
-        <ul class="form-error">
+        <ul class="form-error list-unstyled">
             <li
                 v-for="(error, index) in normalizedErrors"
                 :key="index"

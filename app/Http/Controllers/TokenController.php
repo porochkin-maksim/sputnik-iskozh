@@ -26,7 +26,7 @@ class TokenController extends Controller
                 return redirect()->route(RouteNames::HOME);
             }
 
-            return view('pages.system.token-auth', compact('uid'));
+            return view('public.system.token-auth', compact('uid'));
         }
 
         abort(404);

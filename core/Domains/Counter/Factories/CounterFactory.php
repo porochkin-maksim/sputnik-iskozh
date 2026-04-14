@@ -58,16 +58,16 @@ class CounterFactory
             ->setExpireAt($model->expire_at)
         ;
 
-        if (isset($model->getRelations()[Counter::HISTORY])) {
-            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::HISTORY)));
+        if (isset($model->getRelations()[Counter::RELATION_HISTORY])) {
+            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::RELATION_HISTORY)));
         }
 
-        if (isset($model->getRelations()[Counter::ACCOUNT])) {
-            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::ACCOUNT)));
+        if (isset($model->getRelations()[Counter::RELATION_ACCOUNT])) {
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::RELATION_ACCOUNT)));
         }
 
-        if (isset($model->getRelations()[Counter::PASSPORT])) {
-            $result->setPassportFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(Counter::PASSPORT)));
+        if (isset($model->getRelations()[Counter::RELATION_PASSPORT])) {
+            $result->setPassportFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(Counter::RELATION_PASSPORT)));
         }
 
         return $result;

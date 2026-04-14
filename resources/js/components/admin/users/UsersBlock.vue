@@ -247,11 +247,12 @@ import {
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
-import Pagination           from '../../common/pagination/Pagination.vue';
-import SimpleSelect         from '../../common/form/SimpleSelect.vue';
-import CustomCheckbox       from '../../common/form/CustomCheckbox.vue';
-import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import { usePermissions }   from '@composables/usePermissions';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import Pagination           from '@common/pagination/Pagination.vue';
+import SimpleSelect         from '@common/form/SimpleSelect.vue';
+import CustomCheckbox       from '@common/form/CustomCheckbox.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiAdminUserList,
 }                           from '@api';
@@ -270,6 +271,7 @@ const props = defineProps({
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatDate }                                = useFormat();
+const { has }                                       = usePermissions();
 
 const users          = ref([]);
 const actions        = ref({});
@@ -289,6 +291,8 @@ const searchInput    = ref(null);
 const isMember    = ref(null);
 const isNotMember = ref(null);
 const isDeleted   = ref(null);
+
+const canView = computed(() => has('users', 'view'));
 
 // Текущая страница для пагинации
 const currentPage = computed(() => Math.floor(skip.value / perPage.value) + 1);

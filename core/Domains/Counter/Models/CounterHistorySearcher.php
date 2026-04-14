@@ -19,14 +19,14 @@ class CounterHistorySearcher implements SearcherInterface
 
     public function setWithCounter(): static
     {
-        $this->with[] = CounterHistory::COUNTER;
+        $this->with[] = CounterHistory::RELATION_COUNTER;
 
         return $this;
     }
 
     public function setWithPrevious(): static
     {
-        $this->with[] = CounterHistory::PREVIOUS;
+        $this->with[] = CounterHistory::RELATION_PREVIOUS;
 
         return $this;
     }
@@ -75,7 +75,7 @@ class CounterHistorySearcher implements SearcherInterface
 
     public function setWithClaim(): static
     {
-        $this->with[] = CounterHistory::CLAIM;
+        $this->with[] = CounterHistory::RELATION_CLAIM;
 
         return $this;
     }

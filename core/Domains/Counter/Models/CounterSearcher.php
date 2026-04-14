@@ -19,14 +19,14 @@ class CounterSearcher implements SearcherInterface
 
     public function setWithPassport(): static
     {
-        $this->with[] = Counter::PASSPORT;
+        $this->with[] = Counter::RELATION_PASSPORT;
 
         return $this;
     }
 
     public function setWithHistory(): static
     {
-        $this->with[] = Counter::HISTORY;
+        $this->with[] = Counter::RELATION_HISTORY;
 
         return $this;
     }

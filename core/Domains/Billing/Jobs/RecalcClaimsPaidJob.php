@@ -4,14 +4,14 @@ namespace Core\Domains\Billing\Jobs;
 
 use App\Models\Billing\Claim;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
-use Core\Domains\Billing\Claim\ClaimLocator;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
 use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;

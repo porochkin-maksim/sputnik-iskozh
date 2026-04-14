@@ -76,6 +76,7 @@ import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import Url                  from '../../../../utils/Url.js';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat.js';
+import { usePermissions }   from '@composables/usePermissions.js';
 
 const props = defineProps({
     account: {
@@ -90,6 +91,9 @@ const props = defineProps({
 
 const { showInfo, showDanger } = useResponseError();
 const { formatDate }           = useFormat();
+const { has }                  = usePermissions();
+
+const canView = computed(() => has('user', 'view'));
 
 // Состояния
 const loading = ref(false);

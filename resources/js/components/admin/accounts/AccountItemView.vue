@@ -50,7 +50,7 @@
                 <div class="card-footer bg-white">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex">
-                            <button class="btn btn-success me-2"
+                            <button class="btn btn-success me-2" v-if="canEdit"
                                     :disabled="!canSave || loading"
                                     @click="saveAction">
                                 <i class="fa"
@@ -65,15 +65,15 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-2">
+            <div class="mb-2" v-if="canUserView">
                 <users-block :account="account" :users="account.users" />
             </div>
         </div>
-        <div class="col-lg-6 col-12 mb-2">
+        <div class="col-lg-6 col-12 mb-2" v-if="canCounterView">
             <counters-block :account="account" />
         </div>
     </div>
-    <div class="row">
+    <div class="row" v-if="canInvoiceView">
         <div class="col-12">
             <invoices-block :account="account" />
         </div>
@@ -89,9 +89,10 @@ import {
     defineOptions,
 }                              from 'vue';
 import { useResponseError }    from '@composables/useResponseError';
-import CustomInput             from '../../common/form/CustomInput.vue';
-import CustomCheckbox          from '../../common/form/CustomCheckbox.vue';
-import HistoryBtn              from '../../common/HistoryBtn.vue';
+import { usePermissions }      from '@composables/usePermissions.js';
+import CustomInput             from '@common/form/CustomInput.vue';
+import CustomCheckbox          from '@common/form/CustomCheckbox.vue';
+import HistoryBtn              from '@common/HistoryBtn.vue';
 import CountersBlock           from './counters/CountersBlock.vue';
 import AccountInfoList         from './AccountInfoList.vue';
 import InvoicesBlock           from './invoices/InvoicesBlock.vue';
@@ -110,6 +111,14 @@ const props = defineProps({
 });
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { has }                                       = usePermissions();
+
+const canView        = computed(() => has('accounts', 'view'));
+const canEdit        = computed(() => has('accounts', 'edit'));
+const canDrop        = computed(() => has('accounts', 'drop'));
+const canUserView    = computed(() => has('users', 'view'));
+const canInvoiceView = computed(() => has('invoices', 'view'));
+const canCounterView = computed(() => has('counters', 'view'));
 
 // Состояния
 const loading = ref(false);
@@ -168,7 +177,7 @@ const saveAction = async () => {
 
 // Валидация формы
 const canSave = computed(() => {
-    return formData.number && formData.size !== null && formData.size >= 0;
+    return canEdit && formData.number && formData.size !== null && formData.size >= 0;
 });
 
 onMounted(() => {
