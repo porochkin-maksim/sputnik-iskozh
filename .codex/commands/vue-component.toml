@@ -1,0 +1,7 @@
+description = "Создать Vue 3 компонент"
+prompt = """
+Создай Vue 3 компонент {{name}} в resources/js/components/{{name}}.vue
+Используй Composition API с <script setup>
+Если нужно пропсы или emits — добавь.
+Стили используй scoped Sass.
+"""
