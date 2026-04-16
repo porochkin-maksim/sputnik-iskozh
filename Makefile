@@ -61,6 +61,10 @@ artisan: ## запуск artisan
 tests: ## запуск artisan
 	@./vendor/bin/sail artisan test
 
+.PHONY: architecture
+architecture: ## архитектурные проверки
+	@bash ./scripts/check-architecture.sh
+
 .PHONY: php
 php: ## запуск php
 	@./vendor/bin/sail bash

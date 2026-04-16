@@ -1,0 +1,9 @@
+description = "Создать модель Laravel с миграцией и контроллером"
+prompt = """
+Создай модель {{name}} в Laravel:
+- Модель в app/Models/{{name}}.php
+- Миграцию с соответствующими полями (поля: {{fields}})
+- Контроллер Resource в app/Http/Controllers/{{name}}Controller.php
+- Добавь маршруты в routes/web.php (ресурсные)
+- Используй PHP 8.4 синтаксис, типизацию, связи (если нужно)
+"""

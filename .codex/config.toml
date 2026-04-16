@@ -1,0 +1,57 @@
+[project]
+name = "sputnik-iskozh"
+description = "PHP 8.4 + Laravel 12 + Vue 3 проект"
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[ai]
+style = "concise"
+temperature = 0.3
+
+[features]
+multimodal = true
+
+[context]
+include-hidden = false
+max-context-files = 50
+
+[context.pinned]
+files = [
+    "composer.json",
+    "package.json",
+    "vite.config.js",
+    "tailwind.config.js",
+    ".env.example",
+    "PROJECT_CONTEXT.md",
+    "bootstrap/app.php",
+    "app/Providers/AppServiceProvider.php",
+    "routes/web.php",
+    "routes/api.php",
+    "core/Domains/Files/FileService.php",
+    "core/Domains/Files/FileRepositoryInterface.php",
+    "core/Domains/Files/FileEntity.php",
+    "core/Domains/Files/FileCollection.php",
+    "core/Domains/Files/FileSearcher.php",
+    "core/Domains/Files/FileSearchResponse.php",
+    "core/Domains/Files/FileFactory.php",
+    "app/Models/Files/FileModel.php",
+    "app/Observers/Files/FileObserver.php",
+    "app/Repositories/Files/FileEloquentRepository.php",
+    "app/Http/Resources/Shared/ResourseList.php",
+    "app/Http/Resources/Shared/Files/FileResource.php"
+]
+
+[context.auto]
+patterns = [
+    "core/Domains/**/*.php",
+    "app/**/*.php",
+    "resources/js/**/*.vue",
+    "resources/js/**/*.js",
+    "routes/web/*.php",
+    "routes/api/*.php"
+]
+ignore = ["vendor/", "node_modules/", "storage/", "tests/"]
+
+[rules]
+path = ".codex/rules"
