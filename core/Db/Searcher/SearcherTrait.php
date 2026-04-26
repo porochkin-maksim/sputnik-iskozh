@@ -6,6 +6,9 @@ use Core\Db\Searcher\Collections\WhereCollection;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\Where;
 
+/**
+ * @deprecated
+ */
 trait SearcherTrait
 {
     /** @var Order[] */

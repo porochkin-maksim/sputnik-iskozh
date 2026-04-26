@@ -2,14 +2,17 @@
 
 namespace Core\Db;
 
-use Core\Cache\CacheLocator;
 use Core\Db\Searcher\BaseSearcher;
 use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Db\Searcher\SearcherInterface;
+use Core\Infrastructure\Shared\Cache\CacheLocator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @deprecated
+ */
 trait RepositoryTrait
 {
     abstract protected function modelClass(): string;

@@ -4,6 +4,9 @@ namespace Core\Db\Searcher\Models;
 
 use Illuminate\Support\Collection;
 
+/**
+ * @deprecated 
+ */
 class BaseSearchResponse
 {
     private Collection $items;

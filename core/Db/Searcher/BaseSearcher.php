@@ -2,6 +2,9 @@
 
 namespace Core\Db\Searcher;
 
+/**
+ * @deprecated
+ */
 class BaseSearcher implements SearcherInterface
 {
     use SearcherTrait;
