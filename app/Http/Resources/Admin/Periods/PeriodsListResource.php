@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Periods;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Collections\PeriodCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Period\PeriodCollection;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class PeriodsListResource extends AbstractResource
 {
@@ -23,13 +22,13 @@ readonly class PeriodsListResource extends AbstractResource
         $access = lc::roleDecorator();
         $result = [
             'periods'    => [],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type: HistoryType::PERIOD,
             ),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::PERIODS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP),
+                'view' => $access->can(PermissionEnum::PERIODS_VIEW),
+                'edit' => $access->can(PermissionEnum::PERIODS_EDIT),
+                'drop' => $access->can(PermissionEnum::PERIODS_DROP),
             ],
         ];
 
@@ -39,7 +38,7 @@ readonly class PeriodsListResource extends AbstractResource
             $hasUnclosed         = $hasUnclosed || ! $period->isClosed();
         }
 
-        $result['actions'][ResponsesEnum::CREATE] = ! $hasUnclosed;
+        $result['actions']['create'] = ! $hasUnclosed;
 
         return $result;
     }

@@ -3,42 +3,36 @@
 namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Services\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Services\ServiceResource;
 use App\Http\Resources\Admin\Services\ServicesListResource;
-use App\Models\Billing\Period;
-use App\Models\Billing\Service;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Factories\ServiceFactory;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Service\Services\ServiceService;
-use Core\Resources\Views\ViewNames;
+use Core\App\Billing\Service\GetListCommand;
+use Core\App\Billing\Service\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceFactory;
+use Core\Domains\Billing\Service\ServiceCatalogService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class ServiceController extends Controller
 {
-    private ServiceFactory $serviceFactory;
-    private ServiceService $serviceService;
-    private PeriodService  $periodService;
 
-    public function __construct()
+    public function __construct(
+        private readonly ServiceFactory        $serviceFactory,
+        private readonly ServiceCatalogService $serviceService,
+        private readonly PeriodService         $periodService,
+        private readonly GetListCommand        $getListCommand,
+        private readonly SaveCommand           $saveCommand,
+    )
     {
-        $this->serviceFactory = ServiceLocator::ServiceFactory();
-        $this->serviceService = ServiceLocator::ServiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_SERVICES);
+            return view('admin.pages.services');
         }
 
         abort(403);
@@ -68,53 +62,32 @@ class ServiceController extends Controller
             abort(403);
         }
 
-        $searcher = ServiceSearcher::make()
-            ->exludeType(ServiceTypeEnum::OTHER)
-            ->exludeType(ServiceTypeEnum::DEBT)
-            ->exludeType(ServiceTypeEnum::ADVANCE_PAYMENT)
-            ->withPeriods()
-            ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC)
-        ;
-        $services = $this->serviceService->search($searcher);
-
-        $periodSearcher = PeriodSearcher::make()
-            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)
-        ;
-
-        $periods = $this->periodService->search($periodSearcher);
+        $result = $this->getListCommand->execute();
 
         return response()->json(new ServicesListResource(
-            $services->getItems(),
-            $periods->getItems(),
+            $result['services']->getItems(),
+            $result['periods']->getItems(),
         ));
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
-        $service = $request->getId()
-            ? $this->serviceService->getById($request->getId())
-            : $this->serviceFactory->makeDefault()
-                ->setPeriodId($request->getPeriodId())
-                ->setType(ServiceTypeEnum::tryFrom($request->getType()))
-        ;
+        $service = $this->saveCommand->execute(
+            id      : $request->getIntOrNull('id'),
+            periodId: $request->getIntOrNull('period_id'),
+            type    : ServiceTypeEnum::tryFrom($request->getInt('type')),
+            name    : $request->getStringOrNull('name'),
+            cost    : $request->getFloat('cost'),
+            isActive: $request->getBool('is_active'),
+        );
 
-        if ( ! $service) {
+        if ($service === null) {
             abort(404);
         }
-
-        $service
-            ->setName($request->getName())
-            ->setIsActive($request->getIsActive())
-            ->setCost($request->getCost())
-        ;
-
-        $service = $this->serviceService->save($service);
 
         return response()->json([
             'service' => new ServiceResource($service),

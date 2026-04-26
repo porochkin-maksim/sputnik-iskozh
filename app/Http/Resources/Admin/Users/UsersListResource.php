@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Users;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\User\Collections\UserCollection;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\User\UserCollection;
 
 /**
  * @deprecated
@@ -29,11 +28,11 @@ readonly class UsersListResource extends AbstractResource
             'users'      => [],
             'total'      => $this->totalUsersCount,
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::USERS_DROP),
+                'view' => $access->can(PermissionEnum::USERS_VIEW),
+                'edit' => $access->can(PermissionEnum::USERS_EDIT),
+                'drop' => $access->can(PermissionEnum::USERS_DROP),
             ],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type: HistoryType::USER,
             ),
         ];

@@ -6,7 +6,7 @@
 
 use Core\Domains\Infra\Uid\UidDTO;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 
 
 $qrCode = QrCode::size(300)->generate(route(RouteNames::TOKEN, $uid->getToken()))?->toHtml();

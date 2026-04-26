@@ -3,12 +3,12 @@
 namespace App\Http\Resources\Admin\HelpDesk;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\HelpDesk\Models\TicketServiceDTO;
+use Core\Domains\HelpDesk\Models\TicketServiceEntity;
 
 readonly class ServiceResource extends AbstractResource
 {
     public function __construct(
-        private TicketServiceDTO $serviceDTO,
+        private TicketServiceEntity $service,
     )
     {
     }
@@ -17,15 +17,15 @@ readonly class ServiceResource extends AbstractResource
     public function jsonSerialize(): array
     {
         return [
-            'id'          => $this->serviceDTO->getId(),
-            'category_id' => $this->serviceDTO->getCategoryId(),
-            'name'        => $this->serviceDTO->getName(),
-            'code'        => $this->serviceDTO->getCode(),
-            'sort_order'  => $this->serviceDTO->getSortOrder(),
-            'is_active'   => $this->serviceDTO->getIsActive(),
-            'created_at'  => $this->serviceDTO->getCreatedAt()?->toISOString(),
-            'updated_at'  => $this->serviceDTO->getUpdatedAt()?->toISOString(),
-            'category'    => $this->serviceDTO->getCategory() ? new CategoryResource($this->serviceDTO->getCategory()) : null,
+            'id'          => $this->service->getId(),
+            'category_id' => $this->service->getCategoryId(),
+            'name'        => $this->service->getName(),
+            'code'        => $this->service->getCode(),
+            'sort_order'  => $this->service->getSortOrder(),
+            'is_active'   => $this->service->getIsActive(),
+            'created_at'  => $this->service->getCreatedAt()?->toISOString(),
+            'updated_at'  => $this->service->getUpdatedAt()?->toISOString(),
+            'category'    => $this->service->getCategory() ? new CategoryResource($this->service->getCategory()) : null,
         ];
     }
 }

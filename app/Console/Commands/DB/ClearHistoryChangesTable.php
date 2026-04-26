@@ -14,7 +14,7 @@ use App\Models\Counter\CounterHistory;
 use App\Models\Infra\HistoryChanges;
 use App\Models\Infra\Option;
 use App\Models\User;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

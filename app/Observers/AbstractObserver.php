@@ -5,11 +5,10 @@ namespace App\Observers;
 use App\Models\Interfaces\CastsInterface;
 use Core\Domains\Infra\Comparator\DTO\Changes;
 use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Core\Helpers\DateTime\DateTimeHelper;
+use Core\Domains\HistoryChanges\Event;
+use Core\Domains\HistoryChanges\HistoryChangesService;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Shared\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -17,9 +16,9 @@ abstract class AbstractObserver
 {
     protected HistoryChangesService $historyChangesService;
 
-    public function __construct()
+    public function __construct(HistoryChangesService $historyChangesService)
     {
-        $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
+        $this->historyChangesService = $historyChangesService;
     }
 
     /**

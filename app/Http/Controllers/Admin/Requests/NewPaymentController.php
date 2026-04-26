@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Requests;
 
-use App\Http\Requests\Admin\Payments\LinkRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Invoices\InvoicesSelectResource;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
@@ -12,43 +12,38 @@ use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
 use App\Models\Billing\Period;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Resources\Views\ViewNames;
+use Core\Exceptions\ValidationException;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\App\Billing\Payment\LinkPaymentCommand;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class NewPaymentController
 {
-    private PaymentService $paymentService;
-    private InvoiceService $invoiceService;
-    private AccountService $accountService;
-    private PeriodService  $periodService;
 
-    public function __construct()
+    public function __construct(
+        private readonly PaymentService     $paymentService,
+        private readonly InvoiceService     $invoiceService,
+        private readonly AccountService     $accountService,
+        private readonly PeriodService      $periodService,
+        private readonly LinkPaymentCommand $linkPaymentCommand,
+    )
     {
-        $this->paymentService = PaymentLocator::PaymentService();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->accountService = AccountLocator::AccountService();
-        $this->periodService  = PeriodLocator::PeriodService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_PAYMENTS);
+            return view('admin.pages.payments');
         }
 
         abort(403);
@@ -78,7 +73,8 @@ class NewPaymentController
         $periodSearcher = new PeriodSearcher();
         $periodSearcher
             ->setIsClosed(false)
-            ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC);
+            ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC)
+        ;
         $periods = $this->periodService->search($periodSearcher);
 
         return response()->json([
@@ -109,29 +105,27 @@ class NewPaymentController
         ]);
     }
 
-    public function save(LinkRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
-        $payment = $this->paymentService->getById($request->getId());
+        $payment = $this->linkPaymentCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getStringOrNull('name'),
+            $request->getFloat('cost'),
+            $request->getStringOrNull('comment'),
+            $request->getIntOrNull('account_id'),
+            $request->getInt('invoice_id') ? : null,
+        );
 
-        if ( ! $payment) {
+        if ($payment === null) {
             abort(404);
         }
-
-        $payment
-            ->setVerified(true)
-            ->setModerated(true)
-            ->setName($request->getName())
-            ->setCost($request->getCost())
-            ->setComment($request->getComment())
-            ->setAccountId($request->getAccountId())
-            ->setInvoiceId($request->getInvoiceId())
-        ;
-
-        $payment = $this->paymentService->save($payment);
 
         return response()->json([
             'payment' => new PaymentResource($payment),
@@ -154,7 +148,6 @@ class NewPaymentController
         ;
 
         $payments = $this->paymentService->search($searcher);
-
 
         return response()->json(new PaymentsListResource(
             $payments->getItems(),

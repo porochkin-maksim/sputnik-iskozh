@@ -5,19 +5,18 @@ namespace App\Http\Controllers\Admin\Account;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Invoices\InvoicesListResource;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Illuminate\Http\JsonResponse;
 
 class InvoiceController extends Controller
 {
-    private InvoiceService $invoiceService;
 
-    public function __construct()
+    public function __construct(
+        private readonly InvoiceService $invoiceService,
+    )
     {
-        $this->invoiceService = InvoiceLocator::InvoiceService();
     }
 
     public function list(int $accountId, DefaultRequest $request): JsonResponse
@@ -28,7 +27,7 @@ class InvoiceController extends Controller
         ;
 
         $invoices = $this->invoiceService->search($searcher)->getItems();
-        $invoices = $invoices->sort(function (InvoiceDTO $a, InvoiceDTO $b) {
+        $invoices = $invoices->sort(function (InvoiceEntity $a, InvoiceEntity $b) {
             return $a->getPeriodId() < $b->getPeriodId();
         });
 

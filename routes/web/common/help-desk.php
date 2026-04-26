@@ -4,7 +4,7 @@ use App\Http\Controllers;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
 use Core\Domains\HelpDesk\Models\TicketCategoryDTO;
 use Core\Domains\HelpDesk\Models\TicketServiceDTO;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 use Illuminate\Support\Facades\Route;
 

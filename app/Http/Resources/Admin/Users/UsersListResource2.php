@@ -3,8 +3,7 @@
 namespace App\Http\Resources\Admin\Users;
 
 use App\Http\Resources\AbstractResource;
-
-use Core\Domains\User\Collections\UserCollection;
+use Core\Domains\User\UserCollection;
 
 readonly class UsersListResource2 extends AbstractResource
 {

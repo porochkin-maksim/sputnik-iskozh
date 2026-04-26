@@ -3,15 +3,14 @@
 use App\Http\Controllers;
 use App\Http\Controllers\Admin\System\SentEmailController;
 use App\Http\Middleware\Enums\MiddlewareNames;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], static function () {
     Route::group(['middleware' => MiddlewareNames::ADMIN], static function () {
         Route::get('/', static function () {
-            return view(ViewNames::ADMIN_PAGES_INDEX);
+            return view('admin.pages.index');
         })->name(RouteNames::ADMIN);
 
         // главная админки

@@ -3,12 +3,12 @@
 namespace App\Http\Resources\Profile\Accounts;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Account\Models\AccountDTO;
+use Core\Domains\Account\AccountEntity;
 
 readonly class AccountResource extends AbstractResource
 {
     public function __construct(
-        private AccountDTO $account,
+        private AccountEntity $account,
     )
     {
     }

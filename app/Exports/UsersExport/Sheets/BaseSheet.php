@@ -2,10 +2,9 @@
 
 namespace App\Exports\UsersExport\Sheets;
 
-use Core\Domains\User\Collections\UserCollection;
-use Core\Domains\User\UserLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Helpers\Phone\PhoneHelper;
+use Core\Domains\User\UserCollection;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use Core\Shared\Helpers\Phone\PhoneHelper;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -55,7 +54,7 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
 
             $row[self::ID]              = $user->getId();
             $row[self::ACCOUNT]         = implode(', ', $accounts->getNumbersWitchFraction());
-            $row[self::NAME]            = UserLocator::UserDecorator($user)->getFullName();
+            $row[self::NAME]            = $user->getViewer()->getFullName();
             $row[self::EMAIL]           = $user->getEmailVerifiedAt() ? $user->getEmail() : null;
             $row[self::PHONE]           = $user->getPhone() ? PhoneHelper::normalizePhone($user->getPhone()) : null;
             $row[self::MEMBERSHIP]      = $user->getMembershipDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT);

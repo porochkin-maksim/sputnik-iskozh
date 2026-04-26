@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Core\Services\Images\StaticFileLocator;
+use App\Services\Images\StaticFileLocator;
 
 $isIndexPage = $isIndexPage ?? false;
 

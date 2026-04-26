@@ -3,12 +3,12 @@
 namespace App\Http\Resources\Profile\Periods;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Billing\Period\Models\PeriodDTO;
+use Core\Domains\Billing\Period\PeriodEntity;
 
 readonly class PeriodResource extends AbstractResource
 {
     public function __construct(
-        private PeriodDTO $period,
+        private PeriodEntity $period,
     )
     {
     }

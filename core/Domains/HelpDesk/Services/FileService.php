@@ -2,45 +2,23 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Models\FileDTO;
-use Core\Domains\File\Services\FileService as BaseFileService;
-use Illuminate\Http\UploadedFile;
+use Core\Domains\Files\FileService as BaseFileService;
+use Core\Domains\Files\FileTypeEnum;
 
-class FileService
+readonly class FileService extends BaseFileService
 {
-    private const string FILE_DIR = 'help-desk/tickets';
-
-    public function __construct(
-        private readonly BaseFileService $fileService,
-    )
+    protected function getBaseDir(): string
     {
+        return 'help-desk/tickets';
     }
 
-    public function store(UploadedFile $file, int $relatedId, FileTypeEnum $type = FileTypeEnum::TICKET): FileDTO
+    protected function getBaseType(): ?FileTypeEnum
     {
-        $dto = $this->fileService->store($file, self::FILE_DIR, false);
-        $dto->setType($type)
-            ->setRelatedId($relatedId)
-        ;
-
-        $this->fileService->save($dto);
-
-        return $dto;
+        return FileTypeEnum::TICKET;
     }
 
-    public function getById(int $id): ?FileDTO
+    protected function isDefaultPublic(): ?bool
     {
-        return $this->fileService->getById($id);
-    }
-
-    public function deleteById(int $id): bool
-    {
-        return $this->fileService->deleteById($id);
-    }
-
-    public function save(FileDTO $file): FileDTO
-    {
-        return $this->fileService->save($file);
+        return false;
     }
 }

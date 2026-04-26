@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Core\Exceptions\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use lc;
@@ -28,6 +29,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             $this->logError($e);
         });
+
+        $this->renderable(function (ValidationException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['errors' => $e->errors], 422);
+            }
+
+            // Для обычных запросов можно редиректить назад с ошибками, как делает Laravel
+            return redirect()->back()->withErrors($e->errors);
+        });
+
     }
 
     protected function logError(Throwable $e): void

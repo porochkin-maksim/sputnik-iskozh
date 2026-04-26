@@ -2,15 +2,15 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\HelpDesk\Models\TicketCommentDTO;
-use Core\Domains\HelpDesk\Repositories\TicketCommentRepository;
+use Core\Domains\HelpDesk\Models\TicketCommentEntity;
 use Core\Domains\HelpDesk\Responses\TicketCommentSearchResponse;
 use Core\Domains\HelpDesk\Searchers\TicketCommentSearcher;
+use Core\Domains\HelpDesk\TicketCommentRepositoryInterface;
 
 readonly class TicketCommentService
 {
     public function __construct(
-        private TicketCommentRepository $ticketCommentRepository,
+        private TicketCommentRepositoryInterface $ticketCommentRepository,
     )
     {
     }
@@ -20,12 +20,12 @@ readonly class TicketCommentService
         return $this->ticketCommentRepository->search($searcher);
     }
 
-    public function getById(?int $id): ?TicketCommentDTO
+    public function getById(?int $id): ?TicketCommentEntity
     {
         return $this->ticketCommentRepository->getById($id);
     }
 
-    public function save(TicketCommentDTO $comment): TicketCommentDTO
+    public function save(TicketCommentEntity $comment): TicketCommentEntity
     {
         return $this->ticketCommentRepository->save($comment);
     }

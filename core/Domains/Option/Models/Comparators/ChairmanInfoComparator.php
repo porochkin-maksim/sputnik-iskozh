@@ -5,7 +5,7 @@ namespace Core\Domains\Option\Models\Comparators;
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
-use Core\Domains\Option\Models\OptionDTO;
+use Core\Domains\Option\OptionEntity;
 
 class ChairmanInfoComparator extends AbstractComparatorDTO
 {
@@ -23,7 +23,7 @@ class ChairmanInfoComparator extends AbstractComparatorDTO
         'email'      => self::TITLE_EMAIL,
     ];
 
-    public function __construct(OptionDTO $entity)
+    public function __construct(OptionEntity $entity)
     {
         $this->initProperties($entity, $entity->getId());
 

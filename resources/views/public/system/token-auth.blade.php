@@ -1,16 +1,15 @@
 <?php declare(strict_types=1);
 
 use Core\Domains\Infra\Uid\UidDTO;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 /**
  * @var UidDTO $uid
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::CONTENT)
     <div class="d-flex justify-content-center align-items-center pt-3 text-center">

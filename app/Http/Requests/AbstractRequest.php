@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\UploadedFileFactory;
 use Carbon\Carbon;
+use Core\Domains\Shared\ValueObjects\UploadedFile;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
-/**
- * @method UploadedFile[] allFiles()
- */
 abstract class AbstractRequest extends FormRequest
 {
     public static function make()
@@ -30,6 +28,39 @@ abstract class AbstractRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * @return UploadedFile[]
+     */
+    public function allFiles(): array
+    {
+        return UploadedFileFactory::fromHttpRequestCollection(parent::allFiles());
+    }
+
+    /**
+     * @param string|null $key
+     * @param mixed       $default
+     *
+     * @return UploadedFile|null
+     */
+    public function file($key = null, $default = null)
+    {
+        $file = parent::file($key, $default);
+
+        if ($file instanceof UploadedFile) {
+            return $file;
+        }
+
+        return $file ? UploadedFileFactory::fromHttpRequest($file) : $default;
+    }
+
+    public function files(string $key, $default = null)
+    {
+        $files = parent::file($key, $default);
+        $files = is_array($files) ? $files : [$files];
+
+        return $files ? UploadedFileFactory::fromHttpRequestCollection($files) : $default;
     }
 
     public function getInt(string $key, mixed $default = null): int
@@ -69,7 +100,7 @@ abstract class AbstractRequest extends FormRequest
             return (string) $this->input($key);
         }
 
-        return (string) $default;
+        return trim((string) $default);
     }
 
     public function getStringOrNull(string $key, mixed $default = null): ?string
@@ -82,7 +113,7 @@ abstract class AbstractRequest extends FormRequest
             return $this->input($key);
         }
 
-        return (string) $default ?: null;
+        return trim((string) $default) ? : null;
     }
 
     public function getFloat(string $key, mixed $default = null): ?float

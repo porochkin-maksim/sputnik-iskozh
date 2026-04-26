@@ -2,13 +2,13 @@
 
 namespace Core\Domains\Infra\Comparator;
 
-use Core\Domains\Infra\Comparator\Factories\HistoryChangesFactory;
+use Core\Domains\Infra\Comparator\Factories\ChangesFactory;
 use Core\Domains\Infra\Comparator\Services\Comparator;
 
 class ComparatorLocator
 {
-    private static Comparator            $comparator;
-    private static HistoryChangesFactory $historyChangesFactory;
+    private static Comparator     $comparator;
+    private static ChangesFactory $historyChangesFactory;
 
     public static function Comparator(): Comparator
     {
@@ -21,10 +21,10 @@ class ComparatorLocator
         return self::$comparator;
     }
 
-    private static function HistoryChangesFactory(): HistoryChangesFactory
+    private static function HistoryChangesFactory(): ChangesFactory
     {
         if ( ! isset(self::$historyChangesFactory)) {
-            self::$historyChangesFactory = new HistoryChangesFactory();
+            self::$historyChangesFactory = new ChangesFactory();
         }
 
         return self::$historyChangesFactory;

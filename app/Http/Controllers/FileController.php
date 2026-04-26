@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\FileLocator;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Counter\CounterService;
+use Core\Domains\CounterHistory\CounterHistoryService;
+use Core\Domains\Files\FileEntity;
+use Core\Domains\Files\FileService;
+use Core\Domains\Files\FileTypeEnum;
 use Illuminate\Support\Facades\Storage;
 use lc;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
 {
+    public function __construct(
+        private readonly FileService           $fileService,
+        private readonly PaymentService        $paymentService,
+        private readonly CounterHistoryService $counterHistoryService,
+        private readonly CounterService        $counterService,
+    )
+    {
+    }
+
     public function download($filePath): BinaryFileResponse
     {
         $storagePath = $filePath;
@@ -22,7 +32,7 @@ class FileController extends Controller
         if ( ! Storage::exists($storagePath)) {
             if (Storage::exists('public/' . $storagePath)) {
                 $fullPath = Storage::path('public/' . $filePath);
-                $fileDto  = FileLocator::FileService()->getByPath('public/' . $filePath);
+                $fileDto  = $this->fileService->getByPath('public/' . $filePath);
 
                 $filename        = $fileDto?->getName() ? : basename($filePath);
                 $encodedFilename = rawurlencode($filename); // Кодируем для UTF-8
@@ -33,7 +43,6 @@ class FileController extends Controller
                 ];
 
                 return response()->file($fullPath, $headers);
-
             }
             abort(404, 'Файл не найден');
         }
@@ -42,7 +51,7 @@ class FileController extends Controller
             abort(403);
         }
 
-        $fileDto = FileLocator::FileService()->getByPath($filePath);
+        $fileDto = $this->fileService->getByPath($filePath);
         if ( ! $fileDto) {
             abort(404, 'Файл не найден');
         }
@@ -62,7 +71,7 @@ class FileController extends Controller
         return response()->file($fullPath, $headers);
     }
 
-    private function checkAccess(FileDTO $fileDto): void
+    private function checkAccess(FileEntity $fileDto): void
     {
         if ($fileDto->getType() === FileTypeEnum::TICKET) {
             $this->checkTicketAccess($fileDto);
@@ -78,7 +87,7 @@ class FileController extends Controller
         }
     }
 
-    private function checkPaymentAccess(FileDTO $fileDto): void
+    private function checkPaymentAccess(FileEntity $fileDto): void
     {
         if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             return;
@@ -90,7 +99,7 @@ class FileController extends Controller
             ->withAccount()
             ->setLimit(1)
         ;
-        $payment = PaymentLocator::PaymentService()->search($searcher)->getItems()->first();
+        $payment = $this->paymentService->search($searcher)->getItems()->first();
 
         $account = lc::account();
         if (
@@ -103,7 +112,7 @@ class FileController extends Controller
         abort(403);
     }
 
-    private function checkCounterAccess(FileDTO $fileDto): void
+    private function checkCounterAccess(FileEntity $fileDto): void
     {
         if (lc::roleDecorator()->canAccessAdmin()) {
             return;
@@ -111,14 +120,14 @@ class FileController extends Controller
 
         $counter = null;
         if ($fileDto->getType() === FileTypeEnum::COUNTER_HISTORY) {
-            $counterHistory = CounterLocator::CounterHistoryService()->getById($fileDto->getRelatedId());
+            $counterHistory = $this->counterHistoryService->getById($fileDto->getRelatedId());
             if ( ! $counterHistory) {
                 abort(404);
             }
-            $counter = CounterLocator::CounterService()->getById($counterHistory->getCounterId());
+            $counter = $this->counterService->getById($counterHistory->getCounterId());
         }
         if ($fileDto->getType() === FileTypeEnum::COUNTER_PASSPORT) {
-            $counter = CounterLocator::CounterService()->getById($fileDto->getRelatedId());
+            $counter = $this->counterService->getById($fileDto->getRelatedId());
         }
 
         if ( ! $counter) {
@@ -136,7 +145,7 @@ class FileController extends Controller
         abort(403);
     }
 
-    private function checkTicketAccess(FileDTO $fileDto): void
+    private function checkTicketAccess(FileEntity $fileDto): void
     {
         if (lc::roleDecorator()->can(PermissionEnum::HELP_DESK_VIEW)) {
             return;

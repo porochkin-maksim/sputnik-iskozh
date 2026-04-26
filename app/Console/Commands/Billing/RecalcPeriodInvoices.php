@@ -2,12 +2,19 @@
 
 namespace App\Console\Commands\Billing;
 
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Illuminate\Console\Command;
 
 class RecalcPeriodInvoices extends Command
 {
+    public function __construct(
+        private readonly InvoiceService $invoiceService,
+    )
+    {
+        parent::__construct();
+    }
+
     protected $signature   = 'billing:invoices:recalc 
                                 {--period= : ID периода для пересчёта всех счетов}
                                 {--invoice= : Список ID счетов через запятую}';
@@ -47,7 +54,7 @@ class RecalcPeriodInvoices extends Command
             $this->info("Поиск счетов по ID: " . implode(',', $invoiceIds));
         }
 
-        $invoices = InvoiceLocator::InvoiceService()->search($searcher)->getItems();
+        $invoices = $this->invoiceService->search($searcher)->getItems();
 
         if ($invoices->isEmpty()) {
             $this->warn("Счета не найдены.");
@@ -68,7 +75,7 @@ class RecalcPeriodInvoices extends Command
 
         foreach ($invoices as $invoice) {
             try {
-                $result = InvoiceLocator::InvoiceService()->recalcInvoice($invoice->getId(), true);
+                $result = $this->invoiceService->recalcInvoice($invoice->getId(), true);
 
                 if ($result === true) {
                     $sent++;

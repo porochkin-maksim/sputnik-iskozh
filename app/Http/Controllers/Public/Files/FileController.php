@@ -3,150 +3,162 @@
 namespace App\Http\Controllers\Public\Files;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\File\FileLocator;
-use Core\Domains\File\Requests\File\ChangeOrderRequest;
-use Core\Domains\File\Requests\File\MoveRequest;
-use Core\Domains\File\Requests\File\ReplaceRequest;
-use Core\Domains\File\Requests\File\SaveRequest;
-use Core\Domains\File\Requests\File\SearchRequest;
-use Core\Domains\File\Requests\File\StoreRequest;
-use Core\Domains\File\Services\FileService;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
+use App\Http\Requests\DefaultRequest;
+use App\Http\Resources\Shared\Files\FileResource;
+use App\Http\Resources\Shared\ResourseList;
+use Core\App\Files\DeleteCommand;
+use Core\App\Files\DownCommand;
+use Core\App\Files\GetListCommand;
+use Core\App\Files\MoveCommand;
+use Core\App\Files\ReplaceCommand;
+use Core\App\Files\SaveCommand;
+use Core\App\Files\StoreCommand;
+use Core\App\Files\UpCommand;
+use Core\Exceptions\ValidationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 
 class FileController extends Controller
 {
-    private FileService $fileService;
+    private const string DIRECORY = '/uploads';
 
-    public function __construct()
+    public function __construct(
+        private readonly StoreCommand   $storeCommand,
+        private readonly SaveCommand    $saveCommand,
+        private readonly DeleteCommand  $deleteCommand,
+        private readonly UpCommand      $upCommand,
+        private readonly DownCommand    $downCommand,
+        private readonly MoveCommand    $moveCommand,
+        private readonly ReplaceCommand $replaceCommand,
+        private readonly GetListCommand $getListCommand,
+    )
     {
-        $this->fileService = FileLocator::FileService();
+    }
+
+    private function canEdit(): bool
+    {
+        return \lc::roleDecorator()->canFiles();
     }
 
     public function index(): View
     {
-        return view(ViewNames::PAGES_FILES_INDEX);
+        return view('public.files.index');
     }
 
-    public function list(SearchRequest $request): JsonResponse
+    public function list(DefaultRequest $request): JsonResponse
     {
-        $searcher = $request->dto();
-        $searcher->setType(null);
-
-        $files = $this->fileService->search($searcher)->getItems();
+        $searchResult = $this->getListCommand->execute(
+            $request->getIntOrNull('limit'),
+            $request->getIntOrNull('parent_id'),
+            $request->getStringOrNull('sort_by'),
+            $request->getBool('sort_desc'),
+        );
 
         return response()->json([
-            ResponsesEnum::FILES => $files,
-            ResponsesEnum::EDIT  => $this->canEdit(),
+            'files' => new ResourseList($searchResult->getItems(), FileResource::class),
+            'edit'  => $this->canEdit(),
         ]);
     }
 
-    public function store(StoreRequest $request): JsonResponse
+    public function store(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        foreach ($request->allFiles() as $file) {
-            $dto = $this->fileService->store($file, 'uploads');
-            $dto->setParentId($request->getParentId());
-            $this->fileService->save($dto);
-        }
-
-        return response()->json(true);
+        return response()->json($this->storeCommand->execute(
+            $request->allFiles(),
+            self::DIRECORY,
+            $request->getIntOrNull('parent_id'),
+        ));
     }
 
-    public function replace(ReplaceRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $file = $this->fileService->getById($request->getFileId());
-
-        if ($file) {
-            $newFile = $this->fileService->store($request->getFile(), 'uploads');
-            $this->fileService->replace($file, $newFile);
-        }
-
-        return response()->json(true);
+        return response()->json($this->saveCommand->execute(
+            $request->getInt('id'),
+            $request->getString('name'),
+        ));
     }
 
-    public function save(SaveRequest $request): JsonResponse
-    {
-        if ( ! $this->canEdit()) {
-            abort(403);
-        }
-
-        $file = $this->fileService->getById($request->getId());
-        if ($file) {
-            $file->setName($request->getName());
-            $this->fileService->save($file);
-
-            return response()->json(true);
-        }
-
-        return response()->json(true);
-    }
-
+    /**
+     * @throws ValidationException
+     */
     public function delete(int $id): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        return response()->json($this->fileService->deleteById($id));
+        return response()->json($this->deleteCommand->execute($id));
     }
 
-    public function up(int $id, ChangeOrderRequest $request): void
+    /**
+     * @throws ValidationException
+     */
+    public function replace(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $file = $this->fileService->getById($id);
-        if ($file) {
-            $this->fileService->saveFileOrderIndex($file, $request->getIndex() - 1);
-        }
+        return response()->json($this->replaceCommand->execute(
+            $request->getInt('id'),
+            $request->file('file'),
+            self::DIRECORY,
+        ));
     }
 
-    public function down(int $id, ChangeOrderRequest $request): void
+    /**
+     * @throws ValidationException
+     */
+    public function up(int $id, DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $file = $this->fileService->getById($id);
-        if ($file) {
-            $this->fileService->saveFileOrderIndex($file, $request->getIndex() + 1);
-        }
+        return response()->json($this->upCommand->execute(
+            $id,
+            $request->getInt('index'),
+        ));
     }
 
-    public function move(MoveRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function down(int $id, DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $file = $this->fileService->getById($request->getFileId());
-        if ($file->getType()) {
-            return response()->json(false);
-        }
-
-        if ($request->isCopyType()) {
-            $file = $this->fileService->copy($file);
-        }
-
-        $file->setParentId($request->getFolderId());
-        $this->fileService->save($file);
-
-        return response()->json(true);
+        return response()->json($this->downCommand->execute(
+            $id,
+            $request->getInt('index'),
+        ));
     }
 
-    private function canEdit(): bool
+    /**
+     * @throws ValidationException
+     */
+    public function move(DefaultRequest $request): JsonResponse
     {
-        return \lc::roleDecorator()->canFiles();
+        if ( ! $this->canEdit()) {
+            abort(403);
+        }
+
+        return response()->json($this->moveCommand->execute(
+            $request->getInt('file'),
+            $request->getInt('folder'),
+            $request->getString('type') === 'copy',
+        ));
     }
 }

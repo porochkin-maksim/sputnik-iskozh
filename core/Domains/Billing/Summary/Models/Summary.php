@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Summary\Models;
 
-use Core\Services\Money\MoneyService;
+use App\Services\Money\MoneyService;
 
 class Summary implements \JsonSerializable
 {

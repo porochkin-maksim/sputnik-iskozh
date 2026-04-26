@@ -2,7 +2,7 @@
 
 use App\Http\Controllers;
 use App\Http\Middleware\Enums\MiddlewareNames;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'home'], static function () {

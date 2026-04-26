@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Common\Documents;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Service\Services\ServiceService;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Claim\ClaimSearcher;
+use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceCatalogService;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
 use Illuminate\Support\Str;
@@ -18,15 +19,15 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ReceiptController extends Controller
 {
-    private InvoiceService $invoiceService;
-    private PeriodService  $periodService;
-    private ServiceService $serviceService;
 
-    public function __construct()
+    public function __construct(
+        private readonly InvoiceService        $invoiceService,
+        private readonly ClaimService          $claimService,
+        private readonly AccountService        $accountService,
+        private readonly PeriodService         $periodService,
+        private readonly ServiceCatalogService $serviceService,
+    )
     {
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
-        $this->serviceService = ServiceLocator::ServiceService();
     }
 
     /**
@@ -73,10 +74,31 @@ class ReceiptController extends Controller
      */
     public function makeByInvoiceId(mixed $id): BinaryFileResponse
     {
-        $invoice = $this->invoiceService->getById(is_numeric($id) ? (int) $id : null);
+        $invoiceId = is_numeric($id) ? (int) $id : null;
+        $invoice   = $this->invoiceService->search(
+            InvoiceSearcher::make()
+                ->setId($invoiceId)
+                ->setWithAccount()
+                ->setWithPeriod()
+                ->setLimit(1),
+        )->getItems()->first();
 
         if ( ! $invoice) {
             abort(404, 'Счёт не найден');
+        }
+
+        $invoice->setClaims($this->claimService->search(
+            ClaimSearcher::make()
+                ->setInvoiceId($invoice->getId())
+                ->setWithService(),
+        )->getItems());
+
+        if ( ! $invoice->getAccount()) {
+            $invoice->setAccount($this->accountService->getById($invoice->getAccountId()));
+        }
+
+        if ( ! $invoice->getPeriod()) {
+            $invoice->setPeriod($this->periodService->getById($invoice->getPeriodId()));
         }
 
         $tempFile = sys_get_temp_dir() . '/receipt_' . $invoice->getId() . '_' . Str::uuid() . '.pdf';
@@ -98,4 +120,3 @@ class ReceiptController extends Controller
         ])->deleteFileAfterSend();
     }
 }
-

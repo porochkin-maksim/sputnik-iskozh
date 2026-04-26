@@ -5,12 +5,12 @@ namespace App\Http\Resources\Profile\Invoices;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Periods\PeriodResource;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
 
 readonly class InvoiceResource extends AbstractResource
 {
     public function __construct(
-        private InvoiceDTO $invoice,
+        private InvoiceEntity $invoice,
     )
     {
     }

@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Proposal\Jobs;
 
-use Core\Queue\QueueEnum;
-use Core\Services\Files\Collections\TmpFiles;
-use Core\Services\Files\Jobs\RemoveFileJob;
+use App\Services\Queue\QueueEnum;
+use App\Services\Files\Collections\TmpFiles;
+use App\Services\Files\Jobs\RemoveFileJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

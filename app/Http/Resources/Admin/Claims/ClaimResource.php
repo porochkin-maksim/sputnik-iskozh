@@ -4,16 +4,15 @@ namespace App\Http\Resources\Admin\Claims;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimEntity;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class ClaimResource extends AbstractResource
 {
     public function __construct(
-        private ClaimDTO $claim,
+        private ClaimEntity $claim,
     )
     {
     }
@@ -43,12 +42,12 @@ readonly class ClaimResource extends AbstractResource
             'name'       => $this->claim->getName(),
             'created'    => $this->formatDateTimeForRender($this->claim->getCreatedAt()),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ! $period?->isClosed(),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ! $period?->isClosed(),
+                'view' => $access->can(PermissionEnum::CLAIMS_VIEW),
+                'edit' => $access->can(PermissionEnum::CLAIMS_EDIT) && ! $period?->isClosed(),
+                'drop' => $access->can(PermissionEnum::CLAIMS_DROP) && ! $period?->isClosed(),
             ],
             'historyUrl' => $this->claim->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     referenceType: HistoryType::CLAIM,
                     referenceId  : $this->claim->getId(),
                 ) : null,

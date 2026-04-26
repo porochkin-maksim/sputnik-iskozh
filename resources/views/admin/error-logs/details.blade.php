@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
+use App\Resources\Views\SectionNames;
 use Carbon\Carbon;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::TITLE, 'Детали ошибки')
 
@@ -18,7 +18,8 @@ use Core\Resources\Views\ViewNames;
                     <div class="card-header">
                         <h3 class="card-title">Детали ошибки из файла: {{ $filename }}</h3>
                         <div class="card-tools">
-                            <a href="{{ route('admin.error-logs.show', $filename) }}" class="btn btn-default btn-sm text-nowrap">
+                            <a href="{{ route('admin.error-logs.show', $filename) }}"
+                               class="btn btn-default btn-sm text-nowrap">
                                 <i class="fa fa-arrow-left"></i> Назад к списку ошибок
                             </a>
                         </div>
@@ -56,11 +57,11 @@ use Core\Resources\Views\ViewNames;
                             <div class="col-12">
                                 <h4>Контекст</h4>
                                 @php
-                                $context = clone $entry->context;
-                                if (isset($context->trace)){
-                                    unset($context->trace);
-                                }
-                                $context = json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                    $context = clone $entry->context;
+                                    if (isset($context->trace)){
+                                        unset($context->trace);
+                                    }
+                                    $context = json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                                 @endphp
                                 <pre><code>{{ $context }}</code></pre>
                             </div>
@@ -81,10 +82,10 @@ use Core\Resources\Views\ViewNames;
 @push('styles')
     <style>
         pre {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0.25rem;
-            overflow-y: auto;
+            background-color : #f8f9fa;
+            padding          : 1rem;
+            border-radius    : 0.25rem;
+            overflow-y       : auto;
         }
     </style>
 @endpush 

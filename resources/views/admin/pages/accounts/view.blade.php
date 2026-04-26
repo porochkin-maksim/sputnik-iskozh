@@ -1,17 +1,16 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Domains\Account\Models\AccountDTO;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\Account\AccountEntity;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 /**
- * @var AccountDTO $account
+ * @var AccountEntity $account
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::ADMIN_ACCOUNT_VIEW, $account) }}

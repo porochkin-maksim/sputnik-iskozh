@@ -2,7 +2,7 @@
 
 namespace App\Exports\UsersExport\Sheets;
 
-use Core\Domains\User\Collections\UserCollection;
+use Core\Domains\User\UserCollection;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 

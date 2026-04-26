@@ -5,24 +5,24 @@ use App\Http\Resources\Admin\HelpDesk\ServiceListResource;
 use App\Http\Resources\Common\SelectResource;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
 use Core\Domains\HelpDesk\Searchers\TicketCategorySearcher;
 use Core\Domains\HelpDesk\Searchers\TicketServiceSearcher;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\HelpDesk\Services\TicketCatalogService;
+use Core\Domains\HelpDesk\Services\TicketCategoryService;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
-$categories         = HelpDeskServiceLocator::TicketCategoryService()->search(new TicketCategorySearcher())->getItems();
+$categories         = app(TicketCategoryService::class)->search(new TicketCategorySearcher())->getItems();
 $categoriesResource = new CategoryListResource($categories);
 
-$services         = HelpDeskServiceLocator::TicketServiceService()->search(new TicketServiceSearcher())->getItems();
+$services         = app(TicketCatalogService::class)->search(new TicketServiceSearcher())->getItems();
 $servicesResource = new ServiceListResource($services);
 
 $statuses   = new SelectResource(TicketStatusEnum::array());
 $priorities = new SelectResource(TicketPriorityEnum::array());
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     <help-desk-tickets-block

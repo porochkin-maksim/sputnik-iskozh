@@ -4,7 +4,7 @@ namespace App\Exports\UsersExport;
 
 use App\Exports\UsersExport\Sheets\BaseSheet;
 use App\Exports\UsersExport\Sheets\UsersPlotSheet;
-use Core\Domains\User\Collections\UserCollection;
+use Core\Domains\User\UserCollection;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class UsersExport implements WithMultipleSheets

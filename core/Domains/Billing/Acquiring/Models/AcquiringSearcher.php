@@ -3,17 +3,22 @@
 namespace Core\Domains\Billing\Acquiring\Models;
 
 use App\Models\Billing\Acquiring;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Db\Searcher\SearcherTrait;
 use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
+use Core\Repositories\BaseSearcher;
+use Core\Repositories\SearcherInterface;
 
-class AcquiringSearcher implements SearcherInterface
+class AcquiringSearcher extends BaseSearcher
 {
-    use SearcherTrait;
-
     public function setInvoiceId(int $id): static
     {
         $this->addWhere(Acquiring::INVOICE_ID, SearcherInterface::EQUALS, $id);
+
+        return $this;
+    }
+
+    public function setUserId(int $id): static
+    {
+        $this->addWhere(Acquiring::USER_ID, SearcherInterface::EQUALS, $id);
 
         return $this;
     }

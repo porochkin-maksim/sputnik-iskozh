@@ -2,10 +2,11 @@
 
 namespace Core\Domains\Billing\Jobs;
 
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Queue\QueueEnum;
+use Core\Domains\Billing\Service\ServiceFactory;
+use Core\Domains\Billing\Service\ServiceSearcher;
+use Core\Domains\Billing\Service\ServiceCatalogService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +27,10 @@ class CreateOtherServiceJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    public function handle(
+        ServiceCatalogService $serviceService,
+        ServiceFactory        $serviceFactory,
+    ): void
     {
         $serviceSearcher = new ServiceSearcher();
         $serviceSearcher
@@ -34,17 +38,17 @@ class CreateOtherServiceJob implements ShouldQueue
             ->setActive(true)
             ->setType(ServiceTypeEnum::OTHER)
         ;
-        $service = ServiceLocator::ServiceService()->search($serviceSearcher)->getItems()->first();
+        $service = $serviceService->search($serviceSearcher)->getItems()->first();
 
         if ( ! $service) {
-            $service = ServiceLocator::ServiceFactory()->makeDefault();
+            $service = $serviceFactory->makeDefault();
             $service
                 ->setPeriodId($this->periodId)
                 ->setType(ServiceTypeEnum::OTHER)
                 ->setName(ServiceTypeEnum::OTHER->name())
                 ->setCost(0)
             ;
-            ServiceLocator::ServiceService()->save($service);
+            $serviceService->save($service);
         }
     }
 }

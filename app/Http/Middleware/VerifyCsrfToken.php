@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use lc;
 
 class VerifyCsrfToken extends Middleware
 {
@@ -15,8 +16,8 @@ class VerifyCsrfToken extends Middleware
         //
     ];
 
-    protected function tokensMatch($request)
+    protected function tokensMatch($request): bool
     {
-        return \lc::isAndroid() || parent::tokensMatch($request);
+        return lc::isAndroid() || parent::tokensMatch($request);
     }
 }

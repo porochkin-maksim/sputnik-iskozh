@@ -2,15 +2,15 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Domains\HelpDesk\Repositories\TicketRepository;
+use Core\Domains\HelpDesk\Models\TicketEntity;
 use Core\Domains\HelpDesk\Responses\TicketSearchResponse;
 use Core\Domains\HelpDesk\Searchers\TicketSearcher;
+use Core\Domains\HelpDesk\TicketRepositoryInterface;
 
 readonly class TicketService
 {
     public function __construct(
-        private TicketRepository $ticketRepository,
+        private TicketRepositoryInterface $ticketRepository,
     )
     {
     }
@@ -20,12 +20,12 @@ readonly class TicketService
         return $this->ticketRepository->search($searcher);
     }
 
-    public function getById(?int $id): ?TicketDTO
+    public function getById(?int $id): ?TicketEntity
     {
         return $this->ticketRepository->getById($id);
     }
 
-    public function save(TicketDTO $ticket): TicketDTO
+    public function save(TicketEntity $ticket): TicketEntity
     {
         return $this->ticketRepository->save($ticket);
     }

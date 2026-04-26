@@ -6,64 +6,37 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\HelpDesk\TicketListResource;
 use App\Http\Resources\Admin\HelpDesk\TicketResource;
-use App\Models\HelpDesk\Ticket;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
-use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Domains\HelpDesk\Searchers\TicketSearcher;
+use Core\App\HelpDesk\Ticket\DeleteCommand;
+use Core\App\HelpDesk\Ticket\GetListCommand;
+use Core\App\HelpDesk\Ticket\SaveCommand;
 use Core\Domains\HelpDesk\Services\TicketService;
-use Core\Domains\HelpDesk\UseCases\Ticket\DeleteUseCase;
-use Core\Domains\HelpDesk\UseCases\Ticket\UpdateInputDTO;
-use Core\Domains\HelpDesk\UseCases\Ticket\UpdateUseCase;
 use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class TicketController extends Controller
 {
-    private readonly TicketService $ticketService;
-
-    public function __construct()
+    public function __construct(
+        private readonly TicketService  $ticketService,
+        private readonly GetListCommand $getListCommand,
+        private readonly SaveCommand    $saveCommand,
+        private readonly DeleteCommand  $deleteCommand,
+    )
     {
-        $this->ticketService = HelpDeskServiceLocator::TicketService();
     }
 
     public function list(DefaultRequest $request): JsonResponse
     {
-        $searcher = new TicketSearcher();
-        $searcher
-            ->setLimit($request->getLimit())
-            ->setOffset($request->getOffset())
-        ;
-
-        if ($request->getSortField() && $request->getSortOrder()) {
-            $searcher->setSortOrderProperty(
-                $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
-            );
-        }
-        else {
-            $searcher->setSortOrderProperty(Ticket::ID, SearcherInterface::SORT_ORDER_DESC);
-        }
-
-        if ($request->getIntOrNull('category')) {
-            $searcher->setCategoryId($request->getIntOrNull('category'));
-        }
-
-        if ($request->getIntOrNull('service')) {
-            $searcher->setServiceId($request->getIntOrNull('service'));
-        }
-
-        if ($request->getIntOrNull('priority')) {
-            $searcher->setPriority(TicketPriorityEnum::tryFrom($request->getInt('priority')));
-        }
-
-        if ($request->getIntOrNull('status')) {
-            $searcher->setStatus(TicketStatusEnum::tryFrom($request->getInt('status')));
-        }
-
-        $searchResult = $this->ticketService->search($searcher);
+        $searchResult = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSortField(),
+            $request->getSortOrder(),
+            $request->getIntOrNull('category'),
+            $request->getIntOrNull('service'),
+            $request->getIntOrNull('priority'),
+            $request->getIntOrNull('status'),
+        );
 
         return response()->json([
             'tickets' => new TicketListResource($searchResult->getItems()),
@@ -85,44 +58,34 @@ class TicketController extends Controller
     }
 
     /**
-     * Создать новую категорию
+     * @throws ValidationException
      */
     public function save(DefaultRequest $request): JsonResponse
     {
-        $dto = $this->ticketService->getById($request->getInt('id'));
+        $result = $this->saveCommand->execute(
+            $request->getInt('id'),
+            $request->getString('description'),
+            $request->getStringOrNull('result'),
+            $request->getInt('type'),
+            $request->getInt('category_id'),
+            $request->getInt('service_id'),
+            $request->getInt('priority'),
+            $request->getInt('status'),
+            $request->getStringOrNull('contact_name'),
+            $request->getStringOrNull('contact_phone'),
+            $request->getStringOrNull('contact_email'),
+            $request->getInt('user_id'),
+            $request->getInt('account_id'),
+            $request->files('files', []),
+            $request->files('result_files', []),
+        );
 
-        if ( ! $dto) {
+        if ($result === null) {
             return response()->json([
                 'success' => false,
                 'message' => 'Заявка не найдена',
             ], 404);
         }
-
-        $dto = new UpdateInputDTO(
-            id          : $request->getInt('id'),
-            description : $request->getString('description'),
-            result      : $request->getStringOrNull('result'),
-            type        : $request->getInt('type'),
-            categoryId  : $request->getInt('category_id'),
-            serviceId   : $request->getInt('service_id'),
-            priority    : $request->getInt('priority'),
-            status      : $request->getInt('status'),
-            contactName : $request->getStringOrNull('contact_name'),
-            contactPhone: $request->getStringOrNull('contact_phone'),
-            contactEmail: $request->getStringOrNull('contact_email'),
-            userId      : $request->getInt('user_id'),
-            accountId   : $request->getInt('account_id'),
-            files       : $request->file('files', []),
-            resultFiles : $request->file('result_files', []),
-        );
-
-        try {
-            $result = new UpdateUseCase()->execute($dto);
-        }
-        catch (ValidationException $e) {
-            throw \Illuminate\Validation\ValidationException::withMessages($e->errors);
-        }
-
 
         return response()->json([
             'success' => true,
@@ -145,7 +108,7 @@ class TicketController extends Controller
             ], 404);
         }
         try {
-            new DeleteUseCase()->execute($ticket);
+            $this->deleteCommand->execute($ticket);
 
             return response()->json([
                 'success' => true,

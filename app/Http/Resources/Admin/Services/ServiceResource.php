@@ -4,17 +4,16 @@ namespace App\Http\Resources\Admin\Services;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Models\ServiceDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Service\ServiceEntity;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class ServiceResource extends AbstractResource
 {
     public function __construct(
-        private ServiceDTO $service,
+        private ServiceEntity $service,
     )
     {
     }
@@ -38,12 +37,12 @@ readonly class ServiceResource extends AbstractResource
                 'active'            => $canEdit && in_array($this->service->getType(), [ServiceTypeEnum::TARGET_FEE, ServiceTypeEnum::PERSONAL_FEE], true),
                 'period'            => $canEdit && ! $this->service->getId(),
                 'type'              => $canEdit && ! $this->service->getId(),
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::SERVICES_VIEW),
-                ResponsesEnum::EDIT => $canEdit,
-                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP) && in_array($this->service->getType(), [ServiceTypeEnum::TARGET_FEE, ServiceTypeEnum::PERSONAL_FEE], true),
+                'view' => $access->can(PermissionEnum::SERVICES_VIEW),
+                'edit' => $canEdit,
+                'drop' => $access->can(PermissionEnum::SERVICES_DROP) && in_array($this->service->getType(), [ServiceTypeEnum::TARGET_FEE, ServiceTypeEnum::PERSONAL_FEE], true),
             ],
             'historyUrl' => $this->service->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     type     : HistoryType::SERVICE,
                     primaryId: $this->service->getId(),
                 ) : null,

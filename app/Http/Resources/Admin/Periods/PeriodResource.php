@@ -2,19 +2,18 @@
 
 namespace App\Http\Resources\Admin\Periods;
 
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Models\PeriodDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Period\PeriodEntity;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class PeriodResource extends AbstractResource
 {
     public function __construct(
-        private PeriodDTO $period,
+        private PeriodEntity $period,
     )
     {
     }
@@ -30,13 +29,13 @@ readonly class PeriodResource extends AbstractResource
             'endAt'      => $this->formatDateTimeOrNowForFront($this->period->getEndAt()),
             'isClosed'   => $this->period->isClosed(),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::PERIODS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PERIODS_EDIT) && ! $this->period->isClosed(),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PERIODS_DROP) && ! $this->period->isClosed(),
+                'view' => $access->can(PermissionEnum::PERIODS_VIEW),
+                'edit' => $access->can(PermissionEnum::PERIODS_EDIT) && ! $this->period->isClosed(),
+                'drop' => $access->can(PermissionEnum::PERIODS_DROP) && ! $this->period->isClosed(),
             ],
             'receiptUrl' => route(RouteNames::DOCUMENT_RECEIPT_BLANK, ['period' => $this->period->getId()]),
             'historyUrl' => $this->period->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     type     : HistoryType::PERIOD,
                     primaryId: $this->period->getId(),
                 ) : null,

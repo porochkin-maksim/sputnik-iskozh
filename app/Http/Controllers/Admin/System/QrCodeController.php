@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 

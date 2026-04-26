@@ -1,10 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Providers;
 
-use Core\Domains\User\Models\UserDTO;
-use Core\Domains\User\UserLocator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 

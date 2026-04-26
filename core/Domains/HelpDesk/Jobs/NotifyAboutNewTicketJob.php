@@ -2,14 +2,14 @@
 
 namespace Core\Domains\HelpDesk\Jobs;
 
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Access\RoleService;
 use Core\Domains\HelpDesk\Mails\NewTicketCreatedEmail;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Queue\QueueEnum;
+use Core\Domains\HelpDesk\Services\TicketService;
+use Core\Domains\HistoryChanges\Event;
+use Core\Domains\HistoryChanges\HistoryChangesService;
+use Core\Domains\HistoryChanges\HistoryType;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,15 +28,19 @@ class NotifyAboutNewTicketJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    public function handle(
+        TicketService $ticketService,
+        RoleService $roleService,
+        HistoryChangesService $historyChangesService,
+    ): void
     {
-        $ticket = HelpDeskServiceLocator::TicketService()->getById($this->ticketId);
+        $ticket = $ticketService->getById($this->ticketId);
 
         if ( ! $ticket || ! $ticket->getStatus()?->isNew()) {
             return;
         }
 
-        $emails = RoleLocator::RoleService()->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT);
+        $emails = $roleService->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT);
         $emails = array_unique(array_merge($emails, [config('mail.emails.admin')]));
 
         foreach ($emails as $email) {
@@ -46,7 +50,7 @@ class NotifyAboutNewTicketJob implements ShouldQueue
             );
             Mail::send($mail);
 
-            HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+            $historyChangesService->writeToHistory(
                 Event::COMMON,
                 HistoryType::TICKET,
                 $ticket->getId(),

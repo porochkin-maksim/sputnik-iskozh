@@ -3,9 +3,8 @@
 namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Counter\Collections\CounterHistoryCollection;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\CounterHistory\CounterHistoryCollection;
 use lc;
 
 readonly class CounterHistoryListResource extends AbstractResource
@@ -22,9 +21,9 @@ readonly class CounterHistoryListResource extends AbstractResource
         $result = [
             'histories' => [],
             'actions'   => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::COUNTERS_DROP),
+                'view' => $access->can(PermissionEnum::COUNTERS_VIEW),
+                'edit' => $access->can(PermissionEnum::COUNTERS_EDIT),
+                'drop' => $access->can(PermissionEnum::COUNTERS_DROP),
             ],
         ];
 

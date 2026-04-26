@@ -4,15 +4,15 @@ namespace Core\Domains\HelpDesk\Services;
 
 use Core\Domains\HelpDesk\Collection\TicketCategoryCollection;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\Models\TicketCategoryDTO;
-use Core\Domains\HelpDesk\Repositories\TicketCategoryRepository;
+use Core\Domains\HelpDesk\Models\TicketCategoryEntity;
 use Core\Domains\HelpDesk\Responses\TicketCategorySearchResponse;
 use Core\Domains\HelpDesk\Searchers\TicketCategorySearcher;
+use Core\Domains\HelpDesk\TicketCategoryRepositoryInterface;
 
 readonly class TicketCategoryService
 {
     public function __construct(
-        private TicketCategoryRepository $ticketCategoryRepository,
+        private TicketCategoryRepositoryInterface $ticketCategoryRepository,
     )
     {
     }
@@ -22,12 +22,12 @@ readonly class TicketCategoryService
         return $this->ticketCategoryRepository->search($searcher ? : new TicketCategorySearcher());
     }
 
-    public function getById(?int $id): ?TicketCategoryDTO
+    public function getById(?int $id): ?TicketCategoryEntity
     {
         return $this->ticketCategoryRepository->getById($id);
     }
 
-    public function save(TicketCategoryDTO $category): TicketCategoryDTO
+    public function save(TicketCategoryEntity $category): TicketCategoryEntity
     {
         return $this->ticketCategoryRepository->save($category);
     }
@@ -39,10 +39,10 @@ readonly class TicketCategoryService
 
     public function getByType(TicketTypeEnum $type, bool $activeOnly = true): TicketCategoryCollection
     {
-        $seearcher = new TicketCategorySearcher()
+        $seearcher = new TicketCategorySearcher();
+        $seearcher
             ->setType($type)
-            ->setWithServices()
-        ;
+            ->setWithServices();
 
         if ($activeOnly) {
             $seearcher->setActive(true);
@@ -51,12 +51,13 @@ readonly class TicketCategoryService
         return $this->search($seearcher)->getItems();
     }
 
-    public function findByTypeAndCode(TicketTypeEnum $type, string $code): ?TicketCategoryDTO
+    public function findByTypeAndCode(TicketTypeEnum $type, string $code): ?TicketCategoryEntity
     {
-        return $this->search(
-            new TicketCategorySearcher()
-                ->setType($type)
-                ->setCode($code),
-        )->getItems()->first();
+        $searcher = new TicketCategorySearcher();
+        $searcher
+            ->setType($type)
+            ->setCode($code);
+
+        return $this->search($searcher)->getItems()->first();
     }
 }

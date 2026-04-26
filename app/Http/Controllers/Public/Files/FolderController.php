@@ -3,27 +3,29 @@
 namespace App\Http\Controllers\Public\Files;
 
 use App\Http\Controllers\Controller;
-use App\Models\File\Folder;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\File\Collections\FolderCollection;
-use Core\Domains\File\FolderLocator;
-use Core\Domains\File\Requests\Folder\SaveRequest;
-use Core\Domains\File\Requests\Folder\SearchRequest;
-use Core\Domains\File\Services\FolderService;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
+use App\Http\Requests\DefaultRequest;
+use App\Http\Resources\Shared\Files\FolderResource;
+use App\Http\Resources\Shared\ResourseList;
+use Core\App\Folders\DeleteCommand;
+use Core\App\Folders\GetListCommand;
+use Core\App\Folders\SaveCommand;
+use Core\Domains\Folders\FolderCollection;
+use Core\Domains\Folders\FolderService;
+use Core\Exceptions\ValidationException;
+use App\Resources\RouteNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 
 class FolderController extends Controller
 {
-    private FolderService $folderService;
-
-    public function __construct()
+    public function __construct(
+        private readonly FolderService $folderService,
+        private readonly GetListCommand $getListCommand,
+        private readonly SaveCommand $saveCommand,
+        private readonly DeleteCommand $deleteCommand,
+    )
     {
-        $this->folderService = FolderLocator::FolderService();
     }
 
     public function index(?string $folderUid = null): View
@@ -33,33 +35,41 @@ class FolderController extends Controller
             $folder = $this->folderService->getByUid($folderUid);
         }
 
-        return view(ViewNames::PAGES_FILES_INDEX, compact('folder'));
+        return view('public.files.index', compact('folder'));
     }
 
-    public function list(SearchRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function list(DefaultRequest $request): JsonResponse
     {
-        $searcher = $request->dto();
-        $searcher->setSortOrderProperty(Folder::NAME, SearcherInterface::SORT_ORDER_ASC);
-
-        $folders = $this->folderService->search($searcher)->getItems();
+        $searchResult = $this->getListCommand->execute(
+            $request->getIntOrNull('limit'),
+            $request->getIntOrNull('parent_id'),
+        );
 
         return response()->json([
-            ResponsesEnum::FOLDERS => $folders,
-            ResponsesEnum::EDIT    => $this->canEdit(),
+            'folders' => new ResourseList($searchResult->getItems(), FolderResource::class),
+            'edit'    => $this->canEdit(),
         ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $folder = $request->dto();
-        $folder = $this->folderService->save($folder);
-        $folder = $this->folderService->getById($folder->getId());
+        $folder = $this->saveCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getString('name'),
+            $request->getIntOrNull('parent_id'),
+        );
 
-        return response()->json($folder);
+        return response()->json(new FolderResource($folder));
     }
 
     public function show(int|string|null $id): JsonResponse
@@ -67,12 +77,12 @@ class FolderController extends Controller
         $folder = $id ? $this->folderService->getById((int) $id) : null;
 
         return response()->json([
-            ResponsesEnum::FOLDER => $folder,
-            ResponsesEnum::EDIT   => $this->canEdit(),
+            'folder' => $folder ? new FolderResource($folder) : null,
+            'edit'   => $this->canEdit(),
         ]);
     }
 
-    public function info(int|string|null $id = null): ?JsonResponse
+    public function info(int|null $id = null): ?JsonResponse
     {
         $folders = ($id ? $this->folderService->getWithParentsRecursively($id) : new FolderCollection())->reverse();
 
@@ -80,7 +90,7 @@ class FolderController extends Controller
         foreach ($folders as $folder) {
             $item        = new \stdClass();
             $item->title = $folder->getName();
-            $item->url   = $folder->getUrl();
+            $item->url   = route(RouteNames::FILES, ['folder' => $folder->getUid()]);
             $breadcrumbs->add($item);
         }
 
@@ -100,13 +110,16 @@ class FolderController extends Controller
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function delete(int|string|null $id): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        return response()->json($this->folderService->deleteById((int) $id));
+        return response()->json($this->deleteCommand->execute((int) $id));
     }
 
     private function canEdit(): bool

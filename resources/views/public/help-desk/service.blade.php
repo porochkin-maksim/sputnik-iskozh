@@ -5,11 +5,10 @@ use App\Http\Resources\Profile\Users\UserResource;
 use App\Models\HelpDesk\TicketCategory;
 use App\Models\HelpDesk\TicketService;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use Core\Domains\HelpDesk\Services\TicketCategoryService;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\OpenGraph\OpenGraphLocator;
 
 /**
  * @var TicketTypeEnum $type
@@ -23,16 +22,16 @@ $openGraph
     ->setUrl(route(RouteNames::HELP_DESK_SERVICE, [$type->code(), $category->getCode(), $service->getCode()]))
 ;
 
-$categories = HelpDeskServiceLocator::TicketCategoryService()->getByType($type);
+$categories = app(TicketCategoryService::class)->getByType($type);
 
 $userResource    = lc::user()->getId() ? new UserResource(lc::user()) : null;
 $accountResource = lc::account()->getId() ? new AccountResource(lc::account()) : null;
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::TITLE)

@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Invoices;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectOptionResource;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Enums\DateTimeFormat;
-use Core\Services\Money\MoneyService;
+use App\Services\Money\MoneyService;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 readonly class InvoicesSelectResource extends AbstractResource
 {

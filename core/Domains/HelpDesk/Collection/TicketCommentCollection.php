@@ -2,20 +2,19 @@
 
 namespace Core\Domains\HelpDesk\Collection;
 
-use Core\Collections\CollectionInterface;
-use Core\Collections\CollectionTrait;
-use Core\Domains\HelpDesk\Models\TicketCommentDTO;
-use Illuminate\Support\Collection;
+use Core\Shared\Collections\CollectionTrait;
+use Core\Domains\HelpDesk\Models\TicketCommentEntity;
+use Core\Shared\Collections\Collection;;
 
 /**
- * @template-extends Collection<int, TicketCommentDTO>
+ * @template-extends Collection<int, TicketCommentEntity>
  */
-class TicketCommentCollection extends Collection implements CollectionInterface
+class TicketCommentCollection extends Collection
 {
     use CollectionTrait;
 
     public function checkItemInstance(mixed $item): bool
     {
-        return $item instanceof TicketCommentDTO;
+        return $item instanceof TicketCommentEntity;
     }
 }

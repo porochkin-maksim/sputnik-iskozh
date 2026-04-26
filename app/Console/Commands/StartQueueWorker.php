@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Core\Queue\QueueEnum;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

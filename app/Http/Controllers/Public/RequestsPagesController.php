@@ -3,28 +3,22 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use Core\Resources\Views\ViewNames;
 use Illuminate\Contracts\View\View;
 
 class RequestsPagesController extends Controller
 {
     public function index(): View
     {
-        return view(ViewNames::PAGES_REQUESTS);
-    }
-
-    public function proposal(): View
-    {
-        return view(ViewNames::PAGES_PROPOSAL);
+        return view('public.contacts.requests');
     }
 
     public function payment(): View
     {
-        return view(ViewNames::PAGES_PAYMENT);
+        return view('public.contacts.payment');
     }
 
     public function counter(): View
     {
-        return view(ViewNames::PAGES_COUNTER);
+        return view('public.contacts.counter');
     }
 }

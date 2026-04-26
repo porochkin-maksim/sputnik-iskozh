@@ -1,12 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\DefaultRequest;
+use App\Models\User;
+use App\Resources\RouteNames;
 use Carbon\Carbon;
+use Core\App\User\SetPasswordByTokenCommand;
 use Core\Domains\Infra\Tokens\TokenFacade;
-use Core\Domains\User\UserLocator;
-use Core\Resources\RouteNames;
+use Core\Domains\User\UserService;
 use Exception;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +18,17 @@ class SetPasswordController extends AbstractAuthController
 {
     use ResetsPasswords;
 
+    public function __construct(
+        private readonly UserService               $userService,
+        private readonly SetPasswordByTokenCommand $setPasswordByTokenCommand,
+    )
+    {
+    }
+
     public function index(DefaultRequest $request)
     {
         try {
-            $token = $request->get('token');
+            $token = $request->getStringOrNull('token');
             $email = $this->getEmail($request);
 
             if ( ! $email) {
@@ -38,28 +47,29 @@ class SetPasswordController extends AbstractAuthController
     {
         $email = $this->getEmail($request);
 
-        $request->validate($this->rules(), $this->validationErrorMessages());
-
-        $user = UserLocator::UserService()->getByEmail($email);
+        $user = $this->userService->getByEmail($email);
 
         if ( ! $user) {
             return $this->sendResetFailedResponse($request, Password::INVALID_TOKEN);
         }
 
-        $user->setPassword($request->get('password'));
+        $result = $this->setPasswordByTokenCommand->execute(
+            $email,
+            $request->getStringOrNull('password'),
+            $request->getStringOrNull('password_confirmation'),
+            $request->getString('token'),
+        );
 
-        UserLocator::UserService()->save($user);
-
-        TokenFacade::drop($request->getString('token'));
-
-        Auth::login($user->getModel());
+        if ($result) {
+            Auth::login(User::findOrFail($user->getId()));
+        }
 
         return redirect()->route(RouteNames::HOME);
     }
 
     private function getEmail(DefaultRequest $request): ?string
     {
-        $token = $request->get('token');
+        $token = $request->getStringOrNull('token');
         $data  = TokenFacade::find($token);
 
         if (empty($data)) {

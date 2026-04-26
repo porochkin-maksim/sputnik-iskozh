@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands\Counters;
 
+use App\Locators\CounterLocator;
 use Carbon\Carbon;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Counter\CounterEntity;
+use Core\Domains\Counter\CounterSearcher;
+use Core\Domains\CounterHistory\CounterHistoryFactory;
+use Core\Domains\CounterHistory\CounterHistoryService;
 use env;
 use Illuminate\Console\Command;
 
@@ -13,6 +15,14 @@ class GenerateCounterReadings extends Command
 {
     protected $signature   = 'counters:generate-readings {--months=12 : Количество месяцев для генерации} {--start-date= : Начальная дата в формате Y-m-d}';
     protected $description = 'Генерация фейковых показаний для существующих счетчиков';
+
+    public function __construct(
+        private readonly CounterHistoryFactory $counterHistoryFactory,
+        private readonly CounterHistoryService $counterHistoryService,
+    )
+    {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -51,7 +61,7 @@ class GenerateCounterReadings extends Command
         return 0;
     }
 
-    private function generateReadingsForCounter(CounterDTO $counter, Carbon $startDate, ?int $months = null): void
+    private function generateReadingsForCounter(CounterEntity $counter, Carbon $startDate, ?int $months = null): void
     {
         // Базовое значение для счетчика (случайное в диапазоне 1000-5000)
         $baseValue    = random_int(1000, 5000);
@@ -75,7 +85,7 @@ class GenerateCounterReadings extends Command
                 $currentValue += $monthlyIncrement * (1 + $deviation);
             }
 
-            $history = CounterLocator::CounterHistoryFactory()->makeDefault()
+            $history = $this->counterHistoryFactory->makeDefault()
                 ->setCounterId($counter->getId())
                 ->setPreviousId($lastHistory?->getId())
                 ->setPreviousValue((int) $lastHistory?->getValue())
@@ -84,7 +94,7 @@ class GenerateCounterReadings extends Command
                 ->setIsVerified(true)
             ;
 
-            $history     = CounterLocator::CounterHistoryService()->save($history);
+            $history     = $this->counterHistoryService->save($history);
             $lastHistory = $history;
 
             $date->addMonth();

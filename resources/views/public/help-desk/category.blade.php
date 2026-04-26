@@ -1,16 +1,15 @@
 <?php declare(strict_types=1);
 
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Domains\HelpDesk\Models\TicketCategoryDTO;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use Core\Domains\HelpDesk\Models\TicketCategoryEntity;
+use Core\Domains\HelpDesk\Services\TicketCategoryService;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\OpenGraph\OpenGraphLocator;
 
 /**
- * @var TicketTypeEnum    $type
- * @var TicketCategoryDTO $category
+ * @var TicketTypeEnum       $type
+ * @var TicketCategoryEntity $category
  */
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
@@ -19,13 +18,13 @@ $openGraph
     ->setUrl(route(RouteNames::HELP_DESK_CATEGORY, [$type->code(), $category->getCode()]))
 ;
 
-$categories = HelpDeskServiceLocator::TicketCategoryService()->getByType($type);
+$categories = app(TicketCategoryService::class)->getByType($type);
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::TITLE)

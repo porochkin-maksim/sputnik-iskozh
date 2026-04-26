@@ -3,13 +3,12 @@
 use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Users\UserResource;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_PROFILE)
+@extends('layouts.profile-layout')
 
 @section(SectionNames::CONTENT)
     <div class="row">

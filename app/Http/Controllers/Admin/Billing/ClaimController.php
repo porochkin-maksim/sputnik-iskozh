@@ -3,50 +3,29 @@
 namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Claims\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Claims\ClaimResource;
 use App\Http\Resources\Admin\Claims\ClaimsListResource;
 use App\Http\Resources\Admin\Claims\ServicesListResource;
 use App\Http\Resources\Common\SelectResource;
-use App\Models\Billing\Claim;
-use App\Models\Billing\Service;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Factories\ClaimFactory;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Claim\Responses\ClaimSearchResponse;
-use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
-use Core\Domains\Billing\Claim\Services\ClaimService;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Models\ServiceDTO;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Service\Services\ServiceService;
+use Core\App\Billing\Claim\GetFormDataCommand;
+use Core\App\Billing\Claim\GetListCommand;
+use Core\App\Billing\Claim\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimService;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class ClaimController extends Controller
 {
-    private ClaimFactory   $claimFactory;
-    private ClaimService   $claimService;
-    private InvoiceService $invoiceService;
-    private ServiceService $serviceService;
-    private PeriodService  $periodService;
 
-    public function __construct()
+    public function __construct(
+        private readonly ClaimService       $claimService,
+        private readonly GetFormDataCommand $getFormDataCommand,
+        private readonly GetListCommand     $getListCommand,
+        private readonly SaveCommand        $saveCommand,
+    )
     {
-        $this->claimService   = ClaimLocator::ClaimService();
-        $this->claimFactory   = ClaimLocator::ClaimFactory();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->serviceService = ServiceLocator::ServiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
     }
 
     public function create(int $invoiceId): JsonResponse
@@ -55,45 +34,15 @@ class ClaimController extends Controller
             abort(403);
         }
 
-        $invoice = $this->invoiceService->getById($invoiceId);
-        if ( ! $invoice) {
+        $formData = $this->getFormDataCommand->create($invoiceId);
+        if ($formData === null) {
             abort(412);
         }
 
-        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems()->sortByServiceTypes();
-        $existingServiceIds = array_map(static fn(ClaimDTO $claim) => $claim->getServiceId(), $claims->toArray());
-
-        $services = $this->serviceService->search(
-            (new ServiceSearcher())
-                ->setPeriodId($invoice->getPeriodId())
-                ->setSortOrderProperty(Service::TYPE, SearcherInterface::SORT_ORDER_ASC),
-        )->getItems();
-
-        if ($invoice->getType() === InvoiceTypeEnum::REGULAR) {
-            $services = $services->filter(static function (ServiceDTO $service) use ($existingServiceIds) {
-                return ! in_array($service->getId(), $existingServiceIds, true)
-                       || in_array($service->getType(), [ServiceTypeEnum::ELECTRIC_TARIFF, ServiceTypeEnum::OTHER], true);
-            });
-        }
-        else {
-            $services = $services->filter(static function (ServiceDTO $service) {
-                return in_array($service->getType(), [
-                    ServiceTypeEnum::ELECTRIC_TARIFF,
-                    ServiceTypeEnum::OTHER,
-                ], true);
-            });
-        }
-
-        $servicesMap = [];
-        foreach ($services as $service) {
-            $servicesMap[$service->getId()] = $service->getName();
-        }
-        $claim = $this->claimFactory->makeDefault()->setServiceId($services->first()?->getId());
-
         return response()->json([
-            'servicesSelect' => new SelectResource($servicesMap),
-            'claim'          => new ClaimResource($claim),
-            'services'       => new ServicesListResource($services),
+            'servicesSelect' => new SelectResource($formData->servicesSelect),
+            'claim'          => new ClaimResource($formData->claim),
+            'services'       => new ServicesListResource($formData->services),
         ]);
     }
 
@@ -106,78 +55,36 @@ class ClaimController extends Controller
             abort(412);
         }
 
-        $claim        = $this->claimService->getById($claimId);
-        $invoice      = $this->invoiceService->getById($invoiceId);
-        $claimService = $this->serviceService->getById($claim?->getServiceId());
-        if ( ! $claim || ! $invoice || ! $claimService) {
+        $formData = $this->getFormDataCommand->get($invoiceId, $claimId);
+        if ($formData === null) {
             abort(412);
         }
 
-        $claims             = $this->getInvoiceClaims($invoice->getId())->getItems()->sortByServiceTypes();
-        $existingServiceIds = array_map(static fn(ClaimDTO $claim) => $claim->getServiceId(), $claims->toArray());
-
-        $services = $this->serviceService->search(
-            (new ServiceSearcher())
-                ->setPeriodId($invoice->getPeriodId())
-                ->setSortOrderProperty(Service::TYPE, SearcherInterface::SORT_ORDER_ASC),
-        )->getItems();
-
-        if ($invoice->getType() === InvoiceTypeEnum::REGULAR) {
-            $services = $services->filter(static function (ServiceDTO $service) use ($existingServiceIds) {
-                return ! in_array($service->getId(), $existingServiceIds, true)
-                       || in_array($service->getType(), [ServiceTypeEnum::ELECTRIC_TARIFF, ServiceTypeEnum::OTHER], true);
-            });
-        }
-        else {
-            $services = $services->filter(static function (ServiceDTO $service) {
-                return in_array($service->getType(), [
-                    ServiceTypeEnum::ELECTRIC_TARIFF,
-                    ServiceTypeEnum::OTHER,
-                ], true);
-            });
-        }
-
-        $servicesMap = [];
-        foreach ($services as $service) {
-            $servicesMap[$service->getId()] = $service->getName();
-        }
-        $servicesMap[$claimService->getId()] = $claimService->getName();
-        $claim->setService($claimService);
-
-        $invoice = $this->fetchInvoice($invoiceId);
-        $claim->setInvoice($invoice);
-
         return response()->json([
-            'servicesSelect' => new SelectResource($servicesMap),
-            'claim'          => new ClaimResource($claim),
-            'services'       => new ServicesListResource($services),
+            'servicesSelect' => new SelectResource($formData->servicesSelect),
+            'claim'          => new ClaimResource($formData->claim),
+            'services'       => new ServicesListResource($formData->services),
         ]);
     }
 
-    public function save(int $invoiceId, SaveRequest $request): JsonResponse
+    public function save(int $invoiceId, DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
             abort(403);
         }
 
-        $claim = $request->getId()
-            ? $this->claimService->getById($request->getId())
-            : $this->claimFactory->makeDefault()
-                ->setInvoiceId($request->getInvoiceId())
-                ->setServiceId($request->getServiceId())
-        ;
+        $claim = $this->saveCommand->execute(
+            id       : $request->getIntOrNull('id'),
+            invoiceId: $request->getIntOrNull('invoice_id'),
+            serviceId: $request->getIntOrNull('service_id'),
+            tariff   : $request->getFloat('tariff'),
+            cost     : $request->getFloat('cost'),
+            name     : $request->getStringOrNull('name'),
+        );
 
-        if ( ! $claim) {
+        if ($claim === null) {
             abort(404);
         }
-
-        $claim
-            ->setName($request->getName())
-            ->setTariff($request->getTariff() ? : $request->getCost())
-            ->setCost($request->getCost())
-        ;
-
-        $claim = $this->claimService->save($claim);
 
         return response()->json([
             'claim' => new ClaimResource($claim),
@@ -190,10 +97,13 @@ class ClaimController extends Controller
             abort(403);
         }
 
-        $claims = $this->getInvoiceClaims($invoiceId);
+        $claims = $this->getListCommand->execute($invoiceId);
+        if ($claims === null) {
+            abort(412);
+        }
 
         return response()->json(new ClaimsListResource(
-            $claims->getItems()->sortByServiceTypes(),
+            $claims,
         ));
     }
 
@@ -204,35 +114,5 @@ class ClaimController extends Controller
         }
 
         return $this->claimService->deleteById($id);
-    }
-
-    private function getInvoiceClaims(int $invoiceId): ClaimSearchResponse
-    {
-        $searcher = new ClaimSearcher();
-        $searcher
-            ->setInvoiceId($invoiceId)
-            ->setWithService()
-            ->setSortOrderProperty(Claim::ID, SearcherInterface::SORT_ORDER_ASC)
-            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC)
-        ;
-
-
-        $result = $this->claimService->search($searcher);
-
-        $invoice = $this->fetchInvoice($invoiceId);
-        $result->setItems($result->getItems()->map(function (ClaimDTO $claimDTO) use ($invoice) {
-            return $claimDTO->setInvoice($invoice);
-        }));
-
-        return $result;
-    }
-
-    private function fetchInvoice(int $invoiceId): ?InvoiceDTO
-    {
-        $invoice = $this->invoiceService->getById($invoiceId);
-        $period  = $invoice ? $this->periodService->getById($invoice->getPeriodId()) : null;
-        $invoice?->setPeriod($period);
-
-        return $invoice;
     }
 }

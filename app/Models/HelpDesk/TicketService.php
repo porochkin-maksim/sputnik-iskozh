@@ -3,7 +3,6 @@
 namespace App\Models\HelpDesk;
 
 use App\Models\AbstractModel;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -44,7 +43,9 @@ class TicketService extends AbstractModel
     protected $guarded = [];
 
     protected $casts = [
-        self::IS_ACTIVE => CastsInterface::CAST_BOOLEAN,
+        self::CATEGORY_ID => self::CAST_INTEGER,
+        self::SORT_ORDER  => self::CAST_INTEGER,
+        self::IS_ACTIVE   => self::CAST_BOOLEAN,
     ];
 
     // ========== Связи ==========

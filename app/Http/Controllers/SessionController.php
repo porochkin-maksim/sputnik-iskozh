@@ -9,6 +9,6 @@ class SessionController extends Controller
 {
     public function store(DefaultRequest $request): void
     {
-        Session::put($request->get('key'), $request->get('value'));
+        Session::put($request->input('key'), $request->input('value'));
     }
 }

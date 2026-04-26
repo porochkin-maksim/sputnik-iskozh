@@ -3,42 +3,41 @@
 namespace App\Http\Controllers\Public\News;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Public\News\IndexNewsListResource;
-use App\Models\News;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Requests\File\SaveRequest as SaveFileRequest;
-use Core\Domains\News\Enums\CategoryEnum;
-use Core\Domains\News\Factories\NewsFactory;
-use Core\Domains\News\NewsLocator;
-use Core\Domains\News\Requests\SaveRequest;
-use Core\Domains\News\Requests\SearchRequest;
-use Core\Domains\News\Services\FileService;
-use Core\Domains\News\Services\NewsService;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
+use App\Http\Requests\DefaultRequest;
+use App\Http\Resources\Public\NewsResource;
+use App\Http\Resources\Public\NewsShortResource;
+use App\Http\Resources\Shared\ResourseList;
+use App\Locators\News\UrlFactory;
+use Core\App\News\GetListCommand;
+use Core\App\News\SaveFileCommand;
+use Core\App\News\SaveCommand;
+use Core\Domains\Files\FileTypeEnum;
+use Core\Domains\News\FileService;
+use Core\Domains\News\NewsCategoryEnum;
+use Core\Domains\News\NewsFactory;
+use Core\Domains\News\NewsService;
+use Core\Exceptions\ValidationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NewsController extends Controller
 {
-    private NewsService $newsService;
-    private NewsFactory $newsFactory;
-    private FileService $fileService;
-
-    public function __construct()
+    public function __construct(
+        private readonly NewsService     $newsService,
+        private readonly NewsFactory     $newsFactory,
+        private readonly FileService     $fileService,
+        private readonly GetListCommand  $getListCommand,
+        private readonly SaveCommand     $saveCommand,
+        private readonly UrlFactory      $urlFactory,
+        private readonly SaveFileCommand $saveFileCommand,
+    )
     {
-        $this->newsService = NewsLocator::NewsService();
-        $this->newsFactory = NewsLocator::NewsFactory();
-        $this->fileService = NewsLocator::FileService();
     }
 
     public function index(): View
     {
-        return view(ViewNames::PAGES_NEWS_INDEX);
+        return view('public.news.index');
     }
 
     public function create(): JsonResponse
@@ -46,14 +45,13 @@ class NewsController extends Controller
         $news = $this->newsFactory->makeDefault();
 
         return response()->json([
-            ResponsesEnum::NEWS       => $news,
-            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
+            'news'       => new NewsResource($news),
+            'categories' => NewsCategoryEnum::json(),
         ]);
     }
 
-    public function show($id): mixed
+    public function show(int $id): mixed
     {
-        $id   = is_numeric($id) ? (int) $id : null;
         $news = $this->newsService->getById($id);
         $edit = Auth::id();
 
@@ -61,11 +59,11 @@ class NewsController extends Controller
             abort(404);
         }
 
-        if ($news->getCategory() !== CategoryEnum::DEFAULT) {
-            return redirect($news->getUrl());
+        if ($news->getCategory() !== NewsCategoryEnum::DEFAULT) {
+            return redirect($this->urlFactory->makeUrl($news));
         }
 
-        return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
+        return view('public.news.show', compact('news', 'edit'));
     }
 
     public function edit(int $id): JsonResponse
@@ -76,98 +74,95 @@ class NewsController extends Controller
         $news = $this->newsService->getById($id);
 
         return response()->json([
-            ResponsesEnum::NEWS       => $news,
-            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
-            ResponsesEnum::EDIT       => $this->canEdit(),
+            'news'       => new NewsResource($news),
+            'categories' => NewsCategoryEnum::json(),
+            'edit'       => $this->canEdit(),
         ]);
     }
 
-    public function list(SearchRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function list(DefaultRequest $request): JsonResponse
     {
         $canEdit = $this->canEdit();
-
-        $searcher = $request->searcher();
-        $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setCategory(CategoryEnum::DEFAULT)
-            ->setWithFiles()
-        ;
-
-        if ( ! $canEdit) {
-            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
-        }
-
-        $news = $this->newsService->search($searcher);
+        $news    = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSearch(),
+            NewsCategoryEnum::DEFAULT,
+            true,
+            null,
+            ! $canEdit,
+        );
 
         return response()->json([
-            ResponsesEnum::NEWS  => $news->getItems(),
-            ResponsesEnum::TOTAL => $news->getTotal(),
-            ResponsesEnum::EDIT  => $canEdit,
+            'news'  => new ResourseList($news->getItems(), NewsResource::class),
+            'total' => $news->getTotal(),
+            'edit'  => $canEdit,
         ]);
     }
 
-    public function lockedNews(SearchRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function lockedNews(DefaultRequest $request): JsonResponse
     {
-        $searcher = $request->searcher();
-        $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, true)
-        ;
-
-        if ( ! $this->canEdit()) {
-            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
-        }
-
-        $news = $this->newsService->search($searcher);
+        $news = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSearch(),
+            null,
+            false,
+            true,
+            ! $this->canEdit(),
+        );
 
         return response()->json([
-            ResponsesEnum::NEWS  => new IndexNewsListResource($news->getItems()->toArray()),
-            ResponsesEnum::TOTAL => $news->getTotal(),
-            ResponsesEnum::EDIT  => false,
+            'news'  => new ResourseList($news->getItems(), NewsShortResource::class),
+            'total' => $news->getTotal(),
+            'edit'  => false,
         ]);
 
     }
 
-    public function indexList(SearchRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function indexList(DefaultRequest $request): JsonResponse
     {
-        $searcher = $request->searcher();
-        $searcher
-            ->setLimit(10)
-            ->addWhere(News::IS_LOCK, SearcherInterface::EQUALS, false)
-            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setWithFiles()
-        ;
-
-        if ( ! $this->canEdit()) {
-            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
-        }
-
-        $news = $this->newsService->search($searcher);
+        $news = $this->getListCommand->execute(
+            10,
+            $request->getOffset(),
+            $request->getSearch(),
+            null,
+            true,
+            false,
+            ! $this->canEdit(),
+        );
 
         return response()->json([
-            ResponsesEnum::NEWS  => new IndexNewsListResource($news->getItems()->toArray()),
-            ResponsesEnum::TOTAL => $news->getTotal(),
-            ResponsesEnum::EDIT  => false,
+            'news'  => new ResourseList($news->getItems(), NewsShortResource::class),
+            'total' => $news->getTotal(),
+            'edit'  => false,
         ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
 
-        $news = $this->newsFactory->makeDefault()
-            ->setId($request->getId())
-            ->setTitle($request->getTitle())
-            ->setDescription($request->getDescription())
-            ->setArticle($request->getArticle())
-            ->setCategory($request->getCategory())
-            ->setIsLock($request->isLock())
-            ->setPublishedAt($request->getPublishedAt())
-        ;
-
-        $news = $this->newsService->save($news);
+        $news = $this->saveCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getString('title'),
+            $request->getStringOrNull('description'),
+            $request->getStringOrNull('article'),
+            $request->getIntOrNull('category'),
+            $request->getBool('is_lock'),
+            $request->getStringOrNull('published_at'),
+        );
 
         return response()->json($news);
     }
@@ -183,32 +178,32 @@ class NewsController extends Controller
 
     /** Работа с файлами */
 
-    public function uploadFile(int $id, Request $request): JsonResponse
+    public function uploadFile(int $id, DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
-        foreach ($request->allFiles() as $file) {
-            $this->fileService->store($file, $id);
-        }
+
+        $this->fileService->storeAndSave($request->allFiles(), $id);
 
         return response()->json(true);
     }
 
-    public function saveFile(SaveFileRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function saveFile(DefaultRequest $request): JsonResponse
     {
         if ( ! $this->canEdit()) {
             abort(403);
         }
-        $file = $this->fileService->getById($request->getId());
-        if ($file && $file->getType() === FileTypeEnum::NEWS) {
-            $file->setName($request->getName());
-            $this->fileService->save($file);
 
-            return response()->json(true);
-        }
-
-        return response()->json(false);
+        return response()->json(
+            $this->saveFileCommand->execute(
+                $request->getInt('id'),
+                $request->getStringOrNull('name'),
+            ),
+        );
     }
 
     public function deleteFile(int $id): JsonResponse

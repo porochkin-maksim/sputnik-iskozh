@@ -2,7 +2,8 @@
 
 namespace Core\Domains\Billing\Jobs;
 
-use Core\Domains\Billing\Payment\PaymentLocator;
+use Core\Domains\Billing\Payment\PaymentFactory;
+use Core\Domains\Billing\Payment\PaymentService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,11 +21,11 @@ class SaveImportPaymentsJob implements ShouldQueue, ShouldBeUnique
     {
     }
 
-    public function handle(): void
+    public function handle(
+        PaymentFactory $paymentFactory,
+        PaymentService $paymentService,
+    ): void
     {
-        $paymentFactory = PaymentLocator::PaymentFactory();
-        $paymentService = PaymentLocator::PaymentService();
-
         foreach ($this->paymentsData as $paymentData) {
             $invoiceId = (int) ($paymentData['invoice_id'] ?? 0);
             $cost      = (float) ($paymentData['amount'] ?? 0);

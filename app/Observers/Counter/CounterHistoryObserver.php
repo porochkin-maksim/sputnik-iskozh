@@ -2,17 +2,17 @@
 
 namespace App\Observers\Counter;
 
+use App\Jobs\Files\DeleteFilesJob;
 use App\Models\Counter\CounterHistory;
 use App\Observers\AbstractObserver;
-use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\ClaimToObject\ClaimToObjectLocator;
-use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
-use Core\Domains\Counter\Jobs\NotifyAboutNewUnverifiedCounterHistoryJob;
-use Core\Domains\Counter\Jobs\RewatchCounterHistoryChainJob;
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Jobs\DeleteFilesJob;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Helpers\DateTime\DateTimeHelper;
+use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\ClaimToObject\ClaimObjectTypeEnum;
+use Core\Domains\Billing\ClaimToObject\ClaimToObjectService;
+use Core\Domains\CounterHistory\Jobs\NotifyAboutNewUnverifiedCounterHistoryJob;
+use Core\Domains\CounterHistory\Jobs\RewatchCounterHistoryChainJob;
+use Core\Domains\Files\FileTypeEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Shared\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class CounterHistoryObserver extends AbstractObserver
@@ -78,10 +78,10 @@ class CounterHistoryObserver extends AbstractObserver
     {
         parent::deleted($item);
 
-        $claim = ClaimToObjectLocator::ClaimToObjectService()->getByReference(ClaimObjectTypeEnum::COUNTER_HISTORY, $item->id);
+        $claim = app(ClaimToObjectService::class)->getByReference(ClaimObjectTypeEnum::COUNTER_HISTORY, $item->id);
 
         if ($claim) {
-            ClaimLocator::ClaimService()->deleteById($claim->getId());
+            app(ClaimService::class)->deleteById($claim->getId());
         }
 
         DeleteFilesJob::dispatchIfNeeded($item->id, FileTypeEnum::COUNTER_HISTORY);

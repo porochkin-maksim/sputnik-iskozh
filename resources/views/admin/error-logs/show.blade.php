@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
+use App\Resources\Views\SectionNames;
 use Carbon\Carbon;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::TITLE, 'Просмотр лога ошибок')
 

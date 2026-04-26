@@ -3,8 +3,8 @@
 namespace Core\Domains\HelpDesk\Searchers;
 
 use App\Models\HelpDesk\TicketService;
-use Core\Db\Searcher\BaseSearcher;
-use Core\Db\Searcher\SearcherInterface;
+use Core\Repositories\BaseSearcher;
+use Core\Repositories\SearcherInterface;
 
 class TicketServiceSearcher extends BaseSearcher
 {

@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Payments;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Payment\Collections\PaymentCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Payment\PaymentCollection;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class PaymentsListResource extends AbstractResource
 {
@@ -23,14 +22,14 @@ readonly class PaymentsListResource extends AbstractResource
         $access = lc::roleDecorator();
         $result = [
             'payments'   => [],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type         : HistoryType::INVOICE,
                 referenceType: HistoryType::PAYMENT,
             ),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP),
+                'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT),
+                'drop' => $access->can(PermissionEnum::PAYMENTS_DROP),
             ],
         ];
 

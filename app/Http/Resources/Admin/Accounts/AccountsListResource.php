@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Accounts;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\AccountsSelectResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\Collections\AccountCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountCollection;
+use Core\Domains\HistoryChanges\HistoryType;
 use lc;
 
 /**
@@ -32,11 +31,11 @@ readonly class AccountsListResource extends AbstractResource
             'allAccounts' => new AccountsSelectResource($this->allAccountCollection, false),
             'total'       => $this->totalAccountsCount,
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::ACCOUNTS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::ACCOUNTS_DROP),
+                'view' => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                'edit' => $access->can(PermissionEnum::ACCOUNTS_EDIT),
+                'drop' => $access->can(PermissionEnum::ACCOUNTS_DROP),
             ],
-            'historyUrl'  => HistoryChangesLocator::route(
+            'historyUrl'  => HistoryChangesRoute::make(
                 type: HistoryType::ACCOUNT,
             ),
         ];

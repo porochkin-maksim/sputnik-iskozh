@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Infra\HistoryChanges\Collections\HistoryChangesCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\User\UserLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Requests\RequestArgumentsEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesDecoratorFactory;
+use Core\Domains\HistoryChanges\Event;
+use Core\Domains\HistoryChanges\HistoryChangesCollection;
+use Core\Domains\User\UserViewer;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 /**
  * @var HistoryChangesCollection $historyChanges
@@ -14,7 +13,7 @@ use Core\Resources\RouteNames;
  * @var int                      $offset
  */
 ?>
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -171,8 +170,8 @@ use Core\Resources\RouteNames;
                     <tbody>
                     @foreach($historyChanges as $historyChange)
                         @php
-                            $decorator = HistoryChangesLocator::HistoryChangesDecorator($historyChange);
-                            $user = UserLocator::UserDecorator($historyChange->getUser());
+                            $decorator = app(HistoryChangesDecoratorFactory::class)->make($historyChange);
+                            $user      = $historyChange->getUser()->getViewer();
                             $createdAt = $historyChange->getCreatedAt();
                         @endphp
                         <tr>
@@ -265,8 +264,8 @@ use Core\Resources\RouteNames;
 
             limitSelect.addEventListener('change', function () {
                 const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set('{{ RequestArgumentsEnum::LIMIT }}', this.value);
-                searchParams.set('{{ RequestArgumentsEnum::SKIP }}', '0');
+                searchParams.set('{{ 'limit' }}', this.value);
+                searchParams.set('{{ 'skip' }}', '0');
                 window.location.href = window.location.pathname + '?' + searchParams.toString();
             });
         });

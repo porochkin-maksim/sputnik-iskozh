@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
@@ -7,7 +7,6 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
-use App\Logging\JsonPrettyFormatter;
 
 return [
 

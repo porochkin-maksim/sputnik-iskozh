@@ -2,6 +2,9 @@
 
 namespace App\Models\Interfaces;
 
+/**
+ * @deprecated
+ */
 interface CastsInterface
 {
     public const string CAST_INTEGER  = 'integer';

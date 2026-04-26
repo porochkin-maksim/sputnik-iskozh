@@ -3,35 +3,35 @@
 namespace App\Http\Controllers\Admin\System;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Roles\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Roles\RoleResource;
 use App\Http\Resources\Admin\Roles\RolesListResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\Factories\RoleFactory;
-use Core\Domains\Access\Models\RoleSearcher;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use Core\App\Access\SaveRoleCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Access\RoleFactory;
+use Core\Domains\Access\RoleSearcher;
+use Core\Domains\Access\RoleService;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class RolesController extends Controller
 {
-    private RoleFactory $roleFactory;
-    private RoleService $roleService;
 
-    public function __construct()
+    public function __construct(
+        private readonly RoleFactory     $roleFactory,
+        private readonly RoleService     $roleService,
+        private readonly SaveRoleCommand $saveRoleCommand,
+    )
     {
-        $this->roleFactory = RoleLocator::RoleFactory();
-        $this->roleService = RoleLocator::RoleService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::ROLES_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_ROLES);
+            return view('admin.pages.roles');
         }
 
         abort(403);
@@ -52,40 +52,34 @@ class RolesController extends Controller
             abort(403);
         }
 
-        $roles = $this->roleService->search(new RoleSearcher()
-            ->setWithUsers()
+        $roles = $this->roleService->search((new RoleSearcher())
+            ->setWithUsers(),
         );
 
         return response()->json([
             'roles'      => new RolesListResource($roles->getItems()),
-            'historyUrl' => HistoryChangesLocator::route(type: HistoryType::ROLE),
+            'historyUrl' => route(RouteNames::HISTORY_CHANGES, ['type' => HistoryType::ROLE->value]),
         ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function save(DefaultRequest $request): JsonResponse
     {
-        if ($request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
             abort(403);
         }
 
-        if ( ! $request->getId() && ! lc::roleDecorator()->can(PermissionEnum::ROLES_EDIT)) {
-            abort(403);
-        }
+        $role = $this->saveRoleCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getStringOrNull('name'),
+            $request->getArray('permissions'),
+        );
 
-        $role = $request->getId()
-            ? $this->roleService->getById($request->getId())
-            : $this->roleFactory->makeDefault();
-
-        if ( ! $role) {
+        if ($role === null) {
             abort(404);
         }
-
-        $role
-            ->setName($request->getName())
-            ->setPermissions($request->getPersmissions())
-        ;
-
-        $role = $this->roleService->save($role);
 
         return response()->json(new RoleResource($role));
     }

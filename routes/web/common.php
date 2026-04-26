@@ -2,7 +2,7 @@
 
 use App\Http\Controllers;
 use App\Http\Middleware\Enums\MiddlewareNames;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
@@ -26,8 +26,6 @@ Route::group(['prefix' => 'contacts/requests'], static function () {
     include 'common/help-desk.php';
 
     Route::get('/', [Controllers\Public\RequestsPagesController::class, 'index'])->name(RouteNames::REQUESTS);
-    Route::get('/proposal', [Controllers\Public\RequestsPagesController::class, 'proposal'])->name(RouteNames::REQUESTS_PROPOSAL);
-    Route::post('/proposal', [Controllers\Public\Requests\ProposalController::class, 'create'])->name(RouteNames::REQUESTS_PROPOSAL_CREATE);
     Route::get('/payment', [Controllers\Public\RequestsPagesController::class, 'payment'])->name(RouteNames::REQUESTS_PAYMENT);
     Route::post('/payment', [Controllers\Public\Requests\PaymentsController::class, 'create'])->name(RouteNames::REQUESTS_PAYMENT_CREATE);
     Route::get('/counter', [Controllers\Public\RequestsPagesController::class, 'counter'])->name(RouteNames::REQUESTS_COUNTER);
@@ -41,10 +39,6 @@ Breadcrumbs::for(RouteNames::REQUESTS, static function (BreadcrumbTrail $trail) 
 Breadcrumbs::for(RouteNames::REQUESTS_COUNTER, static function (BreadcrumbTrail $trail) {
     $trail->parent(RouteNames::REQUESTS);
     $trail->push(RouteNames::name(RouteNames::REQUESTS_COUNTER), route(RouteNames::REQUESTS_COUNTER));
-});
-Breadcrumbs::for(RouteNames::REQUESTS_PROPOSAL, static function (BreadcrumbTrail $trail) {
-    $trail->parent(RouteNames::REQUESTS);
-    $trail->push(RouteNames::name(RouteNames::REQUESTS_PROPOSAL), route(RouteNames::REQUESTS_PROPOSAL));
 });
 Breadcrumbs::for(RouteNames::REQUESTS_PAYMENT, static function (BreadcrumbTrail $trail) {
     $trail->parent(RouteNames::REQUESTS);

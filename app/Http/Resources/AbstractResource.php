@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use Core\Enums\DateTimeFormat;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 use JsonSerializable;
 
 abstract readonly class AbstractResource implements JsonSerializable

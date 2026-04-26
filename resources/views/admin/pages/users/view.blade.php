@@ -3,8 +3,7 @@
 use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Common\SelectOptionResource;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\Views\SectionNames;
 
 /**
  * @var UserResource         $user
@@ -13,7 +12,7 @@ use Core\Resources\Views\ViewNames;
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     <user-item-view

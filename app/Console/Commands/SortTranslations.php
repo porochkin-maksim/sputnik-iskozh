@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use Core\Services\Translations\TranslationService;
+use App\Services\Translations\TranslationService;
 use Illuminate\Console\Command;
 
 class SortTranslations extends Command

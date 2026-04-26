@@ -1,17 +1,16 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Admin\Counters\CounterResource;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\Counter\CounterEntity;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 /**
- * @var CounterDTO $counter
+ * @var CounterEntity $counter
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::ADMIN_COUNTER_VIEW, $counter) }}

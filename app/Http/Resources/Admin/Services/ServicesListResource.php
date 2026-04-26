@@ -6,13 +6,12 @@ use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Collections\PeriodCollection;
-use Core\Domains\Billing\Service\Collections\ServiceCollection;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Period\PeriodCollection;
+use Core\Domains\Billing\Service\ServiceCollection;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class ServicesListResource extends AbstractResource
 {
@@ -33,13 +32,13 @@ readonly class ServicesListResource extends AbstractResource
             'types'      => [
                 'all' => new SelectResource($types),
             ],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type: HistoryType::SERVICE,
             ),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::SERVICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::SERVICES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP),
+                'view' => $access->can(PermissionEnum::SERVICES_VIEW),
+                'edit' => $access->can(PermissionEnum::SERVICES_EDIT),
+                'drop' => $access->can(PermissionEnum::SERVICES_DROP),
             ],
         ];
 
@@ -61,7 +60,7 @@ readonly class ServicesListResource extends AbstractResource
         $result['periodsInfo'] = new PeriodsListResource($this->periodCollection);
 
         foreach ($this->serviceCollection as $service) {
-            $result[ResponsesEnum::SERVICES][] = new ServiceResource($service);
+            $result['services'][] = new ServiceResource($service);
 
             $type      = $service->getType();
             $available = match ($type) {

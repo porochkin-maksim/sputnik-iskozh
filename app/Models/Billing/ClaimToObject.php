@@ -14,9 +14,12 @@ class ClaimToObject extends AbstractModel
 {
     public const string TABLE = 'claim_to_objects';
 
+    public const string ID = 'id';
     public const string TYPE         = 'type';
     public const string CLAIM_ID     = 'claim_id';
     public const string REFERENCE_ID = 'reference_id';
+    public const string CREATED_AT = 'created_at';
+    public const string UPDATED_AT = 'updated_at';
 
     public const string RELATION_CLAIM = 'claim';
 

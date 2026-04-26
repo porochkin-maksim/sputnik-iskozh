@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\CookieController;
 use App\Http\Controllers\SessionController;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 
 Route::post('session', [SessionController::class, 'store'])->name(RouteNames::SESSION_STORE);

@@ -6,41 +6,41 @@ use App\Http\Resources\Admin\HelpDesk\ServiceListResource;
 use App\Http\Resources\Admin\HelpDesk\TicketResource;
 use App\Http\Resources\Admin\Users\UsersListResource2;
 use App\Http\Resources\Common\SelectResource;
-use Core\Domains\Account\AccountLocator;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use Core\Domains\Account\AccountService;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Domains\User\UserLocator;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\HelpDesk\Models\TicketEntity;
+use Core\Domains\HelpDesk\Services\TicketCatalogService;
+use Core\Domains\HelpDesk\Services\TicketCategoryService;
+use Core\Domains\User\UserService;
 
 /**
- * @var TicketDTO $ticket ;
+ * @var TicketEntity $ticket ;
  */
 
 $ticketResource = new TicketResource($ticket);
 
-$categories         = HelpDeskServiceLocator::TicketCategoryService()->search()->getItems();
+$categories         = app(TicketCategoryService::class)->search()->getItems();
 $categoriesResource = new CategoryListResource($categories);
 
-$services         = HelpDeskServiceLocator::TicketServiceService()->search()->getItems();
+$services         = app(TicketCatalogService::class)->search()->getItems();
 $servicesResource = new ServiceListResource($services);
 
 $types      = new SelectResource(TicketTypeEnum::array());
 $statuses   = new SelectResource(TicketStatusEnum::array());
 $priorities = new SelectResource(TicketPriorityEnum::array());
 
-$accounts = AccountLocator::AccountService()->search()->getItems();
+$accounts = app(AccountService::class)->search()->getItems();
 $accounts = new AccountsListResource2($accounts);
 
-$users = UserLocator::UserService()->search()->getItems();
+$users = app(UserService::class)->search()->getItems();
 $users = new UsersListResource2($users);
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::ADMIN_HELP_DESK_TICKETS_VIEW, $ticket) }}

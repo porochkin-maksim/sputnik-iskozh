@@ -3,72 +3,46 @@
 namespace App\Http\Controllers\Public\Requests;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Public\Requests\PaymentCreateRequest;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Payment\Factories\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\FileService;
-use Core\Domains\Billing\Payment\Services\PaymentService;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\DefaultRequest;
+use Core\App\Billing\Payment\CreatePublicPaymentCommand;
 
 class PaymentsController extends Controller
 {
-    private PaymentService $paymentService;
-    private PaymentFactory $paymentFactory;
-    private FileService    $fileService;
-    private AccountService $accountService;
-    private InvoiceService $invoiceService;
-
-    public function __construct()
+    public function __construct(
+        private readonly CreatePublicPaymentCommand $command,
+    )
     {
-        $this->paymentService = PaymentLocator::PaymentService();
-        $this->paymentFactory = PaymentLocator::PaymentFactory();
-        $this->fileService    = PaymentLocator::FileService();
-        $this->accountService = AccountLocator::AccountService();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
     }
 
-    public function create(PaymentCreateRequest $request): void
+    public function create(DefaultRequest $request): void
     {
-        DB::beginTransaction();
-        try {
-            $payment = $this->paymentFactory->makeDefault();
-
-            if ($request->getInvoice()) {
-                $invoice = $this->invoiceService->getById($request->getInvoice());
-                if ($invoice) {
-                    $payment->setInvoiceId($invoice->getId());
-                    $payment->setAccountId($invoice->getAccountId());
-                }
-            }
-            elseif ($request->getAccount()) {
-                $account = $this->accountService->findByNumber($request->getAccount());
-                if ($account) {
-                    $payment->setAccountId($account->getId());
-                }
-            }
-            if ( ! isset($invoice)) {
-                $payment->setComment($request->getFullText());
-            }
-            else {
-                $payment->setComment($request->getText());
-            }
-            $payment->setCost($request->getCost());
-
-            $payment = $this->paymentService->save($payment);
-
-            foreach ($request->allFiles() as $file) {
-                $this->fileService->store($file, $payment->getId());
-            }
-
-            DB::commit();
+        $text            = $request->getString('text');
+        $account         = $request->getStringOrNull('account');
+        $name            = $request->getStringOrNull('name');
+        $email           = $request->getStringOrNull('email');
+        $phone           = $request->getStringOrNull('phone');
+        $files           = $request->allFiles();
+        $attachmentLines = [];
+        $i               = 1;
+        foreach ($files as $file) {
+            $attachmentLines[] = sprintf('%d. %s', $i++, $file->getName());
         }
-        catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $fullText = trim(implode('', [
+            $account ? sprintf("Участок: %s\n", $account) : '',
+            $name ? sprintf("Обращение от: %s\n", $name) : '',
+            $email ? sprintf("Почта для связи: %s\n", $email) : '',
+            $phone ? sprintf("Телефон для связи: %s\n", $phone) : '',
+            $attachmentLines ? sprintf("Вложения: \n%s\n", implode("\n", $attachmentLines)) : '',
+            sprintf("Текст обращения:\n%s", $text),
+        ]));
+
+        $this->command->execute(
+            $request->getIntOrNull('invoice'),
+            $account,
+            $request->getFloat('cost'),
+            $text,
+            $fullText,
+            $files,
+        );
     }
 }

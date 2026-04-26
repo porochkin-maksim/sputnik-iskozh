@@ -2,67 +2,54 @@
 
 namespace Core\Domains\Billing\Acquiring\Services;
 
-use App\Models\Billing\Acquiring;
-use Core\Domains\Billing\Acquiring\Collections\AcquiringCollection;
-use Core\Domains\Billing\Acquiring\Factories\AcquiringFactory;
-use Core\Domains\Billing\Acquiring\Models\AcquiringDTO;
-use Core\Domains\Billing\Acquiring\Repositories\AcquiringRepository;
+use Core\Domains\Billing\Acquiring\AcquiringEntity;
+use Core\Domains\Billing\Acquiring\Contracts\AcquiringRepositoryInterface;
 use Core\Domains\Billing\Acquiring\Models\AcquiringSearcher;
-use Core\Domains\Billing\Acquiring\Responses\AcquiringSearchResponse;
+use Core\Domains\Billing\Acquiring\Models\AcquiringSearchResponse;
 
 readonly class AcquiringService
 {
     public function __construct(
-        private AcquiringFactory    $acquiringFactory,
-        private AcquiringRepository $acquiringRepository,
+        private AcquiringRepositoryInterface $acquiringRepository,
+        private ProviderSelector $providerSelector,
     )
     {
     }
 
-    public function isAcquringAvailable(): bool
+    public function isAvailable(): bool
     {
-        return ProviderSelector::random() !== null;
+        return $this->providerSelector->random() !== null;
     }
 
-    public function getByInvoiceAndUserId(
-        int $invoiceId,
-        int $userId,
-    ): AcquiringCollection
+    public function save(AcquiringEntity $acquiring): AcquiringEntity
     {
-        $models = $this->acquiringRepository->getByInvoiceAndUserId($invoiceId, $userId);
-
-        return $this->acquiringFactory->makeDtoFromObjects($models);
+        return $this->acquiringRepository->save($acquiring);
     }
 
-    public function save(AcquiringDTO $acquiring): AcquiringDTO
+    public function getById(int $id): ?AcquiringEntity
     {
-        $model = $this->acquiringRepository->getById($acquiring->getId());
-
-        $model = $this->acquiringRepository->save($this->acquiringFactory->makeModelFromDto($acquiring, $model));
-
-        return $this->acquiringFactory->makeDtoFromObject($model);
-    }
-
-    public function getById(int $id): ?AcquiringDTO
-    {
-        /** @var Acquiring|null $model */
-        $model = $this->acquiringRepository->getById($id);
-
-        return $model ? $this->acquiringFactory->makeDtoFromObject($model) : null;
+        return $this->acquiringRepository->getById($id);
     }
 
     public function search(AcquiringSearcher $searcher): AcquiringSearchResponse
     {
-        $response = $this->acquiringRepository->search($searcher);
+        return $this->acquiringRepository->search($searcher);
+    }
 
-        $result = new AcquiringSearchResponse();
-        $result->setTotal($response->getTotal());
-
-        $collection = new AcquiringCollection();
-        foreach ($response->getItems() as $item) {
-            $collection->add($this->acquiringFactory->makeDtoFromObject($item));
+    public function findForInvoiceUserAndAmount(int $invoiceId, int $userId, float $amount): ?AcquiringEntity
+    {
+        foreach (
+            $this->search(
+                (new AcquiringSearcher())
+                    ->setInvoiceId($invoiceId)
+                    ->setUserId($userId)
+            )->getItems() as $acquiring
+        ) {
+            if ($acquiring->getAmount() === $amount && ! $acquiring->getStatus()?->isPaid()) {
+                return $acquiring;
+            }
         }
 
-        return $result->setItems($collection);
+        return null;
     }
 }

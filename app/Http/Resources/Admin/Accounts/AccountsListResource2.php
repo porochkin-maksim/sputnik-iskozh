@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\Accounts;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Account\Collections\AccountCollection;
+use Core\Domains\Account\AccountCollection;
 
 readonly class AccountsListResource2 extends AbstractResource
 {

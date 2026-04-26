@@ -4,11 +4,10 @@ namespace App\Models\HelpDesk;
 
 use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
+use App\Models\Files\FileModel;
 use App\Models\User;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Domains\Files\FileTypeEnum;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
@@ -39,7 +38,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property TicketCategory|null        $category
  * @property TicketService|null         $service
  * @property TicketComment[]|Collection $comments
- * @property File[]|Collection          $files
+ * @property FileModel[]|Collection     $files
+ * @property FileModel[]|Collection     $resultFiles
  */
 class Ticket extends AbstractModel
 {
@@ -91,24 +91,26 @@ class Ticket extends AbstractModel
     protected $guarded = [];
 
     protected $casts = [
+        self::USER_ID     => self::CAST_INTEGER,
+        self::ACCOUNT_ID  => self::CAST_INTEGER,
         self::TYPE        => TicketTypeEnum::class,
         self::PRIORITY    => TicketPriorityEnum::class,
         self::STATUS      => TicketStatusEnum::class,
-        self::RESOLVED_AT => CastsInterface::CAST_DATETIME,
-        self::CATEGORY_ID => CastsInterface::CAST_INTEGER,
-        self::SERVICE_ID  => CastsInterface::CAST_INTEGER,
+        self::RESOLVED_AT => self::CAST_DATETIME,
+        self::CATEGORY_ID => self::CAST_INTEGER,
+        self::SERVICE_ID  => self::CAST_INTEGER,
     ];
 
     // ========== Связи ==========
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, self::USER_ID)->withTrashed();
     }
 
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class)->withTrashed();
+        return $this->belongsTo(Account::class, self::ACCOUNT_ID)->withTrashed();
     }
 
     public function category(): BelongsTo
@@ -123,22 +125,22 @@ class Ticket extends AbstractModel
 
     public function comments(): HasMany
     {
-        return $this->hasMany(TicketComment::class)->latest();
+        return $this->hasMany(TicketComment::class, TicketComment::TICKET_ID)->latest();
     }
 
     public function files(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::TICKET->value)
-            ->orderBy(File::ORDER)
+        return $this->hasMany(FileModel::class, FileModel::RELATED_ID)
+            ->where(FileModel::TYPE, FileTypeEnum::TICKET->value)
+            ->orderBy(FileModel::ORDER)
         ;
     }
 
     public function resultFiles(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::TICKET_RESULT->value)
-            ->orderBy(File::ORDER)
+        return $this->hasMany(FileModel::class, FileModel::RELATED_ID)
+            ->where(FileModel::TYPE, FileTypeEnum::TICKET_RESULT->value)
+            ->orderBy(FileModel::ORDER)
         ;
     }
 }

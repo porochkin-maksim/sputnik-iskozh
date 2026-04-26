@@ -18,7 +18,8 @@
         "maatwebsite/excel": "^3.1",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/browsershot": "^5.2",
-        "spatie/laravel-pdf": "^2.4"
+        "spatie/laravel-pdf": "^2.4",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

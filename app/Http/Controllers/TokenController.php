@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 
 class TokenController extends Controller
 {

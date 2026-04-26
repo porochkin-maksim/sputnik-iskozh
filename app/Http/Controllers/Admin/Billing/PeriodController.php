@@ -3,36 +3,33 @@
 namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Periods\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
 use App\Http\Resources\Admin\Periods\PeriodsListResource;
-use App\Models\Billing\Period;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Factories\PeriodFactory;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
+use Core\App\Billing\Period\GetListCommand;
+use Core\App\Billing\Period\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Period\PeriodFactory;
+use Core\Domains\Billing\Period\PeriodService;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class PeriodController extends Controller
 {
-    private PeriodFactory $periodFactory;
-    private PeriodService $periodService;
 
-    public function __construct()
+    public function __construct(
+        private readonly PeriodFactory $periodFactory,
+        private readonly PeriodService $periodService,
+        private readonly GetListCommand $getListCommand,
+        private readonly SaveCommand $saveCommand,
+    )
     {
-        $this->periodFactory = PeriodLocator::PeriodFactory();
-        $this->periodService = PeriodLocator::PeriodService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::PERIODS_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_PERIODS);
+            return view('admin.pages.periods');
         }
 
         abort(403);
@@ -53,41 +50,31 @@ class PeriodController extends Controller
             abort(403);
         }
 
-        $searcher = new PeriodSearcher();
-        $searcher
-            ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Period::END_AT, SearcherInterface::SORT_ORDER_DESC);
-        $periods = $this->periodService->search($searcher);
-
         return response()->json(
-            new PeriodsListResource($periods->getItems())
+            new PeriodsListResource($this->getListCommand->execute()->getItems()),
         );
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
             abort(403);
         }
 
-        $period = $request->getId()
-            ? $this->periodService->getById($request->getId())
-            : $this->periodFactory->makeDefault();
+        $period = $this->saveCommand->execute(
+            id: $request->getIntOrNull('id'),
+            name: $request->getStringOrNull('name'),
+            startAt: $request->getStringOrNull('start_at'),
+            endAt: $request->getStringOrNull('end_at'),
+            isClosed: $request->getBool('is_closed'),
+        );
 
-        if ( ! $period) {
+        if ($period === null) {
             abort(404);
         }
 
-        $period
-            ->setName($request->getName())
-            ->setStartAt($request->getStartAt())
-            ->setEndAt($request->getEndAt())
-            ->setIsClosed($request->getIsClosed());
-
-        $period = $this->periodService->save($period);
-
         return response()->json([
-            ResponsesEnum::PERIOD => new PeriodResource($period),
+            'period' => new PeriodResource($period),
         ]);
     }
 

@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\Views\SectionNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     <counter-history-block></counter-history-block>

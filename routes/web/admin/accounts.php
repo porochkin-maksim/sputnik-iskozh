@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
-use Core\Domains\Account\Models\AccountDTO;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\Account\AccountEntity;
+use Core\Domains\Counter\CounterEntity;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
@@ -30,7 +30,7 @@ Route::group(['prefix' => 'accounts'], static function () {
     Route::group(['prefix' => 'view/{accountId}', 'where' => ['accountId' => '[0-9]+']], static function () {
         Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'view'])->name(RouteNames::ADMIN_ACCOUNT_VIEW);
 
-        Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_VIEW, static function (BreadcrumbTrail $trail, AccountDTO $account) {
+        Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_VIEW, static function (BreadcrumbTrail $trail, AccountEntity $account) {
             $trail->parent(RouteNames::ADMIN_ACCOUNT_INDEX);
             $trail->push('Участок №' . $account->getNumber(), route(RouteNames::ADMIN_ACCOUNT_VIEW, $account->getId()));
         });
@@ -41,8 +41,8 @@ Route::group(['prefix' => 'accounts'], static function () {
                 ->whereNumber('counterId')
             ;
 
-            Breadcrumbs::for(RouteNames::ADMIN_COUNTER_VIEW, static function (BreadcrumbTrail $trail, CounterDTO $counter) {
-                $trail->parent(RouteNames::ADMIN_ACCOUNT_VIEW, $counter->getAccount(true));
+            Breadcrumbs::for(RouteNames::ADMIN_COUNTER_VIEW, static function (BreadcrumbTrail $trail, CounterEntity $counter) {
+                $trail->parent(RouteNames::ADMIN_ACCOUNT_VIEW, $counter->getAccount());
                 $trail->push('Счётчик №' . $counter->getNumber(), route(RouteNames::ADMIN_COUNTER_VIEW, [$counter->getAccountId(), $counter->getId()]));
             });
 

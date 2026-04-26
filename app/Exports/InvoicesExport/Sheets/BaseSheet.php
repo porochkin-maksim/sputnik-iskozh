@@ -2,7 +2,7 @@
 
 namespace App\Exports\InvoicesExport\Sheets;
 
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;

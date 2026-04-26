@@ -2,7 +2,7 @@
 
 namespace App\Exports\InvoicesExport\Sheets;
 
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 

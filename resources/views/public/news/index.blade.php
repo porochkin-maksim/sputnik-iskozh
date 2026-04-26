@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setUrl(route(RouteNames::NEWS));
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::CONTENT)

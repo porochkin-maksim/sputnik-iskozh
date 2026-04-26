@@ -43,7 +43,7 @@ namespace Core\Domains\\${ENTITY_NAME}\Repositories;
 
 use Core\Domains\\${ENTITY_NAME}\Models\\${ENTITY_NAME};
 use Core\Db\RepositoryTrait;
-use Core\Db\Searcher\SearcherInterface;
+use Core\Repositories\SearcherInterface;
 use Core\Domains\\${ENTITY_NAME}\Collection\\${ENTITY_NAME}Collection;
 use Core\Domains\\${ENTITY_NAME}\Models\\${ENTITY_NAME}DTO;
 use Core\Domains\\${ENTITY_NAME}\Factories\\${ENTITY_NAME}Factory;

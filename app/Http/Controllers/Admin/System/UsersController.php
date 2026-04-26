@@ -4,62 +4,51 @@ namespace App\Http\Controllers\Admin\System;
 
 use App\Exports\UsersExport\UsersExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Users\ListRequest;
-use App\Http\Requests\Admin\Users\SaveRequest;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
 use App\Http\Resources\Common\AccountsSelectResource;
 use App\Models\Account\Account;
-use App\Models\Infra\UserInfo;
 use App\Models\User;
+use App\Services\Users\Notificator;
 use Carbon\Carbon;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Collections\AccountCollection;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
-use Core\Domains\Infra\ExData\ExDataLocator;
-use Core\Domains\Infra\ExData\Services\ExDataService;
-use Core\Domains\User\Factories\UserFactory;
-use Core\Domains\User\Models\UserSearcher;
-use Core\Domains\User\Responses\UserSearchResponse;
-use Core\Domains\User\Services\UserService;
-use Core\Domains\User\UserLocator;
-use Core\Helpers\DateTime\DateTimeHelper;
-use Core\Requests\RequestArgumentsEnum;
-use Core\Resources\Views\ViewNames;
+use Core\App\User\GetListCommand;
+use Core\App\User\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Access\RoleService;
+use Core\Domains\Account\AccountCollection;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\User\UserFactory;
+use Core\Domains\User\UserService;
+use Core\Exceptions\ValidationException;
+use Core\Repositories\SearcherInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use lc;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
 
 class UsersController extends Controller
 {
-    private UserFactory    $userFactory;
-    private UserService    $userService;
-    private AccountService $accountService;
-    private RoleService    $roleService;
-    private ExDataService  $exDataService;
 
-    public function __construct()
+    public function __construct(
+        private readonly UserFactory    $userFactory,
+        private readonly UserService    $userService,
+        private readonly AccountService $accountService,
+        private readonly RoleService    $roleService,
+        private readonly Notificator    $notificator,
+        private readonly GetListCommand $getListCommand,
+        private readonly SaveCommand    $saveCommand,
+    )
     {
-        $this->userFactory    = UserLocator::UserFactory();
-        $this->userService    = UserLocator::UserService();
-        $this->accountService = AccountLocator::AccountService();
-        $this->roleService    = RoleLocator::RoleService();
-        $this->exDataService  = ExDataLocator::ExDataService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_USERS);
+            return view('admin.pages.users');
         }
 
         abort(403);
@@ -115,13 +104,25 @@ class UsersController extends Controller
         return view('admin.pages.users.view', compact('user', 'accounts', 'roles'));
     }
 
-    public function list(ListRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function list(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             abort(403);
         }
 
-        $users = $this->getUsersList($request);
+        $users = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSortField(),
+            $request->getSortOrder(),
+            $request->getStringOrNull('search'),
+            $request->getBool('isDeleted'),
+            $request->input('isMember'),
+            $request->getBool('isMember'),
+        );
 
         return response()->json(new UsersListResource(
             $users->getItems(),
@@ -129,117 +130,62 @@ class UsersController extends Controller
         ));
     }
 
-    public function export(ListRequest $request)
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @throws ValidationException
+     */
+    public function export(DefaultRequest $request)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
             abort(403);
         }
 
         $requestData = $request->toArray();
-        unset($requestData[RequestArgumentsEnum::SKIP], $requestData[RequestArgumentsEnum::LIMIT]);
+        unset($requestData['skip'], $requestData['limit']);
 
-        $newRequest = new ListRequest($requestData);
-
-        $users = $this->getUsersList($newRequest)->getItems();
+        $newRequest = new DefaultRequest($requestData);
+        $users      = $this->getListCommand->execute(
+            $newRequest->getLimit(),
+            $newRequest->getOffset(),
+            $newRequest->getSortField(),
+            $newRequest->getSortOrder(),
+            $newRequest->getStringOrNull('search'),
+            $newRequest->getBool('isDeleted'),
+            $newRequest->input('isMember'),
+            $newRequest->getBool('isMember'),
+        )->getItems();
 
         return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
-    private function getUsersList(ListRequest $request): UserSearchResponse
-    {
-        $searcher = new UserSearcher();
-        $searcher
-            ->setWithAccounts()
-            ->setLimit($request->getLimit())
-            ->setOffset($request->getOffset())
-        ;
-
-        $searchString = $request->getStringOrNull(RequestArgumentsEnum::SEARCH);
-        if ($searchString) {
-            $searcher->addOrWhere(User::LAST_NAME, SearcherInterface::LIKE, "{$searchString}%")
-                ->addOrWhere(User::FIRST_NAME, SearcherInterface::LIKE, "{$searchString}%")
-                ->addOrWhere(User::EMAIL, SearcherInterface::LIKE, "{$searchString}%")
-                ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%")
-            ;
-        }
-        else {
-            if ($request->input('isMember')) {
-                if ($request->getBool('isMember')) {
-                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
-                }
-                else {
-                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NULL);
-                }
-            }
-
-            if ($request->getBool('isDeleted')) {
-                $searcher->addWhere(User::SOFT_DELETED, SearcherInterface::IS_NOT_NULL);
-                $searcher->setWithDeleted();
-            }
-        }
-
-        if ($request->getSortField() && $request->getSortOrder()) {
-            $searcher->setSortOrderProperty(
-                $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
-            );
-        }
-        else {
-            $searcher->setSortOrderProperty(User::ID, SearcherInterface::SORT_ORDER_DESC);
-        }
-
-        return $this->userService->search($searcher);
-    }
-
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
             abort(403);
         }
 
-        $user = $request->getId()
-            ? $this->userService->getById($request->getId(), true)
-            : $this->userFactory->makeDefault()
-                ->setPassword(Str::random(8))
-        ;
-
-        if ( ! $user) {
-            abort(412);
-        }
-
-        $user->setFirstName($request->getFirstName())
-            ->setMiddleName($request->getMiddleName())
-            ->setLastName($request->getLastName())
-            ->setEmail($request->getEmail())
-            ->setPhone($request->getPhone())
-            ->setRole($this->roleService->getById($request->getRoleId()))
-            ->setMembershipDutyInfo($request->getMembershipDutyInfo())
-            ->setMembershipDate($request->getMembershipDate())
-        ;
-
-        $fractions  = $request->getFractions();
-        $ownerDates = $request->getOwnerDates();
-        $accounts   = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
-        foreach ($accounts as $account) {
-            $account->setFraction((float) $fractions[$account->getId()]);
-            $account->setOwnerDate(DateTimeHelper::toCarbonOrNull($ownerDates[$account->getId()]));
-        }
-        $user->setAccounts($accounts);
-
-        $user = $this->userService->save($user);
-
-        $exData = $this->exDataService->getByTypeAndReferenceId(ExDataTypeEnum::USER, $user->getId())
-            ? : $this->exDataService->makeDefault(ExDataTypeEnum::USER)->setReferenceId($user->getId());
-
-        $exData->setData($user->getExData()
-            ->setPhone($request->getAddPhone())
-            ->setLegalAddress($request->getLegalAddress())
-            ->setPostAddress($request->getPostAddress())
-            ->setAdditional($request->getAdditional())
-            ->jsonSerialize(),
+        $user = $this->saveCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getStringOrNull('first_name'),
+            $request->getStringOrNull('middle_name'),
+            $request->getStringOrNull('last_name'),
+            $request->getStringOrNull('email'),
+            $request->getStringOrNull('phone'),
+            $request->getInt('role_id'),
+            $request->getStringOrNull('membershipDutyInfo'),
+            $request->getDateOrNull('membershipDate'),
+            $request->getArray('fractions'),
+            $request->getArray('ownerDates'),
+            $request->getStringOrNull('add_phone'),
+            $request->getStringOrNull('legal_address'),
+            $request->getStringOrNull('post_address'),
+            $request->getStringOrNull('additional'),
         );
 
-        $this->exDataService->save($exData);
+        if ($user === null) {
+            abort(412);
+        }
 
         return response()->json(new UserResource($user));
     }
@@ -273,11 +219,11 @@ class UsersController extends Controller
 
         $user = $this->userService->getById($request->getInt('id'));
 
-        if ( ! $user || ! $user->getModel()) {
+        if ( ! $user?->getId()) {
             abort(412);
         }
 
-        UserLocator::Notificator()->sendRestorePassword($user);
+        $this->notificator->sendRestorePassword($user);
     }
 
     public function sendInviteWithPassword(DefaultRequest $request): void
@@ -288,11 +234,11 @@ class UsersController extends Controller
 
         $user = $this->userService->getById($request->getInt('id'));
 
-        if ( ! $user || ! $user->getModel()) {
+        if ( ! $user?->getId()) {
             abort(412);
         }
 
-        UserLocator::Notificator()->sendInviteNotification($user);
+        $this->notificator->sendInviteNotification($user);
 
         if ( ! $user->getEmailVerifiedAt()) {
             $this->userService->save($user->setEmailVerifiedAt(Carbon::now()));

@@ -2,12 +2,13 @@
 
 namespace Core\Domains\Billing\Jobs;
 
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Queue\QueueEnum;
+use Core\Domains\Billing\Service\ServiceFactory;
+use Core\Domains\Billing\Service\ServiceCatalogService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Domains\HistoryChanges\Event;
+use Core\Domains\HistoryChanges\HistoryChangesService;
+use Core\Domains\HistoryChanges\HistoryType;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,7 +29,11 @@ class CreateMainServicesJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    public function handle(
+        ServiceCatalogService $serviceService,
+        ServiceFactory        $serviceFactory,
+        HistoryChangesService $historyChangesService,
+    ): void
     {
         $cases = [
             ServiceTypeEnum::MEMBERSHIP_FEE,
@@ -38,12 +43,12 @@ class CreateMainServicesJob implements ShouldQueue
             ServiceTypeEnum::ADVANCE_PAYMENT,
         ];
         foreach ($cases as $case) {
-            $service = ServiceLocator::ServiceService()->getByPeriodIdAndType($this->periodId, $case);
+            $service = $serviceService->getByPeriodIdAndType($this->periodId, $case);
             if ($service) {
                 continue;
             }
 
-            $service = ServiceLocator::ServiceFactory()->makeDefault();
+            $service = $serviceFactory->makeDefault();
             $service
                 ->setPeriodId($this->periodId)
                 ->setType($case)
@@ -51,9 +56,9 @@ class CreateMainServicesJob implements ShouldQueue
                 ->setCost(0)
             ;
 
-            ServiceLocator::ServiceService()->save($service);
+            $service = $serviceService->save($service);
 
-            HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+            $historyChangesService->writeToHistory(
                 Event::CREATE,
                 HistoryType::PERIOD,
                 $this->periodId,

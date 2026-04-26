@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers\Admin\HelpDesk;
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\HelpDesk\Models\TicketEntity;
+use App\Resources\RouteNames;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 use Illuminate\Support\Facades\Route;
 
@@ -49,7 +49,7 @@ Breadcrumbs::for(RouteNames::ADMIN_HELP_DESK_INDEX, static function (BreadcrumbT
     $trail->push(RouteNames::name(RouteNames::ADMIN_HELP_DESK_INDEX), route(RouteNames::ADMIN_HELP_DESK_INDEX));
 });
 
-Breadcrumbs::for(RouteNames::ADMIN_HELP_DESK_TICKETS_VIEW, static function (BreadcrumbTrail $trail, TicketDTO $ticket) {
+Breadcrumbs::for(RouteNames::ADMIN_HELP_DESK_TICKETS_VIEW, static function (BreadcrumbTrail $trail, TicketEntity $ticket) {
     $trail->parent(RouteNames::ADMIN_HELP_DESK_INDEX);
     $trail->push(sprintf('№%s', $ticket->getId()), route(RouteNames::ADMIN_HELP_DESK_TICKETS_VIEW, $ticket->getId()));
 });

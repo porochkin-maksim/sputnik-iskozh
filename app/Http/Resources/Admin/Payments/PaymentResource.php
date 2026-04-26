@@ -2,22 +2,21 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
-use Core\Domains\Billing\Acquiring\AcquiringLocator;
-use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
-use Core\Domains\Billing\Acquiring\Models\AcquiringSearcher;
-use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\payment\Models\paymentDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
+use Core\Domains\Billing\Acquiring\Models\AcquiringSearcher;
+use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Payment\PaymentEntity;
+use Core\Domains\HistoryChanges\HistoryType;
+use lc;
 
 readonly class PaymentResource extends AbstractResource
 {
     public function __construct(
-        private PaymentDTO $payment,
+        private PaymentEntity $payment,
     )
     {
     }
@@ -28,14 +27,16 @@ readonly class PaymentResource extends AbstractResource
 
         $period = $this->payment->getInvoice()?->getPeriod();
 
-        $hasAcquiring = $this->payment->getId()
-            ? AcquiringLocator::AcquiringService()->search(
-                new AcquiringSearcher()
-                    ->setPaymentId($this->payment->getId())
-                    ->setStatus(StatusEnum::PAID)
-                ,
-            )->getItems()->first()?->getId()
-            : false;
+        $hasAcquiring = false;
+        if ($this->payment->getId()) {
+            $hasAcquiring = app(AcquiringService::class)
+                ->search((new AcquiringSearcher())
+                        ->setPaymentId($this->payment->getId())
+                        ->setStatus(StatusEnum::PAID)
+                )
+                ->getItems()
+                ->first()?->getId();
+        }
 
         return [
             'id'            => $this->payment->getId(),
@@ -50,12 +51,12 @@ readonly class PaymentResource extends AbstractResource
             'accountId'     => $this->payment->getAccountId(),
             'invoice'       => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'       => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring,
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring,
+                'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring,
+                'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring,
             ],
             'historyUrl'    => $this->payment->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     referenceType: HistoryType::PAYMENT,
                     referenceId  : $this->payment?->getId(),
                 ) : null,

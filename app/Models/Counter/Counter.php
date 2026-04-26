@@ -4,10 +4,10 @@ namespace App\Models\Counter;
 
 use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use Carbon\Carbon;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Files\FileTypeEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -83,8 +83,8 @@ class Counter extends AbstractModel
 
     public function passport(): HasOne
     {
-        return $this->hasOne(File::class, File::RELATED_ID, 'id')
-            ->where(File::TYPE, FileTypeEnum::COUNTER_PASSPORT->value)
+        return $this->hasOne(FileModel::class, FileModel::RELATED_ID, 'id')
+            ->where(FileModel::TYPE, FileTypeEnum::COUNTER_PASSPORT->value)
         ;
     }
 }

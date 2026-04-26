@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\DefaultRequest;
+use App\Models\User;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\User\UserLocator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,14 +21,14 @@ class LoginController extends AbstractAuthController
 
     public function token(string $token)
     {
-        $pin = new DefaultRequest(request()->toArray())->getString('pin');
+        $pin = (new DefaultRequest(request()->toArray()))->getString('pin');
 
         $data = TokenFacade::find($token);
         if ($data && Hash::check($pin, $data['pin'])) {
             $uid = UidFacade::find($token);
 
             if ($uid) {
-                $user = UserLocator::UserRepository()->getModelById($uid->getReferenceId());
+                $user = User::find($uid->getReferenceId());
                 Auth::login($user, true);
             }
         }

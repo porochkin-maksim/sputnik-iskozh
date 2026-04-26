@@ -2,8 +2,8 @@
 
 use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
-use Core\Domains\Option\OptionLocator;
-use Core\Services\Images\StaticFileLocator;
+use Core\Domains\Option\OptionService;
+use App\Services\Images\StaticFileLocator;
 
 /**
  * @var bool $showSigns
@@ -13,7 +13,7 @@ $showSigns = $showSigns ?? false;
 $signatureFile = StaticFileLocator::StaticFileService()->signatureDirector();
 $stampFile     = StaticFileLocator::StaticFileService()->stampSnt();
 /** @var ChairmanInfo $chairmanInfo */
-$chairmanInfo = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
+$chairmanInfo = app(OptionService::class)->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
 
 $signatureBase64 = $signatureFile->getBase64();
 $stampBase64     = $stampFile->getBase64();

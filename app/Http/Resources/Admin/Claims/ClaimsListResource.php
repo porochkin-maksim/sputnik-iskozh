@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Claims;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Claim\Collections\ClaimCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimCollection;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class ClaimsListResource extends AbstractResource
 {
@@ -24,14 +23,14 @@ readonly class ClaimsListResource extends AbstractResource
 
         $result = [
             'claims' => [],
-            'historyUrl'   => HistoryChangesLocator::route(
+            'historyUrl'   => HistoryChangesRoute::make(
                 type         : HistoryType::INVOICE,
                 referenceType: HistoryType::CLAIM,
             ),
             'actions'      => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP),
+                'view' => $access->can(PermissionEnum::CLAIMS_VIEW),
+                'edit' => $access->can(PermissionEnum::CLAIMS_EDIT),
+                'drop' => $access->can(PermissionEnum::CLAIMS_DROP),
             ],
         ];
 

@@ -2,24 +2,22 @@
 
 namespace App\Http\Resources\Admin\Users;
 
-use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Domains\User\Enums\UserIdEnum;
-use Core\Domains\User\UserLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Helpers\Phone\PhoneHelper;
-use Core\Resources\RouteNames;
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\User\Models\UserDTO;
-use Core\Responses\ResponsesEnum;
+use App\Http\Resources\Admin\Accounts\AccountResource;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\User\UserEntity;
+use Core\Domains\User\UserIdEnum;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use Core\Shared\Helpers\Phone\PhoneHelper;
+use lc;
 
 readonly class UserResource extends AbstractResource
 {
     public function __construct(
-        private UserDTO $user,
+        private UserEntity $user,
     )
     {
     }
@@ -36,7 +34,7 @@ readonly class UserResource extends AbstractResource
 
         $result = [
             'id'              => $user->getId(),
-            'fullName'        => UserLocator::UserDecorator($user)->getFullName(),
+            'fullName'        => $user->getViewer()->getFullName(),
             'firstName'       => $user->getFirstName(),
             'middleName'      => $user->getMiddleName(),
             'lastName'        => $user->getLastName(),
@@ -63,14 +61,14 @@ readonly class UserResource extends AbstractResource
             'additional'   => $exData->getAdditional(),
 
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => ! $user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
+                'view' => $access->can(PermissionEnum::USERS_VIEW),
+                'edit' => ! $user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
+                'drop' => $canEdit && $access->can(PermissionEnum::USERS_DROP),
                 'account'           => [
-                    ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                    'view' => $access->can(PermissionEnum::ACCOUNTS_VIEW),
                 ],
             ],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type     : HistoryType::USER,
                 primaryId: $user->getId(),
             ),

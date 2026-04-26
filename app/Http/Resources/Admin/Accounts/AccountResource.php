@@ -2,21 +2,20 @@
 
 namespace App\Http\Resources\Admin\Accounts;
 
-use App\Http\Resources\Admin\Users\UserResource;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\Models\AccountDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Http\Resources\Admin\Users\UserResource;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountEntity;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use lc;
 
 readonly class AccountResource extends AbstractResource
 {
     public function __construct(
-        private AccountDTO $account,
+        private AccountEntity $account,
     )
     {
     }
@@ -41,17 +40,17 @@ readonly class AccountResource extends AbstractResource
             'cadastreNumber' => $exData->getCadastreNumber(),
 
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
-                ResponsesEnum::EDIT => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_EDIT),
-                ResponsesEnum::DROP => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_DROP),
+                'view' => $access->can(PermissionEnum::ACCOUNTS_VIEW),
+                'edit' => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_EDIT),
+                'drop' => ! $isSnt && $access->can(PermissionEnum::ACCOUNTS_DROP),
                 'counters'          => [
-                    ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
-                    ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),
-                    ResponsesEnum::DROP => $access->can(PermissionEnum::COUNTERS_DROP),
+                    'view' => $access->can(PermissionEnum::COUNTERS_VIEW),
+                    'edit' => $access->can(PermissionEnum::COUNTERS_EDIT),
+                    'drop' => $access->can(PermissionEnum::COUNTERS_DROP),
                 ],
             ],
             'historyUrl' => $this->account->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     type     : HistoryType::ACCOUNT,
                     primaryId: $this->account->getId(),
                 ) : null,

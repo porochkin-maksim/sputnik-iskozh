@@ -2,15 +2,11 @@
 
 namespace App\Http\Requests;
 
-use Core\Requests\RequestArgumentsEnum;
-
 class DefaultRequest extends AbstractRequest
 {
-    use SortFieldTrait;
-
-    private const string LIMIT  = RequestArgumentsEnum::LIMIT;
-    private const string SKIP   = RequestArgumentsEnum::SKIP;
-    private const string SEARCH = RequestArgumentsEnum::SEARCH;
+    private const string LIMIT  = 'limit';
+    private const string SKIP   = 'skip';
+    private const string SEARCH = 'search';
 
     public function getLimit(): ?int
     {
@@ -25,5 +21,15 @@ class DefaultRequest extends AbstractRequest
     public function getSearch(): ?string
     {
         return $this->getStringOrNull(self::SEARCH);
+    }
+
+    public function getSortField(): ?string
+    {
+        return $this->input('sort_field', 'id');
+    }
+
+    public function getSortOrder(): ?string
+    {
+        return $this->input('sort_order', 'desc');
     }
 }

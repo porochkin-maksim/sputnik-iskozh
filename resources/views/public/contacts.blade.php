@@ -4,15 +4,14 @@ use Carbon\Carbon;
 use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
-use Core\Domains\Option\OptionLocator;
+use Core\Domains\Option\OptionService;
 use Core\Domains\StateSchedule\StateSchedule;
-use Core\Helpers\Phone\PhoneHelper;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\Iframes;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\Images\StaticFileLocator;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use Core\Shared\Helpers\Phone\PhoneHelper;
+use App\Resources\RouteNames;
+use App\Resources\Views\Iframes;
+use App\Resources\Views\SectionNames;
+use App\Services\Images\StaticFileLocator;
+use App\Services\OpenGraph\OpenGraphLocator;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
 $openGraph->setDescription('Контакты, режим работы');
@@ -25,22 +24,23 @@ $isWinter = $month >= 11 || $month <= 3;
  * @var SntAccounting $accountingData
  * @var ChairmanInfo  $chairmanData
  */
-$accountingData = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
-$chairmanData   = OptionLocator::OptionService()->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
+$optionService  = app(OptionService::class);
+$accountingData = $optionService->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
+$chairmanData   = $optionService->getByType(OptionEnum::CHAIRMAN_INFO)->getData();
 $schedule       = StateSchedule::getScheduledDates(Carbon::now(), $isWinter ? 5 : 10);
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::CONTACTS) }}
     @if(lc::roleDecorator()->isSuperAdmin() && false)
-        <page-editor :template="'{{ ViewNames::PAGES_CONTACTS }}'"></page-editor>
+        <page-editor :template="'public.contacts'"></page-editor>
     @endif
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">
@@ -77,25 +77,25 @@ $schedule       = StateSchedule::getScheduledDates(Carbon::now(), $isWinter ? 5 
                 @endif
             </td>
         </tr>
-        <tr>
-            <th>Электрик</th>
-            <td>
-                <div>
-                    Дмитрий
-                </div>
-                <div>
-                    <a href="tel:+79105330631"><i class="fa fa-phone"></i> +7(910)533-06-31</a>
-                </div>
-                <div>
-                    <a href="tel:+79607150046"><i class="fa fa-phone"></i> +7(960)715-00-46</a>
-                </div>
-            </td>
-        </tr>
+{{--        <tr>--}}
+{{--            <th>Электрик</th>--}}
+{{--            <td>--}}
+{{--                <div>--}}
+{{--                    Дмитрий--}}
+{{--                </div>--}}
+{{--                <div>--}}
+{{--                    <a href="tel:+79105330631"><i class="fa fa-phone"></i> +7(910)533-06-31</a>--}}
+{{--                </div>--}}
+{{--                <div>--}}
+{{--                    <a href="tel:+79607150046"><i class="fa fa-phone"></i> +7(960)715-00-46</a>--}}
+{{--                </div>--}}
+{{--            </td>--}}
+{{--        </tr>--}}
         <tr>
             <td colspan="2">
                 <div class="d-flex justify-content-center">
                     <div class="social social-contacts d-flex">
-                        @include(ViewNames::PARTIAL_SOCIAL)
+                        @include('layouts.partial.social')
                     </div>
                 </div>
             </td>
@@ -203,7 +203,7 @@ $schedule       = StateSchedule::getScheduledDates(Carbon::now(), $isWinter ? 5 
         <tr>
             <th>Кадастровая карта</th>
             <td>
-                <a href="https://map.ru/pkk?kad=69:10:0205201&z=16"><i class="fa fa-map-marker"></i> https://map.ru/pkk?kad=69:10:0205201</a>
+                <a href="https://nspd.gov.ru/map?thematic=PKK&zoom=16.295267300412462&coordinate_x=4009573.271111887&coordinate_y=7732190.873764123&baseLayerId=235&theme_id=1&is_copy_url=true&active_layers=36048&is_copy_url=true" target="_blank"><i class="fa fa-map-marker"></i> https://nspd.gov.ru/map</a>
             </td>
         </tr>
         <tr>
@@ -216,6 +216,6 @@ $schedule       = StateSchedule::getScheduledDates(Carbon::now(), $isWinter ? 5 
     {!! Iframes::map() !!}
 
     <div class="mt-3">
-        @include(ViewNames::PARTIAL_REQUESTS)
+        @include('public.partial.requests')
     </div>
 @endsection

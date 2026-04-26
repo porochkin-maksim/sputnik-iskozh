@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Period\Models\PeriodDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Period\PeriodEntity;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
@@ -27,7 +27,7 @@ Route::group(['prefix' => 'invoices'], static function () {
         Route::get('/invoice-receipt', [Controllers\Common\Documents\ReceiptController::class, 'makeByInvoiceId'])->name(RouteNames::ADMIN_DOCUMENT_RECEIPT_INVOICE);
     })->whereNumber('id');
 
-    Breadcrumbs::for(RouteNames::ADMIN_INVOICE_VIEW, static function (BreadcrumbTrail $trail, InvoiceDTO $invoice) {
+    Breadcrumbs::for(RouteNames::ADMIN_INVOICE_VIEW, static function (BreadcrumbTrail $trail, InvoiceEntity $invoice) {
         $trail->parent(RouteNames::ADMIN_INVOICE_INDEX);
         $trail->push('Счёт №' . $invoice->getId(), route(RouteNames::ADMIN_INVOICE_VIEW, $invoice->getId()));
     });
@@ -35,14 +35,14 @@ Route::group(['prefix' => 'invoices'], static function () {
     Route::get('/export', [Controllers\Admin\Billing\InvoiceController::class, 'export'])->name(RouteNames::ADMIN_INVOICE_EXPORT);
 
     Route::group(['prefix' => '/import-payments/period-{periodId}'], static function () {
-        Route::get('/', [Controllers\Admin\Billing\PaymentImportController::class, 'index'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX);
-        Route::post('/parse-file', [Controllers\Admin\Billing\PaymentImportController::class, 'parseFile'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_PARSE_FILE);
-        Route::post('/save', [Controllers\Admin\Billing\PaymentImportController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_SAVE);
+        Route::get('/', [Controllers\Admin\Billing\InvoiceImportController::class, 'index'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX);
+        Route::post('/parse-file', [Controllers\Admin\Billing\InvoiceImportController::class, 'parseFile'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_PARSE_FILE);
+        Route::post('/save', [Controllers\Admin\Billing\InvoiceImportController::class, 'save'])->name(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_SAVE);
     })->whereNumber('periodId');
 
-    Breadcrumbs::for(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, static function (BreadcrumbTrail $trail, PeriodDTO $periodDto) {
-        $trail->parent(RouteNames::ADMIN_INVOICE_INDEX, ['period' => $periodDto->getId()]);
-        $trail->push('Импорт платежей в счета периода ' . $periodDto->getName(), route(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, ['periodId' => $periodDto->getId()]));
+    Breadcrumbs::for(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, static function (BreadcrumbTrail $trail, PeriodEntity $period) {
+        $trail->parent(RouteNames::ADMIN_INVOICE_INDEX, ['period' => $period->getId()]);
+        $trail->push('Импорт платежей в счета периода ' . $period->getName(), route(RouteNames::ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX, ['periodId' => $period->getId()]));
     });
 
     Route::group(['prefix' => 'json'], static function () {

@@ -1,54 +1,50 @@
 <?php declare(strict_types=1);
 
-use App\Http\Resources\Profile\Accounts\AccountResource;
-use App\Http\Resources\Profile\Users\UserResource;
 use App\Models\Billing\Period;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Billing\Acquiring\AcquiringLocator;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Payment\Collections\PaymentCollection;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\Money\MoneyService;
+use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Payment\PaymentCollection;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceSearcher;
+use Core\Domains\Billing\Service\ServiceService;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\Money\MoneyService;
+use Core\Repositories\SearcherInterface;
 
-$periods = PeriodLocator::PeriodService()->search(
+$periods = app(PeriodService::class)->search(
     PeriodSearcher::make()->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC),
 )->getItems();
 
 $periodId = (int) request()->get('period', null);
-$period   = PeriodLocator::PeriodService()->getById($periodId);
+$period   = app(PeriodService::class)->getById($periodId);
 $period   = $period ? : $periods->first();
 
 $invoices = new InvoiceCollection();
 $payments = new PaymentCollection();
 
 if (lc::account()->getId() && $period) {
-    $services = ServiceLocator::ServiceService()->search(
-        new ServiceSearcher()->setPeriodId($period->getId()),
+    $services = app(ServiceService::class)->search(
+        (new ServiceSearcher())->setPeriodId($period->getId()),
     )->getItems();
 
-    $invoices = InvoiceLocator::InvoiceService()->search(
-        new InvoiceSearcher()
+    $invoices = app(InvoiceService::class)->search(
+        (new InvoiceSearcher())
             ->setWithPayments()
             ->setWithClaims()
             ->setPeriodId($period->getId())
             ->setAccountId(lc::account()->getId()),
     )->getItems();
 
-    $payments = PaymentLocator::PaymentService()->search(
-        new PaymentSearcher()->setInvoiceIds($invoices->getIds()),
+    $payments = app(PaymentService::class)->search(
+        (new PaymentSearcher())->setInvoiceIds($invoices->getIds()),
     )->getItems();
 }
 $account     = lc::account();
@@ -56,7 +52,7 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
 
 ?>
 
-@extends(ViewNames::LAYOUTS_PROFILE)
+@extends('layouts.profile-layout')
 
 @section(SectionNames::TITLE, $breadcrumbs->last()?->title)
 
@@ -131,32 +127,27 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
                         @if (!$invoice->isPaid())
                             <tr class="text-center">
                                 <td colspan="5">
-                                    @if (AcquiringLocator::AcquiringService()->isAcquringAvailable())
+                                    @if (app(AcquiringService::class)->isAvailable())
                                         @php
+                                            $acquiringAmounts = [];
                                             if ( ! $invoice->getPaid()) {
                                                 if (($account->getFraction() ?: 1) !== 1){
-                                                    $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
-                                                        $invoice,
-                                                        MoneyService::toFloat(MoneyService::parse($invoice->getDelta())->multiply($account->getFraction() ?: 1)),
-                                                        lc::user()->getId(),
+                                                    $acquiringAmounts[] = MoneyService::toFloat(
+                                                        MoneyService::parse($invoice->getDelta())->multiply($account->getFraction() ?: 1)
                                                     );
                                                 }
                                             }
 
-                                            $acquiringWrappers[] = AcquiringLocator::AcquiringWrapper(
-                                                $invoice,
-                                                $invoice->getDelta(),
-                                                lc::user()->getId(),
-                                            );
+                                            $acquiringAmounts[] = $invoice->getDelta();
                                         @endphp
                                         <div class="d-flex flex-column flex-sm-row text-center justify-content-center align-items-center flex-wrap">
-                                            @foreach($acquiringWrappers as $wrapper)
+                                            @foreach($acquiringAmounts as $amount)
                                                 <form method="POST"
-                                                      action="{{ route(RouteNames::ACQURING_INVOICE_CREATE, [$wrapper->getInvoice()->getId(), $wrapper->getAmount()]) }}"
+                                                      action="{{ route(RouteNames::ACQURING_INVOICE_CREATE, [$invoice->getId(), $amount]) }}"
                                                       target="_blank">
                                                     @csrf
                                                     <button class="btn btn-sm btn-success mb-2 mx-1">
-                                                        <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($wrapper->getAmount()) }}
+                                                        <i class="fa fa-credit-card"></i> Оплатить {{ MoneyService::parse($amount) }}
                                                     </button>
                                                 </form>
                                             @endforeach

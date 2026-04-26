@@ -1,10 +1,9 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
-use Core\Resources\Views\Iframes;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use App\Resources\RouteNames;
+use App\Resources\Views\Iframes;
+use App\Resources\Views\SectionNames;
+use App\Services\OpenGraph\OpenGraphLocator;
 use Illuminate\Support\Facades\Route;
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
@@ -13,16 +12,16 @@ $openGraph->setUrl(route(RouteNames::GARBAGE));
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::GARBAGE) }}
     @if(lc::roleDecorator()->isSuperAdmin() && false)
-        <page-editor :template="'{{ ViewNames::PAGES_GARBAGE }}'"></page-editor>
+        <page-editor :template="'public.garbage'"></page-editor>
     @endif
     <h1 class="page-title">
         <a href="<?= $openGraph->getUrl() ?>">

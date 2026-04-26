@@ -3,9 +3,9 @@
 namespace Core\Domains\Billing\Summary\Repositories;
 
 use App\Models\Billing\Invoice;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Illuminate\Support\Facades\DB;
 
 class SummaryRepository

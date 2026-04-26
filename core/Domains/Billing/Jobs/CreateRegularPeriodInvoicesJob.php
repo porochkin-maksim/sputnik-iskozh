@@ -2,12 +2,13 @@
 
 namespace Core\Domains\Billing\Jobs;
 
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Billing\Invoice\InvoiceFactory;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
+use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
-use Core\Queue\DispatchIfNeededTrait;
-use Core\Queue\QueueEnum;
+use App\Services\Queue\DispatchIfNeededTrait;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,14 +44,18 @@ class CreateRegularPeriodInvoicesJob implements ShouldQueue
         return $this->periodId;
     }
 
-    protected function process(): void
+    protected function process(
+        PeriodService $periodService,
+        InvoiceService $invoiceService,
+        InvoiceFactory $invoiceFactory,
+    ): void
     {
-        if ( ! PeriodLocator::PeriodService()->getById($this->periodId)) {
+        if ( ! $periodService->getById($this->periodId)) {
             throw new RuntimeException("Период не найден #{$this->periodId}");
         }
 
         if ( ! $this->acountIds) {
-            $accountIds = InvoiceLocator::InvoiceService()->getAccountsWithoutRegularInvoice($this->periodId)->getIds();
+            $accountIds = $invoiceService->getAccountsWithoutRegularInvoice($this->periodId)->getIds();
             if ( ! $accountIds) {
                 return;
             }
@@ -62,13 +67,13 @@ class CreateRegularPeriodInvoicesJob implements ShouldQueue
         }
 
         foreach ($this->acountIds as $acountId) {
-            $invoice = InvoiceLocator::InvoiceFactory()->makeDefault()
+            $invoice = $invoiceFactory->makeDefault()
                 ->setType(InvoiceTypeEnum::REGULAR)
                 ->setPeriodId($this->periodId)
                 ->setAccountId($acountId)
             ;
 
-            InvoiceLocator::InvoiceService()->save($invoice);
+            $invoiceService->save($invoice);
         }
     }
 }

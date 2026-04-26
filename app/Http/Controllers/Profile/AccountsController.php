@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Profile\Accounts\AccountResource;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Services\AccountService;
+use Core\Domains\Account\AccountService;
 use Illuminate\Http\JsonResponse;
 
 class AccountsController extends Controller
 {
-    private AccountService $accountService;
 
-    public function __construct()
+    public function __construct(
+        private readonly AccountService $accountService,
+    )
     {
-        $this->accountService = AccountLocator::AccountService();
     }
 
     public function show(int $id): JsonResponse

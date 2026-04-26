@@ -1,43 +1,45 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Access\Models\RoleDTO;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleDecorator;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountDTO;
-use Core\Domains\Counter\Collections\CounterCollection;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\User\Models\UserDTO;
-use Core\Domains\User\Services\UserDecorator;
-use Core\Domains\User\UserLocator;
-use Core\Session\SessionNames;
+use App\Locators\CounterLocator;
+use App\Session\SessionNames;
+use Core\Domains\Access\RoleDecorator;
+use Core\Domains\Access\RoleEntity;
+use Core\Domains\Access\RoleService;
+use Core\Domains\Account\AccountEntity;
+use Core\Domains\Account\AccountFactory;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Counter\CounterCollection;
+use Core\Domains\User\UserEntity;
+use Core\Domains\User\UserFactory;
+use Core\Domains\User\UserService;
+use Core\Domains\User\UserViewer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 abstract class lc
 {
-    private static UserDTO           $user;
-    private static RoleDTO           $role;
+    private static UserEntity        $user;
+    private static RoleEntity        $role;
     private static CounterCollection $counters;
-    private static AccountDTO        $account;
-    private static RoleDecorator     $roleDecorator;
-    private static UserDecorator     $userDecorator;
+    private static AccountEntity     $account;
+    private static RoleDecorator $roleDecorator;
+    private static UserViewer    $userDecorator;
 
     public static function isAuth(): bool
     {
         return (bool) Auth::id();
     }
 
-    public static function user(): UserDTO
+    public static function user(): UserEntity
     {
         if ( ! isset(self::$user)) {
-            $user = Auth::id() ? UserLocator::UserService()->getById(Auth::id()) : null;
+            $user = Auth::id() ? app(UserService::class)->getById(Auth::id()) : null;
             if ( ! $user) {
                 if (self::isCli()) {
-                    $user = UserLocator::UserFactory()->makeRobot();
+                    $user = app(UserFactory::class)->makeRobot();
                 }
                 else {
-                    $user = UserLocator::UserFactory()->makeUndefined();
+                    $user = app(UserFactory::class)->makeUndefined();
                 }
             }
             $user->setRole(self::role());
@@ -54,19 +56,21 @@ abstract class lc
         return App::runningInConsole();
     }
 
-    public static function account(): AccountDTO
+    public static function account(): AccountEntity
     {
         if ( ! isset(self::$account)) {
             $accountId = Session::get(SessionNames::ACCOUNT_ID);
-            $accounts  = Auth::id() ? AccountLocator::AccountService()->getByUserId(Auth::id()) : null;
+            $accountService = app(AccountService::class);
+            $accountFactory = app(AccountFactory::class);
+            $accounts  = Auth::id() ? $accountService->getByUserId(Auth::id()) : null;
             if ($accountId && $accounts !== null && in_array($accountId, $accounts->getIds())) {
-                $account = AccountLocator::AccountService()->getById($accountId);
+                $account = $accountService->getById($accountId);
             }
             else {
                 $account = $accounts?->first();
             }
             if ( ! $account) {
-                $account = AccountLocator::AccountFactory()->makeDefault();
+                $account = $accountFactory->makeDefault();
             }
 
             $account->setFraction($account->getUsers()->getById(Auth::id())?->getFraction());
@@ -91,12 +95,12 @@ abstract class lc
         return self::$counters;
     }
 
-    public static function role(): RoleDTO
+    public static function role(): RoleEntity
     {
         if ( ! isset(self::$role)) {
-            $role = RoleLocator::RoleService()->getByUserId(Auth::id());
+            $role = app(RoleService::class)->getByUserId(Auth::id());
             if ( ! $role) {
-                $role = new RoleDTO();
+                $role = new RoleEntity();
             }
             self::$role = $role;
         }
@@ -113,10 +117,10 @@ abstract class lc
         return self::$roleDecorator;
     }
 
-    public static function userDecorator(): UserDecorator
+    public static function userDecorator(): UserViewer
     {
         if ( ! isset(self::$userDecorator)) {
-            self::$userDecorator = UserLocator::UserDecorator(self::user());
+            self::$userDecorator = new UserViewer(self::user());
         }
 
         return self::$userDecorator;

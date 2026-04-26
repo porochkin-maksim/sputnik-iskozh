@@ -4,56 +4,52 @@ namespace App\Http\Controllers\Admin\Billing;
 
 use App\Exports\InvoicesExport\InvoicesExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Invoices\ListRequest;
-use App\Http\Requests\Admin\Invoices\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use App\Http\Resources\Admin\Invoices\InvoicesListResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
 use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Common\SelectResource;
+use Core\App\Billing\Invoice\GetListCommand;
+use Core\App\Billing\Invoice\SaveCommand;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Invoice\InvoiceFactory;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
 use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\Billing\Period\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodService;
 use Illuminate\Http\JsonResponse;
 use lc;
 use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
-    private InvoiceFactory $invoiceFactory;
-    private InvoiceService $invoiceService;
-    private PeriodService  $periodService;
-    private AccountService $accountService;
 
-    public function __construct()
+    public function __construct(
+        private readonly InvoiceFactory $invoiceFactory,
+        private readonly InvoiceService $invoiceService,
+        private readonly PeriodService  $periodService,
+        private readonly AccountService $accountService,
+        private readonly GetListCommand $getListCommand,
+        private readonly SaveCommand    $saveCommand,
+    )
     {
-        $this->invoiceFactory = InvoiceLocator::InvoiceFactory();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
-        $this->accountService = AccountLocator::AccountService();
     }
 
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_INVOICES);
+            return view('admin.pages.invoices');
         }
 
         abort(403);
@@ -84,24 +80,22 @@ class InvoiceController extends Controller
         return response()->json(new InvoiceResource($invoice));
     }
 
-    public function list(ListRequest $request): JsonResponse
+    public function list(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
-        $searcher = new InvoiceSearcher();
-        $searcher
-            ->setLimit($request->getLimit())
-            ->setOffset($request->getOffset())
-            ->setWithPeriod()
-            ->setWithAccount()
-            ->setWithClaims()
-        ;
-
-        $this->extracted($request, $searcher);
-
-        $invoices = $this->invoiceService->search($searcher);
+        $invoices = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSortField(),
+            $request->getSortOrder(),
+            $request->getStringOrNull('status'),
+            $request->getStringOrNull('period'),
+            $request->getStringOrNull('account'),
+            $request->getStringOrNull('type'),
+        );
 
         $periodSearcher = new PeriodSearcher();
         $periodSearcher
@@ -133,49 +127,44 @@ class InvoiceController extends Controller
         return response()->json($result);
     }
 
-    public function export(ListRequest $request)
+    public function export(DefaultRequest $request)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
-        $searcher = new InvoiceSearcher();
-        $searcher
-            ->setWithPeriod()
-            ->setWithAccount()
-            ->setWithClaims()
-            ->setWithPayments()
-            ->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_ASC)
-        ;
-
-        $this->extracted($request, $searcher);
-
-        $invoices = $this->invoiceService->search($searcher)->getItems();
+        $invoices = $this->getListCommand->execute(
+            null,
+            null,
+            Invoice::ID,
+            'asc',
+            $request->getStringOrNull('status'),
+            $request->getStringOrNull('period'),
+            $request->getStringOrNull('account'),
+            $request->getStringOrNull('type'),
+            true,
+        )->getItems();
 
         return Excel::download(new InvoicesExport($invoices), sprintf('счета-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
-        $invoice = $request->getId()
-            ? $this->invoiceService->getById($request->getId())
-            : $this->invoiceFactory->makeDefault()
-                ->setType(InvoiceTypeEnum::tryFrom($request->getType()))
-                ->setPeriodId($request->getPeriodId())
-                ->setAccountId($request->getAccountId())
-        ;
+        $invoice = $this->saveCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getInt('period_id'),
+            $request->getInt('account_id'),
+            $request->getIntOrNull('type'),
+            $request->getStringOrNull('name'),
+        );
 
         if ( ! $invoice) {
             abort(404);
         }
-
-        $invoice->setName($request->getName());
-
-        $invoice = $this->invoiceService->save($invoice);
 
         return response()->json([
             'invoice' => new InvoiceResource($invoice),
@@ -214,58 +203,12 @@ class InvoiceController extends Controller
         return CreateRegularPeriodInvoicesJob::dispatchIfNeeded($periodId);
     }
 
-    /**
-     * @param ListRequest     $request
-     * @param InvoiceSearcher $searcher
-     *
-     * @return void
-     */
-    public function extracted(ListRequest $request, InvoiceSearcher $searcher): void
-    {
-        if ($request->getSortField() && $request->getSortOrder()) {
-            $searcher->setSortOrderProperty(
-                $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
-            );
-        }
-        else {
-            $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
-        }
-
-        if ($request->getPaidStatus()) {
-            if ($request->getPaidStatus() === 'unpaid') {
-                $searcher->addWhere(Invoice::PAID, SearcherInterface::EQUALS, 0);
-            }
-            elseif ($request->getPaidStatus() === 'paid') {
-                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::GTE, Invoice::COST);
-            }
-            elseif ($request->getPaidStatus() === 'partial') {
-                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::LT, Invoice::COST)
-                    ->addWhere(Invoice::PAID, SearcherInterface::GT, 0)
-                ;
-            }
-        }
-
-        if ($request->getPeriodId()) {
-            $searcher->setPeriodId($request->getPeriodId());
-        }
-        if ($request->getAccount()) {
-            $accountIds = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getAccount()}%"),
-            )->getItems()->getIds();
-            $searcher->setAccountIds($accountIds);
-        }
-        if ($request->getType()) {
-            $searcher->setType($request->getType());
-        }
-    }
-
-    private function getViewInvoice(int $id): ?InvoiceDTO
+    private function getViewInvoice(int $id): ?InvoiceEntity
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
-        $invoice = $this->invoiceService->search(new InvoiceSearcher()
+        $invoice = $this->invoiceService->search((new InvoiceSearcher())
             ->setId($id)
             ->setWithClaims()
             ->setWithAccount()

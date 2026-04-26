@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\Images\StaticFileLocator;
-use Core\Session\CookieNames;
+use Core\Domains\Access\PermissionEnum;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\Images\StaticFileLocator;
+use App\Session\CookieNames;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 

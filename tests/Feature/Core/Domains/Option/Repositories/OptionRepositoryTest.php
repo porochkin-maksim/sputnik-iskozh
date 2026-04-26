@@ -4,7 +4,7 @@ namespace Tests\Feature\Core\Domains\Option\Repositories;
 
 use App\Models\Infra\Option;
 use Core\Db\Searcher\Collections\WhereCollection;
-use Core\Db\Searcher\SearcherInterface;
+use Core\Repositories\SearcherInterface;
 use Core\Domains\Option\Repositories\OptionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

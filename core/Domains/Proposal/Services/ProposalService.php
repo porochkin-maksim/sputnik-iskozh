@@ -2,12 +2,12 @@
 
 namespace Core\Domains\Proposal\Services;
 
-use App\Http\Requests\Public\Requests\ProposalCreateRequest;
 use Core\Domains\Enums\Emails;
 use Core\Domains\Proposal\Jobs\ProposalCreatedJob;
-use Core\Services\Files\Collections\TmpFiles;
-use Core\Services\Files\Models\TmpFile;
-use Core\Services\Files\Services\TmpFileService;
+use Core\Domains\Shared\ValueObjects\UploadedFile;
+use App\Services\Files\Collections\TmpFiles;
+use App\Services\Files\Models\TmpFile;
+use App\Services\Files\Services\TmpFileService;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
 
@@ -19,14 +19,17 @@ readonly class ProposalService
     {
     }
 
-    public function notify(ProposalCreateRequest $request): void
+    /**
+     * @param UploadedFile[] $files
+     */
+    public function notify(string $fullText, string $name, array $files): void
     {
         $attachFiles = new TmpFiles();
-        foreach ($request->allFiles() as $file) {
+        foreach ($files as $file) {
             $attachFiles->add(new TmpFile(
-                $file->getClientOriginalName(),
-                $this->tmpFileService->createTmpFile($file->getClientOriginalExtension(), $file->getContent()),
-                $file->getClientOriginalExtension(),
+                $file->getName(),
+                $this->tmpFileService->createTmpFile($file->getExtension(), $file->getContent()),
+                $file->getExtension(),
             ));
         }
 
@@ -34,12 +37,12 @@ readonly class ProposalService
 
         $pdf = new Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
         $pdf->SetProtection(['copy', 'print'], '', md5(random_bytes(10)));
-        $pdf->WriteHTML(nl2br($request->getFullText()));
+        $pdf->WriteHTML(nl2br($fullText));
         $pdf->Output($proposalFilePath, Destination::FILE);
 
         dispatch(new ProposalCreatedJob(
             $proposalFilePath,
-            $request->getName(),
+            $name,
             Emails::pressAddresses(),
             $attachFiles,
         ));

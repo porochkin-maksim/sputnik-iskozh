@@ -1,14 +1,13 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
 $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_COUNTERS);
 ?>
 
-@extends(ViewNames::LAYOUTS_PROFILE)
+@extends('layouts.profile-layout')
 
 @section(SectionNames::TITLE, $breadcrumbs->last()?->title)
 

@@ -3,7 +3,6 @@
 namespace App\Models\HelpDesk;
 
 use App\Models\AbstractModel;
-use App\Models\Interfaces\CastsInterface;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,10 +34,19 @@ class TicketComment extends AbstractModel
     public const string RELATION_TICKET = 'ticket';
     public const string RELATION_USER   = 'user';
 
+    public const array PROPERTIES_TO_TITLES = [
+        self::TICKET_ID   => 'Заявка',
+        self::USER_ID     => 'Пользователь',
+        self::COMMENT     => 'Комментарий',
+        self::IS_INTERNAL => 'Внутренний комментарий',
+    ];
+
     protected $guarded = [];
 
     protected $casts = [
-        self::IS_INTERNAL => CastsInterface::CAST_BOOLEAN,
+        self::TICKET_ID   => self::CAST_INTEGER,
+        self::USER_ID     => self::CAST_INTEGER,
+        self::IS_INTERNAL => self::CAST_BOOLEAN,
     ];
 
     // ========== Связи ==========
@@ -50,6 +58,6 @@ class TicketComment extends AbstractModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, self::USER_ID);
+        return $this->belongsTo(User::class, self::USER_ID)->withTrashed();
     }
 }

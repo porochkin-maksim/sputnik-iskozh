@@ -3,88 +3,55 @@
 namespace App\Http\Controllers\Public\Requests;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Public\Requests\CounterCreateRequest;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Factories\CounterHistoryFactory;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Counter\Services\CounterHistoryService;
-use Core\Domains\Counter\Services\CounterService;
-use Core\Domains\Counter\Services\FileService;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\Infra\HistoryChanges\Models\LogData;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Exception;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\DefaultRequest;
+use Core\App\CounterHistory\CreatePublicCounterHistoryCommand;
+use Core\Exceptions\ValidationException;
+use Throwable;
 
 class CounterController extends Controller
 {
-    private CounterService        $counterService;
-    private CounterHistoryService $counterHistoryService;
-    private CounterHistoryFactory $counterHistoryFactory;
-    private FileService           $fileService;
-    private HistoryChangesService $historyChangesService;
-    private AccountService        $accountService;
-
-    public function __construct()
+    public function __construct(
+        private readonly CreatePublicCounterHistoryCommand $command,
+    )
     {
-        $this->counterService        = CounterLocator::CounterService();
-        $this->counterHistoryService = CounterLocator::CounterHistoryService();
-        $this->counterHistoryFactory = CounterLocator::CounterHistoryFactory();
-        $this->fileService           = CounterLocator::FileService();
-        $this->historyChangesService = HistoryChangesLocator::HistoryChangesService();
-        $this->accountService        = AccountLocator::AccountService();
     }
 
-    public function create(CounterCreateRequest $request): void
+    /**
+     * @throws Throwable
+     * @throws ValidationException
+     */
+    public function create(DefaultRequest $request): void
     {
-        DB::beginTransaction();
-        try {
-            $history = $this->counterHistoryFactory->makeDefault()
-                ->setValue($request->getValue())
-            ;
-
-            if ($request->getAccount()) {
-                $account = $this->accountService->findByNumber($request->getAccount());
-                if ($account) {
-                    $counters = $this->counterService->getByAccountId($account->getId());
-                    $counter  = null;
-                    if ($request->getCounterId()) {
-                        $counter = $counters->getById($request->getCounterId());
-                    }
-                    elseif ($request->getCounter()) {
-                        $counter = $counters->filter(function (CounterDTO $counter) use ($request) {
-                            return $counter->getNumber() === $request->getCounter();
-                        })->first();
-                    }
-                    $counter = $counter ?? $counters->getInvoicing()->first();
-
-                    if ($counter) {
-                        $history->setCounterId($counter->getId());
-                    }
-                }
-            }
-
-            $history = $this->counterHistoryService->save($history);
-
-            $this->fileService->storeHistoryFile($request->getFile(), $history->getId());
-
-            $historyChanges = $this->historyChangesService->makeHistory()
-                ->setType(HistoryType::COUNTER)
-                ->setReferenceType(HistoryType::COUNTER_HISTORY)
-                ->setReferenceId($history->getId())
-                ->setLog(new LogData(Event::COMMON, null, $request->getFullText()))
-            ;
-
-            $this->historyChangesService->save($historyChanges);
-            DB::commit();
+        $account         = $request->getString('account');
+        $counter         = $request->getStringOrNull('counter');
+        $name            = $request->getStringOrNull('name');
+        $email           = $request->getStringOrNull('email');
+        $phone           = $request->getStringOrNull('phone');
+        $value           = $request->getInt('value');
+        $files           = $request->allFiles();
+        $attachmentLines = [];
+        $i               = 1;
+        foreach ($files as $file) {
+            $attachmentLines[] = sprintf('%d. %s', $i++, $file->getName());
         }
-        catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $fullText = sprintf(
+            "%s%s%s%s%s%s%s",
+            $account ? sprintf("Участок: %s\n", $account) : '',
+            $counter ? sprintf("Счётчик №: %s\n", $counter) : '',
+            $value ? sprintf("Показание: %s\n", $value) : '',
+            $name ? sprintf("Обращение от: %s\n", $name) : '',
+            $email ? sprintf("Почта для связи: %s\n", $email) : '',
+            $phone ? sprintf("Телефон для связи: %s\n", $phone) : '',
+            $attachmentLines ? sprintf("Вложения: \n%s\n", implode("\n", $attachmentLines)) : '',
+        );
+
+        $this->command->execute(
+            $account,
+            $request->getIntOrNull('counter_id'),
+            $counter,
+            $value,
+            $request->file('file'),
+            $fullText,
+        );
     }
 }

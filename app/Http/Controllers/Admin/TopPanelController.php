@@ -5,31 +5,26 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Accounts\AccountResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Payment;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Requests\RequestArgumentsEnum;
-use Core\Resources\RouteNames;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use App\Resources\RouteNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class TopPanelController extends Controller
 {
-    private AccountService $accountService;
-    private PaymentService $paymentService;
 
-    public function __construct()
+    public function __construct(
+        private readonly AccountService $accountService,
+        private readonly PaymentService $paymentService,
+    )
     {
-        $this->accountService = AccountLocator::AccountService();
-        $this->paymentService = PaymentLocator::PaymentService();
     }
 
     public function index(): JsonResponse
@@ -49,7 +44,7 @@ class TopPanelController extends Controller
         $result['canActions'] = $canActions;
 
         if ($roleDecorator->can(PermissionEnum::PAYMENTS_VIEW)) {
-            $searcher = new PaymentSearcher()
+            $searcher = (new PaymentSearcher())
                 ->setInvoiceId(null)
                 ->setWithFiles()
                 ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_ASC)
@@ -73,17 +68,17 @@ class TopPanelController extends Controller
             )->getItems();
 
             if ($accounts->count() === 1) {
-                $result = new AccountResource($accounts->first())->getViewUrl();
+                $result = (new AccountResource($accounts->first()))->getViewUrl();
             }
             elseif ($accounts->count() > 1) {
-                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
             }
             else {
-                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
             }
         }
         elseif ($userSearch) {
-            $result = route(RouteNames::ADMIN_USER_INDEX, [RequestArgumentsEnum::SEARCH => $userSearch]);
+            $result = route(RouteNames::ADMIN_USER_INDEX, ['search' => $userSearch]);
         }
 
         return $result;

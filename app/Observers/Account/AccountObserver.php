@@ -5,7 +5,7 @@ namespace App\Observers\Account;
 use App\Models\Account\Account;
 use App\Models\User;
 use App\Observers\AbstractObserver;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountObserver extends AbstractObserver

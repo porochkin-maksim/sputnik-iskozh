@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Services\Queue;
+
+use Core\Shared\Enums\EnumCommonTrait;
+
+enum QueueEnum: string
+{
+    use EnumCommonTrait;
+
+    case HIGH     = 'high';
+    case EMAIL    = 'email';
+    case DEFAULT  = 'default';
+    case LOW      = 'low';
+    case VERY_LOW = 'very-low';
+
+    /** @return string[] */
+    public static function values(): array
+    {
+        return array_map(static fn(QueueEnum $enum) => $enum->value, self::cases());
+    }
+
+    /** @return string[] */
+    public static function normalPriorityValues(): array
+    {
+        return array_map(static fn(QueueEnum $enum) => $enum->value, [self::EMAIL, self::DEFAULT, self::LOW,]);
+    }
+}

@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 $authRole = lc::roleDecorator();
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::METRICS)
-    @include(ViewNames::PARTIAL_METRICS)
+    @include('layouts.partial.metrics')
 @endsection
 
 @section(SectionNames::CONTENT)

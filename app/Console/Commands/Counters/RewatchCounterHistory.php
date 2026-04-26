@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Counters;
 
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Jobs\RewatchCounterHistoryChainJob;
-use Core\Domains\Counter\Models\CounterSearcher;
+use App\Locators\CounterLocator;
+use Core\Domains\Counter\CounterSearcher;
+use Core\Domains\CounterHistory\Jobs\RewatchCounterHistoryChainJob;
 use Illuminate\Console\Command;
 
 class RewatchCounterHistory extends Command

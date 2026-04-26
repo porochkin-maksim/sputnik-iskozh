@@ -3,44 +3,45 @@
 namespace App\Http\Controllers\Public\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\News\Enums\CategoryEnum;
-use Core\Domains\News\Factories\NewsFactory;
-use Core\Domains\News\NewsLocator;
-use Core\Domains\News\Requests\SearchRequest;
-use Core\Domains\News\Services\NewsService;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\Views\ViewNames;
-use Core\Responses\ResponsesEnum;
+use App\Http\Requests\DefaultRequest;
+use App\Http\Resources\Public\NewsResource;
+use App\Http\Resources\Shared\ResourseList;
+use App\Locators\News\UrlFactory;
+use Core\App\News\GetListCommand;
+use Core\Domains\News\NewsCategoryEnum;
+use Core\Domains\News\NewsFactory;
+use Core\Domains\News\NewsService;
+use Core\Exceptions\ValidationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
-    private NewsService $newsService;
-    private NewsFactory $newsFactory;
-
-    public function __construct()
+    public function __construct(
+        private readonly NewsService    $newsService,
+        private readonly NewsFactory    $newsFactory,
+        private readonly GetListCommand $getListCommand,
+        private readonly UrlFactory     $urlFactory,
+    )
     {
-        $this->newsService = NewsLocator::NewsService();
-        $this->newsFactory = NewsLocator::NewsFactory();
     }
 
     public function index(): View
     {
-        return view(ViewNames::PAGES_ANNOUNCEMENT_INDEX);
+        return view('public.announcement.index');
     }
 
     public function create(): JsonResponse
     {
-        $news = $this->newsFactory->makeDefault()
-            ->setCategory(CategoryEnum::ANNOUNCEMENT);
+        $news = $this->newsFactory
+            ->makeDefault()
+            ->setCategory(NewsCategoryEnum::ANNOUNCEMENT)
+        ;
 
         return response()->json([
-            ResponsesEnum::NEWS       => $news,
-            ResponsesEnum::CATEGORIES => CategoryEnum::json(),
+            'news'       => new NewsResource($news),
+            'categories' => NewsCategoryEnum::json(),
         ]);
     }
 
@@ -54,33 +55,33 @@ class AnnouncementController extends Controller
             abort(404);
         }
 
-        if ($news->getCategory() !== CategoryEnum::ANNOUNCEMENT) {
-            return redirect($news->getUrl());
+        if ($news->getCategory() !== NewsCategoryEnum::ANNOUNCEMENT) {
+            return redirect($this->urlFactory->makeUrl($news));
         }
 
-        return view(ViewNames::PAGES_NEWS_SHOW, compact('news', 'edit'));
+        return view('public.news.show', compact('news', 'edit'));
     }
 
-    public function list(SearchRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    public function list(DefaultRequest $request): JsonResponse
     {
         $canEdit = $this->canEdit();
-
-        $searcher = $request->searcher();
-        $searcher
-            ->setSortOrderProperty(News::PUBLISHED_AT, SearcherInterface::SORT_ORDER_DESC)
-            ->setCategory(CategoryEnum::ANNOUNCEMENT)
-            ->setWithFiles();
-
-        if ( ! $canEdit) {
-            $searcher->addWhere(News::PUBLISHED_AT, SearcherInterface::LTE, now()->format(DateTimeFormat::DATE_TIME_DEFAULT));
-        }
-
-        $news = $this->newsService->search($searcher);
+        $news    = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSearch(),
+            NewsCategoryEnum::ANNOUNCEMENT,
+            true,
+            null,
+            ! $canEdit,
+        );
 
         return response()->json([
-            ResponsesEnum::NEWS  => $news->getItems(),
-            ResponsesEnum::TOTAL => $news->getTotal(),
-            ResponsesEnum::EDIT  => $canEdit,
+            'news'  => new ResourseList($news->getItems(), NewsResource::class),
+            'total' => $news->getTotal(),
+            'edit'  => $canEdit,
         ]);
     }
 

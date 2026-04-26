@@ -4,49 +4,42 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Requests\Profile\Counters\AddHistoryRequest;
-use App\Http\Requests\Profile\Counters\CreateRequest;
 use App\Http\Resources\Profile\Counters\CounterHistoryListResource;
 use App\Http\Resources\Profile\Counters\CounterListResource;
 use App\Models\Counter\Counter;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Counter\Collections\CounterHistoryCollection;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Factories\CounterFactory;
-use Core\Domains\Counter\Factories\CounterHistoryFactory;
-use Core\Domains\Counter\Models\CounterHistorySearcher;
-use Core\Domains\Counter\Models\CounterSearcher;
-use Core\Domains\Counter\Services\CounterHistoryService;
-use Core\Domains\Counter\Services\CounterService;
-use Core\Domains\Counter\Services\FileService;
+use Core\App\Counter\CreateProfileCounterCommand;
+use Core\App\Counter\UpdateCounterIncrementCommand;
+use Core\App\CounterHistory\AddProfileCounterHistoryCommand;
+use Core\Domains\Counter\CounterSearcher;
+use Core\Domains\Counter\CounterService;
+use Core\Domains\CounterHistory\CounterHistoryCollection;
+use Core\Domains\CounterHistory\CounterHistorySearcher;
+use Core\Domains\CounterHistory\CounterHistoryService;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\Views\ViewNames;
+use Core\Exceptions\ValidationException;
+use Core\Repositories\SearcherInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use lc;
+use Throwable;
 
 class CounterController extends Controller
 {
-    private CounterService        $counterService;
-    private CounterFactory        $counterFactory;
-    private CounterHistoryService $counterHistoryService;
-    private CounterHistoryFactory $counterHistoryFactory;
-    private FileService           $fileService;
 
-    public function __construct()
+    public function __construct(
+        private readonly CounterService                  $counterService,
+        private readonly CounterHistoryService           $counterHistoryService,
+        private readonly CreateProfileCounterCommand     $createProfileCounterCommand,
+        private readonly UpdateCounterIncrementCommand   $updateCounterIncrementCommand,
+        private readonly AddProfileCounterHistoryCommand $addProfileCounterHistoryCommand,
+    )
     {
-        $this->counterService        = CounterLocator::CounterService();
-        $this->counterFactory        = CounterLocator::CounterFactory();
-        $this->counterHistoryService = CounterLocator::CounterHistoryService();
-        $this->counterHistoryFactory = CounterLocator::CounterHistoryFactory();
-        $this->fileService           = CounterLocator::FileService();
     }
 
     public function index(): View
     {
-        return view(ViewNames::PAGES_PROFILE_COUNTERS);
+        return view('home.pages.counters.index');
     }
 
     public function view(string $counterUid): View
@@ -92,7 +85,10 @@ class CounterController extends Controller
         ]);
     }
 
-    public function create(CreateRequest $request): void
+    /**
+     * @throws Throwable
+     */
+    public function create(DefaultRequest $request): void
     {
         $account = lc::account();
 
@@ -100,75 +96,38 @@ class CounterController extends Controller
             return;
         }
 
-        DB::beginTransaction();
-        try {
-            $counter = $this->counterFactory->makeDefault()
-                ->setNumber($request->getNumber())
-                ->setAccountId($account->getId())
-                ->setIncrement($request->getIncrement())
-                ->setExpireAt($request->getExpireAt())
-            ;
-
-            $counter = $this->counterService->save($counter);
-
-            $history = $this->counterHistoryFactory->makeDefault()
-                ->setCounterId($counter->getId())
-                ->setValue($request->getValue())
-            ;
-            $history = $this->counterHistoryService->save($history);
-
-            $this->fileService->storeHistoryFile($request->getHistoryFile(), $history->getId());
-            $passportFile = $request->getPassportFile();
-            if ($passportFile) {
-                $this->fileService->storePassportFile($passportFile, $counter->getId());
-            }
-            DB::commit();
-        }
-        catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $this->createProfileCounterCommand->execute(
+            $account->getId(),
+            $request->getString('number'),
+            abs($request->getInt('increment')),
+            $request->getDateOrNull('expireAt'),
+            $request->getInt('value'),
+            $request->file('file'),
+            $request->file('passportFile'),
+        );
     }
 
     public function incrementSave(DefaultRequest $request): void
     {
-        $counter = $this->counterService->getById($request->getInt('id'));
-
-        if ($counter && $counter->getAccountId() === lc::account()->getId()) {
-            DB::beginTransaction();
-            $counter->setIncrement($request->getInt('increment'));
-
-            $this->counterService->save($counter);
-            DB::commit();
-        }
+        $this->updateCounterIncrementCommand->execute(
+            $request->getInt('id'),
+            $request->getInt('increment'),
+            lc::account()->getId(),
+        );
     }
 
-    public function addValue(AddHistoryRequest $request): void
+    /**
+     * @throws Throwable
+     * @throws ValidationException
+     */
+    public function addValue(DefaultRequest $request): void
     {
-        DB::beginTransaction();
-        $counter = $this->counterService->getById($request->getCounterId());
-
-        if ( ! $counter) {
-            abort(404);
-        }
-
-        if ($counter->getAccountId() !== lc::account()->getId()) {
-            abort(403);
-        }
-
-        $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
-
-        $history = $this->counterHistoryFactory->makeDefault()
-            ->setPreviousId($lastHistory?->getId())
-            ->setPreviousValue($lastHistory?->getValue())
-            ->setCounterId($counter->getId())
-            ->setValue($request->getValue())
-        ;
-
-        $history = $this->counterHistoryService->save($history);
-
-        $this->fileService->storeHistoryFile($request->getFile(), $history->getId());
-        DB::commit();
+        $this->addProfileCounterHistoryCommand->execute(
+            $request->getInt('counter_id'),
+            $request->getInt('value'),
+            $request->file('file'),
+            lc::account()->getId(),
+        );
     }
 
     public function history(DefaultRequest $request): JsonResponse

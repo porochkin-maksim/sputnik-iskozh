@@ -3,40 +3,38 @@
 namespace App\Http\Controllers\Admin\Requests;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Counters\ConfirmRequest;
-use App\Http\Requests\Admin\Counters\LinkRequest;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
+use Core\App\CounterHistory\ConfirmCounterHistoriesCommand;
+use Core\App\CounterHistory\DeleteCounterHistoriesCommand;
+use Core\App\CounterHistory\LinkCounterHistoryCommand;
 use App\Models\Account\Account;
 use App\Models\Counter\Counter;
 use App\Models\Counter\CounterHistory;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Models\CounterHistorySearcher;
-use Core\Domains\Counter\Models\CounterSearcher;
-use Core\Domains\Counter\Services\CounterHistoryService;
-use Core\Domains\Counter\Services\CounterService;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Counter\CounterSearcher;
+use Core\Domains\Counter\CounterService;
+use Core\Domains\CounterHistory\CounterHistorySearcher;
+use Core\Domains\CounterHistory\CounterHistoryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use lc;
 use Throwable;
 
 class CounterController extends Controller
 {
-    private CounterHistoryService $counterHistoryService;
-    private CounterService        $counterService;
-    private AccountService        $accountService;
 
-    public function __construct()
+    public function __construct(
+        private readonly CounterHistoryService          $counterHistoryService,
+        private readonly CounterService                 $counterService,
+        private readonly AccountService                 $accountService,
+        private readonly LinkCounterHistoryCommand      $linkCounterHistoryCommand,
+        private readonly ConfirmCounterHistoriesCommand $confirmCounterHistoriesCommand,
+        private readonly DeleteCounterHistoriesCommand  $deleteCounterHistoriesCommand,
+    )
     {
-        $this->counterHistoryService = CounterLocator::CounterHistoryService();
-        $this->counterService        = CounterLocator::CounterService();
-        $this->accountService        = AccountLocator::AccountService();
     }
 
     public function list(DefaultRequest $request): JsonResponse
@@ -86,85 +84,40 @@ class CounterController extends Controller
         ]);
     }
 
-    public function link(LinkRequest $request): void
+    /**
+     * @throws Throwable
+     */
+    public function link(DefaultRequest $request): void
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
             abort(403);
         }
 
-        $history = $this->counterHistoryService->getById($request->getId());
-
-        if ( ! $history) {
-            abort(404);
-        }
-
-        $searcher = new CounterHistorySearcher();
-        $searcher
-            ->setCounterId($request->getCounterId())
-            ->setWithCounter()
-            ->setWithPrevious()
-            ->setVerified(false)
-            ->defaultSort()
-        ;
-        $counterHistory = $this->counterHistoryService->search($searcher)->getItems()->last();
-        if ($counterHistory) {
-            $history->setPreviousId($counterHistory->getId());
-        }
-
-        $history->setCounterId($request->getCounterId());
-        $this->counterHistoryService->save($history);
+        $this->linkCounterHistoryCommand->execute($request->getInt('id'), $request->getInt('counter_id'));
     }
 
-    public function confirm(ConfirmRequest $request): void
+    /**
+     * @throws Throwable
+     */
+    public function confirm(DefaultRequest $request): void
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
             abort(403);
         }
 
-        DB::beginTransaction();
-        try {
-            $searcher = new CounterHistorySearcher();
-            $searcher
-                ->setIds($request->getIds())
-                ->setVerified(false)
-                ->defaultSort()
-            ;
-
-            $counterHistories = $this->counterHistoryService->search($searcher)->getItems();
-
-            foreach ($counterHistories as $history) {
-                $history->setIsVerified(true);
-                $history = $this->counterHistoryService->save($history);
-
-                dispatch(new CheckClaimForCounterChangeJob($history->getId()));
-            }
-
-            DB::commit();
-        }
-        catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $this->confirmCounterHistoriesCommand->execute(array_map('intval', $request->getArray('ids')));
     }
 
-    public function confirmDelete(ConfirmRequest $request): void
+    /**
+     * @throws Throwable
+     */
+    public function confirmDelete(DefaultRequest $request): void
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_DROP)) {
             abort(403);
         }
 
-        DB::beginTransaction();
-        try {
-            foreach ($request->getIds() as $id) {
-                $this->counterHistoryService->deleteById($id);
-            }
-
-            DB::commit();
-        }
-        catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $this->deleteCounterHistoriesCommand->execute(array_map('intval', $request->getArray('ids')));
     }
 
     public function delete(int $id): bool

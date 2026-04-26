@@ -11,6 +11,7 @@ use App\Models\Billing\Period;
 use App\Models\Billing\Service;
 use App\Models\Counter\Counter;
 use App\Models\Counter\CounterHistory;
+use App\Models\Files\FileModel;
 use App\Models\HelpDesk\Ticket;
 use App\Models\HelpDesk\TicketCategory;
 use App\Models\HelpDesk\TicketService;
@@ -24,6 +25,7 @@ use App\Observers\Billing\PeriodObserver;
 use App\Observers\Billing\ServiceObserver;
 use App\Observers\Counter\CounterHistoryObserver;
 use App\Observers\Counter\CounterObserver;
+use App\Observers\Files\FileObserver;
 use App\Observers\HelpDesk\TicketCategoryObserver;
 use App\Observers\HelpDesk\TicketObserver;
 use App\Observers\HelpDesk\TicketServiceObserver;
@@ -47,5 +49,6 @@ class ObserverServiceProvider extends ServiceProvider
         Ticket::observe(TicketObserver::class);
         TicketCategory::observe(TicketCategoryObserver::class);
         TicketService::observe(TicketServiceObserver::class);
+        FileModel::observe(FileObserver::class);
     }
 }

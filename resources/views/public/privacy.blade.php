@@ -1,16 +1,15 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::CONTENT)
     @if(lc::roleDecorator()->isSuperAdmin() && false)
-        <page-editor :template="'{{ ViewNames::PAGES_PRIVACY }}'"></page-editor>
+        <page-editor :template="'public.privacy'"></page-editor>
     @endif
     <h1 class="page-title">Политика в&nbsp;отношении обработки персональных данных</h1>
     <div id="inputResult">
@@ -615,4 +614,3 @@ use Core\Resources\Views\ViewNames;
         </div>
     </div>
 @endsection
-

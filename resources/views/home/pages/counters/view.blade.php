@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Profile\Counters\CounterResource;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use Core\Domains\Counter\CounterEntity;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
 /**
- * @var CounterDTO $counter
+ * @var CounterEntity $counter
  */
 $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_COUNTER_VIEW, $counter);
 ?>
 
-@extends(ViewNames::LAYOUTS_PROFILE)
+@extends('layouts.profile-layout')
 
 @section(SectionNames::TITLE, $breadcrumbs->last()?->title)
 

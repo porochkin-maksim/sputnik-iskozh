@@ -4,20 +4,19 @@ namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
-use Core\Responses\ResponsesEnum;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Counter\CounterEntity;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 use lc;
 
 readonly class CounterResource extends AbstractResource
 {
     public function __construct(
-        private CounterDTO $counter,
+        private CounterEntity $counter,
     )
     {
     }
@@ -40,13 +39,13 @@ readonly class CounterResource extends AbstractResource
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
             'account'     => $this->counter->getAccount() ? new AccountResource($this->counter->getAccount()) : null,
             'actions'     => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::COUNTERS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::COUNTERS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::COUNTERS_DROP),
+                'view' => $access->can(PermissionEnum::COUNTERS_VIEW),
+                'edit' => $access->can(PermissionEnum::COUNTERS_EDIT),
+                'drop' => $access->can(PermissionEnum::COUNTERS_DROP),
             ],
             'viewUrl'     => route(RouteNames::ADMIN_COUNTER_VIEW, [$this->counter->getAccountId(), $this->counter->getId()]),
             'historyUrl'  => $this->counter->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     type     : HistoryType::COUNTER,
                     primaryId: $this->counter->getId(),
                 ) : null,

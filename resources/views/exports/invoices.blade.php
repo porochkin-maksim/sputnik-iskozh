@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Enums\DateTimeFormat;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 /**
  * @var InvoiceCollection $invoices

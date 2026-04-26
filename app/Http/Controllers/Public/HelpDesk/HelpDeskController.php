@@ -4,25 +4,24 @@ namespace App\Http\Controllers\Public\HelpDesk;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
+use Core\App\HelpDesk\Ticket\CreateCommand;
+use Core\App\HelpDesk\Ticket\CreateInput;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
 use Core\Domains\HelpDesk\Services\TicketCategoryService;
-use Core\Domains\HelpDesk\Services\TicketServiceService;
-use Core\Domains\HelpDesk\UseCases\Ticket\CreateInputDTO;
-use Core\Domains\HelpDesk\UseCases\Ticket\CreateUseCase;
+use Core\Domains\HelpDesk\Services\TicketCatalogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
+use Throwable;
 
 class HelpDeskController extends Controller
 {
-    private TicketCategoryService $ticketCategoryService;
-    private TicketServiceService  $ticketServiceService;
-
-    public function __construct()
+    public function __construct(
+        private readonly TicketCategoryService $ticketCategoryService,
+        private readonly TicketCatalogService  $ticketServiceService,
+        private readonly CreateCommand         $createCommand,
+    )
     {
-        $this->ticketCategoryService = HelpDeskServiceLocator::TicketCategoryService();
-        $this->ticketServiceService  = HelpDeskServiceLocator::TicketServiceService();
     }
 
     public function index()
@@ -77,7 +76,7 @@ class HelpDeskController extends Controller
 
     public function ticket(DefaultRequest $request, string $typeCode, string $categoryCode, string $serviceCode): JsonResponse
     {
-        $input = new CreateInputDTO(
+        $input = new CreateInput(
             typeCode    : $typeCode,
             categoryCode: $categoryCode,
             serviceCode : $serviceCode,
@@ -87,21 +86,18 @@ class HelpDeskController extends Controller
             contactPhone: $request->getStringOrNull('phone'),
             accountId   : $request->getIntOrNull('account_id'),
             userId      : Auth::id(),
-            files       : $request->file('files', []),
+            files       : $request->files('files', []),
         );
 
         try {
-            $ticket = new CreateUseCase()->execute($input);
+            $ticket = $this->createCommand->execute($input);
 
             return response()->json(['success' => true, 'message' => sprintf('Заявка %s успешно создана', $ticket->getId()), 'number' => $ticket->getId()]);
         }
-        catch (ValidationException $e) {
-            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
-        }
-        catch (\InvalidArgumentException $e) {
+        catch (InvalidArgumentException $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
         }
-        catch (\Throwable $e) {
+        catch (Throwable $e) {
             \Log::error($e);
 
             return response()->json(['success' => false, 'message' => 'Ошибка сервера'], 500);

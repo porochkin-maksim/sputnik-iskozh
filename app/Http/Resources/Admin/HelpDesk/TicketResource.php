@@ -5,13 +5,13 @@ namespace App\Http\Resources\Admin\HelpDesk;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Accounts\AccountResource;
 use App\Http\Resources\Admin\Users\UserResource;
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\HelpDesk\Models\TicketEntity;
+use App\Resources\RouteNames;
 
 readonly class TicketResource extends AbstractResource
 {
     public function __construct(
-        private TicketDTO $ticket,
+        private TicketEntity $ticket,
     )
     {
     }

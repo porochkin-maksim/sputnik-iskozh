@@ -3,17 +3,15 @@
 namespace App\Http\Resources\Profile\Counters;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Counter\CounterEntity;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 readonly class CounterResource extends AbstractResource
 {
     public function __construct(
-        private CounterDTO $counter,
+        private CounterEntity $counter,
     )
     {
     }

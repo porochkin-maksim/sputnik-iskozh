@@ -4,10 +4,10 @@ namespace App\Models\Counter;
 
 use App\Models\AbstractModel;
 use App\Models\Billing\ClaimToObject;
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use Carbon\Carbon;
-use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Domains\Billing\ClaimToObject\ClaimObjectTypeEnum;
+use Core\Domains\Files\FileTypeEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -68,8 +68,8 @@ class CounterHistory extends AbstractModel
 
     public function file(): HasOne
     {
-        return $this->hasOne(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::COUNTER_HISTORY->value)
+        return $this->hasOne(FileModel::class, FileModel::RELATED_ID)
+            ->where(FileModel::TYPE, FileTypeEnum::COUNTER_HISTORY->value)
         ;
     }
 

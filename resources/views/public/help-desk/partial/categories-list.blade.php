@@ -2,7 +2,7 @@
 
 use Core\Domains\HelpDesk\Collection\TicketCategoryCollection;
 use Core\Domains\HelpDesk\Models\TicketCategoryDTO;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 
 /**
  * @var TicketCategoryCollection $categories

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 
 ?>
 @include('public.partial.requests-grid', [

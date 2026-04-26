@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Core\Resources\Views\ViewNames;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +11,7 @@ class QueueController extends Controller
 {
     public function index()
     {
-        return view(ViewNames::ADMIN_PAGES_QUEUE);
+        return view('admin.pages.queue');
     }
 
     public function status()
@@ -41,17 +40,17 @@ class QueueController extends Controller
 
                 if ($pid) {
                     $workers[] = [
-                        'pid' => $pid,
-                        'queue' => $queue,
+                        'pid'    => $pid,
+                        'queue'  => $queue,
                         'uptime' => $uptime,
-                        'cpu' => $cpu
+                        'cpu'    => $cpu,
                     ];
                 }
             }
         }
 
         return response()->json([
-            'workers' => $workers
+            'workers' => $workers,
         ]);
     }
 
@@ -67,9 +66,9 @@ class QueueController extends Controller
 
             // Запускаем новый воркер
             Artisan::call('queue:worker:start', [
-                'queue' => $queue,
-                '--tries' => $tries,
-                '--timeout' => $timeout
+                'queue'     => $queue,
+                '--tries'   => $tries,
+                '--timeout' => $timeout,
             ]);
 
             return response()->json(['success' => true, 'message' => 'Воркер запущен']);

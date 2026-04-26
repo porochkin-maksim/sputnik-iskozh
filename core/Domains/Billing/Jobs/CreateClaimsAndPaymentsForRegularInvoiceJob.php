@@ -3,27 +3,29 @@
 namespace Core\Domains\Billing\Jobs;
 
 use App\Models\Billing\Period;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Collections\ClaimCollection;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
+use App\Services\Money\MoneyService;
+use App\Services\Queue\DispatchIfNeededTrait;
+use App\Services\Queue\QueueEnum;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Claim\ClaimCollection;
+use Core\Domains\Billing\Claim\ClaimEntity;
+use Core\Domains\Billing\Claim\ClaimFactory;
+use Core\Domains\Billing\Claim\ClaimSearcher;
+use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
+use Core\Domains\Billing\Payment\PaymentFactory;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceSearcher;
+use Core\Domains\Billing\Service\ServiceCatalogService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
-use Core\Queue\DispatchIfNeededTrait;
-use Core\Queue\QueueEnum;
-use Core\Services\Money\MoneyService;
+use Core\Repositories\SearcherInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -57,9 +59,18 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         return $this->invoiceId;
     }
 
-    protected function process(): void
+    protected function process(
+        InvoiceService $invoiceService,
+        ClaimService $claimService,
+        ClaimFactory $claimFactory,
+        AccountService $accountService,
+        ServiceCatalogService $serviceService,
+        PaymentFactory $paymentFactory,
+        PaymentService $paymentService,
+        PeriodService $periodService,
+    ): void
     {
-        $invoice = InvoiceLocator::InvoiceService()->getById($this->invoiceId);
+        $invoice = $invoiceService->getById($this->invoiceId);
         if ( ! $invoice) {
             throw new RuntimeException("Счёт не найден #{$this->invoiceId}");
         }
@@ -72,16 +83,12 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
             return;
         }
 
-        $claimService   = ClaimLocator::ClaimService();
-        $claimFactory   = ClaimLocator::ClaimFactory();
-        $accountService = AccountLocator::AccountService();
-
-        $oldClaims = $this->getMigratingClaimsToNewPeriod($invoice);
+        $oldClaims = $this->getMigratingClaimsToNewPeriod($invoice, $periodService, $invoiceService, $claimService);
 
         $oldAdvance = $oldClaims->getAdvancePayment();
-        $oldDebts   = $oldClaims->filter(fn(ClaimDTO $claim) => ! $claim->getService()?->getType()?->isAdvance());
+        $oldDebts   = $oldClaims->filter(fn(ClaimEntity $claim) => ! $claim->getService()?->getType()?->isAdvance());
 
-        $newPeriodServices = ServiceLocator::ServiceService()->search(new ServiceSearcher()
+        $newPeriodServices = $serviceService->search((new ServiceSearcher())
             ->setPeriodId($invoice->getPeriodId())
             ->setActive(true),
         )->getItems();
@@ -145,7 +152,7 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         }
 
         if ($oldAdvance?->getPaid()) {
-            $payment = PaymentLocator::PaymentFactory()
+            $payment = $paymentFactory
                 ->makeDefault()
                 ->setAccountId($invoice->getAccountId())
                 ->setInvoiceId($invoice->getId())
@@ -156,14 +163,19 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
                 ->setComment('Автоматический платёж из переплаты с предыдущего периода')
             ;
 
-            PaymentLocator::PaymentService()->save($payment);
+            $paymentService->save($payment);
         }
     }
 
     /**
      * Услуги переходящие в долг и оплату (аванс) нового счёта
      */
-    private function getMigratingClaimsToNewPeriod(InvoiceDTO $invoice): ClaimCollection
+    private function getMigratingClaimsToNewPeriod(
+        InvoiceEntity $invoice,
+        PeriodService $periodService,
+        InvoiceService $invoiceService,
+        ClaimService $claimService,
+    ): ClaimCollection
     {
         $result = new ClaimCollection();
 
@@ -173,13 +185,13 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
             ->setLimit(1)
         ;
 
-        $period = PeriodLocator::PeriodService()->search($periodSearcher)->getItems()->first();
+        $period = $periodService->search($periodSearcher)->getItems()->first();
 
         if ( ! $period) {
             return $result;
         }
 
-        $previousInvoice = InvoiceLocator::InvoiceService()->search(
+        $previousInvoice = $invoiceService->search(
             InvoiceSearcher::make()
                 ->setPeriodId($period->getId())
                 ->setAccountId($invoice->getAccountId())
@@ -193,15 +205,15 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 
         $previousInvoice->setPeriod($period);
 
-        return ClaimLocator::ClaimService()->search(new ClaimSearcher()
+        return $claimService->search((new ClaimSearcher())
             ->setWithService()
             ->setInvoiceId($previousInvoice->getId()),
         )->getItems()
-            ->map(static function (ClaimDTO $claim) use ($previousInvoice) {
+            ->map(static function (ClaimEntity $claim) use ($previousInvoice) {
                 return $claim->setInvoice($previousInvoice);
             })
-            ->filter(static function (ClaimDTO $claim) {
-                return $claim->getDelta() || ($claim->getService(true)?->getType()?->isAdvance());
+            ->filter(static function (ClaimEntity $claim) {
+                return $claim->getDelta() || ($claim->getService()?->getType()?->isAdvance());
             })
         ;
     }

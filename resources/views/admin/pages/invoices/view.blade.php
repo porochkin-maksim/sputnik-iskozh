@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 
 /**
@@ -11,7 +10,7 @@ use Diglactic\Breadcrumbs\Breadcrumbs;
  */
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     {{ Breadcrumbs::render(RouteNames::ADMIN_INVOICE_VIEW, $invoice->getInvoice()) }}

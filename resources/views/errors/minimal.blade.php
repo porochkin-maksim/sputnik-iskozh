@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\Views\SectionNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_APP)
+@extends('layouts.app-layout')
 
 @section(SectionNames::CONTENT)
     <div class="errors">

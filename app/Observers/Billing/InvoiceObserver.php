@@ -5,7 +5,7 @@ namespace App\Observers\Billing;
 use App\Models\Billing\Invoice;
 use App\Observers\AbstractObserver;
 use Core\Domains\Billing\Jobs\CreateClaimsAndPaymentsForRegularInvoiceJob;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class InvoiceObserver extends AbstractObserver

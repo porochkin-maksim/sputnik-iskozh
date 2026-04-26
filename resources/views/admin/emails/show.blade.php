@@ -1,13 +1,10 @@
 <?php declare(strict_types=1);
 
-use Carbon\Carbon;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\Views\SectionNames;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::TITLE, 'Письмо #' . $email->id)
 
@@ -19,7 +16,8 @@ use Core\Resources\Views\ViewNames;
                     <div class="card-header">
                         <h3 class="card-title">Детали письма #{{ $email->id }}</h3>
                         <div class="card-tools">
-                            <a href="{{ route('admin.emails.index') }}" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i> Назад</a>
+                            <a href="{{ route('admin.emails.index') }}" class="btn btn-secondary btn-sm"><i
+                                        class="fa fa-reply"></i> Назад</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -34,7 +32,9 @@ use Core\Resources\Views\ViewNames;
                             </tr>
                             <tr>
                                 <th>Получатель</th>
-                                <td>{{ $email->recipient_email }} @if($email->recipient_name) ({{ $email->recipient_name }}) @endif</td>
+                                <td>{{ $email->recipient_email }} @if($email->recipient_name)
+                                        ({{ $email->recipient_name }})
+                                    @endif</td>
                             </tr>
                             <tr>
                                 <th>Тема</th>
@@ -83,7 +83,9 @@ use Core\Resources\Views\ViewNames;
                             </tr>
                             <tr>
                                 <th>Метаданные</th>
-                                <td><pre>{{ json_encode($email->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre></td>
+                                <td>
+                                    <pre>{{ json_encode($email->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
+                                </td>
                             </tr>
                         </table>
 
@@ -102,7 +104,8 @@ use Core\Resources\Views\ViewNames;
                         <h3 class="card-title">Действия</h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.emails.destroy', $email) }}" method="POST" onsubmit="return confirm('Удалить письмо?')">
+                        <form action="{{ route('admin.emails.destroy', $email) }}" method="POST"
+                              onsubmit="return confirm('Удалить письмо?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-block">Удалить запись</button>

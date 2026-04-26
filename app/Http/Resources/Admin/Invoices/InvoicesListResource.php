@@ -4,11 +4,10 @@ namespace App\Http\Resources\Admin\Invoices;
 
 use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
+use Core\Domains\HistoryChanges\HistoryType;
 
 readonly class InvoicesListResource extends AbstractResource
 {
@@ -25,13 +24,13 @@ readonly class InvoicesListResource extends AbstractResource
         $result = [
             'invoices'   => [],
             'total'      => $this->totalInvoicesCount,
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type: HistoryType::INVOICE,
             ),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP),
+                'view' => $access->can(PermissionEnum::INVOICES_VIEW),
+                'edit' => $access->can(PermissionEnum::INVOICES_EDIT),
+                'drop' => $access->can(PermissionEnum::INVOICES_DROP),
             ],
         ];
 

@@ -1,0 +1,82 @@
+<?php declare(strict_types=1);
+
+namespace Core\Domains\Billing\Claim;
+
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Shared\Collections\Collection;
+use Core\Shared\Collections\CollectionTrait;
+
+/**
+ * @template-extends Collection<int, ClaimEntity>
+ */
+class ClaimCollection extends Collection
+{
+    use CollectionTrait;
+
+    /**
+     * @param array<int, ServiceTypeEnum> $orderedTypes
+     */
+    public function sortByServiceTypes(array $orderedTypes = [
+        ServiceTypeEnum::DEBT,
+        ServiceTypeEnum::MEMBERSHIP_FEE,
+        ServiceTypeEnum::TARGET_FEE,
+        ServiceTypeEnum::PERSONAL_FEE,
+        ServiceTypeEnum::ELECTRIC_TARIFF,
+        ServiceTypeEnum::OTHER,
+        ServiceTypeEnum::ADVANCE_PAYMENT,
+    ]): static {
+        return $this->sort(function (ClaimEntity $claim1, ClaimEntity $claim2) use ($orderedTypes) {
+            foreach ($orderedTypes as $type) {
+                $compareResult = $this->orderingFunction($type, $claim1->getService()?->getType(), $claim2->getService()?->getType());
+                if ($compareResult !== 0) {
+                    return $compareResult;
+                }
+            }
+
+            return 0;
+        });
+    }
+
+    public function findByServiceType(ServiceTypeEnum $type): ?ClaimEntity
+    {
+        foreach ($this as $claim) {
+            if ($claim->getService()?->getType() === $type) {
+                return $claim;
+            }
+        }
+
+        return null;
+    }
+
+    public function getByServiceType(ServiceTypeEnum $type): static
+    {
+        $result = new static();
+        foreach ($this as $claim) {
+            if ($claim->getService()?->getType() === $type) {
+                $result->add($claim);
+            }
+        }
+
+        return $result;
+    }
+
+    public function getAdvancePayment(): ?ClaimEntity
+    {
+        return $this->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
+    }
+
+    public function getDebts(): static
+    {
+        return $this->getByServiceType(ServiceTypeEnum::DEBT);
+    }
+
+    public function getCost(): float
+    {
+        $result = 0.0;
+        foreach ($this as $claim) {
+            $result += (float) $claim->getCost();
+        }
+
+        return $result;
+    }
+}

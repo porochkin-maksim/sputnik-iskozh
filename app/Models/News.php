@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Domains\Files\FileTypeEnum;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class News extends AbstractModel
 {
+    use SoftDeletes;
+
     public const string TABLE = 'news';
 
     public const string ID           = 'id';
@@ -31,7 +34,7 @@ class News extends AbstractModel
     public const string CATEGORY     = 'category';
     public const string PUBLISHED_AT = 'published_at';
 
-    public const RELATION_FILES = 'files';
+    public const string RELATION_FILES = 'files';
 
     protected $fillable = [
         self::TYPE,
@@ -51,8 +54,8 @@ class News extends AbstractModel
 
     public function files(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::NEWS->value)
-            ->orderBy(FILE::ORDER);
+        return $this->hasMany(FileModel::class, FileModel::RELATED_ID)
+            ->where(FileModel::TYPE, FileTypeEnum::NEWS->value)
+            ->orderBy(FileModel::ORDER);
     }
 }

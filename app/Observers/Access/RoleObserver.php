@@ -4,7 +4,7 @@ namespace App\Observers\Access;
 
 use App\Models\Access\Role;
 use App\Observers\AbstractObserver;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 
 class RoleObserver extends AbstractObserver
 {

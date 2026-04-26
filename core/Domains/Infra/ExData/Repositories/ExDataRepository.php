@@ -3,8 +3,8 @@
 namespace Core\Domains\Infra\ExData\Repositories;
 
 use App\Models\Infra\ExData;
-use Core\Db\RepositoryTrait;
-use Core\Db\Searcher\SearcherInterface;
+use Core\Repositories\SearcherTrait;
+use Core\Repositories\SearcherInterface;
 
 /**
  * @method ExData getById(?int $id, bool $cache = false)

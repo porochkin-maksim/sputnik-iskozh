@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Domains\Access\Enums\PermissionEnum;
+use App\Resources\Views\SectionNames;
+use Core\Domains\Access\PermissionEnum;
 
 ?>
 
-@extends(ViewNames::LAYOUTS_ADMIN)
+@extends('layouts.admin-layout')
 
 @section(SectionNames::CONTENT)
     <users-block></users-block>

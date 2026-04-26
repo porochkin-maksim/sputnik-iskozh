@@ -3,11 +3,10 @@
 namespace App\Http\Resources\Admin\Options;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\Option\Collections\OptionCollection;
-use Core\Responses\ResponsesEnum;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\Option\OptionCollection;
 use lc;
 
 readonly class OptionListResource extends AbstractResource
@@ -23,12 +22,12 @@ readonly class OptionListResource extends AbstractResource
         $access = lc::roleDecorator();
         $result = [
             'options'    => [],
-            'historyUrl' => HistoryChangesLocator::route(
-                type: HistoryType::INVOICE,
+            'historyUrl' => HistoryChangesRoute::make(
+                type: HistoryType::OPTION,
             ),
             'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::OPTIONS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::OPTIONS_EDIT),
+                'view' => $access->can(PermissionEnum::OPTIONS_VIEW),
+                'edit' => $access->can(PermissionEnum::OPTIONS_EDIT),
             ],
         ];
 
