@@ -1,16 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File\Collections;
+namespace Core\Domains\Files\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
-use Core\Domains\File\Models\FolderDTO;
+use Core\Domains\Files\Models\FolderDTO;
 use Illuminate\Support\Collection;
 
 /**
  * @template-extends Collection<int, FolderDTO>
  */
-class FolderCollection extends Collection implements CollectionInterface
+class FolderCollection extends Collection
 {
     use CollectionTrait;
 
