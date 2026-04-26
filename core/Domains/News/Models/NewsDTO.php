@@ -5,7 +5,7 @@ namespace Core\Domains\News\Models;
 use Carbon\Carbon;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Files\Collections\FileCollection;
-use Core\Domains\Files\Entities\FileDTO;
+use Core\Domains\Files\Entities\FileEntity;
 use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\NewsLocator;
 use Core\Enums\DateTimeFormat;
@@ -24,7 +24,7 @@ class NewsDTO implements \JsonSerializable
     private ?Carbon       $publishedAt = null;
 
     /**
-     * @var FileDTO[]
+     * @var FileEntity[]
      */
     private array $files = [];
 
@@ -118,7 +118,7 @@ class NewsDTO implements \JsonSerializable
     }
 
     /**
-     * @param FileDTO[] $files
+     * @param FileEntity[] $files
      */
     public function setFiles(array $files): static
     {
