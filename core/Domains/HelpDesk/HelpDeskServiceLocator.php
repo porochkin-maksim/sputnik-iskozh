@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk;
 
-use Core\Domains\Files\FileLocator;
+use App\Locators\FileLocator;
 use Core\Domains\HelpDesk\Factories\TicketCategoryFactory;
 use Core\Domains\HelpDesk\Factories\TicketCommentFactory;
 use Core\Domains\HelpDesk\Factories\TicketFactory;
@@ -14,8 +14,8 @@ use Core\Domains\HelpDesk\Repositories\TicketServiceRepository;
 use Core\Domains\HelpDesk\Services\FileService;
 use Core\Domains\HelpDesk\Services\TicketCategoryService;
 use Core\Domains\HelpDesk\Services\TicketCommentService;
-use Core\Domains\HelpDesk\Services\TicketServiceService;
 use Core\Domains\HelpDesk\Services\TicketService;
+use Core\Domains\HelpDesk\Services\TicketServiceService;
 
 class HelpDeskServiceLocator
 {
