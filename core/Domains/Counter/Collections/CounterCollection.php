@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Counter\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Counter\Models\CounterDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, CounterDTO>
  */
-class CounterCollection extends Collection implements CollectionInterface
+class CounterCollection extends Collection
 {
     use CollectionTrait;
 

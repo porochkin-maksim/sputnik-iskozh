@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File;
+namespace Core\Domains\Folders;
 
-use Core\Domains\File\Factories\FolderFactory;
-use Core\Domains\File\Repositories\FolderRepository;
-use Core\Domains\File\Services\FolderService;
+use Core\Domains\Files\Factories\FolderFactory;
+use Core\Domains\Files\FileLocator;
+use Core\Domains\Folders\Repositories\FolderRepository;
+use Core\Domains\Folders\Services\FolderService;
 
 abstract class FolderLocator
 {

@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File\Services;
+namespace Core\Domains\Folders\Services;
 
-use App\Models\File\Folder;
-use Core\Domains\File\Collections\FolderCollection;
-use Core\Domains\File\Factories\FolderFactory;
-use Core\Domains\File\Models\FileSearcher;
-use Core\Domains\File\Models\FolderDTO;
-use Core\Domains\File\Models\FolderSearcher;
-use Core\Domains\File\Repositories\FolderRepository;
-use Core\Domains\File\Responses\FolderSearchResponse;
+use Core\Domains\Files\Collections\FolderCollection;
+use Core\Domains\Files\Factories\FolderFactory;
+use Core\Domains\Files\Models\FileSearcher;
+use Core\Domains\Files\Models\FolderDTO;
+use Core\Domains\Files\Models\FolderSearcher;
+use Core\Domains\Files\Responses\FolderSearchResponse;
+use Core\Domains\Files\Services\FileService;
+use Core\Domains\Folders\Repositories\FolderRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

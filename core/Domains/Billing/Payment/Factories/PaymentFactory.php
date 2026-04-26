@@ -7,7 +7,7 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 use Core\Domains\Billing\Payment\Models\PaymentDTO;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class PaymentFactory

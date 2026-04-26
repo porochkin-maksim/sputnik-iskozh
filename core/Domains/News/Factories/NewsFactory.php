@@ -5,9 +5,9 @@ namespace Core\Domains\News\Factories;
 use App\Models\News;
 use Carbon\Carbon;
 use Core\Domains\News\Enums\CategoryEnum;
-use Core\Enums\DateTimeFormat;
-use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\News\Models\NewsDTO;
+use Core\Enums\DateTimeFormat;
+use Core\Infrastructure\File\FileFactory;
 
 readonly class NewsFactory
 {

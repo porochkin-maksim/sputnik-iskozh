@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Infra\HistoryChanges\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, HistoryChangesDTO>
  */
-class HistoryChangesCollection extends Collection implements CollectionInterface
+class HistoryChangesCollection extends Collection
 {
     use CollectionTrait;
 

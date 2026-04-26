@@ -7,7 +7,7 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 
 class CounterFactory
 {

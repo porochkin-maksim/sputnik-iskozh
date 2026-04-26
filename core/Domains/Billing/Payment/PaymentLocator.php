@@ -6,7 +6,7 @@ use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Repositories\PaymentRepository;
 use Core\Domains\Billing\Payment\Services\FileService;
 use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 
 abstract class PaymentLocator
 {

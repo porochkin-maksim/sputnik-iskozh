@@ -2,7 +2,7 @@
 
 namespace Core\Domains\News;
 
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Core\Domains\News\Factories\NewsFactory;
 use Core\Domains\News\Factories\UrlFactory;
 use Core\Domains\News\Repositories\FileRepository;

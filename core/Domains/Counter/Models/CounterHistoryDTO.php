@@ -5,7 +5,7 @@ namespace Core\Domains\Counter\Models;
 use Carbon\Carbon;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Files\Entities\FileDTO;
 
 class CounterHistoryDTO
 {

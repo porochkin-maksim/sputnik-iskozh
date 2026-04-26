@@ -2,10 +2,10 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Models\FileDTO;
-use Core\Domains\File\Services\FileService as BaseFileService;
-use Illuminate\Http\UploadedFile;
+use Core\Domains\Files\Entities\FileDTO;
+use Core\Domains\Files\Enums\FileTypeEnum;
+use Core\Domains\Files\Services\FileService as BaseFileService;
+use Core\Domains\Shared\ValueObjects\UploadedFile;
 
 class FileService
 {

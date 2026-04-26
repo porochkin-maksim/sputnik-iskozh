@@ -2,7 +2,6 @@
 
 namespace Core\Domains\HelpDesk\Collection;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\HelpDesk\Models\TicketCommentDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, TicketCommentDTO>
  */
-class TicketCommentCollection extends Collection implements CollectionInterface
+class TicketCommentCollection extends Collection
 {
     use CollectionTrait;
 

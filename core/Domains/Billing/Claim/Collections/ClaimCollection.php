@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Billing\Claim\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
@@ -11,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, ClaimDTO>
  */
-class ClaimCollection extends Collection implements CollectionInterface
+class ClaimCollection extends Collection
 {
     use CollectionTrait;
 

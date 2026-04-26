@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Files\Entities\FileDTO;
 
 class PaymentDTO
 {

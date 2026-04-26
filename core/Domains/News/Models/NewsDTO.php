@@ -3,13 +3,13 @@
 namespace Core\Domains\News\Models;
 
 use Carbon\Carbon;
-use Core\Domains\File\Collections\Files;
+use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Domains\Files\Collections\FileCollection;
+use Core\Domains\Files\Entities\FileDTO;
 use Core\Domains\News\Enums\CategoryEnum;
 use Core\Domains\News\NewsLocator;
 use Core\Enums\DateTimeFormat;
 use Core\Helpers\DateTime\DateTimeHelper;
-use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Models\FileDTO;
 
 class NewsDTO implements \JsonSerializable
 {
@@ -112,9 +112,9 @@ class NewsDTO implements \JsonSerializable
         return $this;
     }
 
-    public function getFiles(): Files
+    public function getFiles(): FileCollection
     {
-        return new Files($this->files ?? []);
+        return new FileCollection($this->files ?? []);
     }
 
     /**
@@ -150,7 +150,7 @@ class NewsDTO implements \JsonSerializable
         return NewsLocator::UrlFactory()->makeUrl($this);
     }
 
-    public function getImages(): Files
+    public function getImages(): FileCollection
     {
         $result = [];
         foreach ($this->getFiles() as $file) {
@@ -159,7 +159,7 @@ class NewsDTO implements \JsonSerializable
             }
         }
 
-        return new Files($result);
+        return new FileCollection($result);
     }
 
     public function getArticleAsText(): string

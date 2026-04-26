@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Files\Entities\FileDTO;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;

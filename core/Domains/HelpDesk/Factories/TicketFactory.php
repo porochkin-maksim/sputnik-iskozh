@@ -4,7 +4,7 @@ namespace Core\Domains\HelpDesk\Factories;
 
 use App\Models\HelpDesk\Ticket;
 use Core\Domains\Account\AccountLocator;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Core\Domains\HelpDesk\Collection\TicketCollection;
 use Core\Domains\HelpDesk\HelpDeskServiceLocator;
 use Core\Domains\HelpDesk\Models\TicketDTO;

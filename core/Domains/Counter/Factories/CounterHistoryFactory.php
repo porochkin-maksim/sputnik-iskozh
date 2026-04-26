@@ -9,7 +9,7 @@ use Core\Domains\Billing\Claim\ClaimLocator;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterHistoryDTO;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Illuminate\Database\Eloquent\Collection;
 
 class CounterHistoryFactory

@@ -4,7 +4,7 @@ namespace Core\Domains\HelpDesk\UseCases\Ticket;
 
 use AllowDynamicProperties;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Domains\Files\Enums\FileTypeEnum;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;

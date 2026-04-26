@@ -8,7 +8,7 @@ use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Files\Entities\FileDTO;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Helpers\DateTime\DateTimeHelper;

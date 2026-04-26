@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Billing\Acquiring\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Billing\Acquiring\Models\AcquiringDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, AcquiringDTO>
  */
-class AcquiringCollection extends Collection implements CollectionInterface
+class AcquiringCollection extends Collection
 {
     use CollectionTrait;
 

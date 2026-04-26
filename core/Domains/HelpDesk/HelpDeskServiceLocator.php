@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk;
 
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Core\Domains\HelpDesk\Factories\TicketCategoryFactory;
 use Core\Domains\HelpDesk\Factories\TicketCommentFactory;
 use Core\Domains\HelpDesk\Factories\TicketFactory;

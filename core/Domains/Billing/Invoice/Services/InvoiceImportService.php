@@ -76,7 +76,6 @@ class InvoiceImportService
                 ->setWithAccount(),
         )
             ->getItems()
-            ->setCheckClass(false)
             ->mapWithKeys(function (InvoiceDTO $invoiceDTO) {
                 /** @var AccountDTO $account */
                 $account = $invoiceDTO->getAccount();

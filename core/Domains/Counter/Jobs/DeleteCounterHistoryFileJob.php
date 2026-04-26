@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Counter\Jobs;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\FileLocator;
-use Core\Domains\File\Models\FileSearcher;
+use Core\Domains\Files\Enums\FileTypeEnum;
+use Core\Domains\Files\FileLocator;
+use Core\Domains\Files\Models\FileSearcher;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

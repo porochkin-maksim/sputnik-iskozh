@@ -9,7 +9,7 @@ use Core\Domains\Counter\Repositories\CounterRepository;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 
 class CounterLocator
 {

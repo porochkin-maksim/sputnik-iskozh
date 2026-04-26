@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\Domains\File\Repositories;
+namespace Core\Domains\Folders\Repositories;
 
 use App\Models\File\Folder;
 use Core\Db\RepositoryTrait;
