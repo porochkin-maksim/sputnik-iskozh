@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\Files\Entities\FileDTO;
+use Core\Domains\Files\Entities\FileEntity;
 use Core\Domains\Files\Enums\FileTypeEnum;
 use Core\Domains\Files\Services\FileService as BaseFileService;
 use Core\Domains\Shared\ValueObjects\UploadedFile;
@@ -17,7 +17,7 @@ class FileService
     {
     }
 
-    public function store(UploadedFile $file, int $relatedId, FileTypeEnum $type = FileTypeEnum::TICKET): FileDTO
+    public function store(UploadedFile $file, int $relatedId, FileTypeEnum $type = FileTypeEnum::TICKET): FileEntity
     {
         $dto = $this->fileService->store($file, self::FILE_DIR, false);
         $dto->setType($type)
@@ -29,7 +29,7 @@ class FileService
         return $dto;
     }
 
-    public function getById(int $id): ?FileDTO
+    public function getById(int $id): ?FileEntity
     {
         return $this->fileService->getById($id);
     }
@@ -39,7 +39,7 @@ class FileService
         return $this->fileService->deleteById($id);
     }
 
-    public function save(FileDTO $file): FileDTO
+    public function save(FileEntity $file): FileEntity
     {
         return $this->fileService->save($file);
     }

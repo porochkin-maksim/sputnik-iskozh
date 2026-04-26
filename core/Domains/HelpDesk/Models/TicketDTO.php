@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\Files\Entities\FileDTO;
+use Core\Domains\Files\Entities\FileEntity;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
@@ -35,9 +35,9 @@ class TicketDTO
     /** @var TicketCommentDTO[] */
     private array $comments = [];
 
-    /** @var FileDTO[] */
+    /** @var FileEntity[] */
     private array $files = [];
-    /** @var FileDTO[] */
+    /** @var FileEntity[] */
     private array $resultFiles = [];
 
     private ?AccountDTO        $account  = null;
@@ -231,7 +231,7 @@ class TicketDTO
     }
 
     /**
-     * @param FileDTO[] $files
+     * @param FileEntity[] $files
      */
     public function setFiles(array $files): static
     {
