@@ -29,11 +29,13 @@
             </div>
             <input class="d-none"
                    type="file"
+                   accept="*/*"
                    ref="fileElem"
                    multiple
                    @change="uploadFile">
             <input class="d-none"
                    type="file"
+                   accept="*/*"
                    ref="replaceFileElem"
                    multiple
                    @change="uploadReplacedFile">
@@ -254,6 +256,7 @@ export default {
         }
         this.loadFoldersList();
         this.loadFilesList();
+        this.loadFolderPath();
     },
     data () {
         return {
@@ -313,10 +316,8 @@ export default {
             });
         },
         loadFoldersList () {
-            window.axios[Url.Routes.foldersList.method](Url.Routes.foldersList.uri, {
-                params: {
-                    parent_id: this.parentId,
-                },
+            Url.RouteFunctions.foldersList({
+                parent_id: this.parentId,
             }).then(response => {
                 this.folders = response.data.folders;
                 this.edit    = response.data.edit;
@@ -381,6 +382,15 @@ export default {
             this.files   = [];
             this.loadFoldersList();
             this.loadFilesList();
+            this.loadFolderPath();
+        },
+
+        loadFolderPath () {
+            Url.RouteFunctions.foldersInfo(this.selectedFolder?.id ? this.selectedFolder?.id : '0').then(response => {
+                $('.breadcrumb').html(response.data.breadcrumbs);
+            }).catch(response => {
+                this.parseResponseErrors(response);
+            });
         },
 
         /**

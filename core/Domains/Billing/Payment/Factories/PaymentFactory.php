@@ -7,7 +7,7 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Payment\Collections\PaymentCollection;
 use Core\Domains\Billing\Payment\Models\PaymentDTO;
-use Core\Domains\File\FileLocator;
+use Core\Domains\Files\FileLocator;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class PaymentFactory
@@ -39,7 +39,7 @@ readonly class PaymentFactory
             Payment::COMMENT    => $dto->getComment(),
             Payment::NAME       => $dto->getName(),
             Payment::DATA       => $dto->getData(),
-            Payment::PAYED_AT   => $dto->getPayedAt() ?: $dto->getCreatedAt(),
+            Payment::PAID_AT    => $dto->getPaidAt() ? : $dto->getCreatedAt(),
         ]);
     }
 
@@ -59,7 +59,7 @@ readonly class PaymentFactory
             ->setUpdatedAt($model->updated_at)
             ->setName($model->name)
             ->setData($model->data)
-            ->setPayedAt($model->payed_at)
+            ->setPaidAt($model->paid_at)
             ->setAccountNumber($model->account_number)
         ;
 

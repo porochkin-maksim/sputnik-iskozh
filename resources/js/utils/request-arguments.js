@@ -41,6 +41,7 @@ export default {
     cost         : 'cost',
     payed        : 'payed',
     periodId     : 'period_id',
+    invoice      : 'invoice',
     invoiceId    : 'invoice_id',
     serviceId    : 'service_id',
     accountId    : 'account_id',

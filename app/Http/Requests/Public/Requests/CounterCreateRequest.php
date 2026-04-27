@@ -4,21 +4,20 @@ namespace App\Http\Requests\Public\Requests;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\Enums\Regexp;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\UploadedFile;
 
 class CounterCreateRequest extends AbstractRequest
 {
-    private const ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
+    private const string ACCOUNT_REGEXP = Regexp::ACCOUNT_NAME;
 
-    private const EMAIL      = RequestArgumentsEnum::EMAIL;
-    private const PHONE      = RequestArgumentsEnum::PHONE;
-    private const NAME       = RequestArgumentsEnum::NAME;
-    private const COUNTER    = RequestArgumentsEnum::COUNTER;
-    private const COUNTER_ID = RequestArgumentsEnum::COUNTER_ID;
-    private const ACCOUNT    = RequestArgumentsEnum::ACCOUNT;
-    private const VALUE      = RequestArgumentsEnum::VALUE;
-    private const FILE       = RequestArgumentsEnum::FILE;
+    private const string EMAIL      = 'email';
+    private const string PHONE      = 'phone';
+    private const string NAME       = 'name';
+    private const string COUNTER    = 'counter';
+    private const string COUNTER_ID = 'counter_id';
+    private const string ACCOUNT    = 'account';
+    private const string VALUE      = 'value';
+    private const string FILE       = 'file';
 
     public function rules(): array
     {

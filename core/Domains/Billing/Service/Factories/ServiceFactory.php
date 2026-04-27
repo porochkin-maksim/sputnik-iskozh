@@ -11,10 +11,10 @@ readonly class ServiceFactory
 {
     public function makeDefault(): ServiceDTO
     {
-        return (new ServiceDTO())
+        return new ServiceDTO()
             ->setId(null)
             ->setPeriodId(null)
-            ->setType(ServiceTypeEnum::TARGET_FEE)
+            ->setType(ServiceTypeEnum::OTHER)
             ->setName('')
             ->setIsActive(true)
             ->setCost(0);
@@ -52,8 +52,8 @@ readonly class ServiceFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        if (isset($model->getRelations()[Service::PERIOD])) {
-            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Service::PERIOD)));
+        if (isset($model->getRelations()[Service::RELATION_PERIOD])) {
+            $result->setPeriod(PeriodLocator::PeriodFactory()->makeDtoFromObject($model->getRelation(Service::RELATION_PERIOD)));
         }
 
         return $result;

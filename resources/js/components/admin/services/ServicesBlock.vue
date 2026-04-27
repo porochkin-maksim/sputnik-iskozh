@@ -20,9 +20,9 @@
                 :url="historyUrl" />
         </div>
         <div>
-            <div v-for="period in periods">
-                <div class="fw-bold mb-2">
-                    Период «{{ period.value }}»
+            <div v-for="period in periodsInfo.periods" :key="period.id">
+                <div class="mb-2">
+                    <b>Период «{{ period.name }}»</b> <span class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
                 </div>
                 <table class="table table-sm">
                     <thead>
@@ -35,11 +35,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.key && parseInt(s.periodId) === parseInt(period.key))"
+                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.id && parseInt(s.periodId) === parseInt(period.id))"
                         :key="service.id">
                         <td>{{ service.id }}</td>
                         <td>{{ service.name }}</td>
-                        <td>{{ $formatMoney(service.cost) }}</td>
+                        <td>{{ formatMoney(service.cost) }}</td>
                         <td>{{ service.typeName }}</td>
                         <td>
                             <div class="d-flex justify-content-center">
@@ -52,7 +52,7 @@
                                        role="button"
                                        :id="'dropDown'+index+vueId"
                                        data-bs-toggle="dropdown"
-                                       :class="{'disabled opacity-50': !(actions.edit || actions.drop)}"
+                                       :class="{'disabled opacity-0': !(service.actions.edit || service.actions.drop)}"
                                        aria-expanded="false">
                                         <i class="fa fa-bars"></i>
                                     </a>
@@ -89,105 +89,96 @@
         @update:model-value="onServiceUpdated" />
 </template>
 
-<script>
-import ResponseError     from '../../../mixin/ResponseError.js';
-import Url               from '../../../utils/Url.js';
-import HistoryBtn        from '../../common/HistoryBtn.vue';
-import ServiceEditDialog from './ServiceEditDialog.vue';
+<script setup>
+import {
+    ref,
+    onMounted,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import ServiceEditDialog    from './ServiceEditDialog.vue';
+import {
+    ApiAdminServiceList,
+    ApiAdminServiceCreate,
+    ApiAdminServiceDelete,
+}                           from '@api';
+import Url                  from '@utils/Url.js';
 
-export default {
-    name      : 'ServicesBlock',
-    components: {
-        HistoryBtn,
-        ServiceEditDialog,
-    },
-    mixins    : [ResponseError],
-    data () {
-        return {
-            services       : [],
-            periods        : [],
-            types          : [],
-            historyUrl     : null,
-            Url            : Url,
-            loaded         : false,
-            actions        : {},
-            selectedService: null,
-            showDialog     : false,
-            vueId          : null,
-        };
-    },
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-        this.listAction();
-    },
-    methods: {
-        showCreateDialog () {
-            window.axios[Url.Routes.adminServiceCreate.method](Url.Routes.adminServiceCreate.uri)
-                .then(response => {
-                    this.selectedService = response.data.service;
-                    this.showDialog      = true;
-                })
-                .catch(response => {
-                    this.parseResponseErrors(response);
-                });
-        },
-        showEditDialog (service) {
-            if (!this.actions.edit) {
-                return;
-            }
-            this.selectedService = service;
-            this.showDialog      = true;
-        },
-        onServiceUpdated () {
-            this.listAction();
-        },
-        deleteAction (service) {
-            if (!confirm('Удалить услугу?')) {
-                return;
-            }
+defineOptions({
+    name: 'ServicesBlock',
+});
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminServiceDelete, {
-                id: service.id,
-            });
-            window.axios[Url.Routes.adminServiceDelete.method](uri)
-                .then(() => {
-                    this.services = this.services.filter(s => s.id !== service.id);
-                    this.showInfo('Услуга удалена');
-                })
-                .catch(response => {
-                    this.parseResponseErrors(response);
-                });
-        },
-        listAction () {
-            window.axios[Url.Routes.adminServiceList.method](Url.Routes.adminServiceList.uri)
-                .then(response => {
-                    this.services   = response.data.services || [];
-                    this.actions    = response.data.actions;
-                    this.types      = response.data.types;
-                    this.periods    = response.data.periods;
-                    this.historyUrl = response.data.historyUrl;
-                })
-                .catch(response => {
-                    this.parseResponseErrors(response);
-                })
-                .then(() => {
-                    this.loaded = true;
-                });
-        },
-    },
+const { parseResponseErrors, showInfo } = useResponseError();
+const { formatMoney, formatDate }       = useFormat();
+
+const services        = ref([]);
+const periods         = ref([]);
+const periodsInfo     = ref([]);
+const types           = ref([]);
+const historyUrl      = ref(null);
+const loaded          = ref(false);
+const actions         = ref({});
+const selectedService = ref(null);
+const showDialog      = ref(false);
+const vueId           = ref('uuid-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
+
+const listAction = async () => {
+    try {
+        const response    = await ApiAdminServiceList();
+        services.value    = response.data.services || [];
+        actions.value     = response.data.actions;
+        types.value       = response.data.types;
+        periods.value     = response.data.periods;
+        periodsInfo.value = response.data.periodsInfo;
+        historyUrl.value  = response.data.historyUrl;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        loaded.value = true;
+    }
 };
+
+const showCreateDialog = async () => {
+    try {
+        const response        = await ApiAdminServiceCreate();
+        selectedService.value = response.data.service;
+        showDialog.value      = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const showEditDialog = (service) => {
+    if (!actions.value.edit) {
+        return;
+    }
+    selectedService.value = service;
+    showDialog.value      = true;
+};
+
+const onServiceUpdated = () => {
+    listAction();
+};
+
+const deleteAction = async (service) => {
+    if (!confirm('Удалить услугу?')) {
+        return;
+    }
+
+    try {
+        await ApiAdminServiceDelete(service.id);
+        services.value = services.value.filter(s => s.id !== service.id);
+        showInfo('Услуга удалена');
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+onMounted(listAction);
 </script>
-
-<style scoped>
-.cursor-pointer {
-    cursor : pointer;
-}
-
-.dropdown-item {
-    cursor : pointer;
-}
-
-.disabled {
-    pointer-events : none;
-}
-</style>

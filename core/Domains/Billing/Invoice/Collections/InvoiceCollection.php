@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Billing\Invoice\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, InvoiceDTO>
  */
-class InvoiceCollection extends Collection implements CollectionInterface
+class InvoiceCollection extends Collection
 {
     use CollectionTrait;
 

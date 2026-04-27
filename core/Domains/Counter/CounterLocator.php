@@ -9,8 +9,7 @@ use Core\Domains\Counter\Repositories\CounterRepository;
 use Core\Domains\Counter\Services\CounterHistoryService;
 use Core\Domains\Counter\Services\CounterService;
 use Core\Domains\Counter\Services\FileService;
-use Core\Domains\File\FileLocator;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\Files\FileLocator;
 
 class CounterLocator
 {
@@ -26,9 +25,7 @@ class CounterLocator
     {
         if ( ! isset(self::$counterService)) {
             self::$counterService = new CounterService(
-                self::CounterFactory(),
                 self::CounterRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -47,7 +44,9 @@ class CounterLocator
     public static function CounterRepository(): CounterRepository
     {
         if ( ! isset(self::$counterRepository)) {
-            self::$counterRepository = new CounterRepository();
+            self::$counterRepository = new CounterRepository(
+                self::CounterFactory(),
+            );
         }
 
         return self::$counterRepository;
@@ -57,9 +56,7 @@ class CounterLocator
     {
         if ( ! isset(self::$counterHistoryService)) {
             self::$counterHistoryService = new CounterHistoryService(
-                self::CounterHistoryFactory(),
                 self::CounterHistoryRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -78,7 +75,9 @@ class CounterLocator
     public static function CounterHistoryRepository(): CounterHistoryRepository
     {
         if ( ! isset(self::$counterHistoryRepository)) {
-            self::$counterHistoryRepository = new CounterHistoryRepository();
+            self::$counterHistoryRepository = new CounterHistoryRepository(
+                self::CounterHistoryFactory(),
+            );
         }
 
         return self::$counterHistoryRepository;

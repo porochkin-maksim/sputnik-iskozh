@@ -2,16 +2,14 @@
 
 namespace App\Models\Counter;
 
+use App\Models\AbstractModel;
 use App\Models\Billing\ClaimToObject;
 use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\Billing\ClaimToObject\Enums\ClaimObjectTypeEnum;
 use Core\Domains\File\Enums\FileTypeEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int     $id
@@ -25,29 +23,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $date
  * @property ?bool   $is_verified
  */
-class CounterHistory extends Model implements CastsInterface
+class CounterHistory extends AbstractModel
 {
-    use SoftDeletes;
-
-    public const TABLE = 'counter_history';
+    public const string TABLE = 'counter_history';
 
     protected $table = self::TABLE;
 
-    public const ID             = 'id';
-    public const COUNTER_ID     = 'counter_id';
-    public const PREVIOUS_ID    = 'previous_id';
-    public const PREVIOUS_VALUE = 'previous_value';
-    public const VALUE          = 'value';
-    public const DATE           = 'date';
-    public const IS_VERIFIED    = 'is_verified';
+    public const string ID             = 'id';
+    public const string COUNTER_ID     = 'counter_id';
+    public const string PREVIOUS_ID    = 'previous_id';
+    public const string PREVIOUS_VALUE = 'previous_value';
+    public const string VALUE          = 'value';
+    public const string DATE           = 'date';
+    public const string IS_VERIFIED    = 'is_verified';
 
-    public const FILE     = 'file';
-    public const COUNTER  = 'counter';
-    public const PREVIOUS = 'previous';
-    public const CLAIM    = 'claim';
+    public const string RELATION_FILE     = 'file';
+    public const string RELATION_COUNTER  = 'counter';
+    public const string RELATION_PREVIOUS = 'previous';
+    public const string RELATION_CLAIM    = 'claim';
 
     protected $guarded = [];
-    protected $with    = [self::FILE, self::PREVIOUS];
+    protected $with    = [self::RELATION_FILE, self::RELATION_PREVIOUS];
 
     protected $casts = [
         self::COUNTER_ID     => self::CAST_INTEGER,
@@ -58,18 +54,30 @@ class CounterHistory extends Model implements CastsInterface
         self::IS_VERIFIED    => self::CAST_BOOLEAN,
     ];
 
+    public const string TITLE_COUNTER_ID  = 'Счётчик';
+    public const string TITLE_VALUE       = 'Показание';
+    public const string TITLE_DATE        = 'Дата показания';
+    public const string TITLE_IS_VERIFIED = 'Подтверждён';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::COUNTER_ID  => self::TITLE_COUNTER_ID,
+        self::VALUE       => self::TITLE_VALUE,
+        self::DATE        => self::TITLE_DATE,
+        self::IS_VERIFIED => self::TITLE_IS_VERIFIED,
+    ];
+
     public function file(): HasOne
     {
         return $this->hasOne(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::COUNTER->value)
+            ->where(File::TYPE, FileTypeEnum::COUNTER_HISTORY->value)
         ;
     }
 
     public function counter(): BelongsTo
     {
         return $this->belongsTo(Counter::class, self::COUNTER_ID)
-            ->with(Counter::ACCOUNT)
-            ->without(Counter::HISTORY)
+            ->with(Counter::RELATION_ACCOUNT)
+            ->without(Counter::RELATION_HISTORY)
         ;
     }
 

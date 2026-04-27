@@ -7,14 +7,12 @@ use Illuminate\Support\Str;
 
 abstract class TokenFacade
 {
-    public static function save(array $data): string
+    public static function save(array $data, ?string $id = null): string
     {
-        $model = Token::make([
-            Token::ID   => Str::uuid()->serialize(),
-            Token::DATA => json_encode($data),
-        ]);
-
-        $model->save();
+        $model = Token::updateOrCreate(
+            [Token::ID => $id ? : Str::uuid()->serialize()],
+            [Token::DATA => json_encode($data)],
+        );
 
         return $model->id;
     }
@@ -24,7 +22,7 @@ abstract class TokenFacade
         try {
             $model = Token::find($token);
 
-            return $model->data ? json_decode($model->data, true): null;
+            return $model->data ? json_decode($model->data, true) : null;
         }
         catch (\Throwable $e) {
             return null;

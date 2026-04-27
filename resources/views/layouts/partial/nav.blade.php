@@ -65,7 +65,7 @@ use Illuminate\Support\Facades\Route;
                     <i class="fa fa-home"></i>  {{ \lc::userDecorator()->getDisplayName() }}
                 </a>
             </li>
-            @if (lc::roleDecorator()->canAccessAdmin())
+            @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">
@@ -140,7 +140,7 @@ use Illuminate\Support\Facades\Route;
     <ul class="navbar-nav ms-auto">
         @guest
             <li class="nav-item">
-                <auth-block></auth-block>
+                <auth-block :has-modal="true"></auth-block>
             </li>
         @else
             <li class="nav-item">
@@ -149,7 +149,7 @@ use Illuminate\Support\Facades\Route;
                     {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
                 </a>
             </li>
-            @if (lc::roleDecorator()->canAccessAdmin())
+            @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ route(RouteNames::ADMIN) }}">

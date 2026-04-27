@@ -1,326 +1,413 @@
 <template>
-    <element-wrapper
-        :label="label"
-        :error="error"
-        :required="required"
-        :disabled="disabled"
-        :help="help"
-        :classes="'w-100'"
-    >
-        <div class="custom-calendar w-100"
-             ref="calendarRoot">
-            <div class="custom-calendar__input d-flex align-items-center position-relative">
+    <div ref="calendarRoot"
+         class="custom-calendar w-100">
+        <element-wrapper
+            :label="label"
+            :required="required"
+            :classes="classes"
+            :id="inputId"
+            :floating="true"
+        >
+            <div class="position-relative">
                 <input
+                    :id="inputId"
                     type="text"
-                    class="form-control pe-5"
-                    :value="inputValue"
-                    :placeholder="'дд.мм.гггг'"
+                    class="form-control custom-calendar__input pe-5"
+                    :class="label ? 'labeled' : ''"
+                    :value="displayText"
+                    :placeholder="placeholder"
                     :disabled="disabled"
                     @input="onInput"
                     @blur="onBlur"
+                    @focus="toggleDropdown"
                     @keydown.enter.prevent="onBlur"
-                >
-                <i class="fa fa-calendar position-absolute end-0 me-3 text-secondary"
-                   style="cursor:pointer; z-index:2;"
-                   @click="toggleDropdown"
+                    @keydown.esc="close"
+                    @keydown.down.prevent="openAndFocus"
+                    v-bind="$attrs"
+                />
+                <i
+                    class="fa fa-calendar position-absolute end-0 me-3 text-secondary cursor-pointer"
+                    style="z-index:2; transform:translateY(-50%);"
+                    :style="[label ? 'top:65%' : 'top:50%;']"
+                    @click="toggleDropdown"
                 ></i>
             </div>
+        </element-wrapper>
+
+        <errors-list :errors="error" />
+
+        <transition name="fade">
             <div v-if="isOpen"
-                 class="custom-calendar__dropdown p-2">
-                <div class="custom-calendar__header mb-2 d-flex align-items-center justify-content-between">
-                    <button class="btn btn-sm btn-outline-secondary px-2"
-                            @click="prevMonth"
-                            type="button">&lt;
+                 class="custom-calendar__dropdown p-2 mt-1 shadow-sm bg-white rounded border">
+
+                <calendar-header
+                    :month-name="monthName"
+                    :year="year"
+                    @prev="prevMonth"
+                    @next="nextMonth"
+                    @toggle-month-year="toggleMonthYearPicker"
+                />
+
+                <month-year-picker
+                    v-if="showMonthYearPicker"
+                    :year="year"
+                    :month="month"
+                    @apply="applyMonthYear"
+                />
+
+                <calendar-grid
+                    v-else
+                    :weeks="weeks"
+                    :selected-date="selectedDate"
+                    @select="handleDateSelect"
+                />
+
+                <!-- Блок выбора времени (только если withTime) -->
+                <div v-if="withTime"
+                     class="mt-3 pt-2 border-top">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <div class="d-flex align-items-center gap-1">
+                            <select v-model="selectedHour"
+                                    class="form-select form-select-sm w-auto"
+                                    style="width: 80px;">
+                                <option v-for="h in 24"
+                                        :key="h-1"
+                                        :value="String(h-1).padStart(2,'0')">
+                                    {{ String(h - 1).padStart(2, '0') }}
+                                </option>
+                            </select>
+                            <span class="fw-bold">:</span>
+                            <select v-model="selectedMinute"
+                                    class="form-select form-select-sm w-auto"
+                                    style="width: 80px;">
+                                <option v-for="m in 60"
+                                        :key="m-1"
+                                        :value="String(m-1).padStart(2,'0')">
+                                    {{ String(m - 1).padStart(2, '0') }}
+                                </option>
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-primary"
+                                @click="applyTime">OK
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <button class="btn btn-sm btn-outline-success"
+                            @click="goToToday"
+                            type="button">
+                        <i class="fa fa-calendar-check-o me-1"></i>Сегодня
                     </button>
-                    <span class="custom-calendar__month-name flex-grow-1 text-center"
-                          style="cursor:pointer;"
-                          @click="toggleMonthYearSelect">
-                        {{ monthYearLabel }}
-                    </span>
-                    <button class="btn btn-sm btn-outline-secondary px-2"
-                            @click="nextMonth"
-                            type="button">&gt;
+                    <button class="btn btn-sm btn-outline-secondary"
+                            @click="clearDate"
+                            type="button">
+                        <i class="fa fa-times me-1"></i>Очистить
                     </button>
                 </div>
-                <div v-if="isMonthYearSelectOpen" class="custom-calendar__month-year-select mb-2 d-flex justify-content-center align-items-center gap-2">
-                    <select v-model.number="tempYear" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
-                        <option v-for="year in yearsRange" :key="year" :value="year">{{ year }}</option>
-                    </select>
-                    <select v-model.number="tempMonth" class="form-select form-select-sm w-auto" @change="onMonthYearChange">
-                        <option v-for="(m, idx) in months" :key="m" :value="idx">{{ m }}</option>
-                    </select>
-                    <button class="btn btn-sm btn-primary ms-2" @click="applyMonthYear">OK</button>
-                </div>
-                <table v-if="!isMonthYearSelectOpen" class="table table-bordered table-sm mb-0 text-center align-middle">
-                    <thead>
-                    <tr>
-                        <th v-for="d in weekdays"
-                            :key="d"
-                            class="bg-light text-secondary small">{{ d }}
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(week, wIdx) in weeks"
-                        :key="wIdx">
-                        <td v-for="(day, dIdx) in week"
-                            :key="dIdx"
-                            :class="[
-                                    'p-0',
-                                    day.isSelected ? 'bg-primary text-white' : '',
-                                    (!day.isSelected && day.isToday) ? 'text-info fw-bold' : '',
-                                    day.disabled ? 'bg-light text-muted' : 'cursor-pointer'
-                                ]"
-                            style="height:2.2em; min-width:2.2em; border-width: 1px;"
-                            @click="!day.disabled && selectDate(day.date)"
-                        >
-                            {{ day.text }}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
-        </div>
-    </element-wrapper>
+        </transition>
+    </div>
 </template>
 
-<script>
-/**
- * @see https://primevue.org/
- */
-import Calendar       from 'primevue/calendar';
-import ErrorsList     from './partial/ErrorsList.vue';
-import ElementWrapper from './partial/ElementWrapper.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+}                      from 'vue';
+import { useId }       from 'vue';
+import { useCalendar } from './calendar/useCalendar';
+import ElementWrapper  from './partial/ElementWrapper.vue';
+import ErrorsList      from './partial/ErrorsList.vue';
+import CalendarHeader  from './calendar/CalendarHeader.vue';
+import MonthYearPicker from './calendar/MonthYearPicker.vue';
+import CalendarGrid    from './calendar/CalendarGrid.vue';
 
-export default {
-    name      : 'CustomCalendar',
-    components: {
-        ElementWrapper,
-        ErrorsList,
-        Calendar,
-    },
-    props     : {
-        modelValue: String,
-        label     : String,
-        required  : Boolean,
-        error     : String,
-        help      : String,
-        disabled  : Boolean,
-    },
-    data () {
-        const today = new Date();
-        return {
-            isOpen      : false,
-            isMonthYearSelectOpen: false,
-            tempMonth: today.getMonth(),
-            tempYear: today.getFullYear(),
-            selected    : null,
-            currentMonth: today.getMonth(),
-            currentYear : today.getFullYear(),
-            weekdays    : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-            months      : [
-                'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
-            ],
-            inputValue  : '',
-        };
-    },
-    computed: {
-        monthYearLabel () {
-            return `${this.months[this.currentMonth]} ${this.currentYear}`;
-        },
-        yearsRange() {
-            const current = new Date().getFullYear();
-            const min = current - 100;
-            const max = current + 10;
-            const years = [];
-            for (let y = min; y <= max; y++) years.push(y);
-            return years;
-        },
-        // weeks — массив недель, каждая неделя — массив из 7 объектов (день месяца или пусто)
-        weeks () {
-            const days     = [];
-            const firstDay = new Date(this.currentYear, this.currentMonth, 1);
-            const lastDay  = new Date(this.currentYear, this.currentMonth + 1, 0);
-            let start      = firstDay.getDay() - 1;
-            if (start < 0) {
-                start = 6;
-            } // В JS воскресенье = 0, а у нас неделя с понедельника
-            // Пустые ячейки до первого дня месяца
-            for (let i = 0; i < start; i++) {
-                days.push({ text: '', date: null, disabled: true });
-            }
-            // Дни месяца
-            for (let d = 1; d <= lastDay.getDate(); d++) {
-                const date = new Date(this.currentYear, this.currentMonth, d);
-                const iso  = [
-                    date.getFullYear(),
-                    String(date.getMonth() + 1).padStart(2, '0'),
-                    String(date.getDate()).padStart(2, '0')
-                ].join('-');
-                days.push({
-                    text      : d,
-                    date      : iso,
-                    disabled  : false,
-                    isToday   : this.isToday(iso),
-                    isSelected: this.selected === iso,
-                });
-            }
-            // Пустые ячейки до конца последней недели
-            while (days.length % 7 !== 0) {
-                days.push({ text: '', date: null, disabled: true });
-            }
-            // Формируем недели
-            const weeks = [];
-            for (let i = 0; i < days.length; i += 7) {
-                weeks.push(days.slice(i, i + 7));
-            }
-            return weeks;
-        },
-        formattedValue () {
-            if (!this.selected) {
-                return '';
-            }
-            // Разбираем yyyy-mm-dd как локальную дату
-            const [year, month, day] = this.selected.split('-').map(Number);
-            if (!year || !month || !day) return this.selected;
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('ru-RU');
-        },
-    },
-    methods : {
-        toggleDropdown () {
-            if (this.disabled) {
-                return;
-            }
-            this.isOpen = !this.isOpen;
-            if (!this.isOpen) this.isMonthYearSelectOpen = false;
-        },
-        toggleMonthYearSelect() {
-            this.isMonthYearSelectOpen = !this.isMonthYearSelectOpen;
-            this.tempMonth = this.currentMonth;
-            this.tempYear = this.currentYear;
-        },
-        onMonthYearChange() {
-            // ничего не делаем, только обновляем tempMonth/tempYear
-        },
-        applyMonthYear() {
-            this.currentMonth = this.tempMonth;
-            this.currentYear = this.tempYear;
-            this.isMonthYearSelectOpen = false;
-        },
-        prevMonth () {
-            if (this.currentMonth === 0) {
-                this.currentMonth = 11;
-                this.currentYear--;
-            }
-            else {
-                this.currentMonth--;
-            }
-        },
-        nextMonth () {
-            if (this.currentMonth === 11) {
-                this.currentMonth = 0;
-                this.currentYear++;
-            }
-            else {
-                this.currentMonth++;
-            }
-        },
-        isSelected (date) {
-            return this.selected === date;
-        },
-        isToday (date) {
-            const today = new Date();
-            const iso = [
-                today.getFullYear(),
-                String(today.getMonth() + 1).padStart(2, '0'),
-                String(today.getDate()).padStart(2, '0')
-            ].join('-');
-            return date === iso;
-        },
-        selectDate (date) {
-            if (!date) {
-                return;
-            }
-            this.selected = date;
-            this.inputValue = this.formatInput(date);
-            this.$emit('update:modelValue', date);
-            this.isOpen = false;
-        },
-        handleClickOutside (event) {
-            if (!this.$refs.calendarRoot.contains(event.target)) {
-                this.isOpen = false;
-                this.isMonthYearSelectOpen = false;
-            }
-        },
-        setCalendarToDate(val) {
-            if (!val) return;
-            // Разбираем yyyy-mm-dd как локальную дату
-            const [year, month, day] = val.split('-').map(Number);
-            if (!year || !month || !day) return;
-            const date = new Date(year, month - 1, day);
-            this.selected = val;
-            this.currentMonth = date.getMonth();
-            this.currentYear = date.getFullYear();
-        },
-        onInput(e) {
-            let val = e.target.value.replace(/[^\d]/g, '');
-            if (val.length > 8) val = val.slice(0, 8);
-            if (val.length > 4) {
-                val = val.slice(0,2) + '.' + val.slice(2,4) + '.' + val.slice(4);
-            } else if (val.length > 2) {
-                val = val.slice(0,2) + '.' + val.slice(2);
-            }
-            this.inputValue = val;
-        },
-        onBlur() {
-            const val = this.inputValue.trim();
-            let iso = '';
-            // dd.mm.yyyy
-            if (/^\d{2}\.\d{2}\.\d{4}$/.test(val)) {
-                const [d, m, y] = val.split('.').map(Number);
-                if (d && m && y) {
-                    iso = [y, String(m).padStart(2, '0'), String(d).padStart(2, '0')].join('-');
-                }
-            }
-            // yyyy-mm-dd
-            else if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-                iso = val;
-            }
-            if (iso) {
-                this.setCalendarToDate(iso);
-                this.$emit('update:modelValue', iso);
-            } else if (!val) {
-                this.selected = null;
-                this.$emit('update:modelValue', '');
-            } else {
-                // некорректная дата — не меняем selected
-                this.inputValue = this.formatInput(this.selected);
-            }
-        },
-        formatInput(val) {
-            if (!val) return '';
-            const [year, month, day] = val.split('-').map(Number);
-            if (!year || !month || !day) return val;
-            return `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}.${year}`;
-        },
-    },
-    watch   : {
-        modelValue (val) {
-            this.setCalendarToDate(val);
-            this.inputValue = this.formatInput(val);
-        },
-    },
-    mounted () {
-        if (this.modelValue) {
-            this.setCalendarToDate(this.modelValue);
-            this.inputValue = this.formatInput(this.modelValue);
+const props = defineProps({
+    modelValue : String,
+    label      : String,
+    required   : Boolean,
+    error      : [String, Array],
+    disabled   : Boolean,
+    classes    : String,
+    placeholder: { type: String, default: 'дд.мм.гггг' },
+    min        : String,   // YYYY-MM-DD
+    max        : String,   // YYYY-MM-DD
+    withTime   : { type: Boolean, default: false },
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const inputId             = `calendar-${useId()}`;
+const calendarRoot        = ref(null);
+const isOpen              = ref(false);
+const showMonthYearPicker = ref(false);
+const inputText           = ref('');
+
+// Состояние для времени
+const selectedHour   = ref('00');
+const selectedMinute = ref('00');
+
+const initialDate = props.modelValue ? new Date(props.modelValue) : new Date();
+const {
+          selectedDate,
+          year,
+          month,
+          monthName,
+          weeks,
+          prevMonth,
+          nextMonth,
+          goToDate,
+          selectDate: calendarSelectDate,
+      }           = useCalendar(initialDate, props.min, props.max);
+
+// Парсинг modelValue при инициализации и внешних изменениях
+const parseModelValue = (val) => {
+    if (!val) {
+        calendarSelectDate(null);
+        if (props.withTime) {
+            selectedHour.value   = '00';
+            selectedMinute.value = '00';
         }
-        document.addEventListener('mousedown', this.handleClickOutside);
-    },
-    beforeUnmount () {
-        document.removeEventListener('mousedown', this.handleClickOutside);
+        return;
+    }
+
+    let datePart = val;
+    let timePart = null;
+
+    const timeMatch = val.match(/\s+(\d{1,2}):(\d{1,2})$/);
+    if (timeMatch) {
+        timePart = { hour: timeMatch[1].padStart(2, '0'), minute: timeMatch[2].padStart(2, '0') };
+        datePart = val.slice(0, timeMatch.index).trim();
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        calendarSelectDate(datePart);
+        goToDate(datePart); // ← добавить эту строку
+        if (props.withTime && timePart) {
+            selectedHour.value   = timePart.hour;
+            selectedMinute.value = timePart.minute;
+        }
+        else if (props.withTime) {
+            selectedHour.value   = '00';
+            selectedMinute.value = '00';
+        }
+    }
+    else {
+        calendarSelectDate(null);
     }
 };
+
+watch(() => props.modelValue, (val) => {
+    parseModelValue(val);
+    inputText.value = '';
+}, { immediate: true });
+
+// Отображаемое значение в поле (синхронизируется с датой/временем)
+const displayText = computed(() => {
+    if (!selectedDate.value) {
+        return '';
+    }
+    const [y, m, d] = selectedDate.value.split('-');
+    let result      = `${d}.${m}.${y}`;
+    if (props.withTime) {
+        result += ` ${selectedHour.value}:${selectedMinute.value}`;
+    }
+    return result;
+});
+
+// Эмит при изменении даты или времени
+const emitValue = () => {
+    if (!selectedDate.value) {
+        emit('update:modelValue', null);
+        return;
+    }
+    let value = selectedDate.value;
+    if (props.withTime) {
+        value += ` ${selectedHour.value}:${selectedMinute.value}`;
+    }
+    emit('update:modelValue', value);
+};
+
+watch([selectedDate, selectedHour, selectedMinute], () => {
+    emitValue();
+});
+
+// Применение времени (закрывает календарь)
+const applyTime = () => {
+    close();
+    inputText.value = '';
+};
+
+// Ручной ввод
+const onInput = (e) => {
+    inputText.value = e.target.value;
+};
+
+const parseInputString = (str) => {
+    str              = str.trim();
+    const patternDMY = /^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{1,2}):(\d{1,2}))?$/;
+    const patternISO = /^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{1,2}):(\d{1,2}))?$/;
+
+    let match = str.match(patternDMY);
+    if (match) {
+        const [_, d, m, y, h, min] = match;
+        const dateStr              = `${y}-${m}-${d}`;
+        const hour                 = h ? h.padStart(2, '0') : (props.withTime ? selectedHour.value : '00');
+        const minute               = min ? min.padStart(2, '0') : (props.withTime ? selectedMinute.value : '00');
+        return { date: dateStr, hour, minute };
+    }
+
+    match = str.match(patternISO);
+    if (match) {
+        const [_, y, m, d, h, min] = match;
+        const dateStr              = `${y}-${m}-${d}`;
+        const hour                 = h ? h.padStart(2, '0') : (props.withTime ? selectedHour.value : '00');
+        const minute               = min ? min.padStart(2, '0') : (props.withTime ? selectedMinute.value : '00');
+        return { date: dateStr, hour, minute };
+    }
+
+    return null;
+};
+
+const onBlur = () => {
+    const val = inputText.value.trim();
+    if (val === '') {
+        // Если была выбрана дата, восстанавливаем её отображение
+        if (selectedDate.value) {
+            inputText.value = displayText.value;
+        }
+        // Если даты не было, ничего не делаем (оставляем пустым)
+        return;
+    }
+
+    const parsed = parseInputString(val);
+    if (parsed) {
+        const date = new Date(parsed.date);
+        if (!isNaN(date.getTime())) {
+            if ((props.min && date < new Date(props.min)) || (props.max && date > new Date(props.max))) {
+                inputText.value = displayText.value;
+                return;
+            }
+            goToDate(parsed.date);
+            calendarSelectDate(parsed.date);
+            if (props.withTime) {
+                selectedHour.value   = parsed.hour;
+                selectedMinute.value = parsed.minute;
+            }
+        }
+        else {
+            inputText.value = displayText.value;
+        }
+    }
+    else {
+        // Невалидный ввод – восстанавливаем предыдущее значение
+        inputText.value = displayText.value;
+    }
+};
+
+const toggleDropdown = () => {
+    if (props.disabled) {
+        return;
+    }
+    // Если есть выбранная дата, перейти к её месяцу
+    if (selectedDate.value) {
+        goToDate(selectedDate.value);
+    }
+    isOpen.value = !isOpen.value;
+    if (!isOpen.value) {
+        showMonthYearPicker.value = false;
+    }
+};
+
+const close = () => {
+    isOpen.value              = false;
+    showMonthYearPicker.value = false;
+};
+
+const openAndFocus = () => {
+    if (selectedDate.value) {
+        goToDate(selectedDate.value);
+    }
+    isOpen.value = true;
+};
+
+const toggleMonthYearPicker = () => {
+    showMonthYearPicker.value = !showMonthYearPicker.value;
+};
+
+const applyMonthYear = ({ year: y, month: m }) => {
+    goToDate(new Date(y, m, 1));
+    showMonthYearPicker.value = false;
+};
+
+const handleDateSelect = (date) => {
+    calendarSelectDate(date);
+    goToDate(date);
+    inputText.value = '';
+    if (!props.withTime) {
+        close();
+    }
+};
+
+const goToToday = () => {
+    const today   = new Date();
+    const y       = today.getFullYear();
+    const m       = String(today.getMonth() + 1).padStart(2, '0');
+    const d       = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
+    if ((props.min && dateStr < props.min) || (props.max && dateStr > props.max)) {
+        return;
+    }
+
+    goToDate(today);
+    calendarSelectDate(dateStr);
+    if (props.withTime) {
+        selectedHour.value   = String(today.getHours()).padStart(2, '0');
+        selectedMinute.value = String(today.getMinutes()).padStart(2, '0');
+    }
+    inputText.value = '';
+    if (!props.withTime) {
+        close();
+    }
+};
+
+const clearDate = () => {
+    calendarSelectDate(null);
+    if (props.withTime) {
+        selectedHour.value   = '00';
+        selectedMinute.value = '00';
+    }
+    inputText.value = '';
+    close();
+};
+
+const handleClickOutside = (event) => {
+    if (calendarRoot.value && !calendarRoot.value.contains(event.target)) {
+        close();
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('mousedown', handleClickOutside);
+});
+
+defineOptions({ inheritAttrs: false });
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+    transition : opacity 0.2s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity : 0;
+}
+</style>

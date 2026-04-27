@@ -28,8 +28,8 @@
 
 <script>
 import ResponseError from '../../../mixin/ResponseError.js';
-import NewsItemEdit  from './NewsItemEdit.vue';
-import NewsList      from './NewsList.vue';
+import NewsItemEdit  from './list/NewsItemEdit.vue';
+import NewsList      from './list/NewsList.vue';
 import Wrapper       from '../../common/Wrapper.vue';
 import PageTemplate  from '../pages/SingleColumnPage.vue';
 

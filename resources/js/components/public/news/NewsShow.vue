@@ -11,7 +11,7 @@
 
 <script>
 import Url          from '../../../utils/Url.js';
-import NewsItem     from './NewsItem.vue';
+import NewsItem     from './list/NewsItem.vue';
 import PageTemplate from '../pages/SingleColumnPage.vue';
 
 export default {

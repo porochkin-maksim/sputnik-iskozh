@@ -6,10 +6,10 @@ use App\Exports\InvoicesExport\InvoicesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoices\ListRequest;
 use App\Http\Requests\Admin\Invoices\SaveRequest;
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use App\Http\Resources\Admin\Invoices\InvoicesListResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Common\SelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
@@ -26,9 +26,11 @@ use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\Services\InvoiceService;
 use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
+use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 use Maatwebsite\Excel\Facades\Excel;
@@ -46,6 +48,15 @@ class InvoiceController extends Controller
         $this->invoiceService = InvoiceLocator::InvoiceService();
         $this->periodService  = PeriodLocator::PeriodService();
         $this->accountService = AccountLocator::AccountService();
+    }
+
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_INVOICES);
+        }
+
+        abort(403);
     }
 
     public function view(int $id)
@@ -171,6 +182,11 @@ class InvoiceController extends Controller
         ]);
     }
 
+    public function recalc(int $id): JsonResponse
+    {
+        return response()->json(RecalcClaimsPaidJob::dispatchSyncIfNeeded($id));
+    }
+
     public function delete(int $id): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
@@ -189,13 +205,13 @@ class InvoiceController extends Controller
         return $this->invoiceService->getAccountsWithoutRegularInvoice($periodId)->count();
     }
 
-    public function createRegularInvoices(int $periodId): void
+    public function createRegularInvoices(int $periodId): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
 
-        dispatch(new CreateRegularPeriodInvoicesJob($periodId));
+        return CreateRegularPeriodInvoicesJob::dispatchIfNeeded($periodId);
     }
 
     /**
@@ -216,16 +232,16 @@ class InvoiceController extends Controller
             $searcher->setSortOrderProperty(Invoice::ID, SearcherInterface::SORT_ORDER_DESC);
         }
 
-        if ($request->getPayedStatus()) {
-            if ($request->getPayedStatus() === 'unpayed') {
-                $searcher->addWhere(Invoice::PAYED, SearcherInterface::EQUALS, 0);
+        if ($request->getPaidStatus()) {
+            if ($request->getPaidStatus() === 'unpaid') {
+                $searcher->addWhere(Invoice::PAID, SearcherInterface::EQUALS, 0);
             }
-            elseif ($request->getPayedStatus() === 'payed') {
-                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::GTE, Invoice::COST);
+            elseif ($request->getPaidStatus() === 'paid') {
+                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::GTE, Invoice::COST);
             }
-            elseif ($request->getPayedStatus() === 'partial') {
-                $searcher->addWhereColumn(Invoice::PAYED, SearcherInterface::LT, Invoice::COST)
-                    ->addWhere(Invoice::PAYED, SearcherInterface::GT, 0)
+            elseif ($request->getPaidStatus() === 'partial') {
+                $searcher->addWhereColumn(Invoice::PAID, SearcherInterface::LT, Invoice::COST)
+                    ->addWhere(Invoice::PAID, SearcherInterface::GT, 0)
                 ;
             }
         }
@@ -249,16 +265,16 @@ class InvoiceController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
-        $invoice = $this->invoiceService->getById($id);
+        $invoice = $this->invoiceService->search(new InvoiceSearcher()
+            ->setId($id)
+            ->setWithClaims()
+            ->setWithAccount()
+            ->setWithPeriod()
+            ->setLimit(1),
+        )->getItems()->first();
         if ( ! $invoice) {
             abort(404);
         }
-
-        $account = $this->accountService->getById($invoice->getAccountId());
-        $invoice->setAccount($account);
-
-        $period = $this->periodService->getById($invoice->getPeriodId());
-        $invoice->setPeriod($period);
 
         return $invoice;
     }

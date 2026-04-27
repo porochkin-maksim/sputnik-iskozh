@@ -8,7 +8,7 @@ use Core\Resources\Views\ViewNames;
 
 @extends(ViewNames::LAYOUTS_ADMIN)
 
-@section('title', 'Детали ошибки')
+@section(SectionNames::TITLE, 'Детали ошибки')
 
 @section(SectionNames::CONTENT)
     <div class="container-fluid">
@@ -55,7 +55,14 @@ use Core\Resources\Views\ViewNames;
                             </div>
                             <div class="col-12">
                                 <h4>Контекст</h4>
-                                <pre><code>{{ json_encode($entry->context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}</code></pre>
+                                @php
+                                $context = clone $entry->context;
+                                if (isset($context->trace)){
+                                    unset($context->trace);
+                                }
+                                $context = json_encode($context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                @endphp
+                                <pre><code>{{ $context }}</code></pre>
                             </div>
                             @if(isset($entry->context->trace))
                                 <div class="col-12">

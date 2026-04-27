@@ -6,12 +6,14 @@ use Carbon\Carbon;
 use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
 use Core\Domains\Infra\HistoryChanges\Enums\Event;
 use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
 use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 use Core\Domains\Option\Enums\OptionEnum;
 use Core\Domains\Option\Models\DataDTO\CounterReadingDay;
 use Core\Domains\Option\OptionLocator;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 
 class AutoIncrementingCounterHistoriesJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct()
@@ -30,7 +33,17 @@ class AutoIncrementingCounterHistoriesJob implements ShouldQueue
         $this->onQueue(QueueEnum::LOW->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::AUTO_INCREMENTING_COUNTER_HISTORIES_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return null;
+    }
+
+    public function process(): void
     {
         $option = OptionLocator::OptionService()->getByType(OptionEnum::COUNTER_READING_DAY)->getData();
         /** @var CounterReadingDay $option */

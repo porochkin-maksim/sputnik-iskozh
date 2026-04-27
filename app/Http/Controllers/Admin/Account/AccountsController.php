@@ -17,6 +17,7 @@ use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\Infra\ExData\Services\ExDataService;
+use Core\Resources\Views\ViewNames;
 use Core\Responses\ResponsesEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -34,6 +35,15 @@ class AccountsController extends Controller
         $this->exDataService  = ExDataLocator::ExDataService();
     }
 
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_ACCOUNTS);
+        }
+
+        abort(403);
+    }
+
     public function create(): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_EDIT)) {
@@ -43,7 +53,7 @@ class AccountsController extends Controller
         return response()->json(new AccountResource($this->accountFactory->makeDefault()));
     }
 
-    public function view(int $id)
+    public function view($id)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
             abort(403);
@@ -60,6 +70,10 @@ class AccountsController extends Controller
 
         if ( ! $account) {
             abort(404);
+        }
+
+        foreach ($account->getUsers() as $user) {
+            $user->setAccount($account);
         }
 
         return view('admin.pages.accounts.view', compact('account'));
@@ -85,6 +99,7 @@ class AccountsController extends Controller
         }
 
         $searcher = AccountSearcher::make()
+            ->setWithUsers()
             ->setLimit($request->getLimit())
             ->setOffset($request->getOffset())
         ;
@@ -150,7 +165,6 @@ class AccountsController extends Controller
 
         $exData->setData($account->getExData()
             ->setCadastreNumber($request->getCadastreNumber())
-            ->setRegistryDate($request->getRegistryDate())
             ->jsonSerialize(),
         );
 

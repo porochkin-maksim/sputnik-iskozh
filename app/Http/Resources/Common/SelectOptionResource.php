@@ -16,8 +16,8 @@ readonly class SelectOptionResource extends AbstractResource
     public function jsonSerialize(): array
     {
         return [
-            'key'   => (string) $this->key,
-            'value' => (string) $this->value,
+            'value' => (string) $this->key,
+            'label' => (string) $this->value,
         ];
     }
 }

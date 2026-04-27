@@ -1,0 +1,14 @@
+<?php declare(strict_types=1);
+
+namespace Core\Domains\Billing\Service\Responses;
+
+use Core\Db\Searcher\Models\BaseSearchResponse;
+use Core\Domains\Billing\Service\Collections\ServiceCollection;
+
+/**
+ * @method ServiceCollection getItems()
+ */
+class ServiceSearchResponse extends BaseSearchResponse
+{
+
+}

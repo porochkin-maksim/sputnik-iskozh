@@ -49,17 +49,17 @@ abstract class BaseSheet implements FromCollection, WithHeadings, ShouldAutoSize
         $result = [];
 
         foreach ($this->users as $user) {
-            $row     = array_fill_keys(array_keys($this->headers), 0);
-            $exData  = $user->getExData();
+            $row      = array_fill_keys(array_keys($this->headers), 0);
+            $exData   = $user->getExData();
             $accounts = $user->getAccounts();
 
             $row[self::ID]              = $user->getId();
-            $row[self::ACCOUNT]         = implode(', ', $accounts->getNumbers());
+            $row[self::ACCOUNT]         = implode(', ', $accounts->getNumbersWitchFraction());
             $row[self::NAME]            = UserLocator::UserDecorator($user)->getFullName();
             $row[self::EMAIL]           = $user->getEmailVerifiedAt() ? $user->getEmail() : null;
             $row[self::PHONE]           = $user->getPhone() ? PhoneHelper::normalizePhone($user->getPhone()) : null;
-            $row[self::MEMBERSHIP]      = $user->getOwnershipDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT);
-            $row[self::MEMBERSHIP_DUTY] = $user->getOwnershipDutyInfo();
+            $row[self::MEMBERSHIP]      = $user->getMembershipDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT);
+            $row[self::MEMBERSHIP_DUTY] = $user->getMembershipDutyInfo();
             $row[self::ADD_PHONE]       = $exData->getPhone();
             $row[self::ADDRESS]         = $exData->getLegalAddress();
             $row[self::POST_ADDRESS]    = $exData->getPostAddress();

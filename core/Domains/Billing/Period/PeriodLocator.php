@@ -5,7 +5,6 @@ namespace Core\Domains\Billing\Period;
 use Core\Domains\Billing\Period\Factories\PeriodFactory;
 use Core\Domains\Billing\Period\Repositories\PeriodRepository;
 use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
 
 abstract class PeriodLocator
 {
@@ -17,9 +16,7 @@ abstract class PeriodLocator
     {
         if ( ! isset(self::$periodService)) {
             self::$periodService = new PeriodService(
-                self::PeriodFactory(),
                 self::PeriodRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -38,7 +35,9 @@ abstract class PeriodLocator
     public static function PeriodRepository(): PeriodRepository
     {
         if ( ! isset(self::$periodRepository)) {
-            self::$periodRepository = new PeriodRepository();
+            self::$periodRepository = new PeriodRepository(
+                self::PeriodFactory(),
+            );
         }
 
         return self::$periodRepository;

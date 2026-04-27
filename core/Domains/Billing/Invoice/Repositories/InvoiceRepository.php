@@ -7,18 +7,31 @@ use App\Models\Billing\Invoice;
 use Core\Db\RepositoryTrait;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\Enums\AccountIdEnum;
+use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
+use Core\Domains\Billing\Invoice\Factories\InvoiceFactory;
+use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
+use Core\Domains\Billing\Invoice\Responses\InvoiceSearchResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class InvoiceRepository
 {
+    use RepositoryTrait {
+        adaptFieldName as traitAdaptFieldName;
+    }
+
     private const string TABLE = Invoice::TABLE;
 
-    use RepositoryTrait {
-        getById as traitGetById;
-        getByIds as traitGetByIds;
-        adaptFieldName as traitAdaptFieldName;
+    public function __construct(
+        private readonly InvoiceFactory $factory,
+    )
+    {
+    }
+
+    protected function modelClass(): string
+    {
+        return Invoice::class;
     }
 
     private function adaptFieldName(string $field): string
@@ -30,24 +43,37 @@ class InvoiceRepository
         return $this->traitAdaptFieldName($field);
     }
 
-    protected function modelClass(): string
+    public function search(SearcherInterface $searcher): InvoiceSearchResponse
     {
-        return Invoice::class;
-    }
+        $response   = $this->searchModels($searcher);
+        $collection = new InvoiceCollection();
+        foreach ($response->getItems() as $model) {
+            $collection->add($this->factory->makeDtoFromObject($model));
+        }
 
-    public function getById(?int $id): ?Invoice
-    {
-        /** @var ?Invoice $result */
-        $result = $this->traitGetById($id);
+        $result = new InvoiceSearchResponse();
+        $result->setTotal($response->getTotal())
+            ->setItems($collection)
+        ;
 
         return $result;
     }
 
-    public function save(Invoice $invoice): Invoice
+    public function getById(?int $id): ?InvoiceDTO
     {
-        $invoice->save();
+        /** @var null|Invoice $model */
+        $model = $this->getModelById($id);
 
-        return $invoice;
+        return $model ? $this->factory->makeDtoFromObject($model) : null;
+    }
+
+    public function save(InvoiceDTO $dto): InvoiceDTO
+    {
+        $model = $this->getModelById($dto->getId());
+        $model = $this->factory->makeModelFromDto($dto, $model);
+        $model->save();
+
+        return $this->factory->makeDtoFromObject($model);
     }
 
     public function getAccountsWithoutRegularInvoice(int $periodId): Collection

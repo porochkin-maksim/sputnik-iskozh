@@ -35,6 +35,8 @@ readonly class CounterResource extends AbstractResource
             'increment'   => $this->counter->getIncrement(),
             'value'       => $lastHistory?->getValue(),
             'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
+            'expireAt'    => $this->counter->getExpireAt()?->format(DateTimeFormat::DATE_DEFAULT),
+            'passport'    => $this->counter->getPasportFile(),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
             'account'     => $this->counter->getAccount() ? new AccountResource($this->counter->getAccount()) : null,
             'actions'     => [

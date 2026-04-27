@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->decimal('tariff', 20)->default(0);
             $table->decimal('cost', 20)->default(0);
-            $table->decimal('payed', 20)->default(0);
+            $table->decimal('paid', 20)->default(0);
             $table->timestamps();
         });
     }

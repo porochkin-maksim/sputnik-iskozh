@@ -12,7 +12,7 @@ use Core\Domains\Option\Factories\OptionFactory;
 use Core\Domains\Option\Models\OptionDTO;
 use Core\Domains\Option\Models\OptionSearcher;
 use Core\Domains\Option\Repositories\OptionRepository;
-use Core\Domains\Option\Responses\SearchResponse;
+use Core\Domains\Option\Responses\OptionSearchResponse;
 
 readonly class OptionService
 {
@@ -51,11 +51,11 @@ readonly class OptionService
         return $current;
     }
 
-    public function search(OptionSearcher $searcher): SearchResponse
+    public function search(OptionSearcher $searcher): OptionSearchResponse
     {
         $response = $this->optionRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new OptionSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new OptionCollection();
@@ -95,7 +95,7 @@ readonly class OptionService
         return $option;
     }
 
-    public function all(): SearchResponse
+    public function all(): OptionSearchResponse
     {
         // Получаем все существующие опции из БД
         $searcher = new OptionSearcher();
@@ -118,7 +118,7 @@ readonly class OptionService
             }
         }
 
-        return (new SearchResponse())
+        return (new OptionSearchResponse())
             ->setItems($collection)
             ->setTotal(count($collection));
     }

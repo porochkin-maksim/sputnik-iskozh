@@ -14,7 +14,7 @@ use Core\Resources\RouteNames;
  * @var int                      $offset
  */
 ?>
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -101,6 +101,7 @@ use Core\Resources\RouteNames;
                         <option value="25" {{ $limit === 25 ? 'selected' : '' }}>25 записей</option>
                         <option value="50" {{ $limit === 50 ? 'selected' : '' }}>50 записей</option>
                         <option value="100" {{ $limit === 100 ? 'selected' : '' }}>100 записей</option>
+                        <option value="1000" {{ $limit === 1000 ? 'selected' : '' }}>1000 записей</option>
                     </select>
                 </div>
 
@@ -156,11 +157,13 @@ use Core\Resources\RouteNames;
                 <table class="table table-sm table-hover">
                     <thead class="table-light">
                     <tr class="text-center">
-                        <th class="text-center">ID</th>
-                        <th class="text-center">Дата</th>
-                        <th class="text-center">Время</th>
-                        <th class="text-center">Пользователь</th>
-                        <th class="text-center">ID1</th>
+                        <th>ID</th>
+                        <th>Дата</th>
+                        <th>Время</th>
+                        <th>Пользователь</th>
+                        <th>Тип1</th>
+                        <th>ID1</th>
+                        <th>Тип2</th>
                         <th>ID2</th>
                         <th>История</th>
                     </tr>
@@ -173,16 +176,40 @@ use Core\Resources\RouteNames;
                             $createdAt = $historyChange->getCreatedAt();
                         @endphp
                         <tr>
+                            @php
+                                $primaryUrl = $decorator->getPrimaryUrl();
+                                $referenceUrl = $decorator->getReferenceUrl();
+                            @endphp
                             <td class="text-center">{{ $historyChange->getId() }}</td>
                             <td class="text-center">{{ $createdAt->format(DateTimeFormat::DATE_VIEW_FORMAT) }}</td>
                             <td class="text-center">{{ $createdAt->format(DateTimeFormat::TIME_FULL) }}</td>
-                            <td class="text-center">
-                                {{ $user->getDisplayName() }}
+                            <td class="text-center text-nowrap">
+                                @if ($user->getAdminViewUrl())
+                                    <a href="{{ $user->getAdminViewUrl() }}" target="_blank">
+                                        {{ $user->getDisplayName() }}
+                                    </a>
+                                @else
+                                    {{ $user->getDisplayName() }}
+                                @endif
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-secondary">{{ $historyChange->getPrimaryId() }}</span>
+                                <a href="{{ $primaryUrl }}" target="_blank">
+                                    {{ $historyChange->getType()?->name() }}
+                                </a>
                             </td>
-                            <td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">
+                                    <a href="{{ $primaryUrl }}" style="color:white;" target="_blank">
+                                        {{ $historyChange->getPrimaryId() }}
+                                    </a>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ $referenceUrl }}" target="_blank">
+                                    {{ $historyChange->getReferenceType()?->name() }}
+                                </a>
+                            </td>
+                            <td class="text-center">
                                 @if($historyChange->getReferenceId())
                                     @php
                                         $badgeColor = match ($decorator->getEvent()) {

@@ -1,12 +1,4 @@
 <template>
-    <template v-if="showPagination">
-        <div class="d-flex justify-content-center">
-            <pagination :total="total"
-                        :perPage="perPage"
-                        @update="onPaginationUpdate"
-            />
-        </div>
-    </template>
     <div class="custom-list w-100">
         <template v-for="(item, index) in news">
             <news-list-item :news="item"
@@ -30,8 +22,8 @@
 <script>
 import Url           from '../../../../utils/Url.js';
 import ResponseError from '../../../../mixin/ResponseError.js';
-import Pagination    from '../../../common/pagination/Pagination.vue';
-import NewsListItem  from '../NewsItem.vue';
+import Pagination   from '../../../common/pagination/Pagination.vue';
+import NewsListItem from '../list/NewsItem.vue';
 
 export default {
     components: {

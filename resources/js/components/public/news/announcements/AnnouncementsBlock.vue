@@ -28,7 +28,7 @@
 
 <script>
 import ResponseError     from '../../../../mixin/ResponseError.js';
-import NewsItemEdit      from '../NewsItemEdit.vue';
+import NewsItemEdit      from '../list/NewsItemEdit.vue';
 import AnnouncementsList from './AnnouncementsList.vue';
 import Wrapper           from '../../../common/Wrapper.vue';
 import PageTemplate      from '../../pages/SingleColumnPage.vue';

@@ -18,10 +18,10 @@ class UserExDataDTO extends AbstractExData
 
     public function __construct(array $data = [])
     {
-        $this->phone        = $data['phone'] ?? null;
-        $this->legalAddress = $data['legalAddress'] ?? null;
-        $this->postAddress  = $data['postAddress'] ?? null;
-        $this->additional   = $data['additional'] ?? null;
+        $this->setphone($data['phone'] ?? null);
+        $this->setlegalAddress($data['legalAddress'] ?? null);
+        $this->setpostAddress($data['postAddress'] ?? null);
+        $this->setadditional($data['additional'] ?? null);
     }
 
     public function getType(): ExDataTypeEnum

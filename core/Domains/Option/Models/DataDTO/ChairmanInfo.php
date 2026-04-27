@@ -2,6 +2,8 @@
 
 namespace Core\Domains\Option\Models\DataDTO;
 
+use Illuminate\Support\Str;
+
 class ChairmanInfo implements DataDTOInterface
 {
     private ?string $lastName   = null;
@@ -73,6 +75,15 @@ class ChairmanInfo implements DataDTOInterface
     public function getFullName(): string
     {
         return implode(' ', [$this->getLastName(), $this->getFirstName(), $this->getMiddleName()]);
+    }
+
+    public function getShortName(): string
+    {
+        $lastName   = $this->getLastName();
+        $firstName  = $this->getFirstName() ? mb_substr($this->getFirstName(), 0, 1) . '.' : '';
+        $middleName = $this->getMiddleName() ? mb_substr($this->getMiddleName(), 0, 1) . '.' : '';
+
+        return trim(sprintf('%s %s%s', $lastName, $firstName, $middleName));
     }
 
     public function jsonSerialize(): array

@@ -5,6 +5,9 @@ namespace Core\Db\Searcher;
 use Core\Db\Searcher\Collections\WhereCollection;
 use Core\Db\Searcher\Models\Order;
 
+/**
+ * @deprecated
+ */
 interface SearcherInterface
 {
     public const string SORT_ORDER_ASC  = 'asc';
@@ -56,8 +59,12 @@ interface SearcherInterface
 
     public function getWhereColumn(): WhereCollection;
 
+    public function getWhereIn(): WhereCollection;
+
     /**
      * @return string[]
      */
     public function getGroupsBy(): array;
+
+    public function getWithTrashed(): ?bool;
 }

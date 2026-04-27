@@ -23,8 +23,29 @@ abstract class UidFacade
         return $uid->id;
     }
 
-    public static function findReferenceId(string $uid): ?int
+    public static function find(string $uid): ?UidDTO
     {
-        return Uid::find($uid)?->{Uid::REFERENCE_ID};
+        $result = Uid::find($uid);
+
+        if ($result) {
+            return new UidDTO(
+                $result->{Uid::ID},
+                UidTypeEnum::tryFrom($result->{Uid::TYPE}),
+                $result->{Uid::REFERENCE_ID},
+            );
+        }
+
+        return null;
+    }
+
+    public static function findReferenceId(string $uid, ?UidTypeEnum $type = null): ?int
+    {
+        $result = Uid::find($uid);
+
+        if ( ! $result || $result->{Uid::TYPE} !== $type?->value) {
+            return null;
+        }
+        
+        return $result->{Uid::REFERENCE_ID};
     }
 }

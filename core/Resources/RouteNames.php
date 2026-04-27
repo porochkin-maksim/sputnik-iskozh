@@ -14,16 +14,26 @@ abstract class RouteNames
     public const string SEARCH      = 'search';
     public const string SITE_SEARCH = 'search.site';
 
+    public const string LOGING       = 'login';
+    public const string LOGING_DO    = 'login.do';
+    public const string LOGING_TOKEN = 'login.do';
+    public const string TOKEN        = 'token';
+
     public const string PASSWORD_SET  = 'password.set';
     public const string PASSWORD_SAVE = 'password.save';
 
-    public const string REQUESTS        = 'requests';
-    public const string PROPOSAL        = 'proposal';
-    public const string PROPOSAL_CREATE = 'proposal.create';
-    public const string PAYMENT         = 'payment';
-    public const string PAYMENT_CREATE  = 'payment.create';
-    public const string COUNTER         = 'counter';
-    public const string COUNTER_CREATE  = 'counter.create';
+    public const string REQUESTS                 = 'requests';
+    public const string REQUESTS_PROPOSAL        = 'proposal';
+    public const string REQUESTS_PROPOSAL_CREATE = 'proposal.create';
+    public const string REQUESTS_PAYMENT         = 'payment';
+    public const string REQUESTS_PAYMENT_CREATE  = 'payment.create';
+    public const string REQUESTS_COUNTER         = 'counter';
+    public const string REQUESTS_COUNTER_CREATE  = 'counter.create';
+    public const string HELP_DESK                = 'help-desk';
+    public const string HELP_DESK_TYPE           = 'help-desk.type';
+    public const string HELP_DESK_CATEGORY       = 'help-desk.category';
+    public const string HELP_DESK_SERVICE        = 'help-desk.service';
+    public const string HELP_DESK_TICKET         = 'help-desk.ticket';
 
     public const string TEMPLATE_GET    = 'template.get';
     public const string TEMPLATE_UPDATE = 'template.update';
@@ -31,18 +41,9 @@ abstract class RouteNames
     public const string SESSION_STORE    = 'session.store';
     public const string COOKIE_AGREEMENT = 'cookie_agreement';
 
-    public const string REPORTS             = 'reports.index';
-    public const string REPORTS_LIST        = 'reports.list';
-    public const string REPORTS_CREATE      = 'reports.create';
-    public const string REPORTS_EDIT        = 'reports.edit';
-    public const string REPORTS_SAVE        = 'reports.save';
-    public const string REPORTS_DELETE      = 'reports.delete';
-    public const string REPORTS_FILE_UPLOAD = 'reports.file.upload';
-    public const string REPORTS_FILE_DELETE = 'reports.file.delete';
-
     public const string NEWS             = 'news.index';
     public const string NEWS_LIST        = 'news.list';
-    public const string NEWS_LIST_ALL    = 'news.list.all';
+    public const string NEWS_INDEX_LIST  = 'news.list.index';
     public const string NEWS_LIST_LOCKED = 'news.list.locked';
     public const string NEWS_CREATE      = 'news.create';
     public const string NEWS_SHOW        = 'news.show';
@@ -71,18 +72,13 @@ abstract class RouteNames
     public const string FOLDERS_LIST   = 'folders.list';
     public const string FOLDERS_SAVE   = 'folders.save';
     public const string FOLDERS_SHOW   = 'folders.show';
+    public const string FOLDERS_INFO   = 'folders.info';
     public const string FOLDERS_DELETE = 'folders.delete';
 
-    public const string ACCOUNT_REGISTER      = 'account.register';
-    public const string ACCOUNT_REGISTER_SAVE = 'account.register.save';
-
     public const string PROFILE                = 'profile.show';
-    public const string PROFILE_SAVE           = 'profile.save';
-    public const string PROFILE_SAVE_EMAIL     = 'profile.save.email';
     public const string PROFILE_SAVE_PASSWORD  = 'profile.save.password';
     public const string PROFILE_SWITCH_ACCOUNT = 'profile.account.switch';
 
-    public const string PROFILE_INDEX             = 'profile.index';
     public const string PROFILE_COUNTERS          = 'profile.counters.index';
     public const string PROFILE_COUNTER_VIEW      = 'profile.counters.view';
     public const string PROFILE_COUNTER_INCREMENT = 'profile.counters.increment-save';
@@ -98,6 +94,10 @@ abstract class RouteNames
     public const string SUMMARY           = 'common.summary';
     public const string SUMMARY_DETAILING = 'common.summary.detailing';
 
+    public const string DOCUMENT_RECEIPT_BLANK         = 'document.receipt.blank';
+    public const string DOCUMENT_RECEIPT_INVOICE       = 'document.receipt.invoice';
+    public const string ADMIN_DOCUMENT_RECEIPT_INVOICE = 'admin.document.receipt.invoice';
+
     public const string ADMIN = 'admin.index';
 
     public const string ADMIN_ROLE_INDEX  = 'admin.role.index';
@@ -112,6 +112,7 @@ abstract class RouteNames
     public const string ADMIN_USER_GENERATE_EMAIL = 'admin.user.generate-email';
     public const string ADMIN_USER_LIST           = 'admin.user.list';
     public const string ADMIN_USER_DELETE         = 'admin.user.delete';
+    public const string ADMIN_USER_RESTORE        = 'admin.user.restore';
     public const string ADMIN_USER_EXPORT         = 'admin.user.export';
 
     public const string ADMIN_OPTIONS_INDEX = 'admin.options.index';
@@ -141,6 +142,10 @@ abstract class RouteNames
     public const string ADMIN_ACCOUNT_LIST   = 'admin.account.list';
     public const string ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
 
+    public const string ADMIN_LOGIN_LINK = 'admin.login-link';
+
+    public const string ADMIN_QR_VIEW = 'admin.qr.view';
+
     public const string ADMIN_ACCOUNT_INVOICE_LIST = 'admin.account.invoice.list';
 
     public const string ADMIN_COUNTER_CREATE    = 'admin.counter.create';
@@ -153,11 +158,16 @@ abstract class RouteNames
     public const string ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
     public const string ADMIN_INVOICE_CREATE = 'admin.invoice.create';
     public const string ADMIN_INVOICE_SAVE   = 'admin.invoice.save';
+    public const string ADMIN_INVOICE_RECALC = 'admin.invoice.recalc';
     public const string ADMIN_INVOICE_VIEW   = 'admin.invoice.view';
     public const string ADMIN_INVOICE_GET    = 'admin.invoice.get';
     public const string ADMIN_INVOICE_LIST   = 'admin.invoice.list';
     public const string ADMIN_INVOICE_EXPORT = 'admin.invoice.export';
     public const string ADMIN_INVOICE_DELETE = 'admin.invoice.delete';
+
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_INDEX      = 'admin.invoice.import-payments.index';
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_PARSE_FILE = 'admin.invoice.import-payments.parse-file';
+    public const string ADMIN_INVOICE_IMPORT_PAYMENTS_SAVE       = 'admin.invoice.import-payments.save';
 
     public const string ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
     public const string ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
@@ -192,11 +202,19 @@ abstract class RouteNames
     public const string ADMIN_REQUEST_COUNTER_HISTORY_CONFIRM_DELETE = 'admin.requests.counter-history.confirm-delete';
     public const string ADMIN_REQUEST_COUNTER_HISTORY_CREATE_CLAIM   = 'admin.requests.counter-history.create-claim';
 
-    public const string ADMIN_TOP_PANEL_INDEX  = 'admin.top-panel.index';
-    public const string ADMIN_TOP_PANEL_SEARCH = 'admin.top-panel.search';
-    public const string ADMIN_SELECTS_ACCOUNTS = 'admin.selects.accounts';
-    public const string ADMIN_SELECTS_COUNTERS = 'admin.selects.counters';
-    public const string ADMIN_ERRORS           = 'admin.error-logs.index';
+    public const string ADMIN_TOP_PANEL_INDEX        = 'admin.top-panel.index';
+    public const string ADMIN_TOP_PANEL_SEARCH       = 'admin.top-panel.search';
+    public const string ADMIN_SELECTS_ACCOUNTS       = 'admin.selects.accounts';
+    public const string ADMIN_SELECTS_PERIODS        = 'admin.selects.periods';
+    public const string ADMIN_SELECTS_COUNTERS       = 'admin.selects.counters';
+    public const string ADMIN_SELECTS_SERVICES_TYPES = 'admin.selects.services-types';
+    public const string ADMIN_ERRORS                 = 'admin.error-logs.index';
+    public const string ADMIN_EMAILS                 = 'admin.emails.index';
+
+    public const string ADMIN_HELP_DESK              = 'admin.help-desk';
+    public const string ADMIN_HELP_DESK_INDEX        = 'admin.help-desk.index';
+    public const string ADMIN_HELP_DESK_TICKETS_VIEW = 'admin.help-desk.tickets.view';
+    public const string ADMIN_HELP_DESK_SETTINGS     = 'admin.help-desk.settings';
 
     public const string ADMIN_QUEUE        = 'admin.queue';
     public const string ADMIN_QUEUE_STATUS = 'admin.queue.status';
@@ -204,19 +222,27 @@ abstract class RouteNames
     public const string ADMIN_QUEUE_STOP   = 'admin.queue.stop';
     public const string ADMIN_QUEUE_CLEAR  = 'admin.queue.clear';
 
+    public const string ACQURING_INVOICE_CREATE = 'acquring.invoice.create';
+
+    public const string WEBHOOK_ACQURING_SUBMIT = 'webhook.acquring.submit';
+    public const string WEBHOOK_ACQURING_FAILED = 'webhook.acquring.failed';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
+            self::INDEX                               => 'Главная',
             self::CONTACTS                            => 'Контакты',
             self::GARBAGE                             => 'Вывоз мусора',
             self::PRIVACY                             => 'Политика обработки персональных данных',
             self::REGULATION                          => 'Устав',
             self::SEARCH                              => 'Поиск по сайту',
 
+            self::HELP_DESK,
+            self::ADMIN_HELP_DESK_INDEX               => 'Заявки',
             self::REQUESTS                            => 'Обращения',
-            self::PROPOSAL                            => 'Предложения',
-            self::PAYMENT                             => 'Платежи',
-            self::COUNTER                             => 'Показания',
+            self::REQUESTS_PROPOSAL                   => 'Предложения',
+            self::REQUESTS_PAYMENT                    => 'Платежи',
+            self::REQUESTS_COUNTER                    => 'Показания',
 
             self::HOME                                => 'Личный кабинет',
             self::PROFILE                             => 'Профиль',
@@ -225,10 +251,9 @@ abstract class RouteNames
             self::PROFILE_COUNTERS                    => 'Счётчики',
             self::PROFILE_INVOICES                    => 'Счета',
 
-            self::FILES                               => 'Файлы',
+            self::FILES                               => 'Документы',
             self::NEWS                                => 'Новости',
             self::ANNOUNCEMENTS                       => 'Объявления',
-            self::REPORTS                             => 'Отчёты',
 
             // админка
             self::ADMIN                               => 'О системе',
@@ -242,7 +267,11 @@ abstract class RouteNames
             self::ADMIN_NEW_PAYMENT_INDEX             => 'Новые платежи',
             self::ADMIN_REQUEST_COUNTER_HISTORY_INDEX => 'Счётчики',
             self::ADMIN_ERRORS                        => 'Журнал ошибок',
+            self::ADMIN_EMAILS                        => 'История писем',
             self::ADMIN_QUEUE                         => 'Очереди',
+            self::HISTORY_CHANGES                     => 'История изменений',
+            self::ADMIN_HELP_DESK                     => 'Учёт заявок',
+            self::ADMIN_HELP_DESK_SETTINGS            => 'Настройки',
 
             default                                   => $default,
         };

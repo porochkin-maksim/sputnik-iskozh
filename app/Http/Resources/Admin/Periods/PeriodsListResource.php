@@ -14,7 +14,7 @@ readonly class PeriodsListResource extends AbstractResource
 {
     public function __construct(
         private PeriodCollection $periodCollection,
-    )//
+    )
     {
     }
 

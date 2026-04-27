@@ -36,4 +36,11 @@ class PaymentSearcher implements SearcherInterface
 
         return $this;
     }
+
+    public function setInvoiceIds(array $ids): static
+    {
+        $this->addWhere(Payment::INVOICE_ID, SearcherInterface::IN, $ids);
+
+        return $this;
+    }
 }

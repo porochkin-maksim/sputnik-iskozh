@@ -1,21 +1,41 @@
 <template>
     <div v-if="counters && counters.length">
-        <template v-for="item in counters">
-            <div>
-                <a :href="item.viewUrl"
-                   class="text-decoration-none">
-                    <div>
-                        <h5 class="mb-0">Счётчик «{{ item.number }}»&nbsp;</h5>
+        <div class="row">
+            <div class="col-12 col-md-8 col-lg-6">
+                <template v-for="item in counters" :key="item.id">
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-start">
+                                <div>
+                                    <a :href="item.viewUrl"
+                                       class="text-decoration-none d-block">
+                                        <h5 class="mb-2">Счётчик&nbsp;«{{ item.number }}»&nbsp;</h5>
+                                    </a>
+                                    <div v-if="item.expireAt">
+                                        Поверен до {{ formatDate(item.expireAt) }}
+                                    </div>
+                                    <file-item :file="item.passport"
+                                               v-if="item.passport"
+                                               :name="'Паспорт'"
+                                    />
+                                </div>
+                                <div
+                                    class="text-end w-sm-25 d-flex flex-row flex-sm-column justify-content-between">
+                                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт</div>
+                                    <div>от {{ formatDate(item.date) }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт от&nbsp;{{ $formatDate(item.date) }}</div>
-                </a>
+                </template>
             </div>
-        </template>
+        </div>
     </div>
     <div v-if="loaded">
         <button class="btn btn-success mt-2"
                 v-if="showAddCounterButton"
-                @click="addCounter">Добавить счётчик
+                @click="addCounter">
+            Добавить счётчик
         </button>
     </div>
     <view-dialog v-model:show="showDialog"
@@ -26,174 +46,237 @@
         <template v-slot:body>
             <div class="container-fluid">
                 <div>
-                    <custom-input v-model="number"
+                    <custom-input v-model="form.number"
                                   :errors="errors.number"
-                                  :type="'text'"
-                                  :label="'Серийный номер устройства'"
+                                  type="text"
+                                  label="Серийный номер устройства"
                                   :required="true"
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="increment"
+                    <custom-input v-model="form.value"
+                                  :errors="errors.value"
+                                  type="number"
+                                  label="Текущие показания на счётчике"
+                                  :required="true"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-calendar v-model="form.expire_at"
+                                     :error="errors.expire_at"
+                                     :required="true"
+                                     label="Дата истечения поверки"
+                    />
+                </div>
+                <div class="mt-2">
+                    <custom-input v-model="form.increment"
                                   :errors="errors.increment"
-                                  :type="'number'"
+                                  type="number"
                                   :min="0"
                                   :step="1"
-                                  :label="'Ежемесячное увеличение показаний на кВт'"
+                                  label="Ежемесячное увеличение показаний на кВт"
                                   :required="true"
                                   @focusout="calculateIncrement"
                     />
                 </div>
                 <div class="mt-2">
-                    <custom-input v-model="value"
-                                  :errors="errors.value"
-                                  :type="'number'"
-                                  :label="'Текущие показания на счётчике'"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <div v-if="file">
-                        <button class="btn btn-sm btn-danger"
-                                @click="removeFile">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        &nbsp;
-                        {{ file.name }}
+                    <div>
+                        <template v-if="form.file">
+                            <button class="btn btn-sm btn-danger"
+                                    @click="removeFile">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            &nbsp;
+                            {{ form.file.name }}
+                        </template>
+                        <template v-else>
+                            <button class="btn btn-outline-secondary w-100"
+                                    @click="chooseFile"
+                                    v-if="!form.file">
+                                <i class="fa fa-paperclip"></i>&nbsp;Фото счётчика
+                            </button>
+                            <input class="d-none"
+                                   type="file"
+                                   ref="fileElem"
+                                   accept="image/*"
+                                   @change="appendFile"
+                            />
+                        </template>
                     </div>
-                    <template v-else>
-                        <button class="btn btn-outline-secondary"
-                                @click="chooseFile"
-                                v-if="!file">
-                            <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
-                        </button>
-                        <input class="d-none"
-                               type="file"
-                               ref="fileElem"
-                               accept="image/*"
-                               @change="appendFile"
-                        />
-                    </template>
+                    <div class="mt-2">
+                        <template v-if="form.passportFile">
+                            <button class="btn btn-sm btn-danger"
+                                    @click="removePassportFile">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            &nbsp;
+                            {{ form.passportFile.name }}
+                        </template>
+                        <template v-else>
+                            <button class="btn btn-outline-secondary w-100"
+                                    @click="choosePassportFile"
+                                    v-if="!form.passportFile">
+                                <i class="fa fa-paperclip"></i>&nbsp;Паспорт счётчика
+                            </button>
+                            <input class="d-none"
+                                   type="file"
+                                   ref="filePassportElem"
+                                   accept="image/*, application/pdf"
+                                   @change="appendPassportFile"
+                            />
+                        </template>
+                    </div>
                 </div>
             </div>
         </template>
         <template v-slot:footer>
             <button class="btn btn-success"
                     @click="createAction"
-                    :disabled="!canSubmitAction">
+                    :disabled="!canSubmitAction || loading">
                 Добавить
             </button>
         </template>
     </view-dialog>
 </template>
 
-<script>
-import Url            from '../../../utils/Url.js';
-import ResponseError  from '../../../mixin/ResponseError.js';
-import Wrapper        from '../../common/Wrapper.vue';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomCheckbox from '../../common/form/CustomCheckbox.vue';
-import ViewDialog     from '../../common/ViewDialog.vue';
-import FileItem       from '../../common/files/FileItem.vue';
-import SearchSelect   from '../../common/form/SearchSelect.vue';
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    onMounted,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import CustomInput          from '@common/form/CustomInput.vue';
+import ViewDialog           from '@common/ViewDialog.vue';
+import FileItem             from '@common/files/FileItem.vue';
+import CustomCalendar       from '@common/form/CustomCalendar.vue';
+import {
+    ApiProfileCounterCreate,
+    ApiProfileCounterList,
+}                           from '@api';
 
-export default {
-    name      : 'ProfileCountersBlock',
-    components: {
-        SearchSelect, FileItem, ViewDialog,
-        CustomCheckbox,
-        CustomInput,
-        Wrapper,
+const { errors, parseResponseErrors } = useResponseError();
+const { formatDate }                  = useFormat();
 
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            loaded: false,
+const loaded           = ref(false);
+const showDialog       = ref(false);
+const hideDialog       = ref(false);
+const loading          = ref(false);
+const counters         = ref([]);
+const fileElem         = ref(null);
+const filePassportElem = ref(null);
 
-            showDialog: false,
-            hideDialog: false,
+const form = reactive({
+    number      : null,
+    value       : null,
+    expire_at   : null,
+    increment   : 0,
+    file        : null,
+    passportFile: null,
+});
 
-            id       : null,
-            number   : null,
-            value    : null,
-            increment: 0,
+onMounted(() => {
+    listAction();
+});
 
-            counters: null,
-            file    : null,
-
-            currentCounterId: null,
-        };
-    },
-    created () {
-        this.listAction();
-    },
-    methods : {
-        listAction () {
-            window.axios[Url.Routes.profileCounterList.method](Url.Routes.profileCounterList.uri).then(response => {
-                this.counters = response.data.counters;
-                if (this.id !== null) {
-                    this.currentCounterId = this.id;
-                }
-                else {
-                    this.currentCounterId = this.counters.length > 0 ? this.counters[0].id : null;
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loaded = true;
-            });
-        },
-        createAction () {
-            if (!confirm('Номер счётчика невозможно будет изменить. Продолжить?')) {
-                return;
-            }
-            let form = new FormData();
-            form.append('number', this.number);
-            form.append('value', this.value);
-            form.append('file', this.file);
-            form.append('increment', this.increment);
-
-            window.axios[Url.Routes.profileCounterCreate.method](Url.Routes.profileCounterCreate.uri, form).then(response => {
-                this.onSuccessSubmit();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        onSuccessSubmit () {
-            this.showDialog = false;
-            this.hideDialog = true;
-            this.file       = null;
-            this.listAction();
-        },
-        addCounter () {
-            this.showDialog = true;
-        },
-        closeAction () {
-            this.showDialog = false;
-        },
-        chooseFile () {
-            this.$refs.fileElem.click();
-        },
-        appendFile (event) {
-            this.file = event.target.files[0];
-        },
-        removeFile () {
-            this.file = null;
-        },
-        calculateIncrement () {
-            this.increment = this.increment < 0 ? this.increment * -1 : this.increment;
-        },
-    },
-    computed: {
-        showAddCounterButton () {
-            return !this.counters || !this.counters.length || this.counters.length < 1;
-        },
-        canSubmitAction () {
-            return this.number && this.value && this.file;
-        },
-    },
+const listAction = () => {
+    ApiProfileCounterList()
+        .then(response => {
+            counters.value = response.data.counters;
+        })
+        .catch(response => {
+            parseResponseErrors(response);
+        })
+        .finally(() => {
+            loaded.value = true;
+        });
 };
+
+const createAction = () => {
+    if (loading.value) {
+        return;
+    }
+
+    if (!confirm('Номер счётчика невозможно будет изменить. Продолжить?')) {
+        return;
+    }
+
+    loading.value = true;
+    ApiProfileCounterCreate({}, {
+        number      : form.number,
+        value       : form.value,
+        expireAt    : form.expire_at,
+        file        : form.file,
+        passportFile: form.passportFile,
+        increment   : form.increment,
+    }).then(() => {
+        onSuccessSubmit();
+    })
+        .catch(response => {
+            parseResponseErrors(response);
+        })
+        .finally(() => {
+            loading.value = false;
+        });
+};
+
+const onSuccessSubmit = () => {
+    showDialog.value = false;
+    hideDialog.value = true;
+    Object.assign(form, {
+        number      : null,
+        value       : null,
+        expire_at   : null,
+        increment   : 0,
+        file        : null,
+        passportFile: null,
+    });
+    listAction();
+};
+
+const addCounter = () => {
+    showDialog.value = true;
+};
+
+const closeAction = () => {
+    showDialog.value = false;
+};
+
+const chooseFile = () => {
+    fileElem.value?.click();
+};
+
+const appendFile = (event) => {
+    form.file = event.target.files[0];
+};
+
+const removeFile = () => {
+    form.file = null;
+};
+
+const choosePassportFile = () => {
+    filePassportElem.value?.click();
+};
+
+const appendPassportFile = (event) => {
+    form.passportFile = event.target.files[0];
+};
+
+const removePassportFile = () => {
+    form.passportFile = null;
+};
+
+const calculateIncrement = () => {
+    form.increment = form.increment < 0 ? form.increment * -1 : form.increment;
+};
+
+const showAddCounterButton = computed(() => {
+    return !counters.value || !counters.value.length || counters.value.length < 2;
+});
+
+const canSubmitAction = computed(() => {
+    return form.number && form.value && form.file && form.expire_at;
+});
 </script>

@@ -2,13 +2,15 @@
 
 namespace App\Models\Counter;
 
+use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\Interfaces\CastsInterface;
+use App\Models\File\File;
 use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
-use Illuminate\Database\Eloquent\Model;
+use Core\Domains\File\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -21,36 +23,54 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string  $number
  * @property bool    $is_invoicing
  * @property int     $increment
+ * @property ?Carbon $expire_at
  */
-class Counter extends Model implements CastsInterface
+class Counter extends AbstractModel
 {
     use SoftDeletes;
 
-    public const TABLE = 'counters';
+    public const string TABLE = 'counters';
 
     protected $table = self::TABLE;
 
-    public const ID           = 'id';
-    public const TYPE         = 'type';
-    public const ACCOUNT_ID   = 'account_id';
-    public const NUMBER       = 'number';
-    public const IS_INVOICING = 'is_invoicing';
-    public const INCREMENT    = 'increment';
+    public const string ID           = 'id';
+    public const string TYPE         = 'type';
+    public const string ACCOUNT_ID   = 'account_id';
+    public const string NUMBER       = 'number';
+    public const string IS_INVOICING = 'is_invoicing';
+    public const string INCREMENT    = 'increment';
+    public const string EXPIRE_AT    = 'expire_at';
 
-    public const ACCOUNT = 'account';
-    public const HISTORY = 'history';
+    public const string RELATION_ACCOUNT  = 'account';
+    public const string RELATION_HISTORY  = 'history';
+    public const string RELATION_PASSPORT = 'passport';
 
     protected $guarded = [];
 
     protected $casts = [
         self::IS_INVOICING => self::CAST_BOOLEAN,
         self::INCREMENT    => self::CAST_INTEGER,
+        self::EXPIRE_AT    => self::CAST_DATETIME,
+    ];
+
+    public const string TITLE_TYPE         = 'Тип';
+    public const string TITLE_ACCOUNT_ID   = 'Участок';
+    public const string TITLE_NUMBER       = 'Номер';
+    public const string TITLE_IS_INVOICING = 'Выставлять счета';
+    public const string TITLE_INCREMENT    = 'Автоприращение (кВт)';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::TYPE         => self::TITLE_TYPE,
+        self::ACCOUNT_ID   => self::TITLE_ACCOUNT_ID,
+        self::NUMBER       => self::TITLE_NUMBER,
+        self::IS_INVOICING => self::TITLE_IS_INVOICING,
+        self::INCREMENT    => self::TITLE_INCREMENT,
     ];
 
     public function history(): HasMany
     {
         return $this->hasMany(CounterHistory::class, CounterHistory::COUNTER_ID, self::ID)
-            ->with(CounterHistory::CLAIM)
+            ->with(CounterHistory::RELATION_CLAIM)
             ->orderBy(CounterHistory::DATE, SearcherInterface::SORT_ORDER_DESC)
             ->orderBy(CounterHistory::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
@@ -59,5 +79,12 @@ class Counter extends Model implements CastsInterface
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, self::ACCOUNT_ID);
+    }
+
+    public function passport(): HasOne
+    {
+        return $this->hasOne(File::class, File::RELATED_ID, 'id')
+            ->where(File::TYPE, FileTypeEnum::COUNTER_PASSPORT->value)
+        ;
     }
 }

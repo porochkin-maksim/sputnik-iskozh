@@ -16,7 +16,7 @@ return new class extends Migration
         }
 
         Schema::table('invoices', static function (Blueprint $table) {
-            $table->string('name')->nullable()->after('payed');
+            $table->string('name')->nullable()->after('paid');
         });
     }
 

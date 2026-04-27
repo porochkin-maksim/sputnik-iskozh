@@ -10,7 +10,6 @@ use Core\Domains\Infra\HistoryChanges\Models\HistoryChangesDTO;
 use Core\Domains\Infra\HistoryChanges\Repositories\HistoryChangesRepository;
 use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
 use Core\Domains\User\UserLocator;
-use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\RouteNames;
 
 abstract class HistoryChangesLocator
@@ -36,7 +35,7 @@ abstract class HistoryChangesLocator
     {
         if ( ! isset(self::$historyChangesFactory)) {
             self::$historyChangesFactory = new HistoryChangesFactory(
-                UserLocator::UserFactory()
+                UserLocator::UserFactory(),
             );
         }
 
@@ -65,10 +64,10 @@ abstract class HistoryChangesLocator
     ): string
     {
         return route(RouteNames::HISTORY_CHANGES, [
-            RequestArgumentsEnum::TYPE           => $type?->value,
-            RequestArgumentsEnum::PRIMARY_ID     => $primaryId,
-            RequestArgumentsEnum::REFERENCE_TYPE => $referenceType?->value,
-            RequestArgumentsEnum::REFERENCE_ID   => $referenceId,
+            'type'           => $type?->value,
+            'primary_id'     => $primaryId,
+            'reference_type' => $referenceType?->value,
+            'reference_id'   => $referenceId,
         ]);
     }
 }

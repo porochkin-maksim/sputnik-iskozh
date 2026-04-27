@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Core\Requests\RequestArgumentsEnum;
 
 class AbstractAuthController extends Controller
 {
@@ -12,6 +11,6 @@ class AbstractAuthController extends Controller
      */
     public function username()
     {
-        return RequestArgumentsEnum::EMAIL;
+        return 'email';
     }
 }

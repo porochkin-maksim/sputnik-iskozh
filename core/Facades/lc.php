@@ -69,6 +69,8 @@ abstract class lc
                 $account = AccountLocator::AccountFactory()->makeDefault();
             }
 
+            $account->setFraction($account->getUsers()->getById(Auth::id())?->getFraction());
+
             self::$account = $account;
         }
 
@@ -123,5 +125,14 @@ abstract class lc
     public static function isSuperAdmin(): bool
     {
         return self::RoleDecorator()->isSuperAdmin();
+    }
+
+    public static function isAndroid(): bool
+    {
+        if ( ! Session::has(SessionNames::IS_ANDROID)) {
+            Session::put(SessionNames::IS_ANDROID, request()->header('X-Client-Type') === 'android-app');
+        }
+
+        return Session::get(SessionNames::IS_ANDROID);
     }
 }

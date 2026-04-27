@@ -8,7 +8,7 @@ use Core\Enums\DateTimeFormat;
  */
 ?>
 <style>
-    table, th, td { border: 1px solid black; }
+    table, th, td { border : 1px solid black; }
 </style>
 <table>
     <thead>
@@ -31,7 +31,7 @@ use Core\Enums\DateTimeFormat;
             <td>{{ $invoice->getPeriod()?->getName() }}</td>
             <td>{{ $invoice->getAccount()?->getNumber() }}</td>
             <td>{{ $invoice->getCost() }}</td>
-            <td>{{ $invoice->getPayed() }}</td>
+            <td>{{ $invoice->getPaid() }}</td>
             <td>{{ $invoice->getCreatedAt()->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT) }}</td>
             <td>{{ $invoice->getUpdatedAt()->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT) }}</td>
         </tr>

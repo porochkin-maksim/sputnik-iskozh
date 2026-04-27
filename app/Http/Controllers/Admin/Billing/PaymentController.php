@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 use Core\Domains\Billing\Claim\Services\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
@@ -59,8 +59,8 @@ class PaymentController extends Controller
 
         $payment = $this->paymentFactory->makeDefault()
             ->setInvoiceId($invoiceId)
-            ->setInvoice($invoice)
-            ->setPayedAt(Carbon::now())
+            ->setAccountId($invoice->getAccountId())
+            ->setPaidAt(Carbon::now())
             ->setCost($invoice->getDelta())
         ;
 
@@ -87,7 +87,7 @@ class PaymentController extends Controller
         )->getItems();
 
         foreach ($claims as $claim) {
-            if (! $claim->getCost() || ! $claim->getDelta()) {
+            if ( ! $claim->getCost() || ! $claim->getDelta()) {
                 continue;
             }
 
@@ -158,7 +158,7 @@ class PaymentController extends Controller
             ->setCost($request->getCost())
             ->setName($request->getName())
             ->setComment($request->getComment())
-            ->setPayedAt($request->getPayedAt())
+            ->setPaidAt($request->getPaidAt())
         ;
 
         $payment = $this->paymentService->save($payment);
@@ -176,6 +176,10 @@ class PaymentController extends Controller
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
+        }
+
+        if ( ! $invoiceId) {
+            abort(412);
         }
 
         $searcher = new PaymentSearcher();

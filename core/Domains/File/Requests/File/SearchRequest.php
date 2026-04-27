@@ -10,10 +10,10 @@ use Core\Requests\RequestArgumentsEnum;
 
 class SearchRequest extends AbstractRequest
 {
-    private const LIMIT     = RequestArgumentsEnum::LIMIT;
-    private const PARENT_ID = RequestArgumentsEnum::PARENT_ID;
-    private const SORT_BY   = RequestArgumentsEnum::SORT_BY;
-    private const SORT_DESC = RequestArgumentsEnum::SORT_DESC;
+    private const string PARENT_ID = 'parent_id';
+    private const string LIMIT     = RequestArgumentsEnum::LIMIT;
+    private const string SORT_BY   = RequestArgumentsEnum::SORT_BY;
+    private const string SORT_DESC = RequestArgumentsEnum::SORT_DESC;
 
     public function dto(): FileSearcher
     {

@@ -24,7 +24,7 @@ $season = match (Carbon::now()->month) {
     @include('layouts.partial.meta')
     @include('layouts.partial.favicon')
 
-    <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), env('APP_NAME')))</title>
+    <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), config('app.name')))</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
@@ -32,6 +32,7 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::STYLES)
     @stack(SectionNames::SCRIPTS)
     @yield(SectionNames::METRICS)
+    @include('layouts.partial.access.import-roles')
 </head>
 <body class="d-flex flex-column h-100 {{ $season }}"
       id="app"
@@ -43,7 +44,7 @@ $season = match (Carbon::now()->month) {
            href="{{ url('/') }}">
             <div class="logo"
                  style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
-            {{ env('APP_NAME') }}
+            {{ config('app.name') }}
         </a>
         <button class="navbar-toggler"
                 type="button"

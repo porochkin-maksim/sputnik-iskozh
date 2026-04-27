@@ -2,20 +2,14 @@
 
 namespace Core\Db\Searcher\Collections;
 
-use Core\Collections\CollectionInterface;
-use Core\Collections\CollectionTrait;
 use Core\Db\Searcher\Models\Where;
 use Illuminate\Support\Collection;
 
 /**
+ * @deprecated
  * @template-extends Collection<int, Where>
  */
-class WhereCollection extends Collection implements CollectionInterface
+class WhereCollection extends Collection
 {
-    use CollectionTrait;
 
-    public function checkItemInstance(mixed $item): bool
-    {
-        return $item instanceof Where;
-    }
 }

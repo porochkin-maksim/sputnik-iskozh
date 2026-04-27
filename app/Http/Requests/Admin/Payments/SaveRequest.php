@@ -3,18 +3,16 @@
 namespace App\Http\Requests\Admin\Payments;
 
 use App\Http\Requests\AbstractRequest;
+use App\Models\Billing\Payment;
 use Carbon\Carbon;
-use Core\Domains\Billing\Payment\Models\PaymentComparator;
-use Core\Enums\DateTimeFormat;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID      = RequestArgumentsEnum::ID;
-    private const string NAME    = RequestArgumentsEnum::NAME;
-    private const string COST    = RequestArgumentsEnum::COST;
-    private const string COMMENT = RequestArgumentsEnum::COMMENT;
-    private const string PAYED   = 'payedAt';
+    private const string ID      = 'id';
+    private const string NAME    = 'name';
+    private const string COST    = 'cost';
+    private const string COMMENT = 'comment';
+    private const string PAID    = 'paidAt';
 
     public function rules(): array
     {
@@ -38,11 +36,11 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::COST . '.required' => sprintf('Укажите «%s»', PaymentComparator::TITLE_COST),
-            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', PaymentComparator::TITLE_COST),
-            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', PaymentComparator::TITLE_COST),
+            self::COST . '.required' => sprintf('Укажите «%s»', Payment::TITLE_COST),
+            self::COST . '.numeric'  => sprintf('«%s» должна быть числом', Payment::TITLE_COST),
+            self::COST . '.min'      => sprintf('«%s» должна быть больше :min', Payment::TITLE_COST),
 
-            self::COMMENT . '.string' => sprintf('Неверное значение «%s»', PaymentComparator::TITLE_COMMENT),
+            self::COMMENT . '.string' => sprintf('Неверное значение «%s»', Payment::TITLE_COMMENT),
         ];
     }
 
@@ -66,8 +64,8 @@ class SaveRequest extends AbstractRequest
         return $this->getStringOrNull(self::COMMENT);
     }
 
-    public function getPayedAt(): ?Carbon
+    public function getPaidAt(): ?Carbon
     {
-        return $this->getDateOrNull(self::PAYED);
+        return $this->getDateOrNull(self::PAID);
     }
 }

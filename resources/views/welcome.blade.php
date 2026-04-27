@@ -1,10 +1,8 @@
-<?php
-
-use Core\Env;
+<?php declare(strict_types=1);
 
 ?>
 
-    <!doctype html>
+        <!doctype html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -20,15 +18,16 @@ use Core\Env;
           type="image/x-icon"
           href="/favicon.ico" />
 
-    <title>@yield('title', Env::appName())</title>
+    <title>@yield('title', env::appName())</title>
 
-    @includeIf('hosts.frontend.mertika', [App::isProduction()])
+    @includeIf('hosts.frontend.mertika', [env::isProduction()])
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
     @stack('styles')
 </head>
-<body class="body" id="app">
+<body class="body"
+      id="app">
 <div class="main-container">
     <article id="app">
         @yield('app.content')

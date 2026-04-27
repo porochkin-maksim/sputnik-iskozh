@@ -2,6 +2,8 @@
 
 namespace Core\Domains\Account\Models;
 
+use Carbon\Carbon;
+use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Common\Traits\TimestampsTrait;
 use Core\Domains\User\Collections\UserCollection;
@@ -19,6 +21,8 @@ class AccountDTO
     private ?int    $primary_user_id = null;
     private ?bool   $is_invoicing    = null;
     private ?string $sort_value      = null;
+    private ?float  $fraction        = null;
+    private ?Carbon $ownerDate       = null;
 
     private ?AccountExDataDTO $exData = null;
 
@@ -26,7 +30,6 @@ class AccountDTO
 
     public function __construct()
     {
-        $this->users = new UserCollection();
     }
 
     public function getId(): ?int
@@ -113,6 +116,47 @@ class AccountDTO
         return $this;
     }
 
+    public function getFraction(): ?float
+    {
+        return $this->fraction;
+    }
+
+    public function setFraction(null|float|string $fraction): static
+    {
+        $this->fraction = is_string($fraction) ? (float) $fraction : $fraction;
+
+        return $this;
+    }
+
+    public function getFractionPercent(): ?string
+    {
+        if ( ! $this->getFraction()) {
+            return null;
+        }
+
+        $fractionPercent = $this->getFraction() * 100;
+        if (floor($fractionPercent) === $fractionPercent || fmod($fractionPercent, 1) === 0.00) {
+            $fractionPercent = number_format($fractionPercent);
+        }
+        else {
+            $fractionPercent = number_format($fractionPercent, 2);
+        }
+
+        return "$fractionPercent%";
+    }
+
+    public function getOwnerDate(): ?Carbon
+    {
+        return $this->ownerDate;
+    }
+
+    public function setOwnerDate(?Carbon $ownerDate): static
+    {
+        $this->ownerDate = $ownerDate;
+
+        return $this;
+    }
+
     public function getExData(): AccountExDataDTO
     {
         $this->exData = $this->exData ? : new AccountExDataDTO();
@@ -137,9 +181,31 @@ class AccountDTO
         return $this;
     }
 
-    public function getUsers(): ?UserCollection
+    public function setUsers(UserCollection|array|null $users): static
     {
-        return $this->users;
+        $this->users = is_array($users) ? new UserCollection($users) : $users;
+
+        return $this;
+    }
+
+    public function getUsers(bool $lazyLoad = false): ?UserCollection
+    {
+        if ( ! $this->users && $lazyLoad) {
+            $this->users = AccountLocator::AccountService()->search(
+                new AccountSearcher()
+                    ->setWithUsers()
+                    ->setId($this->getId()),
+            )->getItems()->first()
+                ?->getUsers()
+            ;
+        }
+
+        return $this->users ? : new UserCollection();
+    }
+
+    public function hasUsers(): bool
+    {
+        return $this->users !== null;
     }
 
     public function isSnt(): bool
@@ -149,7 +215,7 @@ class AccountDTO
 
     public function getSortValue(): ?string
     {
-        return $this->sort_value ?: $this->normalizePlotNumber();
+        return $this->sort_value ? : $this->normalizePlotNumber();
     }
 
     public function setSortValue(?string $sortValue): static

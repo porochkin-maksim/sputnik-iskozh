@@ -12,7 +12,7 @@ use Core\Responses\ResponsesEnum;
 readonly class CounterHistoryResource extends AbstractResource
 {
     public function __construct(
-        private CounterHistoryDTO  $counterHistory,
+        private CounterHistoryDTO $counterHistory,
     )
     {
     }
@@ -21,8 +21,9 @@ readonly class CounterHistoryResource extends AbstractResource
     {
         $claim = $this->counterHistory->getClaim();
 
+        $date         = clone $this->counterHistory->getDate();
         $previous     = $this->counterHistory->getPrevious();
-        $canCreateNew = $this->counterHistory->getDate()?->endOfMonth()->endOfDay()?->lte(Carbon::now()->startOfDay());
+        $canCreateNew = $date?->endOfDay()?->lte(Carbon::now()->startOfDay()->subDays(7));
 
         return [
             'id'         => $this->counterHistory->getId(),
@@ -32,7 +33,7 @@ readonly class CounterHistoryResource extends AbstractResource
             'before'     => $previous?->getValue(),
             'delta'      => $previous ? ($this->counterHistory->getValue() - $previous->getValue()) : null,
             'date'       => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
-            'days'       => $previous ? abs((int)$this->counterHistory->getDate()?->diffInDays($previous->getDate())) : null,
+            'days'       => $previous ? abs((int) $this->counterHistory->getDate()?->diffInDays($previous->getDate())) : null,
             'file'       => $this->counterHistory->getFile(),
             'actions'    => [
                 ResponsesEnum::CREATE => $canCreateNew,

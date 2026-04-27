@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Billing\Claim\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
@@ -11,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, ClaimDTO>
  */
-class ClaimCollection extends Collection implements CollectionInterface
+class ClaimCollection extends Collection
 {
     use CollectionTrait;
 
@@ -27,6 +26,7 @@ class ClaimCollection extends Collection implements CollectionInterface
         ServiceTypeEnum::DEBT,
         ServiceTypeEnum::MEMBERSHIP_FEE,
         ServiceTypeEnum::TARGET_FEE,
+        ServiceTypeEnum::PERSONAL_FEE,
         ServiceTypeEnum::ELECTRIC_TARIFF,
         ServiceTypeEnum::OTHER,
         ServiceTypeEnum::ADVANCE_PAYMENT,
@@ -55,8 +55,35 @@ class ClaimCollection extends Collection implements CollectionInterface
         return null;
     }
 
+    public function getByServiceType(ServiceTypeEnum $type): static
+    {
+        $result = new static();
+        foreach ($this as $claim) {
+            if ($claim->getService()?->getType() === $type) {
+                $result->add($claim);
+            }
+        }
+
+        return $result;
+    }
+
     public function getAdvancePayment(): ?ClaimDTO
     {
         return $this->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
+    }
+
+    public function getDebts(): static
+    {
+        return $this->getByServiceType(ServiceTypeEnum::DEBT);
+    }
+
+    public function getCost(): float
+    {
+        $result = 0;
+        foreach ($this as $claim) {
+            $result += (float) $claim->getCost();
+        }
+
+        return (float) $result;
     }
 }

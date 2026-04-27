@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\Requests;
 
 use App\Http\Requests\Admin\Payments\LinkRequest;
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Invoices\InvoicesSelectResource;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
@@ -26,6 +26,7 @@ use Core\Domains\Billing\Payment\Services\PaymentService;
 use Core\Domains\Billing\Period\Models\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -44,6 +45,15 @@ class NewPaymentController
         $this->periodService  = PeriodLocator::PeriodService();
     }
 
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_PAYMENTS);
+        }
+
+        abort(403);
+    }
+
     public function get(int $paymentId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
@@ -56,6 +66,9 @@ class NewPaymentController
         $payment = $this->paymentService->getById($paymentId);
         if ( ! $payment) {
             abort(412);
+        }
+        if ($payment->getInvoiceId()) {
+            $payment->setInvoice($this->invoiceService->getById($payment->getInvoiceId()));
         }
 
         $accountSearcher = new AccountSearcher();
@@ -133,7 +146,9 @@ class NewPaymentController
 
         $searcher = new PaymentSearcher();
         $searcher
-            ->setInvoiceId(null)
+            ->addOrWhere(Payment::VERIFIED, SearcherInterface::EQUALS, false)
+            ->addOrWhere(Payment::MODERATED, SearcherInterface::EQUALS, false)
+            ->addOrWhere(Payment::INVOICE_ID, SearcherInterface::EQUALS, null)
             ->setWithFiles()
             ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_ASC)
         ;

@@ -26,6 +26,7 @@ readonly class ClaimResource extends AbstractResource
         if ( ! $name) {
             $name = $claimService?->getName();
         }
+        $claimServiceType = $claimService?->getType();
 
         $period = $this->claim->getInvoice()?->getPeriod();
 
@@ -33,9 +34,11 @@ readonly class ClaimResource extends AbstractResource
             'id'         => $this->claim->getId(),
             'tariff'     => $this->claim->getTariff(),
             'cost'       => $this->claim->getCost(),
-            'payed'      => $this->claim->getPayed(),
-            'delta'      => $this->claim->getCost() - $this->claim->getPayed(),
+            'paid'       => $this->claim->getPaid(),
+            'delta'      => $this->claim->getCost() - $this->claim->getPaid(),
             'serviceId'  => $this->claim->getServiceId(),
+            'isAdvance'  => $claimServiceType?->isAdvance(),
+            'isDebt'     => $claimServiceType?->isDebt(),
             'service'    => $name,
             'name'       => $this->claim->getName(),
             'created'    => $this->formatDateTimeForRender($this->claim->getCreatedAt()),

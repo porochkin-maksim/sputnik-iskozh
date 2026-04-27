@@ -29,6 +29,14 @@ footer,
     margin    : 0 auto;
 }
 
+.home {
+    main,
+    footer,
+    .wrapper-container {
+        font-size : 0.8 * $font-size;
+    }
+}
+
 .admin {
     main,
     footer,
@@ -37,6 +45,57 @@ footer,
         width     : 100%;
         max-width : 1800px;
         margin    : 0 auto;
+    }
+}
+
+.home {
+    main {
+        @media (max-width : $lg) {
+            padding-bottom : 3 * $font-size !important;
+        }
+    }
+
+    footer {
+        height     : 3 * $font-size;
+        border-top : 1px solid $default-primary !important;
+
+        .bottom-nav {
+            display : none;
+        }
+
+        @media (max-width : $lg) {
+            position : fixed;
+            bottom   : 0;
+            width    : 100%;
+
+            .bottom-nav {
+                display : flex;
+                width   : 100%;
+                height  : 100%;
+
+                .nav-item {
+                    list-style   : none;
+                    width        : calc(33.3% - 1px);
+                    border-right : 1px solid $default-primary;
+                    padding-top  : calc(0.5 * $font-size);
+
+                    &:last-child {
+                        border-right : none;
+                    }
+
+                    .nav-link {
+                        display         : flex;
+                        flex-direction  : column;
+                        justify-content : center;
+                        align-items     : center;
+
+                        span {
+                            margin-top : 2px;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -62,6 +121,20 @@ footer,
         .social-link {
             border        : 1px solid $default-primary;
             border-radius : 0.5rem;
+
+            &:hover {
+                cursor           : pointer;
+                background-color : $default-light;
+            }
+
+        }
+    }
+
+    &.social-contacts {
+        &.social-index {
+            .social-link {
+                padding : 0.2rem;
+            }
         }
     }
 
@@ -89,7 +162,7 @@ footer,
     align-items      : center;
     justify-content  : center;
     cursor           : pointer;
-    z-index          : 100;
+    z-index          : 1040; // чуть ниже модалок
 }
 
 .wrapper-container {
@@ -102,7 +175,7 @@ footer,
     align-items     : center;
     justify-content : center;
     margin-top      : $font-size * 5;
-    z-index         : 101;
+    z-index         : 1045;
 }
 
 .admin-content-body {
@@ -124,15 +197,62 @@ footer,
     }
 }
 
-// Фиксируем ширину страницы для предотвращения "прыжков" при появлении скроллбара
+.hover-plate {
+    &:hover {
+        cursor           : pointer;
+        background-color : $default-light;
+    }
+}
+
+.form-floating > textarea.form-control {
+    height         : auto; // отменяем фиксированную высоту
+    min-height     : calc(3.5rem + calc(var(--bs-border-width) * 2)); // оставляем минимальную высоту как у поля ввода
+    line-height    : 1.5; // нормальный межстрочный интервал
+    padding-top    : 1.625rem; // оставляем место для метки
+    padding-bottom : 0.625rem;
+}
+
+.form-floating {
+    label {
+        color      : rgba(var(--bs-body-color-rgb), 0.65) !important;
+        transition : none !important;
+        transform  : scale(0.85) translateY(-0.5rem) translateX(0.15rem) !important;
+    }
+}
+
+.form-control:focus {
+    border-color : $default-primary;
+    box-shadow   : 0 0 0 0.2rem rgba($default-primary, 0.25);
+}
+
+.form-control > label {
+    color : $color-gray; // более мягкий цвет
+}
+
+// Чекбокс-переключатель (если используете)
+.form-switch .form-check-input:checked {
+    background-color : $default-primary;
+    border-color     : $default-primary;
+}
+
+// Кнопки
+.btn-primary {
+    background-color : $default-primary;
+    border-color     : $default-primary;
+
+    &:hover {
+        background-color : darken($default-primary, 7%);
+        border-color     : darken($default-primary, 10%);
+    }
+}
+
 html {
-    overflow-y : scroll;
-    width      : 100vw;
     overflow-x : hidden;
+    width      : 100vw;
 }
 
 body {
-    overflow-y : scroll;
+    overflow-y : auto;
     width      : 100%;
     position   : relative;
 }

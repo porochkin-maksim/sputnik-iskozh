@@ -1,0 +1,45 @@
+# .codex/config.toml
+[project]
+name = "sputnik-iskozh"
+description = "Laravel 12 + Vue 3 проект"
+
+[model]
+# Можно выбрать конкретную модель (если доступна)
+# model = "gpt-4.1"
+
+[permissions]
+# Разрешить чтение файлов без подтверждения
+allow-read = true
+# Но запрос на запись и выполнение команд оставить с подтверждением
+ask-write = true
+ask-shell = true
+
+[context]
+# Загружать автоматически определённые файлы для контекста
+include-hidden = false
+max-context-files = 50
+
+[context.pinned]
+files = [
+    "composer.json",
+    "package.json",
+    "PROJECT_CONTEXT.md",
+    "app/Providers/AppServiceProvider.php",
+    "routes/web.php",
+    "routes/web/*",
+    ".env.example",
+    "core/Domains/Billing/Claim/ClaimService.php",
+    "core/Domains/Billing/Claim/ClaimRepository.php",
+    "core/Domains/Billing/Claim/ClaimDTO.php",
+    "core/Domains/Billing/Claim/ClaimCollection.php",
+    "core/Domains/Billing/Claim/ClaimLocator.php",
+    "core/Domains/Billing/Claim/Searcher/ClaimSearcher.php",
+    "core/Domains/Billing/Claim/Responses/ClaimSearchResponse.php",
+    "core/Domains/Billing/Claim/Factories/ClaimFactory.php",
+    "app/Models/Billing/Claim.php",
+    "app/Observers/Billing/ClaimObserver.php"
+]
+
+[features]
+# Включить мультимодальность (если нужно отправлять скриншоты)
+multimodal = true

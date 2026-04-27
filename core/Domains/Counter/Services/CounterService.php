@@ -3,107 +3,54 @@
 namespace Core\Domains\Counter\Services;
 
 use App\Models\Counter\Counter;
-use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Counter\Collections\CounterCollection;
-use Core\Domains\Counter\Factories\CounterFactory;
-use Core\Domains\Counter\Models\CounterComparator;
 use Core\Domains\Counter\Models\CounterDTO;
 use Core\Domains\Counter\Models\CounterSearcher;
 use Core\Domains\Counter\Repositories\CounterRepository;
 use Core\Domains\Counter\Responses\CounterSearchResponse;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
+use Core\Db\Searcher\SearcherInterface;
 
 readonly class CounterService
 {
     public function __construct(
-        private CounterFactory        $counterFactory,
-        private CounterRepository     $counterRepository,
-        private HistoryChangesService $historyChangesService,
+        private CounterRepository $counterRepository,
     )
     {
     }
 
     public function search(CounterSearcher $searcher): CounterSearchResponse
     {
-        $response = $this->counterRepository->search($searcher);
-
-        $result = new CounterSearchResponse();
-        $result->setTotal($response->getTotal());
-
-        $collection = new CounterCollection();
-        foreach ($response->getItems() as $item) {
-            $collection->add($this->counterFactory->makeDtoFromObject($item));
-        }
-
-        return $result->setItems($collection);
+        return $this->counterRepository->search($searcher);
     }
 
-    public function getById(int $id): ?CounterDTO
+    public function getById(?int $id): ?CounterDTO
     {
-        $searcher = new CounterSearcher();
-        $searcher->setId($id);
-
-        return $this->search($searcher)->getItems()->first();
+        return $this->counterRepository->getById($id);
     }
 
     public function save(CounterDTO $counter): CounterDTO
     {
-        $model = $this->counterRepository->getById($counter->getId());
-        if ($model) {
-            $before = $this->counterFactory->makeDtoFromObject($model);
-        }
-        else {
-            $before = new CounterDTO();
-        }
-
-        if ($counter->getIncrement() !== null && $counter->getIncrement() < 0) {
-            $counter->setIncrement(0);
-        }
-
-        $model   = $this->counterRepository->save($this->counterFactory->makeModelFromDto($counter, $model));
-        $current = $this->counterFactory->makeDtoFromObject($model);
-
-        $this->historyChangesService->writeToHistory(
-            $counter->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::COUNTER,
-            $current->getId(),
-            null,
-            null,
-            new CounterComparator($current),
-            new CounterComparator($before),
-        );
-
-        return $current;
+        return $this->counterRepository->save($counter);
     }
 
-    public function getByAccountId(?int $id): CounterCollection
+    public function deleteById(?int $id): bool
     {
+        return $this->counterRepository->deleteById($id);
+    }
+
+    public function getByAccountId(?int $accountId): CounterCollection
+    {
+        if ( ! $accountId) {
+            return new CounterCollection();
+        }
+
         $searcher = new CounterSearcher();
         $searcher
-            ->setAccountId($id)
+            ->setAccountId($accountId)
             ->setSortOrderProperty(Counter::IS_INVOICING, SearcherInterface::SORT_ORDER_DESC)
             ->setSortOrderProperty(Counter::ID, SearcherInterface::SORT_ORDER_DESC)
         ;
 
-        return $this->search($searcher)->getItems();
-    }
-
-    public function deleteById(int $id): bool
-    {
-        $counter = $this->getById($id);
-
-        if ( ! $counter) {
-            return false;
-        }
-
-        $this->historyChangesService->writeToHistory(
-            Event::DELETE,
-            HistoryType::COUNTER,
-            $counter->getId(),
-        );
-
-        return $this->counterRepository->deleteById($id);
+        return $this->counterRepository->search($searcher)->getItems();
     }
 }

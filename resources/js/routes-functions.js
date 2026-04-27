@@ -1,15 +1,26 @@
 function makeQuery(uri, getParams = {}) {
-    let getQuery = [];
-    Object.keys(getParams).forEach(key => {
-        if (getParams[key] && String(getParams[key]) !== '0') {
-            getQuery = getQuery.concat([key + '=' + getParams[key]]);
-        }
-    });
-    if (getQuery.length) {
-        uri = uri + '?' + getQuery.join('&');
-    }
+     let getQuery = [];
+     Object.keys(getParams).forEach(key => {
+         if (getParams[key]) {
+             if (Array.isArray(getParams[key])) {
+                 getParams[key].forEach((value, index) => {
+                     getQuery = getQuery.concat([key + '[]=' + value]);
+                 })
+             } else if (String(getParams[key]) !== '0') {
+                 getQuery = getQuery.concat([key + '=' + getParams[key]]);
+             }
+         }
+     });
+     if (getQuery.length) {
+         uri = uri + '?' + getQuery.join('&');
+     }
+ 
+     return uri;
+ }
 
-    return uri;
+export function acquringInvoiceCreate(invoiceId,amount, getParams = {}, postData = null) {
+    // see acquring.invoice.create
+    return window.axios.post(makeQuery('/home/acquring/create/'+invoiceId+'/'+amount+'', getParams), postData);
 }
 
 export function adminAccountCreate(getParams = {}, postData = null) {
@@ -34,7 +45,7 @@ export function adminAccountIndex(getParams = {}, postData = null) {
 
 export function adminAccountInvoiceList(accountId, getParams = {}, postData = null) {
     // see admin.account.invoice.list
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/invoices/list', getParams), postData);
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/invoices/json/list', getParams), postData);
 }
 
 export function adminAccountList(getParams = {}, postData = null) {
@@ -79,17 +90,17 @@ export function adminClaimView(invoiceId,claimId, getParams = {}, postData = nul
 
 export function adminCounterAddValue(accountId, getParams = {}, postData = null) {
     // see admin.counter.add-value
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/add-value', getParams), postData);
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/add-value', getParams), postData);
 }
 
 export function adminCounterCreate(accountId, getParams = {}, postData = null) {
     // see admin.counter.create
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/create', getParams), postData);
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/create', getParams), postData);
 }
 
 export function adminCounterDelete(accountId,counterId, getParams = {}, postData = null) {
     // see admin.counter.delete
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/delete/'+counterId+'', getParams), postData);
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/delete/'+counterId+'', getParams), postData);
 }
 
 export function adminCounterHistoryList(counterId, getParams = {}, postData = null) {
@@ -99,17 +110,17 @@ export function adminCounterHistoryList(counterId, getParams = {}, postData = nu
 
 export function adminCounterList(accountId, getParams = {}, postData = null) {
     // see admin.counter.list
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/list', getParams), postData);
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/list', getParams), postData);
 }
 
 export function adminCounterSave(accountId, getParams = {}, postData = null) {
     // see admin.counter.save
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/save', getParams), postData);
+    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/save', getParams), postData);
 }
 
 export function adminCounterView(accountId,counterId, getParams = {}, postData = null) {
     // see admin.counter.view
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/json/counters/view/'+counterId+'', getParams), postData);
+    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/view/'+counterId+'', getParams), postData);
 }
 
 export function adminErrorLogsDetails(filename,index, getParams = {}, postData = null) {
@@ -180,6 +191,11 @@ export function adminInvoiceSave(getParams = {}, postData = null) {
 export function adminInvoiceView(id, getParams = {}, postData = null) {
     // see admin.invoice.view
     return window.axios.get(makeQuery('/admin/invoices/view/'+id+'', getParams), postData);
+}
+
+export function adminLoginLink(userId,pin, getParams = {}, postData = null) {
+    // see admin.login-link
+    return window.axios.post(makeQuery('/admin/users/json/qr/login/'+userId+'/'+pin+'', getParams), postData);
 }
 
 export function adminNewPaymentDelete(id, getParams = {}, postData = null) {
@@ -280,6 +296,11 @@ export function adminPeriodList(getParams = {}, postData = null) {
 export function adminPeriodSave(getParams = {}, postData = null) {
     // see admin.period.save
     return window.axios.post(makeQuery('/admin/periods/json/save', getParams), postData);
+}
+
+export function adminQrView(uid, getParams = {}, postData = null) {
+    // see admin.qr.view
+    return window.axios.get(makeQuery('/admin/qr/view/'+uid+'', getParams), postData);
 }
 
 export function adminQueue(getParams = {}, postData = null) {
@@ -437,6 +458,11 @@ export function adminUserList(getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/admin/users/json/list', getParams), postData);
 }
 
+export function adminUserRestore(id, getParams = {}, postData = null) {
+    // see admin.user.restore
+    return window.axios.patch(makeQuery('/admin/users/json/'+id+'', getParams), postData);
+}
+
 export function adminUserSave(getParams = {}, postData = null) {
     // see admin.user.save
     return window.axios.post(makeQuery('/admin/users/json/save', getParams), postData);
@@ -557,6 +583,11 @@ export function foldersDelete(id, getParams = {}, postData = null) {
     return window.axios.delete(makeQuery('/folders/json/delete/'+id+'', getParams), postData);
 }
 
+export function foldersInfo(id, getParams = {}, postData = null) {
+    // see folders.info
+    return window.axios.get(makeQuery('/folders/json/info/'+id+'', getParams), postData);
+}
+
 export function foldersList(getParams = {}, postData = null) {
     // see folders.list
     return window.axios.get(makeQuery('/folders/json/list', getParams), postData);
@@ -595,6 +626,11 @@ export function infraHistoryChanges(getParams = {}, postData = null) {
 export function login(getParams = {}, postData = null) {
     // see login
     return window.axios.post(makeQuery('/login', getParams), postData);
+}
+
+export function loginDo(token, getParams = {}, postData = null) {
+    // see login.do
+    return window.axios.post(makeQuery('/login/'+token+'', getParams), postData);
 }
 
 export function logout(getParams = {}, postData = null) {
@@ -642,9 +678,9 @@ export function newsList(getParams = {}, postData = null) {
     return window.axios.get(makeQuery('/news/json/list', getParams), postData);
 }
 
-export function newsListAll(getParams = {}, postData = null) {
-    // see news.list.all
-    return window.axios.get(makeQuery('/news/json/list/all', getParams), postData);
+export function newsListIndex(getParams = {}, postData = null) {
+    // see news.list.index
+    return window.axios.get(makeQuery('/news/json/list/index', getParams), postData);
 }
 
 export function newsListLocked(getParams = {}, postData = null) {
@@ -852,6 +888,11 @@ export function templateUpdate(getParams = {}, postData = null) {
     return window.axios.patch(makeQuery('/pages/json/edit', getParams), postData);
 }
 
+export function token(token, getParams = {}, postData = null) {
+    // see token
+    return window.axios.get(makeQuery('/token/'+token+'', getParams), postData);
+}
+
 export function verificationNotice(getParams = {}, postData = null) {
     // see verification.notice
     return window.axios.get(makeQuery('/email/verify', getParams), postData);
@@ -865,4 +906,14 @@ export function verificationResend(getParams = {}, postData = null) {
 export function verificationVerify(id,hash, getParams = {}, postData = null) {
     // see verification.verify
     return window.axios.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams), postData);
+}
+
+export function webhookAcquringFailed(acquringId,salt, getParams = {}, postData = null) {
+    // see webhook.acquring.failed
+    return window.axios.delete(makeQuery('/webhook/acquring/failed/'+acquringId+'/'+salt+'', getParams), postData);
+}
+
+export function webhookAcquringSubmit(acquringId,salt, getParams = {}, postData = null) {
+    // see webhook.acquring.submit
+    return window.axios.delete(makeQuery('/webhook/acquring/submit/'+acquringId+'/'+salt+'', getParams), postData);
 }

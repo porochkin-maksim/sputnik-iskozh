@@ -3,14 +3,12 @@
 namespace Core\Domains\Account\Models;
 
 use App\Models\Account\Account;
+use Core\Db\Searcher\BaseSearcher;
 use Core\Db\Searcher\SearcherInterface;
-use Core\Db\Searcher\SearcherTrait;
 use Core\Domains\Account\Enums\AccountIdEnum;
 
-class AccountSearcher implements SearcherInterface
+class AccountSearcher extends BaseSearcher
 {
-    use SearcherTrait;
-
     public function __construct()
     {
         $this->select = [
@@ -41,7 +39,7 @@ class AccountSearcher implements SearcherInterface
 
     public function setWithUsers(): static
     {
-        $this->with[] = Account::USERS;
+        $this->with[] = Account::RELATION_USERS;
 
         return $this;
     }

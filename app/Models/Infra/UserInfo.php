@@ -2,26 +2,25 @@
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
  * @property int     $user_id
- * @property ?string $ownership_duty_info
- * @property ?Carbon $ownership_date
+ * @property ?string $membership_duty_info
+ * @property ?Carbon $membership_date
  */
-class UserInfo extends Model implements CastsInterface
+class UserInfo extends AbstractModel
 {
     public const string TABLE = 'user_info';
 
     protected $table = self::TABLE;
 
-    public const string ID                  = 'id';
-    public const string USER_ID             = 'user_id';
-    public const string OWNERSHIP_DATE      = 'ownership_date';
-    public const string OWNERSHIP_DUTY_INFO = 'ownership_duty_info';
+    public const string ID                   = 'id';
+    public const string USER_ID              = 'user_id';
+    public const string MEMBERSHIP_DATE      = 'membership_date';
+    public const string MEMBERSHIP_DUTY_INFO = 'membership_duty_info';
 
     protected $guarded    = [];
     public    $timestamps = false;

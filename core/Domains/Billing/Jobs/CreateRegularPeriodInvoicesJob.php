@@ -5,6 +5,8 @@ namespace Core\Domains\Billing\Jobs;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Period\PeriodLocator;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,28 +20,52 @@ use RuntimeException;
  */
 class CreateRegularPeriodInvoicesJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private const int LIMIT = 50;
+
     public function __construct(
-        private readonly int $periodId,
+        private readonly int   $periodId,
+        private readonly array $acountIds = [],
     )
     {
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::CREATE_REGULAR_PERIOD_INVOICES_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return $this->periodId;
+    }
+
+    protected function process(): void
     {
         if ( ! PeriodLocator::PeriodService()->getById($this->periodId)) {
             throw new RuntimeException("Период не найден #{$this->periodId}");
         }
 
-        $accounts = InvoiceLocator::InvoiceService()->getAccountsWithoutRegularInvoice($this->periodId);
+        if ( ! $this->acountIds) {
+            $accountIds = InvoiceLocator::InvoiceService()->getAccountsWithoutRegularInvoice($this->periodId)->getIds();
+            if ( ! $accountIds) {
+                return;
+            }
+            foreach (array_chunk($accountIds, self::LIMIT) as $accountIdsChunk) {
+                dispatch(new self($this->periodId, $accountIdsChunk));
+            }
 
-        foreach ($accounts as $account) {
+            return;
+        }
+
+        foreach ($this->acountIds as $acountId) {
             $invoice = InvoiceLocator::InvoiceFactory()->makeDefault()
                 ->setType(InvoiceTypeEnum::REGULAR)
                 ->setPeriodId($this->periodId)
-                ->setAccountId($account->getId())
+                ->setAccountId($acountId)
             ;
 
             InvoiceLocator::InvoiceService()->save($invoice);

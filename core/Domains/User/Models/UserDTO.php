@@ -10,8 +10,8 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Collections\AccountCollection;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Domains\User\Services\UserDecorator;
 use Core\Helpers\DateTime\DateTimeHelper;
-use function PHPUnit\Framework\isArray;
 
 class UserDTO
 {
@@ -25,9 +25,12 @@ class UserDTO
     private ?string $phone         = null;
     private ?string $password      = null;
     private ?bool   $rememberToken = null;
+    private ?float  $fraction      = null;
+    private ?Carbon $ownerDate     = null;
+    private ?Carbon $isDeleted     = null;
 
-    private ?string $ownershipDutyInfo = null;
-    private ?Carbon $ownershipDate     = null;
+    private ?string $membershipDutyInfo = null;
+    private ?Carbon $membershipDate     = null;
 
     private ?int $account_id = null;
 
@@ -35,12 +38,17 @@ class UserDTO
     private ?RoleDTO           $role            = null;
     private ?Carbon            $emailVerifiedAt = null;
     private ?UserExDataDTO     $exData          = null;
-    private ?AccountCollection $accounts       = null;
+    private ?AccountCollection $accounts        = null;
 
     public function __construct(
         private readonly ?User $user = null,
     )
     {
+    }
+
+    public function getViewer(): UserDecorator
+    {
+        return new UserDecorator($this);
     }
 
     public function getModel(): ?User
@@ -190,6 +198,59 @@ class UserDTO
         return $this->emailVerifiedAt;
     }
 
+    public function getFraction(): ?float
+    {
+        return $this->fraction;
+    }
+
+    public function setFraction(null|float|string $fraction): static
+    {
+        $this->fraction = is_string($fraction) ? (float) $fraction : $fraction;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?Carbon
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(mixed $isDeleted): UserDTO
+    {
+        $this->isDeleted = DateTimeHelper::toCarbonOrNull($isDeleted);;
+
+        return $this;
+    }
+
+    public function getFractionpercent(): ?string
+    {
+        if ( ! $this->getFraction()) {
+            return null;
+        }
+
+        $fractionPercent = $this->getFraction() * 100;
+        if (floor($fractionPercent) === $fractionPercent || fmod($fractionPercent, 1) === 0.00) {
+            $fractionPercent = number_format($fractionPercent);
+        }
+        else {
+            $fractionPercent = number_format($fractionPercent, 2);
+        }
+
+        return "$fractionPercent%";
+    }
+
+    public function getOwnerDate(): ?Carbon
+    {
+        return $this->ownerDate;
+    }
+
+    public function setOwnerDate(?Carbon $ownerDate): static
+    {
+        $this->ownerDate = $ownerDate;
+
+        return $this;
+    }
+
     public function getExData(): UserExDataDTO
     {
         $this->exData = $this->exData ? : new UserExDataDTO();
@@ -204,26 +265,26 @@ class UserDTO
         return $this;
     }
 
-    public function getOwnershipDutyInfo(): ?string
+    public function getMembershipDutyInfo(): ?string
     {
-        return $this->ownershipDutyInfo;
+        return $this->membershipDutyInfo;
     }
 
-    public function setOwnershipDutyInfo(?string $ownershipDutyInfo): static
+    public function setMembershipDutyInfo(?string $membershipDutyInfo): static
     {
-        $this->ownershipDutyInfo = $ownershipDutyInfo;
+        $this->membershipDutyInfo = $membershipDutyInfo;
 
         return $this;
     }
 
-    public function getOwnershipDate(): ?Carbon
+    public function getMembershipDate(): ?Carbon
     {
-        return $this->ownershipDate;
+        return $this->membershipDate;
     }
 
-    public function setOwnershipDate(mixed $ownershipDate): static
+    public function setMembershipDate(mixed $membershipDate): static
     {
-        $this->ownershipDate = DateTimeHelper::toCarbonOrNull($ownershipDate);
+        $this->membershipDate = DateTimeHelper::toCarbonOrNull($membershipDate);
 
         return $this;
     }
@@ -263,6 +324,11 @@ class UserDTO
 
     public function getAccounts(): AccountCollection
     {
-        return $this->accounts ?: new AccountCollection();
+        return $this->accounts ? : new AccountCollection();
+    }
+
+    public function isRealEmail(): bool
+    {
+        return (bool) $this->getEmailVerifiedAt();
     }
 }

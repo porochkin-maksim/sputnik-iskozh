@@ -1,128 +1,186 @@
 <template>
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
+    <view-dialog
+        v-model:show="showDialog"
+        v-model:hide="hideDialog"
+        @hidden="closeDialog"
     >
-        <template v-slot:title>{{ id ? 'Редактирование счёта' : 'Добавление счёта' }}</template>
-        <template v-slot:body>
+        <template #title>
+            {{ id ? 'Редактирование счёта' : 'Добавление счёта' }}
+        </template>
+        <template #body>
             <div class="container-fluid">
-                <custom-input v-model="name"
-                               class="form-select form-select-sm"
-                               :label="'Название (опционально)'"
-                />
-                <label>Тип</label>
-                <simple-select v-model="type"
-                               class="form-select form-select-sm"
-                               :items="types"
-                               :label="'Тип'"
-                />
-                <label>Период</label>
-                <simple-select v-model="periodId"
-                               class="form-select form-select-sm"
-                               :items="periods"
-                               :label="'Период'"
-                />
-                <label>Участок</label>
-                <search-select :items="accounts"
-                               :prop-class="'form-control'"
-                               v-model="accountId"
-                />
+                <!-- Название -->
+                <div class="mb-2">
+                    <custom-input
+                        v-model="name"
+                        :errors="errors?.name"
+                        label="Название (опционально)"
+                        type="text"
+                        @update:modelValue="clearError('name')"
+                    />
+                </div>
+
+                <!-- Тип -->
+                <div class="mb-2">
+                    <custom-select
+                        v-model="type"
+                        :errors="errors?.type"
+                        label="Тип"
+                        :options="props.types"
+                        :required="true"
+                        @update:modelValue="clearError('type')"
+                    />
+                </div>
+
+                <!-- Период -->
+                <div class="mb-2">
+                    <custom-select
+                        v-model="periodId"
+                        :errors="errors?.period_id"
+                        label="Период"
+                        :options="props.periods"
+                        :required="true"
+                        @update:modelValue="clearError('period_id')"
+                    />
+                </div>
+
+                <!-- Участок -->
+                <div class="mb-2">
+                    <search-select
+                        :items="props.accounts"
+                        :prop-class="'form-control'"
+                        label="Участок"
+                        v-model="accountId"
+                        :error="errors?.account_id"
+                        @update:modelValue="clearError('account_id')"
+                    />
+                </div>
             </div>
         </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
-                    :disabled="!canSave"
-                    @click="saveAction">
+        <template #footer>
+            <button
+                class="btn btn-success"
+                :disabled="!canSave || loading"
+                @click="saveAction"
+            >
+                <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                 {{ id ? 'Сохранить' : 'Создать' }} счёт
             </button>
         </template>
     </view-dialog>
 </template>
 
-<script>
-import Url           from '../../../utils/Url.js';
-import SimpleSelect  from '../../common/form/SimpleSelect.vue';
-import CustomInput   from '../../common/form/CustomInput.vue';
-import ErrorsList    from '../../common/form/partial/ErrorsList.vue';
-import SearchSelect  from '../../common/form/SearchSelect.vue';
-import ViewDialog    from '../../common/ViewDialog.vue';
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import {
+    ref,
+    computed,
+    onMounted,
+    defineProps,
+    defineEmits,
+    defineOptions,
+    watch,
+}                              from 'vue';
+import { useResponseError }    from '@composables/useResponseError';
+import CustomInput             from '../../common/form/CustomInput.vue';
+import SearchSelect            from '../../common/form/SearchSelect.vue';
+import ViewDialog              from '../../common/ViewDialog.vue';
+import { ApiAdminInvoiceSave } from '@api';
+import CustomSelect            from '@common/form/CustomSelect.vue';
 
-export default {
-    emits     : ['update:modelValue', 'updated'],
-    components: {
-        ViewDialog,
-        SearchSelect,
-        ErrorsList,
-        SimpleSelect,
-        CustomInput,
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'modelValue',
-        'accounts',
-        'periods',
-        'types',
-    ],
-    created () {
-        this.vueId     = 'uuid' + this.$_uid;
-        this.id        = this.modelValue.id;
-        this.periodId  = this.modelValue.periodId;
-        this.accountId = this.modelValue.accountId;
-        this.type      = this.modelValue.type;
-        this.name      = this.modelValue.name;
+defineOptions({
+    name: 'InvoiceItemEdit',
+});
 
-        this.showDialog = true;
+const props = defineProps({
+    modelValue: {
+        type    : Object,
+        required: true,
     },
-    data () {
-        return {
-            showDialog: false,
-            hideDialog: false,
+    accounts  : {
+        type    : Array,
+        required: true,
+    },
+    periods   : {
+        type    : Array,
+        required: true,
+    },
+    types     : {
+        type    : Array,
+        required: true,
+    },
+});
 
-            id       : null,
-            periodId : null,
-            accountId: null,
-            type     : null,
+const emit = defineEmits(['update:modelValue', 'updated']);
 
-            vueId  : null,
-            loading: false,
-        };
-    },
-    methods : {
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.id);
-            form.append('period_id', this.periodId);
-            form.append('account_id', this.accountId);
-            form.append('type', this.type);
-            form.append('name', this.name);
+const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminInvoiceSave.method](
-                Url.Routes.adminInvoiceSave.uri,
-                form,
-            ).then((response) => {
-                let text = this.id ? 'Счёт обновлён' : 'Счёт ' + response.data.invoice.id + ' создан';
-                this.showInfo(text);
-                this.$emit('updated');
-                this.hideDialog = true;
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' счёт';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-    },
-    computed: {
-        canSave () {
-            return this.type && this.periodId && this.accountId;
-        },
-    },
+const showDialog = ref(true);
+const hideDialog = ref(false);
+const loading    = ref(false);
+
+const id        = ref(null);
+const periodId  = ref(null);
+const accountId = ref(null);
+const type      = ref(null);
+const name      = ref('');
+
+// Инициализация из modelValue
+const initFromModel = () => {
+    id.value        = props.modelValue.id || null;
+    periodId.value  = props.modelValue.periodId || null;
+    accountId.value = props.modelValue.accountId || null;
+    type.value      = props.modelValue.type || null;
+    name.value      = props.modelValue.name || '';
+
+    // Если тип не выбран и есть доступные типы
+    if (!type.value && props.types?.length) {
+        const firstOption = props.types[0];
+        type.value        = firstOption.value ?? firstOption;
+    }
 };
+
+// Следим за изменениями modelValue
+watch(() => props.modelValue, initFromModel, { immediate: true, deep: true });
+
+// Валидация формы
+const canSave = computed(() => {
+    return type.value && periodId.value && accountId.value;
+});
+
+// Закрытие диалога
+const closeDialog = () => {
+    showDialog.value = false;
+};
+
+// Сохранение
+const saveAction = async () => {
+    loading.value = true;
+
+    const data = {
+        id        : id.value,
+        period_id : periodId.value,
+        account_id: accountId.value,
+        type      : type.value,
+        name      : name.value,
+    };
+
+    try {
+        const response = await ApiAdminInvoiceSave({}, data);
+        const message  = id.value ? 'Счёт обновлён' : `Счёт ${response.data.invoice.id} создан`;
+        showInfo(message);
+        emit('updated');
+        closeDialog();
+    }
+    catch (error) {
+        const message = error?.response?.data?.message ||
+            `Не удалось ${id.value ? 'сохранить' : 'создать'} счёт`;
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+onMounted(initFromModel);
 </script>

@@ -3,12 +3,11 @@
 namespace Core\Domains\File\Requests\File;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Http\UploadedFile;
 
 class ReplaceRequest extends AbstractRequest
 {
-    private const ID = RequestArgumentsEnum::ID;
+    private const string ID = 'id';
 
     public function getFileId(): int
     {

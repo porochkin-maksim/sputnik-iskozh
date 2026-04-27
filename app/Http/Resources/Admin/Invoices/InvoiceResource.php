@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Invoices;
 
 use App\Http\Resources\Admin\Accounts\AccountResource;
+use Core\Services\Money\MoneyService;
 use lc;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
@@ -30,7 +31,24 @@ readonly class InvoiceResource extends AbstractResource
 
         $period = $this->invoice->getPeriod();
 
-        $advance = $this->invoice->getClaims()?->getAdvancePayment();
+        $claims = $this->invoice->getClaims();
+
+        $detailCost = null;
+        if ($claims) {
+            $advance = $claims?->getAdvancePayment();
+            $debts   = $claims?->getDebts();
+
+            $advanceCost = MoneyService::parse((float) $advance?->getCost());
+            $debtCost    = MoneyService::parse((float) $debts?->getCost());
+            $invoiceCost = MoneyService::parse((float) $this->invoice?->getCost());
+
+            $detailCost = [
+                'total'   => MoneyService::toFloat($invoiceCost),
+                'advance' => MoneyService::toFloat($advanceCost),
+                'debt'    => MoneyService::toFloat($debtCost),
+                'main'    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
+            ];
+        }
 
         return [
             'id'            => $this->invoice->getId(),
@@ -43,10 +61,11 @@ readonly class InvoiceResource extends AbstractResource
             'name'          => $this->invoice->getName(),
             'displayName'   => $this->invoice->getName() ? sprintf('%s (%s)', $this->invoice->getName(), $this->invoice->getType()?->name()) : $this->invoice->getType()?->name(),
             'cost'          => $this->invoice->getCost(),
-            'payed'         => $this->invoice->getPayed(),
-            'delta'         => $this->invoice->getCost() - $this->invoice->getPayed(),
-            'advance'       => (float) $advance?->getPayed(),
-            'isPayed'       => $this->invoice->isPayed(),
+            'paid'          => $this->invoice->getPaid(),
+            'delta'         => $this->invoice->getCost() - $this->invoice->getPaid(),
+            'advance'       => (float) $claims?->getAdvancePayment()?->getPaid(),
+            'detailCost'    => $detailCost,
+            'isPaid'        => $this->invoice->isPaid(),
             'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
             'updated'       => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
             'actions'       => [
@@ -71,6 +90,9 @@ readonly class InvoiceResource extends AbstractResource
             ]) : null,
             'accountUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
+                : null,
+            'receiptUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
+                ? route(RouteNames::ADMIN_DOCUMENT_RECEIPT_INVOICE, ['id' => $this->invoice?->getId()])
                 : null,
             'account'       => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];

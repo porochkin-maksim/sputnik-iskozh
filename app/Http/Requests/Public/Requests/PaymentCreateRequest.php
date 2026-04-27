@@ -3,15 +3,16 @@
 namespace App\Http\Requests\Public\Requests;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 
 class PaymentCreateRequest extends AbstractRequest
 {
-    private const EMAIL   = RequestArgumentsEnum::EMAIL;
-    private const PHONE   = RequestArgumentsEnum::PHONE;
-    private const NAME    = RequestArgumentsEnum::NAME;
-    private const TEXT    = RequestArgumentsEnum::TEXT;
-    private const ACCOUNT = RequestArgumentsEnum::ACCOUNT;
+    private const string EMAIL   = 'email';
+    private const string PHONE   = 'phone';
+    private const string NAME    = 'name';
+    private const string TEXT    = 'text';
+    private const string ACCOUNT = 'account';
+    private const string INVOICE = 'invoice';
+    private const string COST    = 'cost';
 
     public function attributes(): array
     {
@@ -78,6 +79,16 @@ class PaymentCreateRequest extends AbstractRequest
     public function getText(): string
     {
         return (string) $this->getStringOrNull(self::TEXT);
+    }
+
+    public function getInvoice(): ?int
+    {
+        return $this->getIntOrNull(self::INVOICE);
+    }
+
+    public function getCost(): float
+    {
+        return $this->getFloat(self::COST);
     }
 
     private function getFormattedText(): string

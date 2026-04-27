@@ -8,23 +8,22 @@ use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Account\Models\AccountExDataDTO;
 use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\User\UserLocator;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Illuminate\Database\Eloquent\Collection;
 
 readonly class AccountFactory
 {
     public function makeDefault(): AccountDTO
     {
-        $account = new AccountDTO();
-        $account
+        return new AccountDTO()
             ->setNumber(null)
             ->setSize(null)
             ->setBalance(0)
             ->setIsVerified(false)
             ->setIsInvoicing(false)
             ->setSortValue(null)
-            ->setExData(new AccountExDataDTO());
-
-        return $account;
+            ->setExData(new AccountExDataDTO())
+        ;
     }
 
     public function makeModelFromDto(AccountDTO $dto, ?Account $model = null): Account
@@ -61,16 +60,19 @@ readonly class AccountFactory
             ->setIsInvoicing($model->is_invoicing)
             ->setSortValue($model->sort_value)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+            ->setFraction($model->pivot?->fraction)
+            ->setOwnerDate(DateTimeHelper::toCarbonOrNull($model->pivot?->ownerDate))
+        ;
 
-        if (isset($model->getRelations()[Account::USERS])) {
-            foreach ($model->getRelation(Account::USERS) as $user) {
+        if (isset($model->getRelations()[Account::RELATION_USERS])) {
+            foreach ($model->getRelation(Account::RELATION_USERS) as $user) {
                 $result->addUser(UserLocator::UserFactory()->makeDtoFromObject($user));
             }
         }
 
-        if (isset($model->getRelations()[Account::EX_DATA])) {
-            $exData    = $model->getRelation(Account::EX_DATA);
+        if (isset($model->getRelations()[Account::RELATION_EX_DATA])) {
+            $exData    = $model->getRelation(Account::RELATION_EX_DATA);
             $exDataDTO = $exData ? ExDataLocator::ExDataFactory()->makeDtoFromObject($exData) : null;
 
             $data = new AccountExDataDTO($exDataDTO?->getData());

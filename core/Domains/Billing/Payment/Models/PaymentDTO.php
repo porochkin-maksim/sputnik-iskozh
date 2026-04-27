@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Core\Domains\Account\Models\AccountDTO;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
 use Core\Domains\Common\Traits\TimestampsTrait;
-use Core\Domains\File\Models\FileDTO;
+use Core\Domains\Files\Entities\FileDTO;
 
 class PaymentDTO
 {
@@ -21,7 +21,7 @@ class PaymentDTO
     private ?string $comment    = null;
     private ?string $name       = null;
     private ?array  $data       = null;
-    private ?Carbon $payed_at   = null;
+    private ?Carbon $paid_at    = null;
 
     private ?string $account_number = null;
 
@@ -141,14 +141,14 @@ class PaymentDTO
         return $this;
     }
 
-    public function getPayedAt(): ?Carbon
+    public function getPaidAt(): ?Carbon
     {
-        return $this->payed_at;
+        return $this->paid_at;
     }
 
-    public function setPayedAt(?Carbon $payed_at): static
+    public function setPaidAt(?Carbon $paid_at): static
     {
-        $this->payed_at = $payed_at;
+        $this->paid_at = $paid_at;
 
         return $this;
     }

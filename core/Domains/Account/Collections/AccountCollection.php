@@ -2,16 +2,14 @@
 
 namespace Core\Domains\Account\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
-use Core\Domains\Account\Enums\AccountIdEnum;
 use Core\Domains\Account\Models\AccountDTO;
 use Illuminate\Support\Collection;
 
 /**
  * @template-extends Collection<int, AccountDTO>
  */
-class AccountCollection extends Collection implements CollectionInterface
+class AccountCollection extends Collection
 {
     use CollectionTrait;
 
@@ -34,7 +32,7 @@ class AccountCollection extends Collection implements CollectionInterface
         });
     }
 
-    public function hasMany(): bool
+    public function hasSeveral(): bool
     {
         return $this->count() > 1;
     }
@@ -53,6 +51,20 @@ class AccountCollection extends Collection implements CollectionInterface
 
         foreach ($this->items as $account) {
             $result[] = $account->getNumber();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNumbersWitchFraction(): array
+    {
+        $result = [];
+
+        foreach ($this->items as $account) {
+            $result[] = $account->getNumber() . ($account->getFractionPercent() ? " ({$account->getFractionPercent()})" : null);
         }
 
         return $result;

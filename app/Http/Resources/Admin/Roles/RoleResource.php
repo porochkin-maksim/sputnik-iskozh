@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\Admin\Roles;
 
-use lc;
+use App\Http\Resources\Admin\Users\UsersResource;
 use App\Http\Resources\AbstractResource;
 use Core\Domains\Access\Enums\PermissionEnum;
 use Core\Domains\Access\Models\RoleDTO;
-use Core\Responses\ResponsesEnum;
 
 readonly class RoleResource extends AbstractResource
 {
@@ -18,17 +17,11 @@ readonly class RoleResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = lc::roleDecorator();
-
         return [
             'id'          => $this->role->getId(),
             'name'        => $this->role->getName(),
             'permissions' => array_values(array_map(static fn(PermissionEnum $permission) => (string) ($permission->value), $this->role->getPermissions())),
-            'actions'     => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::ROLES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::ROLES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::ROLES_DROP),
-            ],
+            'users'       => $this->role->getUsers() ? new UsersResource($this->role->getUsers()) : null,
         ];
     }
 }

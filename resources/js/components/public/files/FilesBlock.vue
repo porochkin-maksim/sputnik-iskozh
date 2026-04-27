@@ -9,6 +9,7 @@
                     <input class="d-none"
                            type="file"
                            ref="fileElem"
+                           accept="*/*"
                            @change="uploadFile">
                 </div>
             </template>

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -7,6 +7,7 @@ use App\Models\Access\RoleToUser;
 use App\Models\Account\Account;
 use App\Models\Account\AccountToUser;
 use App\Models\Infra\ExData;
+use App\Models\Infra\UserInfo;
 use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
@@ -34,6 +35,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool    $remember_token
  * @property string  $email_verified_at
  * @property int     $telegram_id
+ *
+ * @method null|static find($id)
  */
 class User extends Authenticatable implements CastsInterface, MustVerifyEmail
 {
@@ -51,9 +54,12 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
     public const string REMEMBER_TOKEN    = 'remember_token';
     public const string EMAIL_VERIFIED_AT = 'email_verified_at';
     public const string TELEGRAM_ID       = 'telegram_id';
+    public const string SOFT_DELETED      = 'deleted_at';
 
     public const string ACCOUNTS = 'accounts';
     public const string ROLES    = 'roles';
+    public const string ACCOUNT  = 'account';
+    public const string ROLE     = 'role';
     public const string EX_DATA  = 'exData';
 
     protected $with = [
@@ -95,6 +101,30 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
         self::PASSWORD          => self::CAST_HASHED,
     ];
 
+    public const  string TITLE_EMAIL                = 'Почта';
+    public const  string TITLE_PHONE                = 'Телефон';
+    public const  string TITLE_FIRST_NAME           = 'Имя';
+    public const  string TITLE_MIDDLE_NAME          = 'Отчество';
+    public const  string TITLE_LAST_NAME            = 'Фамилия';
+    public const  string TITLE_TELEGRAM_ID          = 'ID Телеграма';
+    public const  string TITLE_ACCOUNT              = 'Участок';
+    public const  string TITLE_ROLE                 = 'Роль';
+    public const string  TITLE_MEMBERSHIP_DATE      = 'Дата членства';
+    public const string  TITLE_MEMBERSHIP_DUTY_INFO = 'Основание членства';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::EMAIL                    => self::TITLE_EMAIL,
+        self::PHONE                    => self::TITLE_PHONE,
+        self::FIRST_NAME               => self::TITLE_FIRST_NAME,
+        self::MIDDLE_NAME              => self::TITLE_MIDDLE_NAME,
+        self::LAST_NAME                => self::TITLE_LAST_NAME,
+        self::TELEGRAM_ID              => self::TITLE_TELEGRAM_ID,
+        self::ACCOUNT                  => self::TITLE_ACCOUNT,
+        self::ROLE                     => self::TITLE_ROLE,
+        UserInfo::MEMBERSHIP_DATE      => self::TITLE_MEMBERSHIP_DATE,
+        UserInfo::MEMBERSHIP_DUTY_INFO => self::TITLE_MEMBERSHIP_DUTY_INFO,
+    ];
+
     public function accounts(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -102,7 +132,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
             AccountToUser::TABLE,
             AccountToUser::USER,
             AccountToUser::ACCOUNT,
-        );
+        )->withPivot([AccountToUser::FRACTION, AccountToUser::OWNER_DATE]);
     }
 
     public function roles(): BelongsToMany

@@ -3,62 +3,74 @@
         :label="label"
         :required="required"
         :classes="classes"
-        :id="id"
+        :id="selectId"
     >
-        <select :required="required"
-                @change="onChange"
-                @keyup="onChange"
-                class="form-control"
-                :class="[errors ? 'form-error' : '']"
+        <select
+            :id="selectId"
+            :value="modelValue"
+            :required="required"
+            :disabled="disabled"
+            :name="name"
+            class="form-control"
+            :class="{ 'form-error': errors }"
+            @change="onChange"
+            v-bind="$attrs"
         >
-            <option v-for="item in items"
-                    :key="item.key !== undefined ? item.key : item"
-                    :value="item.key !== undefined ? item.key : item"
-                    :selected="(item.key !== undefined ? String(item.key) : String(item)) === String(modelValue)"
+            <option
+                v-for="option in normalizedOptions"
+                :key="option.value"
+                :value="option.value"
             >
-                {{ item.value !== undefined ? item.value : item }}
+                {{ option.label }}
             </option>
         </select>
     </element-wrapper>
     <errors-list :errors="errors" />
 </template>
 
-<script>
+<script setup>
+import {
+    computed,
+    useId,
+}                     from 'vue';
 import ErrorsList     from './partial/ErrorsList.vue';
 import ElementWrapper from './partial/ElementWrapper.vue';
 
-export default {
-    components: { ElementWrapper, ErrorsList },
-    props     : [
-        'classes',
-        'modelValue',
-        'errors',
-        'type',
-        'label',
-        'name',
-        'placeholder',
-        'required',
-        'disabled',
-        'items',
-    ],
-    emits     : [
-        'update:modelValue',
-        'change',
-    ],
-    mounted () {
-        this.id = 'input-' + this.$_uid;
+const props = defineProps({
+    modelValue: [String, Number],
+    errors    : [String, Array],
+    label     : String,
+    name      : String,
+    required  : Boolean,
+    disabled  : Boolean,
+    classes   : String,
+    // Принимаем options в любом формате: массив строк или массив объектов { value, label }
+    options: {
+        type    : Array,
+        required: true,
     },
-    data () {
-        return {
-            id        : null,
-            localValue: null,
-        };
-    },
-    methods   : {
-        onChange (event) {
-            this.$emit('update:modelValue', event.target.value);
-            this.$emit('change', event.target.value);
-        },
-    },
+});
+
+const emit = defineEmits(['update:modelValue', 'change']);
+
+const selectId = `select-${useId()}`;
+
+// Нормализуем options к единому формату { value, label }
+const normalizedOptions = computed(() => {
+    return props.options.map(opt => {
+        if (typeof opt === 'object' && opt !== null) {
+            return {
+                value: opt.value ?? opt.key ?? opt,
+                label: opt.label ?? opt.value ?? opt,
+            };
+        }
+        return { value: opt, label: opt };
+    });
+});
+
+const onChange = (event) => {
+    const value = event.target.value;
+    emit('update:modelValue', value);
+    emit('change', value);
 };
 </script>

@@ -2,7 +2,6 @@
 
 namespace Core\Domains\Access\Collections;
 
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Access\Models\RoleDTO;
 use Illuminate\Support\Collection;
@@ -10,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, RoleDTO>
  */
-class RoleCollection extends Collection implements CollectionInterface
+class RoleCollection extends Collection
 {
     use CollectionTrait;
 

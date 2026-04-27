@@ -6,7 +6,10 @@ use App\Models\Billing\Period;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Account\AccountLocator;
 use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\Claim\Collections\ClaimCollection;
+use Core\Domains\Billing\Claim\Models\ClaimDTO;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
@@ -17,8 +20,8 @@ use Core\Domains\Billing\Period\PeriodLocator;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Claim\Events\ClaimsUpdatedEvent;
-use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
+use Core\Queue\DispatchIfNeededTrait;
 use Core\Queue\QueueEnum;
 use Core\Services\Money\MoneyService;
 use Illuminate\Bus\Queueable;
@@ -26,6 +29,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
@@ -33,6 +37,7 @@ use RuntimeException;
  */
 class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 {
+    use DispatchIfNeededTrait;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -42,7 +47,17 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         $this->onQueue(QueueEnum::DEFAULT->value);
     }
 
-    public function handle(): void
+    protected static function getLockName(): LockNameEnum
+    {
+        return LockNameEnum::CREATE_CLAIMS_AND_PAYMENTS_FOR_REGULAR_INVOICE_JOB;
+    }
+
+    protected function getIdentificator(): null|int|string
+    {
+        return $this->invoiceId;
+    }
+
+    protected function process(): void
     {
         $invoice = InvoiceLocator::InvoiceService()->getById($this->invoiceId);
         if ( ! $invoice) {
@@ -61,19 +76,50 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         $claimFactory   = ClaimLocator::ClaimFactory();
         $accountService = AccountLocator::AccountService();
 
-        $serviceSearcher = new ServiceSearcher();
-        $serviceSearcher
+        $oldClaims = $this->getMigratingClaimsToNewPeriod($invoice);
+
+        $oldAdvance = $oldClaims->getAdvancePayment();
+        $oldDebts   = $oldClaims->filter(fn(ClaimDTO $claim) => ! $claim->getService()?->getType()?->isAdvance());
+
+        $newPeriodServices = ServiceLocator::ServiceService()->search(new ServiceSearcher()
             ->setPeriodId($invoice->getPeriodId())
-            ->setActive(true)
-        ;
+            ->setActive(true),
+        )->getItems();
 
-        $balance = $this->getBalanceFromPreviousPeriod($invoice);
+        $newDebtService = $newPeriodServices->getByType(ServiceTypeEnum::DEBT)->first();
 
-        foreach (ServiceLocator::ServiceService()->search($serviceSearcher)->getItems() as $service) {
+        $newClaims = new ClaimCollection();
+
+        foreach ($oldDebts as $oldDebtClaim) {
+            $oldService = $oldDebtClaim->getService();
+            if (Str::contains('(долг за период', $oldService?->getName())) {
+                $newServiceName = $oldService?->getName();
+            }
+            else {
+                $newServiceName = sprintf('%s (долг за период %s)',
+                    $oldService?->getName() ? : $oldService?->getType()?->name(),
+                    $oldDebtClaim->getInvoice()?->getPeriod()?->getName(),
+                );
+            }
+
+            $claim = $claimFactory
+                ->makeDefault()
+                ->setInvoiceId($this->invoiceId)
+                ->setServiceId($newDebtService->getId())
+                ->setTariff($oldDebtClaim->getTariff())
+                ->setCost($oldDebtClaim->getDelta())
+                ->setName($newServiceName)
+                ->setPaid(0.00)
+            ;
+
+            $newClaims->add($claimService->save($claim));
+        }
+
+        foreach ($newPeriodServices as $service) {
             if ( ! in_array($service->getType(), [
-                ServiceTypeEnum::DEBT,
                 ServiceTypeEnum::MEMBERSHIP_FEE,
                 ServiceTypeEnum::TARGET_FEE,
+                ServiceTypeEnum::PERSONAL_FEE,
             ], true)) {
                 continue;
             }
@@ -82,30 +128,28 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
                 $size   = (int) $accountService->getById($invoice->getAccountId())?->getSize();
                 $cost   = $tariff->multiply($size);
             }
-            elseif ($service->getType() === ServiceTypeEnum::DEBT) {
-                $cost = MoneyService::parse($balance < 0 ? abs($balance) : 0);
-            }
             else {
                 $cost = MoneyService::parse($service->getCost());
             }
 
-            $claim = $claimFactory->makeDefault();
-            $claim->setInvoiceId($this->invoiceId)
+            $claim = $claimFactory
+                ->makeDefault()
+                ->setInvoiceId($this->invoiceId)
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
                 ->setCost(MoneyService::toFloat($cost))
-                ->setPayed(0.00)
+                ->setPaid(0.00)
             ;
 
-            $claimService->save($claim);
+            $newClaims->add($claimService->save($claim));
         }
 
-        if ($balance > 0) {
+        if ($oldAdvance?->getPaid()) {
             $payment = PaymentLocator::PaymentFactory()
                 ->makeDefault()
                 ->setAccountId($invoice->getAccountId())
                 ->setInvoiceId($invoice->getId())
-                ->setCost($balance)
+                ->setCost($oldAdvance?->getPaid())
                 ->setModerated(true)
                 ->setVerified(true)
                 ->setName('Аванс с предыдущего периода')
@@ -114,18 +158,15 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 
             PaymentLocator::PaymentService()->save($payment);
         }
-
-        ClaimsUpdatedEvent::dispatch($invoice->getId());
     }
 
     /**
-     * Разница сколько должен с предыдущего периода.
-     * 0    - всё оплачено.
-     * > 0  - аванс/переплата.
-     * < 0  - долг.
+     * Услуги переходящие в долг и оплату (аванс) нового счёта
      */
-    private function getBalanceFromPreviousPeriod(InvoiceDTO $invoice): float
+    private function getMigratingClaimsToNewPeriod(InvoiceDTO $invoice): ClaimCollection
     {
+        $result = new ClaimCollection();
+
         $periodSearcher = PeriodSearcher::make()
             ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)
             ->addWhere(Period::ID, SearcherInterface::LT, $invoice->getPeriodId())
@@ -134,8 +175,8 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
 
         $period = PeriodLocator::PeriodService()->search($periodSearcher)->getItems()->first();
 
-        if ( ! $period || ! $period->isClosed()) {
-            return 0;
+        if ( ! $period) {
+            return $result;
         }
 
         $previousInvoice = InvoiceLocator::InvoiceService()->search(
@@ -147,27 +188,21 @@ class CreateClaimsAndPaymentsForRegularInvoiceJob implements ShouldQueue
         )->getItems()->first();
 
         if ( ! $previousInvoice) {
-            return 0;
+            return $result;
         }
 
-        $claims = ClaimLocator::ClaimService()->search(
-            ClaimSearcher::make()
-                ->setWithService()
-                ->setInvoiceId($previousInvoice->getId()),
-        )->getItems();
+        $previousInvoice->setPeriod($period);
 
-        $debt = $previousInvoice->getCost() - $previousInvoice->getPayed();
-
-        /**
-         * Если по нулям, то там может быть аванс
-         */
-        if ((float) $debt === 0.0) {
-            return (float) $claims->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT)?->getCost();
-        }
-
-        /**
-         * это долг
-         */
-        return -1 * $debt;
+        return ClaimLocator::ClaimService()->search(new ClaimSearcher()
+            ->setWithService()
+            ->setInvoiceId($previousInvoice->getId()),
+        )->getItems()
+            ->map(static function (ClaimDTO $claim) use ($previousInvoice) {
+                return $claim->setInvoice($previousInvoice);
+            })
+            ->filter(static function (ClaimDTO $claim) {
+                return $claim->getDelta() || ($claim->getService(true)?->getType()?->isAdvance());
+            })
+        ;
     }
 }

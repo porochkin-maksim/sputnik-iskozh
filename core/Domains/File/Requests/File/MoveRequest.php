@@ -5,14 +5,13 @@ namespace Core\Domains\File\Requests\File;
 use App\Http\Requests\AbstractRequest;
 use App\Models\File\File;
 use App\Models\File\Folder;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class MoveRequest extends AbstractRequest
 {
-    private const FILE   = RequestArgumentsEnum::FILE;
-    private const FOLDER = RequestArgumentsEnum::FOLDER;
-    private const TYPE   = RequestArgumentsEnum::TYPE;
+    private const string FILE   = 'file';
+    private const string FOLDER = 'folder';
+    private const string TYPE   = 'type';
 
     public function rules(): array
     {

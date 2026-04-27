@@ -35,12 +35,12 @@ readonly class ServiceResource extends AbstractResource
             'cost'       => $this->service->getCost(),
             'active'     => $this->service->isActive(),
             'actions'    => [
-                'active'            => $canEdit && $this->service->getType()->value === ServiceTypeEnum::TARGET_FEE->value,
+                'active'            => $canEdit && in_array($this->service->getType(), [ServiceTypeEnum::TARGET_FEE, ServiceTypeEnum::PERSONAL_FEE], true),
                 'period'            => $canEdit && ! $this->service->getId(),
                 'type'              => $canEdit && ! $this->service->getId(),
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::SERVICES_VIEW),
                 ResponsesEnum::EDIT => $canEdit,
-                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP) && $this->service->getType()?->value === ServiceTypeEnum::TARGET_FEE->value,
+                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP) && in_array($this->service->getType(), [ServiceTypeEnum::TARGET_FEE, ServiceTypeEnum::PERSONAL_FEE], true),
             ],
             'historyUrl' => $this->service->getId()
                 ? HistoryChangesLocator::route(

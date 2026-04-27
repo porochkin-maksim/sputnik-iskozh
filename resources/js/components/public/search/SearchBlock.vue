@@ -69,7 +69,7 @@
 import Url           from '../../../utils/Url.js';
 import CustomInput   from '../../common/form/CustomInput.vue';
 import ResponseError from '../../../mixin/ResponseError.js';
-import NewsListItem  from '../news/NewsItem.vue';
+import NewsListItem  from '../news/list/NewsItem.vue';
 import FileItem      from '../news/FileItem.vue';
 
 export default {

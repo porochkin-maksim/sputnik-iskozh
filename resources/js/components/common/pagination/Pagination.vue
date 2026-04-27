@@ -87,5 +87,10 @@ export default {
             return paginationArray;
         },
     },
+    watch   : {
+        page () {
+            this.current = this.page;
+        },
+    },
 };
 </script>

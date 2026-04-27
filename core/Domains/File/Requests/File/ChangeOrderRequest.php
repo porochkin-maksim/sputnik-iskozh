@@ -3,11 +3,10 @@
 namespace Core\Domains\File\Requests\File;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 
 class ChangeOrderRequest extends AbstractRequest
 {
-    private const INDEX = RequestArgumentsEnum::INDEX;
+    private const string INDEX = 'index';
 
     public function rules(): array
     {

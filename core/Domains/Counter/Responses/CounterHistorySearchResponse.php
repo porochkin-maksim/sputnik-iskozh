@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Counter\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse as BaseSearchResponse;
+use Core\Db\Searcher\Models\BaseSearchResponse;
 use Core\Domains\Counter\Collections\CounterHistoryCollection;
 
 /**

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests;
 
@@ -6,6 +6,8 @@ use Core\Requests\RequestArgumentsEnum;
 
 class DefaultRequest extends AbstractRequest
 {
+    use SortFieldTrait;
+
     private const string LIMIT  = RequestArgumentsEnum::LIMIT;
     private const string SKIP   = RequestArgumentsEnum::SKIP;
     private const string SEARCH = RequestArgumentsEnum::SEARCH;
@@ -23,10 +25,5 @@ class DefaultRequest extends AbstractRequest
     public function getSearch(): ?string
     {
         return $this->getStringOrNull(self::SEARCH);
-    }
-
-    public function getLastId(): ?int
-    {
-        return $this->getIntOrNull(RequestArgumentsEnum::LAST_ID);
     }
 }

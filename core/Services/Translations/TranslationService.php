@@ -3,6 +3,7 @@
 namespace Core\Services\Translations;
 
 use App\Models\User;
+use Core\Domains\Enums\Emails;
 use Core\Log\LogChannel;
 use Core\Services\Translations\Notifications\TranslationRequired;
 use Illuminate\Support\Facades\File;
@@ -38,7 +39,7 @@ class TranslationService
 
             if ( ! $translationExists) {
                 $content[] = "    $line";
-                $user      = new User([User::EMAIL => env('ADMIN_EMAIL')]);
+                $user      = new User([User::EMAIL => Emails::POROCHKIN_MAKSIM]);
                 $user->notify(new TranslationRequired($key));
             }
 

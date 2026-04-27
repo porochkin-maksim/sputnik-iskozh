@@ -5,11 +5,10 @@ namespace Core\Domains\Counter\Requests;
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterSearcher;
-use Core\Requests\RequestArgumentsEnum;
 
 class SearchRequest extends AbstractRequest
 {
-    private const ALL = RequestArgumentsEnum::ALL;
+    private const string ALL = 'all';
 
     public function dto(): CounterSearcher
     {

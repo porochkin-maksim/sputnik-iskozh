@@ -5,9 +5,9 @@ namespace Core\Domains\News\Factories;
 use App\Models\News;
 use Carbon\Carbon;
 use Core\Domains\News\Enums\CategoryEnum;
-use Core\Enums\DateTimeFormat;
-use Core\Domains\File\Factories\FileFactory;
 use Core\Domains\News\Models\NewsDTO;
+use Core\Enums\DateTimeFormat;
+use Core\Infrastructure\File\FileFactory;
 
 readonly class NewsFactory
 {
@@ -64,8 +64,8 @@ readonly class NewsFactory
             ->setCreatedAt($model->created_at)
             ->setUpdatedAt($model->updated_at);
 
-        if (isset($model->getRelations()[News::FILES])) {
-            $result->setFiles($this->fileFactory->makeDtoFromObjects($model->getRelation(News::FILES)));
+        if (isset($model->getRelations()[News::RELATION_FILES])) {
+            $result->setFiles($this->fileFactory->makeDtoFromObjects($model->getRelation(News::RELATION_FILES)));
         }
 
         return $result;

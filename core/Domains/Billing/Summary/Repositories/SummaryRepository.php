@@ -23,9 +23,9 @@ class SummaryRepository
                 COUNT(CASE WHEN type = {$outcome} THEN 1 ELSE NULL END) AS outcomeCount,
                 
                 SUM(CASE WHEN type = {$outcome} THEN 0 ELSE cost END)  AS incomeCost,
-                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE payed END) AS incomePayed,
+                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE paid END) AS incomePaid,
                 SUM(CASE WHEN type = {$outcome} THEN cost ELSE 0 END)  AS outcomeCost,
-                SUM(CASE WHEN type = {$outcome} THEN payed ELSE 0 END) AS outcomePayed
+                SUM(CASE WHEN type = {$outcome} THEN paid ELSE 0 END) AS outcomePaid
             "),
         )->when($periodId, function ($query) use ($periodId) {
             $query->where(Invoice::PERIOD_ID, SearcherInterface::EQUALS, $periodId);
@@ -47,8 +47,8 @@ class SummaryRepository
             SELECT 
                 IF(services.type = {$otherType} AND claims.name IS NOT NULL, claims.name, services.name) AS service,
                 SUM(claims.cost) AS cost,
-                SUM(claims.payed) AS payed,
-                SUM(claims.cost) - SUM(claims.payed) AS delta
+                SUM(claims.paid) AS paid,
+                SUM(claims.cost) - SUM(claims.paid) AS delta
             FROM claims
             INNER JOIN services ON claims.service_id = services.id
             WHERE invoice_id IN ({$invoiceIdsString})

@@ -3,71 +3,37 @@
 namespace Core\Domains\Billing\Claim\Services;
 
 use Core\Domains\Billing\Claim\Collections\ClaimCollection;
-use Core\Domains\Billing\Claim\Events\ClaimDeletedEvent;
-use Core\Domains\Billing\Claim\Events\ClaimsUpdatedEvent;
-use Core\Domains\Billing\Claim\Factories\ClaimFactory;
-use Core\Domains\Billing\Claim\Models\ClaimComparator;
 use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
 use Core\Domains\Billing\Claim\Repositories\ClaimRepository;
-use Core\Domains\Billing\Claim\Responses\SearchResponse;
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\Services\HistoryChangesService;
-use Exception;
-use Illuminate\Support\Facades\DB;
+use Core\Domains\Billing\Claim\Responses\ClaimSearchResponse;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 
 readonly class ClaimService
 {
     public function __construct(
-        private ClaimFactory    $claimFactory,
         private ClaimRepository $claimRepository,
-        private HistoryChangesService $historyChangesService,
     )
     {
     }
 
-    public function save(ClaimDTO $claim): ClaimDTO
+    public function search(ClaimSearcher $searcher): ClaimSearchResponse
     {
-        $model = $this->claimRepository->getById($claim->getId());
-        if ($model) {
-            $before = $this->claimFactory->makeDtoFromObject($model);
-        }
-        else {
-            $before = new ClaimDTO();
-        }
-
-        $model   = $this->claimRepository->save($this->claimFactory->makeModelFromDto($claim, $model));
-        $current = $this->claimFactory->makeDtoFromObject($model);
-
-        $this->historyChangesService->writeToHistory(
-            $claim->getId() ? Event::UPDATE : Event::CREATE,
-            HistoryType::INVOICE,
-            $current->getInvoiceId(),
-            HistoryType::CLAIM,
-            $current->getId(),
-            new ClaimComparator($current),
-            new ClaimComparator($before),
-        );
-
-        if (
-            ! $claim->getId()
-            || $current->getCost() !== $before->getCost()
-            || $current->getPayed() !== $before->getPayed()
-        ) {
-            ClaimsUpdatedEvent::dispatch($current->getInvoiceId());
-        }
-
-        return $current;
+        return $this->claimRepository->search($searcher);
     }
 
-    public function saveQuietly(ClaimDTO $claim): ClaimDTO
+    public function getById(?int $id): ?ClaimDTO
     {
-        return $this->claimFactory->makeDtoFromObject(
-            $this->claimRepository->save($this->claimFactory->makeModelFromDto(
-                $claim, $this->claimRepository->getById($claim->getId())
-            ))
-        );
+        return $this->claimRepository->getById($id);
+    }
+
+    public function save(ClaimDTO $item): ClaimDTO
+    {
+        return $this->claimRepository->save($item);
+    }
+
+    public function deleteById(?int $id): bool
+    {
+        return $this->claimRepository->deleteById($id);
     }
 
     /**
@@ -77,69 +43,19 @@ readonly class ClaimService
     {
         $result = new ClaimCollection();
         foreach ($claims as $claim) {
-            $result->add($this->saveQuietly($claim));
+            $result->add($this->save($claim));
         }
 
         return $result;
     }
 
-    public function search(ClaimSearcher $searcher): SearchResponse
+    public function getByInvoiceId(?int $invoiceId): ClaimCollection
     {
-        $response = $this->claimRepository->search($searcher);
+        $sarcher = new ClaimSearcher()
+            ->setInvoiceId($invoiceId)
+            ->setWithService()
+        ;
 
-        $result = new SearchResponse();
-        $result->setTotal($response->getTotal());
-
-        $collection = new ClaimCollection();
-        foreach ($response->getItems() as $item) {
-            $collection->add($this->claimFactory->makeDtoFromObject($item));
-        }
-
-        return $result->setItems($collection);
-    }
-
-    public function getById(?int $id): ?ClaimDTO
-    {
-        if ( ! $id) {
-            return null;
-        }
-
-        $searcher = new ClaimSearcher();
-        $searcher->setId($id);
-        $result = $this->claimRepository->search($searcher)->getItems()->first();
-
-        return $result ? $this->claimFactory->makeDtoFromObject($result) : null;
-    }
-
-    public function deleteById(int $id): bool
-    {
-        DB::beginTransaction();
-        try {
-            $claim = $this->getById($id);
-
-            if ( ! $claim) {
-                return false;
-            }
-
-            $this->historyChangesService->writeToHistory(
-                Event::DELETE,
-                HistoryType::INVOICE,
-                $claim->getInvoiceId(),
-                HistoryType::CLAIM,
-                $claim->getId(),
-            );
-
-            $result = $this->claimRepository->deleteById($id);
-
-            ClaimDeletedEvent::dispatch($claim);
-
-            DB::commit();
-
-            return $result;
-        }
-        catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return $this->search($sarcher)->getItems();
     }
 }

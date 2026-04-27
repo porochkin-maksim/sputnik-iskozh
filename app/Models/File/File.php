@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\File;
 
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -18,20 +18,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $name
  * @property ?string $path
  */
-class File extends Model
+class File extends AbstractModel
 {
-    public const TABLE = 'files';
+    public const string TABLE = 'files';
 
     protected $table = self::TABLE;
 
-    public const ID         = 'id';
-    public const TYPE       = 'type';
-    public const RELATED_ID = 'related_id';
-    public const PARENT_ID  = 'parent_id';
-    public const ORDER      = 'order';
-    public const EXT        = 'ext';
-    public const NAME       = 'name';
-    public const PATH       = 'path';
+    public const string ID         = 'id';
+    public const string TYPE       = 'type';
+    public const string RELATED_ID = 'related_id';
+    public const string PARENT_ID  = 'parent_id';
+    public const string ORDER      = 'order';
+    public const string EXT        = 'ext';
+    public const string NAME       = 'name';
+    public const string PATH       = 'path';
 
     protected $fillable = [
         self::TYPE,

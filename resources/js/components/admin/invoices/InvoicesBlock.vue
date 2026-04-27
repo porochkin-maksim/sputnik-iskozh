@@ -1,343 +1,407 @@
 <template>
-    <div v-if="loaded && (!periods || !periods.length)">
-        <div class="alert alert-warning">
-            <p><i class="fa fa-warning"></i> Не найдено ни одного периода</p>
-            <a :href="Url.Routes.adminPeriodIndex.uri">
-                Создайте период
-            </a>
-        </div>
-    </div>
-    <template v-if="periods && periods.length">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="d-flex">
-                <button class="btn btn-success"
-                        v-if="actions.edit"
-                        v-on:click="makeAction">Добавить счёт
-                </button>
-                <button class="btn btn-success ms-2"
-                        v-if="actions.edit && periodId"
-                        v-on:click="makeRegularAction">Выставить регулярные счета
-                </button>
-            </div>
-            <div class="d-flex">
+    <!-- Индикатор загрузки -->
+    <loading-spinner
+        v-if="!loaded"
+        size="lg"
+        color="primary"
+        text="Загрузка счетов..."
+        wrapper-class="my-5"
+    />
+
+    <template v-else>
+        <!-- Нет периодов -->
+        <div v-if="!periods || !periods.length">
+            <div class="alert alert-warning d-flex align-items-center gap-2">
+                <i class="fa fa-warning fa-lg" aria-hidden="true"></i>
                 <div>
-                    <pagination :total="total"
-                                :perPage="perPage"
-                                :page="Math.ceil(this.skip > 0 ? this.skip / this.perPage : 0) + 1"
-                                :prop-classes="'pagination-sm mb-0'"
-                                @update="onPaginationUpdate"
-                    />
-                </div>
-                <div>
-                    <simple-select v-model="perPage"
-                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="[15,25,50,100]"
-                                   @change="listAction"
-                    />
-                </div>
-                <div class=" d-flex align-items-center justify-content-center mx-2">
-                    Всего: {{ total }}
-                </div>
-                <div>
-                    <history-btn
-                        class="btn-link underline-none"
-                        :url="historyUrl" />
+                    <p class="mb-1">Не найдено ни одного периода</p>
+                    <a :href="Url.Routes.adminPeriodIndex.uri" class="alert-link">
+                        Создайте период
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-between">
-            <div class="d-flex mb-2">
-                <template v-if="computedPeriods && computedPeriods.length">
-                    <simple-select v-model="periodId"
-                                   :class="'d-inline-block form-select-sm w-auto'"
-                                   :items="computedPeriods"
-                                   @change="listAction"
-                    />
-                </template>
-                <template v-if="computedTypes && computedTypes.length">
-                    <simple-select v-model="type"
-                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="computedTypes"
-                                   @change="listAction"
-                    />
-                </template>
-                <template v-if="computedAccounts && computedAccounts.length">
-                    <div class="d-flex ms-2">
-                        <div class="input-group input-group-sm">
-                            <input class="form-control"
-                                   v-model="searchAccount"
-                                   name="users_search"
-                                   placeholder="Участок..."
-                                   @keyup="listAction"
-                                   ref="search">
-                            <button class="btn btn-light border"
-                                    type="button"
-                                    @click="searchAccount=null;listAction">
-                                <i class="fa fa-close"></i>
-                            </button>
-                        </div>
+
+        <!-- Основной контент -->
+        <template v-else>
+            <!-- Верхняя панель с кнопками и пагинацией -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-success"
+                                v-if="actions.edit"
+                                @click="makeAction">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Добавить счёт
+                        </button>
+                        <button class="btn btn-success"
+                                v-if="actions.edit && periodId"
+                                @click="makeRegularAction">
+                            <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                            Выставить регулярные
+                        </button>
                     </div>
-                </template>
-                <template v-if="computedPayedStatus && computedPayedStatus.length">
-                    <simple-select v-model="payedStatus"
-                                   :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                   :items="computedPayedStatus"
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <pagination :total="total"
+                                :per-page="perPage"
+                                :page="Math.ceil(skip / perPage) + 1"
+                                :prop-classes="'pagination-sm mb-0'"
+                                @update="onPaginationUpdate" />
+
+                    <simple-select v-model="perPage"
+                                   class="d-inline-block form-select-sm w-auto"
+                                   :options="[15, 25, 50, 100]"
                                    @change="listAction"
-                    />
-                </template>
+                                   aria-label="Элементов на странице" />
+
+                    <span class="badge bg-secondary">
+                        Всего: {{ total }}
+                    </span>
+
+                    <history-btn class="btn-link underline-none p-0"
+                                 :url="historyUrl"
+                                 aria-label="История изменений" />
+                </div>
             </div>
-            <div>
-                <button class="btn btn-success"
-                        @click="exportAction">
-                    <i class="fa fa-file-excel-o"></i>
-                </button>
+
+            <!-- Панель фильтров -->
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Период -->
+                    <simple-select v-if="computedPeriods?.length"
+                                   v-model="periodId"
+                                   class="form-select-sm w-auto"
+                                   :options="computedPeriods"
+                                   @change="listAction"
+                                   aria-label="Фильтр по периоду" />
+
+                    <!-- Тип -->
+                    <simple-select v-if="computedTypes?.length"
+                                   v-model="type"
+                                   class="form-select-sm w-auto"
+                                   :options="computedTypes"
+                                   @change="listAction"
+                                   aria-label="Фильтр по типу" />
+
+                    <!-- Статус оплаты -->
+                    <simple-select v-if="computedPaidStatus?.length"
+                                   v-model="paidStatus"
+                                   class="form-select-sm w-auto"
+                                   :options="computedPaidStatus"
+                                   @change="listAction"
+                                   aria-label="Фильтр по статусу оплаты" />
+
+                    <!-- Поиск по участку -->
+                    <div v-if="computedAccounts?.length" class="input-group input-group-sm"
+                         style="min-width: 80px; max-width: 150px;">
+                        <button class="btn btn-light border px-2"
+                                @click="searchAction"
+                                :disabled="!searchAccount && searchAccount !== ''"
+                                type="button"
+                                aria-label="Поиск">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        <input class="form-control"
+                               v-model="searchAccount"
+                               placeholder="Участок"
+                               @keyup.enter="searchAction"
+                               ref="searchInput"
+                               aria-label="Поиск по участку"
+                               style="min-width: 50px;">
+                        <button class="btn btn-light border px-2"
+                                v-if="searchAccount"
+                                @click="clearSearchAction"
+                                type="button"
+                                aria-label="Очистить поиск">
+                            <i class="fa fa-close" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-outline-success"
+                                v-if="actions.edit && periodId"
+                                @click="importAction">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline ms-1">Импорт</span>
+                        </button>
+                        <button class="btn btn-success"
+                                @click="exportAction"
+                                aria-label="Экспорт в Excel">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            <span class="d-none d-sm-inline ms-1">Экспорт</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Сводка -->
+            <summary-block :account-id="parseInt(accountId)"
+                           :account-search="searchAccount"
+                           :type="parseInt(type)"
+                           :period-id="parseInt(periodId)"
+                           class="mb-3" />
+
+            <!-- Список счетов -->
+            <invoices-list :invoices="invoices"
+                           :sort-field="sortField"
+                           :sort-order="sortOrder"
+                           @sort="onSort" />
+
+            <!-- Редактирование счёта -->
+            <invoice-item-edit v-if="invoice && actions.edit"
+                               :model-value="invoice"
+                               :accounts="accounts"
+                               :periods="activePeriods"
+                               :types="activeTypes"
+                               @updated="listAction" />
+        </template>
     </template>
-    <summary-block :account-id="parseInt(accountId)"
-                   :account-search="searchAccount"
-                   :type="parseInt(type)"
-                   :period-id="parseInt(periodId)" />
-    <invoices-list
-        :invoices="invoices"
-        :sort-field="sortField"
-        :sort-order="sortOrder"
-        @sort="onSort"
-    />
-    <invoice-item-edit v-if="invoice && actions.edit"
-                       :model-value="invoice"
-                       :accounts="accounts"
-                       :periods="activePeriods"
-                       :types="activeTypes"
-                       @updated="listAction"
-    />
 </template>
 
-<script>
-import ResponseError   from '../../../mixin/ResponseError.js';
-import Url             from '../../../utils/Url.js';
-import InvoiceItemEdit from './InvoiceItemEdit.vue';
-import HistoryBtn      from '../../common/HistoryBtn.vue';
-import Pagination      from '../../common/pagination/Pagination.vue';
-import SimpleSelect    from '../../common/form/SimpleSelect.vue';
-import SearchSelect    from '../../common/form/SearchSelect.vue';
-import InvoicesList    from './InvoicesList.vue';
-import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
-import SummaryBlock    from '../../common/blocks/SummaryBlock.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    onMounted,
+    watch,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import InvoiceItemEdit      from './InvoiceItemEdit.vue';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import Pagination           from '../../common/pagination/Pagination.vue';
+import SimpleSelect         from '../../common/form/SimpleSelect.vue';
+import InvoicesList         from './InvoicesList.vue';
+import SummaryBlock         from '../../common/blocks/SummaryBlock.vue';
+import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import {
+    ApiAdminInvoiceCreate,
+    ApiAdminInvoiceList,
+    ApiAdminInvoiceGetAccountsCountWithoutRegular,
+    ApiAdminInvoiceCreateRegularInvoices,
+}                           from '@api';
+import Url                  from '@utils/Url.js';
 
-export default {
-    name      : 'InvoicesBlock',
-    components: {
-        CustomCheckbox,
-        InvoicesList,
-        SearchSelect,
-        SimpleSelect,
-        Pagination,
-        HistoryBtn,
-        InvoiceItemEdit,
-        SummaryBlock,
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            invoice      : null,
-            invoices     : [],
-            accounts     : [],
-            periods      : [],
-            activePeriods: [],
-            types        : [],
-            activeTypes  : [],
-            historyUrl   : null,
+defineOptions({
+    name: 'InvoicesBlock',
+});
 
-            loaded       : false,
-            total        : null,
-            perPage      : 25,
-            skip         : 0,
-            routeState   : 0,
-            type         : 0,
-            periodId     : null,
-            payedStatus  : null,
-            accountId    : 0,
-            searchAccount: null,
-            Url          : Url,
-            actions      : {},
-            summary      : null,
+const { parseResponseErrors, showInfo, showSuccess } = useResponseError();
 
-            // Добавляем параметры сортировки
-            sortField: 'id',
-            sortOrder: 'desc',
-        };
-    },
-    created () {
-        const urlParams    = new URLSearchParams(window.location.search);
-        this.perPage       = parseInt(urlParams.get('limit') || 25);
-        this.skip          = parseInt(urlParams.get('skip') || 0);
-        this.type          = parseInt(urlParams.get('type') || 0);
-        this.periodId      = parseInt(urlParams.get('period') || 0);
-        this.payedStatus   = urlParams.get('status') || 'all';
-        this.sortField     = urlParams.get('sort_field') || 'id';
-        this.sortOrder     = urlParams.get('sort_order') || 'desc';
-        this.searchAccount = urlParams.get('search') || null;
-        this.listAction();
-    },
-    methods : {
-        makeRegularAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceGetAccountsCountWithoutRegular, {
-                periodId: this.periodId,
-            });
-            window.axios[Url.Routes.adminInvoiceGetAccountsCountWithoutRegular.method](uri).then(response => {
-                const count = response.data;
-                if (count === 0) {
-                    alert('Нет ни одного участка для выставления регулярного счёта в периоде');
-                    return;
-                }
-                else if (!confirm('Выставить регулярные счета всем участкам в периоде, у которых ещё нет таких счетов? (' + count + 'шт)')) {
-                    return;
-                }
+const invoice        = ref(null);
+const invoices       = ref([]);
+const accounts       = ref([]);
+const periods        = ref([]);
+const activePeriods  = ref([]);
+const types          = ref([]);
+const activeTypes    = ref([]);
+const historyUrl     = ref(null);
+const loaded         = ref(false);
+const total          = ref(null);
+const perPage        = ref(25);
+const skip           = ref(0);
+const routeState     = ref(0);
+const type           = ref(0);
+const periodId       = ref(null);
+const paidStatus     = ref('all');
+const accountId      = ref(0);
+const searchAccount  = ref(null);
+const actions        = ref({});
+const sortField      = ref('id');
+const sortOrder      = ref('desc');
+const searchProgress = ref(null);
+const searchInput    = ref(null);
 
-                uri = Url.Generator.makeUri(Url.Routes.adminInvoiceCreateRegularInvoices, {
-                    periodId: this.periodId,
-                });
-                window.axios[Url.Routes.adminInvoiceCreateRegularInvoices.method](uri).then(response => {
-                    this.listAction();
-                }).catch(response => {
-                    this.parseResponseErrors(response);
-                });
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        makeAction () {
-            this.invoice = null;
-            window.axios[Url.Routes.adminInvoiceCreate.method](Url.Routes.adminInvoiceCreate.uri).then(response => {
-                let invoice = response.data;
-                if (this.periodId) {
-                    invoice.periodId = this.periodId;
-                }
-                if (this.type) {
-                    invoice.type = this.type;
-                }
-                this.invoice = invoice;
-
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        listAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
-                limit     : this.perPage,
-                skip      : this.skip,
-                type      : this.type,
-                period    : this.periodId,
-                account   : this.accountId,
-                search    : this.searchAccount,
-                status    : this.payedStatus,
-                sort_field: this.sortField,
-                sort_order: this.sortOrder,
-            });
-            window.history.pushState({ state: this.routeState++ }, '', uri);
-
-            window.axios[Url.Routes.adminInvoiceList.method](Url.Routes.adminInvoiceList.uri, {
-                params: {
-                    limit       : this.perPage,
-                    skip        : this.skip,
-                    type        : this.type,
-                    period_id   : this.periodId,
-                    account_id  : this.accountId,
-                    account     : this.searchAccount,
-                    payed_status: this.payedStatus,
-                    sort_field  : this.sortField,
-                    sort_order  : this.sortOrder,
-                },
-            }).then(response => {
-                this.actions       = response.data.actions;
-                this.invoices      = response.data.invoices;
-                this.total         = response.data.total;
-                this.types         = response.data.types;
-                this.activeTypes   = response.data.activeTypes;
-                this.periods       = response.data.periods;
-                this.activePeriods = response.data.activePeriods;
-                this.accounts      = response.data.accounts;
-                this.historyUrl    = response.data.historyUrl;
-
-                if (!this.periodId && this.periods.length) {
-                    this.periodId = this.periods[0].key;
-                    this.listAction();
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loaded = true;
-            });
-        },
-        exportAction () {
-            window.open(Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
-                type        : this.type,
-                period_id   : this.periodId,
-                account_id  : this.accountId,
-                account     : this.searchAccount,
-                payed_status: this.payedStatus,
-                sort_field  : this.sortField,
-                sort_order  : this.sortOrder,
-            }), '_blank');
-        },
-        onPaginationUpdate (skip) {
-            this.skip = skip;
-            this.listAction();
-        },
-        onSort ({ field, order }) {
-            this.sortField = field;
-            this.sortOrder = order;
-            this.listAction();
-        },
-    },
-    computed: {
-        computedTypes () {
-            return [
-                {
-                    'key'  : 0,
-                    'value': 'Все типы',
-                },
-            ].concat(this.types);
-        },
-        computedPeriods () {
-            return [
-                {
-                    'key'  : 0,
-                    'value': 'Все периоды',
-                },
-            ].concat(this.periods);
-        },
-        computedAccounts () {
-            return [
-                {
-                    'key'  : 0,
-                    'value': 'Все участки',
-                },
-            ].concat(this.accounts);
-        },
-        computedPayedStatus () {
-            return [
-                {
-                    'key'  : 'all',
-                    'value': 'Все статусы',
-                },
-                {
-                    'key'  : 'payed',
-                    'value': 'Оплаченные',
-                },
-                {
-                    'key'  : 'unpayed',
-                    'value': 'Неоплаченные',
-                },
-                {
-                    'key'  : 'partial',
-                    'value': 'Частично оплаченные',
-                },
-            ];
-        },
-    },
+// Инициализация из URL параметров
+const initFromUrl = () => {
+    const urlParams     = new URLSearchParams(window.location.search);
+    perPage.value       = parseInt(urlParams.get('limit') || 25);
+    skip.value          = parseInt(urlParams.get('skip') || 0);
+    type.value          = parseInt(urlParams.get('type') || 0);
+    periodId.value      = parseInt(urlParams.get('period') || 0);
+    paidStatus.value    = urlParams.get('status') || 'all';
+    sortField.value     = urlParams.get('sort_field') || 'id';
+    sortOrder.value     = urlParams.get('sort_order') || 'desc';
+    searchAccount.value = urlParams.get('search') || null;
 };
+
+const computedTypes = computed(() => [
+    { value: 0, label: 'Все типы' },
+    ...types.value,
+]);
+
+const computedPeriods = computed(() => [
+    { value: 0, label: 'Все периоды' },
+    ...periods.value,
+]);
+
+const computedAccounts = computed(() => [
+    { value: 0, label: 'Все участки' },
+    ...accounts.value,
+]);
+
+const computedPaidStatus = computed(() => [
+    { value: 'all', label: 'Все статусы' },
+    { value: 'paid', label: 'Оплаченные' },
+    { value: 'unpaid', label: 'Неоплаченные' },
+    { value: 'partial', label: 'Частично оплаченные' },
+]);
+
+const makeRegularAction = async () => {
+    try {
+        const countResponse = await ApiAdminInvoiceGetAccountsCountWithoutRegular(periodId.value);
+        const count         = countResponse.data;
+
+        if (count === 0) {
+            alert('Нет ни одного участка для выставления регулярного счёта в периоде');
+            return;
+        }
+
+        if (!confirm(`Выставить регулярные счета всем участкам в периоде, у которых ещё нет таких счетов? (${count}шт)`)) {
+            return;
+        }
+
+        const response = await ApiAdminInvoiceCreateRegularInvoices(periodId.value);
+        if (response.data) {
+            await listAction();
+            showSuccess('Процесс выставления счетов запущен');
+        }
+        else {
+            showInfo('Процесс выставления счетов уже запущен');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const makeAction = async () => {
+    invoice.value = null;
+    try {
+        const response   = await ApiAdminInvoiceCreate();
+        const newInvoice = response.data;
+
+        if (periodId.value) {
+            newInvoice.periodId = periodId.value;
+        }
+        if (type.value) {
+            newInvoice.type = type.value;
+        }
+
+        invoice.value = newInvoice;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const listAction = async () => {
+    const uri = Url.Generator.makeUri(Url.Routes.adminInvoiceIndex, {}, {
+        limit     : perPage.value,
+        skip      : skip.value,
+        type      : type.value,
+        period    : periodId.value,
+        account   : accountId.value,
+        search    : searchAccount.value,
+        status    : paidStatus.value,
+        sort_field: sortField.value,
+        sort_order: sortOrder.value,
+    });
+
+    window.history.pushState({ state: routeState.value++ }, '', uri);
+
+    try {
+        const response = await ApiAdminInvoiceList({
+            limit      : perPage.value,
+            skip       : skip.value,
+            type       : type.value,
+            period_id  : periodId.value,
+            account_id : accountId.value,
+            account    : searchAccount.value,
+            paid_status: paidStatus.value,
+            sort_field : sortField.value,
+            sort_order : sortOrder.value,
+        });
+
+        actions.value       = response.data.actions;
+        invoices.value      = response.data.invoices;
+        total.value         = response.data.total;
+        types.value         = response.data.types;
+        activeTypes.value   = response.data.activeTypes;
+        periods.value       = response.data.periods;
+        activePeriods.value = response.data.activePeriods;
+        accounts.value      = response.data.accounts;
+        historyUrl.value    = response.data.historyUrl;
+
+        if ((periodId.value === null || periodId.value === undefined) && periods.value.length) {
+            periodId.value = periods.value[0].value;
+            await listAction();
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        loaded.value = true;
+    }
+};
+
+const searchAction = () => {
+    clearTimeout(searchProgress.value);
+    searchProgress.value = setTimeout(() => {
+        skip.value = 0;
+        listAction();
+    }, 300);
+};
+
+const clearSearchAction = () => {
+    searchAccount.value = null;
+    searchAction();
+    searchInput.value?.focus();
+};
+
+const exportAction = () => {
+    const url = Url.Generator.makeUri(Url.Routes.adminInvoiceExport, {}, {
+        type       : type.value,
+        period_id  : periodId.value,
+        account_id : accountId.value,
+        account    : searchAccount.value,
+        paid_status: paidStatus.value,
+        sort_field : sortField.value,
+        sort_order : sortOrder.value,
+    });
+    window.open(url, '_blank');
+};
+
+const importAction = () => {
+    const url = Url.Generator.makeUri(Url.Routes.adminInvoiceImportPaymentsIndex, {
+        periodId: periodId.value,
+    });
+    window.open(url, '_blank');
+};
+
+const onPaginationUpdate = (newSkip) => {
+    skip.value = newSkip;
+    listAction();
+};
+
+const onSort = ({ field, order }) => {
+    sortField.value = field;
+    sortOrder.value = order;
+    listAction();
+};
+
+onMounted(() => {
+    initFromUrl();
+    listAction();
+});
+
+// Следим за изменениями accountId (может меняться из summary)
+watch(accountId, () => {
+    listAction();
+});
 </script>

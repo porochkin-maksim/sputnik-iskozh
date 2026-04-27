@@ -16,6 +16,7 @@ use Core\Domains\Account\Services\AccountService;
 use Core\Domains\Billing\Payment\Models\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentLocator;
 use Core\Domains\Billing\Payment\Services\PaymentService;
+use Core\Requests\RequestArgumentsEnum;
 use Core\Resources\RouteNames;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -60,7 +61,7 @@ class TopPanelController extends Controller
         return response()->json($result);
     }
 
-    public function search(DefaultRequest $request): JsonResponse
+    public function search(DefaultRequest $request): ?string
     {
         $accountSearch = $request->getStringOrNull('account');
         $userSearch    = $request->getStringOrNull('user');
@@ -75,13 +76,16 @@ class TopPanelController extends Controller
                 $result = new AccountResource($accounts->first())->getViewUrl();
             }
             elseif ($accounts->count() > 1) {
-                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
+            }
+            else {
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
             }
         }
         elseif ($userSearch) {
-            $result = route(RouteNames::ADMIN_USER_INDEX, ['search' => $userSearch]);
+            $result = route(RouteNames::ADMIN_USER_INDEX, [RequestArgumentsEnum::SEARCH => $userSearch]);
         }
 
-        return response()->json($result);
+        return $result;
     }
 }

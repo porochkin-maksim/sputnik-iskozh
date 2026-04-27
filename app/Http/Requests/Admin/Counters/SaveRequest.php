@@ -3,15 +3,18 @@
 namespace App\Http\Requests\Admin\Counters;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
+use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID           = RequestArgumentsEnum::ID;
-    private const NUMBER       = RequestArgumentsEnum::NUMBER;
-    private const IS_INVOICING = 'is_invoicing';
-    private const INCREMENT    = RequestArgumentsEnum::INCREMENT;
+    private const string ID            = 'id';
+    private const string NUMBER        = 'number';
+    private const string IS_INVOICING  = 'isInvoicing';
+    private const string INCREMENT     = 'increment';
+    private const string EXPIRE_AT     = 'expireAt';
+    private const string PASSPORT_FILE = 'passportFile';
 
     public function rules(): array
     {
@@ -49,5 +52,15 @@ class SaveRequest extends AbstractRequest
     public function getIncrement(): int
     {
         return abs($this->getInt(self::INCREMENT));
+    }
+
+    public function getPassportFile(): ?UploadedFile
+    {
+        return $this->file(self::PASSPORT_FILE);
+    }
+
+    public function getExpireAt(): ?Carbon
+    {
+        return $this->getDateOrNull(self::EXPIRE_AT);
     }
 }

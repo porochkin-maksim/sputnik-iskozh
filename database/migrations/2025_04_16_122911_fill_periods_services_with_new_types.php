@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
 use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;

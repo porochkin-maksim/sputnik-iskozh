@@ -2,9 +2,9 @@
 
 namespace Core\Domains\News\Repositories;
 
-use App\Models\File\File;
 use Core\Db\RepositoryTrait;
-use Core\Domains\File\Repositories\FileRepository as BaseFileRepository;
+use Core\Infrastructure\File\FileModel;
+use Core\Infrastructure\File\FileEloquentRepository as BaseFileRepository;
 
 class FileRepository
 {
@@ -18,6 +18,6 @@ class FileRepository
 
     protected function modelClass(): string
     {
-        return File::class;
+        return FileModel::class;
     }
 }

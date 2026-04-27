@@ -26,4 +26,9 @@ class MoneyService
     {
         return (float) $money->formatByDecimal();
     }
+
+    public static function subtract(?float $left, ?float $right): float
+    {
+        return self::toFloat(self::parse($left)->subtract(self::parse($right)));
+    }
 }

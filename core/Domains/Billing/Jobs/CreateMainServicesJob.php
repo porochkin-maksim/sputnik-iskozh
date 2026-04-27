@@ -30,11 +30,14 @@ class CreateMainServicesJob implements ShouldQueue
 
     public function handle(): void
     {
-        foreach (ServiceTypeEnum::cases() as $case) {
-            if ($case === ServiceTypeEnum::TARGET_FEE) {
-                continue;
-            }
-
+        $cases = [
+            ServiceTypeEnum::MEMBERSHIP_FEE,
+            ServiceTypeEnum::ELECTRIC_TARIFF,
+            ServiceTypeEnum::OTHER,
+            ServiceTypeEnum::DEBT,
+            ServiceTypeEnum::ADVANCE_PAYMENT,
+        ];
+        foreach ($cases as $case) {
             $service = ServiceLocator::ServiceService()->getByPeriodIdAndType($this->periodId, $case);
             if ($service) {
                 continue;
@@ -45,7 +48,8 @@ class CreateMainServicesJob implements ShouldQueue
                 ->setPeriodId($this->periodId)
                 ->setType($case)
                 ->setName($case->name())
-                ->setCost(0);
+                ->setCost(0)
+            ;
 
             ServiceLocator::ServiceService()->save($service);
 

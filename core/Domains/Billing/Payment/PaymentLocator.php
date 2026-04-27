@@ -6,8 +6,7 @@ use Core\Domains\Billing\Payment\Factories\PaymentFactory;
 use Core\Domains\Billing\Payment\Repositories\PaymentRepository;
 use Core\Domains\Billing\Payment\Services\FileService;
 use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Domains\File\FileLocator;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\Files\FileLocator;
 
 abstract class PaymentLocator
 {
@@ -20,9 +19,7 @@ abstract class PaymentLocator
     {
         if ( ! isset(self::$paymentService)) {
             self::$paymentService = new PaymentService(
-                self::PaymentFactory(),
                 self::PaymentRepository(),
-                HistoryChangesLocator::HistoryChangesService(),
             );
         }
 
@@ -41,7 +38,9 @@ abstract class PaymentLocator
     public static function PaymentRepository(): PaymentRepository
     {
         if ( ! isset(self::$paymentRepository)) {
-            self::$paymentRepository = new PaymentRepository();
+            self::$paymentRepository = new PaymentRepository(
+                self::PaymentFactory(),
+            );
         }
 
         return self::$paymentRepository;

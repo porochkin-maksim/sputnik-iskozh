@@ -31,7 +31,9 @@ readonly class CounterResource extends AbstractResource
             'value'       => $lastHistory?->getValue(),
             'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
-            'viewUrl'     => route(RouteNames::PROFILE_COUNTER_VIEW, ['counter' => UidFacade::getUid(UidTypeEnum::COUNTER, $this->counter->getId())]),
+            'passport'    => $this->counter->getPasportFile(),
+            'expireAt'    => $this->counter->getExpireAt()?->format(DateTimeFormat::DATE_DEFAULT),
+            'viewUrl'     => route(RouteNames::PROFILE_COUNTER_VIEW, [$this->counter->getUid()]),
         ];
     }
 }

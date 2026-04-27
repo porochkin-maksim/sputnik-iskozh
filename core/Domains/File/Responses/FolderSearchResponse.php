@@ -2,13 +2,13 @@
 
 namespace Core\Domains\File\Responses;
 
-use Core\Db\Searcher\Models\SearchResponse;
-use Core\Domains\File\Collections\Folders;
+use Core\Db\Searcher\Models\BaseSearchResponse;
+use Core\Domains\File\Collections\FolderCollection;
 
 /**
- * @method Folders getItems()
+ * @method FolderCollection getItems()
  */
-class FolderSearchResponse extends SearchResponse
+class FolderSearchResponse extends BaseSearchResponse
 {
 
 }

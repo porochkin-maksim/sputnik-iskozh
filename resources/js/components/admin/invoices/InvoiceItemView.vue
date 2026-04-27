@@ -1,150 +1,245 @@
 <template>
-    <h4>Детали счёта №{{ localInvoice.id }} для «{{ localInvoice.account.number }}» | {{ localInvoice.displayName }} </h4>
-    <div class="mb-2 d-flex align-items-center justify-content-between">
-        <div>
-            <a class="btn btn-sm border text-decoration-none me-2"
-               v-if="localInvoice.account.viewUrl"
-               :href="localInvoice.account.viewUrl">
-                Перейти в участок {{ localInvoice.account.number }} (Площадь {{ localInvoice.account.size }}м²)
-            </a>
-            <history-btn
-                class="btn-link underline-none"
-                :url="localInvoice.historyUrl" />
-        </div>
-        <button class="btn btn-sm text-danger"
-                v-if="canDrop"
-                @click="dropAction">
-            <i class="fa fa-trash"></i>
-        </button>
-    </div>
-    <div class="alert p-2 mb-2"
-         v-if="actions.view"
-         :class="[invoice.cost !== 0 && localInvoice.isPayed ? 'alert-success' : 'alert-secondary']">
-        <i class="fa fa-check text-success"
-           v-if="localInvoice.isPayed"></i>
-        <i class="fa fa-close text-secondary"
-           v-else></i>
-        &nbsp;
-        <span>
-            Оплачено: {{ $formatMoney(localInvoice.payed ? localInvoice.payed : 0) }} / {{ $formatMoney(localInvoice.cost ? localInvoice.cost : 0) }}
+    <div class="invoice-item-view">
+        <!-- Заголовок -->
+        <h4 class="mb-3" v-if="localInvoice.id">
+            Детали счёта №{{ localInvoice.id }}
+            для «{{ localInvoice.account?.number || '—' }}»
+            <span class="text-muted fw-normal">
+                 | {{ localInvoice.periodName }} | {{ localInvoice.displayName || '—' }}
+            </span>
+        </h4>
 
-            <template v-if="localInvoice.delta !== 0">
-                &nbsp;(Долг {{ $formatMoney(localInvoice.delta) }})
-            </template>
-        </span>
+        <!-- Верхняя панель с действиями -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <!-- Ссылка на участок -->
+                <template>
+                    <a v-if="localInvoice.account?.viewUrl && canAccountView"
+                       class="btn btn-sm btn-outline-primary"
+                       :href="localInvoice.account.viewUrl">
+                        <i class="fa fa-home me-1" aria-hidden="true"></i>
+                        Участок {{ localInvoice.account?.number }} ({{ localInvoice.account?.size }}м²)
+                    </a>
+                </template>
+
+                <!-- Квитанция -->
+                <a v-if="localInvoice.receiptUrl"
+                   :href="localInvoice.receiptUrl"
+                   target="_blank"
+                   class="btn btn-sm btn-outline-danger">
+                    <i class="fa fa-file-pdf-o me-1" aria-hidden="true"></i>
+                    Квитанция
+                </a>
+
+                <button class="btn btn-outline-primary btn-sm" @click="recalcAction"
+                        v-if="canEdit"
+                        :class="isRecalculating ? 'disabled' : ''">
+                    <i class="fa fa-refresh" :class="isRecalculating ? 'fa-spin' : ''"></i> Пересчитать
+                </button>
+
+                <!-- История -->
+                <history-btn v-if="localInvoice.historyUrl"
+                             class="btn-link underline-none p-0"
+                             :url="localInvoice.historyUrl"
+                             aria-label="История изменений" />
+            </div>
+
+            <!-- Кнопка удаления -->
+            <button v-if="canDelete"
+                    class="btn btn-sm btn-outline-danger"
+                    @click="dropAction">
+                <i class="fa fa-trash me-1" aria-hidden="true"></i>
+                Удалить счёт
+            </button>
+        </div>
+
+        <table class="table table-borderless table-sm w-auto mb-0" v-if="localInvoice.detailCost">
+            <tbody>
+            <tr>
+                <th>Основа:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.main) }}</td>
+                <th>Долг:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.debt) }}</td>
+                <th>Аванс:</th>
+                <td>{{ formatMoney(localInvoice.detailCost.advance) }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Статус оплаты -->
+        <div class="alert p-3 mb-3"
+             v-if="actions.view && localInvoice.cost !== undefined"
+             :class="statusAlertClass">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa"
+                   :class="localInvoice.isPaid ? 'fa-check-circle text-success' : 'fa-times-circle text-secondary'"
+                   aria-hidden="true"></i>
+                <div>
+                    <strong>Оплачено:</strong>
+                    {{ formatMoney(localInvoice.paid || 0) }} / {{ formatMoney(localInvoice.cost || 0) }}
+                    <span v-if="localInvoice.delta !== 0" class="ms-2" :class="deltaClass">
+                        (Долг {{ formatMoney(Math.abs(localInvoice.delta)) }})
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блоки услуг и платежей -->
+        <claim-block v-if="actions.claims?.view"
+                     :invoice="invoice"
+                     v-model:count="claimsCount"
+                     v-model:reload="reload" />
+
+        <div v-if="actions.claims?.view && actions.payments?.view" class="border-top my-3"></div>
+
+        <payments-block v-if="actions.payments?.view"
+                        :invoice="invoice"
+                        v-model:count="paymentsCount"
+                        v-model:reload="reload" />
     </div>
-    <claim-block :invoice="invoice"
-                 v-if="actions.claims.view"
-                 v-model:count="claimsCount"
-                 v-model:reload="reload" />
-    <div class="border-top my-2"></div>
-    <payments-block :invoice="invoice"
-                    v-if="actions.payments.view"
-                    v-model:count="paymentsCount"
-                    v-model:reload="reload" />
 </template>
 
-<script>
-import ResponseError    from '../../../mixin/ResponseError.js';
-import HistoryBtn       from '../../common/HistoryBtn.vue';
-import ClaimBlock       from './claims/ClaimBlock.vue';
-import PaymentsBlock    from './payments/PaymentsBlock.vue';
-import Url              from '../../../utils/Url.js';
-import SearchSelect     from '../../common/form/SearchSelect.vue';
-import CountersBlock    from '../accounts/counters/CountersBlock.vue';
-import AccountActions   from '../accounts/AccountActions.js';
-import CustomInput      from '../../common/form/CustomInput.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    onMounted,
+    watch,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { useFormat }        from '@composables/useFormat';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import ClaimBlock           from './claims/ClaimBlock.vue';
+import PaymentsBlock        from './payments/PaymentsBlock.vue';
+import {
+    ApiAdminInvoiceGet,
+    ApiAdminInvoiceDelete,
+    ApiAdminInvoiceRecalc,
+}                           from '@api';
+import Url                  from '@utils/Url.js';
 
-export default {
-    name      : 'InvoiceItemView',
-    components: {
-        CustomInput,
-        CountersBlock,
-        SearchSelect,
-        ClaimBlock,
-        PaymentsBlock,
-        HistoryBtn,
-    },
-    mixins    : [
-        ResponseError,
-        AccountActions,
-    ],
-    props     : {
-        invoice: {
-            type   : Object,
-            default: {},
-        },
-    },
-    created () {
-        this.localInvoice = this.invoice;
-        this.actions      = this.invoice.actions;
-        this.vueId        = 'uuid' + this.$_uid;
-        this.getAction();
-        this.getAccountAction(this.invoice.accountId);
-    },
-    data () {
-        return {
-            localInvoice : {},
-            actions      : {},
-            reload       : false,
-            claimsCount  : 0,
-            paymentsCount: 0,
-        };
-    },
-    methods : {
-        getAction () {
-            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceGet, {
-                id: this.invoice.id,
-            });
-            window.axios[Url.Routes.adminInvoiceGet.method](uri).then(response => {
-                this.localInvoice = response.data;
-                this.actions      = this.localInvoice.actions;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        dropAction () {
-            if (!confirm('Удалить счёт?')) {
-                return;
-            }
+defineOptions({
+    name: 'InvoiceItemView',
+});
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminInvoiceDelete, {
-                id: this.invoice.id,
-            });
-            window.axios[Url.Routes.adminInvoiceDelete.method](
-                uri,
-            ).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Счёт удалён');
-                    setTimeout(() => {
-                        location.href = Url.Routes.adminInvoiceIndex.uri;
-                    }, 1000);
-                }
-                else {
-                    this.showDanger('Счёт не удалён');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
+const props = defineProps({
+    invoice: {
+        type    : Object,
+        required: true,
     },
-    computed: {
-        canDrop () {
-            return this.actions.drop
-                && this.claimsCount === 0
-                && this.paymentsCount === 0;
-        },
-    },
-    watch   : {
-        reload (value) {
-            if (value) {
-                this.getAction();
-                setTimeout(() => {
-                    this.reload = false;
-                }, 100);
-            }
-        },
-    },
+});
+
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
+
+const canView        = computed(() => has('invoices', 'view'));
+const canEdit        = computed(() => has('invoices', 'edit'));
+const canDrop        = computed(() => has('invoices', 'drop'));
+const canAccountView = computed(() => has('accounts', 'view'));
+
+const localInvoice    = ref({});
+const actions         = ref({});
+const reload          = ref(false);
+const claimsCount     = ref(0);
+const paymentsCount   = ref(0);
+const isLoading       = ref(true);
+const isRecalculating = ref(false);
+
+// Computed свойства для стилей
+const statusAlertClass = computed(() => {
+    if (!localInvoice.value.isPaid && localInvoice.value.cost === 0) {
+        return 'alert-secondary';
+    }
+    return localInvoice.value.isPaid ? 'alert-success' : 'alert-warning';
+});
+
+const deltaClass = computed(() => {
+    return localInvoice.value.delta > 0 ? 'text-danger fw-bold' : 'text-success';
+});
+
+// Загрузка данных
+const loadInvoice = async () => {
+    isLoading.value = true;
+    try {
+        const response     = await ApiAdminInvoiceGet(props.invoice.id);
+        localInvoice.value = response.data;
+        actions.value      = response.data.actions || {};
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        isLoading.value = false;
+    }
 };
+
+// Удаление счёта
+const dropAction = async () => {
+    if (!confirm('Удалить счёт?')) {
+        return;
+    }
+
+    try {
+        const response = await ApiAdminInvoiceDelete(props.invoice.id);
+        if (response.data) {
+            showInfo('Счёт удалён');
+            setTimeout(() => {
+                window.location.href = Url.Routes.adminInvoiceIndex.uri;
+            }, 1000);
+        }
+        else {
+            showDanger('Счёт не удалён');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Пересчёт счёта
+const recalcAction = async () => {
+    isRecalculating.value = true;
+    try {
+        const response = await ApiAdminInvoiceRecalc(props.invoice.id);
+        if (response.data) {
+            await loadInvoice();
+            showInfo('Счёт пересчитан');
+        }
+        else {
+            showDanger('Не удалось пересчитать счёт');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        isRecalculating.value = false;
+    }
+};
+
+// Можно ли удалить
+const canDelete = computed(() => {
+    return canDrop && actions.value.drop && claimsCount.value === 0 && paymentsCount.value === 0;
+});
+
+// Следим за перезагрузкой
+watch(reload, (value) => {
+    if (value) {
+        loadInvoice();
+        setTimeout(() => {
+            reload.value = false;
+        }, 100);
+    }
+});
+
+onMounted(() => {
+    // Сразу устанавливаем данные из пропсов для первоначального рендера
+    localInvoice.value = props.invoice;
+    actions.value      = props.invoice.actions || {};
+    // Затем загружаем свежие данные
+    loadInvoice();
+});
 </script>

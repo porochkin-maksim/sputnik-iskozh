@@ -4,13 +4,12 @@ namespace App\Http\Requests\Users;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\User\Models\UserDTO;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveProfileRequest extends AbstractRequest
 {
-    private const LAST_NAME   = RequestArgumentsEnum::LAST_NAME;
-    private const FIRST_NAME  = RequestArgumentsEnum::FIRST_NAME;
-    private const MIDDLE_NAME = RequestArgumentsEnum::MIDDLE_NAME;
+    private const string LAST_NAME   = 'last_name';
+    private const string FIRST_NAME  = 'first_name';
+    private const string MIDDLE_NAME = 'middle_name';
 
     public function rules(): array
     {

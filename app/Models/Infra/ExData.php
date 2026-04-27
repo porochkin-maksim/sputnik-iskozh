@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -15,16 +14,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property int     $reference_id
  * @property array   $data
  */
-class ExData extends Model implements CastsInterface
+class ExData extends AbstractModel
 {
-    public const TABLE = 'ex_data';
+    public const string TABLE = 'ex_data';
 
     protected $table = self::TABLE;
 
-    public const ID           = 'id';
-    public const TYPE         = 'type';
-    public const REFERENCE_ID = 'reference_id';
-    public const DATA         = 'data';
+    public const string ID           = 'id';
+    public const string TYPE         = 'type';
+    public const string REFERENCE_ID = 'reference_id';
+    public const string DATA         = 'data';
 
     protected $guarded = [];
 

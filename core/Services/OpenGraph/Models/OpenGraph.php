@@ -21,6 +21,11 @@ class OpenGraph
         return $this;
     }
 
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
     public function setType(?OpenGraphType $type): self
     {
         $this->type = $type;

@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Billing\Payment\Services;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Models\FileDTO;
-use Core\Domains\File\Services\FileService as BaseFileService;
+use Core\Domains\Files\Entities\FileDTO;
+use Core\Domains\Files\Enums\FileTypeEnum;
+use Core\Domains\Files\Services\FileService as BaseFileService;
 use Illuminate\Http\UploadedFile;
 
 class FileService

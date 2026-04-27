@@ -3,6 +3,7 @@
 namespace Core\Domains\File\Models;
 
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Resources\RouteNames;
 
 class FolderDTO implements \JsonSerializable
 {
@@ -61,13 +62,19 @@ class FolderDTO implements \JsonSerializable
         return $this;
     }
 
+    public function getUrl(): string
+    {
+        return route(RouteNames::FILES, ['folder' => $this->getUid()]);
+    }
+
     public function jsonSerialize(): array
     {
         return [
-            'id'       => $this->id,
-            'uid'      => $this->uid,
-            'parentId' => $this->parentId,
-            'name'     => $this->name,
+            'id'       => $this->getId(),
+            'uid'      => $this->getUid(),
+            'parentId' => $this->getParentId(),
+            'name'     => $this->getName(),
+            'url'      => $this->getUrl(),
         ];
     }
 }

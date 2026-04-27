@@ -7,7 +7,7 @@ use Core\Domains\News\Factories\NewsFactory;
 use Core\Domains\News\Models\NewsDTO;
 use Core\Domains\News\Models\NewsSearcher;
 use Core\Domains\News\Repositories\NewsRepository;
-use Core\Domains\News\Responses\SearchResponse;
+use Core\Domains\News\Responses\NewsSearchResponse;
 
 readonly class NewsService
 {
@@ -35,11 +35,11 @@ readonly class NewsService
         return $this->newsFactory->makeDtoFromObject($model);
     }
 
-    public function search(NewsSearcher $searcher): SearchResponse
+    public function search(NewsSearcher $searcher): NewsSearchResponse
     {
         $response = $this->newsRepository->search($searcher);
 
-        $result = new SearchResponse();
+        $result = new NewsSearchResponse();
         $result->setTotal($response->getTotal());
 
         $collection = new NewsCollection();

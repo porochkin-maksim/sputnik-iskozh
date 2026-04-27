@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Models\CounterDTO;
 use Core\Domains\Counter\Models\CounterSearcher;
-use Core\Env;
+use env;
 use Illuminate\Console\Command;
 
 class GenerateCounterReadings extends Command
@@ -16,7 +16,7 @@ class GenerateCounterReadings extends Command
 
     public function handle(): int
     {
-        if (Env::isProduction()) {
+        if (env::isProduction()) {
             $this->error("Приложение запущено в боевом режиме");
             return 1;
         }

@@ -1,74 +1,50 @@
 <template>
-    <div class="">
-        <div class="form-check form-switch"
-             :class="classes">
-            <input class="form-check-input"
-                   type="checkbox"
-                   :id="id"
-                   v-model="localValue"
-                   :checked="localValue"
-                   :disabled="disabled"
-                   :name="name"
-                   @change="onChange"
+    <div>
+        <div :class="['form-check', classes, { 'form-switch': switchStyle }]">
+            <input
+                :id="checkboxId"
+                class="form-check-input"
+                type="checkbox"
+                :checked="modelValue"
+                :disabled="disabled"
+                :name="name"
+                :required="required"
+                v-bind="$attrs"
+                @change="onChange"
             >
-            <label class="form-check-label label-checkbox"
-                   :for="id">{{ label }}</label>
+            <label
+                v-if="label"
+                :for="checkboxId"
+                class="form-check-label label-checkbox"
+            >
+                {{ label }}
+            </label>
         </div>
+        <errors-list :errors="errors" />
     </div>
-    <errors-list :errors="errors" />
 </template>
 
-<script>
+<script setup>
+import { useId }  from 'vue';
 import ErrorsList from './partial/ErrorsList.vue';
 
-export default {
-    components: {
-        ErrorsList,
-    },
-    props     : [
-        'classes',
-        'modelValue',
-        'errors',
-        'label',
-        'name',
-        'placeholder',
-        'required',
-        'disabled',
-    ],
-    emits     : [
-        'update:modelValue',
-        'change',
-        'submit',
-        'keyup',
-    ],
-    data () {
-        return {
-            localValue: null,
-            id        : null,
-        };
-    },
-    mounted () {
-        this.id         = 'checkbox-' + this.$_uid;
-        this.localValue = this.modelValue;
-    },
-    created () {
-        this.localValue = this.modelValue;
-    },
-    methods : {
-        onChange (event) {
-            this.$emit('update:modelValue', this.localValue);
-            this.$emit('change', event);
-        },
-    },
-    watch: {
-        modelValue: function () {
-            this.localValue = this.modelValue;
-        },
-    },
-    computed: {
-        isInvalid () {
-            return this.errors && this.errors.length;
-        },
-    },
+const props = defineProps({
+    modelValue : Boolean, // для чекбокса значение - булево
+    errors     : [String, Array],
+    label      : String,
+    name       : String,
+    disabled   : Boolean,
+    required   : Boolean,
+    classes    : String,
+    switchStyle: Boolean, // добавляем проп для переключения между обычным чекбоксом и switch
+});
+
+const emit = defineEmits(['update:modelValue', 'change']);
+
+const checkboxId = `checkbox-${useId()}`;
+
+const onChange = (event) => {
+    emit('update:modelValue', event.target.checked);
+    emit('change', event);
 };
 </script>

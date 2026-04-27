@@ -1,57 +1,58 @@
 <template>
-    <custom-select v-model="accountId"
-                   :items="accounts"
-                   :classes="'form-control-sm'"
-                   :required="false"
-                   @change="switchAccount"
+    <custom-select
+        v-model="accountId"
+        :options="options"
+        :classes="'form-control-sm'"
+        :required="false"
+        @change="switchAccount"
     />
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import CustomSelect  from '../../common/form/CustomSelect.vue';
-import Url           from '../../../utils/Url.js';
+<script setup>
+import {
+    ref,
+    computed,
+    defineProps,
+}                                  from 'vue';
+import { useResponseError }        from '@composables/useResponseError';
+import CustomSelect                from '@common/form/CustomSelect.vue';
+import { ApiProfileAccountSwitch } from '@api';
 
-export default {
-    name      : 'AccountSwitcher',
-    components: { CustomSelect },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : {
-        accounts: {
-            default: [],
-        },
-        selected: {
-            default: null,
-        },
+const props = defineProps({
+    accounts: {
+        type   : Array,
+        default: () => [],
     },
-    data () {
-        return {
-            accountId: null,
-        };
+    selected: {
+        type   : [String, Number],
+        default: null,
     },
-    created () {
-        this.accountId = this.selected;
-    },
-    methods: {
-        switchAccount(data) {
-            Url.RouteFunctions.profileAccountSwitch({}, {
-                accountId: data
-            }).then(response => {
-                console.log(response);
-                if (response.data) {
-                    this.showInfo('Сейчас страница будет перезагружена');
-                    location.reload();
-                }
-                else {
-                    this.showDanger('Что-то пошло не так');
-                }
-            })
-        }
-    }
+});
+
+const { showInfo, showDanger } = useResponseError();
+
+const accountId = ref(props.selected);
+
+const options = computed(() => {
+    return props.accounts.map(account => ({
+        value: account.id,
+        label: account.number,
+    }));
+});
+
+const switchAccount = (value) => {
+    ApiProfileAccountSwitch({}, { accountId: value })
+        .then(response => {
+            if (response.data) {
+                showInfo('Сейчас страница будет перезагружена');
+                location.reload();
+            }
+            else {
+                showDanger('Что-то пошло не так');
+            }
+        })
+        .catch(() => {
+            showDanger('Ошибка при смене участка');
+        });
 };
 </script>
-
-<style scoped>
-</style>

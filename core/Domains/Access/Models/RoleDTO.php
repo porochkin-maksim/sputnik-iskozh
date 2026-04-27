@@ -78,6 +78,9 @@ class RoleDTO
         return $this;
     }
 
+    /**
+     * @return PermissionEnum[]
+     */
     public function getPermissions(): array
     {
         return $this->permissions;

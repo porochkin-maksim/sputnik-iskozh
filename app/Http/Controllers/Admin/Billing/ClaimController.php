@@ -4,14 +4,20 @@ namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Claims\SaveRequest;
-use App\Http\Resources\Admin\Claims\ServicesListResource;
 use App\Http\Resources\Admin\Claims\ClaimResource;
 use App\Http\Resources\Admin\Claims\ClaimsListResource;
+use App\Http\Resources\Admin\Claims\ServicesListResource;
 use App\Http\Resources\Common\SelectResource;
 use App\Models\Billing\Claim;
 use App\Models\Billing\Service;
 use Core\Db\Searcher\SearcherInterface;
 use Core\Domains\Access\Enums\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimLocator;
+use Core\Domains\Billing\Claim\Factories\ClaimFactory;
+use Core\Domains\Billing\Claim\Models\ClaimDTO;
+use Core\Domains\Billing\Claim\Responses\ClaimSearchResponse;
+use Core\Domains\Billing\Claim\Searcher\ClaimSearcher;
+use Core\Domains\Billing\Claim\Services\ClaimService;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
@@ -23,12 +29,6 @@ use Core\Domains\Billing\Service\Models\ServiceDTO;
 use Core\Domains\Billing\Service\Models\ServiceSearcher;
 use Core\Domains\Billing\Service\ServiceLocator;
 use Core\Domains\Billing\Service\Services\ServiceService;
-use Core\Domains\Billing\Claim\Factories\ClaimFactory;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
-use Core\Domains\Billing\Claim\Responses\SearchResponse;
-use Core\Domains\Billing\Claim\Services\ClaimService;
-use Core\Domains\Billing\Claim\ClaimLocator;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -154,7 +154,7 @@ class ClaimController extends Controller
         ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(int $invoiceId, SaveRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
             abort(403);
@@ -206,7 +206,7 @@ class ClaimController extends Controller
         return $this->claimService->deleteById($id);
     }
 
-    private function getInvoiceClaims(int $invoiceId): SearchResponse
+    private function getInvoiceClaims(int $invoiceId): ClaimSearchResponse
     {
         $searcher = new ClaimSearcher();
         $searcher

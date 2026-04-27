@@ -4,19 +4,18 @@ namespace App\Http\Requests\Admin\Invoices;
 
 use App\Http\Requests\AbstractRequest;
 use App\Models\Account\Account;
+use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
 use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\Models\InvoiceComparator;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class SaveRequest extends AbstractRequest
 {
-    private const string ID         = RequestArgumentsEnum::ID;
-    private const string PERIOD_ID  = RequestArgumentsEnum::PERIOD_ID;
-    private const string ACCOUNT_ID = RequestArgumentsEnum::ACCOUNT_ID;
-    private const string TYPE       = RequestArgumentsEnum::TYPE;
-    private const string NAME       = RequestArgumentsEnum::NAME;
+    private const string ID         = 'id';
+    private const string PERIOD_ID  = 'period_id';
+    private const string ACCOUNT_ID = 'account_id';
+    private const string TYPE       = 'type';
+    private const string NAME       = 'name';
 
     public function rules(): array
     {
@@ -43,16 +42,16 @@ class SaveRequest extends AbstractRequest
     public function messages(): array
     {
         return [
-            self::PERIOD_ID . '.required' => sprintf('Укажите «%s»', InvoiceComparator::TITLE_PERIOD_ID),
-            self::PERIOD_ID . '.exists'   => sprintf('Указанный «%s» не существует', InvoiceComparator::TITLE_PERIOD_ID),
+            self::PERIOD_ID . '.required' => sprintf('Укажите «%s»', Invoice::TITLE_PERIOD_ID),
+            self::PERIOD_ID . '.exists'   => sprintf('Указанный «%s» не существует', Invoice::TITLE_PERIOD_ID),
 
-            self::ACCOUNT_ID . '.required' => sprintf('Укажите «%s»', InvoiceComparator::TITLE_ACCOUNT_ID),
-            self::ACCOUNT_ID . '.exists'   => sprintf('Указанный «%s» не существует', InvoiceComparator::TITLE_ACCOUNT_ID),
+            self::ACCOUNT_ID . '.required' => sprintf('Укажите «%s»', Invoice::TITLE_ACCOUNT_ID),
+            self::ACCOUNT_ID . '.exists'   => sprintf('Указанный «%s» не существует', Invoice::TITLE_ACCOUNT_ID),
 
-            self::TYPE . '.required' => sprintf('Укажите «%s»', InvoiceComparator::TITLE_TYPE),
-            self::TYPE . '.in'       => sprintf('Неверный «%s»', InvoiceComparator::TITLE_TYPE),
+            self::TYPE . '.required' => sprintf('Укажите «%s»', Invoice::TITLE_TYPE),
+            self::TYPE . '.in'       => sprintf('Неверный «%s»', Invoice::TITLE_TYPE),
 
-            self::NAME . '.max' => sprintf('Слишком длинное «%s»', InvoiceComparator::TITLE_NAME),
+            self::NAME . '.max' => sprintf('Слишком длинное «%s»', Invoice::TITLE_NAME),
         ];
     }
 
@@ -78,6 +77,6 @@ class SaveRequest extends AbstractRequest
 
     public function getName(): ?string
     {
-        return $this->getStringOrNull('name');
+        return $this->getStringOrNull(self::NAME);
     }
 }

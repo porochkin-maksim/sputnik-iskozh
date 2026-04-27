@@ -1,0 +1,94 @@
+<?php declare(strict_types=1);
+
+use Core\Resources\RouteNames;
+use Illuminate\Support\Facades\Route;
+
+/**
+ * @see https://iqbalfn.github.io/bootstrap-vertical-menu/
+ */
+
+$hasAccount = (bool) lc::account()->getId();
+?>
+
+<div class="vertical-menu vertical-menu-light d-block d-lg-none">
+    <ul>
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::HOME) }}">
+                <i class="fa fa-user"></i> <span>{{ \lc::userDecorator()->getDisplayName() }}</span>
+            </a>
+        </li>
+        @if ($hasAccount)
+        <li class="nav-item">
+            <a class="nav-link @if(Route::is(RouteNames::PROFILE_COUNTERS)) active @endif"
+               href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
+                <i class="fa fa-bolt"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @if(Route::is(RouteNames::PROFILE_INVOICES)) active @endif"
+               href="{{ route(RouteNames::PROFILE_INVOICES) }}">
+                <i class="fa fa-money"></i> <span>{{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route(RouteNames::INDEX) }}">
+                <i class="fa fa-mail-reply"></i> <span>Вернуться на главную</span>
+            </a>
+        </li>
+        @endif
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::LOGOUT) }}">
+                <i class="fa fa-sign-out"></i>&nbsp;{{ RouteNames::name(RouteNames::LOGOUT) }}
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="horizontal-menu d-none d-lg-flex justify-content-between w-100">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        @if ($hasAccount)
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
+                <i class="fa fa-bolt"></i>  {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::PROFILE_INVOICES) }}">
+                <i class="fa fa-money"></i>  {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
+            </a>
+        </li>
+        @endif
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::INDEX) }}">
+                <i class="fa fa-mail-reply"></i> Вернуться на главную
+            </a>
+        </li>
+    </ul>
+
+    <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::HOME) }}">
+                {{ \lc::userDecorator()->getDisplayName() }} {!! \lc::account() ? sprintf('(<i class="fa fa-home"></i>&nbsp;%s)', \lc::account()->getNumber()) : '' !!}
+            </a>
+        </li>
+        @if (lc::roleDecorator()->canAccessAdmin() && !lc::isAndroid())
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{{ route(RouteNames::ADMIN) }}">
+                    <i class="fa fa-gears"></i> Админка
+                </a>
+            </li>
+        @endif
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::LOGOUT) }}">
+                <i class="fa fa-sign-out"></i>&nbsp;{{ RouteNames::name(RouteNames::LOGOUT) }}
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,13 +1,15 @@
 <template>
     <div class="options-block">
-        <div v-if="loading"
-             class="text-center py-5">
-            <div class="spinner-border text-success"
-                 role="status">
-                <span class="visually-hidden">Загрузка...</span>
-            </div>
-        </div>
-        <div v-else>
+        <!-- Индикатор загрузки -->
+        <loading-spinner
+            v-if="loading"
+            size="lg"
+            color="success"
+            text="Загрузка опций..."
+            wrapper-class="py-5"
+        />
+
+        <template v-else>
             <div class="table-responsive">
                 <table class="table table-sm">
                     <thead>
@@ -17,8 +19,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="option in options"
-                        :key="option.id">
+                    <tr v-for="option in options" :key="option.id">
                         <td>
                             <div>{{ option.name }}</div>
                             <div class="mt-2">
@@ -38,141 +39,152 @@
                             </div>
                         </td>
                         <td>
-                            <div v-if="option.data"
-                                 class="option-properties">
-                                <div v-for="prop in option.data.properties"
-                                     :key="prop.key"
-                                     class="mb-1">
-                                    <label :for="'prop-' + option.id + '-' + prop.key"
-                                           class="form-label mb-0">
-                                        {{ prop.title }}
-                                    </label>
-                                    <input v-if="prop.inputType !== 'checkbox'"
-                                           :id="'prop-' + option.id + '-' + prop.key"
-                                           v-model="editedOptions[option.id][prop.key]"
-                                           :type="prop.inputType"
-                                           class="form-control form-control-sm"
-                                           :disabled="!actions.edit"
-                                    />
-                                    <div v-else
-                                         class="form-check">
-                                        <input type="checkbox"
-                                               :id="'prop-' + option.id + '-' + prop.key"
-                                               v-model="editedOptions[option.id][prop.key]"
-                                               class="form-check-input"
-                                               :disabled="!actions.edit"
+                            <div v-if="option.data" class="option-properties">
+                                <div
+                                    v-for="prop in option.data.properties"
+                                    :key="prop.key"
+                                    class="mb-1"
+                                >
+                                    <!-- Чекбокс -->
+                                    <div v-if="prop.inputType === 'checkbox'" class="form-check">
+                                        <custom-checkbox
+                                            :id="'prop-' + option.id + '-' + prop.key"
+                                            v-model="editedOptions[option.id][prop.key]"
+                                            :label="prop.title"
+                                            :disabled="!actions.edit"
                                         />
                                     </div>
+
+                                    <!-- Другие типы полей -->
+                                    <custom-input
+                                        v-else
+                                        :id="'prop-' + option.id + '-' + prop.key"
+                                        v-model="editedOptions[option.id][prop.key]"
+                                        :type="prop.inputType"
+                                        :label="prop.title"
+                                        :disabled="!actions.edit"
+                                        class="form-control-sm"
+                                    />
                                 </div>
                             </div>
-                            <div v-else
-                                 class="text-muted">
-                                Нет данных
-                            </div>
+                            <div v-else class="text-muted">Нет данных</div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
+<script setup>
+import {
+    ref,
+    reactive,
+    onMounted,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import CustomInput          from '../../common/form/CustomInput.vue';
+import CustomCheckbox       from '../../common/form/CustomCheckbox.vue';
+import {
+    ApiAdminOptionsList,
+    ApiAdminOptionsSave,
+}                           from '@api';
 
-export default {
-    name  : 'OptionsBlock',
-    mixins: [ResponseError],
-    data () {
-        return {
-            options        : [],
-            editedOptions  : {},
-            originalOptions: {},
-            loading        : true,
-            error          : null,
-            saving         : {},
-            actions        : {
-                edit: false,
-            },
-            Url            : Url,
-        };
-    },
-    created () {
-        this.listAction();
-    },
-    methods: {
-        listAction () {
-            this.options = [];
-            window.axios[Url.Routes.adminOptionsList.method](Url.Routes.adminOptionsList.uri).then(response => {
-                this.options = response.data.options;
-                this.actions = response.data.actions;
+defineOptions({
+    name: 'OptionsBlock',
+});
 
-                // Инициализация редактируемых значений
-                this.options.forEach(option => {
-                    if (option.data) {
-                        this.editedOptions[option.id]   = {};
-                        this.originalOptions[option.id] = {};
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-                        option.data.properties.forEach(prop => {
-                            this.editedOptions[option.id][prop.key]   = prop.value;
-                            this.originalOptions[option.id][prop.key] = prop.value;
-                        });
-                    }
+const options         = ref([]);
+const editedOptions   = ref({});
+const originalOptions = ref({});
+const loading         = ref(true);
+const saving          = ref({});
+const actions         = ref({
+    edit: false,
+});
+
+// Загрузка списка опций
+const loadOptions = async () => {
+    try {
+        const response = await ApiAdminOptionsList();
+        options.value  = response.data.options || [];
+        actions.value  = response.data.actions || { edit: false };
+
+        // Инициализация объектов для редактирования и оригинала
+        options.value.forEach(option => {
+            if (option.data) {
+                // Используем reactive для вложенных объектов? Нет, просто присваиваем в ref-объект.
+                editedOptions.value[option.id]   = {};
+                originalOptions.value[option.id] = {};
+
+                option.data.properties.forEach(prop => {
+                    editedOptions.value[option.id][prop.key]   = prop.value;
+                    originalOptions.value[option.id][prop.key] = prop.value;
                 });
-            }).catch(response => {
-                this.showDanger('Ошибка при загрузке опций');
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-
-        isOptionChanged (optionId) {
-            if (!this.editedOptions[optionId] || !this.originalOptions[optionId]) {
-                return false;
             }
-
-            return Object.keys(this.editedOptions[optionId]).some(key =>
-                this.editedOptions[optionId][key] !== this.originalOptions[optionId][key],
-            );
-        },
-
-        saveAction (option) {
-            if (!this.isOptionChanged(option.id)) {
-                return;
-            }
-
-            this.saving[option.id] = true;
-
-            const data = {
-                id  : option.id,
-                data: {},
-            };
-
-            // Преобразуем отредактированные значения в формат для сохранения
-            Object.keys(this.editedOptions[option.id]).forEach(key => {
-                data.data[key] = this.editedOptions[option.id][key];
-            });
-
-            window.axios[Url.Routes.adminOptionsSave.method](
-                Url.Routes.adminOptionsSave.uri,
-                data,
-            ).then(() => {
-                // Обновляем оригинальные значения после успешного сохранения
-                Object.keys(this.editedOptions[option.id]).forEach(key => {
-                    this.originalOptions[option.id][key] = this.editedOptions[option.id][key];
-                });
-
-                this.showInfo('Опция сохранена');
-            }).catch(response => {
-                this.showDanger('Ошибка при сохранении опции');
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.saving[option.id] = false;
-            });
-        },
-    },
+        });
+    }
+    catch (error) {
+        showDanger('Ошибка при загрузке опций');
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
 };
+
+// Проверка, были ли изменения для конкретной опции
+const isOptionChanged = (optionId) => {
+    const edited   = editedOptions.value[optionId];
+    const original = originalOptions.value[optionId];
+    if (!edited || !original) {
+        return false;
+    }
+
+    return Object.keys(edited).some(key => edited[key] !== original[key]);
+};
+
+// Сохранение изменений для опции
+const saveAction = async (option) => {
+    if (!isOptionChanged(option.id)) {
+        return;
+    }
+
+    saving.value[option.id] = true;
+
+    const data = {
+        id  : option.id,
+        data: {},
+    };
+
+    // Собираем только изменённые поля? Можно все, сервер разберётся.
+    Object.keys(editedOptions.value[option.id]).forEach(key => {
+        data.data[key] = editedOptions.value[option.id][key];
+    });
+
+    try {
+        await ApiAdminOptionsSave({}, data);
+
+        // После успешного сохранения обновляем оригинальные значения
+        Object.keys(editedOptions.value[option.id]).forEach(key => {
+            originalOptions.value[option.id][key] = editedOptions.value[option.id][key];
+        });
+
+        showInfo('Опция сохранена');
+    }
+    catch (error) {
+        showDanger('Ошибка при сохранении опции');
+        parseResponseErrors(error);
+    }
+    finally {
+        saving.value[option.id] = false;
+    }
+};
+
+onMounted(loadOptions);
 </script>

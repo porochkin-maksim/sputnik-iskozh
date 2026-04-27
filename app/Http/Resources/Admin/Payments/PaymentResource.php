@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources\Admin\Payments;
 
+use Core\Domains\Billing\Acquiring\AcquiringLocator;
+use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
+use Core\Domains\Billing\Acquiring\Models\AcquiringSearcher;
 use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
@@ -25,6 +28,15 @@ readonly class PaymentResource extends AbstractResource
 
         $period = $this->payment->getInvoice()?->getPeriod();
 
+        $hasAcquiring = $this->payment->getId()
+            ? AcquiringLocator::AcquiringService()->search(
+                new AcquiringSearcher()
+                    ->setPaymentId($this->payment->getId())
+                    ->setStatus(StatusEnum::PAID)
+                ,
+            )->getItems()->first()?->getId()
+            : false;
+
         return [
             'id'            => $this->payment->getId(),
             'name'          => $this->payment->getName(),
@@ -32,15 +44,15 @@ readonly class PaymentResource extends AbstractResource
             'comment'       => $this->payment->getComment(),
             'files'         => $this->payment->getFiles(),
             'created'       => $this->formatDateTimeForRender($this->payment->getCreatedAt()),
-            'payed'         => $this->formatDateForRender($this->payment->getPayedAt()),
+            'paid'          => $this->formatDateForRender($this->payment->getPaidAt()),
             'invoiceId'     => $this->payment->getInvoiceId(),
             'accountNumber' => $this->payment->getAccountNumber(),
             'accountId'     => $this->payment->getAccountId(),
             'invoice'       => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'       => [
                 ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed(),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed(),
+                ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring,
+                ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring,
             ],
             'historyUrl'    => $this->payment->getId()
                 ? HistoryChangesLocator::route(

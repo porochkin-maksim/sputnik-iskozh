@@ -2,6 +2,9 @@
 
 namespace Core\Db\Searcher\Models;
 
+/**
+ * @deprecated
+ */
 readonly class Where
 {
     public function __construct(

@@ -4,17 +4,16 @@ namespace Core\Domains\News\Requests;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\News\Enums\CategoryEnum;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID           = RequestArgumentsEnum::ID;
-    private const TITLE        = RequestArgumentsEnum::TITLE;
-    private const DESCRIPTION  = RequestArgumentsEnum::DESCRIPTION;
-    private const ARTICLE      = RequestArgumentsEnum::ARTICLE;
-    private const PUBLISHED_AT = RequestArgumentsEnum::PUBLISHED_AT;
-    private const IS_LOCK      = RequestArgumentsEnum::IS_LOCK;
-    private const CATEGORY     = RequestArgumentsEnum::CATEGORY;
+    private const string ID           = 'id';
+    private const string TITLE        = 'title';
+    private const string DESCRIPTION  = 'description';
+    private const string ARTICLE      = 'article';
+    private const string PUBLISHED_AT = 'published_at';
+    private const string IS_LOCK      = 'is_lock';
+    private const string CATEGORY     = 'category';
 
     public function rules(): array
     {

@@ -7,10 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\ListRequest;
 use App\Http\Requests\Admin\Users\SaveRequest;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
 use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Admin\Users\UserResource;
 use App\Http\Resources\Admin\Users\UsersListResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Models\Account\Account;
 use App\Models\Infra\UserInfo;
 use App\Models\User;
@@ -28,10 +28,12 @@ use Core\Domains\Infra\ExData\ExDataLocator;
 use Core\Domains\Infra\ExData\Services\ExDataService;
 use Core\Domains\User\Factories\UserFactory;
 use Core\Domains\User\Models\UserSearcher;
-use Core\Domains\User\Responses\SearchResponse;
+use Core\Domains\User\Responses\UserSearchResponse;
 use Core\Domains\User\Services\UserService;
 use Core\Domains\User\UserLocator;
+use Core\Helpers\DateTime\DateTimeHelper;
 use Core\Requests\RequestArgumentsEnum;
+use Core\Resources\Views\ViewNames;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use lc;
@@ -54,6 +56,15 @@ class UsersController extends Controller
         $this->exDataService  = ExDataLocator::ExDataService();
     }
 
+    public function index()
+    {
+        if (lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
+            return view(ViewNames::ADMIN_PAGES_USERS);
+        }
+
+        abort(403);
+    }
+
     public function view(?int $id = null)
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_VIEW)) {
@@ -65,6 +76,7 @@ class UsersController extends Controller
         $user = $id
             ? $this->userService->getById($id)
             : $this->userFactory->makeDefault();
+
         if ( ! $user) {
             abort(412);
         }
@@ -74,6 +86,18 @@ class UsersController extends Controller
             $user->setAccount($account);
             $role = $this->roleService->getByUserId($user->getId());
             $user->setRole($role);
+        }
+        else {
+            $accountId = DefaultRequest::make()->getIntOrNull('accountId');
+            if ($accountId) {
+                $account = $this->accountService->getById($accountId)
+                    ?->setFraction(1)
+                    ->setOwnerDate(Carbon::now())
+                ;
+
+                $user->setAccount($account);
+                $user->setAccounts(new AccountCollection([$account]));
+            }
         }
         $user = new UserResource($user);
 
@@ -121,7 +145,7 @@ class UsersController extends Controller
         return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));
     }
 
-    private function getUsersList(ListRequest $request): SearchResponse
+    private function getUsersList(ListRequest $request): UserSearchResponse
     {
         $searcher = new UserSearcher();
         $searcher
@@ -138,12 +162,19 @@ class UsersController extends Controller
                 ->addOrWhere(User::PHONE, SearcherInterface::LIKE, "{$searchString}%")
             ;
         }
-        elseif ($request->get('isMember')) {
-            if ($request->getBool('isMember')) {
-                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+        else {
+            if ($request->input('isMember')) {
+                if ($request->getBool('isMember')) {
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NOT_NULL);
+                }
+                else {
+                    $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::MEMBERSHIP_DATE, SearcherInterface::IS_NULL);
+                }
             }
-            else {
-                $searcher->addWhere(UserInfo::TABLE . '.' . UserInfo::OWNERSHIP_DATE, SearcherInterface::IS_NULL);
+
+            if ($request->getBool('isDeleted')) {
+                $searcher->addWhere(User::SOFT_DELETED, SearcherInterface::IS_NOT_NULL);
+                $searcher->setWithDeleted();
             }
         }
 
@@ -167,7 +198,7 @@ class UsersController extends Controller
         }
 
         $user = $request->getId()
-            ? $this->userService->getById($request->getId())
+            ? $this->userService->getById($request->getId(), true)
             : $this->userFactory->makeDefault()
                 ->setPassword(Str::random(8))
         ;
@@ -182,11 +213,17 @@ class UsersController extends Controller
             ->setEmail($request->getEmail())
             ->setPhone($request->getPhone())
             ->setRole($this->roleService->getById($request->getRoleId()))
-            ->setOwnershipDutyInfo($request->getOwnershipDutyInfo())
-            ->setOwnershipDate($request->getOwnershipDate())
+            ->setMembershipDutyInfo($request->getMembershipDutyInfo())
+            ->setMembershipDate($request->getMembershipDate())
         ;
 
-        $accounts = $request->getAccountIds() ? $this->accountService->getByIds($request->getAccountIds()) : new AccountCollection();
+        $fractions  = $request->getFractions();
+        $ownerDates = $request->getOwnerDates();
+        $accounts   = $fractions ? $this->accountService->getByIds(array_keys($fractions)) : new AccountCollection();
+        foreach ($accounts as $account) {
+            $account->setFraction((float) $fractions[$account->getId()]);
+            $account->setOwnerDate(DateTimeHelper::toCarbonOrNull($ownerDates[$account->getId()]));
+        }
         $user->setAccounts($accounts);
 
         $user = $this->userService->save($user);
@@ -216,6 +253,18 @@ class UsersController extends Controller
         return $this->userService->deleteById($id);
     }
 
+    public function restore(int $id): bool
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_DROP)) {
+            abort(403);
+        }
+
+        $user = User::withTrashed()->find($id);
+        $user?->restore();
+
+        return (bool) $user?->id;
+    }
+
     public function sendRestorePassword(DefaultRequest $request): void
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::USERS_EDIT)) {
@@ -229,10 +278,6 @@ class UsersController extends Controller
         }
 
         UserLocator::Notificator()->sendRestorePassword($user);
-
-        if ( ! $user->getEmailVerifiedAt()) {
-            $this->userService->save($user->setEmailVerifiedAt(Carbon::now()));
-        }
     }
 
     public function sendInviteWithPassword(DefaultRequest $request): void
@@ -256,9 +301,9 @@ class UsersController extends Controller
 
     public function generateEmail(DefaultRequest $request): ?string
     {
-        $lastName   = $request->getStringOrNull(RequestArgumentsEnum::LAST_NAME);
-        $firstName  = $request->getStringOrNull(RequestArgumentsEnum::FIRST_NAME);
-        $middleName = $request->getStringOrNull(RequestArgumentsEnum::MIDDLE_NAME);
+        $lastName   = $request->getStringOrNull('last_name');
+        $firstName  = $request->getStringOrNull('first_name');
+        $middleName = $request->getStringOrNull('middle_name');
 
         return Str::slug($lastName) . '.' . Str::slug($firstName) . '@' . Str::slug($middleName) . '.ru';
     }

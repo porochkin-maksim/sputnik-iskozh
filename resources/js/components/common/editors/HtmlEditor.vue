@@ -1,49 +1,167 @@
 <template>
-    <div class="h-100 position-relative overflow-y-hidden border-bottom">
-        <div class="html-editor h-100 overflow-y-auto">
-            <Editor
-                v-model="content"
-                height="100%"
-                @change="onChange"
-                api-key="l8vjolgctraqq0x8nxujokup1bcd9x0u7knkh9cl9o08smty"
-                :init="{
-        toolbar_mode: 'sliding',
-        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-        }"
-            />
+    <div class="html-editor h-100 d-flex flex-column border rounded">
+        <html-editor-toolbar v-if="editor"
+                             :editor="editor" />
+
+        <div class="editor-container flex-grow-1 overflow-y-auto p-2"
+             v-if="editor">
+            <editor-content :editor="editor" />
         </div>
     </div>
 </template>
 
-<script>
-/**
- * @see https://www.tiny.cloud/my-account/integrate/#more
- */
-import Editor from '@tinymce/tinymce-vue';
+<script setup>
+import {
+    useEditor,
+    EditorContent,
+}                        from '@tiptap/vue-3';
+import StarterKit        from '@tiptap/starter-kit';
+import Underline         from '@tiptap/extension-underline';
+import Link              from '@tiptap/extension-link';
+import Image             from '@tiptap/extension-image';
+import TextAlign         from '@tiptap/extension-text-align';
+import Blockquote        from '@tiptap/extension-blockquote';
+import Code              from '@tiptap/extension-code';
+import CodeBlock         from '@tiptap/extension-code-block';
+import HorizontalRule    from '@tiptap/extension-horizontal-rule';
+import {
+    watch,
+    onBeforeUnmount,
+}                        from 'vue';
+import HtmlEditorToolbar from './HtmlEditorToolbar.vue';
 
-export default {
-    components: {
-        Editor,
+const props = defineProps({
+    value: {
+        type   : String,
+        default: '',
     },
-    props     : {
-        value: String,
-    },
-    data () {
-        return {
-            content: null,
-        };
-    },
-    mounted () {
-        this.content = this.value;
-    },
-    created () {
-        this.content = this.value;
-    },
-    methods: {
-        onChange () {
-            this.$emit('update:value', this.content);
+});
+
+const emit = defineEmits(['update:value']);
+
+const editor = useEditor({
+    content    : props.value,
+    extensions : [
+        StarterKit.configure({
+            heading: {
+                levels: [1, 2, 3],
+            },
+            // Отключаем дублирующие расширения, которые будут добавлены отдельно
+            blockquote    : false,
+            code          : false,
+            codeBlock     : false,
+            horizontalRule: false,
+        }),
+        Underline,
+        Link.configure({
+            openOnClick   : false,
+            HTMLAttributes: {
+                rel   : 'noopener noreferrer',
+                target: '_blank',
+            },
+        }),
+        Image.configure({
+            inline        : true,
+            HTMLAttributes: {
+                class: 'img-fluid',
+            },
+        }),
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
+        Blockquote,
+        Code,
+        CodeBlock,
+        HorizontalRule,
+    ],
+    editorProps: {
+        attributes: {
+            class: 'prose prose-sm max-w-none p-3 focus:outline-none',
         },
     },
-};
+    onUpdate   : ({ editor }) => {
+        emit('update:value', editor.getHTML());
+    },
+});
+
+// Синхронизация с пропсом
+watch(() => props.value, (newValue) => {
+    if (editor.value && newValue !== editor.value.getHTML()) {
+        editor.value.commands.setContent(newValue, false);
+    }
+});
+
+onBeforeUnmount(() => {
+    editor.value?.destroy();
+});
 </script>
+
+<style scoped>
+.html-editor {
+    background : #fff;
+}
+
+.editor-container {
+    min-height : 200px;
+}
+
+:deep(.tiptap) {
+    outline : none;
+}
+
+:deep(.tiptap p) {
+    margin : 0.5em 0;
+}
+
+:deep(.tiptap h1) {
+    font-size : 2em;
+    margin    : 0.5em 0;
+}
+
+:deep(.tiptap h2) {
+    font-size : 1.5em;
+    margin    : 0.5em 0;
+}
+
+:deep(.tiptap h3) {
+    font-size : 1.17em;
+    margin    : 0.5em 0;
+}
+
+:deep(.tiptap ul),
+:deep(.tiptap ol) {
+    padding-left : 1.5em;
+    margin       : 0.5em 0;
+}
+
+:deep(.tiptap a) {
+    color           : #0d6efd;
+    text-decoration : underline;
+}
+
+:deep(.tiptap img) {
+    max-width : 100%;
+    height    : auto;
+}
+
+:deep(.tiptap blockquote) {
+    border-left  : 4px solid #dee2e6;
+    padding-left : 1rem;
+    margin-left  : 0;
+    color        : #6c757d;
+}
+
+:deep(.tiptap code) {
+    background-color : #f8f9fa;
+    padding          : 0.2em 0.4em;
+    border-radius    : 3px;
+    font-family      : monospace;
+}
+
+:deep(.tiptap pre) {
+    background-color : #f8f9fa;
+    padding          : 0.75rem;
+    border-radius    : 4px;
+    overflow-x       : auto;
+}
+</style>

@@ -2,7 +2,7 @@
 
 namespace App\Models\Billing;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AbstractModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -10,21 +10,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $claim_id
  * @property int $reference_id
  */
-class ClaimToObject extends Model
+class ClaimToObject extends AbstractModel
 {
-    public const TABLE = 'claim_to_objects';
+    public const string TABLE = 'claim_to_objects';
 
-    public const TYPE         = 'type';
-    public const CLAIM_ID     = 'claim_id';
-    public const REFERENCE_ID = 'reference_id';
+    public const string TYPE         = 'type';
+    public const string CLAIM_ID     = 'claim_id';
+    public const string REFERENCE_ID = 'reference_id';
 
-    public const CLAIM = 'claim';
+    public const string RELATION_CLAIM = 'claim';
 
     protected $table = self::TABLE;
 
     protected $guarded = [];
 
-    protected $with = [self::CLAIM];
+    protected $with = [self::RELATION_CLAIM];
 
     public function claim(): BelongsTo
     {

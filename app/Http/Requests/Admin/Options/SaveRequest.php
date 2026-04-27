@@ -3,12 +3,11 @@
 namespace App\Http\Requests\Admin\Options;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID   = RequestArgumentsEnum::ID;
-    private const DATA = RequestArgumentsEnum::DATA;
+    private const string ID   = 'id';
+    private const string DATA = 'data';
 
     public function rules(): array
     {

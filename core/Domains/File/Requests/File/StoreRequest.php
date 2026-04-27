@@ -3,11 +3,10 @@
 namespace Core\Domains\File\Requests\File;
 
 use App\Http\Requests\AbstractRequest;
-use Core\Requests\RequestArgumentsEnum;
 
 class StoreRequest extends AbstractRequest
 {
-    private const PARENT_ID = RequestArgumentsEnum::PARENT_ID;
+    private const string PARENT_ID = 'parent_id';
 
     public function rules(): array
     {

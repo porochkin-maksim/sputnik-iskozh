@@ -2,9 +2,9 @@
 
 namespace Core\Domains\Counter\Jobs;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\FileLocator;
-use Core\Domains\File\Models\FileSearcher;
+use Core\Domains\Files\Enums\FileTypeEnum;
+use Core\Domains\Files\FileLocator;
+use Core\Domains\Files\Models\FileSearcher;
 use Core\Queue\QueueEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +27,7 @@ class DeleteCounterHistoryFileJob implements ShouldQueue
     {
         $fileSearcher = new FileSearcher();
         $fileSearcher->setRelatedId($this->counterHistoryId)
-            ->setType(FileTypeEnum::COUNTER)
+            ->setType(FileTypeEnum::COUNTER_HISTORY)
         ;
         $fileService = FileLocator::FileService();
         foreach ($fileService->search($fileSearcher)->getItems() as $file) {

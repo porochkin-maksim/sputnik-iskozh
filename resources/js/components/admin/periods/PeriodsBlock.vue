@@ -1,177 +1,223 @@
 <template>
-    <div class="d-flex align-items-center justify-content-between mb-2">
-        <div>
-            <button class="btn btn-success"
+    <div class="periods-block">
+        <!-- Заголовок и кнопка добавления -->
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div>
+                <button
                     v-if="actions.create"
-                    @click="showCreateDialog">
-                <i class="fa fa-plus"></i> Добавить период
-            </button>
+                    class="btn btn-success"
+                    @click="showCreateDialog"
+                >
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span>Добавить период</span>
+                </button>
+            </div>
+            <history-btn
+                class="btn-link underline-none"
+                :url="historyUrl"
+            />
         </div>
-        <history-btn
-            class="btn-link underline-none"
-            :url="historyUrl" />
-    </div>
 
-    <div class="">
-        <table class="table table-sm table-hover align-middle">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Название</th>
-                <th>Начало</th>
-                <th>Окончание</th>
-                <th>Статус</th>
-                <th class="text-center">Действия</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(period, index) in periods"
-                :key="period.id">
-                <td>{{ period.id }}</td>
-                <td>{{ period.name }}</td>
-                <td>{{ $formatDate(period.startAt) }}</td>
-                <td>{{ $formatDate(period.endAt) }}</td>
-                <td>
-                    <span v-if="period.isClosed"
-                          class="badge bg-primary">
-                        <i class="fa fa-check"></i> Закрыт
-                    </span>
-                    <span v-else
-                          class="badge bg-success">
-                        <i class="fa fa-clock-o"></i> Активен
-                    </span>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center">
-                        <history-btn
-                            class="btn-link underline-none"
-                            :url="period.historyUrl" />
-                        <div class="dropdown">
-                            <a class="btn btn-sm btn-light border"
-                               href="#"
-                               role="button"
-                               :id="'dropDown'+index+vueId"
-                               data-bs-toggle="dropdown"
-                               :class="{'disabled opacity-50': !(actions.edit && actions.drop) || period.isClosed}"
-                               aria-expanded="false">
-                                <i class="fa fa-bars"></i>
-                            </a>
-                            <ul class="dropdown-menu"
-                                :aria-labelledby="'dropDown'+index+vueId">
-                                <li v-if="actions.edit && !period.isClosed">
-                                    <a class="dropdown-item cursor-pointer"
-                                       @click="showEditDialog(period)">
-                                        <i class="fa fa-edit"></i> Редактировать
-                                    </a>
-                                </li>
-                                <li v-if="actions.drop && !period.isClosed">
-                                    <a class="dropdown-item cursor-pointer text-danger"
-                                       @click="deleteAction(period)">
-                                        <i class="fa fa-trash"></i> Удалить
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+        <!-- Индикатор загрузки -->
+        <loading-spinner
+            v-if="isLoading"
+            size="lg"
+            color="primary"
+            text="Загрузка периодов..."
+            wrapper-class="py-5"
+        />
 
-    <period-edit-dialog
-        v-model:model-value="selectedPeriod"
-        v-model:show="showDialog"
-        @update:model-value="onPeriodUpdated" />
+        <!-- Таблица с периодами -->
+        <template v-else>
+            <div v-if="periods.length">
+                <table class="table table-sm table-hover align-middle">
+                    <caption class="visually-hidden">Список периодов</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Начало</th>
+                        <th scope="col">Окончание</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col" class="text-center">Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(period, index) in periods" :key="period.id">
+                        <td>{{ period.id }}</td>
+                        <td>{{ period.name }}</td>
+                        <td class="text-nowrap">{{ formatDate(period.startAt) }}</td>
+                        <td class="text-nowrap">{{ formatDate(period.endAt) }}</td>
+                        <td>
+                            <span
+                                v-if="period.isClosed"
+                                class="badge bg-primary"
+                            >
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                                Закрыт
+                            </span>
+                            <span v-else class="badge bg-success">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                Активен
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-1">
+                                <history-btn
+                                    class="btn-link underline-none"
+                                    :url="period.historyUrl"
+                                />
+                                <div>
+                                    <a :href="period.receiptUrl" target="_blank" v-if="period.receiptUrl"
+                                       class="btn ps-0 btn-link underline-none">
+                                        <i class="fa fa-file-pdf-o text-danger"></i> Квитанция
+                                    </a>
+                                </div>
+                                <div class="dropdown">
+                                    <button
+                                        class="btn btn-sm btn-light border"
+                                        type="button"
+                                        :id="'dropDown' + index + vueId"
+                                        data-bs-toggle="dropdown"
+                                        :disabled="!(actions.edit && actions.drop) || period.isClosed"
+                                        :aria-disabled="!(actions.edit && actions.drop) || period.isClosed"
+                                        aria-expanded="false"
+                                    >
+                                        <i class="fa fa-bars" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Действия</span>
+                                    </button>
+                                    <ul
+                                        class="dropdown-menu"
+                                        :aria-labelledby="'dropDown' + index + vueId"
+                                    >
+                                        <li v-if="actions.edit && !period.isClosed">
+                                            <a
+                                                class="dropdown-item cursor-pointer"
+                                                @click="showEditDialog(period)"
+                                                role="menuitem"
+                                            >
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                Редактировать
+                                            </a>
+                                        </li>
+                                        <li v-if="actions.drop && !period.isClosed">
+                                            <a
+                                                class="dropdown-item cursor-pointer text-danger"
+                                                @click="deleteAction(period)"
+                                                role="menuitem"
+                                            >
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                Удалить
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Сообщение при пустом списке -->
+            <div v-else class="alert alert-info text-center">
+                Нет доступных периодов.
+            </div>
+        </template>
+
+        <!-- Диалог редактирования -->
+        <period-edit-dialog
+            v-model:model-value="selectedPeriod"
+            v-model:show="showDialog"
+            @update:model-value="onPeriodUpdated"
+        />
+    </div>
 </template>
 
-<script>
-import ResponseError    from '../../../mixin/ResponseError.js';
-import Url              from '../../../utils/Url.js';
-import HistoryBtn       from '../../common/HistoryBtn.vue';
-import PeriodEditDialog from './PeriodEditDialog.vue';
+<script setup>
+import {
+    ref,
+    onMounted,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import PeriodEditDialog     from './PeriodEditDialog.vue';
+import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import {
+    ApiAdminPeriodList,
+    ApiAdminPeriodCreate,
+    ApiAdminPeriodDelete,
+}                           from '@api';
+import { useFormat }        from '@composables/useFormat.js';
 
-export default {
-    name      : 'PeriodsBlock',
-    components: {
-        HistoryBtn,
-        PeriodEditDialog,
-    },
-    mixins    : [ResponseError],
-    data () {
-        return {
-            periods       : [],
-            historyUrl    : null,
-            actions       : {},
-            selectedPeriod: null,
-            showDialog    : false,
-            vueId         : null,
-        };
-    },
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-        this.listAction();
-    },
-    methods: {
-        listAction () {
-            window.axios[Url.Routes.adminPeriodList.method](Url.Routes.adminPeriodList.uri)
-                .then(response => {
-                    this.periods    = response.data.periods || [];
-                    this.actions    = response.data.actions;
-                    this.historyUrl = response.data.historyUrl;
-                })
-                .catch(response => {
-                    this.parseResponseErrors(response);
-                });
-        },
-        showCreateDialog () {
-            window.axios[Url.Routes.adminPeriodCreate.method](Url.Routes.adminPeriodCreate.uri).then(response => {
-                this.selectedPeriod = response.data;
-                this.showDialog     = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        showEditDialog (period) {
-            if (!this.actions.edit || period.isClosed) {
-                return;
-            }
-            this.selectedPeriod = period;
-            this.showDialog     = true;
-        },
-        onPeriodUpdated () {
-            this.listAction();
-        },
-        deleteAction (period) {
-            if (!confirm('Удалить период?')) {
-                return;
-            }
+defineOptions({
+    name: 'PeriodsBlock',
+});
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminPeriodDelete, {
-                id: period.id,
-            });
+const { parseResponseErrors, showInfo } = useResponseError();
+const { formatDate }                                = useFormat();
 
-            window.axios[Url.Routes.adminPeriodDelete.method](uri).then(() => {
-                this.periods = this.periods.filter(p => p.id !== period.id);
-                this.showInfo('Период удален');
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
+const periods        = ref([]);
+const historyUrl     = ref(null);
+const actions        = ref({});
+const selectedPeriod = ref(null);
+const showDialog     = ref(false);
+const vueId          = ref('uuid-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
+const isLoading      = ref(false);
+
+const listAction = async () => {
+    isLoading.value = true;
+    try {
+        const response   = await ApiAdminPeriodList();
+        periods.value    = response.data.periods || [];
+        actions.value    = response.data.actions;
+        historyUrl.value = response.data.historyUrl;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        isLoading.value = false;
+    }
 };
+
+const showCreateDialog = async () => {
+    try {
+        const response       = await ApiAdminPeriodCreate();
+        selectedPeriod.value = response.data;
+        showDialog.value     = true;
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+const showEditDialog = (period) => {
+    if (!actions.value.edit || period.isClosed) {
+        return;
+    }
+    selectedPeriod.value = period;
+    showDialog.value     = true;
+};
+
+const onPeriodUpdated = () => {
+    listAction();
+};
+
+const deleteAction = async (period) => {
+    if (!confirm('Удалить период?')) {
+        return;
+    }
+    try {
+        await ApiAdminPeriodDelete(period.id);
+        periods.value = periods.value.filter(p => p.id !== period.id);
+        showInfo('Период удален');
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+onMounted(listAction);
 </script>
-
-<style scoped>
-.cursor-pointer {
-    cursor : pointer;
-}
-
-.dropdown-item {
-    cursor : pointer;
-}
-
-.disabled {
-    pointer-events : none;
-}
-</style>

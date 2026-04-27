@@ -2,217 +2,185 @@
     <div class="row">
         <div class="col-lg-6 col-12">
             <div class="card mb-2">
+                <div class="card-header bg-white">
+                    <h5 class="m-0">Информация</h5>
+                </div>
                 <div class="card-body">
-                    <h5>Информация</h5>
-                    <template v-if="account.actions.edit">
-                        <div>
-                            <custom-input v-model="account.number"
-                                          :required="true"
-                                          :label="'Номер участка'"
-                            />
-                        </div>
-                        <div class="mt-2">
-                            <custom-input v-model="account.size"
-                                          :label="'Площадь (м²)'"
-                                          :type="'number'"
-                                          :min="0"
-                                          :step="1"
-                                          :required="true"
-                            />
-                        </div>
-                        <div class="mt-2">
-                            <custom-checkbox v-model="account.isInvoicing"
-                                             :label="'Выставлять счета'"
-                            />
+                    <template v-if="account.actions?.edit">
+                        <div class="row">
+                            <div class="col-6">
+                                <custom-input v-model="formData.number"
+                                              :required="true"
+                                              :disabled="loading"
+                                              :label="'Номер участка'"
+                                />
+                            </div>
+                            <div class="col-6">
+                                <custom-input v-model="formData.size"
+                                              :required="true"
+                                              :disabled="loading"
+                                              :label="'Площадь (м²)'"
+                                              :type="'number'"
+                                              :min="0"
+                                              :step="1"
+                                />
+                            </div>
                         </div>
                         <div>
-                            <custom-input v-model="account.cadastreNumber"
-                                          :label="'Кадастровый номер'"
-                                          :required="true"
-                            />
-                        </div>
-                        <div class="mt-2">
-                            <custom-input v-model="account.registryDate"
-                                          :label="'Дата регистрации'"
-                                          :type="'date'"
-                                          @change="clearError('registryDate')"
-                            />
+                            <div class="mt-2">
+                                <custom-checkbox v-model="formData.isInvoicing"
+                                                 :disabled="loading"
+                                                 :label="'Выставлять счета'"
+                                                 switch-style
+                                />
+                            </div>
+                            <div>
+                                <custom-input v-model="formData.cadastreNumber"
+                                              :disabled="loading"
+                                              :label="'Кадастровый номер'"
+                                />
+                            </div>
                         </div>
                     </template>
                     <template v-else>
                         <h6>Данные участка</h6>
                         <account-info-list :account="account" />
                     </template>
-                    <div class="d-flex align-items-center justify-content-between mt-2">
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex">
-                            <div class="d-flex"
-                                 v-if="account.actions.edit">
-                                <button class="btn btn-success me-2"
-                                        v-if="!loading"
-                                        :disabled="!canSave"
-                                        v-on:click="saveAction">Сохранить участок
-                                </button>
-                                <button class="btn border-0"
-                                        disabled
-                                        v-else>
-                                    <i class="fa fa-spinner fa-spin"></i> Сохранение
-                                </button>
-                            </div>
+                            <button class="btn btn-success me-2" v-if="canEdit"
+                                    :disabled="!canSave || loading"
+                                    @click="saveAction">
+                                <i class="fa"
+                                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                                Сохранить
+                            </button>
                         </div>
                         <div class="d-flex">
-                            <history-btn
-                                class="btn-link underline-none"
-                                :url="account.historyUrl" />
+                            <history-btn class="btn-link underline-none"
+                                         :url="account.historyUrl" />
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="mb-2" v-if="canUserView">
+                <users-block :account="account" :users="account.users" />
+            </div>
         </div>
-        <div class="col-lg-6 col-12">
-            <div class="card mb-2"
-                 v-if="account.users && account.users.length">
-                <div class="card-body">
-                    <h5>Пользователи</h5>
-                    <ol class=" mb-0 ps-3">
-                        <li v-for="user in account.users"
-                            class="">
-                            <a :href="user.viewUrl"
-                               v-if="user.actions.view">{{ user.fullName }}</a>
-                            <span v-else>{{ user.fullName }}</span>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <div class="card mb-2">
-                <div class="card-body">
-                    <counters-block :account="account" />
-                </div>
-            </div>
+        <div class="col-lg-6 col-12 mb-2" v-if="canCounterView">
+            <counters-block :account="account" />
         </div>
     </div>
-    <div class="row">
+    <div class="row" v-if="canInvoiceView">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <invoices-block :account="account" />
-                </div>
-            </div>
+            <invoices-block :account="account" />
         </div>
     </div>
 </template>
 
-<script>
-import Url             from '../../../utils/Url.js';
-import CustomInput     from '../../common/form/CustomInput.vue';
-import CustomCheckbox  from '../../common/form/CustomCheckbox.vue';
-import CustomTextarea  from '../../common/form/CustomTextarea.vue';
-import CustomSelect    from '../../common/form/CustomSelect.vue';
-import ResponseError   from '../../../mixin/ResponseError.js';
-import SimpleSelect    from '../../common/form/SimpleSelect.vue';
-import ErrorsList      from '../../common/form/partial/ErrorsList.vue';
-import HistoryBtn      from '../../common/HistoryBtn.vue';
-import Pagination      from '../../common/pagination/Pagination.vue';
-import SearchSelect    from '../../common/form/SearchSelect.vue';
-import CountersBlock   from './counters/CountersBlock.vue';
-import AccountInfoList from './AccountInfoList.vue';
-import InvoicesBlock   from './invoices/InvoicesBlock.vue';
+<script setup>
+import {
+    ref,
+    reactive,
+    computed,
+    onMounted,
+    defineOptions,
+}                              from 'vue';
+import { useResponseError }    from '@composables/useResponseError';
+import { usePermissions }      from '@composables/usePermissions.js';
+import CustomInput             from '@common/form/CustomInput.vue';
+import CustomCheckbox          from '@common/form/CustomCheckbox.vue';
+import HistoryBtn              from '@common/HistoryBtn.vue';
+import CountersBlock           from './counters/CountersBlock.vue';
+import AccountInfoList         from './AccountInfoList.vue';
+import InvoicesBlock           from './invoices/InvoicesBlock.vue';
+import UsersBlock              from './users/UsersBlock.vue';
+import { ApiAdminAccountSave } from '@api';
 
-export default {
-    name      : 'AccountItemView',
-    components: {
-        InvoicesBlock,
-        AccountInfoList,
-        CountersBlock,
-        SearchSelect, Pagination,
-        ErrorsList,
-        SimpleSelect,
-        CustomTextarea,
-        CustomCheckbox,
-        CustomSelect,
-        CustomInput,
-        HistoryBtn,
-    },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'modelValue',
-    ],
-    created () {
-        this.vueId   = 'uuid' + this.$_uid;
-        this.account = this.modelValue;
-    },
-    data () {
-        return {
-            account: {},
-            actions: null,
+defineOptions({
+    name: 'AccountItemView',
+});
 
-            vueId  : null,
-            loading: false,
-        };
+const props = defineProps({
+    modelValue: {
+        type    : Object,
+        required: true,
     },
-    methods : {
-        saveAction () {
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.account.id);
-            form.append('number', this.account.number);
-            form.append('size', parseInt(this.account.size ? this.account.size : 0));
-            form.append('is_invoicing', !!this.account.isInvoicing);
-            form.append('cadastreNumber', this.account.cadastreNumber);
-            form.append('registryDate', this.account.registryDate);
+});
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminAccountSave.method](
-                Url.Routes.adminAccountSave.uri,
-                form,
-            ).then((response) => {
-                this.showInfo('Участок обновлён');
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { has }                                       = usePermissions();
 
-                this.actions    = response.data.actions;
-                this.historyUrl = response.data.historyUrl;
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось сохранить участок';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        dropAction () {
-            if (!this.id) {
-                this.dropped = true;
-                return;
-            }
-            if (!confirm('Удалить акаунт?')) {
-                return;
-            }
+const canView        = computed(() => has('accounts', 'view'));
+const canEdit        = computed(() => has('accounts', 'edit'));
+const canDrop        = computed(() => has('accounts', 'drop'));
+const canUserView    = computed(() => has('users', 'view'));
+const canInvoiceView = computed(() => has('invoices', 'view'));
+const canCounterView = computed(() => has('counters', 'view'));
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminAccountDelete, {
-                id: this.id,
-            });
-            window.axios[Url.Routes.adminAccountDelete.method](
-                uri,
-            ).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Участок удалён');
-                }
-                else {
-                    this.showDanger('Участок не удалён');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    computed: {
-        canSave () {
-            return this.account.number
-                && this.account.size && this.account.size >= 0;
-        },
-    },
+// Состояния
+const loading = ref(false);
+const account = ref({});
+
+// Форма
+const formData = reactive({
+    id            : null,
+    number        : '',
+    size          : null,
+    isInvoicing   : false,
+    cadastreNumber: '',
+});
+
+// Инициализация данных
+const initForm = () => {
+    account.value           = props.modelValue;
+    formData.id             = account.value.id;
+    formData.number         = account.value.number || '';
+    formData.size           = account.value.size || null;
+    formData.isInvoicing    = account.value.isInvoicing || false;
+    formData.cadastreNumber = account.value.cadastreNumber || '';
 };
+
+// Сохранение участка
+const saveAction = async () => {
+    loading.value = true;
+
+    const form = new FormData();
+    form.append('id', formData.id);
+    form.append('number', formData.number);
+    form.append('size', parseInt(formData.size ? formData.size : 0));
+    form.append('is_invoicing', !!formData.isInvoicing);
+    form.append('cadastreNumber', formData.cadastreNumber);
+
+    try {
+        const response = await ApiAdminAccountSave({}, form);
+
+        // Обновляем данные участка
+        account.value = {
+            ...account.value,
+            ...response.data,
+        };
+
+        showInfo('Участок обновлён');
+    }
+    catch (error) {
+        const text = error?.response?.data?.message || 'Не получилось сохранить участок';
+        showDanger(text);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+// Валидация формы
+const canSave = computed(() => {
+    return canEdit && formData.number && formData.size !== null && formData.size >= 0;
+});
+
+onMounted(() => {
+    initForm();
+});
 </script>

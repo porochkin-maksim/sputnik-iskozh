@@ -3,7 +3,6 @@
 namespace Core\Domains\Billing\Payment\Collections;
 
 use Cknow\Money\Money;
-use Core\Collections\CollectionInterface;
 use Core\Collections\CollectionTrait;
 use Core\Domains\Billing\Payment\Models\PaymentDTO;
 use Core\Services\Money\MoneyService;
@@ -12,7 +11,7 @@ use Illuminate\Support\Collection;
 /**
  * @template-extends Collection<int, PaymentDTO>
  */
-class PaymentCollection extends Collection implements CollectionInterface
+class PaymentCollection extends Collection
 {
     use CollectionTrait;
 

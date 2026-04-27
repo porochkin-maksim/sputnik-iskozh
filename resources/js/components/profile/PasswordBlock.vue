@@ -20,40 +20,23 @@
     </div>
 </template>
 
-<script>
-import Url             from '../../utils/Url.js';
-import ResponseError   from '../../mixin/ResponseError.js';
+<script setup>
+import {
+    ref,
+    defineProps,
+}                      from 'vue';
 import ProfilePassword from './ProfilePassword.vue';
 
-export default {
-    name      : 'PasswordBlock',
-    components: {
-        ProfilePassword,
+defineProps({
+    user: {
+        type    : Object,
+        required: true,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'account',
-        'user',
-    ],
-    data () {
-        return {
-            showPasswordBlock: false,
-        };
-    },
-    created () {
+});
 
-    },
-    methods : {
-        togglePasswordBlock () {
-            this.showPasswordBlock = !this.showPasswordBlock;
-        },
-    },
-    computed: {
-        Url () {
-            return Url;
-        },
-    },
+const showPasswordBlock = ref(false);
+
+const togglePasswordBlock = () => {
+    showPasswordBlock.value = !showPasswordBlock.value;
 };
 </script>

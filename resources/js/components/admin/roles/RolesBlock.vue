@@ -1,272 +1,418 @@
 <template>
-    <div class="d-flex align-items-center justify-content-between mb-2">
-        <button class="btn btn-success"
-                v-if="actions.edit"
-                v-on:click="makeAction">Добавить роль
-        </button>
-        <div v-else></div>
-        <history-btn
-            class="btn-link underline-none"
-            v-if="actions.view"
-            :url="historyUrl" />
-    </div>
-    <div class="row">
-        <div class="col-8">
-            <table class="table table-sm"
-                   v-if="actions.view">
-                <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Название</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <template v-for="(role, index) in roles">
-                    <tr class="align-middle"
-                        v-if="role.actions.view">
-                        <td>{{ role.id }}</td>
-                        <td class="w-100">
-                            <a href=""
-                               @click.prevent="editAction(role)">
-                                {{ role.name }}
-                            </a>
-                        </td>
-                        <td>
-                            <button class="btn"
-                                    v-if="role.actions.drop"
-                                    @click="dropAction(role.id)"
-                                    :disabled="loading">
-                                <i class="fa fa-trash text-danger"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </template>
-                </tbody>
-            </table>
+    <div>
+        <!-- Верхняя панель -->
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <button
+                v-if="has('roles', 'edit')"
+                class="btn btn-success"
+                @click="makeAction"
+                :disabled="isLoading"
+            >
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Добавить роль
+            </button>
+            <div v-else></div>
+            <history-btn
+                v-if="has('roles', 'view')"
+                class="btn-link underline-none"
+                :url="historyUrl"
+            />
         </div>
-        <div class="col-4"
-             v-if="role">
-            <div class="input-group input-group-sm mb-2">
-                <template v-if="role.actions.edit">
-                    <button class="btn btn-success"
-                            @click="saveAction"
-                            :disabled="!canSave || role.actions?.edit === false || loading">
-                        <i class="fa"
-                           :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                    </button>
-                    <input type="text"
-                           class="form-control name"
-                           placeholder="Название"
-                           v-model="role.name">
-                </template>
-                <template v-else>
-                    <div class="p-2 border w-100">{{ role.name }}</div>
-                </template>
-            </div>
-            <div v-for="(group, section) in permissions">
-                <ul v-for="(item, code) in group"
-                    class="list-group list-unstyled">
-                    <template v-if="role.actions.edit">
-                        <template v-if="code === section">
-                            <li class="fw-bold mb-2">
-                                <input class="form-check-input cursor-pointer"
-                                       type="checkbox"
-                                       :id="vueId + code"
-                                       :checked="isChecked(code)"
-                                       :disabled="role.actions?.edit === false || loading"
-                                       @change="onChangedSection(code)">
-                                &nbsp;
-                                <label :for="vueId + code"
-                                       class="cursor-pointer">{{ item }}</label>
-                            </li>
-                        </template>
-                        <template v-else>
-                            <li>
-                                <input class="form-check-input cursor-pointer"
-                                       type="checkbox"
-                                       :id="vueId + code"
-                                       :checked="isChecked(code)"
-                                       :disabled="role.actions?.edit === false || loading"
-                                       @change="onChanged(code)">
-                                &nbsp;
-                                <label :for="vueId + code"
-                                       class="cursor-pointer">{{ item }}</label>
-                            </li>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <li>
-                            <i class="fa fa-check text-success" v-if="isChecked(code)"></i>
-                            <i class="fa fa-check text-light" v-else></i>
-                            &nbsp;<span>{{ item }}</span>
-                        </li>
-                    </template>
-                </ul>
-                <hr>
-            </div>
+
+        <!-- Индикатор загрузки -->
+        <loading-spinner
+            v-if="isLoading"
+            size="lg"
+            color="primary"
+            text="Загрузка ролей..."
+            wrapper-class="py-5"
+        />
+
+        <!-- Ошибка загрузки -->
+        <div v-else-if="error" class="alert alert-danger">
+            {{ error }}
         </div>
+
+        <template v-else>
+            <div class="row">
+                <div class="col-4">
+                    <table v-if="has('roles', 'view')" class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Название</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template v-for="r in roles"
+                                  :key="r.id">
+                            <tr class="align-middle">
+                                <td>{{ r.id }}</td>
+                                <td class="w-100">
+                                    <a href="#" @click.prevent="editAction(r)">
+                                        {{ r.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <button
+                                        class="btn"
+                                        v-if="has('roles', 'drop')"
+                                        @click="dropAction(r.id)"
+                                        :disabled="deleting === r.id"
+                                    >
+                                        <i
+                                            v-if="deleting === r.id"
+                                            class="fa fa-spinner fa-spin text-danger"
+                                        ></i>
+                                        <i v-else class="fa fa-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr v-if="roles.length === 0">
+                            <td colspan="3" class="text-center text-muted">
+                                Нет доступных ролей
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Правая панель с правами -->
+                <div v-if="selectedRole" class="col-8">
+                    <div class="d-flex">
+                        <div class="w-50 pe-2">
+                            <div v-if="selectedRole?.users?.length">
+                                <b>Участники</b>
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item borderless" v-for="user in selectedRole?.users"
+                                        :key="user.id">
+                                        <a :href="user.viewUrl">{{ user.fullName }}</a>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="w-50 ps-2">
+                            <div class="input-group input-group-sm mb-2">
+                                <template v-if="has('roles', 'edit')">
+                                    <button
+                                        class="btn btn-success"
+                                        @click="saveAction"
+                                        :disabled="!canSave || saving"
+                                    >
+                                        <i
+                                            class="fa"
+                                            :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"
+                                        ></i>
+                                    </button>
+                                    <input
+                                        type="text"
+                                        class="form-control name"
+                                        placeholder="Название"
+                                        v-model="selectedRole.name"
+                                        :disabled="saving"
+                                    />
+                                </template>
+                                <template v-else>
+                                    <div class="fw-bold">{{ selectedRole.name }}</div>
+                                </template>
+                            </div>
+
+                            <!-- Разрешения -->
+                            <div v-for="(group, section) in permissions" :key="section">
+                                <ul class="list-group list-unstyled">
+                                    <template v-if="has('roles', 'edit')">
+                                        <!-- Секция (группа) -->
+                                        <li class="fw-bold mb-2">
+                                            <input
+                                                class="form-check-input cursor-pointer"
+                                                type="checkbox"
+                                                :id="vueId + section"
+                                                :checked="isSectionChecked(section)"
+                                                :disabled="saving"
+                                                @change="onChangedSection(section)"
+                                            />
+                                            <label :for="vueId + section" class="cursor-pointer ms-2">
+                                                {{ group[section] || section }}
+                                            </label>
+                                        </li>
+                                        <!-- Остальные элементы группы -->
+                                        <li v-for="(label, code) in group" :key="code">
+                                            <template v-if="code !== section">
+                                                <input
+                                                    class="form-check-input cursor-pointer"
+                                                    type="checkbox"
+                                                    :id="vueId + code"
+                                                    :checked="isChecked(code)"
+                                                    :disabled="saving"
+                                                    @change="onChanged(code)"
+                                                />
+                                                <label :for="vueId + code" class="cursor-pointer ms-2">
+                                                    {{ label }}
+                                                </label>
+                                            </template>
+                                        </li>
+                                    </template>
+                                    <template v-else>
+                                        <!-- Режим просмотра -->
+                                        <li class="fw-bold mb-2">
+                                            <label :for="vueId + section" class="cursor-pointer ms-2">
+                                                {{ group[section] || section }}
+                                            </label>
+                                        </li>
+                                        <li v-for="(label, code) in group" :key="code">
+                                            <template v-if="code !== section">
+                                                <i
+                                                    class="fa"
+                                                    :class="isChecked(code) ? 'fa-check text-success' : 'fa-check text-light'"
+                                                ></i>
+                                                <span class="ms-2">{{ label }}</span>
+                                            </template>
+                                        </li>
+                                    </template>
+                                </ul>
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
-import HistoryBtn    from '../../common/HistoryBtn.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    onMounted,
+    defineProps,
+    defineEmits,
+    defineOptions,
+}                           from 'vue';
+import { useResponseError } from '@composables/useResponseError';
+import { usePermissions }   from '@composables/usePermissions';
+import HistoryBtn           from '../../common/HistoryBtn.vue';
+import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import {
+    ApiAdminRoleList,
+    ApiAdminRoleCreate,
+    ApiAdminRoleSave,
+    ApiAdminRoleDelete,
+}                           from '@api';
 
-export default {
-    name      : 'RolesBlock',
-    components: { HistoryBtn },
-    emits     : ['update:checked'],
-    mixins    : [
-        ResponseError,
-    ],
-    props     : {
-        permissions: {
-            type   : Object,
-            default: {},
-        },
+defineOptions({
+    name: 'RolesBlock',
+});
+
+const props = defineProps({
+    permissions: {
+        type   : Object,
+        default: () => ({}),
     },
-    data () {
-        return {
-            vueId  : null,
-            loading: false,
+});
 
-            role      : null,
-            checked   : [],
-            roles     : [],
-            historyUrl: null,
-            actions   : {},
-        };
-    },
-    created () {
-        this.vueId = 'uuid' + this.$_uid;
-        this.listAction();
-    },
-    methods : {
-        makeAction () {
-            if (!this.actions.edit) {
-                return;
-            }
-            window.axios[Url.Routes.adminRoleCreate.method](Url.Routes.adminRoleCreate.uri).then(response => {
-                this.role    = response.data;
-                this.checked = [];
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        listAction () {
-            this.loading = true;
-            window.axios[Url.Routes.adminRoleList.method](Url.Routes.adminRoleList.uri).then(response => {
-                this.actions    = response.data.actions;
-                this.roles      = response.data.roles;
-                this.historyUrl = response.data.historyUrl;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.loading = false;
-            });
-        },
-        editAction (role) {
-            this.checked = role.permissions;
-            this.role    = role;
-        },
-        saveAction () {
-            if (!this.actions.edit) {
-                return;
-            }
-            this.loading = true;
-            let form     = new FormData();
-            form.append('id', this.role.id);
-            form.append('name', this.role.name);
-            this.checked.forEach(item => {
-                form.append('permissions[]', item);
-            });
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminRoleSave.method](
-                Url.Routes.adminRoleSave.uri,
-                form,
-            ).then((response) => {
-                let text = this.role.id ? 'Роль обновлена' : 'Роль ' + response.data.id + ' создана';
-                this.showInfo(text);
+const { has } = usePermissions();
 
-                this.role.id   = response.data.id;
-                this.role.name = response.data.name;
+const emit = defineEmits(['update:checked']);
 
-                this.actions = response.data.actions;
-            }).catch(response => {
-                let text = response?.data?.message ?
-                    response.data.message
-                    : 'Не получилось ' + (this.id ? 'сохранить' : 'создать') + ' роль';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).then(() => {
-                this.listAction();
-            });
-        },
-        dropAction (id) {
-            if (!this.actions.drop) {
-                return;
-            }
-            if (!confirm('Удалить роль?')) {
-                return;
-            }
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
-            let uri = Url.Generator.makeUri(Url.Routes.adminRoleDelete, {
-                id: id,
-            });
-            window.axios[Url.Routes.adminRoleDelete.method](
-                uri,
-            ).then((response) => {
-                this.dropped = response.data;
-                if (response.data) {
-                    this.showInfo('Роль удалена');
-                }
-                else {
-                    this.showDanger('Роль не удалена');
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).then(() => {
-                if (this.role.id === id) {
-                    this.role = null;
-                }
-                this.listAction();
-            });
-        },
-        isChecked (code) {
-            return this.checked.includes(String(code));
-        },
-        onChanged (code) {
-            if (this.checked.includes(String(code))) {
-                this.checked = this.checked.filter(item => String(item) !== String(code));
-            }
-            else {
-                this.checked.push(String(code));
-            }
-            this.$emit('update:checked', this.checked);
-        },
-        onChangedSection (code) {
-            let items = this.permissions[String(code)];
+const vueId = ref('role-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
 
-            if (this.checked.includes(String(code))) {
-                Object.keys(items).forEach(permission => {
-                    this.checked = this.checked.filter(item => String(item) !== String(permission));
-                });
-            }
-            else {
-                Object.keys(items).forEach(permission => {
-                    this.checked.push(String(permission));
-                });
-            }
-            this.$emit('update:checked', this.checked);
-        },
-    },
-    computed: {
-        canSave () {
-            return this.role.name && this.checked && this.checked.length;
-        },
-    },
+const isLoading = ref(false);
+const saving    = ref(false);
+const deleting  = ref(null);
+const error     = ref(null);
+
+const roles      = ref([]);
+const historyUrl = ref(null);
+
+const selectedRole = ref(null);
+const checked      = ref([]);
+
+// Загрузка списка ролей
+const loadList = async () => {
+    isLoading.value = true;
+    error.value     = null;
+    try {
+        const response = await ApiAdminRoleList();
+
+        // Проверяем, где именно лежат роли
+        let fetchedRoles = response.data.roles;
+        if (!fetchedRoles && response.data.list) {
+            fetchedRoles = response.data.list;
+        }
+        else if (!fetchedRoles && Array.isArray(response.data)) {
+            fetchedRoles = response.data;
+        }
+        else {
+            fetchedRoles = fetchedRoles || [];
+        }
+
+        roles.value = fetchedRoles.map(role => ({
+            ...role,
+            actions: role.actions || { view: true, edit: false, drop: false },
+        }));
+
+        historyUrl.value = response.data.historyUrl;
+    }
+    catch (err) {
+        console.error('Error loading roles:', err);
+        error.value = 'Не удалось загрузить роли';
+        parseResponseErrors(err);
+    }
+    finally {
+        isLoading.value = false;
+    }
 };
+
+// Создание новой роли
+const makeAction = async () => {
+    if (!has('roles', 'edit')) {
+        return;
+    }
+    try {
+        const response = await ApiAdminRoleCreate();
+        const newRole  = response.data;
+        if (!newRole.actions) {
+            newRole.actions = { edit: true, view: true, drop: false };
+        }
+        selectedRole.value = newRole;
+        checked.value      = [];
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+};
+
+// Редактирование роли
+const editAction = (role) => {
+    checked.value      = role.permissions || [];
+    selectedRole.value = { ...role };
+};
+
+// Сохранение роли
+const saveAction = async () => {
+    if (!has('roles', 'edit') || saving.value) {
+        return;
+    }
+
+    saving.value = true;
+    const data   = {
+        id         : selectedRole.value.id,
+        name       : selectedRole.value.name,
+        permissions: checked.value,
+    };
+
+    try {
+        const response = await ApiAdminRoleSave({}, data);
+        const message  = selectedRole.value.id ? 'Роль обновлена' : `Роль ${response.data.id} создана`;
+        showInfo(message);
+        await loadList();
+        selectedRole.value = null;
+        checked.value      = [];
+    }
+    catch (error) {
+        const message = error?.response?.data?.message || 'Не удалось сохранить роль';
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        saving.value = false;
+    }
+};
+
+// Удаление роли
+const dropAction = async (id) => {
+    if (!has('roles', 'drop')) {
+        return;
+    }
+    if (!confirm('Удалить роль?')) {
+        return;
+    }
+
+    deleting.value = id;
+    try {
+        const response = await ApiAdminRoleDelete(id);
+        if (response.data) {
+            showInfo('Роль удалена');
+            if (selectedRole.value?.id === id) {
+                selectedRole.value = null;
+                checked.value      = [];
+            }
+            await loadList();
+        }
+        else {
+            showDanger('Роль не удалена');
+        }
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
+    finally {
+        deleting.value = null;
+    }
+};
+
+// Проверка, выбрано ли разрешение
+const isChecked = (code) => checked.value.includes(String(code));
+
+// Проверка, выбраны ли все разрешения в секции
+const isSectionChecked = (section) => {
+    const items = props.permissions[section];
+    if (!items) {
+        return false;
+    }
+    const codes = Object.keys(items).filter(key => key !== section);
+    return codes.length > 0 && codes.every(code => isChecked(code));
+};
+
+// Изменение одного разрешения
+const onChanged = (code) => {
+    const strCode = String(code);
+    if (checked.value.includes(strCode)) {
+        checked.value = checked.value.filter(item => item !== strCode);
+    }
+    else {
+        checked.value.push(strCode);
+    }
+    emit('update:checked', checked.value);
+};
+
+// Изменение всей секции
+const onChangedSection = (section) => {
+    const items = props.permissions[section];
+    if (!items) {
+        return;
+    }
+
+    const codes       = Object.keys(items).filter(key => key !== section);
+    const allSelected = codes.every(code => isChecked(code));
+
+    if (allSelected) {
+        checked.value = checked.value.filter(item => !codes.includes(item));
+    }
+    else {
+        codes.forEach(code => {
+            if (!checked.value.includes(code)) {
+                checked.value.push(code);
+            }
+        });
+    }
+    emit('update:checked', checked.value);
+};
+
+// Возможность сохранения
+const canSave = computed(() => {
+    return selectedRole.value?.name && checked.value.length > 0;
+});
+
+onMounted(loadList);
 </script>
+
+<style scoped>
+/* Стили можно оставить пустыми или добавить специфические */
+</style>

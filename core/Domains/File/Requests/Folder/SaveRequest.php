@@ -4,13 +4,12 @@ namespace Core\Domains\File\Requests\Folder;
 
 use App\Http\Requests\AbstractRequest;
 use Core\Domains\File\Models\FolderDTO;
-use Core\Requests\RequestArgumentsEnum;
 
 class SaveRequest extends AbstractRequest
 {
-    private const ID        = RequestArgumentsEnum::ID;
-    private const NAME      = RequestArgumentsEnum::NAME;
-    private const PARENT_ID = RequestArgumentsEnum::PARENT_ID;
+    private const string ID        = 'id';
+    private const string NAME      = 'name';
+    private const string PARENT_ID = 'parent_id';
 
     public function rules(): array
     {
@@ -47,7 +46,8 @@ class SaveRequest extends AbstractRequest
 
         $dto->setId($this->getId())
             ->setName($this->getName())
-            ->setParentId($this->getParentId());
+            ->setParentId($this->getParentId())
+        ;
 
         return $dto;
     }

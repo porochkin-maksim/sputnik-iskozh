@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Requests;
 
@@ -12,6 +12,21 @@ use Illuminate\Support\Str;
  */
 abstract class AbstractRequest extends FormRequest
 {
+    public static function make()
+    {
+        $request = request();
+
+        return new static(
+            $request->query->all(),
+            $request->request->all(),
+            $request->attributes->all(),
+            $request->cookies->all(),
+            $request->files->all(),
+            $request->server->all(),
+            $request->content,
+        );
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -19,71 +34,70 @@ abstract class AbstractRequest extends FormRequest
 
     public function getInt(string $key, mixed $default = null): int
     {
-        return (int) $this->get($key, $default);
+        return (int) $this->input($key, $default);
     }
 
-    public function getBool(string $key): bool
+    public function getBool(string $key, mixed $default = null): bool
     {
-        if ($this->has($key)) {
-            if (in_array($this->get($key), [true, 'true'], true)) {
-                return true;
-            }
+        if ($this->has($key) && in_array($this->input($key), [true, 'true'], true)) {
+            return true;
         }
 
-        return false;
+        return (bool) $default;
     }
 
-    public function getIntOrNull(string $key): ?int
+    public function getIntOrNull(string $key, mixed $default = null): ?int
     {
         if ($this->has($key)) {
-            if (in_array($this->get($key), [null, 'null'], true)) {
+            if (in_array($this->input($key), [null, 'null'], true)) {
                 return null;
             }
 
             return $this->getInt($key);
         }
 
-        return null;
+        return is_numeric($default) ? (int) $default : null;
     }
 
-    public function getString(string $key): string
+    public function getString(string $key, mixed $default = null): string
     {
         if ($this->has($key)) {
-            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
+            if (in_array(Str::lower($this->input($key)), [null, 'null', 'nan'], true)) {
                 return '';
             }
 
-            return (string) $this->get($key);
+            return (string) $this->input($key);
         }
 
-        return '';
+        return (string) $default;
     }
 
-    public function getStringOrNull(string $key): ?string
+    public function getStringOrNull(string $key, mixed $default = null): ?string
     {
         if ($this->has($key)) {
-            if (in_array(Str::lower($this->get($key)), [null, 'null', 'nan'], true)) {
+            if (in_array(Str::lower($this->input($key)), [null, 'null', 'nan'], true)) {
                 return null;
             }
 
-            return $this->get($key);
+            return $this->input($key);
         }
 
-        return null;
+        return (string) $default ?: null;
     }
 
     public function getFloat(string $key, mixed $default = null): ?float
     {
-        return is_numeric($this->get($key, $default)) ? (float) $this->get($key, $default) : null;
+        return is_numeric($this->input($key, $default)) ? (float) $this->input($key, $default) : null;
     }
 
     public function getDateOrNull(string $key, ?string $fromFormat = null): ?Carbon
     {
         try {
             if ($fromFormat) {
-                return $this->get($key) ? Carbon::createFromFormat($fromFormat, $this->get($key)) : null;
+                return $this->input($key) ? Carbon::createFromFormat($fromFormat, $this->input($key)) : null;
             }
-            return $this->get($key) ? Carbon::parse($this->get($key)) : null;
+
+            return $this->input($key) ? Carbon::parse($this->input($key)) : null;
         }
         catch (\Exception) {
             return null;
@@ -92,14 +106,14 @@ abstract class AbstractRequest extends FormRequest
 
     public function getArray(string $key, array $default = [], string $callback = ''): array
     {
-        if ( ! is_array($this->get($key))) {
+        if ( ! is_array($this->input($key))) {
             return $default;
         }
 
         if ($callback) {
-            return array_map($callback, $this->get($key));
+            return array_map($callback, $this->input($key));
         }
 
-        return $this->get($key, $default);
+        return $this->input($key, $default);
     }
 }

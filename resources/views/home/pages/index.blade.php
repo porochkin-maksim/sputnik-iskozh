@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use App\Http\Resources\Admin\Accounts\AccountsSelectResource;
+use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Users\UserResource;
 use Core\Resources\RouteNames;
@@ -18,10 +18,11 @@ use Core\Resources\Views\ViewNames;
                 <h3 class="text-dark">{{ lc::userDecorator()->getFullName() }}</h3>
                 @if(lc::account()->getId())
                     <h5 class="text-dark d-flex align-items-center"> Участок:
-                        @if (lc::user()->getAccounts()->hasMany())
+                        @if (lc::user()->getAccounts()->hasSeveral())
                             <div class="d-inline-block">
-                                <account-switcher :accounts='@json(new AccountsSelectResource(lc::user()->getAccounts(), false))'
-                                                  :selected='{{ lc::account()->getId() }}'
+                                <account-switcher
+                                        :accounts='@json(new AccountsSelectResource(lc::user()->getAccounts(), false))'
+                                        :selected='{{ lc::account()->getId() }}'
                                 />
                             </div>
                         @else
@@ -31,21 +32,24 @@ use Core\Resources\Views\ViewNames;
                     <h5 class="text-dark"> Площадь: {{ lc::account()->getSize() }}м²</h5>
                 @endif
             </div>
-            <div>
-                <password-block :account='@json(new AccountResource(lc::account()))'
-                                :user='@json(new UserResource(lc::user()))'></password-block>
-            </div>
+            @if(lc::user()->isRealEmail())
+                <div>
+                    <password-block :account='@json(new AccountResource(lc::account()))'
+                                    :user='@json(new UserResource(lc::user()))'
+                    />
+                </div>
+            @endif
             @if(lc::account()->getId())
                 <a class="card mt-2"
                    href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
                     <div class="card-body">
-                        Передать показания электроэнергии
+                        {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
                     </div>
                 </a>
                 <a class="card mt-2"
                    href="{{ route(RouteNames::PROFILE_INVOICES) }}">
                     <div class="card-body">
-                        Счета
+                        {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
                     </div>
                 </a>
             @endif

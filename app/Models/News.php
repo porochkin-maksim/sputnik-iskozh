@@ -1,12 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
 use App\Models\File\File;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
 use Core\Domains\File\Enums\FileTypeEnum;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -20,20 +18,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int     $category
  * @property ?Carbon $published_at
  */
-class News extends Model implements CastsInterface
+class News extends AbstractModel
 {
-    public const TABLE = 'news';
+    public const string TABLE = 'news';
 
-    public const ID           = 'id';
-    public const TYPE         = 'type';
-    public const TITLE        = 'title';
-    public const DESCRIPTION  = 'description';
-    public const ARTICLE      = 'article';
-    public const IS_LOCK      = 'is_lock';
-    public const CATEGORY     = 'category';
-    public const PUBLISHED_AT = 'published_at';
+    public const string ID           = 'id';
+    public const string TYPE         = 'type';
+    public const string TITLE        = 'title';
+    public const string DESCRIPTION  = 'description';
+    public const string ARTICLE      = 'article';
+    public const string IS_LOCK      = 'is_lock';
+    public const string CATEGORY     = 'category';
+    public const string PUBLISHED_AT = 'published_at';
 
-    public const FILES = 'files';
+    public const RELATION_FILES = 'files';
 
     protected $fillable = [
         self::TYPE,

@@ -7,6 +7,7 @@ use Core\Domains\Account\AccountLocator;
 use Core\Domains\Counter\CounterLocator;
 use Core\Domains\Counter\Enums\CounterTypeEnum;
 use Core\Domains\Counter\Models\CounterDTO;
+use Core\Domains\Files\FileLocator;
 
 class CounterFactory
 {
@@ -37,6 +38,7 @@ class CounterFactory
             Counter::NUMBER       => $dto->getNumber(),
             Counter::IS_INVOICING => $dto->isInvoicing(),
             Counter::INCREMENT    => $dto->getIncrement(),
+            Counter::EXPIRE_AT    => $dto->getExpireAt(),
         ]);
     }
 
@@ -52,14 +54,20 @@ class CounterFactory
             ->setIsInvoicing($model->is_invoicing)
             ->setIncrement($model->increment)
             ->setCreatedAt($model->created_at)
-            ->setUpdatedAt($model->updated_at);
+            ->setUpdatedAt($model->updated_at)
+            ->setExpireAt($model->expire_at)
+        ;
 
-        if (isset($model->getRelations()[Counter::HISTORY])) {
-            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::HISTORY)));
+        if (isset($model->getRelations()[Counter::RELATION_HISTORY])) {
+            $result->setHistoryCollection(CounterLocator::CounterHistoryFactory()->makeDtoFromObjects($model->getRelation(Counter::RELATION_HISTORY)));
         }
 
-        if (isset($model->getRelations()[Counter::ACCOUNT])) {
-            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::ACCOUNT)));
+        if (isset($model->getRelations()[Counter::RELATION_ACCOUNT])) {
+            $result->setAccount(AccountLocator::AccountFactory()->makeDtoFromObject($model->getRelation(Counter::RELATION_ACCOUNT)));
+        }
+
+        if (isset($model->getRelations()[Counter::RELATION_PASSPORT])) {
+            $result->setPassportFile(FileLocator::FileFactory()->makeDtoFromObject($model->getRelation(Counter::RELATION_PASSPORT)));
         }
 
         return $result;

@@ -15,6 +15,16 @@ readonly class StaticFileService
     {
     }
 
+    public function signatureDirector(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::SIGNATURE_DIRECTOR);
+    }
+
+    public function stampSnt(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::STAMP_SNT);
+    }
+
     public function regulation(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::REGULATION);
@@ -33,6 +43,11 @@ readonly class StaticFileService
     public function logoSntRed(): StaticFile
     {
         return $this->staticFileFactory->make(StaticFileName::LOGO_SNT_RED);
+    }
+
+    public function maxLogo(): StaticFile
+    {
+        return $this->staticFileFactory->make(StaticFileName::LOGO_MAX);
     }
 
     public function qrPayment(): StaticFile

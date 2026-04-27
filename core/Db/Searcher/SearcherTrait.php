@@ -6,28 +6,33 @@ use Core\Db\Searcher\Collections\WhereCollection;
 use Core\Db\Searcher\Models\Order;
 use Core\Db\Searcher\Models\Where;
 
+/**
+ * @deprecated
+ */
 trait SearcherTrait
 {
     /** @var Order[] */
-    private array $sortOrderProperties = [];
+    protected array $sortOrderProperties = [];
 
-    private ?int $limit  = null;
-    private ?int $offset = null;
-    private ?int $lastId = null;
+    protected ?int $limit  = null;
+    protected ?int $offset = null;
+    protected ?int $lastId = null;
+
+    protected ?bool $withTrashed = null;
 
     /** @var int[] $ids */
-    private ?array $ids     = null;
-    private array  $select  = [];
-    private array  $with    = [];
+    protected ?array $ids    = null;
+    protected array  $select = [];
+    protected array  $with   = [];
     /** @var string[] $groupBy */
-    private array  $groupBy = [];
+    protected array $groupBy = [];
 
-    private ?WhereCollection $where       = null;
-    private ?WhereCollection $orWhere     = null;
-    private ?WhereCollection $whereColumn = null;
-    private array            $whereIn     = [];
+    protected ?WhereCollection $where       = null;
+    protected ?WhereCollection $orWhere     = null;
+    protected ?WhereCollection $whereColumn = null;
+    protected ?WhereCollection $whereIn     = null;
 
-    private ?string $search = null;
+    protected ?string $search = null;
 
     public static function make(): static
     {
@@ -120,6 +125,13 @@ trait SearcherTrait
         return $this;
     }
 
+    public function setSortOrderPropertyIdDesc(): static
+    {
+        $this->sortOrderProperties[] = new Order('id', SearcherInterface::SORT_ORDER_DESC);
+
+        return $this;
+    }
+
     /** Отступы и лимиты */
 
     public function getLimit(): ?int
@@ -195,6 +207,16 @@ trait SearcherTrait
         return $this->whereColumn;
     }
 
+    /** Выборка */
+    public function getWhereIn(): WhereCollection
+    {
+        if ( ! isset($this->whereIn)) {
+            $this->whereIn = new WhereCollection();
+        }
+
+        return $this->whereIn;
+    }
+
     public function addWhere(string $field, string $operator, mixed $value = null): static
     {
         $this->getWhere()->push(new Where($field, $operator, $value));
@@ -209,19 +231,18 @@ trait SearcherTrait
         return $this;
     }
 
+    public function addWhereIn(string $field, mixed $value = null): static
+    {
+        $this->getWhereIn()->push(new Where($field, '', $value));
+
+        return $this;
+    }
+
     public function addWhereColumn(string $field1, string $operator, mixed $field2 = null): static
     {
         $this->getWhereColumn()->push(new Where($field1, $operator, $field2));
 
         return $this;
-    }
-
-    /**
-     * @return Where[]
-     */
-    public function getWhereIn(): array
-    {
-        return $this->whereIn;
     }
 
     public function getGroupsBy(): array
@@ -234,5 +255,17 @@ trait SearcherTrait
         $this->groupBy[] = $groupBy;
 
         return $this;
+    }
+
+    public function setWithDeleted(?bool $flag = true): static
+    {
+        $this->withTrashed = $flag;
+
+        return $this;
+    }
+
+    public function getWithTrashed(): ?bool
+    {
+        return $this->withTrashed;
     }
 }

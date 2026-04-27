@@ -1,156 +1,187 @@
 <template>
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
-                 @hidden="closeDialog"
+    <view-dialog
+        v-model:show="showDialog"
+        v-model:hide="hideDialog"
+        @hidden="closeDialog"
     >
-        <template v-slot:title>
-            {{ modelValue?.id ? 'Редактирование периода' : 'Создание периода' }}
+        <template #title>
+            {{ props.modelValue?.id ? 'Редактирование периода' : 'Создание периода' }}
         </template>
-        <template v-slot:body>
+        <template #body>
             <div class="container-fluid">
-                <label>Название</label>
-                <input type="text"
-                       class="form-control"
-                       v-model="name"
-                       :disabled="modelValue?.isClosed">
-                <label>Начало периода</label>
-                <input type="datetime-local"
-                       class="form-control"
-                       v-model="startAt"
-                       :disabled="modelValue?.isClosed">
-                <label>Окончание периода</label>
-                <input type="datetime-local"
-                       class="form-control"
-                       v-model="endAt"
-                       :disabled="modelValue?.isClosed">
-                <div class="form-check">
-                    <input type="checkbox"
-                           class="form-check-input"
-                           v-model="isClosed"
-                           :disabled="!modelValue?.id">
-                    <label class="form-check-label">Закрыть период</label>
+                <!-- Название периода -->
+                <div>
+                    <custom-input
+                        v-model="name"
+                        :errors="errors?.name"
+                        type="text"
+                        label="Название"
+                        :required="true"
+                        :disabled="props.modelValue?.isClosed"
+                        @update:modelValue="clearError('name')"
+                    />
+                </div>
+
+                <!-- Начало периода с календарём и временем -->
+                <div class="mt-2">
+                    <custom-calendar
+                        v-model="startAt"
+                        :error="errors?.start_at"
+                        label="Начало периода"
+                        :required="true"
+                        :disabled="props.modelValue?.isClosed"
+                        with-time
+                        @update:modelValue="clearError('start_at')"
+                    />
+                </div>
+
+                <!-- Окончание периода с календарём и временем -->
+                <div class="mt-2">
+                    <custom-calendar
+                        v-model="endAt"
+                        :error="errors?.end_at"
+                        label="Окончание периода"
+                        :required="true"
+                        :disabled="props.modelValue?.isClosed"
+                        with-time
+                        @update:modelValue="clearError('end_at')"
+                        withTime
+                    />
+                </div>
+
+                <!-- Чекбокс закрытия периода -->
+                <div class="mt-2">
+                    <custom-checkbox
+                        v-model="isClosed"
+                        :errors="errors?.is_closed"
+                        label="Закрыть период"
+                        :disabled="!props.modelValue?.id"
+                        @update:modelValue="clearError('is_closed')"
+                    />
                 </div>
             </div>
         </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
-                    :disabled="!canSave || loading"
-                    @click="saveAction">
-                <i class="fa"
-                   :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                {{ modelValue?.id ? 'Сохранить' : 'Создать' }}
+        <template #footer>
+            <button
+                class="btn btn-success"
+                :disabled="!canSave || loading"
+                @click="saveAction"
+            >
+                <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ props.modelValue?.id ? 'Сохранить' : 'Создать' }}
             </button>
         </template>
     </view-dialog>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import Url           from '../../../utils/Url.js';
-import ViewDialog    from '../../common/ViewDialog.vue';
+<script setup>
+import {
+    ref,
+    computed,
+    watch,
+    defineProps,
+    defineEmits,
+    defineOptions,
+}                             from 'vue';
+import { useResponseError }   from '@composables/useResponseError';
+import ViewDialog             from '../../common/ViewDialog.vue';
+import CustomInput            from '@common/form/CustomInput.vue';
+import CustomCheckbox         from '@common/form/CustomCheckbox.vue';
+import CustomCalendar         from '@common/form/CustomCalendar.vue';
+import { ApiAdminPeriodSave } from '@api';
 
-export default {
-    name      : 'PeriodEditDialog',
-    components: {
-        ViewDialog,
+const props = defineProps({
+    modelValue: {
+        type   : Object,
+        default: null,
     },
-    mixins    : [ResponseError],
-    props     : {
-        modelValue: {
-            type   : Object,
-            default: null,
-        },
-        show      : {
-            type   : Boolean,
-            default: false,
-        },
+    show      : {
+        type   : Boolean,
+        default: false,
     },
-    emits     : ['update:modelValue', 'update:show'],
-    data () {
-        return {
-            name      : null,
-            startAt   : null,
-            endAt     : null,
-            isClosed  : false,
-            loading   : false,
-            hideDialog: false,
-        };
-    },
-    computed: {
-        showDialog: {
-            get () {
-                return this.show;
-            },
-            set (value) {
-                this.$emit('update:show', value);
-            },
-        },
-        canSave () {
-            return this.name && this.startAt && this.endAt;
-        },
-    },
-    watch   : {
-        modelValue: {
-            handler (newValue) {
-                if (newValue) {
-                    this.id       = newValue.id;
-                    this.name     = newValue.name;
-                    this.startAt  = newValue.startAt;
-                    this.endAt    = newValue.endAt;
-                    this.isClosed = newValue.isClosed;
-                }
-                else {
-                    this.resetForm();
-                }
-            },
-            immediate: true,
-        },
-    },
-    methods : {
-        resetForm () {
-            this.name     = null;
-            this.startAt  = null;
-            this.endAt    = null;
-            this.isClosed = false;
-        },
-        closeDialog () {
-            this.showDialog = false;
-            this.resetForm();
-        },
-        saveAction () {
-            if (this.isClosed) {
-                if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
-                    return;
-                }
-            }
+});
 
-            this.loading = true;
-            let form     = new FormData();
-            if (this.modelValue?.id) {
-                form.append('id', this.modelValue.id);
-            }
-            form.append('name', this.name);
-            form.append('start_at', this.startAt);
-            form.append('end_at', this.endAt);
-            form.append('is_closed', this.isClosed);
+const emit = defineEmits(['update:modelValue', 'update:show']);
 
-            this.clearResponseErrors();
-            window.axios[Url.Routes.adminPeriodSave.method](
-                Url.Routes.adminPeriodSave.uri,
-                form,
-            ).then(response => {
-                this.$emit('update:modelValue', response.data.period);
-                this.showInfo(this.modelValue?.id ? 'Период обновлен' : 'Период создан');
-                this.closeDialog();
-            }).catch(response => {
-                let text = response?.data?.message ||
-                    'Не удалось ' + (this.modelValue?.id ? 'обновить' : 'создать') + ' период';
-                this.showDanger(text);
-                this.parseResponseErrors(response);
-            }).finally(() => {
-                this.loading = false;
-            });
-        },
-    },
+const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
+
+const name       = ref(null);
+const startAt    = ref(null);
+const endAt      = ref(null);
+const isClosed   = ref(false);
+const loading    = ref(false);
+const hideDialog = ref(false);
+
+// Двусторонняя привязка show
+const showDialog = computed({
+    get: () => props.show,
+    set: (value) => emit('update:show', value),
+});
+
+// Валидация формы
+const canSave = computed(() => name.value && startAt.value && endAt.value);
+
+// Сброс формы
+const resetForm = () => {
+    name.value     = null;
+    startAt.value  = null;
+    endAt.value    = null;
+    isClosed.value = false;
 };
-</script> 
+
+// Закрытие диалога
+const closeDialog = () => {
+    showDialog.value = false;
+};
+
+// Следим за изменением modelValue
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        if (newValue) {
+            name.value     = newValue.name;
+            startAt.value  = newValue.startAt;
+            endAt.value    = newValue.endAt;
+            isClosed.value = newValue.isClosed;
+        }
+        else {
+            resetForm();
+        }
+    },
+    { immediate: true },
+);
+
+// Сохранение
+const saveAction = async () => {
+    if (isClosed.value) {
+        if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
+            return;
+        }
+    }
+
+    loading.value = true;
+    const data    = {
+        id       : props.modelValue?.id,
+        name     : name.value,
+        start_at : startAt.value,
+        end_at   : endAt.value,
+        is_closed: isClosed.value,
+    };
+
+    try {
+        const response = await ApiAdminPeriodSave({}, data);
+        emit('update:modelValue', response.data.period);
+        showInfo(props.modelValue?.id ? 'Период обновлен' : 'Период создан');
+        closeDialog();
+    }
+    catch (error) {
+        const message = error?.response?.data?.message ||
+            `Не удалось ${props.modelValue?.id ? 'обновить' : 'создать'} период`;
+        showDanger(message);
+        parseResponseErrors(error);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+</script>

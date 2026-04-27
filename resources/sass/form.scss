@@ -7,7 +7,7 @@ form,
             font-size  : 0.8em;
         }
 
-        &:is(ul), &:is(ol) {
+        &ul, &ol {
             list-style-type : none;
             margin-top      : 0.5rem;
             padding         : 0 0.5rem;
@@ -24,22 +24,14 @@ form,
         box-shadow    : 0 0 2px $color-light-gray;
 
         &:focus {
-            box-shadow : 0 0 2px $color-primary;
+            box-shadow : 0 0 2px $default-primary;
             outline    : none;
         }
 
-        &:is(label) {
+        &label {
             padding    : 0;
             border     : 0;
             box-shadow : none;
-
-            &.label-input {
-
-            }
-
-            &.label-select {
-
-            }
         }
     }
 
@@ -52,6 +44,13 @@ form,
     }
 }
 
+.form-control,
+.form-floating {
+    &:disabled {
+        background-color : #f8f8f8;
+    }
+}
+
 .label-checkbox {
-    cursor: pointer;
+    cursor : pointer;
 }

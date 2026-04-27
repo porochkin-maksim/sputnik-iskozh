@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Services;
 
+use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use lc;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Common\SelectResource;
@@ -45,20 +46,26 @@ readonly class ServicesListResource extends AbstractResource
         $periods = [];
 
         foreach ($this->periodCollection as $period) {
+            if ($period->isClosed()) {
+                continue;
+            }
             $periods[$period->getId()]        = $period->getName();
             $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
+                ServiceTypeEnum::PERSONAL_FEE->name(),
                 ServiceTypeEnum::TARGET_FEE->name() => true,
                 default                             => false,
             });
         }
 
-        $result['periods'] = new SelectResource($periods);
+        $result['periods']     = new SelectResource($periods);
+        $result['periodsInfo'] = new PeriodsListResource($this->periodCollection);
 
         foreach ($this->serviceCollection as $service) {
             $result[ResponsesEnum::SERVICES][] = new ServiceResource($service);
 
             $type      = $service->getType();
             $available = match ($type) {
+                ServiceTypeEnum::PERSONAL_FEE,
                 ServiceTypeEnum::TARGET_FEE => true,
                 default                     => false,
             };

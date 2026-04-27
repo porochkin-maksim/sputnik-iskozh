@@ -22,25 +22,31 @@ class ExportRouteFunctionsListCommand extends Command
         parent::__construct();
     }
 
-    protected const string OUTPUT_FILE_PATH = '/js/routes-functions.js';
+    protected const string OUTPUT_FILE_PATH = '/js/api/index.js';
 
     protected $signature   = 'front:export-route-functions-list-command';
     protected $description = 'Экспортирует маршруты в файл для фронта';
 
-    /**
-     * @throws JsonException
-     */
     public function handle(): void
     {
-        $routes = [$this->drawBuildQueryUrl()];
+        $header    = $this->drawHeader();
+        $functions = [];
 
         foreach ($this->getRoutes() as $route) {
-            $name          = Str::camel(Str::replace('.', '_', $route['name']));
-            $routes[$name] = $this->drawRouteFunction($name, $route);
+            $name        = 'Api' . Str::ucfirst(Str::camel(Str::replace('.', '_', $route['name'])));
+            $functions[] = $this->drawRouteFunction($name, $route);
         }
 
-        File::put(resource_path(self::OUTPUT_FILE_PATH), implode("\n\n", $routes));
+        $content = $header . "\n\n" . implode("\n\n", $functions);
+        File::put(resource_path(self::OUTPUT_FILE_PATH), $content);
         $this->line("Routes exported to " . self::OUTPUT_FILE_PATH);
+    }
+
+    private function drawHeader(): string
+    {
+        return <<<JS
+            import { makeQuery, prepareRequestData } from './helpers.js';
+            JS;
     }
 
     private function filterMethod(array $methods): string
@@ -111,32 +117,11 @@ class ExportRouteFunctionsListCommand extends Command
         $uri       = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
         $note      = $route['name'];
 
-        $result = <<<JS
+        return <<<JS
             export function $name($arguments, postData = null) {
                 // see $note
-                return window.axios.$method(makeQuery('$uri', getParams), postData);
+                return window.axios.$method(makeQuery('$uri', getParams), prepareRequestData(postData));
             }
             JS;
-
-        return $result;
-    }
-
-    private function drawBuildQueryUrl(): string
-    {
-        return $result = <<<JS
-                   function makeQuery(uri, getParams = {}) {
-                       let getQuery = [];
-                       Object.keys(getParams).forEach(key => {
-                           if (getParams[key] && String(getParams[key]) !== '0') {
-                               getQuery = getQuery.concat([key + '=' + getParams[key]]);
-                           }
-                       });
-                       if (getQuery.length) {
-                           uri = uri + '?' + getQuery.join('&');
-                       }
-                   
-                       return uri;
-                   }
-                   JS;
     }
 }

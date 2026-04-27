@@ -5,13 +5,12 @@ namespace App\Http\Requests\Admin\Counters;
 use App\Http\Requests\AbstractRequest;
 use App\Models\Counter\Counter;
 use App\Models\Counter\CounterHistory;
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Validation\Rule;
 
 class LinkRequest extends AbstractRequest
 {
-    private const ID         = RequestArgumentsEnum::ID;
-    private const COUNTER_ID = RequestArgumentsEnum::COUNTER_ID;
+    private const string ID         = 'id';
+    private const string COUNTER_ID = 'counter_id';
 
     public function rules(): array
     {

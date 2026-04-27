@@ -8,10 +8,11 @@ enum QueueEnum: string
 {
     use EnumCommonTrait;
 
-    case HIGH    = 'high';
-    case EMAIL   = 'email';
-    case DEFAULT = 'default';
-    case LOW     = 'low';
+    case HIGH     = 'high';
+    case EMAIL    = 'email';
+    case DEFAULT  = 'default';
+    case LOW      = 'low';
+    case VERY_LOW = 'very-low';
 
     /** @return string[] */
     public static function values(): array

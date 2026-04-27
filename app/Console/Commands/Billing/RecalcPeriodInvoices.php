@@ -4,32 +4,105 @@ namespace App\Console\Commands\Billing;
 
 use Core\Domains\Billing\Invoice\InvoiceLocator;
 use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Jobs\RecalcClaimsPayedJob;
 use Illuminate\Console\Command;
 
 class RecalcPeriodInvoices extends Command
 {
-    protected $signature   = 'billing:invoices:recalc {--periodId= : Period id to recalculate}';
-    protected $description = 'Creates services for each period if they doesnt exist';
+    protected $signature   = 'billing:invoices:recalc 
+                                {--period= : ID периода для пересчёта всех счетов}
+                                {--invoice= : Список ID счетов через запятую}';
+    protected $description = 'Запускает пересчёт счетов (отправляет джобы)';
 
     public function handle(): void
     {
-        $periodId = (int) $this->option('periodId');
+        $periodId   = (int) $this->option('period');
+        $invoiceRaw = $this->option('invoice');
 
-        if ( ! $periodId) {
-            $this->error("Please specify periodId {$periodId}");
+        if ( ! $periodId && empty($invoiceRaw)) {
+            $this->error('Необходимо указать --period или --invoice');
 
             return;
         }
 
-        $invoices = InvoiceLocator::InvoiceService()->search(
-            InvoiceSearcher::make()
-                ->setPeriodId((int) $periodId),
-        )->getItems();
+        $invoiceIds = [];
+        if ( ! empty($invoiceRaw)) {
+            $invoiceIds = array_filter(
+                array_map('intval', explode(',', $invoiceRaw)),
+                fn($id) => $id > 0,
+            );
+            if (empty($invoiceIds)) {
+                $this->error('--invoice содержит некорректные ID');
+
+                return;
+            }
+        }
+
+        $searcher = new InvoiceSearcher();
+        if ($periodId) {
+            $searcher->setPeriodId($periodId);
+            $this->info("Поиск счетов за период {$periodId}...");
+        }
+        else {
+            $searcher->setIds($invoiceIds);
+            $this->info("Поиск счетов по ID: " . implode(',', $invoiceIds));
+        }
+
+        $invoices = InvoiceLocator::InvoiceService()->search($searcher)->getItems();
+
+        if ($invoices->isEmpty()) {
+            $this->warn("Счета не найдены.");
+
+            return;
+        }
+
+        $this->info("Найдено счетов: " . $invoices->count());
+
+        $sent    = 0;
+        $blocked = 0;
+        $errors  = 0;
+
+        $progressBar = $this->output->createProgressBar($invoices->count());
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
+        $progressBar->setMessage('Обработка...');
+        $progressBar->start();
 
         foreach ($invoices as $invoice) {
-            $this->info("Recalculating claims for invoice #{$invoice->getId()}");
-            dispatch_sync(new RecalcClaimsPayedJob($invoice->getId()));
+            try {
+                $result = InvoiceLocator::InvoiceService()->recalcInvoice($invoice->getId(), true);
+
+                if ($result === true) {
+                    $sent++;
+                    $progressBar->setMessage("✅ Счёт #{$invoice->getId()} отправлен");
+                }
+                elseif ($result === false) {
+                    $blocked++;
+                    $progressBar->setMessage("⏳ Счёт #{$invoice->getId()} уже в очереди");
+                }
+                else {
+                    $errors++;
+                    $progressBar->setMessage("❌ Ошибка счёта #{$invoice->getId()}");
+                }
+            }
+            catch (\Throwable $e) {
+                $errors++;
+                $progressBar->setMessage("❌ Исключение счёта #{$invoice->getId()}: " . $e->getMessage());
+            }
+
+            $progressBar->advance();
+            usleep(50000); // небольшая задержка для читаемости сообщений (50 мс)
         }
+
+        $progressBar->finish();
+        $this->newLine(2);
+
+        $this->info("📊 Результат:");
+        $this->line("   - Отправлено: {$sent}");
+        if ($blocked) {
+            $this->warn("   - Заблокировано (уже в работе): {$blocked}");
+        }
+        if ($errors) {
+            $this->error("   - Ошибок: {$errors}");
+        }
+        $this->info("Готово.");
     }
-} 
+}

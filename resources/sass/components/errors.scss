@@ -26,6 +26,7 @@
     position         : fixed;
     top              : 20px;
     left             : 50%;
+    font-weight      : bold;
     transform        : translateX(-50%);
     max-width        : 80vw;
     padding          : 0 10px;
@@ -63,24 +64,34 @@
 }
 
 .notification-container {
-    position : fixed;
-    bottom   : 20px;
-    right    : 20px;
-    width    : 300px;
-    z-index  : 1000;
+    position  : fixed;
+    bottom    : 20px;
+    right     : 20px;
+    min-width : 320px;
 
     .message {
-        margin-top  : 10px;
-        padding     : 15px;
-        border      : 1px solid;
-        border-left : 10px solid;
+        display     : flex;
+        align-items : stretch; // <-- ключевой момент: растягивает дочерние элементы по высоте
+        margin      : 5px 0 0;
+        padding     : 0;
+        border      : 2px solid;
         overflow    : hidden;
-        background  : #ffffff;
-        box-shadow  : 0 2px 12px rgba(0, 0, 0, 0.08);
+        box-shadow  : 0 2px 15px rgba(0, 0, 0, 0.08);
         transition  : all 0.3s ease-in-out;
-    }
 
-    .message-text {
-        margin-bottom : 10px;
+        .message-icon {
+            display         : flex;
+            align-items     : center;
+            justify-content : center;
+            color           : white;
+            padding         : 7px;
+            font-size       : 1.2em;
+        }
+
+        .message-text {
+            flex        : 1; // текст занимает всё оставшееся пространство
+            padding     : 7px;
+            font-weight : bold;
+        }
     }
 }

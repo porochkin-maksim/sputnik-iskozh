@@ -41,7 +41,7 @@ class ServiceSearcher implements SearcherInterface
 
     public function withPeriods(): static
     {
-        $this->with[] = Service::PERIOD;
+        $this->with[] = Service::RELATION_PERIOD;
 
         return $this;
     }

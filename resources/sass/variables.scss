@@ -5,3 +5,25 @@ $md        : 768px;
 $lg        : 992px;
 $xl        : 1200px;
 $xxl       : 1400px;
+
+// Основные цвета (SCSS-переменные для удобства)
+$default-primary        : #117833;
+$default-light          : #e1ffed;
+$color-danger           : #dc3545;
+$color-success          : #198754;
+$color-warning          : #ffc107;
+$color-secondary        : #6c757d;
+
+$color-light-gray       : #cecece;
+$color-light-gray-hover : #e6e6e6;
+$color-gray             : #757575;
+
+// Переопределение CSS-переменных Bootstrap
+:root {
+    --bs-primary: #{$default-primary};
+    --bs-light: #{$default-light};
+    --bs-danger: #{$color-danger};
+    --bs-success: #{$color-success};
+    --bs-warning: #{$color-warning};
+    --bs-secondary: #{$color-secondary};
+}
