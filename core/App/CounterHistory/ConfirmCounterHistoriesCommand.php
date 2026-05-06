@@ -2,7 +2,8 @@
 
 namespace Core\App\CounterHistory;
 
-use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
+use Core\Contracts\EventDispatcherInterface;
+use Core\Domains\CounterHistory\Events\CounterHistoryConfirmed;
 use Core\Domains\CounterHistory\CounterHistorySearcher;
 use Core\Domains\CounterHistory\CounterHistoryService;
 use Illuminate\Support\Facades\DB;
@@ -11,8 +12,9 @@ use Throwable;
 readonly class ConfirmCounterHistoriesCommand
 {
     public function __construct(
-        private CounterHistoryService $counterHistoryService,
+        private CounterHistoryService            $counterHistoryService,
         private ConfirmCounterHistoriesValidator $validator,
+        private EventDispatcherInterface         $eventDispatcher,
     )
     {
     }
@@ -23,10 +25,11 @@ readonly class ConfirmCounterHistoriesCommand
     public function execute(array $ids): void
     {
         $this->validator->validate($ids);
+        $events = [];
 
-        DB::transaction(function () use ($ids) {
+        DB::transaction(function () use ($ids, &$events) {
             $counterHistories = $this->counterHistoryService->search(
-                (new CounterHistorySearcher())
+                new CounterHistorySearcher()
                     ->setIds($ids)
                     ->setVerified(false)
                     ->defaultSort(),
@@ -34,9 +37,13 @@ readonly class ConfirmCounterHistoriesCommand
 
             foreach ($counterHistories as $history) {
                 $history->setIsVerified(true);
-                $history = $this->counterHistoryService->save($history);
-                dispatch(new CheckClaimForCounterChangeJob($history->getId()));
+                $history  = $this->counterHistoryService->save($history);
+                $events[] = new CounterHistoryConfirmed($history->getId());
             }
         });
+
+        if ($events) {
+            $this->eventDispatcher->dispatch($events);
+        }
     }
 }

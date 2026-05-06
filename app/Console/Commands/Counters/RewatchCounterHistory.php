@@ -4,7 +4,7 @@ namespace App\Console\Commands\Counters;
 
 use App\Locators\CounterLocator;
 use Core\Domains\Counter\CounterSearcher;
-use Core\Domains\CounterHistory\Jobs\RewatchCounterHistoryChainJob;
+use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 use Illuminate\Console\Command;
 
 class RewatchCounterHistory extends Command

@@ -24,8 +24,8 @@ use Core\Domains\Billing\Invoice\InvoiceFactory;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
-use Core\Domains\Billing\Jobs\CreateRegularPeriodInvoicesJob;
-use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
+use App\Jobs\Billing\CreateRegularPeriodInvoicesJob;
+use App\Jobs\Billing\RecalcClaimsPaidJob;
 use Core\Domains\Billing\Period\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodService;
 use Illuminate\Http\JsonResponse;
@@ -108,10 +108,11 @@ class InvoiceController extends Controller
         $accountSearcher->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC);
         $accounts = $this->accountService->search($accountSearcher)->getItems();
 
-        $result = new InvoicesListResource(
+        $resource = new InvoicesListResource(
             $invoices->getItems(),
             $invoices->getTotal(),
-        )->jsonSerialize();
+        );
+        $result   = $resource->jsonSerialize();
 
         $result += [
             'periods'       => new PeriodsSelectResource($periods),

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\EventDispatcher;
 use App\Helpers\FileStorage;
 use App\Helpers\StringGenerator;
+use App\Services\Mail\MailSender;
 use App\Repositories\Access\RoleEloquentRepository;
 use App\Repositories\Account\AccountEloquentRepository;
 use App\Repositories\Billing\AcquiringEloquentRepository;
@@ -27,6 +28,7 @@ use App\Repositories\News\NewsEloquentRepository;
 use App\Repositories\Option\OptionEloquentRepository;
 use App\Repositories\User\UserEloquentRepository;
 use Core\Contracts\EventDispatcherInterface;
+use Core\Contracts\MailSenderInterface;
 use Core\Domains\Access\RoleRepositoryInterface;
 use Core\Domains\Account\AccountRepositoryInterface;
 use Core\Domains\Billing\Acquiring\Contracts\AcquiringRepositoryInterface;
@@ -60,6 +62,7 @@ class BindingProvider extends ServiceProvider
         $this->app->bind(EventDispatcherInterface::class, function ($app) {
             return new EventDispatcher($app->make(LaravelDispatcher::class));
         });
+        $this->app->bind(MailSenderInterface::class, MailSender::class);
         $this->app->bind(StringGeneratorInterface::class, StringGenerator::class);
         $this->app->bind(FileStorageInterface::class, FileStorage::class);
 

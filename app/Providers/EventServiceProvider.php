@@ -2,7 +2,19 @@
 
 namespace App\Providers;
 
+use App\Listeners\Billing\DispatchImportPaymentsSaveListener;
+use App\Listeners\CounterHistory\DispatchCounterHistoriesLinkedCheckClaimListener;
+use App\Listeners\CounterHistory\DispatchCheckClaimForCounterChangeListener;
+use App\Listeners\HelpDesk\SendTicketCreatedNotificationListener;
+use App\Listeners\HistoryChanges\DispatchCreateHistoryJobListener;
 use App\Listeners\LogSentEmailListener;
+use App\Listeners\Proposal\DispatchProposalCreatedJobListener;
+use Core\Domains\Billing\Events\ImportPaymentsSaveRequested;
+use Core\Domains\CounterHistory\Events\CounterHistoryConfirmed;
+use Core\Domains\CounterHistory\Events\CounterHistoriesLinked;
+use Core\Domains\HelpDesk\Events\TicketCreated;
+use Core\Domains\HistoryChanges\Events\HistoryChangesSaveRequested;
+use Core\Domains\Proposal\Events\ProposalCreated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,14 +30,32 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        Registered::class => [
+        Registered::class                  => [
             SendEmailVerificationNotification::class,
         ],
-        Login::class => [
+        Login::class                       => [
             LogSuccessfulLogin::class,
         ],
-        MessageSent::class => [
+        MessageSent::class                 => [
             LogSentEmailListener::class,
+        ],
+        TicketCreated::class               => [
+            SendTicketCreatedNotificationListener::class,
+        ],
+        CounterHistoryConfirmed::class     => [
+            DispatchCheckClaimForCounterChangeListener::class,
+        ],
+        CounterHistoriesLinked::class      => [
+            DispatchCounterHistoriesLinkedCheckClaimListener::class,
+        ],
+        ImportPaymentsSaveRequested::class => [
+            DispatchImportPaymentsSaveListener::class,
+        ],
+        ProposalCreated::class             => [
+            DispatchProposalCreatedJobListener::class,
+        ],
+        HistoryChangesSaveRequested::class => [
+            DispatchCreateHistoryJobListener::class,
         ],
     ];
 

@@ -4,7 +4,7 @@ namespace App\Observers\Billing;
 
 use App\Models\Billing\Invoice;
 use App\Observers\AbstractObserver;
-use Core\Domains\Billing\Jobs\CreateClaimsAndPaymentsForRegularInvoiceJob;
+use App\Jobs\Billing\CreateClaimsAndPaymentsForRegularInvoiceJob;
 use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 

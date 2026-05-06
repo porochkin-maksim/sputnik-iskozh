@@ -2,7 +2,7 @@
 
 namespace Core\App\CounterHistory;
 
-use Core\Domains\Billing\Jobs\CheckClaimForCounterChangeJob;
+use App\Jobs\Billing\CheckClaimForCounterChangeJob;
 use Core\Domains\CounterHistory\CounterHistoryService;
 use Illuminate\Support\Facades\DB;
 use Throwable;

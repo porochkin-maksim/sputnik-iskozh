@@ -4,13 +4,13 @@ namespace Core\Domains\Billing\Invoice;
 
 use Core\Domains\Account\AccountCollection;
 use Core\Domains\Account\AccountService;
-use Core\Domains\Billing\Jobs\RecalcClaimsPaidJob;
+use App\Jobs\Billing\RecalcClaimsPaidJob;
 
 readonly class InvoiceService
 {
     public function __construct(
         private InvoiceRepositoryInterface $invoiceRepository,
-        private AccountService $accountService,
+        private AccountService             $accountService,
     )
     {
     }

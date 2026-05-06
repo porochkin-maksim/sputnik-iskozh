@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Billing;
 
-use Core\Domains\Billing\Jobs\CreateMainServicesJob;
+use App\Jobs\Billing\CreateMainServicesJob;
 use Core\Domains\Billing\Period\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodService;
 use Illuminate\Console\Command;

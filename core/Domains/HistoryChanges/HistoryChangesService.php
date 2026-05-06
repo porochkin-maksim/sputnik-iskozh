@@ -2,7 +2,8 @@
 
 namespace Core\Domains\HistoryChanges;
 
-use Core\Domains\HistoryChanges\Jobs\CreateHistoryJob;
+use Core\Contracts\EventDispatcherInterface;
+use Core\Domains\HistoryChanges\Events\HistoryChangesSaveRequested;
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
 use Core\Domains\Infra\Comparator\Services\Comparator;
@@ -10,9 +11,10 @@ use Core\Domains\Infra\Comparator\Services\Comparator;
 class HistoryChangesService
 {
     public function __construct(
-        private HistoryChangesFactory $historyChangesFactory,
+        private HistoryChangesFactory             $historyChangesFactory,
         private HistoryChangesRepositoryInterface $historyChangesRepository,
-        private Comparator $comparator,
+        private Comparator                        $comparator,
+        private EventDispatcherInterface          $eventDispatcher,
     )
     {
     }
@@ -42,7 +44,7 @@ class HistoryChangesService
             ->setLog($logData)
         ;
 
-        CreateHistoryJob::dispatch($historyChanges);
+        $this->eventDispatcher->dispatch(new HistoryChangesSaveRequested($historyChanges));
     }
 
     public function writeToHistory(
@@ -78,7 +80,7 @@ class HistoryChangesService
             ->setLog($logData)
         ;
 
-        CreateHistoryJob::dispatch($historyChanges);
+        $this->eventDispatcher->dispatch(new HistoryChangesSaveRequested($historyChanges));
     }
 
     public function save(HistoryChangesEntity $historyChanges): HistoryChangesEntity

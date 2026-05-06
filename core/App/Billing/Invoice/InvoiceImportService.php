@@ -5,15 +5,14 @@ namespace Core\App\Billing\Invoice;
 use App\Imports\Payments\PaymentsImport;
 use App\Imports\Payments\Sheet;
 use App\Services\Money\MoneyService;
-use App\Services\Queue\QueueEnum;
+use Core\Contracts\EventDispatcherInterface;
 use Core\Domains\Account\AccountEntity;
+use Core\Domains\Billing\Events\ImportPaymentsSaveRequested;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
-use Core\Domains\Billing\Jobs\SaveImportPaymentsJob;
 use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
-use Core\Domains\Infra\DbLock\Jobs\LockedJob;
 use Core\Domains\Infra\DbLock\Service\LockService;
 use Core\Domains\Shared\ValueObjects\UploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,8 +21,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 readonly class InvoiceImportService
 {
     public function __construct(
-        private InvoiceService $invoiceService,
-        private LockService    $lockService,
+        private InvoiceService           $invoiceService,
+        private LockService              $lockService,
+        private EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -125,10 +125,8 @@ readonly class InvoiceImportService
 
         $this->lockService->lock($lockName);
 
-        dispatch(new LockedJob(
-            SaveImportPaymentsJob::class,
-            [$paymentsData],
-            $lockName,
-        )->onQueue(QueueEnum::DEFAULT->value));
+        $this->eventDispatcher->dispatch(
+            new ImportPaymentsSaveRequested($paymentsData, $lockName),
+        );
     }
 }

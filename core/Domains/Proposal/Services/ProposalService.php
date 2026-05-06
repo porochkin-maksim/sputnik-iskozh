@@ -2,8 +2,9 @@
 
 namespace Core\Domains\Proposal\Services;
 
+use Core\Contracts\EventDispatcherInterface;
 use Core\Domains\Enums\Emails;
-use Core\Domains\Proposal\Jobs\ProposalCreatedJob;
+use Core\Domains\Proposal\Events\ProposalCreated;
 use Core\Domains\Shared\ValueObjects\UploadedFile;
 use App\Services\Files\Collections\TmpFiles;
 use App\Services\Files\Models\TmpFile;
@@ -14,7 +15,8 @@ use Mpdf\Output\Destination;
 readonly class ProposalService
 {
     public function __construct(
-        private TmpFileService $tmpFileService,
+        private TmpFileService           $tmpFileService,
+        private EventDispatcherInterface $eventDispatcher,
     )
     {
     }
@@ -40,7 +42,7 @@ readonly class ProposalService
         $pdf->WriteHTML(nl2br($fullText));
         $pdf->Output($proposalFilePath, Destination::FILE);
 
-        dispatch(new ProposalCreatedJob(
+        $this->eventDispatcher->dispatch(new ProposalCreated(
             $proposalFilePath,
             $name,
             Emails::pressAddresses(),
