@@ -124,27 +124,15 @@
         "name": "admin.counter.add-value",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/add-value",
-        "args": {
-            "accountId": "{accountId}"
-        }
-    },
-    "adminCounterCreate": {
-        "name": "admin.counter.create",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/create",
-        "args": {
-            "accountId": "{accountId}"
-        }
+        "uri": "\/admin\/accounts\/counters\/json\/add-value",
+        "args": []
     },
     "adminCounterDelete": {
         "name": "admin.counter.delete",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/delete\/{counterId}",
+        "uri": "\/admin\/accounts\/counters\/json\/delete\/{counterId}",
         "args": {
-            "accountId": "{accountId}",
             "counterId": "{counterId}"
         }
     },
@@ -170,18 +158,15 @@
         "name": "admin.counter.save",
         "displayName": "",
         "method": "post",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/json\/save",
-        "args": {
-            "accountId": "{accountId}"
-        }
+        "uri": "\/admin\/accounts\/counters\/json\/save",
+        "args": []
     },
     "adminCounterView": {
         "name": "admin.counter.view",
         "displayName": "",
         "method": "get",
-        "uri": "\/admin\/accounts\/view\/{accountId}\/counters\/view\/{counterId}",
+        "uri": "\/admin\/accounts\/counters\/view\/{counterId}",
         "args": {
-            "accountId": "{accountId}",
             "counterId": "{counterId}"
         }
     },
@@ -826,6 +811,13 @@
         "uri": "\/admin\/json\/selects\/periods",
         "args": []
     },
+    "adminSelectsRoles": {
+        "name": "admin.selects.roles",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/json\/selects\/roles",
+        "args": []
+    },
     "adminSelectsServicesTypes": {
         "name": "admin.selects.services-types",
         "displayName": "",
@@ -906,6 +898,15 @@
         "method": "post",
         "uri": "\/admin\/users\/json\/generate-email",
         "args": []
+    },
+    "adminUserGet": {
+        "name": "admin.user.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/users\/json\/get\/{id}",
+        "args": {
+            "id": "{id}"
+        }
     },
     "adminUserIndex": {
         "name": "admin.user.index",
@@ -1011,6 +1012,13 @@
         "displayName": "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b",
         "method": "get",
         "uri": "\/contacts",
+        "args": []
+    },
+    "cookiePolicy": {
+        "name": "cookie-policy",
+        "displayName": "\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f cookie",
+        "method": "get",
+        "uri": "\/cookie",
         "args": []
     },
     "cookieAgreement": {
@@ -1320,6 +1328,15 @@
             "id": "{id}"
         }
     },
+    "newsForm": {
+        "name": "news.form",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/news\/form\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "newsIndex": {
         "name": "news.index",
         "displayName": "\u041d\u043e\u0432\u043e\u0441\u0442\u0438",
@@ -1429,6 +1446,20 @@
         "uri": "\/contacts\/requests\/payment",
         "args": []
     },
+    "paymentsInfo": {
+        "name": "payments-info",
+        "displayName": "\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f \u043e\u0431 \u043e\u043f\u043b\u0430\u0442\u0435 \u0438 \u0432\u043e\u0437\u0432\u0440\u0430\u0442\u0435",
+        "method": "get",
+        "uri": "\/payments-info",
+        "args": []
+    },
+    "personalDataConsent": {
+        "name": "personal-data-consent",
+        "displayName": "\u0421\u043e\u0433\u043b\u0430\u0441\u0438\u0435 \u043d\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0443 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445",
+        "method": "get",
+        "uri": "\/personal-data-consent",
+        "args": []
+    },
     "privacy": {
         "name": "privacy",
         "displayName": "\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445",
@@ -1471,6 +1502,13 @@
         "uri": "\/home\/counters\/json\/list",
         "args": []
     },
+    "profileCounterPassport": {
+        "name": "profile.counter.passport",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/counters\/json\/passport",
+        "args": []
+    },
     "profileCountersIncrementSave": {
         "name": "profile.counters.increment-save",
         "displayName": "",
@@ -1506,20 +1544,6 @@
         "displayName": "",
         "method": "post",
         "uri": "\/home\/profile\/password",
-        "args": []
-    },
-    "proposal": {
-        "name": "proposal",
-        "displayName": "\u041f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
-        "method": "get",
-        "uri": "\/contacts\/requests\/proposal",
-        "args": []
-    },
-    "proposalCreate": {
-        "name": "proposal.create",
-        "displayName": "",
-        "method": "post",
-        "uri": "\/contacts\/requests\/proposal",
         "args": []
     },
     "regulation": {
@@ -1576,6 +1600,13 @@
         "displayName": "",
         "method": "patch",
         "uri": "\/pages\/json\/edit",
+        "args": []
+    },
+    "terms": {
+        "name": "terms",
+        "displayName": "\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u0441\u043a\u043e\u0435 \u0441\u043e\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435",
+        "method": "get",
+        "uri": "\/terms",
         "args": []
     },
     "token": {

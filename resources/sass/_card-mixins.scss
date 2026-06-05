@@ -1,0 +1,46 @@
+// Base card with gradient background and shadow
+@mixin card(
+    $border-color: rgba($default-primary, 0.14),
+    $border-radius: 1.1rem,
+    $gradient-from: rgba(#fff, 0.98),
+    $gradient-to: rgba($default-primary, 0.02),
+    $shadow: 0 0.55rem 1.15rem rgba(0, 0, 0, 0.04)
+) {
+    border        : 1px solid $border-color;
+    border-radius : $border-radius;
+    background    : linear-gradient(180deg, $gradient-from 0%, $gradient-to 100%);
+    box-shadow    : $shadow;
+}
+
+// Interactive card hover effect
+@mixin card-hover(
+    $translate-y: -2px,
+    $border-color: rgba($default-primary, 0.28),
+    $shadow: 0 0.75rem 1.25rem rgba($default-primary, 0.12)
+) {
+    &:hover {
+        border-color : $border-color;
+        box-shadow   : $shadow;
+        transform    : translateY(#{$translate-y});
+    }
+}
+
+// Smooth card transitions for transform, box-shadow, border-color
+@mixin card-transition($duration: 0.18s, $extra: null) {
+    @if $extra {
+        transition : transform #{$duration} ease,
+        box-shadow #{$duration} ease,
+        border-color #{$duration} ease,
+        #{$extra};
+    } @else {
+        transition : transform #{$duration} ease,
+        box-shadow #{$duration} ease,
+        border-color #{$duration} ease;
+    }
+}
+
+// Pill/capsule shape
+@mixin pill($padding-inline: 1rem) {
+    border-radius  : 999px;
+    padding-inline : $padding-inline;
+}

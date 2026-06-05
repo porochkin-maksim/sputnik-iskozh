@@ -1,66 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# СНТ "Спутник-Искож"
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Веб-приложение для работы с участками, периодами, начислениями, оплатами, обращениями, документами и личным кабинетом жителей СНТ.
 
-## About Laravel
+## Что это за система
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- `public` - публичная часть сайта: главная, новости, контакты, обращения, файлы, документы, юридические страницы.
+- `profile` - личный кабинет: счётчики, счета, платежи, пароль, профиль.
+- `admin` - админка: участки, пользователи, услуги, периоды, счета, платежи, обращения, история изменений, логи.
+- `core` - домен и application layer в DDD-структуре.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Технологии
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel
+- PHP 8.4
+- Vue 3
+- Vite
+- Sass
+- Bootstrap 5
+- Docker / Sail / Make
 
-## Learning Laravel
+## Архитектура
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- `core/Domains/*` - доменная модель, enum-ы, коллекции, domain services, repository interfaces.
+- `core/App/*` - application commands, validators, orchestration use cases.
+- `app/*` - HTTP controllers, resources, repositories, mappers, bindings, jobs, framework glue.
+- `resources/views/*` - Blade shell, страницы и shared partials.
+- `resources/js/components/*` - Vue-компоненты.
+- `resources/sass/*` - визуальный слой.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Подробные правила:
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [FRONTEND_ARCHITECTURE.md](FRONTEND_ARCHITECTURE.md)
+- [FRONTEND_STANDARDIZATION_PLAN.md](FRONTEND_STANDARDIZATION_PLAN.md)
+- [docs/agents/README.md](docs/agents/README.md)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Billing model
 
-## Laravel Sponsors
+Счета в системе строятся вокруг `account + period`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- `REGULAR` invoice - основной периодный счёт.
+- `INCOME` / `OUTCOME` - дополнительные финансовые документы.
+- `InvoiceEntity` может иметь необязательную связь `serviceId`, если счёт относится к конкретной услуге.
+- `ClaimEntity` остаётся атомарной строкой начисления.
 
-### Premium Partners
+Подробно:
+- [docs/billing-invoice-model.md](docs/billing-invoice-model.md)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Frontend shell
 
-## Contributing
+- Public и profile визуально сближены.
+- Public/admin шапка унифицирована по shell-контракту.
+- Profile использует тот же верхний каркас, но со своим набором элементов.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Подробно:
+- [docs/public-profile-visual-refactor-plan.md](docs/public-profile-visual-refactor-plan.md)
+- [docs/visual-style-refactor-plan.md](docs/visual-style-refactor-plan.md)
 
-## Code of Conduct
+## Agent docs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Для нового агента:
+- [docs/agents/README.md](docs/agents/README.md)
+- [docs/agents/agent-handbook.md](docs/agents/agent-handbook.md)
+- [docs/agents/agent-rules.md](docs/agents/agent-rules.md)
 
-## Security Vulnerabilities
+## Запуск и проверки
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Проектные команды запускаются через `Make` / Sail:
 
-## License
+- `make up` - поднять окружение
+- `make architecture` - архитектурная проверка
+- `make tests` - тесты
+- `make prod` - полный pre-deploy gate: architecture + tests + frontend build
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Нельзя:
+- использовать локальные `php`, `composer`, `yarn`, `npm`, `node`, `vite` для проектных команд;
+- игнорировать dirty worktree;
+- менять DDD/transport boundaries без сверки с архитектурными документами.
+
+## Документация по проекту
+
+- [docs/legal-pages-checklist.md](docs/legal-pages-checklist.md)
+- [docs/billing-invoice-model.md](docs/billing-invoice-model.md)
+- [docs/public-profile-visual-refactor-plan.md](docs/public-profile-visual-refactor-plan.md)
+- [docs/visual-style-refactor-plan.md](docs/visual-style-refactor-plan.md)
+- [docs/agents/README.md](docs/agents/README.md)
+

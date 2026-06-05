@@ -3,13 +3,19 @@
 namespace Core\Domains\Billing\Summary\Repositories;
 
 use App\Models\Billing\Invoice;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Illuminate\Support\Facades\DB;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Contracts\DbServiceInterface;
 
 class SummaryRepository
 {
+    public function __construct(
+        private readonly DbServiceInterface $dbService,
+    )
+    {
+    }
+
     public function getSummaryFor(?int $type, ?int $periodId, ?array $accountIds): array
     {
         $regular = InvoiceTypeEnum::REGULAR->value;
@@ -17,7 +23,7 @@ class SummaryRepository
         $outcome = InvoiceTypeEnum::OUTCOME->value;
 
         $result = Invoice::query()->select(
-            DB::raw("
+            $this->dbService->raw("
                 COUNT(CASE WHEN type = {$regular} THEN 1 ELSE NULL END) AS regularCount,
                 COUNT(CASE WHEN type = {$income} THEN 1 ELSE NULL END)   AS incomeCount,
                 COUNT(CASE WHEN type = {$outcome} THEN 1 ELSE NULL END) AS outcomeCount,
@@ -56,6 +62,6 @@ class SummaryRepository
             ORDER BY services.type, cost DESC;
             SQL;
 
-        return DB::select($sql);
+        return $this->dbService->select($sql);
     }
 }

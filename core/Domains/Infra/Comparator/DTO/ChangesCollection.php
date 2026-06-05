@@ -2,11 +2,16 @@
 
 namespace Core\Domains\Infra\Comparator\DTO;
 
+use ArrayIterator;
 use Countable;
-use Illuminate\Contracts\Support\Arrayable;
+use Core\Contracts\ArrayableInterface;
 use IteratorAggregate;
+use Traversable;
 
-class ChangesCollection implements IteratorAggregate, Countable, Arrayable
+/**
+ * @implements IteratorAggregate<int, Changes>
+ */
+class ChangesCollection implements IteratorAggregate, Countable, ArrayableInterface
 {
     /** @var Changes[] */
     private array $changes;
@@ -17,11 +22,11 @@ class ChangesCollection implements IteratorAggregate, Countable, Arrayable
     }
 
     /**
-     * @return Changes[]
+     * @return ArrayIterator<int, Changes>
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
-        return $this->changes;
+        return new ArrayIterator($this->changes);
     }
 
     public function add(Changes $changes)

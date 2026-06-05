@@ -1,5 +1,5 @@
 <template>
-    <div class="row custom-list list files-list">
+    <div class="public-files-list">
         <file-list-item v-for="file in files"
                         :file="file"
                         :edit="edit"
@@ -8,66 +8,67 @@
     </div>
 </template>
 
-<script>
-import Url           from '../../../utils/Url.js';
-import ResponseError from '../../../mixin/ResponseError.js';
-import FileListItem  from './FileListItem.vue';
+<script setup>
+import {
+    onMounted,
+    ref,
+    watch,
+}                           from 'vue';
+import FileListItem         from '@common/files/FileListItem.vue';
+import { ApiFilesList }     from '@api';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    components: {
-        FileListItem,
+const emit  = defineEmits(['update:canEdit', 'update:count', 'update:reloadList']);
+const props = defineProps({
+    reloadList: {
+        type   : Boolean,
+        default: false,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : [
-        'reloadList',
-        'canEdit',
-        'count',
-        'limit',
-    ],
-    data () {
-        return {
-            showForm: false,
+    canEdit   : {
+        type   : Boolean,
+        default: false,
+    },
+    count     : {
+        type   : Number,
+        default: 0,
+    },
+    limit     : {
+        type   : Number,
+        default: null,
+    },
+});
 
-            files : [],
-            edit  : false,
-            images: [],
-        };
-    },
-    mounted () {
-        this.loadList();
-    },
-    methods: {
-        loadList () {
-            window.axios[Url.Routes.filesList.method](Url.Routes.filesList.uri, {
-                params: {
-                    sort_desc: true,
-                    limit    : this.limit,
-                },
-            }).then(response => {
-                this.files  = response.data.files;
-                this.images = [];
-                this.files.forEach(file => {
-                    if (file.isImage) {
-                        this.images.push(file);
-                    }
-                });
-                this.edit = response.data.edit;
-                this.$emit('update:canEdit', this.edit);
-                this.$emit('update:count', this.files.length);
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    watch  : {
-        reloadList () {
-            if (this.reloadList) {
-                this.loadList();
-                this.$emit('update:reloadList', false);
+const { parseResponseErrors } = useResponseError();
+const files                   = ref([]);
+const edit                    = ref(false);
+const images                  = ref([]);
+
+const loadList = () => {
+    ApiFilesList({
+        sort_desc: true,
+        limit    : props.limit,
+    }).then(response => {
+        files.value  = response.data.files;
+        images.value = [];
+        files.value.forEach(file => {
+            if (file.isImage) {
+                images.value.push(file);
             }
-        },
-    },
+        });
+        edit.value = response.data.edit;
+        emit('update:canEdit', edit.value);
+        emit('update:count', files.value.length);
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
 };
+
+onMounted(loadList);
+
+watch(() => props.reloadList, (value) => {
+    if (value) {
+        loadList();
+        emit('update:reloadList', false);
+    }
+});
 </script>

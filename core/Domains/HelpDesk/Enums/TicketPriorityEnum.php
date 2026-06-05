@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk\Enums;
 
-use Core\Enums\EnumCommonTrait;
+use Core\Shared\Enums\EnumCommonTrait;
 
 enum TicketPriorityEnum: int
 {

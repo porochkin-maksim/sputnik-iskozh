@@ -3,8 +3,7 @@
 namespace Core\Domains\StateSchedule;
 
 use Carbon\Carbon;
-use Core\Helpers\DateTime\DateTimeHelper;
-use Illuminate\Support\Str;
+use Core\Shared\Helpers\DateTime\DateTimeHelper;
 use JsonSerializable;
 
 readonly class Day implements JsonSerializable
@@ -19,7 +18,7 @@ readonly class Day implements JsonSerializable
     {
         return [
             'day'           => $this->period->start->format('d'),
-            'monthGenitive' => Str::ucfirst(DateTimeHelper::monthGenitive(Carbon::parse($this->period->start))),
+            'monthGenitive' => mb_ucfirst(DateTimeHelper::monthGenitive(Carbon::parse($this->period->start))),
             'weekDaylable'  => DateTimeHelper::dayOfWeekAbbrev(Carbon::parse($this->period->start)),
             'startTime'     => $this->period->start->format('H:i'),
             'endTime'       => $this->period->end->format('H:i'),

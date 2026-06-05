@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Console\Commands\Back\DB;
+namespace App\Console\Commands\DB;
 
 use App\Models\Infra\HistoryChanges;
 use Illuminate\Console\Command;

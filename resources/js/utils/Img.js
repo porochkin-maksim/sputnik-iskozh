@@ -4,7 +4,7 @@
  * 50% padding
  */
 
-export default {
+export const Img = {
     Default: '/img/unknown-document-svgrepo-com.svg',
     Folder : '/img/folder-svgrepo-com.svg',
     PDF    : '/img/pdf-document-svgrepo-com.svg',
@@ -12,3 +12,5 @@ export default {
     Excel  : '/img/excel-document-svgrepo-com.svg',
     ZIP    : '/img/zip-document-svgrepo-com.svg',
 };
+
+export default Img;

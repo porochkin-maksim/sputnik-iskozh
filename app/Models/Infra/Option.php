@@ -2,9 +2,8 @@
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -13,15 +12,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property ?string $data
  */
-class Option extends Model implements CastsInterface
+class Option extends AbstractModel
 {
-    public const TABLE = 'options';
+    public const string TABLE = 'options';
 
     protected $table = self::TABLE;
 
-    public const ID   = 'id';
-    public const TYPE = 'type';
-    public const DATA = 'data';
+    public const string ID   = 'id';
+    public const string TYPE = 'type';
+    public const string DATA = 'data';
 
     protected $guarded = [];
 

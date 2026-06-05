@@ -1,9 +1,9 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <template v-if="news.length">
-                <div class="index-news custom-list news-list row w-100 ms-0">
-                    <template v-for="(item, index) in news">
+            <template v-if="news.length > 0">
+                <div class="index-news public-news-grid news-list row w-100 ms-0">
+                    <template v-for="(item, index) in news" :key="index">
                         <a class="col-md-6 col-12 text-decoration-none mb-2 px-0"
                            :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
                            :href="item.url"
@@ -11,9 +11,9 @@
                             <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
                                     <div>
-                                        <a class="name">
+                                        <span class="name">
                                             {{ item.title ? item.title : 'Без названия' }}
-                                        </a>
+                                        </span>
                                     </div>
                                     <div class="date text-end mt-2">
                                         <i class="fa fa-calendar"></i> {{ item.publishedAt }}
@@ -26,18 +26,18 @@
             </template>
         </template>
         <template v-slot:sub>
-            <form :action="Url.Routes.search.uri"
+            <form :action="searchUrl"
                   method="get">
                 <div class="input-group">
                     <button class="btn btn-light border"
                             type="submit">
                         <i class="fa fa-search"></i>
                     </button>
-                    <input class="form-control"
-                           v-model="search"
-                           name="q"
-                           placeholder="Поиск по сайту"
-                           ref="search">
+                    <inline-input v-model="search"
+                                  name="q"
+                                  placeholder="Поиск по сайту"
+                                  :grouped="true"
+                                  :input-class="'flex-grow-1 rounded-0 border-0 shadow-none'" />
                     <button class="btn btn-light border"
                             type="button"
                             @click="search = null">
@@ -46,18 +46,18 @@
                 </div>
             </form>
             <template v-if="lockedNews && lockedNews.length">
-                <div class="side-news custom-list news-list row w-100 ms-0 mt-2">
-                    <template v-for="(item, index) in lockedNews">
+                <div class="side-news public-news-grid news-list row w-100 ms-0 mt-2">
+                    <template v-for="(item, index) in lockedNews" :key="index">
                         <a class="col-md-6 col-lg-12 col-12 text-decoration-none pe-lg-0 mb-2 px-0"
                            :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
                            :href="item.url"
                         >
                             <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between p-2 pb-1">
-                                    <a class="name">
+                                    <span class="name">
                                         <i class="fa fa-bolt text-warning"></i>&nbsp;
-                                                                               {{ item.title ? item.title : 'Без названия' }}
-                                    </a>
+                                        {{ item.title ? item.title : 'Без названия' }}
+                                    </span>
                                     <div class="date text-end mt-2">
                                         <i class="fa fa-calendar"></i> {{ item.publishedAt }}
                                     </div>
@@ -69,7 +69,7 @@
             </template>
 
             <div class="mb-2">
-                <state-schedule :schedule="schedule"/>
+                <state-schedule :schedule="schedule" />
             </div>
 
             <template v-if="qrPayment && qrPayment.url">
@@ -83,8 +83,8 @@
                 </a>
                 <br>
                 <div class="text-center mb-2">
-                    <a :href="Url.Routes.contacts.uri">
-                        Подробнее в разделе <b>"{{ Url.Routes.contacts.displayName }}"</b>
+                    <a :href="contactsUrl">
+                        Подробнее в разделе <b>"{{ contactsLabel }}"</b>
                     </a>
                 </div>
             </template>
@@ -92,62 +92,82 @@
     </page-template>
 </template>
 
-<script>
-import Url               from '../../../utils/Url.js';
-import PageTemplate      from './TwoColumnsPage.vue';
-import NewsListItem      from '../news/list/NewsItem.vue';
-import BsSlider          from '../../common/BsSlider.vue';
-import FileItem          from '../news/FileItem.vue';
-import StateSchedule     from '../StateSchedule.vue';
+<script setup>
+import {
+    computed,
+    onMounted,
+    ref,
+}                           from 'vue';
+import InlineInput          from '@common/form/InlineInput.vue';
+import PageTemplate         from './TwoColumnsPage.vue';
+import StateSchedule        from '../StateSchedule.vue';
+import {
+    ApiNewsListIndex,
+    ApiNewsListLocked,
+}                           from '@api';
+import {
+    routeMeta,
+    routeUri,
+}                           from '@utils/routeUri.js';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    name      : 'IndexPage',
-    components: {
-        StateSchedule,
-        FileItem, BsSlider,
-        NewsListItem,
-        PageTemplate,
+defineProps({
+    qrPayment: null,
+    schedule : {
+        type   : Array,
+        default: [],
     },
-    props     : {
-        qrPayment: null,
-        schedule : {
-            type   : Array,
-            default: [],
-        },
-    },
-    async created () {
-        this.loadLockedNews();
-        this.loadNews();
-    },
-    data () {
-        return {
-            Url,
-            news      : [],
-            lockedNews: [],
-            search    : null,
-        };
-    },
-    methods : {
-        loadLockedNews () {
-            Url.RouteFunctions.newsListLocked().then(response => {
-                this.lockedNews = response.data.news;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        loadNews () {
-            Url.RouteFunctions.newsListIndex().then(response => {
-                this.news = response.data.news;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    computed: {
-        isWinter () {
-            let date = new Date();
-            return date.getMonth() >= 10 || date.getMonth() <= 2;
-        },
-    },
+});
+
+const news                    = ref([]);
+const lockedNews              = ref([]);
+const search                  = ref(null);
+const { parseResponseErrors } = useResponseError();
+const normalizeList           = (value) => {
+    const toPlainItem = (item) => ({
+        id         : item?.id ?? null,
+        title      : typeof item?.title === 'string' ? item.title : '',
+        publishedAt: typeof item?.publishedAt === 'string' ? item.publishedAt : '',
+        url        : typeof item?.url === 'string' ? item.url : '#',
+    });
+
+    if (Array.isArray(value)) {
+        return value.map(toPlainItem);
+    }
+
+    if (Array.isArray(value?.items)) {
+        return value.items.map(toPlainItem);
+    }
+
+    if (Array.isArray(value?.data)) {
+        return value.data.map(toPlainItem);
+    }
+
+    return [];
 };
+
+function loadLockedNews () {
+    ApiNewsListLocked().then(response => {
+        lockedNews.value = normalizeList(response.data.news);
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+function loadNews () {
+    ApiNewsListIndex().then(response => {
+        news.value = normalizeList(response.data.news);
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+const contactsLabel = computed(() => routeMeta('contacts').displayName);
+const contactsUrl   = computed(() => routeUri('contacts'));
+const searchUrl     = computed(() => routeUri('search'));
+
+onMounted(() => {
+    loadLockedNews();
+    loadNews();
+});
 </script>

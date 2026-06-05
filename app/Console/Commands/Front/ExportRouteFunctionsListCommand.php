@@ -2,16 +2,15 @@
 
 namespace App\Console\Commands\Front;
 
-use Core\Methods;
-use Core\Resources\RouteNames;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Routing\Route;
+use App\Resources\RouteNames;
+use Core\Shared\Methods;
 use Illuminate\Console\Command;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use JsonException;
+use Illuminate\Support\Str;
 
 class ExportRouteFunctionsListCommand extends Command
 {
@@ -46,6 +45,7 @@ class ExportRouteFunctionsListCommand extends Command
     {
         return <<<JS
             import { makeQuery, prepareRequestData } from './helpers.js';
+            import apiClient from './client.js';
             JS;
     }
 
@@ -77,6 +77,7 @@ class ExportRouteFunctionsListCommand extends Command
             'method'      => strtolower($this->filterMethod($route->methods())),
             'uri'         => sprintf('/%s', $route->uri() === '/' ? '' : Str::replace('?', '', $route->uri())),
             'args'        => $this->getUriParams($route->uri()),
+            'controller'  => $route->getActionName(),
         ];
     }
 
@@ -111,16 +112,18 @@ class ExportRouteFunctionsListCommand extends Command
 
     private function drawRouteFunction(string $name, array $route): string
     {
-        $arguments = implode(',', array_keys($route['args']));
-        $arguments = $arguments ? "$arguments, getParams = {}" : "getParams = {}";
-        $method    = $route['method'];
-        $uri       = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
-        $note      = $route['name'];
+        $arguments  = implode(',', array_keys($route['args']));
+        $arguments  = $arguments ? "$arguments, getParams = {}" : "getParams = {}";
+        $method     = $route['method'];
+        $uri        = str_replace(['{', '}'], ["'+", "+'"], $route['uri']);
+        $note       = $route['name'];
+        $controller = $route['controller'];
 
         return <<<JS
             export function $name($arguments, postData = null) {
                 // see $note
-                return window.axios.$method(makeQuery('$uri', getParams), prepareRequestData(postData));
+                // controller: $controller
+                return apiClient.$method(makeQuery('$uri', getParams), prepareRequestData(postData));
             }
             JS;
     }

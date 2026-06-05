@@ -6,11 +6,11 @@ use App\Models\Billing\Claim;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
 use App\Models\Billing\Period;
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use App\Models\Infra\HistoryChanges;
-use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Files\FileTypeEnum;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -186,8 +186,8 @@ class PeriodDataTruncate extends Command
 
         // Файлы, привязанные к платежам (если удаляем платежи)
         if ( ! empty($data['payments'])) {
-            $tables[]      = File::TABLE;
-            $data['files'] = File::whereIn('parent_id', $data['payments'])
+            $tables[]      = FileModel::TABLE;
+            $data['files'] = FileModel::whereIn('parent_id', $data['payments'])
                 ->where('type', FileTypeEnum::PAYMENT->value)
                 ->pluck('id')
                 ->toArray()
@@ -221,7 +221,7 @@ class PeriodDataTruncate extends Command
     {
         // Удаляем файлы
         if ( ! empty($data['files'])) {
-            $deleted = File::whereIn('id', $data['files'])->forceDelete();
+            $deleted = FileModel::whereIn('id', $data['files'])->forceDelete();
             $this->line("Удалено файлов платежей: {$deleted}");
         }
 

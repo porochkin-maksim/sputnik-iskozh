@@ -3,10 +3,10 @@
          v-if="success">
         Спасибо большое! Сведения о показаниях приняты и будут обработаны.
     </div>
-    <div class="form"
+    <div class="public-form-card"
          v-if="!success">
         <custom-input v-model="account"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('account')"
                       :required="true"
                       :errors="errors.account"
@@ -15,14 +15,14 @@
                       @submit="sendForm"
         />
         <custom-input v-model="value"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('value')"
                       :required="true"
                       :errors="errors.value"
                       :label="'Показания счётчика'"
                       @submit="sendForm"
         />
-        <template v-if="propCounters && propCounters.length">
+        <template v-if="hasCounters">
             <label class="small text-secondary">Счётчик</label>
             <simple-select v-model="counter"
                            class="period"
@@ -32,7 +32,7 @@
         </template>
         <template v-else>
             <custom-input v-model="counter"
-                          :classes="'my-3'"
+                          :classes="'public-form-field'"
                           @change="clearError('counter')"
                           :errors="errors.counter"
                           :label="'Номер счётчика'"
@@ -40,7 +40,7 @@
             />
         </template>
         <custom-input v-model="name"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('name')"
                       :errors="errors.name"
                       :label="'Ваше имя (по желанию)'"
@@ -48,7 +48,7 @@
                       @submit="sendForm"
         />
         <custom-input v-model="email"
-                      :classes="'mb-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('email')"
                       :errors="errors.email"
                       :label="'Эл.почта (по желанию)'"
@@ -56,14 +56,14 @@
                       @submit="sendForm"
         />
         <custom-input v-model="phone"
-                      :classes="'mb-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('phone')"
                       :errors="errors.phone"
                       :label="'Телефон (по желанию)'"
                       :disabled="propUser?.phone"
                       @submit="sendForm"
         />
-        <div class="mt-2">
+        <div class="public-form-field">
             <div v-if="file">
                 <button class="btn btn-sm btn-danger"
                         @click="removeFile">
@@ -86,7 +86,18 @@
                 />
             </template>
         </div>
-        <div class="d-flex justify-content-end mt-2">
+        <custom-checkbox v-model="consent"
+                         :errors="errors.consent"
+                         name="consent"
+                         classes="public-form-check"
+                         @change="clearError('consent')"
+                         :label="'Я согласен(на) на обработку персональных данных'" />
+        <div class="small mt-1">
+            <a :href="privacyUrl">Политика ПДн</a>
+            и
+            <a :href="consentUrl">согласие на обработку ПДн</a>.
+        </div>
+        <div class="public-form-actions d-flex justify-content-end">
             <button type="submit"
                     :disabled="disableSubmit"
                     v-if="!pending"
@@ -100,172 +111,134 @@
     </div>
 </template>
 
-<script>
-import Url            from '../../../utils/Url.js';
-import ResponseError  from '../../../mixin/ResponseError.js';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomTextarea from '../../common/form/CustomTextarea.vue';
-import SimpleSelect   from '../../common/form/SimpleSelect.vue';
+<script setup>
+import {
+    computed,
+    ref,
+    watch,
+}                                    from 'vue';
+import CustomInput                   from '@common/form/CustomInput.vue';
+import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
+import SimpleSelect                  from '@common/form/SimpleSelect.vue';
+import { ApiCounterCreate }          from '@api';
+import { useResponseError }          from '@composables/useResponseError';
+import { useRequestFormDefaults }    from './useRequestFormDefaults';
+import { useRequestFormPersistence } from './useRequestFormPersistence';
+import { routeUri }                  from '@utils/routeUri.js';
 
-export default {
-    name      : 'CounterForm',
-    components: {
-        SimpleSelect,
-        CustomTextarea,
-        CustomInput,
+const props = defineProps({
+    propAccount : {
+        type   : Object,
+        default: null,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : {
-        propAccount : {
-            type   : Object,
-            default: {},
-        },
-        propUser    : {
-            type   : Object,
-            default: {},
-        },
-        propCounters: {
-            type   : Array,
-            default: [],
-        },
+    propUser    : {
+        type   : Object,
+        default: null,
     },
-    created () {
-        if (this.propAccount?.number) {
-            this.account = this.propAccount?.number;
-        }
-        else {
-            this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
-        }
-
-        if (this.propUser?.email) {
-            this.email = this.propUser?.email;
-        }
-        else {
-            this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
-        }
-
-        if (this.propUser?.phone) {
-            this.phone = this.propUser?.phone;
-        }
-        else {
-            this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
-        }
-
-        if (this.propUserName) {
-            this.name = this.propUserName;
-        }
-        else {
-            this.name = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
-        }
-
-        if (this.propCounters && this.propCounters.length) {
-            this.counter = this.propCounters[0].id;
-            this.value   = this.propCounters[0].value;
-        }
+    propCounters: {
+        type   : Array,
+        default: () => [],
     },
-    data () {
-        return {
-            Url,
-            email  : '',
-            phone  : '',
-            name   : '',
-            account: '',
-            counter: '',
-            value  : '',
+});
 
-            file: null,
+const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
 
-            success: null,
-            pending: false,
-        };
-    },
-    methods : {
-        sendForm () {
-            this.pending = true;
-            this.clearResponseErrors();
-            let form = new FormData();
-            form.append('email', this.email ? this.email : null);
-            form.append('phone', this.phone ? this.phone : null);
-            form.append('name', this.name ? this.name : null);
-            form.append('account', this.account ? this.account : null);
-            form.append('counter', this.counter ? this.counter : null);
-            form.append('value', this.value ? this.value : null);
-            if (this.propCounters && this.propCounters.length) {
-                form.append('counter_id', this.counter ? this.counter : null);
-            }
+const email    = ref('');
+const phone    = ref('');
+const name     = ref('');
+const account  = ref('');
+const counter  = ref('');
+const value    = ref('');
+const file     = ref(null);
+const success  = ref(null);
+const pending  = ref(false);
+const fileElem = ref(null);
+const consent  = ref(false);
 
-            form.append('file', this.file);
+const { propUserName, storedRequestValue, resolveContactValue } = useRequestFormDefaults(props);
 
-            window.axios[Url.Routes.counterCreate.method](Url.Routes.counterCreate.uri, form).then(response => {
-                this.success = true;
-                this.showSuccess('Показания приняты');
+const hasCounters   = computed(() => props.propCounters.length > 0);
+const disableSubmit = computed(() => !account.value || !value.value || !file.value || !consent.value || pending.value);
+const privacyUrl    = routeUri('privacy');
+const consentUrl    = routeUri('personalDataConsent');
 
-                setTimeout(() => {
-                    location.reload();
-                }, 10000);
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).finally(() => {
-                this.pending = false;
-            });
-        },
-        chooseFile () {
-            this.$refs.fileElem.click();
-        },
-        appendFile (event) {
-            this.file = event.target.files[0];
-        },
-        removeFile () {
-            this.file = null;
-        },
-        onCounterChange () {
-            this.propCounters.forEach(item => {
-                if (parseInt(item.id) === parseInt(this.counter)) {
-                    this.value = item.value;
-                }
-            });
-        },
-    },
-    watch   : {
-        account () {
-            localStorage.setItem('requestAccount', this.account);
-        },
-        email () {
-            localStorage.setItem('requestEmail', this.email);
-        },
-        phone () {
-            localStorage.setItem('requestPhone', this.phone);
-        },
-        name () {
-            localStorage.setItem('requestName', this.name);
-        },
-    },
-    computed: {
-        propUserName () {
-            if (!this.propUser?.email) {
-                return null;
-            }
-            return (this.propUser?.lastName + ' ' + this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
-        },
-        disableSubmit () {
-            return !this.account || !this.value || !this.file || this.pending;
-        },
-        computedCounters () {
-            let result = [];
+const computedCounters = computed(() => {
+    if (!hasCounters.value) {
+        return [];
+    }
 
-            if (!this.propCounters && !this.propCounters.length) {
-                return result;
-            }
+    return props.propCounters.map(item => ({
+        value: item.id,
+        label: item.number,
+    }));
+});
 
-            return this.propCounters.map(item => {
-                return {
-                    value: item.id,
-                    label: item.number,
-                };
-            });
-        },
-    },
-};
+account.value = resolveContactValue(props.propAccount?.number, 'requestAccount');
+email.value   = resolveContactValue(props.propUser?.email, 'requestEmail');
+phone.value   = resolveContactValue(props.propUser?.phone, 'requestPhone');
+name.value    = propUserName.value ?? storedRequestValue('requestName');
+
+if (hasCounters.value) {
+    counter.value = props.propCounters[0]?.id ?? '';
+    value.value   = props.propCounters[0]?.value ?? '';
+}
+
+useRequestFormPersistence({
+    requestAccount: account,
+    requestEmail  : email,
+    requestPhone  : phone,
+    requestName   : name,
+});
+
+function sendForm () {
+    pending.value = true;
+    clearResponseErrors();
+
+    const form = new FormData();
+    form.append('email', email.value ? email.value : null);
+    form.append('phone', phone.value ? phone.value : null);
+    form.append('name', name.value ? name.value : null);
+    form.append('account', account.value ? account.value : null);
+    form.append('counter', counter.value ? counter.value : null);
+    form.append('value', value.value ? value.value : null);
+    if (hasCounters.value) {
+        form.append('counter_id', counter.value ? counter.value : null);
+    }
+
+    form.append('file', file.value);
+    form.append('consent', consent.value ? '1' : '');
+
+    ApiCounterCreate({}, form).then(() => {
+        success.value = true;
+        showSuccess('Показания приняты');
+
+        setTimeout(() => {
+            location.reload();
+        }, 10000);
+    }).catch(response => {
+        parseResponseErrors(response);
+    }).finally(() => {
+        pending.value = false;
+    });
+}
+
+function chooseFile () {
+    fileElem.value.click();
+}
+
+function appendFile (event) {
+    file.value = event.target.files[0];
+}
+
+function removeFile () {
+    file.value = null;
+}
+
+function onCounterChange () {
+    props.propCounters.forEach(item => {
+        if (parseInt(item.id) === parseInt(counter.value)) {
+            value.value = item.value;
+        }
+    });
+}
 </script>

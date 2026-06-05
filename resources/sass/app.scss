@@ -1,5 +1,6 @@
-// 1. Переменные и настройки
+// 1. Переменные, миксины и настройки
 @import 'variables';
+@import 'card-mixins';
 
 // 2. Bootstrap и библиотеки
 @import 'bootstrap/scss/bootstrap';
@@ -16,12 +17,17 @@
 
 // 5. Компоненты
 @import 'components/custom-list';
+@import 'components/public';
 @import 'components/help-desk';
 @import 'components/auth';
 @import 'components/news';
-@import 'components/folders';
 @import 'components/calendar';
 @import 'components/errors';
+@import 'components/overlays';
+@import 'components/profile';
+@import 'components/queue-manager';
+@import 'components/editors';
+@import 'components/admin-blocks';
 @import 'components/slider';
 @import 'components/menus/vertical-menu';
 @import 'components/menus/side-menu';
@@ -31,24 +37,19 @@
 @import 'crutches';
 
 // 7. Остальные правила
-body, html {
-    min-height : 100vh;
-    font-size  : $font-size;
+body,
+html {
+    min-height: 100vh;
+    font-size: $font-size;
 }
 
 .nav-link {
-    cursor : pointer;
+    cursor: pointer;
 }
 
 h1 {
     a {
-        color           : unset;
-        text-decoration : none;
-    }
-}
-
-.html-editor {
-    div[role=application] {
-        height : 100% !important;
+        color: unset;
+        text-decoration: none;
     }
 }

@@ -1,29 +1,32 @@
 <template>
-    <div v-if="counters && counters.length">
+    <loading-spinner
+        v-if="!loaded"
+        class="profile-loading-shell"
+        text="Загрузка счётчиков..."
+    />
+    <div v-else-if="counters && counters.length">
         <div class="row">
             <div class="col-12 col-md-8 col-lg-6">
                 <template v-for="item in counters" :key="item.id">
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-start">
-                                <div>
-                                    <a :href="item.viewUrl"
-                                       class="text-decoration-none d-block">
-                                        <h5 class="mb-2">Счётчик&nbsp;«{{ item.number }}»&nbsp;</h5>
-                                    </a>
-                                    <div v-if="item.expireAt">
-                                        Поверен до {{ formatDate(item.expireAt) }}
-                                    </div>
-                                    <file-item :file="item.passport"
-                                               v-if="item.passport"
-                                               :name="'Паспорт'"
-                                    />
+                    <div class="page-card mb-2 p-3 counters-card">
+                        <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-start gap-2">
+                            <div class="flex-grow-1">
+                                <a :href="item.viewUrl"
+                                   class="link-firm counters-card__title">
+                                    Счётчик&nbsp;«{{ item.number }}»
+                                </a>
+                                <div v-if="item.expireAt" class="text-secondary mt-1">
+                                    Поверен до {{ formatDate(item.expireAt) }}
                                 </div>
-                                <div
-                                    class="text-end w-sm-25 d-flex flex-row flex-sm-column justify-content-between">
-                                    <div>{{ item.value.toLocaleString('ru-RU') }}кВт</div>
-                                    <div>от {{ formatDate(item.date) }}</div>
-                                </div>
+                                <file-item :file="item.passport"
+                                           v-if="item.passport"
+                                           :name="'Паспорт'"
+                                           class="mt-2"
+                                />
+                            </div>
+                            <div class="text-end w-sm-25 d-flex flex-row flex-sm-column justify-content-between counters-card__meta">
+                                <div class="fw-semibold">{{ item.value.toLocaleString('ru-RU') }} кВт</div>
+                                <div class="text-secondary">от {{ formatDate(item.date) }}</div>
                             </div>
                         </div>
                     </div>
@@ -152,6 +155,7 @@ import CustomInput          from '@common/form/CustomInput.vue';
 import ViewDialog           from '@common/ViewDialog.vue';
 import FileItem             from '@common/files/FileItem.vue';
 import CustomCalendar       from '@common/form/CustomCalendar.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiProfileCounterCreate,
     ApiProfileCounterList,

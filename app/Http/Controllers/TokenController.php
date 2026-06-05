@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 
 class TokenController extends Controller
 {
@@ -26,7 +26,7 @@ class TokenController extends Controller
                 return redirect()->route(RouteNames::HOME);
             }
 
-            return view('pages.system.token-auth', compact('uid'));
+            return view('pages.public.system.token-auth', compact('uid'));
         }
 
         abort(404);

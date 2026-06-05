@@ -13,118 +13,67 @@
                     :id="inputId"
                     type="text"
                     class="form-control custom-calendar__input pe-5"
-                    :class="label ? 'labeled' : ''"
+                    :class="[label ? 'labeled' : '', { 'is-invalid': resolvedError }]"
                     :value="displayText"
                     :placeholder="placeholder"
                     :disabled="disabled"
                     @input="onInput"
                     @blur="onBlur"
-                    @focus="toggleDropdown"
+                    @focus="toggleDropdown(disabled)"
                     @keydown.enter.prevent="onBlur"
-                    @keydown.esc="close"
+                    @keydown.esc="closeDropdown"
                     @keydown.down.prevent="openAndFocus"
                     v-bind="$attrs"
                 />
                 <i
-                    class="fa fa-calendar position-absolute end-0 me-3 text-secondary cursor-pointer"
-                    style="z-index:2; transform:translateY(-50%);"
-                    :style="[label ? 'top:65%' : 'top:50%;']"
-                    @click="toggleDropdown"
+                    class="fa fa-calendar custom-calendar__icon position-absolute end-0 me-3 text-secondary cursor-pointer"
+                    :class="{ 'with-label': label }"
+                    @click="toggleDropdown(disabled)"
                 ></i>
             </div>
         </element-wrapper>
 
-        <errors-list :errors="error" />
+        <errors-list v-if="resolvedError" :errors="resolvedError" />
 
         <transition name="fade">
-            <div v-if="isOpen"
-                 class="custom-calendar__dropdown p-2 mt-1 shadow-sm bg-white rounded border">
-
-                <calendar-header
-                    :month-name="monthName"
-                    :year="year"
-                    @prev="prevMonth"
-                    @next="nextMonth"
-                    @toggle-month-year="toggleMonthYearPicker"
-                />
-
-                <month-year-picker
-                    v-if="showMonthYearPicker"
-                    :year="year"
-                    :month="month"
-                    @apply="applyMonthYear"
-                />
-
-                <calendar-grid
-                    v-else
-                    :weeks="weeks"
-                    :selected-date="selectedDate"
-                    @select="handleDateSelect"
-                />
-
-                <!-- Блок выбора времени (только если withTime) -->
-                <div v-if="withTime"
-                     class="mt-3 pt-2 border-top">
-                    <div class="d-flex align-items-center justify-content-center gap-3">
-                        <div class="d-flex align-items-center gap-1">
-                            <select v-model="selectedHour"
-                                    class="form-select form-select-sm w-auto"
-                                    style="width: 80px;">
-                                <option v-for="h in 24"
-                                        :key="h-1"
-                                        :value="String(h-1).padStart(2,'0')">
-                                    {{ String(h - 1).padStart(2, '0') }}
-                                </option>
-                            </select>
-                            <span class="fw-bold">:</span>
-                            <select v-model="selectedMinute"
-                                    class="form-select form-select-sm w-auto"
-                                    style="width: 80px;">
-                                <option v-for="m in 60"
-                                        :key="m-1"
-                                        :value="String(m-1).padStart(2,'0')">
-                                    {{ String(m - 1).padStart(2, '0') }}
-                                </option>
-                            </select>
-                        </div>
-                        <button class="btn btn-sm btn-primary"
-                                @click="applyTime">OK
-                        </button>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between mt-2">
-                    <button class="btn btn-sm btn-outline-success"
-                            @click="goToToday"
-                            type="button">
-                        <i class="fa fa-calendar-check-o me-1"></i>Сегодня
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary"
-                            @click="clearDate"
-                            type="button">
-                        <i class="fa fa-times me-1"></i>Очистить
-                    </button>
-                </div>
-            </div>
+            <calendar-dropdown
+                v-if="isOpen"
+                :month-name="monthName"
+                :year="year"
+                :month="month"
+                :weeks="weeks"
+                :selected-date="selectedDate"
+                :show-month-year-picker="showMonthYearPicker"
+                :with-time="withTime"
+                v-model:selected-hour="selectedHour"
+                v-model:selected-minute="selectedMinute"
+                @prev="prevMonth"
+                @next="nextMonth"
+                @toggle-month-year="toggleMonthYearPicker"
+                @apply-month-year="applyMonthYear"
+                @select-date="handleDateSelect"
+                @go-to-today="goToToday"
+                @clear-date="clearDate"
+            />
         </transition>
     </div>
 </template>
 
 <script setup>
 import {
-    ref,
-    computed,
-    watch,
-    onMounted,
+    provide,
     onBeforeUnmount,
-}                      from 'vue';
-import { useId }       from 'vue';
-import { useCalendar } from './calendar/useCalendar';
-import ElementWrapper  from './partial/ElementWrapper.vue';
-import ErrorsList      from './partial/ErrorsList.vue';
-import CalendarHeader  from './calendar/CalendarHeader.vue';
-import MonthYearPicker from './calendar/MonthYearPicker.vue';
-import CalendarGrid    from './calendar/CalendarGrid.vue';
+    onMounted,
+    ref,
+}                                    from 'vue';
+import { useId }                     from 'vue';
+import { useCalendar }               from '@common/form/calendar/useCalendar';
+import { useCustomCalendarModel }    from '@common/form/calendar/useCustomCalendarModel';
+import { useCustomCalendarDropdown } from '@common/form/calendar/useCustomCalendarDropdown';
+import ElementWrapper                from '@common/form/partial/ElementWrapper.vue';
+import ErrorsList                    from '@common/form/partial/ErrorsList.vue';
+import CalendarDropdown              from '@common/form/calendar/CalendarDropdown.vue';
+import { useFieldError }             from '@common/form/useFieldError';
 
 const props = defineProps({
     modelValue : String,
@@ -133,25 +82,20 @@ const props = defineProps({
     error      : [String, Array],
     disabled   : Boolean,
     classes    : String,
+    name       : String,
     placeholder: { type: String, default: 'дд.мм.гггг' },
-    min        : String,   // YYYY-MM-DD
-    max        : String,   // YYYY-MM-DD
+    min        : String,
+    max        : String,
     withTime   : { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['update:modelValue']);
+defineOptions({ inheritAttrs: false });
 
-const inputId             = `calendar-${useId()}`;
-const calendarRoot        = ref(null);
-const isOpen              = ref(false);
-const showMonthYearPicker = ref(false);
-const inputText           = ref('');
-
-// Состояние для времени
-const selectedHour   = ref('00');
-const selectedMinute = ref('00');
-
-const initialDate = props.modelValue ? new Date(props.modelValue) : new Date();
+const emit                                  = defineEmits(['update:modelValue']);
+const inputId                               = `calendar-${useId()}`;
+const { clearResolvedError, resolvedError } = useFieldError(props);
+const initialDate                           = props.modelValue ? new Date(props.modelValue) : new Date();
+const inputText                             = ref('');
 const {
           selectedDate,
           year,
@@ -162,234 +106,39 @@ const {
           nextMonth,
           goToDate,
           selectDate: calendarSelectDate,
-      }           = useCalendar(initialDate, props.min, props.max);
+      }                                     = useCalendar(initialDate, props.min, props.max);
+const {
+          applyMonthYear,
+          applyTime,
+          calendarRoot,
+          closeDropdown,
+          handleClickOutside,
+          handleDateSelect,
+          isOpen,
+          openAndFocus,
+          showMonthYearPicker,
+          toggleDropdown,
+          toggleMonthYearPicker,
+}                                     = useCustomCalendarDropdown(props, selectedDate, goToDate, calendarSelectDate, inputText);
+provide('customCalendarApplyTime', applyTime);
 
-// Парсинг modelValue при инициализации и внешних изменениях
-const parseModelValue = (val) => {
-    if (!val) {
-        calendarSelectDate(null);
-        if (props.withTime) {
-            selectedHour.value   = '00';
-            selectedMinute.value = '00';
-        }
-        return;
-    }
-
-    let datePart = val;
-    let timePart = null;
-
-    const timeMatch = val.match(/\s+(\d{1,2}):(\d{1,2})$/);
-    if (timeMatch) {
-        timePart = { hour: timeMatch[1].padStart(2, '0'), minute: timeMatch[2].padStart(2, '0') };
-        datePart = val.slice(0, timeMatch.index).trim();
-    }
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
-        calendarSelectDate(datePart);
-        goToDate(datePart); // ← добавить эту строку
-        if (props.withTime && timePart) {
-            selectedHour.value   = timePart.hour;
-            selectedMinute.value = timePart.minute;
-        }
-        else if (props.withTime) {
-            selectedHour.value   = '00';
-            selectedMinute.value = '00';
-        }
-    }
-    else {
-        calendarSelectDate(null);
-    }
-};
-
-watch(() => props.modelValue, (val) => {
-    parseModelValue(val);
-    inputText.value = '';
-}, { immediate: true });
-
-// Отображаемое значение в поле (синхронизируется с датой/временем)
-const displayText = computed(() => {
-    if (!selectedDate.value) {
-        return '';
-    }
-    const [y, m, d] = selectedDate.value.split('-');
-    let result      = `${d}.${m}.${y}`;
-    if (props.withTime) {
-        result += ` ${selectedHour.value}:${selectedMinute.value}`;
-    }
-    return result;
-});
-
-// Эмит при изменении даты или времени
-const emitValue = () => {
-    if (!selectedDate.value) {
-        emit('update:modelValue', null);
-        return;
-    }
-    let value = selectedDate.value;
-    if (props.withTime) {
-        value += ` ${selectedHour.value}:${selectedMinute.value}`;
-    }
-    emit('update:modelValue', value);
-};
-
-watch([selectedDate, selectedHour, selectedMinute], () => {
-    emitValue();
-});
-
-// Применение времени (закрывает календарь)
-const applyTime = () => {
-    close();
-    inputText.value = '';
-};
-
-// Ручной ввод
-const onInput = (e) => {
-    inputText.value = e.target.value;
-};
-
-const parseInputString = (str) => {
-    str              = str.trim();
-    const patternDMY = /^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{1,2}):(\d{1,2}))?$/;
-    const patternISO = /^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{1,2}):(\d{1,2}))?$/;
-
-    let match = str.match(patternDMY);
-    if (match) {
-        const [_, d, m, y, h, min] = match;
-        const dateStr              = `${y}-${m}-${d}`;
-        const hour                 = h ? h.padStart(2, '0') : (props.withTime ? selectedHour.value : '00');
-        const minute               = min ? min.padStart(2, '0') : (props.withTime ? selectedMinute.value : '00');
-        return { date: dateStr, hour, minute };
-    }
-
-    match = str.match(patternISO);
-    if (match) {
-        const [_, y, m, d, h, min] = match;
-        const dateStr              = `${y}-${m}-${d}`;
-        const hour                 = h ? h.padStart(2, '0') : (props.withTime ? selectedHour.value : '00');
-        const minute               = min ? min.padStart(2, '0') : (props.withTime ? selectedMinute.value : '00');
-        return { date: dateStr, hour, minute };
-    }
-
-    return null;
-};
-
-const onBlur = () => {
-    const val = inputText.value.trim();
-    if (val === '') {
-        // Если была выбрана дата, восстанавливаем её отображение
-        if (selectedDate.value) {
-            inputText.value = displayText.value;
-        }
-        // Если даты не было, ничего не делаем (оставляем пустым)
-        return;
-    }
-
-    const parsed = parseInputString(val);
-    if (parsed) {
-        const date = new Date(parsed.date);
-        if (!isNaN(date.getTime())) {
-            if ((props.min && date < new Date(props.min)) || (props.max && date > new Date(props.max))) {
-                inputText.value = displayText.value;
-                return;
-            }
-            goToDate(parsed.date);
-            calendarSelectDate(parsed.date);
-            if (props.withTime) {
-                selectedHour.value   = parsed.hour;
-                selectedMinute.value = parsed.minute;
-            }
-        }
-        else {
-            inputText.value = displayText.value;
-        }
-    }
-    else {
-        // Невалидный ввод – восстанавливаем предыдущее значение
-        inputText.value = displayText.value;
-    }
-};
-
-const toggleDropdown = () => {
-    if (props.disabled) {
-        return;
-    }
-    // Если есть выбранная дата, перейти к её месяцу
-    if (selectedDate.value) {
-        goToDate(selectedDate.value);
-    }
-    isOpen.value = !isOpen.value;
-    if (!isOpen.value) {
-        showMonthYearPicker.value = false;
-    }
-};
-
-const close = () => {
-    isOpen.value              = false;
-    showMonthYearPicker.value = false;
-};
-
-const openAndFocus = () => {
-    if (selectedDate.value) {
-        goToDate(selectedDate.value);
-    }
-    isOpen.value = true;
-};
-
-const toggleMonthYearPicker = () => {
-    showMonthYearPicker.value = !showMonthYearPicker.value;
-};
-
-const applyMonthYear = ({ year: y, month: m }) => {
-    goToDate(new Date(y, m, 1));
-    showMonthYearPicker.value = false;
-};
-
-const handleDateSelect = (date) => {
-    calendarSelectDate(date);
-    goToDate(date);
-    inputText.value = '';
-    if (!props.withTime) {
-        close();
-    }
-};
-
-const goToToday = () => {
-    const today   = new Date();
-    const y       = today.getFullYear();
-    const m       = String(today.getMonth() + 1).padStart(2, '0');
-    const d       = String(today.getDate()).padStart(2, '0');
-    const dateStr = `${y}-${m}-${d}`;
-    if ((props.min && dateStr < props.min) || (props.max && dateStr > props.max)) {
-        return;
-    }
-
-    goToDate(today);
-    calendarSelectDate(dateStr);
-    if (props.withTime) {
-        selectedHour.value   = String(today.getHours()).padStart(2, '0');
-        selectedMinute.value = String(today.getMinutes()).padStart(2, '0');
-    }
-    inputText.value = '';
-    if (!props.withTime) {
-        close();
-    }
-};
-
-const clearDate = () => {
-    calendarSelectDate(null);
-    if (props.withTime) {
-        selectedHour.value   = '00';
-        selectedMinute.value = '00';
-    }
-    inputText.value = '';
-    close();
-};
-
-const handleClickOutside = (event) => {
-    if (calendarRoot.value && !calendarRoot.value.contains(event.target)) {
-        close();
-    }
-};
+const {
+          clearDate,
+          displayText,
+          goToToday,
+          onBlur,
+          onInput,
+          selectedHour,
+          selectedMinute,
+      } = useCustomCalendarModel(
+    props,
+    emit,
+    selectedDate,
+    goToDate,
+    calendarSelectDate,
+    clearResolvedError,
+    inputText,
+);
 
 onMounted(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -398,16 +147,4 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.removeEventListener('mousedown', handleClickOutside);
 });
-
-defineOptions({ inheritAttrs: false });
 </script>
-
-<style scoped>
-.fade-enter-active, .fade-leave-active {
-    transition : opacity 0.2s ease;
-}
-
-.fade-enter-from, .fade-leave-to {
-    opacity : 0;
-}
-</style>

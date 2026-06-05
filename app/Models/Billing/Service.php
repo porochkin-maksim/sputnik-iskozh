@@ -2,9 +2,9 @@
 
 namespace App\Models\Billing;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -19,8 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float   $cost
  * @property bool    $active
  */
-class Service extends Model implements CastsInterface
+class Service extends AbstractModel
 {
+    use HasFactory;
     use SoftDeletes;
 
     public const string TABLE = 'services';
@@ -34,7 +35,7 @@ class Service extends Model implements CastsInterface
     public const string COST      = 'cost';
     public const string ACTIVE    = 'active';
 
-    public const string PERIOD = 'period';
+    public const string RELATION_PERIOD = 'period';
 
     protected $guarded = [];
 

@@ -2,17 +2,17 @@
 
 namespace App\Http\Resources\Admin\Options;
 
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Option\Models\OptionDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\Option\OptionEntity;
+use App\Resources\RouteNames;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OptionResource extends JsonResource
 {
-    private OptionDTO $option;
+    private OptionEntity $option;
 
-    public function __construct(OptionDTO $option)
+    public function __construct(OptionEntity $option)
     {
         parent::__construct($option);
         $this->option = $option;

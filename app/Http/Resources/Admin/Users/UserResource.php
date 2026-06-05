@@ -2,41 +2,40 @@
 
 namespace App\Http\Resources\Admin\Users;
 
-use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Domains\User\Enums\UserIdEnum;
-use Core\Domains\User\UserLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Helpers\Phone\PhoneHelper;
-use Core\Resources\RouteNames;
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Domains\User\Models\UserDTO;
-use Core\Responses\ResponsesEnum;
+use App\Http\Resources\Admin\AccountResource;
+use App\Http\Resources\Shared\ResourseList;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesRoute;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\User\UserEntity;
+use Core\Domains\User\UserIdEnum;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use Core\Shared\Helpers\Phone\PhoneHelper;
+use lc;
 
 readonly class UserResource extends AbstractResource
 {
     public function __construct(
-        private UserDTO $user,
+        private UserEntity $user,
     )
     {
     }
 
     public function jsonSerialize(): array
     {
+        $user   = $this->user;
         $access = lc::roleDecorator();
-
-        $user    = $this->user;
-        $canEdit = UserIdEnum::OWNER !== $user->getId() || lc::isSuperAdmin();
-        $exData  = $user->getExData();
+        $canEdit = $access->can(PermissionEnum::USERS_EDIT)
+            && (UserIdEnum::OWNER !== $user->getId() || lc::isSuperAdmin());
+        $exData = $user->getExData();
 
         $curAccount = $user->getAccounts()?->getById((int) $user->getAccountId());
 
         $result = [
             'id'              => $user->getId(),
-            'fullName'        => UserLocator::UserDecorator($user)->getFullName(),
+            'fullName'        => $user->getViewer()->getFullName(),
             'firstName'       => $user->getFirstName(),
             'middleName'      => $user->getMiddleName(),
             'lastName'        => $user->getLastName(),
@@ -62,30 +61,24 @@ readonly class UserResource extends AbstractResource
             'postAddress'  => $exData->getPostAddress(),
             'additional'   => $exData->getAdditional(),
 
-            'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::USERS_VIEW),
-                ResponsesEnum::EDIT => ! $user->isDeleted() && $canEdit && $access->can(PermissionEnum::USERS_EDIT),
-                ResponsesEnum::DROP => $canEdit && $access->can(PermissionEnum::USERS_DROP),
-                'account'           => [
-                    ResponsesEnum::VIEW => $access->can(PermissionEnum::ACCOUNTS_VIEW),
-                ],
-            ],
-            'historyUrl' => HistoryChangesLocator::route(
+            'historyUrl' => HistoryChangesRoute::make(
                 type     : HistoryType::USER,
                 primaryId: $user->getId(),
             ),
             'viewUrl'    => $user->getId() ? route(RouteNames::ADMIN_USER_VIEW, ['id' => $user->getId()]) : null,
+            'actions'    => [
+                'view' => $access->can(PermissionEnum::USERS_VIEW),
+                'edit' => $canEdit,
+                'drop' => $access->can(PermissionEnum::USERS_DROP) && UserIdEnum::OWNER !== $user->getId(),
+            ],
         ];
 
-        if ($curAccount && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
+        if ($curAccount) {
             $result['account'] = new AccountResource($curAccount);
         }
 
-        if ($user->getAccounts() && $access->can(PermissionEnum::ACCOUNTS_VIEW)) {
-            $result['accounts'] = [];
-            foreach ($user->getAccounts() as $account) {
-                $result['accounts'][] = new AccountResource($account);
-            }
+        if ($user->getAccounts()) {
+            $result['accounts'] = new ResourseList($user->getAccounts(), AccountResource::class);
         }
 
         return $result;

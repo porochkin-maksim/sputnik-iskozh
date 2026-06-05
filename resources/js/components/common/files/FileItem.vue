@@ -23,28 +23,25 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
 
-export default {
-    emits   : ['updated'],
-    props   : {
-        file        : {
-            type    : Object,
-            required: true,
-        },
-        name        : {
-            type   : String,
-            default: null,
-        },
-        showDownload: {
-            type   : Boolean,
-            default: true,
-        },
+defineEmits(['updated']);
+
+const props = defineProps({
+    file        : {
+        type    : Object,
+        required: true,
     },
-    computed: {
-        fileName () {
-            return this.name ? this.name + '.' + this.file.ext : this.file.name;
-        },
+    name        : {
+        type   : String,
+        default: null,
     },
-};
+    showDownload: {
+        type   : Boolean,
+        default: true,
+    },
+});
+
+const fileName = computed(() => (props.name ? props.name + '.' + props.file.ext : props.file.name));
 </script>

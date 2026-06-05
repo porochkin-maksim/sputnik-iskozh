@@ -2,10 +2,10 @@
 
 namespace Core\Domains\Billing\Acquiring\Services;
 
+use Core\Domains\Billing\Acquiring\Contracts\ProviderInterface;
 use Core\Domains\Billing\Acquiring\Enums\ProviderEnum;
 use Core\Domains\Billing\Acquiring\Exceptions\UndefinedProviderException;
-use Core\Domains\Billing\Acquiring\ProviderLocator;
-use Core\Domains\Billing\Acquiring\Providers\ProviderInterface;
+use Core\Domains\Billing\Acquiring\Providers\VTB\VTBProvider;
 
 class ProviderSelector
 {
@@ -13,71 +13,60 @@ class ProviderSelector
         // ProviderEnum::VTB->value => 100,
     ];
 
-    /**
-     * @throws UndefinedProviderException
-     */
-    public static function getProviderService(?ProviderEnum $provider): ProviderInterface
+    public function __construct(
+        private readonly VTBProvider $vtbProvider,
+    )
     {
-        return match ($provider) {
-            ProviderEnum::VTB => ProviderLocator::VTB(),
-            default           => throw new UndefinedProviderException(),
-        };
     }
 
     /**
-     * Возвращает поставщика, который имеет заполненую конфигурацию
+     * @throws UndefinedProviderException
      */
-    public static function random(): ?ProviderEnum
+    public function getProviderService(?ProviderEnum $provider): ProviderInterface
     {
-        // Исходные вероятности
+        return match ($provider) {
+            ProviderEnum::VTB => $this->vtbProvider,
+            default => throw new UndefinedProviderException(),
+        };
+    }
+
+    public function random(): ?ProviderEnum
+    {
         $probabilities = self::PROBABILITIES;
 
-        while ( ! empty($probabilities)) {
-            // Генерируем случайное число от 1 до 100
-            $random                = random_int(1, 100);
+        while (! empty($probabilities)) {
+            $random = random_int(1, 100);
             $cumulativeProbability = 0;
 
-            // Ищем провайдера по текущим вероятностям
             foreach ($probabilities as $provider => $probability) {
                 $cumulativeProbability += $probability;
 
                 if ($random <= $cumulativeProbability) {
-                    // Получаем экземпляр провайдера
-                    $providerEnum    = ProviderEnum::tryFrom($provider);
-                    $providerService = self::getProviderService(ProviderEnum::tryFrom($provider));
+                    $providerEnum = ProviderEnum::tryFrom($provider);
+                    $providerService = $this->getProviderService($providerEnum);
 
-                    // Проверяем, есть ли полная конфигурация
                     if ($providerService->hasFullConfig()) {
                         return $providerEnum;
                     }
 
-                    // Если конфигурации нет — удаляем провайдера из списка и перераспределяем вероятности
                     unset($probabilities[$provider]);
-                    self::redistributeProbabilities($probabilities);
-
-                    // Выходим из цикла, чтобы начать новый проход с обновлёнными вероятностями
+                    $this->redistributeProbabilities($probabilities);
                     break;
                 }
             }
         }
 
-        // Если все провайдеры без конфигурации — возвращаем null
         return null;
     }
 
-    /**
-     * Перераспределяет вероятности между оставшимися провайдерами
-     */
-    private static function redistributeProbabilities(array &$probabilities): void
+    private function redistributeProbabilities(array &$probabilities): void
     {
         if (empty($probabilities)) {
             return;
         }
 
-        // Сумма оставшихся вероятностей
         $total = array_sum($probabilities);
 
-        // Нормализуем вероятности к 100%
         foreach ($probabilities as $provider => $probability) {
             $probabilities[$provider] = ($probability / $total) * 100;
         }

@@ -38,7 +38,7 @@ import {
     onMounted,
     onBeforeUnmount,
 }                     from 'vue';
-import * as bootstrap from 'bootstrap'; // или window.bootstrap, если глобально
+import * as bootstrap from 'bootstrap';
 
 const props = defineProps({
     show          : {

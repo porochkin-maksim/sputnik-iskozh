@@ -3,8 +3,8 @@
 namespace Core\Domains\Infra\ExData\Models;
 
 use App\Models\Infra\ExData;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Db\Searcher\SearcherTrait;
+use Core\Repositories\SearcherInterface;
+use Core\Repositories\SearcherTrait;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
 
 class ExDataSearcher implements SearcherInterface

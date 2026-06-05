@@ -2,12 +2,12 @@
     <div class="table-responsive">
         <table
             v-if="invoices && invoices.length"
-            class="table table-sm table-striped table-bordered"
+            class="table table-sm table-striped table-bordered table-hover align-middle admin-table-firm"
         >
             <thead>
             <tr class="text-center">
                 <th
-                    class="text-end cursor-pointer"
+                    class="table-thin-column text-end cursor-pointer"
                     @click="sort('id')"
                     scope="col"
                 >
@@ -81,7 +81,7 @@
                     <i v-else class="fa fa-sort" aria-hidden="true"></i>
                 </th>
 
-                <th class="text-center" scope="col"></th>
+                <th class="table-thin-column text-center" scope="col"></th>
             </tr>
             </thead>
 
@@ -96,8 +96,8 @@
                         invoice.advance ? 'fw-bold' : ''
                     ]"
             >
-                <td class="text-end">
-                    <a :href="invoice.viewUrl" class="text-decoration-none">
+                <td class="table-thin-column text-center">
+                    <a :href="invoice.viewUrl" class="link-firm">
                         {{ invoice.id }}
                     </a>
                 </td>
@@ -109,7 +109,7 @@
                     <a
                         v-if="invoice.accountUrl"
                         :href="invoice.accountUrl"
-                        class="text-decoration-none"
+                        class="link-firm"
                     >
                         {{ invoice.accountNumber }}
                     </a>
@@ -138,12 +138,12 @@
                     {{ invoice.updated }}
                 </td>
 
-                <td class="text-center">
+                <td class="table-thin-column text-center">
                     <a
                         v-if="invoice.receiptUrl"
                         :href="invoice.receiptUrl"
                         target="_blank"
-                        class="btn btn-sm btn-link p-0"
+                        class="btn btn-sm admin-action-btn"
                         title="Скачать квитанцию"
                     >
                         <i class="fa fa-file-pdf-o text-danger fa-lg"></i>
@@ -205,7 +205,3 @@ const sort = (field) => {
     }
 };
 </script>
-
-<style scoped>
-/* Стили удалены - используются глобальные */
-</style>

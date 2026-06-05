@@ -5,29 +5,39 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Periods\PeriodsSelectResource;
+use App\Http\Resources\Admin\Roles\RolesSelectResource;
 use App\Http\Resources\Common\AccountsSelectResource;
 use App\Http\Resources\Common\CountersSelectResource;
 use App\Http\Resources\Common\SelectResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Period;
 use App\Models\Counter\Counter;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Models\CounterSearcher;
+use Core\Domains\Access\RoleSearcher;
+use Core\Domains\Access\RoleService;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Period\PeriodSearcher;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Domains\Counter\CounterSearcher;
+use Core\Domains\Counter\CounterService;
 use Illuminate\Http\JsonResponse;
 
 class SelectCollectionsController extends Controller
 {
+    public function __construct(
+        private readonly PeriodService  $periodService,
+        private readonly AccountService $accountService,
+        private readonly CounterService $counterService,
+        private readonly RoleService    $roleService,
+    )
+    {
+    }
+
     public function periods(DefaultRequest $request): JsonResponse
     {
-        $searcher = new PeriodSearcher()->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC);
-
-        $items = PeriodLocator::PeriodService()->search(new PeriodSearcher()
+        $items = $this->periodService->search(new PeriodSearcher()
             ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC),
         )->getItems();
 
@@ -36,14 +46,25 @@ class SelectCollectionsController extends Controller
         ));
     }
 
-    public function accounts(): JsonResponse
+    public function accounts(DefaultRequest $request): JsonResponse
     {
         $searcher = new AccountSearcher();
+        if ( ! $request->getBool('withSnt')) {
+            $searcher->setWithoutSntAccount();
+        }
         $searcher->setSortOrderProperty(Account::SORT_VALUE, SearcherInterface::SORT_ORDER_ASC);
-        $items = AccountLocator::AccountService()->search($searcher);
+        $items = $this->accountService->search($searcher);
 
         return response()->json(new AccountsSelectResource(
             $items->getItems(),
+            false,
+        ));
+    }
+
+    public function roles(): JsonResponse
+    {
+        return response()->json(new RolesSelectResource(
+            $this->roleService->all(),
             false,
         ));
     }
@@ -55,7 +76,7 @@ class SelectCollectionsController extends Controller
         if ($accountId) {
             $searcher->setAccountId($accountId);
         }
-        $items = CounterLocator::CounterService()->search($searcher);
+        $items = $this->counterService->search($searcher);
 
         return response()->json(new CountersSelectResource(
             $items->getItems(),

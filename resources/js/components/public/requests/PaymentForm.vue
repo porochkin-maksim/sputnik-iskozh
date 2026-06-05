@@ -3,10 +3,10 @@
          v-if="success">
         Спасибо большое! Сведения о платеже приняты и будут обработаны.
     </div>
-    <div class="form"
+    <div class="public-form-card"
          v-if="!success">
         <custom-input v-model="account"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('account')"
                       :required="true"
                       :errors="errors.account"
@@ -15,7 +15,7 @@
                       @submit="sendForm"
         />
         <custom-input v-model="cost"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('cost')"
                       :required="true"
                       :errors="errors.cost"
@@ -30,13 +30,14 @@
                          :label="'Комментарий о платеже - когда и за что платили'"
                          :rows="2"
                          :disabled="loading || propInvoice?.id"
+                         :classes="'public-form-field'"
         />
-        <div class="d-flex justify-content-end small"
+        <div class="d-flex justify-content-end small public-form-field"
              v-if="text && text.length">
             <span class="text-secondary">Символов: {{ text.length }}</span>
         </div>
         <custom-input v-model="name"
-                      :classes="'my-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('name')"
                       :errors="errors.name"
                       :label="'Ваше имя (по желанию)'"
@@ -44,7 +45,7 @@
                       @submit="sendForm"
         />
         <custom-input v-model="email"
-                      :classes="'mb-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('email')"
                       :errors="errors.email"
                       :label="'Эл.почта (по желанию)'"
@@ -52,7 +53,7 @@
                       @submit="sendForm"
         />
         <custom-input v-model="phone"
-                      :classes="'mb-3'"
+                      :classes="'public-form-field'"
                       @change="clearError('phone')"
                       :errors="errors.phone"
                       :label="'Телефон (по желанию)'"
@@ -60,9 +61,9 @@
                       @submit="sendForm"
         />
         <template v-if="files && files.length">
-            <ul class="list-unstyled">
+            <ul class="list-unstyled public-file-queue">
                 <li v-for="(file, index) in files"
-                    class="mb-2 d-flex justify-content-between">
+                    class="d-flex justify-content-between">
                     <div>
                         <button class="btn btn-sm btn-danger"
                                 :disabled="loading"
@@ -77,8 +78,9 @@
                     </span>
                 </li>
             </ul>
-            <div class="d-flex justify-content-end small">
-                <span :class="[fileSizeExceed ? 'text-danger' : 'text-secondary']">Размер файлов: {{ filesSize }}MB</span>
+            <div class="d-flex justify-content-end small public-form-field">
+                <span
+                    :class="[fileSizeExceed ? 'text-danger' : 'text-secondary']">Размер файлов: {{ filesSize }}MB</span>
             </div>
         </template>
         <button class="btn btn-outline-secondary"
@@ -93,7 +95,18 @@
                accept="image/*,application/pdf"
                @change="appendFiles"
                multiple>
-        <div class="d-flex justify-content-end mt-2">
+        <custom-checkbox v-model="consent"
+                         :errors="errors.consent"
+                         name="consent"
+                         classes="public-form-check"
+                         @change="clearError('consent')"
+                         :label="'Я согласен(на) на обработку персональных данных'" />
+        <div class="small mt-1">
+            <a :href="privacyUrl">Политика ПДн</a>
+            и
+            <a :href="consentUrl">согласие на обработку ПДн</a>.
+        </div>
+        <div class="public-form-actions d-flex justify-content-end">
             <button type="submit"
                     :disabled="isSubmitDisable"
                     v-if="!loading"
@@ -109,191 +122,130 @@
     </div>
 </template>
 
-<script>
-import Url            from '../../../utils/Url.js';
-import ResponseError  from '../../../mixin/ResponseError.js';
-import CustomInput    from '../../common/form/CustomInput.vue';
-import CustomTextarea from '../../common/form/CustomTextarea.vue';
+<script setup>
+import {
+    computed,
+    ref,
+    watch,
+}                                    from 'vue';
+import CustomInput                   from '@common/form/CustomInput.vue';
+import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
+import CustomTextarea                from '@common/form/CustomTextarea.vue';
+import { ApiPaymentCreate }          from '@api';
+import { useResponseError }          from '@composables/useResponseError';
+import { useRequestFormDefaults }    from './useRequestFormDefaults';
+import { useRequestFormPersistence } from './useRequestFormPersistence';
+import { routeUri }                  from '@utils/routeUri.js';
 
-export default {
-    name      : 'PaymentForm',
-    components: {
-        CustomTextarea,
-        CustomInput,
+const props = defineProps({
+    propAccount: {
+        type   : Object,
+        default: null,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    props     : {
-        propAccount: {
-            type   : Object,
-            default: null,
-        },
-        propUser   : {
-            type   : Object,
-            default: null,
-        },
-        propInvoice   : {
-            type   : Object,
-            default: null,
-        },
+    propUser   : {
+        type   : Object,
+        default: null,
     },
-    created () {
-        if (this.propInvoice?.id) {
-            this.account = this.propInvoice?.account.number;
-        }
-        else if (this.propAccount?.number) {
-            this.account = this.propAccount?.number;
-        }
-        else {
-            this.account = localStorage.getItem('requestAccount') === 'null' ? '' : localStorage.getItem('requestAccount');
-        }
-
-        if (this.propUser?.email) {
-            this.email = this.propUser?.email;
-        }
-        else {
-            this.email = localStorage.getItem('requestEmail') === 'null' ? '' : localStorage.getItem('requestEmail');
-        }
-
-        if (this.propUser?.phone) {
-            this.phone = this.propUser?.phone;
-        }
-        else {
-            this.phone = localStorage.getItem('requestPhone') === 'null' ? '' : localStorage.getItem('requestPhone');
-        }
-
-        if (this.propUserName) {
-            this.name = this.propUserName;
-        }
-        else {
-            this.name = localStorage.getItem('requestName') === 'null' ? '' : localStorage.getItem('requestName');
-        }
-
-        if (this.propInvoice?.delta) {
-            this.cost = this.propInvoice?.delta;
-        }
-        else {
-            this.cost = localStorage.getItem('requestCost') === 'null' ? '' : localStorage.getItem('requestCost');
-        }
-
-        if (this.propInvoice?.id) {
-            this.text = 'Оплата по счёту №' + this.propInvoice?.id + ' за период "' + this.propInvoice.period.name + '" за участок ' + this.propInvoice.account.number;
-        }
-        else {
-            this.text = localStorage.getItem('requestPaymentText') === 'null' ? '' : localStorage.getItem('requestPaymentText');
-        }
+    propInvoice: {
+        type   : Object,
+        default: null,
     },
-    data () {
-        return {
-            loading: false,
+});
 
-            Url,
-            account: '',
-            email  : '',
-            phone  : '',
-            name   : '',
-            text   : '',
-            cost   : '',
+const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
 
-            files: [],
+const loading  = ref(false);
+const account  = ref('');
+const email    = ref('');
+const phone    = ref('');
+const name     = ref('');
+const text     = ref('');
+const cost     = ref('');
+const files    = ref([]);
+const success  = ref(null);
+const fileElem = ref(null);
+const consent  = ref(false);
 
-            success: null,
-        };
-    },
-    methods : {
-        sendForm () {
-            this.loading = true;
-            this.clearResponseErrors();
-            let form = new FormData();
-            form.append('email', this.email ? this.email : null);
-            form.append('phone', this.phone ? this.phone : null);
-            form.append('name', this.name ? this.name : null);
-            form.append('account', this.account ? this.account : null);
-            form.append('text', this.text ? this.text : null);
-            form.append('cost', this.cost ? this.cost : null);
-            form.append('invoice', this.propInvoice?.id ? this.propInvoice?.id : null);
+const { propUserName, storedRequestValue, resolveContactValue } = useRequestFormDefaults(props);
 
-            this.files.forEach((file, index) => {
-                form.append('file' + index, file);
-            });
+const filesSize = computed(() => {
+    let result = 0;
+    files.value.forEach(file => {
+        result += file.size;
+    });
+    return (result / (1024 * 1024)).toFixed(2);
+});
 
-            Url.RouteFunctions.paymentCreate({}, form).then(response => {
-                localStorage.removeItem('requestPaymentText');
-                this.success = true;
-                this.showSuccess('Платёж принят');
-                setTimeout(() => {
-                    location.reload();
-                }, 10000);
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            }).finally(() => {
-                this.loading = false;
-            });
-        },
-        chooseFiles () {
-            this.$refs.fileElem.click();
-        },
-        appendFiles (event) {
-            for (let i = 0; i < event.target.files.length; i++) {
-                if (!this.fileCountExceed) {
-                    this.files.push(event.target.files[i]);
-                }
-            }
-        },
-        removeFile (index) {
-            let result = [];
-            for (let i = 0; i < this.files.length; i++) {
-                if (i !== index) {
-                    result.push(this.files[i]);
-                }
-            }
-            this.files = result;
-        },
-    },
-    watch   : {
-        email () {
-            localStorage.setItem('requestEmail', this.email);
-        },
-        phone () {
-            localStorage.setItem('requestPhone', this.phone);
-        },
-        name () {
-            localStorage.setItem('requestName', this.name);
-        },
-        text () {
-            localStorage.setItem('requestPaymentText', this.text);
-        },
-        cost () {
-            localStorage.setItem('requestCost', this.cost);
-        },
-        account () {
-            localStorage.setItem('requestAccount', this.account);
-        },
-    },
-    computed: {
-        propUserName () {
-            if (!this.propUser?.email) {
-                return null;
-            }
-            return (this.propUser?.lastName + ' ' + this.propUser?.firstName + ' ' + this.propUser?.middleName).replace('null', '');
-        },
-        isSubmitDisable () {
-            return !this.files.length || !this.account || !this.cost || !this.text || this.loading || this.fileSizeExceed;
-        },
-        filesSize () {
-            let result = 0;
-            this.files.forEach(file => {
-                result += file.size;
-            });
-            return (result / (1024 * 1024)).toFixed(2);
-        },
-        fileSizeExceed () {
-            return this.filesSize > 20;
-        },
-        fileCountExceed () {
-            return this.files.length > 4;
-        },
-    },
-};
+const fileSizeExceed  = computed(() => filesSize.value > 20);
+const fileCountExceed = computed(() => files.value.length > 4);
+const isSubmitDisable = computed(() => !files.value.length || !account.value || !cost.value || !text.value || !consent.value || loading.value || fileSizeExceed.value);
+const privacyUrl      = routeUri('privacy');
+const consentUrl      = routeUri('personalDataConsent');
+
+account.value = props.propInvoice?.id
+    ? props.propInvoice?.account?.number ?? ''
+    : resolveContactValue(props.propAccount?.number, 'requestAccount');
+email.value   = resolveContactValue(props.propUser?.email, 'requestEmail');
+phone.value   = resolveContactValue(props.propUser?.phone, 'requestPhone');
+name.value    = propUserName.value ?? storedRequestValue('requestName');
+cost.value    = props.propInvoice?.delta ?? storedRequestValue('requestCost');
+text.value    = props.propInvoice?.id
+    ? 'Оплата по счёту №' + props.propInvoice.id + ' за период "' + (props.propInvoice.period?.name ?? '') + '" за участок ' + (props.propInvoice.account?.number ?? '')
+    : storedRequestValue('requestPaymentText');
+
+useRequestFormPersistence({
+    requestAccount    : account,
+    requestEmail      : email,
+    requestPhone      : phone,
+    requestName       : name,
+    requestPaymentText: text,
+    requestCost       : cost,
+});
+
+function sendForm () {
+    loading.value = true;
+    clearResponseErrors();
+    const form = new FormData();
+    form.append('email', email.value ? email.value : null);
+    form.append('phone', phone.value ? phone.value : null);
+    form.append('name', name.value ? name.value : null);
+    form.append('account', account.value ? account.value : null);
+    form.append('text', text.value ? text.value : null);
+    form.append('cost', cost.value ? cost.value : null);
+    form.append('invoice', props.propInvoice?.id ? props.propInvoice?.id : null);
+    form.append('consent', consent.value ? '1' : '');
+
+    files.value.forEach((file, index) => {
+        form.append('file' + index, file);
+    });
+
+    ApiPaymentCreate({}, form).then(() => {
+        localStorage.removeItem('requestPaymentText');
+        success.value = true;
+        showSuccess('Платёж принят');
+        setTimeout(() => {
+            location.reload();
+        }, 10000);
+    }).catch(response => {
+        parseResponseErrors(response);
+    }).finally(() => {
+        loading.value = false;
+    });
+}
+
+function chooseFiles () {
+    fileElem.value.click();
+}
+
+function appendFiles (event) {
+    for (let i = 0; i < event.target.files.length; i++) {
+        if (!fileCountExceed.value) {
+            files.value.push(event.target.files[i]);
+        }
+    }
+}
+
+function removeFile (index) {
+    files.value = files.value.filter((_, i) => i !== index);
+}
 </script>

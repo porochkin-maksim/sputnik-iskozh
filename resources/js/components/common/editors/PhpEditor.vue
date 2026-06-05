@@ -10,42 +10,35 @@
     </div>
 </template>
 
-<script>
+<script setup>
 /**
  * @see https://www.npmjs.com/package/codemirror-editor-vue3
  */
-import Codemirror from "codemirror-editor-vue3";
+import {
+    ref,
+    watch,
+}                 from 'vue';
+import Codemirror from 'codemirror-editor-vue3';
 
-// placeholder
-import "codemirror/addon/display/placeholder.js";
-// language
-import "codemirror/mode/php/php.js";
+import 'codemirror/addon/display/placeholder.js';
+import 'codemirror/mode/php/php.js';
 
-export default {
-    components: {
-        Codemirror,
-    },
-    props     : {
-        value: String,
-    },
-    data () {
-        return {
-            content: null,
-            cmOptions: {
-                mode: "text/html",
-            },
-        };
-    },
-    mounted () {
-        this.content = this.value;
-    },
-    created () {
-        this.content = this.value;
-    },
-    methods: {
-        onChange () {
-            this.$emit('update:value', this.content);
-        },
-    },
+const props = defineProps({
+    value: String,
+});
+
+const emit = defineEmits(['update:value']);
+
+const content   = ref(props.value ?? '');
+const cmOptions = {
+    mode: 'text/html',
+};
+
+watch(() => props.value, (value) => {
+    content.value = value ?? '';
+});
+
+const onChange = () => {
+    emit('update:value', content.value);
 };
 </script>

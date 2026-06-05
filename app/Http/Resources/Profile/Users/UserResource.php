@@ -3,12 +3,12 @@
 namespace App\Http\Resources\Profile\Users;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\User\Models\UserDTO;
+use Core\Domains\User\UserEntity;
 
 readonly class UserResource extends AbstractResource
 {
     public function __construct(
-        private UserDTO $user,
+        private UserEntity $user,
     )
     {
     }

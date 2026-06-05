@@ -1,22 +1,20 @@
-.side-menu {
-
-}
-
 .side-menu a {
     display         : block;
-    color           : #000;
+    color           : $color-secondary;
     text-decoration : none;
-    font-size       : 16px;
-    padding         : 5px 12px;
-    transition      : background-color 0.3s ease;
+    font-size       : 15px;
+    padding         : 0.55rem 0.85rem;
+    border-radius   : 0.5rem;
+    transition      : background-color 0.16s ease, color 0.16s ease;
     white-space     : nowrap;
 }
 
 .side-menu a:hover {
-    background-color : #f7f7f7;
+    background-color : rgba($default-primary, 0.05);
+    color            : $default-primary;
 }
 
 .side-menu .active-link {
-    background-color : $default-light;
+    background-color : rgba($default-primary, 0.09);
     color            : $default-primary;
 }

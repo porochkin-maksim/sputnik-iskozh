@@ -14,8 +14,11 @@
     </table>
 </template>
 
-<script>
-export default {
-    props: ['schedule'],
-};
+<script setup>
+defineProps({
+    schedule: {
+        type   : Array,
+        default: () => [],
+    },
+});
 </script>

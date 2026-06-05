@@ -3,8 +3,8 @@
 namespace Core\Domains\HelpDesk\Searchers;
 
 use App\Models\HelpDesk\Ticket;
-use Core\Db\Searcher\BaseSearcher;
-use Core\Db\Searcher\SearcherInterface;
+use Core\Repositories\BaseSearcher;
+use Core\Repositories\SearcherInterface;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 

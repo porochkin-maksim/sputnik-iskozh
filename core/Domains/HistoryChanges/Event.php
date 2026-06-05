@@ -1,0 +1,27 @@
+<?php declare(strict_types=1);
+
+namespace Core\Domains\HistoryChanges;
+
+use Core\Shared\Enums\EnumCommonTrait;
+
+enum Event: int
+{
+    use EnumCommonTrait;
+
+    case COMMON = 0;
+    case CREATE = 1;
+    case UPDATE = 2;
+    case DELETE = 3;
+    case AUTH   = 4;
+
+    public function name(): string
+    {
+        return match ($this) {
+            self::COMMON => '',
+            self::CREATE => 'Создание',
+            self::UPDATE => 'Обновление',
+            self::DELETE => 'Удаление',
+            self::AUTH   => 'Авторизация',
+        };
+    }
+}

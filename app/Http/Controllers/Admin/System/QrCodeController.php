@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\Infra\Uid\UidFacade;
 use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,7 +20,7 @@ class QrCodeController extends Controller
             abort(404);
         }
 
-        return view('admin.pages.qr-view', ['uid' => $uid]);
+        return view('pages.admin.system.qr-view', ['uid' => $uid]);
     }
 
     public function makeLoginLink(int $userId, string $pin): JsonResponse

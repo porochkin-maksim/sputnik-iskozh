@@ -1,45 +1,32 @@
 <template>
     <button class="btn py-0"
             @click="open">
-        <span :style="url ? '' : 'opacity: 0.2'">
+        <span :style="url ? '' : 'opacity: 0.2'" class="text-nowrap">
             <i class="fa fa-file-text text-warning"></i>&nbsp;История
         </span>
     </button>
 </template>
-<script>
-export default {
-    props: {
-        url: {
-            required: true,
-        },
+<script setup>
+const props = defineProps({
+    url: {
+        required: true,
     },
-    data () {
-        return {
-            modal: null,
-        };
-    },
-    methods: {
-        open () {
-            let options = [];
+});
 
-            // Calculate window dimensions
-            const screenWidth  = window.screen.width;
-            const screenHeight = window.screen.height;
-            const windowWidth  = Math.min(Math.max(screenWidth / 2, 1000), screenWidth);
-            const windowHeight = screenHeight;
-            const windowLeft   = (screenWidth - windowWidth) / 2;
-            const windowTop    = 0;
+const open = () => {
+    const screenWidth  = window.screen.width;
+    const screenHeight = window.screen.height;
+    const windowWidth  = Math.min(Math.max(screenWidth / 2, 1000), screenWidth);
+    const windowLeft   = (screenWidth - windowWidth) / 2;
+    const options      = [
+        `width=${windowWidth}`,
+        `height=${screenHeight}`,
+        `left=${windowLeft}`,
+        'top=0',
+        'scrollbars=yes',
+    ];
 
-            options.push(`width=${windowWidth}`);
-            options.push(`height=${windowHeight}`);
-            options.push(`left=${windowLeft}`);
-            options.push(`top=${windowTop}`);
-            options.push('scrollbars=yes');
-
-            let w = window.open(this.url, 'history', options.join(','));
-
-            w.focus();
-        },
-    },
+    const openedWindow = window.open(props.url, 'history', options.join(','));
+    openedWindow?.focus();
 };
 </script>

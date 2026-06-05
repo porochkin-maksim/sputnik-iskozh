@@ -2,8 +2,7 @@
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AbstractModel;
 
 /**
  *
@@ -11,9 +10,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int    $type
  * @property int    $reference_id
  */
-class Uid extends Model implements CastsInterface
+class Uid extends AbstractModel
 {
-    public const TABLE = 'uids';
+    public const string TABLE = 'uids';
 
     protected $table = self::TABLE;
 
@@ -21,9 +20,9 @@ class Uid extends Model implements CastsInterface
     public    $incrementing = false;
     public    $timestamps   = false;
 
-    public const ID           = 'id';
-    public const TYPE         = 'type';
-    public const REFERENCE_ID = 'reference_id';
+    public const string ID           = 'id';
+    public const string TYPE         = 'type';
+    public const string REFERENCE_ID = 'reference_id';
 
     protected $guarded = [];
 }

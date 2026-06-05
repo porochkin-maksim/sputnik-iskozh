@@ -27,10 +27,10 @@ use Illuminate\Support\Facades\App;
             accurateTrackBounce: true,
         });
     </script>
-    <noscript>
-        <div><img src="https://mc.yandex.ru/watch/97578808"
-                  style="position:absolute; left:-9999px;"
-                  alt="" /></div>
-    </noscript>
+            <noscript>
+                <div><img src="https://mc.yandex.ru/watch/97578808"
+                          class="visually-hidden"
+                          alt="" /></div>
+            </noscript>
     <!-- /Yandex.Metrika counter -->
 @endif

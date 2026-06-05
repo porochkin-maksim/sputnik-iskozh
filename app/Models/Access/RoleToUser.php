@@ -4,8 +4,8 @@ namespace App\Models\Access;
 
 abstract class RoleToUser
 {
-    public const TABLE = 'roles_to_users';
+    public const string TABLE = 'roles_to_users';
 
-    public const ROLE = 'role';
-    public const USER = 'user';
+    public const string ROLE = 'role';
+    public const string USER = 'user';
 }

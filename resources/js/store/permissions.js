@@ -1,5 +1,5 @@
 // store/permissions.js
-export default {
+export const permissions = {
     namespaced: true,
     state     : () => ({
         permissions: {},
@@ -20,3 +20,5 @@ export default {
         },
     },
 };
+
+export default permissions;

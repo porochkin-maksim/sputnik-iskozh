@@ -23,7 +23,7 @@ $vertical-menu-dark-active-bg         : rgba(255, 255, 255, .03) !default;
 .vertical-menu {
     .nav-link {
         &.active {
-            background-color : #00b596 !important;
+            background-color : $default-primary !important;
         }
     }
 

@@ -4,7 +4,7 @@ namespace Core\Domains\Infra\Comparator\DTO;
 
 use IteratorAggregate;
 
-class ArrayDifference extends Difference implements IteratorAggregate, \Countable
+class ArrayDifference extends Difference implements \Countable, IteratorAggregate
 {
     /** @var DifferenceInterface[] */
     protected array $diffs = [];
@@ -15,7 +15,7 @@ class ArrayDifference extends Difference implements IteratorAggregate, \Countabl
     }
 
     /**
-     * @param DifferenceInterface[] $diffs
+     * @param  DifferenceInterface[]  $diffs
      */
     public function addArray(array $diffs): void
     {
@@ -27,9 +27,9 @@ class ArrayDifference extends Difference implements IteratorAggregate, \Countabl
     /**
      * @return DifferenceInterface[]
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
-        return $this->diffs;
+        return new \ArrayIterator($this->diffs);
     }
 
     public function count(): int

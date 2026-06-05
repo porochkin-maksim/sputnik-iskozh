@@ -1,5 +1,5 @@
 <template>
-    <div :class="['text-center', wrapperClass]" :style="wrapperStyle">
+    <div :class="['loading-spinner', 'text-center', wrapperClass]" :style="wrapperStyle">
         <div
             class="spinner-border"
             :class="[colorClass, sizeClass]"
@@ -16,50 +16,41 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-    // Размер спиннера
     size: {
         type     : String,
-        default  : 'md', // sm, md, lg
+        default  : 'md',
         validator: (value) => ['sm', 'md', 'lg'].includes(value),
     },
-    // Цвет спиннера
     color: {
         type   : String,
-        default: 'primary', // primary, secondary, success, danger, warning, info, light, dark
+        default: 'primary',
     },
-    // Текст под спиннером
     text: {
         type   : String,
         default: 'Загрузка...',
     },
-    // Показывать ли текст
     showText: {
         type   : Boolean,
         default: true,
     },
-    // Дополнительные CSS классы для контейнера
     wrapperClass: {
         type   : String,
-        default: 'py-5',
+        default: 'py-4',
     },
-    // Стили для контейнера
     wrapperStyle: {
         type   : [Object, String],
         default: () => ({}),
     },
-    // Стили для спиннера
     spinnerStyle: {
         type   : [Object, String],
         default: () => ({}),
     },
-    // Класс для текста
     textClass: {
         type   : String,
         default: 'text-muted',
     },
 });
 
-// Размеры спиннера
 const sizeClass = computed(() => {
     const sizes = {
         sm: 'spinner-border-sm',
@@ -69,6 +60,5 @@ const sizeClass = computed(() => {
     return sizes[props.size] || '';
 });
 
-// Цвет спиннера (Bootstrap)
 const colorClass = computed(() => `text-${props.color}`);
 </script>

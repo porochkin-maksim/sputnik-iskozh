@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk\Responses;
 
-use Core\Db\Searcher\Models\BaseSearchResponse;
+use Core\Repositories\BaseSearchResponse;
 use Core\Domains\HelpDesk\Collection\TicketServiceCollection;
 
 /**

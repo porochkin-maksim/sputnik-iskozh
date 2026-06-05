@@ -2,7 +2,7 @@
     <div v-if="loaded && (!periods || !periods.length)">
         <div class="alert alert-warning">
             <p><i class="fa fa-warning"></i> Не найдено ни одного периода</p>
-            <a :href="Url.Routes.adminPeriodIndex.uri">
+            <a :href="periodIndexUrl">
                 Создайте период
             </a>
         </div>
@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center justify-content-between mb-2">
             <div class="d-flex">
                 <button class="btn btn-success me-2"
-                        v-if="actions.edit"
+                        v-if="canEdit"
                         @click="showCreateDialog">Добавить услугу
                 </button>
             </div>
@@ -20,58 +20,47 @@
                 :url="historyUrl" />
         </div>
         <div>
-            <div v-for="period in periodsInfo.periods" :key="period.id">
+            <div v-for="period in periodsInfo" :key="period.id">
                 <div class="mb-2">
-                    <b>Период «{{ period.name }}»</b> <span class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
+                    <b>Период «{{ period.name }}»</b> <span
+                    class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
                 </div>
-                <table class="table table-sm">
+                <table class="table table-sm admin-table-firm">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th class="table-thin-column">ID</th>
                         <th>Название</th>
                         <th>Тариф</th>
                         <th>Тип</th>
-                        <th class="text-center">Действия</th>
+                        <th class="text-center table-thin-column">Действия</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(service, index) in services.filter(s => s.periodId && period.id && parseInt(s.periodId) === parseInt(period.id))"
+                    <tr v-for="service in services.filter(s => s.periodId && period.id && parseInt(s.periodId) === parseInt(period.id))"
                         :key="service.id">
-                        <td>{{ service.id }}</td>
+                        <td class="table-thin-column text-center">{{ service.id }}</td>
                         <td>{{ service.name }}</td>
                         <td>{{ formatMoney(service.cost) }}</td>
                         <td>{{ service.typeName }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center">
+                        <td class="table-thin-column">
+                            <div class="d-flex justify-content-center gap-1 flex-nowrap">
+                                <button
+                                    v-if="canEdit && service.actions?.edit"
+                                    class="btn btn-sm btn-outline-success admin-action-btn"
+                                    @click="showEditDialog(service)"
+                                >
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button
+                                    v-if="canDrop && service.actions?.drop"
+                                    class="btn btn-sm btn-outline-danger admin-action-btn"
+                                    @click="deleteAction(service)"
+                                >
+                                    <i class="fa fa-trash"></i>
+                                </button>
                                 <history-btn
                                     class="btn-link underline-none"
                                     :url="service.historyUrl" />
-                                <div class="dropdown">
-                                    <a class="btn btn-sm btn-light border"
-                                       href="#"
-                                       role="button"
-                                       :id="'dropDown'+index+vueId"
-                                       data-bs-toggle="dropdown"
-                                       :class="{'disabled opacity-0': !(service.actions.edit || service.actions.drop)}"
-                                       aria-expanded="false">
-                                        <i class="fa fa-bars"></i>
-                                    </a>
-                                    <ul class="dropdown-menu"
-                                        :aria-labelledby="'dropDown'+index+vueId">
-                                        <li v-if="actions.edit">
-                                            <a class="dropdown-item cursor-pointer"
-                                               @click="showEditDialog(service)">
-                                                <i class="fa fa-edit"></i> Редактировать
-                                            </a>
-                                        </li>
-                                        <li v-if="actions.drop">
-                                            <a class="dropdown-item cursor-pointer text-danger"
-                                               @click="deleteAction(service)">
-                                                <i class="fa fa-trash"></i> Удалить
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </td>
                     </tr>
@@ -92,26 +81,24 @@
 <script setup>
 import {
     ref,
+    computed,
     onMounted,
-    defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
+import { usePermissions }   from '@composables/usePermissions.js';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
+import HistoryBtn           from '@common/HistoryBtn.vue';
 import ServiceEditDialog    from './ServiceEditDialog.vue';
 import {
     ApiAdminServiceList,
     ApiAdminServiceCreate,
     ApiAdminServiceDelete,
 }                           from '@api';
-import Url                  from '@utils/Url.js';
-
-defineOptions({
-    name: 'ServicesBlock',
-});
+import { routeUri }         from '@utils/routeUri.js';
 
 const { parseResponseErrors, showInfo } = useResponseError();
 const { formatMoney, formatDate }       = useFormat();
+const { has }                           = usePermissions();
 
 const services        = ref([]);
 const periods         = ref([]);
@@ -119,16 +106,16 @@ const periodsInfo     = ref([]);
 const types           = ref([]);
 const historyUrl      = ref(null);
 const loaded          = ref(false);
-const actions         = ref({});
 const selectedService = ref(null);
 const showDialog      = ref(false);
-const vueId           = ref('uuid-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
+const periodIndexUrl  = routeUri('adminPeriodIndex');
+const canEdit         = computed(() => has('services', 'edit'));
+const canDrop         = computed(() => has('services', 'drop'));
 
 const listAction = async () => {
     try {
         const response    = await ApiAdminServiceList();
         services.value    = response.data.services || [];
-        actions.value     = response.data.actions;
         types.value       = response.data.types;
         periods.value     = response.data.periods;
         periodsInfo.value = response.data.periodsInfo;
@@ -154,7 +141,7 @@ const showCreateDialog = async () => {
 };
 
 const showEditDialog = (service) => {
-    if (!actions.value.edit) {
+    if (!canEdit.value) {
         return;
     }
     selectedService.value = service;

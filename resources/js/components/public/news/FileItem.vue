@@ -102,197 +102,184 @@
     </div>
 </template>
 
-<script>
-import Url           from '../../../utils/Url.js';
-import CustomInput   from '../../common/form/CustomInput.vue';
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import {
+    computed,
+    ref,
+    watch,
+}                           from 'vue';
+import CustomInput          from '@common/form/CustomInput.vue';
+import {
+    ApiFilesDown,
+    ApiFilesReplace,
+    ApiFilesUp,
+    ApiNewsFileSave,
+    ApiNewsFileDelete,
+}                           from '@api';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    name      : 'FileItem',
-    components: {
-        CustomInput,
+const emit  = defineEmits(['updated']);
+const props = defineProps({
+    file       : {
+        type    : Object,
+        required: true,
     },
-    mixins    : [ResponseError],
-    props     : {
-        file       : {
-            type    : Object,
-            required: true,
-        },
-        edit       : {
-            type   : Boolean,
-            default: false,
-        },
-        index      : {
-            type   : Number,
-            default: null,
-        },
-        useUpSort  : {
-            type   : Boolean,
-            default: false,
-        },
-        useDownSort: {
-            type   : Boolean,
-            default: false,
-        },
+    edit       : {
+        type   : Boolean,
+        default: false,
     },
-    emits     : ['updated'],
-    data () {
-        return {
-            modeEdit: false,
-            loading : false,
-            baseName: '',
-        };
+    index      : {
+        type   : Number,
+        default: null,
     },
-    computed: {
-        // Иконка в зависимости от типа файла
-        fileIcon () {
-            if (this.file.isImage) {
-                return 'fa-file-image-o';
-            }
-            const ext = this.file.ext?.toLowerCase();
-            if (ext === 'pdf') {
-                return 'fa-file-pdf-o';
-            }
-            if (['doc', 'docx'].includes(ext)) {
-                return 'fa-file-word-o';
-            }
-            if (['xls', 'xlsx'].includes(ext)) {
-                return 'fa-file-excel-o';
-            }
-            if (['zip', 'rar', '7z'].includes(ext)) {
-                return 'fa-file-archive-o';
-            }
-            return 'fa-file-o';
-        },
-        // Показывать ли кнопки сортировки
-        showUpDownButtons () {
-            return this.useUpSort || this.useDownSort;
-        },
+    useUpSort  : {
+        type   : Boolean,
+        default: false,
     },
-    watch   : {
-        // При изменении файла (например, после перезагрузки списка) обновляем базовое имя
-        file: {
-            handler (newFile) {
-                this.baseName = this.getBaseName(newFile.name);
-            },
-            deep     : true,
-            immediate: true,
-        },
+    useDownSort: {
+        type   : Boolean,
+        default: false,
     },
-    methods : {
-        // Получить имя файла без расширения
-        getBaseName (fullName) {
-            return fullName.replace(`.${this.file.ext}`, '');
-        },
-        enterEdit () {
-            this.modeEdit = true;
-        },
-        cancelEdit () {
-            this.modeEdit = false;
-            this.baseName = this.getBaseName(this.file.name); // сброс к исходному
-            this.clearError('name');
-        },
-        async save () {
-            this.loading = true;
-            try {
-                await window.axios[Url.Routes.newsFileSave.method](Url.Routes.newsFileSave.uri, {
-                    id  : this.file.id,
-                    name: this.baseName + '.' + this.file.ext,
-                });
-                this.showSuccess('Файл сохранён');
-                this.$emit('updated', true);
-                this.modeEdit = false;
-            }
-            catch (err) {
-                this.parseResponseErrors(err);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
-        triggerFileUpload () {
-            this.$refs.fileInput?.click();
-        },
-        async uploadReplacedFile (event) {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
+});
 
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('id', this.file.id);
+const { errors, clearError, parseResponseErrors, showSuccess } = useResponseError();
+const modeEdit                                                 = ref(false);
+const loading                                                  = ref(false);
+const baseName                                                 = ref('');
+const fileInput                                                = ref(null);
 
-            this.loading = true;
-            try {
-                await window.axios[Url.Routes.filesReplace.method](
-                    Url.Routes.filesReplace.uri,
-                    formData,
-                );
-                this.showSuccess('Файл заменён');
-                this.$emit('updated', true);
-                // Очищаем input, чтобы можно было выбрать тот же файл повторно
-                this.$refs.fileInput.value = '';
-            }
-            catch (err) {
-                this.parseResponseErrors(err);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
-        async deleteFile () {
-            if (!confirm('Удалить файл?')) {
-                return;
-            }
+const fileIcon = computed(() => {
+    if (props.file.isImage) {
+        return 'fa-file-image-o';
+    }
+    const ext = props.file.ext?.toLowerCase();
+    if (ext === 'pdf') {
+        return 'fa-file-pdf-o';
+    }
+    if (['doc', 'docx'].includes(ext)) {
+        return 'fa-file-word-o';
+    }
+    if (['xls', 'xlsx'].includes(ext)) {
+        return 'fa-file-excel-o';
+    }
+    if (['zip', 'rar', '7z'].includes(ext)) {
+        return 'fa-file-archive-o';
+    }
+    return 'fa-file-o';
+});
 
-            const uri = Url.Generator.makeUri(Url.Routes.newsFileDelete, {
-                id: this.file.id,
-            });
+const showUpDownButtons = computed(() => props.useUpSort || props.useDownSort);
 
-            this.loading = true;
-            try {
-                await window.axios[Url.Routes.newsFileDelete.method](uri);
-                this.showSuccess('Файл удалён');
-                this.$emit('updated', true);
-            }
-            catch (err) {
-                this.parseResponseErrors(err);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
-        async sortUp (index) {
-            const uri    = Url.Generator.makeUri(Url.Routes.filesUp, { id: this.file.id });
-            this.loading = true;
-            try {
-                await window.axios[Url.Routes.filesUp.method](uri, { index });
-                this.showSuccess('Порядок изменён');
-                this.$emit('updated', true);
-            }
-            catch (err) {
-                this.parseResponseErrors(err);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
-        async sortDown (index) {
-            const uri    = Url.Generator.makeUri(Url.Routes.filesDown, { id: this.file.id });
-            this.loading = true;
-            try {
-                await window.axios[Url.Routes.filesDown.method](uri, { index });
-                this.showSuccess('Порядок изменён');
-                this.$emit('updated', true);
-            }
-            catch (err) {
-                this.parseResponseErrors(err);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
-    },
+const getBaseName = (fullName) => fullName.replace(`.${props.file.ext}`, '');
+
+watch(() => props.file, (newFile) => {
+    baseName.value = getBaseName(newFile.name);
+}, { deep: true, immediate: true });
+
+const enterEdit = () => {
+    modeEdit.value = true;
+};
+
+const cancelEdit = () => {
+    modeEdit.value = false;
+    baseName.value = getBaseName(props.file.name);
+    clearError('name');
+};
+
+const save = async () => {
+    loading.value = true;
+    try {
+        await ApiNewsFileSave({}, {
+            id  : props.file.id,
+            name: `${baseName.value}.${props.file.ext}`,
+        });
+        showSuccess('Файл сохранён');
+        emit('updated', true);
+        modeEdit.value = false;
+    }
+    catch (err) {
+        parseResponseErrors(err);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const triggerFileUpload = () => {
+    fileInput.value?.click();
+};
+
+const uploadReplacedFile = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('id', props.file.id);
+
+    loading.value = true;
+    try {
+        await ApiFilesReplace({}, formData);
+        showSuccess('Файл заменён');
+        emit('updated', true);
+        fileInput.value.value = '';
+    }
+    catch (err) {
+        parseResponseErrors(err);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const deleteFile = async () => {
+    if (!confirm('Удалить файл?')) {
+        return;
+    }
+
+    loading.value = true;
+    try {
+        await ApiNewsFileDelete(props.file.id);
+        showSuccess('Файл удалён');
+        emit('updated', true);
+    }
+    catch (err) {
+        parseResponseErrors(err);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const sortUp = async (index) => {
+    loading.value = true;
+    try {
+        await ApiFilesUp(props.file.id, {}, { index });
+        showSuccess('Порядок изменён');
+        emit('updated', true);
+    }
+    catch (err) {
+        parseResponseErrors(err);
+    }
+    finally {
+        loading.value = false;
+    }
+};
+
+const sortDown = async (index) => {
+    loading.value = true;
+    try {
+        await ApiFilesDown(props.file.id, {}, { index });
+        showSuccess('Порядок изменён');
+        emit('updated', true);
+    }
+    catch (err) {
+        parseResponseErrors(err);
+    }
+    finally {
+        loading.value = false;
+    }
 };
 </script>

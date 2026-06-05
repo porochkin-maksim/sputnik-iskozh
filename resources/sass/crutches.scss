@@ -1,3 +1,7 @@
+body.modal-open {
+    padding-right : 0 !important;
+}
+
 .form-floating > .form-control:focus ~ label::after,
 .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
 .form-floating > .form-control-plaintext ~ label::after,
@@ -12,8 +16,4 @@
     bottom     : 0.8em;
     font-size  : 0.85em;
     color      : #6c757d; /* стандартный цвет плейсхолдера */
-}
-
-body.modal-open {
-    padding-right : 0 !important;
 }

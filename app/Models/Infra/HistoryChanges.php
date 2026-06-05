@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -20,20 +19,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int     $reference_id
  * @property array   $description
  */
-class HistoryChanges extends Model implements CastsInterface
+class HistoryChanges extends AbstractModel
 {
-    public const TABLE = 'history_changes';
+    public const string TABLE = 'history_changes';
 
     protected $table = self::TABLE;
 
-    public const ID             = 'id';
-    public const TYPE           = 'type';
-    public const REFERENCE_TYPE = 'reference_type';
-    public const USER_ID        = 'user_id';
-    public const PRIMARY_ID     = 'primary_id';
-    public const REFERENCE_ID   = 'reference_id';
-    public const DESCRIPTION    = 'description';
-    public const USER           = 'user';
+    public const string ID             = 'id';
+    public const string TYPE           = 'type';
+    public const string REFERENCE_TYPE = 'reference_type';
+    public const string USER_ID        = 'user_id';
+    public const string PRIMARY_ID     = 'primary_id';
+    public const string REFERENCE_ID   = 'reference_id';
+    public const string DESCRIPTION    = 'description';
+    public const string USER           = 'user';
 
     protected $guarded = [];
 

@@ -23,7 +23,7 @@
                             <restore v-else-if="isRestore" />
 
                             <div v-if="isRestore"
-                                 class="d-flex justify-content-center align-items-center text-dark-emphasis mt-3"
+                                 class="d-flex justify-content-center align-items-center text-dark-emphasis auth-form-stack"
                                  @click="state = STATES.LOGIN">
                                 <span>У вас уже есть аккаунт?</span>
                                 <button class="btn btn-link">Войти</button>
@@ -40,16 +40,11 @@
 import {
     ref,
     computed,
-    defineOptions,
 }                   from 'vue';
 import { useStore } from 'vuex';
 import Login        from './Login.vue';
 import Restore      from './Restore.vue';
-import ViewDialog   from '../../common/ViewDialog.vue';
-
-defineOptions({
-    name: 'AuthBlock',
-});
+import ViewDialog   from '@common/ViewDialog.vue';
 
 const props = defineProps({
     hasModal: {

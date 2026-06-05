@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 
 abstract class env
 {
@@ -19,13 +18,7 @@ abstract class env
 
     public static function host(): string
     {
-        return Str::remove(
-            sprintf(':%s', self::appPort()),
-            Str::remove(
-                sprintf(':%s', self::port()),
-                self::fullHost(),
-            ),
-        );
+        return str_replace([sprintf(':%s', self::port()), sprintf(':%s', self::appPort())], '', self::fullHost());
     }
 
     public static function fullHost(): string

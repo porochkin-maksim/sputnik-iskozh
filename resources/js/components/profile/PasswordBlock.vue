@@ -1,21 +1,24 @@
 <template>
-    <div class="card">
-        <div class="card-body d-flex justify-content-between align-items-center cursor-pointer"
-             @click="togglePasswordBlock"
-             :class="showPasswordBlock ? '' : 'border-bottom-0'">
-            <a class="">
+    <div class="profile-password-card overflow-hidden">
+        <button
+            class="profile-password-card__head d-flex justify-content-between align-items-center cursor-pointer profile-password-toggle"
+            type="button"
+            @click="togglePasswordBlock">
+            <div class="profile-password-toggle__title">
                 Смена пароля
-            </a>
-            <button class="btn py-0 btn-sm">
+            </div>
+            <span class="btn btn-sm btn-outline-success profile-password-toggle__btn">
                 <i class="fa fa-chevron-down"
                    v-if="showPasswordBlock"></i>
                 <i class="fa fa-chevron-left"
                    v-else></i>
-            </button>
-        </div>
-        <div class="card-body pb-0"
+            </span>
+        </button>
+        <div class="profile-password-card__body"
              v-if="showPasswordBlock">
-            <profile-password :user="user" />
+            <profile-password :user="user"
+                              @update:password="showPasswordBlock=false"
+            />
         </div>
     </div>
 </template>

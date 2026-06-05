@@ -3,15 +3,17 @@
 namespace App\Http\Resources\Admin\HelpDesk;
 
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Admin\Accounts\AccountResource;
+use App\Http\Resources\Admin\AccountResource;
 use App\Http\Resources\Admin\Users\UserResource;
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Resources\RouteNames;
+use App\Http\Resources\Shared\Files\FileResource;
+use App\Http\Resources\Shared\ResourseList;
+use App\Resources\RouteNames;
+use Core\Domains\HelpDesk\Models\TicketEntity;
 
 readonly class TicketResource extends AbstractResource
 {
     public function __construct(
-        private TicketDTO $ticket,
+        private TicketEntity $ticket,
     )
     {
     }
@@ -48,13 +50,8 @@ readonly class TicketResource extends AbstractResource
             'viewUrl' => route(RouteNames::ADMIN_HELP_DESK . '.tickets.view', $this->ticket->getId()),
         ];
 
-        if ($this->ticket->getFiles()) {
-            $result['files'] = $this->ticket->getFiles();
-        }
-
-        if ($this->ticket->getResultFiles()) {
-            $result['result_files'] = $this->ticket->getResultFiles();
-        }
+        $result['files']        = $this->ticket->getFiles() ? new ResourseList($this->ticket->getFiles(), FileResource::class) : [];
+        $result['result_files'] = $this->ticket->getResultFiles() ? new ResourseList($this->ticket->getResultFiles(), FileResource::class) : [];
 
         return $result;
     }

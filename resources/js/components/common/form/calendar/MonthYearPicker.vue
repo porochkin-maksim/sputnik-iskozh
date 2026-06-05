@@ -14,7 +14,8 @@
                     :value="idx">{{ m }}
             </option>
         </select>
-        <button class="btn btn-sm btn-outline-success"
+        <button type="button"
+                class="btn btn-sm btn-outline-success"
                 @click="apply">OK
         </button>
     </div>
@@ -22,23 +23,30 @@
 
 <script setup>
 import {
+    computed,
     ref,
     watch,
 } from 'vue';
 
 const props = defineProps({
-    year : Number,
-    month: Number,
+    year : {
+        type    : Number,
+        required: true,
+    },
+    month: {
+        type    : Number,
+        required: true,
+    },
 });
 
 const emit = defineEmits(['apply']);
 
-const yearsRange = ref([]);
-const months     = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-// Генерируем диапазон лет
-const currentYear = new Date().getFullYear();
-yearsRange.value  = Array.from({ length: 111 }, (_, i) => currentYear - 100 + i);
+const yearsRange = computed(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 201 }, (_, index) => currentYear - 100 + index);
+});
 
 const localYear  = ref(props.year);
 const localMonth = ref(props.month);
@@ -46,7 +54,7 @@ const localMonth = ref(props.month);
 watch(() => [props.year, props.month], ([y, m]) => {
     localYear.value  = y;
     localMonth.value = m;
-});
+}, { immediate: true });
 
 const apply = () => {
     emit('apply', { year: localYear.value, month: localMonth.value });

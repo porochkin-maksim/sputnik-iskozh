@@ -81,10 +81,9 @@ import {
     watch,
     defineProps,
     defineEmits,
-    defineOptions,
 }                             from 'vue';
 import { useResponseError }   from '@composables/useResponseError';
-import ViewDialog             from '../../common/ViewDialog.vue';
+import ViewDialog             from '@common/ViewDialog.vue';
 import CustomInput            from '@common/form/CustomInput.vue';
 import CustomCheckbox         from '@common/form/CustomCheckbox.vue';
 import CustomCalendar         from '@common/form/CustomCalendar.vue';

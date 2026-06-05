@@ -1,29 +1,27 @@
 <?php declare(strict_types=1);
 
+use App\Services\Images\StaticFileLocator;
 use Carbon\Carbon;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Period\Models\PeriodDTO;
-use Core\Domains\Billing\Service\Collections\ServiceCollection;
-use Core\Domains\Option\Enums\OptionEnum;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Period\PeriodEntity;
+use Core\Domains\Billing\Service\ServiceCollection;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
-use Core\Domains\Option\OptionLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Services\Images\StaticFileLocator;
+use Core\Domains\Option\Models\DataDTO\ChairmanInfo;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 /**
- * @var null|InvoiceDTO        $invoice
- * @var null|PeriodDTO         $period
+ * @var null|InvoiceEntity     $invoice
+ * @var null|PeriodEntity      $period
  * @var null|ServiceCollection $services
  * @var SntAccounting          $sntAccounting
+ * @var ChairmanInfo           $chairmanInfo
  */
 $invoice  = $invoice ?? null;
-$period   = $period ?? $invoice->getPeriod(true);
+$period   = $period ?? $invoice->getPeriod();
 $services = $services ?? new ServiceCollection();
 
-$account = $invoice?->getAccount(true);
-$claims  = $invoice?->getClaims(true)?->sortByServiceTypes();
-
-$sntAccounting = OptionLocator::OptionService()->getByType(OptionEnum::SNT_ACCOUNTING)->getData();
+$account = $invoice?->getAccount();
+$claims  = $invoice?->getClaims()?->sortByServiceTypes();
 
 $blank = '_________';
 ?>
@@ -127,7 +125,7 @@ $blank = '_________';
         @if($claims)
             @foreach($claims as $claim)
                 <tr>
-                    <td>{{ $claim->getName() ?: $claim->getService(true)->getName() }}</td>
+                    <td>{{ $claim->getName() ?: $claim->getService()?->getName() }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getTariff(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getCost(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getPaid(), 2) }}</td>
@@ -189,7 +187,7 @@ $blank = '_________';
                 </div>
             </td>
             <td>
-                @include('exports.documents.signature', ['showSigns' => (bool) $invoice])
+                @include('exports.documents.signature', ['showSigns' => (bool) $invoice, 'chairmanInfo' => $chairmanInfo])
             </td>
         </tr>
     </table>

@@ -48,12 +48,12 @@ class SentEmailController extends Controller
             SentEmail::STATUS_FAILED,
         ];
 
-        return view('admin.emails.index', compact('emails', 'statuses'));
+        return view('pages.admin.system.emails-index', compact('emails', 'statuses'));
     }
 
     public function show(SentEmail $email)
     {
-        return view('admin.emails.show', compact('email'));
+        return view('pages.admin.system.emails-show', compact('email'));
     }
 
     public function destroy(SentEmail $email)

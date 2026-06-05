@@ -3,17 +3,16 @@
 namespace App\Http\Resources\Profile\Counters;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Account\Enums\AccountIdEnum;
-use Core\Domains\Counter\Models\CounterDTO;
-use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\Infra\Uid\UidTypeEnum;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
+use App\Http\Resources\Shared\Files\FileResource;
+use App\Resources\RouteNames;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Counter\CounterEntity;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 readonly class CounterResource extends AbstractResource
 {
     public function __construct(
-        private CounterDTO $counter,
+        private CounterEntity $counter,
     )
     {
     }
@@ -31,7 +30,7 @@ readonly class CounterResource extends AbstractResource
             'value'       => $lastHistory?->getValue(),
             'date'        => $lastHistory?->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'history'     => new CounterHistoryListResource($this->counter->getHistoryCollection()),
-            'passport'    => $this->counter->getPasportFile(),
+            'passport'    => $this->counter->getPasportFile() ? new FileResource($this->counter->getPasportFile()) : null,
             'expireAt'    => $this->counter->getExpireAt()?->format(DateTimeFormat::DATE_DEFAULT),
             'viewUrl'     => route(RouteNames::PROFILE_COUNTER_VIEW, [$this->counter->getUid()]),
         ];

@@ -1,0 +1,45 @@
+<?php declare(strict_types=1);
+
+namespace Core\Domains\Account;
+
+use App\Models\Account\Account;
+use Core\Repositories\BaseSearcher;
+use Core\Repositories\SearcherInterface;
+
+class AccountSearcher extends BaseSearcher
+{
+    public function __construct()
+    {
+        $this->select = [
+            Account::ID,
+            Account::NUMBER,
+            Account::SIZE,
+            Account::BALANCE,
+            Account::IS_VERIFIED,
+            Account::PRIMARY_USER_ID,
+            Account::IS_INVOICING,
+            Account::SORT_VALUE,
+        ];
+    }
+
+    public function setNumber(string $number): static
+    {
+        $this->addWhere(Account::NUMBER, SearcherInterface::EQUALS, $number);
+
+        return $this;
+    }
+
+    public function setWithoutSntAccount(): static
+    {
+        $this->addWhere(Account::ID, SearcherInterface::IS_NOT, AccountIdEnum::SNT->value);
+
+        return $this;
+    }
+
+    public function setWithUsers(): static
+    {
+        $this->with[] = Account::RELATION_USERS;
+
+        return $this;
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Core\Exceptions\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use lc;
@@ -28,29 +29,89 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             $this->logError($e);
         });
+
+        $this->renderable(function (ValidationException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['errors' => $e->errors], 422);
+            }
+
+            // Для обычных запросов можно редиректить назад с ошибками, как делает Laravel
+            return redirect()->back()->withErrors($e->errors);
+        });
+
     }
 
     protected function logError(Throwable $e): void
     {
+        $request = request();
+
         $context = [
-            'timestamp' => now()->toDateTimeString(),
-            'userId'    => lc::user()->getId(),
-            'userName'  => lc::userDecorator()->getFullName(),
-            'url'       => request()?->fullUrl(),
-            'method'    => request()?->method(),
-            'input'     => request()?->all(),
-            'headers'   => request()->headers->all(),
-            'trace'     => $e->getTraceAsString(),
-            'file'      => $e->getFile(),
-            'line'      => $e->getLine(),
-            'code'      => $e->getCode(),
-            'previous'  => $e->getPrevious() ? [
-                'message' => $e->getPrevious()?->getMessage(),
-                'file'    => $e->getPrevious()?->getFile(),
-                'line'    => $e->getPrevious()?->getLine(),
-            ] : null,
+            'timestamp'     => now()->toDateTimeString(),
+            'exceptionType' => get_class($e),
+            'userId'        => lc::user()->getId(),
+            'userName'      => lc::userDecorator()->getFullName(),
+            'url'           => $request?->fullUrl(),
+            'method'        => $request?->method(),
+            'routeName'     => $request?->route()?->getName(),
+            'trace'         => $this->normalizeTrace($e),
+            'file'          => $e->getFile(),
+            'line'          => $e->getLine(),
+            'code'          => $e->getCode(),
+            'previous'      => $e->getPrevious() ? $this->normalizeException($e->getPrevious()) : null,
         ];
 
         Log::channel('errors')->error($e->getMessage(), $context);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function normalizeTrace(Throwable $e): array
+    {
+        return array_values(array_filter(array_map(
+            fn (array $frame): ?array => $this->normalizeTraceFrame($frame),
+            $e->getTrace(),
+        )));
+    }
+
+    /**
+     * @param array<string, mixed> $frame
+     * @return array<string, mixed>|null
+     */
+    protected function normalizeTraceFrame(array $frame): ?array
+    {
+        $file = $frame['file'] ?? null;
+        if ( ! is_string($file)) {
+            return null;
+        }
+
+        if ( ! $this->isProjectFile($file)) {
+            return null;
+        }
+
+        return [
+            'file'     => $file,
+            'line'     => $frame['line'] ?? null,
+            'class'    => $frame['class'] ?? null,
+            'type'     => $frame['type'] ?? null,
+            'function' => $frame['function'] ?? null,
+        ];
+    }
+
+    protected function normalizeException(Throwable $e): array
+    {
+        return [
+            'message' => $e->getMessage(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+            'trace'   => $this->normalizeTrace($e),
+        ];
+    }
+
+    protected function isProjectFile(string $file): bool
+    {
+        return str_starts_with($file, base_path('app'))
+            || str_starts_with($file, base_path('core'))
+            || str_starts_with($file, base_path('bootstrap'));
     }
 }

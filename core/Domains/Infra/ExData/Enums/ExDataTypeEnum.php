@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Infra\ExData\Enums;
 
-use Core\Enums\EnumCommonTrait;
+use Core\Shared\Enums\EnumCommonTrait;
 
 /**
  * @method static tryFrom(int|string|null $value): ?static

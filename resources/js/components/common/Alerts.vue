@@ -1,21 +1,5 @@
 <template>
     <div
-        v-if="!disableErrorsPopup && errors.length"
-        class="error-container"
-        role="alert"
-        aria-live="assertive"
-    >
-        <ul class="error-list cursor-pointer"
-            @click="removeErrors">
-            <li v-for="error in errors"
-                :key="error.id"
-                class="error-item">
-                <span class="error-text">{{ error.text }}</span>
-            </li>
-        </ul>
-    </div>
-
-    <div
         v-if="messages.length"
         class="notification-container"
         role="status"
@@ -30,7 +14,7 @@
                 @click="removeMessage(msg.id)"
             >
                 <div class="message-icon" :class="'bg-' + msg.type">
-                    <i class="fa fa-info-circle"></i>
+                    <i class="fa" :class="iconByType(msg.type)"></i>
                 </div>
                 <div class="message-text">{{ msg.text }}</div>
             </div>
@@ -43,33 +27,32 @@ import {
     computed,
     watch,
     onBeforeUnmount,
-    defineOptions,
 }                   from 'vue';
 import { useStore } from 'vuex';
-
-defineOptions({
-    name: 'AlertsBlock',
-});
-
-const props = defineProps({
-    disableErrorsPopup: {
-        type   : Boolean,
-        default: false,
-    },
-});
 
 const store = useStore();
 
 const allMessages = computed(() => store.getters['alerts/allMessages'] || []);
-const allErrors   = computed(() => store.getters['alerts/allErrors'] || []);
 
 const removeMessage = (id) => store.dispatch('alerts/removeMessage', id);
-const removeErrors  = () => store.dispatch('alerts/removeErrors');
+
+const iconByType = (type) => {
+    if (type === 'success') {
+        return 'fa-check-circle';
+    }
+    if (type === 'warning') {
+        return 'fa-exclamation-triangle';
+    }
+    if (type === 'danger') {
+        return 'fa-times-circle';
+    }
+
+    return 'fa-info-circle';
+};
 
 const timeouts = new Map();
 
 const messages = computed(() => allMessages.value.slice().reverse());
-const errors   = computed(() => allErrors.value);
 
 // Автоматическое скрытие
 watch(messages, (newMessages, oldMessages) => {
@@ -102,17 +85,3 @@ onBeforeUnmount(() => {
     timeouts.clear();
 });
 </script>
-
-<style scoped>
-/* Анимация для уведомлений (остаётся локальной) */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-    transition : all 0.3s ease;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    opacity   : 0;
-    transform : translateX(30px);
-}
-</style>

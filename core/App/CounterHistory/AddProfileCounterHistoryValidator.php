@@ -1,0 +1,29 @@
+<?php declare(strict_types=1);
+
+namespace Core\App\CounterHistory;
+
+use Core\Exceptions\ValidationException;
+
+class AddProfileCounterHistoryValidator
+{
+    public function validate(?int $counterId, mixed $value, mixed $file): void
+    {
+        $errors = [];
+
+        if ($counterId === null) {
+            $errors['counter_id'][] = 'Не указан счётчик';
+        }
+
+        if ($value === null || $value === '' || (int) $value < 0) {
+            $errors['value'][] = 'Показание должно быть не меньше 0';
+        }
+
+        if ($file === null) {
+            $errors['file'][] = 'Не передана фотография показаний';
+        }
+
+        if ($errors !== []) {
+            throw new ValidationException($errors);
+        }
+    }
+}

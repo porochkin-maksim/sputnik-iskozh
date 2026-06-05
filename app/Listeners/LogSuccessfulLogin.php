@@ -2,13 +2,19 @@
 
 namespace App\Listeners;
 
-use Core\Domains\Infra\HistoryChanges\Enums\Event;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
+use Core\Domains\HistoryChanges\Event;
+use Core\Domains\HistoryChanges\HistoryChangesService;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Auth\Events\Login;
 
 class LogSuccessfulLogin
 {
+    public function __construct(
+        private readonly HistoryChangesService $historyChangesService,
+    )
+    {
+    }
+
     public function handle(Login $event): void
     {
         $request = request();
@@ -20,7 +26,7 @@ class LogSuccessfulLogin
             $userAgent
         );
 
-        HistoryChangesLocator::HistoryChangesService()->writeToHistory(
+        $this->historyChangesService->writeToHistory(
             Event::AUTH,
             HistoryType::USER,
             $event->user->id,

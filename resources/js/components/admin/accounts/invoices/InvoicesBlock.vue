@@ -14,11 +14,11 @@
             />
 
             <template v-else>
-                <table class="table table-sm table-striped table-bordered mb-0"
+                <table class="table table-sm table-striped table-bordered table-hover align-middle admin-table-firm mb-0"
                        v-if="invoices && invoices.length">
                     <thead>
                     <tr class="text-center">
-                        <th>№</th>
+                        <th class="table-thin-column">№</th>
                         <th>Название/Тип</th>
                         <th>Период</th>
                         <th>Стоимость</th>
@@ -32,7 +32,7 @@
                         class="text-center align-middle"
                         :class="[invoice.isPaid ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
                         <td class="text-end">
-                            <a :href="invoice.viewUrl">
+                            <a :href="invoice.viewUrl" class="link-firm">
                                 {{ invoice.id }}
                             </a>
                         </td>
@@ -44,12 +44,12 @@
                             :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
                             {{ invoice.advance ? formatMoney(-invoice.advance) : formatMoney(invoice.delta) }}
                         </td>
-                        <td>{{ invoice.updated }}</td>
+                        <td class="table-thin-column">{{ invoice.updated }}</td>
                     </tr>
                     </tbody>
                 </table>
 
-                <div v-else-if="!loading && invoices.length === 0" class="text-center text-muted py-3">
+                <div v-else class="text-center text-muted py-3">
                     Нет счетов для отображения
                 </div>
             </template>
@@ -62,11 +62,11 @@ import {
     ref,
     watch,
     onMounted,
-}                                  from 'vue';
-import LoadingSpinner              from '@common/LoadingSpinner.vue';
-import { useResponseError }        from '@composables/useResponseError';
-import { adminAccountInvoiceList } from '../../../../routes-functions.js';
-import { useFormat }               from '@composables/useFormat.js';
+}                                     from 'vue';
+import LoadingSpinner                 from '@common/LoadingSpinner.vue';
+import { useResponseError }           from '@composables/useResponseError';
+import { useFormat }                  from '@composables/useFormat.js';
+import { ApiAdminAccountInvoiceList } from '@api';
 
 const props = defineProps({
     account: {
@@ -90,7 +90,7 @@ const loadInvoices = async () => {
 
     loading.value = true;
     try {
-        const response = await adminAccountInvoiceList(props.account.id);
+        const response = await ApiAdminAccountInvoiceList(props.account.id);
         invoices.value = response.data.invoices || [];
     }
     catch (error) {

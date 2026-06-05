@@ -4,7 +4,7 @@ namespace App\Observers\Billing;
 
 use App\Models\Billing\Service;
 use App\Observers\AbstractObserver;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 
 class ServiceObserver extends AbstractObserver
 {

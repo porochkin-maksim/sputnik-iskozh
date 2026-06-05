@@ -1,0 +1,102 @@
+.html-editor {
+    background    : #fff;
+    border-color  : rgba($default-primary, 0.15) !important;
+    border-radius : 0.75rem;
+    overflow      : hidden;
+
+    div[role=application] {
+        height : 100% !important;
+    }
+
+    .editor-container {
+        min-height: 200px;
+    }
+
+    .tiptap {
+        outline: none;
+
+        p {
+            margin: 0.5em 0;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin: 0.5em 0;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin: 0.5em 0;
+        }
+
+        h3 {
+            font-size: 1.17em;
+            margin: 0.5em 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.5em;
+            margin: 0.5em 0;
+        }
+
+        a {
+            color           : $default-primary;
+            text-decoration : underline;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        blockquote {
+            border-left  : 4px solid rgba($default-primary, 0.35);
+            padding-left : 1rem;
+            margin-left  : 0;
+            color        : $color-secondary;
+        }
+
+        code {
+            background-color : rgba($default-primary, 0.08);
+            padding          : 0.2em 0.4em;
+            border-radius    : 0.35rem;
+            font-family      : monospace;
+        }
+
+        pre {
+            background-color : rgba($default-primary, 0.06);
+            padding          : 0.85rem;
+            border-radius    : 0.5rem;
+            overflow-x       : auto;
+        }
+    }
+
+    &.quill-editor {
+        border-bottom : 1px solid rgba($default-primary, 0.15);
+    }
+
+    textarea {
+        height: 100%;
+    }
+}
+
+.editor-toolbar {
+    border-bottom    : 1px solid rgba($default-primary, 0.15);
+    background-color : rgba($default-primary, 0.03);
+
+    .btn.active {
+        background-color : $default-primary;
+        color            : white;
+        border-color     : $default-primary;
+    }
+
+    .btn.active:hover {
+        background-color : darken($default-primary, 6%);
+    }
+
+    .vr {
+        height: 31px;
+        align-self: center;
+    }
+}

@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Front;
 
-use Core\Requests\RequestArgumentsEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -17,6 +16,7 @@ class ExportRequestArgumentsCommand extends Command
 
     public function handle(): void
     {
+        return;
         $arguments = [];
 
         foreach ((new ReflectionClass(RequestArgumentsEnum::class))->getConstants() as $name => $value) {

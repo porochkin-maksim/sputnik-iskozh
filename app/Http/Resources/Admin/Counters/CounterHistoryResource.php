@@ -4,26 +4,27 @@ namespace App\Http\Resources\Admin\Counters;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Admin\Claims\ClaimResource;
+use App\Http\Resources\Shared\Files\FileResource;
+use App\Resources\RouteNames;
+use App\Support\HistoryChangesRoute;
 use Carbon\Carbon;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Counter\Models\CounterHistoryDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Enums\DateTimeFormat;
-use Core\Resources\RouteNames;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\CounterHistory\CounterHistoryEntity;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use lc;
 
 readonly class CounterHistoryResource extends AbstractResource
 {
     public function __construct(
-        private CounterHistoryDTO $counterHistory,
+        private CounterHistoryEntity $counterHistory,
     )
     {
     }
 
     public function jsonSerialize(): array
     {
-        $access  = \lc::roleDecorator();
+        $access  = lc::roleDecorator();
         $counter = $this->counterHistory->getCounter();
 
         $claim         = $this->counterHistory->getClaim();
@@ -40,17 +41,17 @@ readonly class CounterHistoryResource extends AbstractResource
             'delta'         => $this->counterHistory->getDelta(),
             'date'          => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'days'          => $previous ? abs((int) $this->counterHistory->getDate()?->diffInDays($previous->getDate())) : null,
-            'file'          => $this->counterHistory->getFile(),
+            'file'          => $this->counterHistory->getFile() ? new FileResource($this->counterHistory->getFile()) : null,
             'counterNumber' => $counter?->getNumber(),
             'accountId'     => $counter?->getAccountId(),
             'accountNumber' => $counter?->getAccount()?->getNumber(),
             'isInvoicing'   => $counter?->isInvoicing(),
             'claim'         => $claim ? new ClaimResource($claim) : null,
             'actions'       => [
-                ResponsesEnum::CREATE => $canCreateNew,
+                'create' => $canCreateNew,
             ],
             'historyUrl'    => $this->counterHistory->getId()
-                ? HistoryChangesLocator::route(
+                ? HistoryChangesRoute::make(
                     referenceType: HistoryType::COUNTER_HISTORY,
                     referenceId  : $this->counterHistory?->getId(),
                 ) : null,

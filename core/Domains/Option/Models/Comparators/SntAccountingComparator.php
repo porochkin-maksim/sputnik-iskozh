@@ -4,7 +4,7 @@ namespace Core\Domains\Option\Models\Comparators;
 
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
 use Core\Domains\Option\Models\DataDTO\SntAccounting;
-use Core\Domains\Option\Models\OptionDTO;
+use Core\Domains\Option\OptionEntity;
 
 class SntAccountingComparator extends AbstractComparatorDTO
 {
@@ -26,7 +26,7 @@ class SntAccountingComparator extends AbstractComparatorDTO
         'ogrn' => self::TITLE_OGRN,
     ];
 
-    public function __construct(OptionDTO $entity)
+    public function __construct(OptionEntity $entity)
     {
         $this->initProperties($entity, $entity->getId());
 

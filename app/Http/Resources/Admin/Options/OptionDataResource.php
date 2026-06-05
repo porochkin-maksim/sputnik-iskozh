@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Admin\Options;
 
-use Core\Domains\Option\Factories\ComparatorFactory;
+use Core\Domains\Option\ComparatorFactory;
+use Core\Domains\Option\OptionEntity;
 use Core\Domains\Option\Models\DataDTO\DataDTOInterface;
-use Core\Domains\Option\Models\OptionDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use ReflectionClass;
@@ -24,11 +24,10 @@ class OptionDataResource extends JsonResource
     public function toArray(Request $request): array
     {
         // Создаем временный DTO для получения компаратора
-        $tempDto = new OptionDTO();
-        $tempDto->setData($this->data);
+        $tempEntity = (new OptionEntity())->setData($this->data);
 
         // Получаем компаратор для данного типа данных
-        $comparator = $this->comparatorFactory->createComparator($tempDto);
+        $comparator = $this->comparatorFactory->createComparator($tempEntity);
 
         // Получаем маппинг ключей к заголовкам из компаратора через рефлексию
         $keysToTitles = (new ReflectionClass($comparator))->getConstant('KEYS_TO_TITLES');

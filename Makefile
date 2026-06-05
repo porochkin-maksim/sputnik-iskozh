@@ -58,8 +58,12 @@ artisan: ## запуск artisan
 	@./vendor/bin/sail artisan $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: tests
-tests: ## запуск artisan
+tests: ## запуск тестов
 	@./vendor/bin/sail artisan test
+
+.PHONY: architecture
+architecture: ## архитектурные проверки
+	@bash ./scripts/check-architecture.sh
 
 .PHONY: php
 php: ## запуск php
@@ -103,6 +107,10 @@ yarn-build: ## собрать фронт
 	@./vendor/bin/sail artisan front:export-route-functions-list-command
 	@./vendor/bin/sail artisan front:export-enum
 	@./vendor/bin/sail yarn run build
+
+.PHONY: prod
+prod: architecture tests yarn-build ## pre-deploy проверки + production сборка фронта
+	@echo "prod: OK"
 
 .PHONY: js-routes
 js-routes: ## Выгрузить маршруты с бэка

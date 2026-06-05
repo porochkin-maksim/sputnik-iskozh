@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\Images\StaticFileLocator;
-use Core\Session\CookieNames;
+use Core\Domains\Access\PermissionEnum;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\Images\StaticFileLocator;
+use App\Session\CookieNames;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +19,7 @@ $season = match (Carbon::now()->month) {
 };
 ?>
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', config('app.locale')) }}">
 <head>
     @include('layouts.partial.meta')
     @include('layouts.partial.favicon')
@@ -34,45 +33,49 @@ $season = match (Carbon::now()->month) {
     @stack(SectionNames::SCRIPTS)
     @include('layouts.partial.access.import-roles')
 </head>
-<body class="d-flex flex-column h-100 {{ $season }} home"
+<body class="d-flex flex-column h-100 {{ $season }} profile layout-background-image"
       id="app"
       style="background-image: url('{{ $bgImage->getUrl() }}')">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"
+<nav class="navbar navbar-expand-lg navbar-dark site-navbar site-navbar--profile sticky-top border-bottom"
      id="topNavBar">
     <div class="container-fluid main px-3">
-        <a class="navbar-brand"
+        <a class="navbar-brand site-navbar__brand"
            href="{{ route(RouteNames::HOME) }}">
-            <div class="logo"
+            <div class="logo layout-logo-image"
                  style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
             {{ config('app.name') }}
         </a>
         <button class="navbar-toggler"
                 type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#topMenuNavContent"
+                data-navbar-target="#topMenuNavContent"
+                data-navbar-toggle="collapse"
                 aria-controls="topMenuNavContent"
                 aria-expanded="false"
                 aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse"
+        <div class="collapse navbar-collapse site-navbar__collapse"
              id="topMenuNavContent">
-            @include('layouts.partial.profile.top-nav')
+            @include('partials.profile.top-nav')
         </div>
     </div>
 </nav>
 @if(!App::isProduction())
-    <div style="background-color: red;height:5px;z-index:99999;"
-         class="position-absolute w-100 top-0 left-0"></div>
+    <div class="development-strip position-absolute w-100 top-0 left-0"></div>
 @endif
-<main class="px-3 py-2">
+<main class="profile-main px-3 py-2 page-shell">
     @yield(SectionNames::CONTENT)
 </main>
-@if (lc::account()->getId())
-    <footer class="w-100">
-        @include('layouts.partial.profile.footer-nav')
-    </footer>
-@endif
+<footer>
+    <div class="d-flex justify-content-center py-3">
+        <div class="social d-flex flex-column align-items-center">
+            @include('layouts.partial.social')
+            <div class="mt-2">
+                @include('partials.public.legal-links')
+            </div>
+        </div>
+    </div>
+</footer>
 <alerts-block :disable-errors-popup="true"></alerts-block>
 </body>
 </html>

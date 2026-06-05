@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Core\Session\CookieNames;
+use App\Session\CookieNames;
 
 class CookieController extends Controller
 {

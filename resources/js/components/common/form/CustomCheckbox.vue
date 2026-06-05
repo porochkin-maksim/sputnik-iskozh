@@ -4,6 +4,7 @@
             <input
                 :id="checkboxId"
                 class="form-check-input"
+                :class="{ 'is-invalid': resolvedErrors }"
                 type="checkbox"
                 :checked="modelValue"
                 :disabled="disabled"
@@ -20,13 +21,14 @@
                 {{ label }}
             </label>
         </div>
-        <errors-list :errors="errors" />
+        <errors-list v-if="resolvedErrors" :errors="resolvedErrors" />
     </div>
 </template>
 
 <script setup>
-import { useId }  from 'vue';
-import ErrorsList from './partial/ErrorsList.vue';
+import ErrorsList         from '@common/form/partial/ErrorsList.vue';
+import { useFormFieldId } from '@common/form/useFormFieldId';
+import { useFieldError }  from '@common/form/useFieldError';
 
 const props = defineProps({
     modelValue : Boolean, // для чекбокса значение - булево
@@ -41,10 +43,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-const checkboxId = `checkbox-${useId()}`;
+const checkboxId                                            = useFormFieldId('checkbox');
+const { clearResolvedError, resolvedError: resolvedErrors } = useFieldError(props);
 
 const onChange = (event) => {
     emit('update:modelValue', event.target.checked);
     emit('change', event);
+    clearResolvedError();
 };
 </script>

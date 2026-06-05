@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Billing;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -19,8 +19,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float   $cost
  * @property float   $paid
  */
-class Claim extends Model implements CastsInterface
+class Claim extends AbstractModel
 {
+    use HasFactory;
+
     public const string TABLE = 'claims';
 
     protected $table = self::TABLE;
@@ -33,8 +35,8 @@ class Claim extends Model implements CastsInterface
     public const string COST       = 'cost';
     public const string PAID       = 'paid';
 
-    public const string INVOICE = 'invoice';
-    public const string SERVICE = 'service';
+    public const string RELATION_INVOICE = 'invoice';
+    public const string RELATION_SERVICE = 'service';
 
     protected $guarded = [];
 
@@ -44,6 +46,7 @@ class Claim extends Model implements CastsInterface
         self::PAID   => self::CAST_FLOAT,
     ];
 
+    public const string TITLE_NAME       = 'Название';
     public const string TITLE_INVOICE_ID = 'Счёт';
     public const string TITLE_SERVICE_ID = 'Услуга';
     public const string TITLE_TARIFF     = 'Тариф';

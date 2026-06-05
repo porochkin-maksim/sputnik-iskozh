@@ -1,60 +1,59 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <news-item :news="localNews"
-                       :edit="localEdit"
-                       @updated="onUpdateItem"
-            />
+            <div class="public-article-shell">
+                <news-item :news="localNews"
+                           :edit="canEdit"
+                           @updated="onUpdateItem"
+                />
+            </div>
         </template>
     </page-template>
 </template>
 
-<script>
-import Url          from '../../../utils/Url.js';
-import NewsItem     from './list/NewsItem.vue';
-import PageTemplate from '../pages/SingleColumnPage.vue';
+<script setup>
+import {
+    onMounted,
+    ref,
+}                           from 'vue';
+import NewsItem             from './list/NewsItem.vue';
+import PageTemplate         from '@components/public/pages/SingleColumnPage.vue';
+import { ApiNewsEdit }      from '@api';
+import { routeUri }         from '@utils/routeUri.js';
+import { useResponseError } from '@composables/useResponseError';
+import { usePermissions }   from '@composables/usePermissions.js';
 
-export default {
-    name      : 'NewsShow',
-    props     : [
-        'news',
-        'edit',
-    ],
-    components: {
-        NewsItem,
-        PageTemplate,
-    },
-    data () {
-        return {
-            localNews: null,
-            localEdit: false,
-        };
-    },
-    created () {
-        this.localNews = this.news;
-        this.localEdit = this.edit;
-    },
-    methods: {
-        onUpdateItem (isDeleted) {
-            if (isDeleted) {
-                location.href = Url.Routes.newsIndex.uri;
-            }
-            else {
-                this.reloadItem();
-            }
-        },
-        reloadItem() {
-            let uri = Url.Generator.makeUri(Url.Routes.newsEdit, {
-                id: this.localNews.id,
-            });
+const { parseResponseErrors } = useResponseError();
+const { has }                 = usePermissions();
 
-            window.axios[Url.Routes.newsEdit.method](uri).then(response => {
-                this.localNews = response.data.news;
-                this.localEdit = response.data.edit;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
+const props = defineProps({
+    news: {
+        type    : Object,
+        required: true,
     },
+});
+
+const localNews = ref(props.news);
+const canEdit   = has('news', 'edit');
+
+const reloadItem = () => {
+    ApiNewsEdit(localNews.value.id).then(response => {
+        localNews.value = response.data.news;
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
 };
+
+const onUpdateItem = (isDeleted) => {
+    if (isDeleted) {
+        location.href = routeUri('newsIndex');
+    }
+    else {
+        reloadItem();
+    }
+};
+
+onMounted(() => {
+    localNews.value = props.news;
+});
 </script>

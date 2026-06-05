@@ -4,13 +4,13 @@ namespace App\Http\Resources\Admin\Roles;
 
 use App\Http\Resources\Admin\Users\UsersResource;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Access\Models\RoleDTO;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Access\RoleEntity;
 
 readonly class RoleResource extends AbstractResource
 {
     public function __construct(
-        private RoleDTO $role,
+        private RoleEntity $role,
     )
     {
     }

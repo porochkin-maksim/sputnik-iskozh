@@ -1,6 +1,6 @@
 <template>
-    <div class="border">
-        <table class="table table-responsive align-middle m-0">
+    <div class="info-table">
+        <table class="table table-sm align-middle m-0">
             <tbody>
             <tr>
                 <th>Участок</th>

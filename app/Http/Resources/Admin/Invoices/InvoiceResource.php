@@ -2,25 +2,25 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
-use App\Http\Resources\Admin\Accounts\AccountResource;
-use Core\Services\Money\MoneyService;
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Resources\RouteNames;
-use Core\Responses\ResponsesEnum;
+use App\Http\Resources\Admin\AccountResource;
+use App\Http\Resources\Admin\Services\ServiceResource;
+use App\Resources\RouteNames;
+use App\Services\Money\MoneyService;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\HistoryChanges\HistoryType;
+use lc;
 
 readonly class InvoiceResource extends AbstractResource
 {
     public function __construct(
-        private InvoiceDTO $invoice,
+        private InvoiceEntity $invoice,
     )
     {
     }
 
-    public function getInvoice(): InvoiceDTO
+    public function getInvoice(): InvoiceEntity
     {
         return $this->invoice;
     }
@@ -56,6 +56,9 @@ readonly class InvoiceResource extends AbstractResource
             'periodName'    => $period?->getName(),
             'accountId'     => $this->invoice->getAccountId(),
             'accountNumber' => $this->invoice->getAccount()?->getNumber(),
+            'serviceId'     => $this->invoice->getServiceId(),
+            'serviceName'   => $this->invoice->getService()?->getName(),
+            'service'       => $this->invoice->getService() ? new ServiceResource($this->invoice->getService()) : null,
             'type'          => $this->invoice->getType()?->value,
             'typeName'      => $this->invoice->getType()?->name(),
             'name'          => $this->invoice->getName(),
@@ -69,18 +72,18 @@ readonly class InvoiceResource extends AbstractResource
             'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
             'updated'       => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
             'actions'       => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP) && ( ! $period || ! $period->isClosed()),
+                'view' => $access->can(PermissionEnum::INVOICES_VIEW),
+                'edit' => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),
+                'drop' => $access->can(PermissionEnum::INVOICES_DROP) && ( ! $period || ! $period->isClosed()),
                 'claims'            => [
-                    ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                    ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT) && ( ! $period || ! $period->isClosed()),
-                    ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP) && ( ! $period || ! $period->isClosed()),
+                    'view' => $access->can(PermissionEnum::CLAIMS_VIEW),
+                    'edit' => $access->can(PermissionEnum::CLAIMS_EDIT) && ( ! $period || ! $period->isClosed()),
+                    'drop' => $access->can(PermissionEnum::CLAIMS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
                 'payments'          => [
-                    ResponsesEnum::VIEW => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                    ResponsesEnum::EDIT => $access->can(PermissionEnum::PAYMENTS_EDIT) && ( ! $period || ! $period->isClosed()),
-                    ResponsesEnum::DROP => $access->can(PermissionEnum::PAYMENTS_DROP) && ( ! $period || ! $period->isClosed()),
+                    'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
+                    'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ( ! $period || ! $period->isClosed()),
+                    'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
             ],
             'viewUrl'       => $this->invoice->getId() ? route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $this->invoice->getId()]) : null,

@@ -3,7 +3,7 @@
 namespace Core\Domains\Common\Traits;
 
 use Carbon\Carbon;
-use Core\Helpers\DateTime\DateTimeHelper;
+use Core\Shared\Helpers\DateTime\DateTimeHelper;
 
 trait TimestampsTrait
 {

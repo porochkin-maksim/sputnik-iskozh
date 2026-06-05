@@ -3,42 +3,43 @@
 namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Services\SaveRequest;
+use App\Http\Requests\DefaultRequest;
+use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use App\Http\Resources\Admin\Services\ServiceResource;
 use App\Http\Resources\Admin\Services\ServicesListResource;
-use App\Models\Billing\Period;
-use App\Models\Billing\Service;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Models\PeriodSearcher;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Billing\Service\Factories\ServiceFactory;
-use Core\Domains\Billing\Service\Models\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceLocator;
-use Core\Domains\Billing\Service\Services\ServiceService;
-use Core\Resources\Views\ViewNames;
+use App\Http\Resources\Common\SelectResource;
+use App\Support\HistoryChangesRoute;
+use Core\App\Billing\Service\GetListCommand;
+use Core\App\Billing\Service\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceFactory;
+use Core\Domains\Billing\Service\ServiceCatalogService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class ServiceController extends Controller
 {
-    private ServiceFactory $serviceFactory;
-    private ServiceService $serviceService;
-    private PeriodService  $periodService;
 
-    public function __construct()
+    public function __construct(
+        private readonly ServiceFactory        $serviceFactory,
+        private readonly ServiceCatalogService $serviceService,
+        private readonly PeriodService         $periodService,
+        private readonly GetListCommand        $getListCommand,
+        private readonly SaveCommand           $saveCommand,
+    )
     {
-        $this->serviceFactory = ServiceLocator::ServiceFactory();
-        $this->serviceService = ServiceLocator::ServiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
     }
 
+    // blade: resources/views/admin/pages/services.blade.php
+    // vue: resources/js/components/admin/services/ServicesBlock.vue
+    // vue: resources/js/components/admin/services/ServiceEditDialog.vue
     public function index()
     {
         if (lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
-            return view(ViewNames::ADMIN_PAGES_SERVICES);
+            return view('pages.admin.billing.services');
         }
 
         abort(403);
@@ -62,59 +63,85 @@ class ServiceController extends Controller
         ]);
     }
 
+    // vue: resources/js/components/admin/services/ServicesBlock.vue
+    // vue: resources/js/components/admin/services/ServiceEditDialog.vue
     public function list(): JsonResponse
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_VIEW)) {
+        $roleDecorator = lc::roleDecorator();
+
+        if ( ! $roleDecorator->can(PermissionEnum::SERVICES_VIEW)) {
             abort(403);
         }
 
-        $searcher = ServiceSearcher::make()
-            ->exludeType(ServiceTypeEnum::OTHER)
-            ->exludeType(ServiceTypeEnum::DEBT)
-            ->exludeType(ServiceTypeEnum::ADVANCE_PAYMENT)
-            ->withPeriods()
-            ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
-            ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC)
-        ;
-        $services = $this->serviceService->search($searcher);
+        $result = $this->getListCommand->execute();
+        $services = $result['services']->getItems();
+        $periods = $result['periods']->getItems();
+        $types = array_filter(
+            ServiceTypeEnum::array(),
+            static fn(string $name) => $name !== ServiceTypeEnum::OTHER->name(),
+        );
+        $availableTypes = [];
+        $periodOptions = [];
+        foreach ($periods as $period) {
+            if ($period->isClosed()) {
+                continue;
+            }
 
-        $periodSearcher = PeriodSearcher::make()
-            ->setSortOrderProperty(Period::ID, SearcherInterface::SORT_ORDER_DESC)
-        ;
+            $periodOptions[$period->getId()] = $period->getName();
+            $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
+                ServiceTypeEnum::PERSONAL_FEE->name(),
+                ServiceTypeEnum::TARGET_FEE->name() => true,
+                default => false,
+            });
+        }
 
-        $periods = $this->periodService->search($periodSearcher);
+        foreach ($services as $service) {
+            $type = $service->getType();
+            $isUniqueType = match ($type) {
+                ServiceTypeEnum::PERSONAL_FEE,
+                ServiceTypeEnum::TARGET_FEE => true,
+                default => false,
+            };
 
-        return response()->json(new ServicesListResource(
-            $services->getItems(),
-            $periods->getItems(),
-        ));
+            if (! $isUniqueType) {
+                unset($availableTypes[$service->getPeriodId()][$type?->value]);
+            }
+        }
+
+        foreach ($availableTypes as $periodId => $typesByPeriod) {
+            $availableTypes[$periodId] = new SelectResource($typesByPeriod);
+        }
+
+        return response()->json([
+            'services'   => new ServicesListResource($services),
+            'periods'    => new SelectResource($periodOptions),
+            'periodsInfo'=> new PeriodsListResource($periods),
+            'types'      => [
+                'all' => new SelectResource($types),
+                'available' => $availableTypes,
+            ],
+            'historyUrl' => HistoryChangesRoute::make(type: HistoryType::SERVICE),
+        ]);
     }
 
-    public function save(SaveRequest $request): JsonResponse
+    public function save(DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
             abort(403);
         }
 
-        $service = $request->getId()
-            ? $this->serviceService->getById($request->getId())
-            : $this->serviceFactory->makeDefault()
-                ->setPeriodId($request->getPeriodId())
-                ->setType(ServiceTypeEnum::tryFrom($request->getType()))
-        ;
+        $service = $this->saveCommand->execute(
+            id      : $request->getIntOrNull('id'),
+            periodId: $request->getIntOrNull('period_id'),
+            type    : ServiceTypeEnum::tryFrom($request->getInt('type')),
+            name    : $request->getStringOrNull('name'),
+            cost    : $request->getFloat('cost'),
+            isActive: $request->getBool('is_active'),
+        );
 
-        if ( ! $service) {
+        if ($service === null) {
             abort(404);
         }
-
-        $service
-            ->setName($request->getName())
-            ->setIsActive($request->getIsActive())
-            ->setCost($request->getCost())
-        ;
-
-        $service = $this->serviceService->save($service);
 
         return response()->json([
             'service' => new ServiceResource($service),

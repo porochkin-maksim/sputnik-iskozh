@@ -90,7 +90,3 @@ onMounted(() => {
     }
 });
 </script>
-
-<style scoped>
-/* Стили из slider.scss применяются глобально */
-</style>

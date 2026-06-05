@@ -1,9 +1,9 @@
-const state = {
-    messages: [], // Массив сообщений
-    errors  : [], // Массив ошибок
+export const state = {
+    messages   : [], // Массив сообщений
+    fieldErrors: {}, // Ошибки валидации по ключам полей
 };
 
-const mutations = {
+export const mutations = {
     ADD_MESSAGE (state, value) {
         state.messages.push(value);
     },
@@ -14,20 +14,28 @@ const mutations = {
         }
     },
     ADD_ERROR (state, value) {
-        state.errors.push(value);
+        state.messages.push(value);
     },
     REMOVE_ERROR (state, id) {
-        const index = state.errors.findIndex(m => m.id === id);
+        const index = state.messages.findIndex(m => m.id === id);
         if (index !== -1) {
-            state.errors.splice(index, 1);
+            state.messages.splice(index, 1);
         }
     },
-    REMOVE_ERRORS (state) {
-        state.errors = [];
+    SET_FIELD_ERRORS (state, value) {
+        state.fieldErrors = value || {};
+    },
+    REMOVE_FIELD_ERROR (state, name) {
+        if (name in state.fieldErrors) {
+            delete state.fieldErrors[name];
+        }
+    },
+    REMOVE_FIELD_ERRORS (state) {
+        state.fieldErrors = {};
     },
 };
 
-const actions = {
+export const actions = {
     addMessage ({ commit }, value) {
         commit('ADD_MESSAGE', value);
     },
@@ -40,20 +48,28 @@ const actions = {
     removeError ({ commit }, id) {
         commit('REMOVE_ERROR', id);
     },
-    removeErrors ({ commit }) {
-        commit('REMOVE_ERRORS');
+    removeFieldErrors ({ commit }) {
+        commit('REMOVE_FIELD_ERRORS');
+    },
+    setFieldErrors ({ commit }, value) {
+        commit('SET_FIELD_ERRORS', value);
+    },
+    removeFieldError ({ commit }, name) {
+        commit('REMOVE_FIELD_ERROR', name);
     },
 };
 
-const getters = {
+export const getters = {
     allMessages: state => state.messages,
-    allErrors  : state => state.errors,
+    fieldErrors: state => state.fieldErrors,
 };
 
-export default {
+export const alerts = {
     namespaced: true,
     state,
     mutations,
     actions,
     getters,
 };
+
+export default alerts;

@@ -2,41 +2,23 @@
 
 namespace App\Http\Resources\Admin\Invoices;
 
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
 
 readonly class InvoicesListResource extends AbstractResource
 {
     public function __construct(
         private InvoiceCollection $invoiceCollection,
-        private ?int              $totalInvoicesCount = null,
     )
     {
     }
 
     public function jsonSerialize(): array
     {
-        $access = lc::roleDecorator();
-        $result = [
-            'invoices'   => [],
-            'total'      => $this->totalInvoicesCount,
-            'historyUrl' => HistoryChangesLocator::route(
-                type: HistoryType::INVOICE,
-            ),
-            'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::INVOICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::INVOICES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::INVOICES_DROP),
-            ],
-        ];
+        $result = [];
 
         foreach ($this->invoiceCollection as $invoice) {
-            $result['invoices'][] = new InvoiceResource($invoice);
+            $result[] = new InvoiceResource($invoice);
         }
 
         return $result;

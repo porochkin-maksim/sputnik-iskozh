@@ -5,12 +5,12 @@ namespace App\Http\Resources\Profile\Invoices;
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Profile\Accounts\AccountResource;
 use App\Http\Resources\Profile\Periods\PeriodResource;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
 
 readonly class InvoiceResource extends AbstractResource
 {
     public function __construct(
-        private InvoiceDTO $invoice,
+        private InvoiceEntity $invoice,
     )
     {
     }
@@ -18,12 +18,14 @@ readonly class InvoiceResource extends AbstractResource
     public function jsonSerialize(): array
     {
         return [
-            'id'      => $this->invoice->getId(),
-            'cost'    => $this->invoice->getCost(),
-            'paid'    => $this->invoice->getPaid(),
-            'delta'   => $this->invoice->getDelta(),
-            'period'  => $this->invoice->getPeriod() ? new PeriodResource($this->invoice->getPeriod()) : null,
-            'account' => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
+            'id'          => $this->invoice->getId(),
+            'serviceId'   => $this->invoice->getServiceId(),
+            'serviceName' => $this->invoice->getService()?->getName(),
+            'cost'        => $this->invoice->getCost(),
+            'paid'        => $this->invoice->getPaid(),
+            'delta'       => $this->invoice->getDelta(),
+            'period'      => $this->invoice->getPeriod() ? new PeriodResource($this->invoice->getPeriod()) : null,
+            'account'     => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];
     }
-} 
+}

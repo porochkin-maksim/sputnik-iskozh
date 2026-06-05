@@ -1,0 +1,117 @@
+.table.password tr th {
+    text-align : right;
+    width      : 50px;
+}
+
+.profile-summary {
+    width           : 100%;
+    border-collapse : collapse;
+    font-size       : 0.9rem;
+
+    &__scroll {
+        overflow-x : auto;
+    }
+
+    &__head {
+        border-bottom : 2px solid rgba($default-primary, 0.12);
+    }
+
+    &__header-row {
+        background-color : rgba($default-primary, 0.04);
+    }
+
+    &__header-cell {
+        padding        : 0.75rem 1rem;
+        font-weight    : 600;
+        font-size      : 0.82rem;
+        color          : $color-secondary;
+        text-transform : uppercase;
+        letter-spacing : 0.02em;
+        white-space    : nowrap;
+
+        &--label {
+            text-align : left;
+        }
+
+        &--number {
+            text-align : right;
+        }
+    }
+
+    &__row {
+        transition : background-color 0.15s ease;
+
+        &--section {
+            background-color : rgba($default-primary, 0.06);
+            font-weight      : 600;
+            cursor           : default;
+
+            &:hover {
+                background-color : rgba($default-primary, 0.08);
+            }
+        }
+
+        &--detail {
+            background-color : #fff;
+
+            &:hover {
+                background-color : rgba($default-primary, 0.02);
+            }
+        }
+
+        &--total {
+            background-color : rgba($default-primary, 0.1);
+            font-weight      : 700;
+            border-top       : 2px solid rgba($default-primary, 0.12);
+        }
+    }
+
+    &__cell {
+        padding        : 0.7rem 1rem;
+        border-bottom  : 1px solid rgba($default-primary, 0.12);
+        vertical-align : middle;
+        white-space    : nowrap;
+
+        &--label {
+            text-align : left;
+        }
+
+        &--number {
+            text-align           : right;
+            font-variant-numeric : tabular-nums;
+        }
+
+        &--toggle {
+            cursor      : pointer;
+            user-select : none;
+        }
+
+        &--sub {
+            padding-top    : 0.45rem;
+            padding-bottom : 0.45rem;
+            font-size      : 0.85rem;
+            color          : $color-secondary;
+        }
+    }
+
+    &__toggle-icon {
+        display         : inline-flex;
+        align-items     : center;
+        justify-content : center;
+        width           : 1.25rem;
+        margin-right    : 0.35rem;
+        color           : $default-primary;
+        font-size       : 0.75rem;
+    }
+
+    &__empty {
+        text-align : center;
+        padding    : 2.5rem 1rem;
+        color      : $color-secondary;
+        font-size  : 0.95rem;
+
+        .fa {
+            color : $default-primary;
+        }
+    }
+}

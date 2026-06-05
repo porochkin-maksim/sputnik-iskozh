@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="loginAction">
+    <form @submit.prevent="loginAction" class="auth-form-stack">
         <custom-input
             v-model="email"
             @change="clearError('email')"
@@ -9,8 +9,9 @@
             label="Эл.почта"
             :required="true"
             autocomplete="username"
+            :classes="'auth-form-field'"
         />
-        <div class="mt-3 toggle-parent">
+        <div class="toggle-parent">
             <custom-input
                 v-model="password"
                 @change="clearError('password')"
@@ -20,6 +21,7 @@
                 name="password"
                 :required="true"
                 autocomplete="current-password"
+                :classes="'auth-form-field'"
             />
             <span
                 class="toggle fa"
@@ -27,7 +29,7 @@
                 @click="togglePassword"
             ></span>
         </div>
-        <div class="mt-3 d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center">
             <div class="form-check">
                 <input
                     v-model="remember"
@@ -39,7 +41,7 @@
             </div>
             <slot name="restore"></slot>
         </div>
-        <div class="d-grid my-3">
+        <div class="d-grid">
             <button type="submit" class="btn btn-success">Войти</button>
         </div>
     </form>
@@ -48,9 +50,9 @@
 <script setup>
 import { ref }              from 'vue';
 import { useStore }         from 'vuex';
-import Url                  from '@utils/Url.js';
 import CustomInput          from '@common/form/CustomInput.vue';
 import { useResponseError } from '@composables/useResponseError';
+import { ApiLogin }         from '@api';
 
 const store                                       = useStore();
 const { errors, clearError, parseResponseErrors } = useResponseError();
@@ -65,7 +67,7 @@ const togglePassword = () => {
 };
 
 const loginAction = () => {
-    Url.RouteFunctions.login({}, {
+    ApiLogin({}, {
         email   : email.value,
         password: password.value,
         remember: remember.value,

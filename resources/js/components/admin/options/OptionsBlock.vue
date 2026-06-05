@@ -24,7 +24,7 @@
                             <div>{{ option.name }}</div>
                             <div class="mt-2">
                                 <button
-                                    v-if="actions.edit && isOptionChanged(option.id)"
+                                    v-if="canEdit && isOptionChanged(option.id)"
                                     class="btn btn-success btn-sm"
                                     @click="saveAction(option)"
                                     :disabled="saving[option.id]"
@@ -51,7 +51,7 @@
                                             :id="'prop-' + option.id + '-' + prop.key"
                                             v-model="editedOptions[option.id][prop.key]"
                                             :label="prop.title"
-                                            :disabled="!actions.edit"
+                                            :disabled="!canEdit"
                                         />
                                     </div>
 
@@ -62,7 +62,7 @@
                                         v-model="editedOptions[option.id][prop.key]"
                                         :type="prop.inputType"
                                         :label="prop.title"
-                                        :disabled="!actions.edit"
+                                        :disabled="!canEdit"
                                         class="form-control-sm"
                                     />
                                 </div>
@@ -81,39 +81,34 @@
 import {
     ref,
     reactive,
+    computed,
     onMounted,
-    defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
-import LoadingSpinner       from '../../common/LoadingSpinner.vue';
-import CustomInput          from '../../common/form/CustomInput.vue';
-import CustomCheckbox       from '../../common/form/CustomCheckbox.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
+import CustomInput          from '@common/form/CustomInput.vue';
+import CustomCheckbox       from '@common/form/CustomCheckbox.vue';
 import {
     ApiAdminOptionsList,
     ApiAdminOptionsSave,
 }                           from '@api';
 
-defineOptions({
-    name: 'OptionsBlock',
-});
-
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
+const { has }                                       = usePermissions();
 
 const options         = ref([]);
 const editedOptions   = ref({});
 const originalOptions = ref({});
 const loading         = ref(true);
 const saving          = ref({});
-const actions         = ref({
-    edit: false,
-});
+const canEdit         = computed(() => has('options', 'edit'));
 
 // Загрузка списка опций
 const loadOptions = async () => {
     try {
         const response = await ApiAdminOptionsList();
         options.value  = response.data.options || [];
-        actions.value  = response.data.actions || { edit: false };
 
         // Инициализация объектов для редактирования и оригинала
         options.value.forEach(option => {

@@ -4,9 +4,10 @@ namespace App\Models\Billing;
 
 use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use Carbon\Carbon;
-use Core\Domains\File\Enums\FileTypeEnum;
+use Core\Domains\Files\FileTypeEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Payment extends AbstractModel
 {
+    use HasFactory;
+
     public const string TABLE = 'payments';
 
     public const string ID         = 'id';
@@ -83,9 +86,9 @@ class Payment extends AbstractModel
 
     public function files(): HasMany
     {
-        return $this->hasMany(File::class, File::RELATED_ID)
-            ->where(File::TYPE, FileTypeEnum::PAYMENT->value)
-            ->orderBy(FILE::ORDER)
+        return $this->hasMany(FileModel::class, FileModel::RELATED_ID)
+            ->where(FileModel::TYPE, FileTypeEnum::PAYMENT->value)
+            ->orderBy(FileModel::ORDER)
         ;
     }
 }

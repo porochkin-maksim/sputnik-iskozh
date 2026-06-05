@@ -2,64 +2,35 @@
     <page-template>
         <template v-slot:main>
             <template v-if="edit">
-                <div class="d-flex justify-content-between mb-2">
-                    <button class="btn btn-success"
-                            v-on:click="showFormAction">Добавить новость
-                    </button>
+                <div class="public-action-bar mb-2">
+                    <a class="btn btn-success public-action-bar__button"
+                       href="/news/form">
+                        Добавить новость
+                    </a>
                 </div>
             </template>
-            <div v-if="showForm">
-                <wrapper @close="showForm=false"
-                         :container-class="'w-lg-75 w-md-100'">
-                    <div class="container-fluid">
-                        <news-item-edit :model-value="id"
-                                        @updated="createdItem" />
-                    </div>
-                </wrapper>
-            </div>
             <news-list v-model:reloadList="reloadList"
                        v-model:canEdit="edit"
                        :showPagination="true"
+                       :current-page="currentPage"
                        class="mt-3"
             />
         </template>
     </page-template>
 </template>
 
-<script>
-import ResponseError from '../../../mixin/ResponseError.js';
-import NewsItemEdit  from './list/NewsItemEdit.vue';
-import NewsList      from './list/NewsList.vue';
-import Wrapper       from '../../common/Wrapper.vue';
-import PageTemplate  from '../pages/SingleColumnPage.vue';
+<script setup>
+import { ref }      from 'vue';
+import NewsList     from './list/NewsList.vue';
+import PageTemplate from '@components/public/pages/SingleColumnPage.vue';
 
-export default {
-    name      : 'NewsBlock',
-    components: {
-        PageTemplate,
-        Wrapper,
-        NewsItemEdit,
-        NewsList,
+const props      = defineProps({
+    currentPage: {
+        type   : Number,
+        default: 1,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            showForm  : false,
-            reloadList: false,
-            edit      : false,
-            id        : null,
-        };
-    },
-    methods: {
-        showFormAction () {
-            this.showForm = !this.showForm;
-        },
-        createdItem () {
-            this.reloadList = true;
-            this.showForm   = false;
-        },
-    },
-};
+});
+
+const reloadList = ref(false);
+const edit       = ref(false);
 </script>

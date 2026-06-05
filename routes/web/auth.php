@@ -3,10 +3,9 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetPasswordController;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisterController;
 
 Auth::routes(
     [
@@ -22,7 +21,6 @@ Route::post('/login/{token}', [LoginController::class, 'token'])->name(RouteName
 Route::get('/logout', LogoutController::class)->name(RouteNames::LOGOUT);
 Route::get('/password/set', [SetPasswordController::class, 'index'])->name(RouteNames::PASSWORD_SET);
 Route::post('/password/set', [SetPasswordController::class, 'set'])->name(RouteNames::PASSWORD_SAVE);
-Route::post('/register', RegisterController::class);
 Route::get('/register', static function () {
     abort(404);
 });

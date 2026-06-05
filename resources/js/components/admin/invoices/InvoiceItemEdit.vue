@@ -77,19 +77,14 @@ import {
     onMounted,
     defineProps,
     defineEmits,
-    defineOptions,
     watch,
 }                              from 'vue';
 import { useResponseError }    from '@composables/useResponseError';
-import CustomInput             from '../../common/form/CustomInput.vue';
-import SearchSelect            from '../../common/form/SearchSelect.vue';
-import ViewDialog              from '../../common/ViewDialog.vue';
+import CustomInput             from '@common/form/CustomInput.vue';
+import SearchSelect            from '@common/form/SearchSelect.vue';
+import ViewDialog              from '@common/ViewDialog.vue';
 import { ApiAdminInvoiceSave } from '@api';
 import CustomSelect            from '@common/form/CustomSelect.vue';
-
-defineOptions({
-    name: 'InvoiceItemEdit',
-});
 
 const props = defineProps({
     modelValue: {

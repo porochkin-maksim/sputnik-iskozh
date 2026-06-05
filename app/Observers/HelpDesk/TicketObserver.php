@@ -8,11 +8,11 @@ use App\Models\HelpDesk\TicketCategory;
 use App\Models\HelpDesk\TicketService;
 use App\Models\User;
 use App\Observers\AbstractObserver;
+use App\Repositories\User\UserEloquentMapper;
 use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
 use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\User\UserLocator;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class TicketObserver extends AbstractObserver
@@ -39,7 +39,7 @@ class TicketObserver extends AbstractObserver
             Ticket::CATEGORY_ID => TicketCategory::find($value)?->name,
             Ticket::SERVICE_ID  => TicketService::find($value)?->name,
             Ticket::ACCOUNT_ID  => Account::find($value)?->number,
-            Ticket::USER_ID     => $value ? UserLocator::UserDecorator(UserLocator::UserFactory()->makeDtoFromObject(User::find($value))) : null,
+            Ticket::USER_ID     => $value ? app(UserEloquentMapper::class)->makeEntityFromRepositoryData(User::find($value))->getViewer()->getDisplayName() : null,
             default             => parent::formatValue($value, $field, $model),
         };
     }

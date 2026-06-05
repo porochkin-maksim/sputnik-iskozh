@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use Core\Queue\QueueEnum;
+use App\Services\Queue\QueueEnum;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

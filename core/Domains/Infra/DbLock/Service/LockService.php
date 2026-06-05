@@ -5,11 +5,17 @@ namespace Core\Domains\Infra\DbLock\Service;
 use App\Models\Infra\Lock;
 use Carbon\Carbon;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
-use Illuminate\Support\Facades\DB;
+use Core\Contracts\DbServiceInterface;
 use RuntimeException;
 
 class LockService
 {
+    public function __construct(
+        private readonly DbServiceInterface $dbService,
+    )
+    {
+    }
+
     /**
      * Проверяет, заблокировано ли имя (активная блокировка существует)
      */
@@ -38,7 +44,7 @@ class LockService
     {
         $name = $this->makeName($lockName, $postfix);
 
-        DB::transaction(function () use ($name, $minutes) {
+        $this->dbService->transaction(function () use ($name, $minutes) {
             // Удаляем истекшие блокировки
             Lock::where(Lock::NAME, $name)
                 ->where(Lock::EXPIRE_AT, '<=', Carbon::now())
@@ -82,7 +88,7 @@ class LockService
         return (bool) Lock::where(Lock::NAME, $name)
             ->where(Lock::EXPIRE_AT, '>', Carbon::now())
             ->update([
-                Lock::EXPIRE_AT => DB::raw("DATE_ADD(" . Lock::EXPIRE_AT . ", INTERVAL {$additionalMinutes} MINUTE)"),
+                Lock::EXPIRE_AT => $this->dbService->raw("DATE_ADD(" . Lock::EXPIRE_AT . ", INTERVAL {$additionalMinutes} MINUTE)"),
             ])
         ;
     }

@@ -11,73 +11,31 @@
 
         <template v-else>
             <div v-if="payments.length">
-                <table class="table table-bordered align-middle ">
+                <table class="table table-bordered align-middle admin-table-firm">
                     <thead>
                     <tr class="text-center">
-                        <th>№</th>
+                    <th class="table-thin-column">№</th>
                         <th>Участок</th>
                         <th>Сумма</th>
-                        <th>Создан</th>
-                        <th>Файл</th>
-                        <th>Действия</th>
+                    <th class="table-thin-column">Создан</th>
+                    <th class="table-thin-column">Файл</th>
+                    <th class="table-thin-column">Действия</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="payment in payments" :key="payment.id">
-                        <td class="text-center">{{ payment.id }}</td>
-                        <td class="text-end">{{ payment.accountNumber }}</td>
-                        <td class="text-end">{{ formatMoney(payment.cost) }}</td>
-                        <td class="text-center">{{ payment.created }}</td>
-                        <td>
-                            <div v-if="payment.files?.length" class="d-flex flex-column gap-1">
-                                <file-item
-                                    v-for="(file, index) in payment.files"
-                                    :key="file.id"
-                                    :file="file"
-                                    :edit="true"
-                                    :index="index"
-                                    :use-up-sort="index !== 0"
-                                    :use-down-sort="index !== payment.files.length - 1"
-                                    @updated="onFileUpdated"
-                                />
-                            </div>
-                            <span v-else class="text-muted small">—</span>
-                        </td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <!-- Кнопка привязки -->
-                                <button
-                                    v-if="actions.edit"
-                                    class="btn btn-sm btn-link p-0"
-                                    @click="editAction(payment.id)"
-                                    :disabled="actionLoading"
-                                    title="Привязать"
-                                >
-                                    <i class="fa fa-link text-primary"></i>
-                                </button>
-
-                                <!-- Кнопка истории -->
-                                <history-btn
-                                    v-if="payment.historyUrl"
-                                    class="btn-link underline-none p-0"
-                                    :url="payment.historyUrl"
-                                    aria-label="История изменений"
-                                />
-
-                                <!-- Кнопка удаления -->
-                                <button
-                                    v-if="actions.drop"
-                                    class="btn btn-sm btn-link p-0 text-danger"
-                                    @click="dropAction(payment.id)"
-                                    :disabled="dropLoading === payment.id"
-                                    title="Удалить"
-                                >
-                                    <i v-if="dropLoading === payment.id" class="fa fa-spinner fa-spin"></i>
-                                    <i v-else class="fa fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    <payments-row
+                        v-for="payment in payments"
+                        :key="payment.id"
+                        :action-loading="actionLoading"
+                        :can-drop="canDrop"
+                        :can-edit="canEdit"
+                        :drop-loading="dropLoading"
+                        :format-money="formatMoney"
+                        :payment="payment"
+                        @drop="dropAction"
+                        @edit="editAction"
+                        @file-updated="onFileUpdated"
+                    />
                     </tbody>
                 </table>
             </div>
@@ -94,6 +52,7 @@
 <script setup>
 import {
     ref,
+    computed,
     watch,
     onMounted,
     defineProps,
@@ -101,13 +60,13 @@ import {
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
-import FileItem             from '../../common/files/FileItem.vue';
-import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiAdminNewPaymentList,
     ApiAdminNewPaymentDelete,
 }                           from '@api';
+import PaymentsRow          from './payments-block/PaymentsRow.vue';
 
 const props = defineProps({
     selectedId: {
@@ -127,20 +86,21 @@ const props = defineProps({
 const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count']);
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
-const { formatMoney, formatDate }                   = useFormat();
+const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
 
 const payments      = ref([]);
-const actions       = ref({});
 const isLoading     = ref(false);
 const actionLoading = ref(false);
 const dropLoading   = ref(null);
+const canEdit       = computed(() => has('payments', 'edit'));
+const canDrop       = computed(() => has('payments', 'drop'));
 
 // Загрузка списка
 const loadList = async () => {
     isLoading.value = true;
     try {
         const response = await ApiAdminNewPaymentList();
-        actions.value  = response.data.actions || {};
         payments.value = response.data.payments || [];
         emit('update:count', payments.value.length);
     }

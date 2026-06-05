@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-window.axios = axios;
-
 import jQuery from 'jquery';
 
 window.$ = jQuery;
@@ -19,7 +17,12 @@ lightbox.option({
     wrapAround                 : true,
 });
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials                    = true;
+
+import { installCsrfRefreshInterceptor } from './utils/csrf-refresh.js';
+
+installCsrfRefreshInterceptor();
 
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация тултипов
@@ -44,6 +47,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 // На случай, если экземпляр ещё не создан
                 new bootstrap.Dropdown(btn).toggle();
             }
+        }
+    }, false);
+
+    document.addEventListener('click', (event) => {
+        const toggler = event.target.closest('[data-navbar-toggle="collapse"]');
+        if ( ! toggler) {
+            return;
+        }
+
+        const targetSelector = toggler.getAttribute('data-navbar-target');
+        const target = targetSelector ? document.querySelector(targetSelector) : null;
+        if ( ! target) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const collapse = bootstrap.Collapse.getOrCreateInstance(target, { toggle: false });
+        collapse.toggle();
+
+        const isShown = target.classList.contains('show');
+        toggler.setAttribute('aria-expanded', isShown ? 'true' : 'false');
+    }, false);
+
+    document.addEventListener('click', async (event) => {
+        const button = event.target.closest('#cookie-agreement-btn');
+        if (!button) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const banner = document.getElementById('cookie-banner');
+        if (!banner) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        try {
+            const response = await fetch(button.dataset.endpoint, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                banner.remove();
+            }
+        }
+        catch (error) {
+            console.error('Cookie agreement request failed', error);
         }
     }, false);
 

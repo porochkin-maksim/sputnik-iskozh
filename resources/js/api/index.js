@@ -1,1031 +1,1268 @@
 import { makeQuery, prepareRequestData } from './helpers.js';
+import apiClient from './client.js';
 
 export function ApiAcquringInvoiceCreate(invoiceId,amount, getParams = {}, postData = null) {
     // see acquring.invoice.create
-    return window.axios.post(makeQuery('/home/acquring/create/'+invoiceId+'/'+amount+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Requests\AcquringController@create
+    return apiClient.post(makeQuery('/home/acquring/create/'+invoiceId+'/'+amount+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountCreate(getParams = {}, postData = null) {
     // see admin.account.create
-    return window.axios.get(makeQuery('/admin/accounts/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@create
+    return apiClient.get(makeQuery('/admin/accounts/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountDelete(id, getParams = {}, postData = null) {
     // see admin.account.delete
-    return window.axios.delete(makeQuery('/admin/accounts/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@delete
+    return apiClient.delete(makeQuery('/admin/accounts/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountGet(accountId, getParams = {}, postData = null) {
     // see admin.account.get
-    return window.axios.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@get
+    return apiClient.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountIndex(getParams = {}, postData = null) {
     // see admin.account.index
-    return window.axios.get(makeQuery('/admin/accounts', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@index
+    return apiClient.get(makeQuery('/admin/accounts', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountInvoiceList(accountId, getParams = {}, postData = null) {
     // see admin.account.invoice.list
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/invoices/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\InvoiceController@list
+    return apiClient.get(makeQuery('/admin/accounts/view/'+accountId+'/invoices/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountList(getParams = {}, postData = null) {
     // see admin.account.list
-    return window.axios.get(makeQuery('/admin/accounts/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@list
+    return apiClient.get(makeQuery('/admin/accounts/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountSave(getParams = {}, postData = null) {
     // see admin.account.save
-    return window.axios.post(makeQuery('/admin/accounts/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@save
+    return apiClient.post(makeQuery('/admin/accounts/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountView(accountId, getParams = {}, postData = null) {
     // see admin.account.view
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@view
+    return apiClient.get(makeQuery('/admin/accounts/view/'+accountId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminClaimCreate(invoiceId, getParams = {}, postData = null) {
     // see admin.claim.create
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@create
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminClaimDelete(invoiceId,id, getParams = {}, postData = null) {
     // see admin.claim.delete
-    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@delete
+    return apiClient.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminClaimList(invoiceId, getParams = {}, postData = null) {
     // see admin.claim.list
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@list
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminClaimSave(invoiceId, getParams = {}, postData = null) {
     // see admin.claim.save
-    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@save
+    return apiClient.post(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminClaimView(invoiceId,claimId, getParams = {}, postData = null) {
     // see admin.claim.view
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/get/'+claimId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@get
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/get/'+claimId+'', getParams), prepareRequestData(postData));
 }
 
-export function ApiAdminCounterAddValue(accountId, getParams = {}, postData = null) {
+export function ApiAdminCounterAddValue(getParams = {}, postData = null) {
     // see admin.counter.add-value
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/add-value', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@addValue
+    return apiClient.post(makeQuery('/admin/accounts/counters/json/add-value', getParams), prepareRequestData(postData));
 }
 
-export function ApiAdminCounterCreate(accountId, getParams = {}, postData = null) {
-    // see admin.counter.create
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/create', getParams), prepareRequestData(postData));
-}
-
-export function ApiAdminCounterDelete(accountId,counterId, getParams = {}, postData = null) {
+export function ApiAdminCounterDelete(counterId, getParams = {}, postData = null) {
     // see admin.counter.delete
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/delete/'+counterId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@delete
+    return apiClient.post(makeQuery('/admin/accounts/counters/json/delete/'+counterId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminCounterHistoryList(counterId, getParams = {}, postData = null) {
     // see admin.counter.history.list
-    return window.axios.get(makeQuery('/admin/counters/json/'+counterId+'/history/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterHistoryController@list
+    return apiClient.get(makeQuery('/admin/counters/json/'+counterId+'/history/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminCounterList(accountId, getParams = {}, postData = null) {
     // see admin.counter.list
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@list
+    return apiClient.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/list', getParams), prepareRequestData(postData));
 }
 
-export function ApiAdminCounterSave(accountId, getParams = {}, postData = null) {
+export function ApiAdminCounterSave(getParams = {}, postData = null) {
     // see admin.counter.save
-    return window.axios.post(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@save
+    return apiClient.post(makeQuery('/admin/accounts/counters/json/save', getParams), prepareRequestData(postData));
 }
 
-export function ApiAdminCounterView(accountId,counterId, getParams = {}, postData = null) {
+export function ApiAdminCounterView(counterId, getParams = {}, postData = null) {
     // see admin.counter.view
-    return window.axios.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/view/'+counterId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@view
+    return apiClient.get(makeQuery('/admin/accounts/counters/view/'+counterId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminDocumentReceiptInvoice(id, getParams = {}, postData = null) {
     // see admin.document.receipt.invoice
-    return window.axios.get(makeQuery('/admin/invoices/view/'+id+'/invoice-receipt', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Common\Documents\ReceiptController@makeByInvoiceId
+    return apiClient.get(makeQuery('/admin/invoices/view/'+id+'/invoice-receipt', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminEmailsDestroy(email, getParams = {}, postData = null) {
     // see admin.emails.destroy
-    return window.axios.delete(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\SentEmailController@destroy
+    return apiClient.delete(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminEmailsIndex(getParams = {}, postData = null) {
     // see admin.emails.index
-    return window.axios.get(makeQuery('/admin/emails', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\SentEmailController@index
+    return apiClient.get(makeQuery('/admin/emails', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminEmailsShow(email, getParams = {}, postData = null) {
     // see admin.emails.show
-    return window.axios.get(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\SentEmailController@show
+    return apiClient.get(makeQuery('/admin/emails/'+email+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminErrorLogsDetails(filename,index, getParams = {}, postData = null) {
     // see admin.error-logs.details
-    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\ErrorLogsController@details
+    return apiClient.get(makeQuery('/admin/error-logs/'+filename+'/details/'+index+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminErrorLogsIndex(getParams = {}, postData = null) {
     // see admin.error-logs.index
-    return window.axios.get(makeQuery('/admin/error-logs', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\ErrorLogsController@index
+    return apiClient.get(makeQuery('/admin/error-logs', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminErrorLogsShow(filename, getParams = {}, postData = null) {
     // see admin.error-logs.show
-    return window.axios.get(makeQuery('/admin/error-logs/'+filename+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\ErrorLogsController@show
+    return apiClient.get(makeQuery('/admin/error-logs/'+filename+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskIndex(getParams = {}, postData = null) {
     // see admin.help-desk.index
-    return window.axios.get(makeQuery('/admin/help-desk', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\IndexPageController
+    return apiClient.get(makeQuery('/admin/help-desk', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettings(getParams = {}, postData = null) {
     // see admin.help-desk.settings
-    return window.axios.get(makeQuery('/admin/help-desk/settings', getParams), prepareRequestData(postData));
+    // controller: Closure
+    return apiClient.get(makeQuery('/admin/help-desk/settings', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsCategoriesCreate(type, getParams = {}, postData = null) {
     // see admin.help-desk.settings.categories.create
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/create/'+type+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\CategoryController@create
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/categories/create/'+type+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsCategoriesDelete(id, getParams = {}, postData = null) {
     // see admin.help-desk.settings.categories.delete
-    return window.axios.delete(makeQuery('/admin/help-desk/settings/ajax/categories/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\CategoryController@delete
+    return apiClient.delete(makeQuery('/admin/help-desk/settings/ajax/categories/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsCategoriesGet(id, getParams = {}, postData = null) {
     // see admin.help-desk.settings.categories.get
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/get/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\CategoryController@get
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/categories/get/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsCategoriesList(getParams = {}, postData = null) {
     // see admin.help-desk.settings.categories.list
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/categories/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\CategoryController@list
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/categories/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsCategoriesSave(getParams = {}, postData = null) {
     // see admin.help-desk.settings.categories.save
-    return window.axios.post(makeQuery('/admin/help-desk/settings/ajax/categories/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\CategoryController@save
+    return apiClient.post(makeQuery('/admin/help-desk/settings/ajax/categories/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsServicesCreate(categoryId, getParams = {}, postData = null) {
     // see admin.help-desk.settings.services.create
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/services/create/'+categoryId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\ServiceController@create
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/services/create/'+categoryId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsServicesDelete(id, getParams = {}, postData = null) {
     // see admin.help-desk.settings.services.delete
-    return window.axios.delete(makeQuery('/admin/help-desk/settings/ajax/services/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\ServiceController@delete
+    return apiClient.delete(makeQuery('/admin/help-desk/settings/ajax/services/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsServicesList(categoryId, getParams = {}, postData = null) {
     // see admin.help-desk.settings.services.list
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/services/'+categoryId+'/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\ServiceController@list
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/services/'+categoryId+'/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsServicesSave(getParams = {}, postData = null) {
     // see admin.help-desk.settings.services.save
-    return window.axios.post(makeQuery('/admin/help-desk/settings/ajax/services/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\ServiceController@save
+    return apiClient.post(makeQuery('/admin/help-desk/settings/ajax/services/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskSettingsTypesList(getParams = {}, postData = null) {
     // see admin.help-desk.settings.types.list
-    return window.axios.get(makeQuery('/admin/help-desk/settings/ajax/types/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\TicketTypeController@list
+    return apiClient.get(makeQuery('/admin/help-desk/settings/ajax/types/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskTicketsDelete(id, getParams = {}, postData = null) {
     // see admin.help-desk.tickets.delete
-    return window.axios.delete(makeQuery('/admin/help-desk/tickets/ajax/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\TicketController@delete
+    return apiClient.delete(makeQuery('/admin/help-desk/tickets/ajax/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskTicketsList(getParams = {}, postData = null) {
     // see admin.help-desk.tickets.list
-    return window.axios.get(makeQuery('/admin/help-desk/tickets/ajax/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\TicketController@list
+    return apiClient.get(makeQuery('/admin/help-desk/tickets/ajax/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskTicketsSave(getParams = {}, postData = null) {
     // see admin.help-desk.tickets.save
-    return window.axios.post(makeQuery('/admin/help-desk/tickets/ajax/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\TicketController@save
+    return apiClient.post(makeQuery('/admin/help-desk/tickets/ajax/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminHelpDeskTicketsView(id, getParams = {}, postData = null) {
     // see admin.help-desk.tickets.view
-    return window.axios.get(makeQuery('/admin/help-desk/tickets/view/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HelpDesk\TicketController@view
+    return apiClient.get(makeQuery('/admin/help-desk/tickets/view/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminIndex(getParams = {}, postData = null) {
     // see admin.index
-    return window.axios.get(makeQuery('/admin', getParams), prepareRequestData(postData));
+    // controller: Closure
+    return apiClient.get(makeQuery('/admin', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceCreate(getParams = {}, postData = null) {
     // see admin.invoice.create
-    return window.axios.get(makeQuery('/admin/invoices/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@create
+    return apiClient.get(makeQuery('/admin/invoices/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceCreateRegularInvoices(periodId, getParams = {}, postData = null) {
     // see admin.invoice.create-regular-invoices
-    return window.axios.post(makeQuery('/admin/invoices/json/create-regular-invoices/'+periodId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@createRegularInvoices
+    return apiClient.post(makeQuery('/admin/invoices/json/create-regular-invoices/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceDelete(id, getParams = {}, postData = null) {
     // see admin.invoice.delete
-    return window.axios.delete(makeQuery('/admin/invoices/json/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@delete
+    return apiClient.delete(makeQuery('/admin/invoices/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceExport(getParams = {}, postData = null) {
     // see admin.invoice.export
-    return window.axios.get(makeQuery('/admin/invoices/export', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@export
+    return apiClient.get(makeQuery('/admin/invoices/export', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceGet(id, getParams = {}, postData = null) {
     // see admin.invoice.get
-    return window.axios.get(makeQuery('/admin/invoices/json/get/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@get
+    return apiClient.get(makeQuery('/admin/invoices/json/get/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceGetAccountsCountWithoutRegular(periodId, getParams = {}, postData = null) {
     // see admin.invoice.get-accounts-count-without-regular
-    return window.axios.get(makeQuery('/admin/invoices/json/get-without-regular/'+periodId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@getAccountCountWithoutRegular
+    return apiClient.get(makeQuery('/admin/invoices/json/get-without-regular/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceImportPaymentsIndex(periodId, getParams = {}, postData = null) {
     // see admin.invoice.import-payments.index
-    return window.axios.get(makeQuery('/admin/invoices/import-payments/period-'+periodId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceImportController@index
+    return apiClient.get(makeQuery('/admin/invoices/import-payments/period-'+periodId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceImportPaymentsParseFile(periodId, getParams = {}, postData = null) {
     // see admin.invoice.import-payments.parse-file
-    return window.axios.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/parse-file', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceImportController@parseFile
+    return apiClient.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/parse-file', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceImportPaymentsSave(periodId, getParams = {}, postData = null) {
     // see admin.invoice.import-payments.save
-    return window.axios.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceImportController@save
+    return apiClient.post(makeQuery('/admin/invoices/import-payments/period-'+periodId+'/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceIndex(getParams = {}, postData = null) {
     // see admin.invoice.index
-    return window.axios.get(makeQuery('/admin/invoices', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@index
+    return apiClient.get(makeQuery('/admin/invoices', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceList(getParams = {}, postData = null) {
     // see admin.invoice.list
-    return window.axios.get(makeQuery('/admin/invoices/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@list
+    return apiClient.get(makeQuery('/admin/invoices/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceRecalc(id, getParams = {}, postData = null) {
     // see admin.invoice.recalc
-    return window.axios.post(makeQuery('/admin/invoices/json/recalc/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@recalc
+    return apiClient.post(makeQuery('/admin/invoices/json/recalc/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceSave(getParams = {}, postData = null) {
     // see admin.invoice.save
-    return window.axios.post(makeQuery('/admin/invoices/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@save
+    return apiClient.post(makeQuery('/admin/invoices/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminInvoiceView(id, getParams = {}, postData = null) {
     // see admin.invoice.view
-    return window.axios.get(makeQuery('/admin/invoices/view/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@view
+    return apiClient.get(makeQuery('/admin/invoices/view/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminLoginLink(userId,pin, getParams = {}, postData = null) {
     // see admin.login-link
-    return window.axios.post(makeQuery('/admin/users/json/qr/login/'+userId+'/'+pin+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\QrCodeController@makeLoginLink
+    return apiClient.post(makeQuery('/admin/users/json/qr/login/'+userId+'/'+pin+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentDelete(id, getParams = {}, postData = null) {
     // see admin.new-payment.delete
-    return window.axios.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@delete
+    return apiClient.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentGetInvoices(accountId,periodId, getParams = {}, postData = null) {
     // see admin.new-payment.get-invoices
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/get-invoices/'+accountId+'/'+periodId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@getInvoices
+    return apiClient.get(makeQuery('/admin/invoices/payments/json/get-invoices/'+accountId+'/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentIndex(getParams = {}, postData = null) {
     // see admin.new-payment.index
-    return window.axios.get(makeQuery('/admin/invoices/payments', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@index
+    return apiClient.get(makeQuery('/admin/invoices/payments', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentList(getParams = {}, postData = null) {
     // see admin.new-payment.list
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@list
+    return apiClient.get(makeQuery('/admin/invoices/payments/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentSave(getParams = {}, postData = null) {
     // see admin.new-payment.save
-    return window.axios.post(makeQuery('/admin/invoices/payments/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@save
+    return apiClient.post(makeQuery('/admin/invoices/payments/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentView(paymentId, getParams = {}, postData = null) {
     // see admin.new-payment.view
-    return window.axios.get(makeQuery('/admin/invoices/payments/json/get/'+paymentId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@get
+    return apiClient.get(makeQuery('/admin/invoices/payments/json/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminOptionsIndex(getParams = {}, postData = null) {
     // see admin.options.index
-    return window.axios.get(makeQuery('/admin/options', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\OptionsController@index
+    return apiClient.get(makeQuery('/admin/options', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminOptionsList(getParams = {}, postData = null) {
     // see admin.options.list
-    return window.axios.get(makeQuery('/admin/options/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\OptionsController@list
+    return apiClient.get(makeQuery('/admin/options/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminOptionsSave(getParams = {}, postData = null) {
     // see admin.options.save
-    return window.axios.post(makeQuery('/admin/options/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\OptionsController@save
+    return apiClient.post(makeQuery('/admin/options/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentAutoCreate(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.auto-create
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/auto-create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@autoCreate
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/auto-create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentCreate(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.create
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@create
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentDelete(invoiceId,id, getParams = {}, postData = null) {
     // see admin.payment.delete
-    return window.axios.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@delete
+    return apiClient.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentList(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.list
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@list
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentSave(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.save
-    return window.axios.post(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@save
+    return apiClient.post(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentView(invoiceId,paymentId, getParams = {}, postData = null) {
     // see admin.payment.view
-    return window.axios.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PaymentController@get
+    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPeriodCreate(getParams = {}, postData = null) {
     // see admin.period.create
-    return window.axios.get(makeQuery('/admin/periods/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@create
+    return apiClient.get(makeQuery('/admin/periods/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPeriodDelete(id, getParams = {}, postData = null) {
     // see admin.period.delete
-    return window.axios.delete(makeQuery('/admin/periods/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@delete
+    return apiClient.delete(makeQuery('/admin/periods/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPeriodIndex(getParams = {}, postData = null) {
     // see admin.period.index
-    return window.axios.get(makeQuery('/admin/periods', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@index
+    return apiClient.get(makeQuery('/admin/periods', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPeriodList(getParams = {}, postData = null) {
     // see admin.period.list
-    return window.axios.get(makeQuery('/admin/periods/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@list
+    return apiClient.get(makeQuery('/admin/periods/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPeriodSave(getParams = {}, postData = null) {
     // see admin.period.save
-    return window.axios.post(makeQuery('/admin/periods/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@save
+    return apiClient.post(makeQuery('/admin/periods/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQrView(uid, getParams = {}, postData = null) {
     // see admin.qr.view
-    return window.axios.get(makeQuery('/admin/qr/view/'+uid+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\QrCodeController@view
+    return apiClient.get(makeQuery('/admin/qr/view/'+uid+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQueue(getParams = {}, postData = null) {
     // see admin.queue
-    return window.axios.get(makeQuery('/admin/queue', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\QueueController@index
+    return apiClient.get(makeQuery('/admin/queue', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQueueClear(getParams = {}, postData = null) {
     // see admin.queue.clear
-    return window.axios.post(makeQuery('/admin/queue/clear', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\QueueController@clear
+    return apiClient.post(makeQuery('/admin/queue/clear', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQueueStart(getParams = {}, postData = null) {
     // see admin.queue.start
-    return window.axios.post(makeQuery('/admin/queue/start', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\QueueController@start
+    return apiClient.post(makeQuery('/admin/queue/start', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQueueStatus(getParams = {}, postData = null) {
     // see admin.queue.status
-    return window.axios.get(makeQuery('/admin/queue/status', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\QueueController@status
+    return apiClient.get(makeQuery('/admin/queue/status', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminQueueStop(getParams = {}, postData = null) {
     // see admin.queue.stop
-    return window.axios.post(makeQuery('/admin/queue/stop', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\QueueController@stop
+    return apiClient.post(makeQuery('/admin/queue/stop', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryConfirm(getParams = {}, postData = null) {
     // see admin.requests.counter-history.confirm
-    return window.axios.post(makeQuery('/admin/counter-history/json/confirm', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\CounterController@confirm
+    return apiClient.post(makeQuery('/admin/counter-history/json/confirm', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryConfirmDelete(getParams = {}, postData = null) {
     // see admin.requests.counter-history.confirm-delete
-    return window.axios.post(makeQuery('/admin/counter-history/json/confirm-delete', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\CounterController@confirmDelete
+    return apiClient.post(makeQuery('/admin/counter-history/json/confirm-delete', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryCreateClaim(historyId, getParams = {}, postData = null) {
     // see admin.requests.counter-history.create-claim
-    return window.axios.post(makeQuery('/admin/counter-history/json/create-claim/'+historyId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@createClaim
+    return apiClient.post(makeQuery('/admin/counter-history/json/create-claim/'+historyId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryDelete(historyId, getParams = {}, postData = null) {
     // see admin.requests.counter-history.delete
-    return window.axios.delete(makeQuery('/admin/counter-history/json/delete/'+historyId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\CounterController@delete
+    return apiClient.delete(makeQuery('/admin/counter-history/json/delete/'+historyId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryIndex(getParams = {}, postData = null) {
     // see admin.requests.counter-history.index
-    return window.axios.get(makeQuery('/admin/counter-history', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Account\CounterController@index
+    return apiClient.get(makeQuery('/admin/counter-history', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryLink(getParams = {}, postData = null) {
     // see admin.requests.counter-history.link
-    return window.axios.post(makeQuery('/admin/counter-history/json/link', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\CounterController@link
+    return apiClient.post(makeQuery('/admin/counter-history/json/link', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRequestsCounterHistoryList(getParams = {}, postData = null) {
     // see admin.requests.counter-history.list
-    return window.axios.get(makeQuery('/admin/counter-history/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Requests\CounterController@list
+    return apiClient.get(makeQuery('/admin/counter-history/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRoleCreate(getParams = {}, postData = null) {
     // see admin.role.create
-    return window.axios.get(makeQuery('/admin/roles/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\RolesController@create
+    return apiClient.get(makeQuery('/admin/roles/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRoleDelete(id, getParams = {}, postData = null) {
     // see admin.role.delete
-    return window.axios.delete(makeQuery('/admin/roles/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\RolesController@delete
+    return apiClient.delete(makeQuery('/admin/roles/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRoleIndex(getParams = {}, postData = null) {
     // see admin.role.index
-    return window.axios.get(makeQuery('/admin/roles', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\RolesController@index
+    return apiClient.get(makeQuery('/admin/roles', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRoleList(getParams = {}, postData = null) {
     // see admin.role.list
-    return window.axios.get(makeQuery('/admin/roles/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\RolesController@list
+    return apiClient.get(makeQuery('/admin/roles/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminRoleSave(getParams = {}, postData = null) {
     // see admin.role.save
-    return window.axios.post(makeQuery('/admin/roles/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\RolesController@save
+    return apiClient.post(makeQuery('/admin/roles/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminSelectsAccounts(getParams = {}, postData = null) {
     // see admin.selects.accounts
-    return window.axios.get(makeQuery('/admin/json/selects/accounts', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\SelectCollectionsController@accounts
+    return apiClient.get(makeQuery('/admin/json/selects/accounts', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminSelectsCounters(accountId, getParams = {}, postData = null) {
     // see admin.selects.counters
-    return window.axios.get(makeQuery('/admin/json/selects/counters/'+accountId+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\SelectCollectionsController@counters
+    return apiClient.get(makeQuery('/admin/json/selects/counters/'+accountId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminSelectsPeriods(getParams = {}, postData = null) {
     // see admin.selects.periods
-    return window.axios.get(makeQuery('/admin/json/selects/periods', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\SelectCollectionsController@periods
+    return apiClient.get(makeQuery('/admin/json/selects/periods', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminSelectsRoles(getParams = {}, postData = null) {
+    // see admin.selects.roles
+    // controller: App\Http\Controllers\Admin\SelectCollectionsController@roles
+    return apiClient.get(makeQuery('/admin/json/selects/roles', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminSelectsServicesTypes(getParams = {}, postData = null) {
     // see admin.selects.services-types
-    return window.axios.get(makeQuery('/admin/json/selects/services-types', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\SelectCollectionsController@servicesTypes
+    return apiClient.get(makeQuery('/admin/json/selects/services-types', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminServiceCreate(getParams = {}, postData = null) {
     // see admin.service.create
-    return window.axios.get(makeQuery('/admin/services/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ServiceController@create
+    return apiClient.get(makeQuery('/admin/services/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminServiceDelete(id, getParams = {}, postData = null) {
     // see admin.service.delete
-    return window.axios.delete(makeQuery('/admin/services/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ServiceController@delete
+    return apiClient.delete(makeQuery('/admin/services/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminServiceIndex(getParams = {}, postData = null) {
     // see admin.service.index
-    return window.axios.get(makeQuery('/admin/services', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ServiceController@index
+    return apiClient.get(makeQuery('/admin/services', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminServiceList(getParams = {}, postData = null) {
     // see admin.service.list
-    return window.axios.get(makeQuery('/admin/services/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ServiceController@list
+    return apiClient.get(makeQuery('/admin/services/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminServiceSave(getParams = {}, postData = null) {
     // see admin.service.save
-    return window.axios.post(makeQuery('/admin/services/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\Billing\ServiceController@save
+    return apiClient.post(makeQuery('/admin/services/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminTopPanelIndex(getParams = {}, postData = null) {
     // see admin.top-panel.index
-    return window.axios.get(makeQuery('/admin/json/top-panel', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\TopPanelController@index
+    return apiClient.get(makeQuery('/admin/json/top-panel', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminTopPanelSearch(getParams = {}, postData = null) {
     // see admin.top-panel.search
-    return window.axios.post(makeQuery('/admin/json/top-panel', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\TopPanelController@search
+    return apiClient.post(makeQuery('/admin/json/top-panel', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserDelete(id, getParams = {}, postData = null) {
     // see admin.user.delete
-    return window.axios.delete(makeQuery('/admin/users/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@delete
+    return apiClient.delete(makeQuery('/admin/users/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserExport(getParams = {}, postData = null) {
     // see admin.user.export
-    return window.axios.get(makeQuery('/admin/users/export', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@export
+    return apiClient.get(makeQuery('/admin/users/export', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserGenerateEmail(getParams = {}, postData = null) {
     // see admin.user.generate-email
-    return window.axios.post(makeQuery('/admin/users/json/generate-email', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@generateEmail
+    return apiClient.post(makeQuery('/admin/users/json/generate-email', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminUserGet(id, getParams = {}, postData = null) {
+    // see admin.user.get
+    // controller: App\Http\Controllers\Admin\System\UsersController@get
+    return apiClient.get(makeQuery('/admin/users/json/get/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserIndex(getParams = {}, postData = null) {
     // see admin.user.index
-    return window.axios.get(makeQuery('/admin/users', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@index
+    return apiClient.get(makeQuery('/admin/users', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserList(getParams = {}, postData = null) {
     // see admin.user.list
-    return window.axios.get(makeQuery('/admin/users/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@list
+    return apiClient.get(makeQuery('/admin/users/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserRestore(id, getParams = {}, postData = null) {
     // see admin.user.restore
-    return window.axios.patch(makeQuery('/admin/users/json/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@restore
+    return apiClient.patch(makeQuery('/admin/users/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserSave(getParams = {}, postData = null) {
     // see admin.user.save
-    return window.axios.post(makeQuery('/admin/users/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@save
+    return apiClient.post(makeQuery('/admin/users/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserSendInviteWithPassword(getParams = {}, postData = null) {
     // see admin.user.send.invite-with-password
-    return window.axios.post(makeQuery('/admin/users/json/send-invite-password', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@sendInviteWithPassword
+    return apiClient.post(makeQuery('/admin/users/json/send-invite-password', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserSendRestorePassword(getParams = {}, postData = null) {
     // see admin.user.send.restore.password
-    return window.axios.post(makeQuery('/admin/users/json/sendRestorePassword', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@sendRestorePassword
+    return apiClient.post(makeQuery('/admin/users/json/sendRestorePassword', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminUserView(id, getParams = {}, postData = null) {
     // see admin.user.view
-    return window.axios.get(makeQuery('/admin/users/view/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\System\UsersController@view
+    return apiClient.get(makeQuery('/admin/users/view/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAjaxSelectsAccounts(getParams = {}, postData = null) {
     // see ajax.selects.accounts
-    return window.axios.get(makeQuery('/ajax/selects/accounts', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\SelectsController@accounts
+    return apiClient.get(makeQuery('/ajax/selects/accounts', getParams), prepareRequestData(postData));
 }
 
 export function ApiAnnouncementsIndex(getParams = {}, postData = null) {
     // see announcements.index
-    return window.axios.get(makeQuery('/announcements', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\AnnouncementController@index
+    return apiClient.get(makeQuery('/announcements', getParams), prepareRequestData(postData));
 }
 
 export function ApiAnnouncementsList(getParams = {}, postData = null) {
     // see announcements.list
-    return window.axios.get(makeQuery('/announcements/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\AnnouncementController@list
+    return apiClient.get(makeQuery('/announcements/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAnnouncementsShow(id, getParams = {}, postData = null) {
     // see announcements.show
-    return window.axios.get(makeQuery('/announcements/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\AnnouncementController@show
+    return apiClient.get(makeQuery('/announcements/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiCommonSummary(getParams = {}, postData = null) {
     // see common.summary
-    return window.axios.get(makeQuery('/json/summary', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Common\SummaryController@summary
+    return apiClient.get(makeQuery('/json/summary', getParams), prepareRequestData(postData));
 }
 
 export function ApiCommonSummaryDetailing(type, getParams = {}, postData = null) {
     // see common.summary.detailing
-    return window.axios.get(makeQuery('/json/summary/'+type+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Common\SummaryController@summaryDetailing
+    return apiClient.get(makeQuery('/json/summary/'+type+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiContacts(getParams = {}, postData = null) {
     // see contacts
-    return window.axios.get(makeQuery('/contacts', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@contacts
+    return apiClient.get(makeQuery('/contacts', getParams), prepareRequestData(postData));
+}
+
+export function ApiCookiePolicy(getParams = {}, postData = null) {
+    // see cookie-policy
+    // controller: App\Http\Controllers\Public\PagesController@cookiePolicy
+    return apiClient.get(makeQuery('/cookie', getParams), prepareRequestData(postData));
 }
 
 export function ApiCookieAgreement(getParams = {}, postData = null) {
     // see cookie_agreement
-    return window.axios.post(makeQuery('/cookie-agreement', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\CookieController@cookieAgreement
+    return apiClient.post(makeQuery('/cookie-agreement', getParams), prepareRequestData(postData));
 }
 
 export function ApiCounter(getParams = {}, postData = null) {
     // see counter
-    return window.axios.get(makeQuery('/contacts/requests/counter', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\RequestsPagesController@counter
+    return apiClient.get(makeQuery('/contacts/requests/counter', getParams), prepareRequestData(postData));
 }
 
 export function ApiCounterCreate(getParams = {}, postData = null) {
     // see counter.create
-    return window.axios.post(makeQuery('/contacts/requests/counter', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Requests\CounterController@create
+    return apiClient.post(makeQuery('/contacts/requests/counter', getParams), prepareRequestData(postData));
 }
 
 export function ApiDocumentReceiptBlank(getParams = {}, postData = null) {
     // see document.receipt.blank
-    return window.axios.get(makeQuery('/document/invoice-receipt/blank', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Common\Documents\ReceiptController@makeForBlank
+    return apiClient.get(makeQuery('/document/invoice-receipt/blank', getParams), prepareRequestData(postData));
 }
 
 export function ApiDocumentReceiptInvoice(uid, getParams = {}, postData = null) {
     // see document.receipt.invoice
-    return window.axios.get(makeQuery('/document/invoice-receipt/'+uid+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Common\Documents\ReceiptController@makeForInvoice
+    return apiClient.get(makeQuery('/document/invoice-receipt/'+uid+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesDelete(id, getParams = {}, postData = null) {
     // see files.delete
-    return window.axios.delete(makeQuery('/files/json/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@delete
+    return apiClient.delete(makeQuery('/files/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesDown(id, getParams = {}, postData = null) {
     // see files.down
-    return window.axios.post(makeQuery('/files/json/down/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@down
+    return apiClient.post(makeQuery('/files/json/down/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesEdit(id, getParams = {}, postData = null) {
     // see files.edit
-    return window.axios.get(makeQuery('/files/json/edit/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@edit
+    return apiClient.get(makeQuery('/files/json/edit/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesIndex(folder, getParams = {}, postData = null) {
     // see files.index
-    return window.axios.get(makeQuery('/files/'+folder+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@index
+    return apiClient.get(makeQuery('/files/'+folder+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesList(getParams = {}, postData = null) {
     // see files.list
-    return window.axios.get(makeQuery('/files/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@list
+    return apiClient.get(makeQuery('/files/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesMove(getParams = {}, postData = null) {
     // see files.move
-    return window.axios.post(makeQuery('/files/json/move', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@move
+    return apiClient.post(makeQuery('/files/json/move', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesReplace(getParams = {}, postData = null) {
     // see files.replace
-    return window.axios.post(makeQuery('/files/json/replace', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@replace
+    return apiClient.post(makeQuery('/files/json/replace', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesSave(getParams = {}, postData = null) {
     // see files.save
-    return window.axios.post(makeQuery('/files/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@save
+    return apiClient.post(makeQuery('/files/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesStore(getParams = {}, postData = null) {
     // see files.store
-    return window.axios.post(makeQuery('/files/json/store', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@store
+    return apiClient.post(makeQuery('/files/json/store', getParams), prepareRequestData(postData));
 }
 
 export function ApiFilesUp(id, getParams = {}, postData = null) {
     // see files.up
-    return window.axios.post(makeQuery('/files/json/up/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FileController@up
+    return apiClient.post(makeQuery('/files/json/up/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFoldersDelete(id, getParams = {}, postData = null) {
     // see folders.delete
-    return window.axios.delete(makeQuery('/folders/json/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@delete
+    return apiClient.delete(makeQuery('/folders/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFoldersInfo(id, getParams = {}, postData = null) {
     // see folders.info
-    return window.axios.get(makeQuery('/folders/json/info/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@info
+    return apiClient.get(makeQuery('/folders/json/info/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiFoldersList(getParams = {}, postData = null) {
     // see folders.list
-    return window.axios.get(makeQuery('/folders/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@list
+    return apiClient.get(makeQuery('/folders/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiFoldersSave(getParams = {}, postData = null) {
     // see folders.save
-    return window.axios.post(makeQuery('/folders/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@save
+    return apiClient.post(makeQuery('/folders/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiFoldersShow(id, getParams = {}, postData = null) {
     // see folders.show
-    return window.axios.get(makeQuery('/folders/json/show/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Files\FolderController@show
+    return apiClient.get(makeQuery('/folders/json/show/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiGarbage(getParams = {}, postData = null) {
     // see garbage
-    return window.axios.get(makeQuery('/garbage', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@garbage
+    return apiClient.get(makeQuery('/garbage', getParams), prepareRequestData(postData));
 }
 
 export function ApiHelpDesk(getParams = {}, postData = null) {
     // see help-desk
-    return window.axios.get(makeQuery('/contacts/requests/help-desk', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\HelpDesk\HelpDeskController@index
+    return apiClient.get(makeQuery('/contacts/requests/help-desk', getParams), prepareRequestData(postData));
 }
 
 export function ApiHelpDeskCategory(type,category, getParams = {}, postData = null) {
     // see help-desk.category
-    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\HelpDesk\HelpDeskController@category
+    return apiClient.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiHelpDeskService(type,category,service, getParams = {}, postData = null) {
     // see help-desk.service
-    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\HelpDesk\HelpDeskController@form
+    return apiClient.get(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiHelpDeskTicket(type,category,service, getParams = {}, postData = null) {
     // see help-desk.ticket
-    return window.axios.post(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\HelpDesk\HelpDeskController@ticket
+    return apiClient.post(makeQuery('/contacts/requests/help-desk/'+type+'/'+category+'/'+service+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiHelpDeskType(type, getParams = {}, postData = null) {
     // see help-desk.type
-    return window.axios.get(makeQuery('/contacts/requests/help-desk/'+type+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\HelpDesk\HelpDeskController@type
+    return apiClient.get(makeQuery('/contacts/requests/help-desk/'+type+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiHome(getParams = {}, postData = null) {
     // see home
-    return window.axios.get(makeQuery('/home', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\HomeController@index
+    return apiClient.get(makeQuery('/home', getParams), prepareRequestData(postData));
 }
 
 export function ApiIndex(getParams = {}, postData = null) {
     // see index
-    return window.axios.get(makeQuery('/', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@index
+    return apiClient.get(makeQuery('/', getParams), prepareRequestData(postData));
 }
 
 export function ApiInfraHistoryChanges(getParams = {}, postData = null) {
     // see infra.history-changes
-    return window.axios.get(makeQuery('/admin/history/changes', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Admin\HistoryChangesViewController
+    return apiClient.get(makeQuery('/admin/history/changes', getParams), prepareRequestData(postData));
 }
 
 export function ApiLogin(getParams = {}, postData = null) {
     // see login
-    return window.axios.post(makeQuery('/login', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\LoginController@login
+    return apiClient.post(makeQuery('/login', getParams), prepareRequestData(postData));
 }
 
 export function ApiLoginDo(token, getParams = {}, postData = null) {
     // see login.do
-    return window.axios.post(makeQuery('/login/'+token+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\LoginController@token
+    return apiClient.post(makeQuery('/login/'+token+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiLogout(getParams = {}, postData = null) {
     // see logout
-    return window.axios.get(makeQuery('/logout', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\LogoutController
+    return apiClient.get(makeQuery('/logout', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsCreate(getParams = {}, postData = null) {
     // see news.create
-    return window.axios.get(makeQuery('/news/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@create
+    return apiClient.get(makeQuery('/news/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsDelete(id, getParams = {}, postData = null) {
     // see news.delete
-    return window.axios.delete(makeQuery('/news/json/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@delete
+    return apiClient.delete(makeQuery('/news/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsEdit(id, getParams = {}, postData = null) {
     // see news.edit
-    return window.axios.get(makeQuery('/news/json/edit/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@edit
+    return apiClient.get(makeQuery('/news/json/edit/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsFileDelete(id, getParams = {}, postData = null) {
     // see news.file.delete
-    return window.axios.delete(makeQuery('/news/json/file/delete/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@deleteFile
+    return apiClient.delete(makeQuery('/news/json/file/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsFileSave(getParams = {}, postData = null) {
     // see news.file.save
-    return window.axios.post(makeQuery('/news/json/file/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@saveFile
+    return apiClient.post(makeQuery('/news/json/file/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsFileUpload(id, getParams = {}, postData = null) {
     // see news.file.upload
-    return window.axios.post(makeQuery('/news/json/file/upload/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@uploadFile
+    return apiClient.post(makeQuery('/news/json/file/upload/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiNewsForm(id, getParams = {}, postData = null) {
+    // see news.form
+    // controller: App\Http\Controllers\Public\News\NewsController@formPage
+    return apiClient.get(makeQuery('/news/form/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsIndex(getParams = {}, postData = null) {
     // see news.index
-    return window.axios.get(makeQuery('/news', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@index
+    return apiClient.get(makeQuery('/news', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsList(getParams = {}, postData = null) {
     // see news.list
-    return window.axios.get(makeQuery('/news/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@list
+    return apiClient.get(makeQuery('/news/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsListIndex(getParams = {}, postData = null) {
     // see news.list.index
-    return window.axios.get(makeQuery('/news/json/list/index', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@indexList
+    return apiClient.get(makeQuery('/news/json/list/index', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsListLocked(getParams = {}, postData = null) {
     // see news.list.locked
-    return window.axios.get(makeQuery('/news/json/list/locked', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@lockedNews
+    return apiClient.get(makeQuery('/news/json/list/locked', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsSave(getParams = {}, postData = null) {
     // see news.save
-    return window.axios.post(makeQuery('/news/json/save', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@save
+    return apiClient.post(makeQuery('/news/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiNewsShow(id, getParams = {}, postData = null) {
     // see news.show
-    return window.axios.get(makeQuery('/news/'+id+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\News\NewsController@show
+    return apiClient.get(makeQuery('/news/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordConfirm(getParams = {}, postData = null) {
     // see password.confirm
-    return window.axios.get(makeQuery('/password/confirm', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\ConfirmPasswordController@showConfirmForm
+    return apiClient.get(makeQuery('/password/confirm', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordEmail(getParams = {}, postData = null) {
     // see password.email
-    return window.axios.post(makeQuery('/password/email', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\ForgotPasswordController@sendResetLinkEmail
+    return apiClient.post(makeQuery('/password/email', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordRequest(getParams = {}, postData = null) {
     // see password.request
-    return window.axios.get(makeQuery('/password/reset', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\ForgotPasswordController@showLinkRequestForm
+    return apiClient.get(makeQuery('/password/reset', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordReset(token, getParams = {}, postData = null) {
     // see password.reset
-    return window.axios.get(makeQuery('/password/reset/'+token+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\ResetPasswordController@showResetForm
+    return apiClient.get(makeQuery('/password/reset/'+token+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordSave(getParams = {}, postData = null) {
     // see password.save
-    return window.axios.post(makeQuery('/password/set', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\SetPasswordController@set
+    return apiClient.post(makeQuery('/password/set', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordSet(getParams = {}, postData = null) {
     // see password.set
-    return window.axios.get(makeQuery('/password/set', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\SetPasswordController@index
+    return apiClient.get(makeQuery('/password/set', getParams), prepareRequestData(postData));
 }
 
 export function ApiPasswordUpdate(getParams = {}, postData = null) {
     // see password.update
-    return window.axios.post(makeQuery('/password/reset', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\ResetPasswordController@reset
+    return apiClient.post(makeQuery('/password/reset', getParams), prepareRequestData(postData));
 }
 
 export function ApiPayment(getParams = {}, postData = null) {
     // see payment
-    return window.axios.get(makeQuery('/contacts/requests/payment', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\RequestsPagesController@payment
+    return apiClient.get(makeQuery('/contacts/requests/payment', getParams), prepareRequestData(postData));
 }
 
 export function ApiPaymentCreate(getParams = {}, postData = null) {
     // see payment.create
-    return window.axios.post(makeQuery('/contacts/requests/payment', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\Requests\PaymentsController@create
+    return apiClient.post(makeQuery('/contacts/requests/payment', getParams), prepareRequestData(postData));
+}
+
+export function ApiPaymentsInfo(getParams = {}, postData = null) {
+    // see payments-info
+    // controller: App\Http\Controllers\Public\PagesController@paymentsInfo
+    return apiClient.get(makeQuery('/payments-info', getParams), prepareRequestData(postData));
+}
+
+export function ApiPersonalDataConsent(getParams = {}, postData = null) {
+    // see personal-data-consent
+    // controller: App\Http\Controllers\Public\PagesController@personalDataConsent
+    return apiClient.get(makeQuery('/personal-data-consent', getParams), prepareRequestData(postData));
 }
 
 export function ApiPrivacy(getParams = {}, postData = null) {
     // see privacy
-    return window.axios.get(makeQuery('/privacy', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@privacy
+    return apiClient.get(makeQuery('/privacy', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileAccountSwitch(getParams = {}, postData = null) {
     // see profile.account.switch
-    return window.axios.post(makeQuery('/home/profile/switch-account', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\ProfileController@switchAccount
+    return apiClient.post(makeQuery('/home/profile/switch-account', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCounterAddValue(getParams = {}, postData = null) {
     // see profile.counter.add-value
-    return window.axios.post(makeQuery('/home/counters/json/add-value', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@addValue
+    return apiClient.post(makeQuery('/home/counters/json/add-value', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCounterCreate(getParams = {}, postData = null) {
     // see profile.counter.create
-    return window.axios.post(makeQuery('/home/counters/json/create', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@create
+    return apiClient.post(makeQuery('/home/counters/json/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCounterHistoryList(getParams = {}, postData = null) {
     // see profile.counter.history-list
-    return window.axios.post(makeQuery('/home/counters/json/history', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@history
+    return apiClient.post(makeQuery('/home/counters/json/history', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCounterList(getParams = {}, postData = null) {
     // see profile.counter.list
-    return window.axios.get(makeQuery('/home/counters/json/list', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@list
+    return apiClient.get(makeQuery('/home/counters/json/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileCounterPassport(getParams = {}, postData = null) {
+    // see profile.counter.passport
+    // controller: App\Http\Controllers\Profile\CounterController@passportSave
+    return apiClient.post(makeQuery('/home/counters/json/passport', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCountersIncrementSave(getParams = {}, postData = null) {
     // see profile.counters.increment-save
-    return window.axios.post(makeQuery('/home/counters/json/increment', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@incrementSave
+    return apiClient.post(makeQuery('/home/counters/json/increment', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCountersIndex(getParams = {}, postData = null) {
     // see profile.counters.index
-    return window.axios.get(makeQuery('/home/counters', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@index
+    return apiClient.get(makeQuery('/home/counters', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileCountersView(counter, getParams = {}, postData = null) {
     // see profile.counters.view
-    return window.axios.get(makeQuery('/home/counters/'+counter+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\CounterController@view
+    return apiClient.get(makeQuery('/home/counters/'+counter+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileInvoicesIndex(getParams = {}, postData = null) {
     // see profile.invoices.index
-    return window.axios.get(makeQuery('/home/invoices', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\HomeController@invoices
+    return apiClient.get(makeQuery('/home/invoices', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfileSavePassword(getParams = {}, postData = null) {
     // see profile.save.password
-    return window.axios.post(makeQuery('/home/profile/password', getParams), prepareRequestData(postData));
-}
-
-export function ApiProposal(getParams = {}, postData = null) {
-    // see proposal
-    return window.axios.get(makeQuery('/contacts/requests/proposal', getParams), prepareRequestData(postData));
-}
-
-export function ApiProposalCreate(getParams = {}, postData = null) {
-    // see proposal.create
-    return window.axios.post(makeQuery('/contacts/requests/proposal', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Profile\ProfileController@savePassword
+    return apiClient.post(makeQuery('/home/profile/password', getParams), prepareRequestData(postData));
 }
 
 export function ApiRegulation(getParams = {}, postData = null) {
     // see regulation
-    return window.axios.get(makeQuery('/regulation', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@regulation
+    return apiClient.get(makeQuery('/regulation', getParams), prepareRequestData(postData));
 }
 
 export function ApiRequests(getParams = {}, postData = null) {
     // see requests
-    return window.axios.get(makeQuery('/contacts/requests', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\RequestsPagesController@index
+    return apiClient.get(makeQuery('/contacts/requests', getParams), prepareRequestData(postData));
 }
 
 export function ApiSanctumCsrfCookie(getParams = {}, postData = null) {
     // see sanctum.csrf-cookie
-    return window.axios.get(makeQuery('/sanctum/csrf-cookie', getParams), prepareRequestData(postData));
+    // controller: Laravel\Sanctum\Http\Controllers\CsrfCookieController@show
+    return apiClient.get(makeQuery('/sanctum/csrf-cookie', getParams), prepareRequestData(postData));
 }
 
 export function ApiSearch(getParams = {}, postData = null) {
     // see search
-    return window.axios.get(makeQuery('/search', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\PagesController@search
+    return apiClient.get(makeQuery('/search', getParams), prepareRequestData(postData));
 }
 
 export function ApiSearchSite(getParams = {}, postData = null) {
     // see search.site
-    return window.axios.post(makeQuery('/search/json/search', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\SearchController@search
+    return apiClient.post(makeQuery('/search/json/search', getParams), prepareRequestData(postData));
 }
 
 export function ApiSessionStore(getParams = {}, postData = null) {
     // see session.store
-    return window.axios.post(makeQuery('/session', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\SessionController@store
+    return apiClient.post(makeQuery('/session', getParams), prepareRequestData(postData));
 }
 
 export function ApiTemplateGet(getParams = {}, postData = null) {
     // see template.get
-    return window.axios.post(makeQuery('/pages/json/edit', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\TemplateController@get
+    return apiClient.post(makeQuery('/pages/json/edit', getParams), prepareRequestData(postData));
 }
 
 export function ApiTemplateUpdate(getParams = {}, postData = null) {
     // see template.update
-    return window.axios.patch(makeQuery('/pages/json/edit', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Public\TemplateController@update
+    return apiClient.patch(makeQuery('/pages/json/edit', getParams), prepareRequestData(postData));
+}
+
+export function ApiTerms(getParams = {}, postData = null) {
+    // see terms
+    // controller: App\Http\Controllers\Public\PagesController@terms
+    return apiClient.get(makeQuery('/terms', getParams), prepareRequestData(postData));
 }
 
 export function ApiToken(token, getParams = {}, postData = null) {
     // see token
-    return window.axios.get(makeQuery('/token/'+token+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\TokenController@token
+    return apiClient.get(makeQuery('/token/'+token+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiVerificationNotice(getParams = {}, postData = null) {
     // see verification.notice
-    return window.axios.get(makeQuery('/email/verify', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\VerificationController@show
+    return apiClient.get(makeQuery('/email/verify', getParams), prepareRequestData(postData));
 }
 
 export function ApiVerificationResend(getParams = {}, postData = null) {
     // see verification.resend
-    return window.axios.post(makeQuery('/email/resend', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\VerificationController@resend
+    return apiClient.post(makeQuery('/email/resend', getParams), prepareRequestData(postData));
 }
 
 export function ApiVerificationVerify(id,hash, getParams = {}, postData = null) {
     // see verification.verify
-    return window.axios.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Auth\VerificationController@verify
+    return apiClient.get(makeQuery('/email/verify/'+id+'/'+hash+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiWebhookAcquringFailed(acquringId,salt, getParams = {}, postData = null) {
     // see webhook.acquring.failed
-    return window.axios.delete(makeQuery('/webhook/acquring/failed/'+acquringId+'/'+salt+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Webhook\AcquiringController@failed
+    return apiClient.delete(makeQuery('/webhook/acquring/failed/'+acquringId+'/'+salt+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiWebhookAcquringSubmit(acquringId,salt, getParams = {}, postData = null) {
     // see webhook.acquring.submit
-    return window.axios.delete(makeQuery('/webhook/acquring/submit/'+acquringId+'/'+salt+'', getParams), prepareRequestData(postData));
+    // controller: App\Http\Controllers\Webhook\AcquiringController@submit
+    return apiClient.delete(makeQuery('/webhook/acquring/submit/'+acquringId+'/'+salt+'', getParams), prepareRequestData(postData));
 }

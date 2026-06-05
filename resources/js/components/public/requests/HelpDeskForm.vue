@@ -3,11 +3,11 @@
         Ваша заявка под номером <b>{{ ticketNumber }}</b> принята и будет обработана.
     </div>
 
-    <div v-else class="help-desk-form">
-        <form @submit.prevent="submitForm">
+    <div v-else class="help-desk-form public-form-card">
+        <form @submit.prevent="submitForm" class="public-form-stack">
             <custom-textarea
                 v-model="form.description"
-                :classes="'my-3'"
+                :classes="'public-form-field'"
                 :errors="errors.description"
                 label="Текст заявки"
                 :required="true"
@@ -23,12 +23,12 @@
                 :error="errors.accountId"
                 :disabled="loading"
                 :required="true"
-                class="my-3"
+                class="public-form-field"
             />
 
             <custom-input
                 v-model="form.name"
-                :classes="'my-3'"
+                :classes="'public-form-field'"
                 :errors="errors.name"
                 label="Ваше имя"
                 required
@@ -37,7 +37,7 @@
             />
             <custom-input
                 v-model="form.email"
-                :classes="'my-3'"
+                :classes="'public-form-field'"
                 :errors="errors.email"
                 label="Эл. почта"
                 type="email"
@@ -46,16 +46,16 @@
             />
             <custom-input
                 v-model="form.phone"
-                :classes="'my-3'"
+                :classes="'public-form-field'"
                 :errors="errors.phone"
                 label="Телефон"
                 :disabled="loading || !!user"
                 @change="clearError('phone')"
             />
 
-            <div class="mb-3">
+            <div class="public-form-field">
                 <div v-for="(file, idx) in files" :key="idx"
-                     class="d-flex justify-content-between align-items-center mb-2">
+                     class="d-flex justify-content-between align-items-center">
                     <span>{{ file.name }} ({{ (file.size / 1024).toFixed(0) }} КБ)</span>
                     <button type="button" class="btn btn-sm btn-danger" @click="removeFile(idx)" :disabled="loading">
                         <i class="fa fa-trash"></i>
@@ -70,11 +70,24 @@
                 <input type="file" ref="fileInput" class="d-none" multiple accept="image/*,application/pdf"
                        @change="handleFileSelect">
                 <div v-if="totalFileSize > 20 * 1024 * 1024"
-                     class="text-danger small mt-1">Общий размер файлов превышает 20 МБ
+                     class="text-danger small">Общий размер файлов превышает 20 МБ
                 </div>
             </div>
+            <custom-checkbox
+                v-model="form.consent"
+                :errors="errors.consent"
+                name="consent"
+                classes="public-form-check"
+                :label="'Я согласен(на) на обработку персональных данных'"
+                @change="clearError('consent')"
+            />
+            <div class="small mt-1">
+                <a :href="privacyUrl">Политика ПДн</a>
+                и
+                <a :href="consentUrl">согласие на обработку ПДн</a>.
+            </div>
 
-            <div class="d-flex justify-content-end mt-3">
+            <div class="public-form-actions d-flex justify-content-end">
                 <button type="submit" class="btn btn-success" :disabled="!canSubmit || loading">
                     <i v-if="loading" class="fa fa-spinner fa-spin"></i>
                     {{ loading ? 'Отправка...' : 'Отправить заявку' }}
@@ -89,13 +102,16 @@ import {
     ref,
     reactive,
     computed,
-    onMounted,
-}                            from 'vue';
-import { useResponseError }  from '@composables/useResponseError';
-import CustomInput           from '@form/CustomInput.vue';
-import CustomTextarea        from '@form/CustomTextarea.vue';
-import AccountSearchSelect   from '@common/app/AccountSearchSelect.vue';
-import { ApiHelpDeskTicket } from '@api';
+}                                    from 'vue';
+import { useResponseError }          from '@composables/useResponseError';
+import CustomInput                   from '@common/form/CustomInput.vue';
+import CustomTextarea                from '@common/form/CustomTextarea.vue';
+import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
+import AccountSearchSelect           from '@components/shared/accounts/AccountSearchSelect.vue';
+import { ApiHelpDeskTicket }         from '@api';
+import { useRequestContactDefaults } from './useRequestContactDefaults';
+import { useRequestFormPersistence } from './useRequestFormPersistence';
+import { routeUri }                  from '@utils/routeUri.js';
 
 const props = defineProps({
     type    : { type: String, required: true },
@@ -107,12 +123,13 @@ const props = defineProps({
 
 const { errors, clearError, parseResponseErrors, showSuccess, showInfo } = useResponseError();
 
-const loading       = ref(false);
-const success       = ref(false);
-const ticketNumber  = ref(null);
-const formSubmitted = ref(false);
-const files         = ref([]);
-const fileInput     = ref(null);
+const loading      = ref(false);
+const success      = ref(false);
+const ticketNumber = ref(null);
+const files        = ref([]);
+const fileInput    = ref(null);
+
+const { userName, storedRequestValue } = useRequestContactDefaults(props.user);
 
 const form = reactive({
     description: '',
@@ -120,14 +137,20 @@ const form = reactive({
     name       : '',
     email      : '',
     phone      : '',
+    consent    : false,
 });
+const privacyUrl = routeUri('privacy');
+const consentUrl = routeUri('personalDataConsent');
 
-// Заполнение данными пользователя, если авторизован
-if (props.user) {
-    form.name  = (props.user?.lastName + ' ' + props.user?.firstName + ' ' + props.user?.middleName).replace(/null/g, '').trim() || '';
-    form.email = props.user.email || '';
-    form.phone = props.user.phone || '';
-}
+form.name  = userName.value ?? storedRequestValue('requestName');
+form.email = props.user?.email ?? storedRequestValue('requestEmail');
+form.phone = props.user?.phone ?? storedRequestValue('requestPhone');
+
+useRequestFormPersistence({
+    requestName : () => form.name,
+    requestEmail: () => form.email,
+    requestPhone: () => form.phone,
+});
 
 // Установка предварительного значения участка из пропа
 if (props.account?.id) {
@@ -140,6 +163,7 @@ const canSubmit = computed(() => {
     return form.description.trim() !== '' &&
         form.name && form.accountId &&
         (form.email || form.phone) &&
+        form.consent &&
         totalFileSize.value <= 20 * 1024 * 1024 &&
         !loading.value;
 });
@@ -175,9 +199,10 @@ const removeFile = (index) => {
 const resetForm = () => {
     form.description = '';
     form.accountId   = props.account?.id || null;
-    form.name        = props.user ? (props.user?.lastName + ' ' + props.user?.firstName + ' ' + props.user?.middleName).replace(/null/g, '').trim() || '' : '';
-    form.email       = props.user?.email || '';
-    form.phone       = props.user?.phone || '';
+    form.name        = userName.value ?? storedRequestValue('requestName');
+    form.email       = props.user?.email ?? storedRequestValue('requestEmail');
+    form.phone       = props.user?.phone ?? storedRequestValue('requestPhone');
+    form.consent     = false;
     files.value      = [];
     Object.keys(errors).forEach(key => delete errors[key]);
 };
@@ -204,16 +229,16 @@ const submitForm = async () => {
     if (form.accountId) {
         formData.append('account_id', form.accountId);
     }
+    formData.append('consent', form.consent ? '1' : '');
 
     files.value.forEach((file, idx) => {
         formData.append(`files[${idx}]`, file);
     });
 
     try {
-        const response      = await ApiHelpDeskTicket(props.type, props.category, props.service, {}, formData);
-        success.value       = response.data.success;
-        ticketNumber.value  = response.data.number;
-        formSubmitted.value = true;
+        const response     = await ApiHelpDeskTicket(props.type, props.category, props.service, {}, formData);
+        success.value      = response.data.success;
+        ticketNumber.value = response.data.number;
         showSuccess(response.data.message);
         resetForm();
         setTimeout(() => {
@@ -222,14 +247,9 @@ const submitForm = async () => {
     }
     catch (error) {
         parseResponseErrors(error, errors);
-        formSubmitted.value = false;
     }
     finally {
         loading.value = false;
     }
 };
-
-onMounted(() => {
-    // Если участок был передан как проп, он уже установлен в form.accountId выше
-});
 </script>

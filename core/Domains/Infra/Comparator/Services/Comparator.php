@@ -7,14 +7,14 @@ use Core\Domains\Infra\Comparator\DTO\ArrayDifference;
 use Core\Domains\Infra\Comparator\DTO\ChangesCollection;
 use Core\Domains\Infra\Comparator\DTO\Difference;
 use Core\Domains\Infra\Comparator\DTO\DifferenceCollection;
-use Core\Domains\Infra\Comparator\Exception\InvalidArgumentException;
-use Core\Domains\Infra\Comparator\Exception\NotSupportedException;
-use Core\Domains\Infra\Comparator\Factories\HistoryChangesFactory;
+use Core\Domains\Infra\Comparator\Factories\ChangesFactory;
+use Core\Exceptions\InvalidArgumentException;
+use Core\Exceptions\NotSupportedException;
 
 readonly class Comparator
 {
     public function __construct(
-        private HistoryChangesFactory $historyChangesFactory,
+        private ChangesFactory $historyChangesFactory,
     )
     {
 

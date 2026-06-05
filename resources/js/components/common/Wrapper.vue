@@ -99,27 +99,3 @@ onBeforeUnmount(() => {
     document.body.style.overflow = '';
 });
 </script>
-
-<style scoped>
-/* Анимации — только переходы, позиционирование уже в глобальных стилях */
-.fade-enter-active,
-.fade-leave-active {
-    transition : opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity : 0;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-    transition : transform 0.3s ease, opacity 0.3s ease;
-}
-
-.slide-up-enter-from,
-.slide-up-leave-to {
-    opacity   : 0;
-    transform : translateY(20px);
-}
-</style>

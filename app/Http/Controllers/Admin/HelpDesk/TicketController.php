@@ -6,64 +6,53 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\HelpDesk\TicketListResource;
 use App\Http\Resources\Admin\HelpDesk\TicketResource;
-use App\Models\HelpDesk\Ticket;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\HelpDesk\Enums\TicketPriorityEnum;
-use Core\Domains\HelpDesk\Enums\TicketStatusEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Domains\HelpDesk\Searchers\TicketSearcher;
+use Core\App\HelpDesk\Ticket\DeleteCommand;
+use Core\App\HelpDesk\Ticket\GetListCommand;
+use Core\App\HelpDesk\Ticket\SaveCommand;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountService;
+use Core\Domains\HelpDesk\Services\TicketCategoryService;
+use Core\Domains\HelpDesk\Services\TicketCatalogService;
 use Core\Domains\HelpDesk\Services\TicketService;
-use Core\Domains\HelpDesk\UseCases\Ticket\DeleteUseCase;
-use Core\Domains\HelpDesk\UseCases\Ticket\UpdateInputDTO;
-use Core\Domains\HelpDesk\UseCases\Ticket\UpdateUseCase;
+use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
+use lc;
 use RuntimeException;
 
 class TicketController extends Controller
 {
-    private readonly TicketService $ticketService;
-
-    public function __construct()
+    public function __construct(
+        private readonly TicketService         $ticketService,
+        private readonly GetListCommand        $getListCommand,
+        private readonly SaveCommand           $saveCommand,
+        private readonly DeleteCommand         $deleteCommand,
+        private readonly TicketCategoryService $ticketCategoryService,
+        private readonly TicketCatalogService  $ticketCatalogService,
+        private readonly AccountService        $accountService,
+        private readonly UserService           $userService,
+    )
     {
-        $this->ticketService = HelpDeskServiceLocator::TicketService();
     }
 
+    // vue: resources/js/components/admin/help-desk/TicketsBlock.vue
+    // vue: resources/js/components/admin/help-desk/TicketsList.vue
     public function list(DefaultRequest $request): JsonResponse
     {
-        $searcher = new TicketSearcher();
-        $searcher
-            ->setLimit($request->getLimit())
-            ->setOffset($request->getOffset())
-        ;
-
-        if ($request->getSortField() && $request->getSortOrder()) {
-            $searcher->setSortOrderProperty(
-                $request->getSortField(),
-                $request->getSortOrder() === 'asc' ? SearcherInterface::SORT_ORDER_ASC : SearcherInterface::SORT_ORDER_DESC,
-            );
-        }
-        else {
-            $searcher->setSortOrderProperty(Ticket::ID, SearcherInterface::SORT_ORDER_DESC);
+        if ( ! lc::roleDecorator()->can(PermissionEnum::HELP_DESK_VIEW)) {
+            abort(403);
         }
 
-        if ($request->getIntOrNull('category')) {
-            $searcher->setCategoryId($request->getIntOrNull('category'));
-        }
-
-        if ($request->getIntOrNull('service')) {
-            $searcher->setServiceId($request->getIntOrNull('service'));
-        }
-
-        if ($request->getIntOrNull('priority')) {
-            $searcher->setPriority(TicketPriorityEnum::tryFrom($request->getInt('priority')));
-        }
-
-        if ($request->getIntOrNull('status')) {
-            $searcher->setStatus(TicketStatusEnum::tryFrom($request->getInt('status')));
-        }
-
-        $searchResult = $this->ticketService->search($searcher);
+        $searchResult = $this->getListCommand->execute(
+            $request->getLimit(),
+            $request->getOffset(),
+            $request->getSortField(),
+            $request->getSortOrder(),
+            $request->getIntOrNull('category'),
+            $request->getIntOrNull('service'),
+            $request->getIntOrNull('priority'),
+            $request->getIntOrNull('status'),
+        );
 
         return response()->json([
             'tickets' => new TicketListResource($searchResult->getItems()),
@@ -74,55 +63,62 @@ class TicketController extends Controller
     /**
      * Получить одну категорию по ID
      */
+    // blade: resources/views/admin/pages/help-desk/view.blade.php
+    // vue: resources/js/components/admin/help-desk/TicketsView.vue
     public function view(int $id)
     {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::HELP_DESK_VIEW)) {
+            abort(403);
+        }
+
         $ticket = $this->ticketService->getById($id);
         if ( ! $ticket) {
             abort(404);
         }
 
-        return view('admin.pages.help-desk.view', compact('ticket'));
+        $categories = $this->ticketCategoryService->search()->getItems();
+        $services   = $this->ticketCatalogService->search()->getItems();
+        $accounts   = $this->accountService->search()->getItems();
+        $users      = $this->userService->search()->getItems();
+
+        return view('pages.admin.help-desk.view', compact('ticket', 'categories', 'services', 'accounts', 'users'));
     }
 
     /**
-     * Создать новую категорию
+     * @throws ValidationException
      */
+    // vue: resources/js/components/admin/help-desk/TicketsView.vue
+    // vue: resources/js/components/admin/help-desk/tickets-view/useTicketsView.js
     public function save(DefaultRequest $request): JsonResponse
     {
-        $dto = $this->ticketService->getById($request->getInt('id'));
+        if ( ! lc::roleDecorator()->can(PermissionEnum::HELP_DESK_EDIT)) {
+            abort(403);
+        }
 
-        if ( ! $dto) {
+        $result = $this->saveCommand->execute(
+            $request->getInt('id'),
+            $request->getString('description'),
+            $request->getStringOrNull('result'),
+            $request->getInt('type'),
+            $request->getInt('category_id'),
+            $request->getInt('service_id'),
+            $request->getInt('priority'),
+            $request->getInt('status'),
+            $request->getStringOrNull('contact_name'),
+            $request->getStringOrNull('contact_phone'),
+            $request->getStringOrNull('contact_email'),
+            $request->getInt('user_id'),
+            $request->getInt('account_id'),
+            $request->files('files', []),
+            $request->files('result_files', []),
+        );
+
+        if ($result === null) {
             return response()->json([
                 'success' => false,
                 'message' => 'Заявка не найдена',
             ], 404);
         }
-
-        $dto = new UpdateInputDTO(
-            id          : $request->getInt('id'),
-            description : $request->getString('description'),
-            result      : $request->getStringOrNull('result'),
-            type        : $request->getInt('type'),
-            categoryId  : $request->getInt('category_id'),
-            serviceId   : $request->getInt('service_id'),
-            priority    : $request->getInt('priority'),
-            status      : $request->getInt('status'),
-            contactName : $request->getStringOrNull('contact_name'),
-            contactPhone: $request->getStringOrNull('contact_phone'),
-            contactEmail: $request->getStringOrNull('contact_email'),
-            userId      : $request->getInt('user_id'),
-            accountId   : $request->getInt('account_id'),
-            files       : $request->file('files', []),
-            resultFiles : $request->file('result_files', []),
-        );
-
-        try {
-            $result = new UpdateUseCase()->execute($dto);
-        }
-        catch (ValidationException $e) {
-            throw \Illuminate\Validation\ValidationException::withMessages($e->errors);
-        }
-
 
         return response()->json([
             'success' => true,
@@ -134,8 +130,13 @@ class TicketController extends Controller
     /**
      * Удалить категорию
      */
+    // vue: resources/js/components/admin/help-desk/TicketsView.vue
     public function delete(int $id): JsonResponse
     {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::HELP_DESK_DROP)) {
+            abort(403);
+        }
+
         $ticket = $this->ticketService->getById($id);
 
         if ( ! $ticket) {
@@ -145,7 +146,7 @@ class TicketController extends Controller
             ], 404);
         }
         try {
-            new DeleteUseCase()->execute($ticket);
+            $this->deleteCommand->execute($ticket);
 
             return response()->json([
                 'success' => true,

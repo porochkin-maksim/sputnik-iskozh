@@ -2,13 +2,8 @@
 
 namespace App\Http\Resources\Admin\Claims;
 
-use lc;
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Claim\Collections\ClaimCollection;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\Billing\Claim\ClaimCollection;
 
 readonly class ClaimsListResource extends AbstractResource
 {
@@ -20,23 +15,10 @@ readonly class ClaimsListResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $access = lc::roleDecorator();
-
-        $result = [
-            'claims' => [],
-            'historyUrl'   => HistoryChangesLocator::route(
-                type         : HistoryType::INVOICE,
-                referenceType: HistoryType::CLAIM,
-            ),
-            'actions'      => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::CLAIMS_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::CLAIMS_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::CLAIMS_DROP),
-            ],
-        ];
+        $result = [];
 
         foreach ($this->claimCollection as $claim) {
-            $result['claims'][] = new ClaimResource($claim);
+            $result[] = new ClaimResource($claim);
         }
 
         return $result;

@@ -23,57 +23,54 @@
     </wrapper>
 </template>
 
-<script>
-import Url        from '../../../utils/Url.js';
-import Wrapper    from '../../common/Wrapper.vue';
-import PhpEditor  from '../../common/editors/PhpEditor.vue';
-import HtmlEditor from '../../common/editors/HtmlEditor.vue';
+<script setup>
+import {
+    onMounted,
+    ref,
+}                           from 'vue';
+import Wrapper              from '@common/Wrapper.vue';
+import PhpEditor            from '@common/editors/PhpEditor.vue';
+import {
+    ApiTemplateGet,
+    ApiTemplateUpdate,
+}                           from '@api';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    name      : 'PageEditor',
-    components: {
-        HtmlEditor,
-        PhpEditor,
-        Wrapper,
-    },
-    props     : {
-        template: String,
-    },
-    created () {
-        this.loadContent();
-    },
-    data () {
-        return {
-            Url,
-            content : null,
-            loaded  : false,
-            editMode: false,
-        };
-    },
-    methods: {
-        loadContent () {
-            window.axios[Url.Routes.templateGet.method](Url.Routes.templateGet.uri, {
-                template: this.template,
-            }).then(response => {
-                this.content = response.data;
-                this.loaded  = true;
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        saveContent () {
-            if (!confirm('Точно совершить эту опасную операцию?')) {
-                return;
-            }
-            window.axios[Url.Routes.templateUpdate.method](Url.Routes.templateUpdate.uri, {
-                template: this.template,
-                content : this.content,
-            }).then(response => {
+const props = defineProps({
+    template: String,
+});
 
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-};
+const { parseResponseErrors } = useResponseError();
+
+const content  = ref(null);
+const loaded   = ref(false);
+const editMode = ref(false);
+
+function loadContent () {
+    ApiTemplateGet({
+        template: props.template,
+    }).then(response => {
+        content.value = response.data;
+        loaded.value  = true;
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+function saveContent () {
+    if (!confirm('Точно совершить эту опасную операцию?')) {
+        return;
+    }
+
+    ApiTemplateUpdate({
+        template: props.template,
+        content : content.value,
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+onMounted(() => {
+    loadContent();
+});
 </script>

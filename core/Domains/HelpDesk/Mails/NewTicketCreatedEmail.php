@@ -2,8 +2,8 @@
 
 namespace Core\Domains\HelpDesk\Mails;
 
-use Core\Domains\HelpDesk\Models\TicketDTO;
-use Core\Resources\RouteNames;
+use Core\Domains\HelpDesk\Models\TicketEntity;
+use App\Resources\RouteNames;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -11,8 +11,8 @@ use Illuminate\Mail\Mailables\Envelope;
 class NewTicketCreatedEmail extends Mailable
 {
     public function __construct(
-        private readonly string    $toEmail,
-        private readonly TicketDTO $ticket,
+        private readonly string       $toEmail,
+        private readonly TicketEntity $ticket,
     )
     {
     }

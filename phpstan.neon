@@ -1,0 +1,28 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 6
+
+    paths:
+        - app
+        - core
+        - database/migrations
+
+    excludePaths:
+        - core/Facades
+        - vendor
+
+    tmpDir: storage/framework/cache/phpstan
+
+    scanFiles:
+        - vendor/autoload.php
+
+    scanDirectories:
+        - app
+        - core
+
+    databaseMigrationsPath:
+        - database/migrations
+
+    treatPhpDocTypesAsCertain: false

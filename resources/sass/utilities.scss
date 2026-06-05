@@ -6,12 +6,13 @@
 @import 'bootstrap/scss/utilities';
 
 // Добавляем свои утилиты для высоты в процентах и вьюпорта
-$custom-utilities: (
+$custom-utilities : (
     "height": (
         property: height,
         class: h,
         responsive: true,
         values: (
+            0: 0%,
             25: 25%,
             30: 30%,
             50: 50%,
@@ -28,6 +29,7 @@ $custom-utilities: (
         class: vh,
         responsive: true,
         values: (
+            0: 0vh,
             25: 25vh,
             30: 30vh,
             50: 50vh,
@@ -37,11 +39,44 @@ $custom-utilities: (
             90: 90vh,
             100: 100vh
         )
+    ),
+    "width": (
+        property: width,
+        class: w,
+        responsive: true,
+        values: (
+            0: 0%,
+            25: 25%,
+            30: 30%,
+            50: 50%,
+            75: 75%,
+            80: 80%,
+            85: 85%,
+            90: 90%,
+            100: 100%,
+            auto: auto
+        )
+    ),
+    "viewport-width": (
+        property: width,
+        class: vw,
+        responsive: true,
+        values: (
+            0: 0vw,
+            25: 25vw,
+            30: 30vw,
+            50: 50vw,
+            75: 75vw,
+            80: 80vw,
+            85: 85vw,
+            90: 90vw,
+            100: 100vw
+        )
     )
 );
 
 // Объединяем со стандартными утилитами
-$utilities: map-merge($utilities, $custom-utilities);
+$utilities        : map-merge($utilities, $custom-utilities);
 
 // Импортируем API для генерации классов
 @import 'bootstrap/scss/utilities/api';

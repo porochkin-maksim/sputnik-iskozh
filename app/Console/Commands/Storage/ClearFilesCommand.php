@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Storage;
 
-use App\Models\File\File;
+use App\Models\Files\FileModel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use function Laravel\Prompts\confirm;
@@ -34,7 +34,7 @@ class ClearFilesCommand extends Command
         }
 
         $disk    = Storage::disk('public');
-        $dbFiles = File::all()
+        $dbFiles = FileModel::all()
             ->map(fn($file) => $file->path) // полный путь с public/
             ->map(fn($path) => substr($path, 7)) // удаляем 'public/'
             ->filter()                           // убираем пустые

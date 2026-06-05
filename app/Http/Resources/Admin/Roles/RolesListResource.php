@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\Roles;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Access\Collections\RoleCollection;
+use Core\Domains\Access\RoleCollection;
 
 readonly class RolesListResource extends AbstractResource
 {

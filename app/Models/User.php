@@ -9,9 +9,9 @@ use App\Models\Account\AccountToUser;
 use App\Models\Infra\ExData;
 use App\Models\Infra\UserInfo;
 use App\Models\Interfaces\CastsInterface;
+use App\Notifications\InviteNotification;
 use Carbon\Carbon;
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
-use Core\Domains\User\Notifications\InviteNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -56,11 +56,12 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
     public const string TELEGRAM_ID       = 'telegram_id';
     public const string SOFT_DELETED      = 'deleted_at';
 
-    public const string ACCOUNTS = 'accounts';
-    public const string ROLES    = 'roles';
-    public const string ACCOUNT  = 'account';
-    public const string ROLE     = 'role';
-    public const string EX_DATA  = 'exData';
+    public const string ACCOUNTS   = 'accounts';
+    public const string ROLES      = 'roles';
+    public const string ACCOUNT    = 'account';
+    public const string ROLE       = 'role';
+    public const string EX_DATA    = 'exData';
+    public const string ACCOUNT_ID = 'account_id';
 
     protected $with = [
         self::EX_DATA,

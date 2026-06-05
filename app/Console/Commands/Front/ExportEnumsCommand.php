@@ -19,7 +19,6 @@ class ExportEnumsCommand extends Command
         ];
 
         $jsContent = "// Автоматически сгенерированный файл. Не редактировать вручную.\n";
-        $jsContent .= "// Создан: " . date('Y-m-d H:i:s') . "\n";
 
         foreach ($enums as $name => $cases) {
             $jsContent .= "\nexport const {$name} = {\n";

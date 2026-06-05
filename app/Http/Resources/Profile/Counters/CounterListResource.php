@@ -3,8 +3,7 @@
 namespace App\Http\Resources\Profile\Counters;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Counter\Collections\CounterCollection;
-use Core\Domains\Counter\Models\CounterDTO;
+use Core\Domains\Counter\CounterCollection;
 
 readonly class CounterListResource extends AbstractResource
 {

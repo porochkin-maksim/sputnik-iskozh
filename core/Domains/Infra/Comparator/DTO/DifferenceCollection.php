@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Infra\Comparator\DTO;
 
-class DifferenceCollection implements \IteratorAggregate, \Countable
+class DifferenceCollection implements \Countable, \IteratorAggregate
 {
     /** @var DifferenceInterface[] */
     private $differences = [];
@@ -25,10 +25,9 @@ class DifferenceCollection implements \IteratorAggregate, \Countable
     /**
      * @return DifferenceInterface[]
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
-        return $this->differences;
-
+        return new \ArrayIterator($this->differences);
     }
 
     public function count(): int

@@ -6,7 +6,11 @@
             &lt;
         </button>
         <span class="custom-calendar__month-name fw-medium"
-              @click="$emit('toggle-month-year')">
+              role="button"
+              tabindex="0"
+              @click="$emit('toggle-month-year')"
+              @keydown.enter="$emit('toggle-month-year')"
+              @keydown.space.prevent="$emit('toggle-month-year')">
             {{ monthName }} {{ year }}
         </span>
         <button class="custom-calendar__nav-button btn btn-sm btn-outline-secondary"

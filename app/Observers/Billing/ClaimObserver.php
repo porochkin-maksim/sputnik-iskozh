@@ -4,8 +4,8 @@ namespace App\Observers\Billing;
 
 use App\Models\Billing\Claim;
 use App\Observers\AbstractObserver;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class ClaimObserver extends AbstractObserver
@@ -21,7 +21,7 @@ class ClaimObserver extends AbstractObserver
             $item->getAttribute(Claim::COST) > 0
             || $item->getAttribute(Claim::PAID) > 0
         ) {
-            InvoiceLocator::InvoiceService()->recalcInvoice($item->invoice_id);
+            app(InvoiceService::class)->recalcInvoice($item->invoice_id, true);
         }
     }
 
@@ -30,13 +30,25 @@ class ClaimObserver extends AbstractObserver
      */
     public function updated(Model $item): void
     {
-        parent::created($item);
+        parent::updated($item);
 
         if (
             $item->getOriginal(Claim::COST) !== $item->getAttribute(Claim::COST)
             || $item->getOriginal(Claim::PAID) !== $item->getAttribute(Claim::PAID)
         ) {
-            InvoiceLocator::InvoiceService()->recalcInvoice($item->invoice_id);
+            app(InvoiceService::class)->recalcInvoice($item->invoice_id, true);
+        }
+    }
+
+    /**
+     * @var Claim $item
+     */
+    public function deleted(Model $item): void
+    {
+        parent::deleted($item);
+
+        if ($item->invoice_id) {
+            app(InvoiceService::class)->recalcInvoice((int) $item->invoice_id, true);
         }
     }
 

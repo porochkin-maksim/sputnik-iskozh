@@ -72,11 +72,12 @@
     .message {
         display     : flex;
         align-items : stretch; // <-- ключевой момент: растягивает дочерние элементы по высоте
-        margin      : 5px 0 0;
+        margin      : 0.5rem 0 0;
         padding     : 0;
-        border      : 2px solid;
+        border      : 1px solid;
+        border-radius : 0.75rem;
         overflow    : hidden;
-        box-shadow  : 0 2px 15px rgba(0, 0, 0, 0.08);
+        box-shadow  : 0 6px 18px rgba(0, 0, 0, 0.08);
         transition  : all 0.3s ease-in-out;
 
         .message-icon {
@@ -84,14 +85,64 @@
             align-items     : center;
             justify-content : center;
             color           : white;
-            padding         : 7px;
+            padding         : 0.75rem;
             font-size       : 1.2em;
         }
 
         .message-text {
             flex        : 1; // текст занимает всё оставшееся пространство
-            padding     : 7px;
+            padding     : 0.75rem;
             font-weight : bold;
         }
     }
+}
+
+.pagination-firm {
+    .page-link {
+        min-width        : 2.3rem;
+        border-radius    : 0.55rem;
+        border-color     : rgba($default-primary, 0.18);
+        color            : $default-primary;
+        background-color : #fff;
+        box-shadow       : none;
+        transition       : background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+
+        &:hover {
+            background-color : rgba($default-primary, 0.08);
+            border-color     : rgba($default-primary, 0.35);
+        }
+
+        &:focus {
+            box-shadow : 0 0 0 0.15rem rgba($default-primary, 0.18);
+        }
+    }
+
+    .page-item.active .page-link,
+    .page-link.active {
+        background-color : $default-primary;
+        border-color     : $default-primary;
+        color            : #fff;
+    }
+
+    .page-link-ellipsis {
+        display         : inline-flex;
+        align-items     : center;
+        justify-content : center;
+        border          : 1px solid transparent;
+        background      : transparent;
+        color           : $color-gray;
+        cursor          : default;
+        min-width       : 2.3rem;
+    }
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition : all 0.3s ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    opacity   : 0;
+    transform : translateX(30px);
 }

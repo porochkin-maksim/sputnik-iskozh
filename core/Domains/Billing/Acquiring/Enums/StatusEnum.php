@@ -2,7 +2,7 @@
 
 namespace Core\Domains\Billing\Acquiring\Enums;
 
-use Core\Enums\EnumCommonTrait;
+use Core\Shared\Enums\EnumCommonTrait;
 
 enum StatusEnum: int
 {

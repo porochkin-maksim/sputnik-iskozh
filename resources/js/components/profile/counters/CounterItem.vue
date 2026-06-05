@@ -1,171 +1,84 @@
 <template>
     <div class="row">
         <div class="col-12 col-md-8 col-lg-6">
-            <div class="border bg-light d-flex justify-content-between align-items-start p-2">
-                <div>
-                    <div>
-                        <b>Счётчик {{ counter.number }}</b>
-                    </div>
-                    <div v-if="counter.expireAt">
-                        Поверен до {{ formatDate(counter.expireAt) }}
-                    </div>
-                    <file-item :file="counter.passport"
-                               v-if="counter.passport"
-                               :name="'Паспорт'" />
-                </div>
-                <div class="d-flex flex-md-row flex-column">
-                    <button v-if="canAddNewHistory"
-                            class="btn btn-sm btn-success mb-md-0 mb-2"
-                            @click="addHistoryValue"
-                    >Добавить показания
-                    </button>
-                    <button v-else
-                            class="btn btn-sm btn-success mb-md-0 mb-2 disabled"
-                            data-bs-toggle="popover"
-                            :data-bs-content="'Добавить показания можно будет в следующем месяце'"
-                            data-bs-placement="bottom"
-                    >Добавить показания
-                    </button>
-                    <button class="btn btn-sm btn-outline-success ms-md-2 ms-0 "
-                            @click="editIncrement"
-                    >Автопоказания
-                    </button>
-                </div>
-            </div>
-            <template v-for="history in histories">
-                <div class="border border-top-0 p-2">
-                    <div>
-                        <b>Показания:</b> {{ history.value.toLocaleString('ru-RU') }}{{ history.delta === null ? '' : ' (' + history.delta.toLocaleString('ru-RU') + 'кВт)' }}
-                    </div>
-                    <div class="mt-1">
-                        <b>Дата:</b> {{ formatDate(history.date) }}{{ history.days === null ? '' : ' (+' + history.days + ' дней)' }}
-                    </div>
-                    <div class="mt-1">
-                        <b>Статус:</b>
-                        <b :class="history.isVerified ? 'text-success' : 'text-secondary'">&nbsp;{{ history.isVerified ? 'Проверено' : 'Не проверено' }}</b>
-                    </div>
-                    <div class="mt-1"
-                         v-if="history.claim">
-                        <b>Оплачено:</b> {{ formatMoney(history.claim.paid) }}/{{ formatMoney(history.claim.cost) }} по тарифу {{ formatMoney(history.claim.tariff) }}
-                    </div>
-                    <div class="mt-1">
-                        <file-item :file="history.file"
-                                   v-if="history.file"
-                                   :edit="false"
+            <div class="counter-item-hero page-card p-3">
+                <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                    <div class="flex-grow-1">
+                        <div class="counter-item-hero__title">
+                            Счётчик {{ counter.number }}
+                        </div>
+                        <div v-if="counter.expireAt" class="counter-item-hero__meta">
+                            Поверен до {{ formatDate(counter.expireAt) }}
+                        </div>
+                        <counter-passport-uploader
+                            class="mt-2"
+                            :can-edit="canEdit"
+                            :counter="counter"
                         />
                     </div>
+                    <div class="d-flex flex-md-row flex-column gap-2 counter-item-hero__actions">
+                        <button v-if="canEdit && canAddNewHistory"
+                                class="btn btn-sm btn-success"
+                                @click="addHistoryValue"
+                        >Добавить показания
+                        </button>
+                        <button v-else
+                                class="btn btn-sm btn-success disabled"
+                                data-bs-toggle="popover"
+                                :data-bs-content="'Добавить показания можно будет в следующем месяце'"
+                                data-bs-placement="bottom"
+                        >Добавить показания
+                        </button>
+                        <button v-if="canEdit" class="btn btn-sm btn-outline-success"
+                                @click="editIncrement"
+                        >Автопоказания
+                        </button>
+                    </div>
                 </div>
-            </template>
-            <template v-if="canLoadMore">
-                <div class="d-flex justify-content-center border border-top-0 p-2">
-                    <button class="btn btn-link"
-                            v-if="!pending"
-                            @click="loadMore">
-                        Показать ещё
-                    </button>
-                    <button class="btn border-0"
-                            disabled
-                            v-else>
-                        <i class="fa fa-spinner fa-spin"></i> Подгрузка
-                    </button>
-                </div>
-            </template>
+            </div>
+            <div class="page-section page-card p-0 mt-3 overflow-hidden">
+                <counter-history-list
+                    :can-load-more="canLoadMore"
+                    :format-date="formatDate"
+                    :format-money="formatMoney"
+                    :histories="histories"
+                    :pending="pending"
+                    @load-more="loadMore"
+                />
+            </div>
         </div>
     </div>
-    <div class="row mt-2" v-if="histories && histories.length">
-        <div class="col-12 col-md-8 col-lg-6">
+    <div class="row mt-2" v-if="histories && histories.length > 1">
+        <div class="col-12">
             <h5 class="text-center">График показаний</h5>
             <counter-item-chart-block :histories="histories"></counter-item-chart-block>
         </div>
     </div>
-    <view-dialog v-model:show="showDialog"
-                 v-model:hide="hideDialog"
-                 @hidden="closeAction"
-    >
-        <template v-slot:title>Внесение показаний счётчика</template>
-        <template v-slot:body>
-            <div class="container-fluid">
-                <div class="mt-2">
-                    <custom-input v-model="value"
-                                  :errors="errors.value"
-                                  type="number"
-                                  label="Текущие показания на счётчике"
-                                  :required="true"
-                    />
-                </div>
-                <div class="mt-2">
-                    <div v-if="file">
-                        <button class="btn btn-sm btn-danger"
-                                @click="removeFile">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        &nbsp;
-                        {{ file.name }}
-                    </div>
-                    <template v-else>
-                        <button class="btn btn-outline-secondary w-100"
-                                @click="chooseFile"
-                                v-if="!file">
-                            <i class="fa fa-paperclip "></i>&nbsp;Фото счётчика
-                        </button>
-                        <input class="d-none"
-                               type="file"
-                               ref="fileElem"
-                               accept="image/*"
-                               @change="appendFile"
-                        />
-                    </template>
-                </div>
-            </div>
-        </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
-                    v-if="!pending"
-                    @click="submitAction"
-                    :disabled="!canSubmitAction">
-                Добавить
-            </button>
-            <button class="btn border-0"
-                    disabled
-                    v-else>
-                <i class="fa fa-spinner fa-spin"></i> Добавление
-            </button>
-        </template>
-    </view-dialog>
-    <view-dialog v-model:show="showIncrementDialog"
-                 v-model:hide="hideIncrementDialog"
-                 @hidden="closeIncrementAction"
-    >
-        <template v-slot:title>Изменение автопоказаний</template>
-        <template v-slot:body>
-            <div class="container-fluid">
-                <div class="mt-2">
-                    <custom-input v-model="increment"
-                                  :errors="errors.increment"
-                                  type="number"
-                                  :min="0"
-                                  :step="1"
-                                  label="Ежемесячное увеличение показаний на кВт"
-                                  :required="true"
-                                  @focusout="calculateIncrement"
-                    />
-                </div>
-            </div>
-        </template>
-        <template v-slot:footer>
-            <button class="btn btn-success"
-                    v-if="!pending"
-                    @click="saveIncrementAction"
-                    :disabled="!canSubmitIncrementAction">
-                Сохранить
-            </button>
-            <button class="btn border-0"
-                    disabled
-                    v-else>
-                <i class="fa fa-spinner fa-spin"></i> Сохранение
-            </button>
-        </template>
-    </view-dialog>
+    <counter-add-history-dialog
+        v-model:show-dialog="showDialog"
+        v-model:hide-dialog="hideDialog"
+        v-model:value="value"
+        :can-submit-action="canSubmitAction"
+        :errors="errors"
+        :file="file"
+        :pending="pending"
+        @append-file="appendFile"
+        @hidden="closeAction"
+        @remove-file="removeFile"
+        @submit="submitAction"
+    />
+
+    <counter-increment-dialog
+        v-model:show-dialog="showIncrementDialog"
+        v-model:hide-dialog="hideIncrementDialog"
+        v-model:increment="increment"
+        :can-submit-increment-action="canSubmitIncrementAction"
+        :errors="errors"
+        :pending="pending"
+        @hidden="closeIncrementAction"
+        @normalize-increment="calculateIncrement"
+        @submit="saveIncrementAction"
+    />
 </template>
 
 <script setup>
@@ -174,18 +87,20 @@ import {
     computed,
     onMounted,
     defineProps,
-}                            from 'vue';
-import { useResponseError }  from '@composables/useResponseError';
-import { useFormat }         from '@composables/useFormat';
-import CustomInput           from '@common/form/CustomInput.vue';
-import ViewDialog            from '@common/ViewDialog.vue';
-import FileItem              from '@common/files/FileItem.vue';
-import CounterItemChartBlock from '@common/blocks/CounterItemChartBlock.vue';
+}                              from 'vue';
+import { useResponseError }    from '@composables/useResponseError';
+import { useFormat }           from '@composables/useFormat';
+import { usePermissions }      from '@composables/usePermissions.js';
+import CounterItemChartBlock   from '@components/shared/counters/CounterItemChartBlock.vue';
+import CounterAddHistoryDialog from './counter-item/CounterAddHistoryDialog.vue';
+import CounterHistoryList      from './counter-item/CounterHistoryList.vue';
+import CounterIncrementDialog  from './counter-item/CounterIncrementDialog.vue';
+import CounterPassportUploader from './counter-item/CounterPassportUploader.vue';
 import {
     ApiProfileCounterHistoryList,
     ApiProfileCounterAddValue,
     ApiProfileCountersIncrementSave,
-}                            from '@api';
+}                              from '@api';
 
 const props = defineProps({
     counter: {
@@ -196,6 +111,7 @@ const props = defineProps({
 
 const { errors, parseResponseErrors, showSuccess } = useResponseError();
 const { formatMoney, formatDate }                  = useFormat();
+const { has }                                      = usePermissions();
 
 const loaded              = ref(false);
 const pending             = ref(false);
@@ -205,12 +121,12 @@ const showIncrementDialog = ref(false);
 const hideIncrementDialog = ref(false);
 const value               = ref(null);
 const file                = ref(null);
-const fileElem            = ref(null);
 const histories           = ref([]);
 const skip                = ref(0);
 const total               = ref(null);
 const limit               = ref(0);
 const increment           = ref(props.counter.increment || 0);
+const canEdit             = computed(() => has('counters', 'edit'));
 
 onMounted(() => {
     listAction();
@@ -298,10 +214,6 @@ const addHistoryValue = () => {
 
 const closeAction = () => {
     showDialog.value = false;
-};
-
-const chooseFile = () => {
-    fileElem.value?.click();
 };
 
 const appendFile = (event) => {

@@ -1,6 +1,107 @@
+.auth-form-shell {
+    padding-top    : 1rem;
+    padding-bottom : 1.25rem;
+}
+
+.auth-form-card {
+    @include card(
+        $border-color: rgba($default-primary, 0.12),
+        $border-radius: 1.35rem,
+        $gradient-from: rgba(#fff, 0.98),
+        $gradient-to: rgba($default-light, 0.98),
+        $shadow: 0 1rem 2rem rgba(0, 0, 0, 0.08)
+    );
+    overflow         : hidden;
+
+    &__header {
+        padding       : 1.25rem 1.5rem 0.75rem;
+        border-bottom : 1px solid rgba($default-primary, 0.12);
+    }
+
+    &__title {
+        margin      : 0;
+        color       : $default-primary;
+        font-size   : 1.35rem;
+        font-weight : 700;
+        line-height : 1.2;
+    }
+
+    &__body {
+        padding : 1.5rem;
+    }
+
+    &__lead {
+        border-radius : 0.9rem;
+        border        : 1px solid rgba($default-primary, 0.14);
+        background    : rgba($default-primary, 0.045);
+        color         : $color-gray;
+    }
+}
+
+.auth-form-stack {
+    display        : flex;
+    flex-direction : column;
+    gap            : 0.75rem;
+}
+
+.auth-form-row {
+    &__label {
+        padding-top    : 0.15rem;
+        padding-bottom : 0.15rem;
+    }
+
+    &__label-text {
+        display     : inline-block;
+        font-weight : 600;
+        color       : $default-primary;
+    }
+
+    &__field {
+        min-width : 0;
+    }
+}
+
+.auth-form-actions {
+    margin-top : 0.25rem;
+
+    &__inner {
+        display         : flex;
+        flex-wrap       : wrap;
+        align-items     : center;
+        gap             : 0.75rem 1rem;
+    }
+
+    &__button {
+        min-width     : 11rem;
+        border-radius : 999px;
+        padding       : 0.68rem 1.3rem;
+        box-shadow    : 0 0.45rem 0.95rem rgba($default-primary, 0.16);
+    }
+
+    &__aside {
+        display         : flex;
+        align-items     : center;
+        flex-wrap       : wrap;
+        gap             : 0.5rem;
+        line-height     : 1.2;
+    }
+
+    &__link {
+        color           : $default-primary;
+        text-decoration : underline;
+        text-underline-offset : 0.18em;
+        font-weight     : 600;
+
+        &:hover {
+            color : darken($default-primary, 8%);
+        }
+    }
+}
+
 .auth,
 .password {
-    .toggle-parent {
+    .toggle-parent,
+    .profile-password-field {
         position : relative;
 
         .toggle {
@@ -18,6 +119,10 @@
                 color : $color-light-gray;
             }
         }
+
+        .form-control {
+            padding-right : 2.3rem;
+        }
     }
 
     .switch-link {
@@ -25,12 +130,84 @@
     }
 }
 
+.auth-form-field,
+.public-form-field,
+.public-form-check {
+    margin-bottom : 0;
+}
+
 .password {
     .toggle-parent {
-        position : relative;
-
         .toggle {
             height : 3.3rem;
         }
+    }
+
+    .profile-password-field {
+        .toggle {
+            top    : 50%;
+            right  : 0.35rem;
+            transform : translateY(-50%);
+            height : 2rem;
+        }
+    }
+}
+
+.profile-password-form {
+    &__field {
+        position : relative;
+    }
+
+    .profile-password-input-wrap {
+        position : relative;
+
+        .toggle {
+            position      : absolute;
+            right         : 0.5rem;
+            top           : 50%;
+            transform     : translateY(-50%);
+            width         : 1.75rem;
+            height        : 1.75rem;
+            display       : flex;
+            align-items   : center;
+            justify-content : center;
+            cursor        : pointer;
+            z-index       : 2;
+            font-size     : 1.1rem;
+            color         : rgba($default-primary, 0.95);
+
+            &.fa-eye-slash {
+                color : rgba($default-primary, 0.65);
+            }
+        }
+
+        .profile-password-copy {
+            position      : absolute;
+            right         : 2.6rem;
+            top           : 50%;
+            transform     : translateY(-50%);
+            width         : 1.75rem;
+            height        : 1.75rem;
+            padding       : 0;
+            display       : flex;
+            align-items   : center;
+            justify-content : center;
+            z-index       : 2;
+            border-radius : 0.35rem;
+        }
+
+        .form-control {
+            padding-right : 4.4rem;
+        }
+
+        .form-error,
+        .is-invalid {
+            margin-bottom : 0;
+        }
+    }
+
+    .profile-password-form__hint {
+        font-size   : 0.9rem;
+        line-height : 1.35;
     }
 }

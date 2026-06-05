@@ -1,4 +1,4 @@
-export default {
+export const auth = {
     namespaced: true,
     state     : {
         modalVisible: false,
@@ -20,3 +20,5 @@ export default {
         modalVisible: state => state.modalVisible,
     },
 };
+
+export default auth;

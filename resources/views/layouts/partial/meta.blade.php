@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-use Core\Resources\RouteNames;
-use Core\Services\OpenGraph\OpenGraphLocator;
+use App\Resources\RouteNames;
+use App\Services\OpenGraph\OpenGraphLocator;
 use Illuminate\Support\Facades\Route;
 
 $allowRobots = Route::is(RouteNames::INDEX)
@@ -9,8 +9,7 @@ $allowRobots = Route::is(RouteNames::INDEX)
                || Route::is(RouteNames::ANNOUNCEMENTS)
                || Route::is(RouteNames::NEWS)
                || Route::is(RouteNames::GARBAGE)
-               || Route::is(RouteNames::FILES)
-               || Route::is(RouteNames::REQUESTS_PROPOSAL);
+               || Route::is(RouteNames::FILES);
 
 $openGraph = $openGraph ?? OpenGraphLocator::OpenGraphFactory()->default();
 

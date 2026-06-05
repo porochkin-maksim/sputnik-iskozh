@@ -6,23 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Counters\CounterHistoryListResource;
 use App\Models\Counter\CounterHistory;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Counter\CounterLocator;
-use Core\Domains\Counter\Models\CounterHistorySearcher;
-use Core\Domains\Counter\Services\CounterHistoryService;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\CounterHistory\CounterHistorySearcher;
+use Core\Domains\CounterHistory\CounterHistoryService;
+use Core\Repositories\SearcherInterface;
 use Illuminate\Http\JsonResponse;
+use lc;
 
 class CounterHistoryController extends Controller
 {
-    private CounterHistoryService $counterHistoryService;
 
-    public function __construct()
+    public function __construct(
+        private readonly CounterHistoryService $counterHistoryService,
+    )
     {
-        $this->counterHistoryService = CounterLocator::CounterHistoryService();
     }
 
+    // vue: resources/js/components/admin/accounts/counters/CounterItemView.vue
+    // vue: resources/js/components/admin/accounts/counters/CounterHistoryTablePanel.vue
     public function list(int $counterId, DefaultRequest $request): JsonResponse
     {
+        $roleDecorator = lc::roleDecorator();
+
+        if ( ! $roleDecorator->can(PermissionEnum::COUNTERS_VIEW)) {
+            abort(403);
+        }
+
         $searcher = CounterHistorySearcher::make()
             ->setCounterId($counterId)
             ->setWithClaim()

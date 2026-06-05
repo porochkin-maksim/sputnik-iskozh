@@ -1,0 +1,154 @@
+.panel-block {
+    font-size : 12px;
+
+    input {
+        padding : 0.2rem 1.5rem;
+    }
+
+    .search-block {
+        width       : 8.5rem;
+        position    : relative;
+        display     : flex;
+        align-items : center;
+    }
+
+    .search-block .prefix {
+        position : absolute;
+        left     : 0.5rem;
+    }
+
+    .search-block .postfix {
+        position : absolute;
+        right    : 0.5rem;
+    }
+}
+
+.admin-toolbar {
+    padding          : 0.45rem 0.65rem;
+    border           : 1px solid rgba($default-primary, 0.12);
+    border-radius    : 0.75rem;
+    background-color : rgba($default-primary, 0.03);
+}
+
+.admin-table-firm {
+    thead {
+        th {
+            background-color : rgba($default-primary, 0.05);
+            border-bottom    : 1px solid rgba($default-primary, 0.14);
+            color            : $default-primary;
+            font-weight      : 700;
+            white-space      : nowrap;
+        }
+    }
+
+    tbody {
+        tr {
+            transition : background-color 0.16s ease;
+        }
+
+        tr:hover {
+            background-color : rgba($default-primary, 0.03);
+        }
+    }
+
+    .admin-action-btn {
+        min-width : 2rem;
+    }
+
+    .admin-inline-link {
+        white-space : nowrap;
+    }
+
+    .admin-nested-list {
+        list-style : none;
+
+        li + li {
+            margin-top : 0.35rem;
+        }
+    }
+
+}
+
+.link-firm {
+    display          : inline-flex;
+    align-items      : center;
+    gap              : 0.25rem;
+    padding          : 0.2rem 0.55rem;
+    border           : 1px solid rgba($default-primary, 0.22);
+    border-radius    : 0.45rem;
+    color            : $default-primary;
+    background-color : rgba($default-primary, 0.06);
+    text-decoration  : none;
+    line-height      : 1.15;
+    white-space      : nowrap;
+    transition       : color 0.16s ease, border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+
+    &:hover {
+        color            : darken($default-primary, 6%);
+        border-color     : rgba($default-primary, 0.45);
+        background-color : rgba($default-primary, 0.11);
+        transform        : translateY(-1px);
+        text-decoration  : none;
+    }
+
+    &.text-muted {
+        color : $color-secondary;
+    }
+}
+
+.ticket-category-block {
+    .list-group-item.active {
+        background-color : rgba($default-primary, 0.08) !important;
+        border-color     : rgba($default-primary, 0.14) !important;
+        color            : $default-primary !important;
+    }
+}
+
+.period-payments-import-block {
+    max-width : 100%;
+
+    .table-responsive {
+        max-height : 800px;
+        overflow-y : auto;
+    }
+
+    thead th {
+        position         : sticky;
+        top              : 0;
+        background-color : #f8f9fa;
+        z-index          : 10;
+    }
+
+    thead th::after {
+        content       : '';
+        position      : absolute;
+        bottom        : 0;
+        left          : 0;
+        width         : 100%;
+        border-bottom : 2px solid #dee2e6;
+    }
+
+    .nav-tabs .nav-link {
+        cursor : pointer;
+    }
+}
+
+.account-item-add {
+    .index {
+        width : 80px;
+    }
+
+    .size {
+        width : 50px;
+    }
+}
+
+.user-item-view {
+    td {
+        padding : 2px 0;
+    }
+
+    .cursor-pointer {
+        cursor : pointer;
+    }
+}

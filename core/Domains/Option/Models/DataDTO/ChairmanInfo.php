@@ -2,8 +2,6 @@
 
 namespace Core\Domains\Option\Models\DataDTO;
 
-use Illuminate\Support\Str;
-
 class ChairmanInfo implements DataDTOInterface
 {
     private ?string $lastName   = null;
@@ -17,7 +15,7 @@ class ChairmanInfo implements DataDTOInterface
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): ChairmanInfo
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 
@@ -29,7 +27,7 @@ class ChairmanInfo implements DataDTOInterface
         return $this->firstName;
     }
 
-    public function setFirstName(?string $firstName): ChairmanInfo
+    public function setFirstName(?string $firstName): static
     {
         $this->firstName = $firstName;
 
@@ -41,7 +39,7 @@ class ChairmanInfo implements DataDTOInterface
         return $this->middleName;
     }
 
-    public function setMiddleName(?string $middleName): ChairmanInfo
+    public function setMiddleName(?string $middleName): static
     {
         $this->middleName = $middleName;
 
@@ -53,7 +51,7 @@ class ChairmanInfo implements DataDTOInterface
         return $this->phone;
     }
 
-    public function setPhone(?string $phone): ChairmanInfo
+    public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
 
@@ -65,13 +63,13 @@ class ChairmanInfo implements DataDTOInterface
         return $this->email;
     }
 
-    public function setEmail(?string $email): ChairmanInfo
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
         return $this;
     }
-    
+
     public function getFullName(): string
     {
         return implode(' ', [$this->getLastName(), $this->getFirstName(), $this->getMiddleName()]);

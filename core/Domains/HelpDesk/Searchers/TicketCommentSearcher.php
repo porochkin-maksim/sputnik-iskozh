@@ -2,7 +2,7 @@
 
 namespace Core\Domains\HelpDesk\Searchers;
 
-use Core\Db\Searcher\BaseSearcher;
+use Core\Repositories\BaseSearcher;
 
 class TicketCommentSearcher extends BaseSearcher
 {

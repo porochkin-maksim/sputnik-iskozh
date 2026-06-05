@@ -10,16 +10,24 @@
 
         <template v-else>
             <div class="d-flex">
-                <div class="search-block" v-if="actions.accounts">
-                    <i class="fa fa-home prefix"></i>
-                    <input class="form-control" v-model="account" placeholder="Участок" @keyup="onAccountSearch"
-                           @keyup.enter="searchAction">
+                        <div class="search-block" v-if="actions.accounts">
+                            <i class="fa fa-home prefix"></i>
+                            <inline-input v-model="account"
+                                  placeholder="Участок"
+                                  :grouped="true"
+                                  :input-class="'search-block-input'"
+                                  @keyup="onAccountSearch"
+                                  @submit="searchAction" />
                     <i class="fa fa-search postfix"></i>
                 </div>
-                <div class="search-block ms-2" v-if="actions.users">
-                    <i class="fa fa-user prefix"></i>
-                    <input class="form-control" v-model="user" placeholder="Пользователь" @keyup="onUserSearch"
-                           @keyup.enter="searchAction">
+                        <div class="search-block ms-2" v-if="actions.users">
+                            <i class="fa fa-user prefix"></i>
+                            <inline-input v-model="user"
+                                  placeholder="Пользователь"
+                                  :grouped="true"
+                                  :input-class="'search-block-input'"
+                                  @keyup="onUserSearch"
+                                  @submit="searchAction" />
                     <i class="fa fa-search postfix"></i>
                 </div>
             </div>
@@ -32,16 +40,13 @@ import {
     ref,
     onMounted,
 }                           from 'vue';
+import InlineInput          from '@common/form/InlineInput.vue';
 import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import { useResponseError } from '@composables/useResponseError';
 import {
     ApiAdminTopPanelIndex,
     ApiAdminTopPanelSearch,
 }                           from '@api';
-
-defineOptions({
-    name: 'TopPanelBlock',
-});
 
 const { parseResponseErrors } = useResponseError();
 
@@ -105,30 +110,3 @@ onMounted(() => {
     loadData();
 });
 </script>
-
-<style scoped>
-.panel-block {
-    font-size : 12px;
-}
-
-.panel-block input {
-    padding : 0.2rem 1.5rem;
-}
-
-.panel-block .search-block {
-    width       : 8.5rem;
-    position    : relative;
-    display     : flex;
-    align-items : center;
-}
-
-.panel-block .search-block .prefix {
-    position : absolute;
-    left     : 0.5rem;
-}
-
-.panel-block .search-block .postfix {
-    position : absolute;
-    right    : 0.5rem;
-}
-</style>

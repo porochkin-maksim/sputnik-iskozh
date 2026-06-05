@@ -1,14 +1,9 @@
 #topNavBar {
-    background-color : $default-primary !important;
-
-    .nav-link {
-        color : #FFF !important;
-    }
+    background-color : transparent;
 
     .navbar-brand {
         display     : flex;
         align-items : center;
-        color       : #ffffff;
         padding     : 0 0 3px 0;
 
         .logo {
@@ -17,14 +12,6 @@
             width           : 30px;
             background-size : contain;
             border-radius   : 50%;
-        }
-    }
-}
-
-#topMenuNavContent {
-    .horizontal-menu {
-        .nav-item:not(:last-child) {
-
         }
     }
 }
@@ -126,18 +113,48 @@ hr {
 
 .breadcrumb-item+.breadcrumb-item:before {
     float         : left;
-    padding-right : var(--bs-breadcrumb-item-padding-x);
-    color         : var(--bs-breadcrumb-divider-color);
+    padding-right : 0.6rem;
+    color         : rgba($default-primary, 0.45);
     content       : var(--bs-breadcrumb-divider, "/");
 }
 
 .breadcrumb {
+    display         : inline-flex;
+    flex-wrap       : wrap;
+    align-items     : center;
+    gap             : 0.2rem;
+    margin-bottom   : 0.85rem;
+    padding         : 0.4rem 0.7rem;
+    border          : 1px solid rgba($default-primary, 0.12);
+    border-radius   : 999px;
+    background      : linear-gradient(180deg, rgba($default-primary, 0.03) 0%, rgba(#fff, 0.98) 100%);
+    box-shadow      : 0 0.25rem 0.75rem rgba(0, 0, 0, 0.03);
+
     .breadcrumb-item {
-        padding-left : var(--bs-breadcrumb-item-padding-x);
+        display      : inline-flex;
+        align-items  : center;
+        padding-left : 0;
+        color        : $color-secondary;
+        font-size    : 0.83rem;
+
         a {
+            display         : inline-flex;
+            align-items     : center;
+            color           : $default-primary;
             text-decoration : none;
+            font-weight     : 600;
+            transition      : color 0.18s ease, transform 0.18s ease;
+
+            &:hover {
+                color     : darken($default-primary, 4%);
+                transform : translateX(1px);
+            }
         }
 
+        &.active {
+            color       : $color-secondary;
+            font-weight : 600;
+        }
     }
 }
 

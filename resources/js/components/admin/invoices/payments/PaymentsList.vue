@@ -10,24 +10,28 @@
         />
 
         <template v-else>
-            <table class="table table-sm table-bordered">
+            <table class="table table-sm table-bordered admin-table-firm">
                 <thead>
                 <tr>
-                    <th class="text-center">№</th>
+                    <th class="text-center table-thin-column">№</th>
                     <th class="text-center">Название</th>
                     <th class="text-center">Сумма</th>
-                    <th class="text-center">Файлы</th>
+                    <th class="text-center table-thin-column">Файлы</th>
                     <th class="text-center">Оплачен</th>
                     <th class="text-center">Создан</th>
-                    <th class="text-center">Действия</th>
+                    <th class="text-center table-thin-column">Действия</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="(payment, index) in payments" :key="payment.id">
-                    <td class="text-end">{{ payment.id }}</td>
+                    <td class="table-thin-column text-center">
+                        <span class="link-firm">
+                            {{ payment.id }}
+                        </span>
+                    </td>
                     <td>{{ payment.name }}</td>
                     <td class="text-end">{{ formatMoney(payment.cost) }}</td>
-                    <td>
+                    <td class="table-thin-column">
                         <div v-if="payment.files?.length" class="d-flex flex-column gap-1">
                             <file-item
                                 v-for="(file, fileIndex) in payment.files"
@@ -42,11 +46,10 @@
                         </div>
                         <span v-else class="text-muted small">—</span>
                     </td>
-                    <td class="text-center">{{ payment.paid }}</td>
-                    <td class="text-center">{{ payment.created }}</td>
-                    <td class="text-center">
-                        <div class="d-flex justify-content-center gap-1">
-                            <!-- Кнопка истории -->
+                    <td class="table-thin-column text-center">{{ payment.paid }}</td>
+                    <td class="table-thin-column text-center">{{ payment.created }}</td>
+                    <td class="table-thin-column text-center">
+                        <div class="d-flex justify-content-center gap-1 flex-nowrap">
                             <history-btn
                                 v-if="payment.historyUrl"
                                 class="btn-link underline-none p-0"
@@ -54,58 +57,32 @@
                                 aria-label="История изменений"
                             />
 
-                            <!-- Дропдаун с действиями -->
-                            <div v-if="hasActions(payment)" class="dropdown">
-                                <button
-                                    class="btn btn-sm btn-light border"
-                                    type="button"
-                                    :id="'dropDown' + index + vueId"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                    :disabled="dropLoading === payment.id"
-                                    :aria-label="'Действия для платежа ' + payment.id"
-                                >
-                                    <i v-if="dropLoading === payment.id"
-                                       class="fa fa-spinner fa-spin"
-                                       aria-hidden="true"></i>
-                                    <i v-else class="fa fa-bars" aria-hidden="true"></i>
-                                </button>
-                                <ul
-                                    class="dropdown-menu"
-                                    :aria-labelledby="'dropDown' + index + vueId"
-                                >
-                                    <li v-if="payment.actions.edit">
-                                        <a
-                                            class="dropdown-item cursor-pointer"
-                                            @click="editAction(payment.id)"
-                                            role="menuitem"
-                                        >
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
-                                            Редактировать
-                                        </a>
-                                    </li>
-                                    <li v-else-if="payment.actions.view">
-                                        <a
-                                            class="dropdown-item cursor-pointer"
-                                            @click="editAction(payment.id)"
-                                            role="menuitem"
-                                        >
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                            Просмотр
-                                        </a>
-                                    </li>
-                                    <li v-if="payment.actions.drop">
-                                        <a
-                                            class="dropdown-item cursor-pointer text-danger"
-                                            @click="dropAction(payment.id)"
-                                            role="menuitem"
-                                        >
-                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                            Удалить
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <button
+                                v-if="canEdit"
+                                class="btn btn-sm btn-outline-success admin-action-btn"
+                                type="button"
+                                :disabled="dropLoading === payment.id"
+                                :aria-label="'Редактировать платёж ' + payment.id"
+                                @click="editAction(payment.id)"
+                            >
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                            </button>
+
+                            <button
+                                v-if="canDrop"
+                                class="btn btn-sm btn-outline-danger admin-action-btn"
+                                type="button"
+                                :disabled="dropLoading === payment.id"
+                                :aria-label="'Удалить платёж ' + payment.id"
+                                @click="dropAction(payment.id)"
+                            >
+                                <i
+                                    v-if="dropLoading === payment.id"
+                                    class="fa fa-spinner fa-spin"
+                                    aria-hidden="true"
+                                ></i>
+                                <i v-else class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -128,12 +105,14 @@ import {
     onMounted,
     defineProps,
     defineEmits,
+    computed,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
-import HistoryBtn           from '../../../common/HistoryBtn.vue';
-import FileItem             from '../../../common/files/FileItem.vue';
-import LoadingSpinner       from '../../../common/LoadingSpinner.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import FileItem             from '@common/files/FileItem.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiAdminPaymentList,
     ApiAdminPaymentDelete,
@@ -162,17 +141,15 @@ const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count'])
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
+const { has }                                       = usePermissions();
+
+const canEdit = computed(() => has('payments', 'edit'));
+const canDrop = computed(() => has('payments', 'drop'));
 
 const payments    = ref([]);
-const actions     = ref({});
 const vueId       = ref('list-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
 const isLoading   = ref(false);
 const dropLoading = ref(null);
-
-// Проверка наличия действий у платежа
-const hasActions = (payment) => {
-    return payment.actions?.edit || payment.actions?.view || payment.actions?.drop;
-};
 
 // Загрузка списка
 const loadList = async () => {
@@ -180,8 +157,6 @@ const loadList = async () => {
     try {
         const response = await ApiAdminPaymentList(props.invoiceId);
         payments.value = response.data.payments || [];
-        actions.value  = response.data.actions || {};
-
         emit('update:count', payments.value.length);
     }
     catch (error) {

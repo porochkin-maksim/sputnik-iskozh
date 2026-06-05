@@ -6,29 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Invoice\Enums\InvoiceTypeEnum;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceSearcher;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Summary\Services\SummaryService;
-use Core\Domains\Billing\Summary\SummaryLocator;
 use Illuminate\Http\JsonResponse;
 
 class SummaryController extends Controller
 {
-    private SummaryService $summaryService;
-    private InvoiceService $invoiceService;
-    private AccountService $accountService;
 
-    public function __construct()
+    public function __construct(
+        private readonly SummaryService $summaryService,
+        private readonly InvoiceService $invoiceService,
+        private readonly AccountService $accountService,
+    )
     {
-        $this->summaryService = SummaryLocator::SummaryService();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->accountService = AccountLocator::AccountService();
     }
 
     public function summary(DefaultRequest $request): JsonResponse

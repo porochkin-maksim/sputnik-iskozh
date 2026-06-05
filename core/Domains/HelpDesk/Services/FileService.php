@@ -2,45 +2,53 @@
 
 namespace Core\Domains\HelpDesk\Services;
 
-use Core\Domains\File\Enums\FileTypeEnum;
-use Core\Domains\File\Models\FileDTO;
-use Core\Domains\File\Services\FileService as BaseFileService;
-use Illuminate\Http\UploadedFile;
+use Core\Domains\Files\FileSearcher;
+use Core\Domains\Files\FileTypeEnum;
+use Core\Domains\Files\FileService as BaseFileService;
+use Core\Domains\Files\FileServiceConfig;
+use Core\Domains\Shared\ValueObjects\UploadedFile;
 
-class FileService
+readonly class FileService extends BaseFileService
 {
-    private const string FILE_DIR = 'help-desk/tickets';
-
-    public function __construct(
-        private readonly BaseFileService $fileService,
-    )
+    protected function config(): FileServiceConfig
     {
+        return new FileServiceConfig(
+            baseDir      : 'help-desk/tickets',
+            baseType     : FileTypeEnum::TICKET,
+            defaultPublic: false,
+        );
     }
 
-    public function store(UploadedFile $file, int $relatedId, FileTypeEnum $type = FileTypeEnum::TICKET): FileDTO
+    /**
+     * @param UploadedFile[] $files
+     */
+    public function storeTicketFiles(array $files, int $ticketId): void
     {
-        $dto = $this->fileService->store($file, self::FILE_DIR, false);
-        $dto->setType($type)
-            ->setRelatedId($relatedId)
+        $this->storeAndSave($files, $ticketId);
+    }
+
+    /**
+     * @param UploadedFile[] $files
+     */
+    public function storeTicketResultFiles(array $files, int $ticketId): void
+    {
+        $this->storeAndSave($files, $ticketId, FileTypeEnum::TICKET_RESULT);
+    }
+
+    public function deleteTicketFiles(int $ticketId): void
+    {
+        $files = $this->search($this->makeTicketFilesSearcher($ticketId))->getItems();
+
+        foreach ($files as $file) {
+            $this->deleteById($file->getId());
+        }
+    }
+
+    private function makeTicketFilesSearcher(int $ticketId): FileSearcher
+    {
+        return (new FileSearcher())
+            ->setRelatedId($ticketId)
+            ->setType(FileTypeEnum::TICKET)
         ;
-
-        $this->fileService->save($dto);
-
-        return $dto;
-    }
-
-    public function getById(int $id): ?FileDTO
-    {
-        return $this->fileService->getById($id);
-    }
-
-    public function deleteById(int $id): bool
-    {
-        return $this->fileService->deleteById($id);
-    }
-
-    public function save(FileDTO $file): FileDTO
-    {
-        return $this->fileService->save($file);
     }
 }

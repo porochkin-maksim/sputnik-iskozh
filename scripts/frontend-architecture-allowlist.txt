@@ -1,0 +1,11 @@
+# Existing large Vue components. Split instead of increasing these files.
+^resources/js/components/common/form/CustomCalendar.vue:410:
+^resources/js/components/profile/counters/CounterItem.vue:368:
+
+# Existing direct axios/window.axios in Vue components. Migrate to @api/api client.
+
+# Existing legacy route helper usage in Vue components. Migrate to @api.
+
+# Existing jQuery usage in Vue components. Replace with Vue state/composable.
+
+# Existing Options API components. New components must use <script setup>.

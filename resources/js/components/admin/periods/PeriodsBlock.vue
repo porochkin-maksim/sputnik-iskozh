@@ -4,11 +4,11 @@
         <div class="d-flex align-items-center justify-content-between mb-2">
             <div>
                 <button
-                    v-if="actions.create"
+                    v-if="canCreate"
                     class="btn btn-success"
                     @click="showCreateDialog"
                 >
-                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;
                     <span>Добавить период</span>
                 </button>
             </div>
@@ -30,25 +30,25 @@
         <!-- Таблица с периодами -->
         <template v-else>
             <div v-if="periods.length">
-                <table class="table table-sm table-hover align-middle">
+                <table class="table table-sm table-hover align-middle admin-table-firm">
                     <caption class="visually-hidden">Список периодов</caption>
                     <thead>
                     <tr>
-                        <th scope="col">ID</th>
+                        <th scope="col" class="table-thin-column">ID</th>
                         <th scope="col">Название</th>
                         <th scope="col">Начало</th>
                         <th scope="col">Окончание</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col" class="text-center">Действия</th>
+                        <th scope="col" class="text-center">Статус</th>
+                        <th scope="col" class="text-center table-thin-column">Действия</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(period, index) in periods" :key="period.id">
-                        <td>{{ period.id }}</td>
-                        <td>{{ period.name }}</td>
-                        <td class="text-nowrap">{{ formatDate(period.startAt) }}</td>
+                    <tr v-for="period in periods" :key="period.id">
+                        <td class="table-thin-column text-center">{{ period.id }}</td>
+                        <td class="text-nowrap">{{ period.name }}</td>
+                        <td>{{ formatDate(period.startAt) }}</td>
                         <td class="text-nowrap">{{ formatDate(period.endAt) }}</td>
-                        <td>
+                        <td class="text-center">
                             <span
                                 v-if="period.isClosed"
                                 class="badge bg-primary"
@@ -61,57 +61,36 @@
                                 Активен
                             </span>
                         </td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-1">
+                        <td class="table-thin-column">
+                            <div class="d-flex justify-content-end gap-1 flex-nowrap">
+                                <button
+                                    v-if="canEdit && !period.isClosed"
+                                    class="btn btn-sm btn-outline-success admin-action-btn"
+                                    type="button"
+                                    @click="showEditDialog(period)"
+                                >
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </button>
+                                <button
+                                    v-if="canDrop && !period.isClosed"
+                                    class="btn btn-sm btn-outline-danger admin-action-btn"
+                                    type="button"
+                                    @click="deleteAction(period)"
+                                >
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                                <a
+                                    v-if="period.receiptUrl"
+                                    :href="period.receiptUrl"
+                                    target="_blank"
+                                    class="btn btn-sm admin-action-btn"
+                                >
+                                    <i class="fa fa-file-pdf-o text-danger"></i>
+                                </a>
                                 <history-btn
                                     class="btn-link underline-none"
                                     :url="period.historyUrl"
                                 />
-                                <div>
-                                    <a :href="period.receiptUrl" target="_blank" v-if="period.receiptUrl"
-                                       class="btn ps-0 btn-link underline-none">
-                                        <i class="fa fa-file-pdf-o text-danger"></i> Квитанция
-                                    </a>
-                                </div>
-                                <div class="dropdown">
-                                    <button
-                                        class="btn btn-sm btn-light border"
-                                        type="button"
-                                        :id="'dropDown' + index + vueId"
-                                        data-bs-toggle="dropdown"
-                                        :disabled="!(actions.edit && actions.drop) || period.isClosed"
-                                        :aria-disabled="!(actions.edit && actions.drop) || period.isClosed"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fa fa-bars" aria-hidden="true"></i>
-                                        <span class="visually-hidden">Действия</span>
-                                    </button>
-                                    <ul
-                                        class="dropdown-menu"
-                                        :aria-labelledby="'dropDown' + index + vueId"
-                                    >
-                                        <li v-if="actions.edit && !period.isClosed">
-                                            <a
-                                                class="dropdown-item cursor-pointer"
-                                                @click="showEditDialog(period)"
-                                                role="menuitem"
-                                            >
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                Редактировать
-                                            </a>
-                                        </li>
-                                        <li v-if="actions.drop && !period.isClosed">
-                                            <a
-                                                class="dropdown-item cursor-pointer text-danger"
-                                                @click="deleteAction(period)"
-                                                role="menuitem"
-                                            >
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                Удалить
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </td>
                     </tr>
@@ -137,41 +116,39 @@
 <script setup>
 import {
     ref,
+    computed,
     onMounted,
-    defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
-import PeriodEditDialog     from './PeriodEditDialog.vue';
-import LoadingSpinner       from '../../common/LoadingSpinner.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
+import HistoryBtn           from '@common/HistoryBtn.vue';
+import LoadingSpinner       from '@common/LoadingSpinner.vue';
 import {
     ApiAdminPeriodList,
     ApiAdminPeriodCreate,
     ApiAdminPeriodDelete,
 }                           from '@api';
 import { useFormat }        from '@composables/useFormat.js';
-
-defineOptions({
-    name: 'PeriodsBlock',
-});
+import PeriodEditDialog     from './PeriodEditDialog.vue';
 
 const { parseResponseErrors, showInfo } = useResponseError();
-const { formatDate }                                = useFormat();
+const { formatDate }                    = useFormat();
+const { has }                           = usePermissions();
 
 const periods        = ref([]);
 const historyUrl     = ref(null);
-const actions        = ref({});
 const selectedPeriod = ref(null);
 const showDialog     = ref(false);
-const vueId          = ref('uuid-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
 const isLoading      = ref(false);
+const canCreate      = computed(() => has('periods', 'edit'));
+const canEdit        = computed(() => has('periods', 'edit'));
+const canDrop        = computed(() => has('periods', 'drop'));
 
 const listAction = async () => {
     isLoading.value = true;
     try {
         const response   = await ApiAdminPeriodList();
         periods.value    = response.data.periods || [];
-        actions.value    = response.data.actions;
         historyUrl.value = response.data.historyUrl;
     }
     catch (error) {
@@ -194,7 +171,7 @@ const showCreateDialog = async () => {
 };
 
 const showEditDialog = (period) => {
-    if (!actions.value.edit || period.isClosed) {
+    if (!canEdit.value || period.isClosed) {
         return;
     }
     selectedPeriod.value = period;

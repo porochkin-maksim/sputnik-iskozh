@@ -23,7 +23,7 @@ class ErrorLogsController extends Controller
             ->sortByDesc('modified')
             ->values();
 
-        return view('admin.error-logs.index', [
+        return view('pages.admin.system.error-logs-index', [
             'logs' => $errorLogs,
         ]);
     }
@@ -35,7 +35,7 @@ class ErrorLogsController extends Controller
     {
         $entries = $this->getValues($filename);
 
-        return view('admin.error-logs.show', [
+        return view('pages.admin.system.error-logs-show', [
             'filename' => $filename,
             'entries' => $entries,
         ]);
@@ -52,7 +52,7 @@ class ErrorLogsController extends Controller
             abort(404);
         }
 
-        return view('admin.error-logs.details', [
+        return view('pages.admin.system.error-logs-details', [
             'filename' => $filename,
             'entry' => $entries[$index],
             'index' => $index,

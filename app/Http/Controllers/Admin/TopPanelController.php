@@ -4,37 +4,41 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Resources\Admin\Accounts\AccountResource;
-use App\Http\Resources\Common\SelectOptionResource;
+use App\Http\Resources\Admin\AccountResource;
 use App\Models\Account\Account;
 use App\Models\Billing\Payment;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Account\AccountLocator;
-use Core\Domains\Account\Models\AccountSearcher;
-use Core\Domains\Account\Services\AccountService;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Requests\RequestArgumentsEnum;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountSearcher;
+use Core\Domains\Account\AccountService;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Repositories\SearcherInterface;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class TopPanelController extends Controller
 {
-    private AccountService $accountService;
-    private PaymentService $paymentService;
 
-    public function __construct()
+    public function __construct(
+        private readonly AccountService $accountService,
+        private readonly PaymentService $paymentService,
+    )
     {
-        $this->accountService = AccountLocator::AccountService();
-        $this->paymentService = PaymentLocator::PaymentService();
     }
 
+    // vue: resources/js/components/admin/TopPanelBlock.vue
     public function index(): JsonResponse
     {
         $roleDecorator = lc::roleDecorator();
+        if (
+            ! $roleDecorator->can(PermissionEnum::USERS_VIEW)
+            && ! $roleDecorator->can(PermissionEnum::ACCOUNTS_VIEW)
+            && ! $roleDecorator->can(PermissionEnum::PAYMENTS_VIEW)
+        ) {
+            abort(403);
+        }
+
         $canActions    = false;
         $result        = [
             'actions'  => [
@@ -61,6 +65,7 @@ class TopPanelController extends Controller
         return response()->json($result);
     }
 
+    // vue: resources/js/components/admin/TopPanelBlock.vue
     public function search(DefaultRequest $request): ?string
     {
         $accountSearch = $request->getStringOrNull('account');
@@ -73,17 +78,17 @@ class TopPanelController extends Controller
             )->getItems();
 
             if ($accounts->count() === 1) {
-                $result = new AccountResource($accounts->first())->getViewUrl();
+                $result = (new AccountResource($accounts->first()))->getViewUrl();
             }
             elseif ($accounts->count() > 1) {
-                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
             }
             else {
-                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, [RequestArgumentsEnum::SEARCH => $accountSearch]);
+                $result = route(RouteNames::ADMIN_ACCOUNT_INDEX, ['search' => $accountSearch]);
             }
         }
         elseif ($userSearch) {
-            $result = route(RouteNames::ADMIN_USER_INDEX, [RequestArgumentsEnum::SEARCH => $userSearch]);
+            $result = route(RouteNames::ADMIN_USER_INDEX, ['search' => $userSearch]);
         }
 
         return $result;

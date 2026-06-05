@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 
 class UserObserver extends AbstractObserver
 {

@@ -1,0 +1,16 @@
+^core/Domains/.+Searcher.php:
+^core/Domains/Access/RoleService.php:
+^core/Domains/User/UserService.php:
+^core/Domains/CounterHistory/CounterHistoryService.php:
+^core/Domains/Counter/CounterService.php:
+^core/Domains/Files/FileService.php:
+^core/Domains/Infra/ExData/Repositories/ExDataRepository.php:
+^core/Domains/Infra/DbLock/Service/LockService.php:
+^core/Domains/Infra/Tokens/TokenFacade.php:
+^core/Domains/Infra/Uid/UidFacade.php:
+^core/Domains/Billing/Summary/Repositories/SummaryRepository.php:
+^core/Domains/Billing/Period/PeriodService.php:
+^core/Domains/Billing/Acquiring/Providers/VTB/VTBProvider.php:
+^core/Domains/Counter/CounterEntity.php:
+^core/Domains/.+/Mails/.+:
+^core/Domains/Infra/Comparator/DTO/ChangesCollection.php:

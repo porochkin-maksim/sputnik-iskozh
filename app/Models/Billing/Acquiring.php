@@ -2,9 +2,8 @@
 
 namespace App\Models\Billing;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -19,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float   $amount
  * @property array   $data
  */
-class Acquiring extends Model implements CastsInterface
+class Acquiring extends AbstractModel
 {
     public const string TABLE = 'acquiring';
 

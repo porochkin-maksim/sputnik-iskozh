@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
 use Carbon\Carbon;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\SectionNames;
-use Core\Resources\Views\ViewNames;
-use Core\Services\Images\StaticFileLocator;
-use Core\Session\CookieNames;
+use Core\Domains\Access\PermissionEnum;
+use App\Resources\RouteNames;
+use App\Resources\Views\SectionNames;
+use App\Services\Images\StaticFileLocator;
+use App\Session\CookieNames;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +28,7 @@ $cutRouteNameFn = static function (string $routeName) {
 };
 ?>
         <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', config('app.locale')) }}">
 <head>
     <title>@yield(SectionNames::TITLE, RouteNames::name(Route::current()?->getName(), config('app.name')))</title>
 
@@ -40,37 +39,37 @@ $cutRouteNameFn = static function (string $routeName) {
     @stack(SectionNames::SCRIPTS)
     @include('layouts.partial.access.import-roles')
 </head>
-<body class="d-flex flex-column h-100 {{ $season }} admin"
+<body class="d-flex flex-column h-100 {{ $season }} admin layout-background-image"
       id="app"
       style="background-image: url('{{ $bgImage->getUrl() }}')">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom"
+<nav class="navbar navbar-expand-lg navbar-dark site-navbar site-navbar--admin sticky-top border-bottom"
      id="topNavBar">
     <div class="container-fluid main px-3">
-        <a class="navbar-brand"
+        <a class="navbar-brand site-navbar__brand"
            href="{{ url('/') }}">
-            <div class="logo"
+            <div class="logo layout-logo-image"
                  style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
             {{ config('app.name') }}
         </a>
         <button class="navbar-toggler"
                 type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#topMenuNavContent"
+                data-navbar-target="#topMenuNavContent"
+                data-navbar-toggle="collapse"
                 aria-controls="topMenuNavContent"
                 aria-expanded="false"
                 aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse"
+        <div class="collapse navbar-collapse site-navbar__collapse"
              id="topMenuNavContent">
-            @include('layouts.partial.nav')
+            @include('layouts.partial.public-topnav')
         </div>
     </div>
 </nav>
 @if(!App::isProduction())
-    <div style="background-color: red;height:5px;z-index:99999;" class="position-absolute w-100 top-0 left-0"></div>
+    <div class="development-strip position-absolute w-100 top-0 left-0"></div>
 @endif
-<main class="px-3 py-2 w-100">
+<main class="admin-main px-3 py-2 w-100">
     <div class="row admin-content-body">
         <div class="col-2 admin-side-panel border-end">
             <div class="side-menu">

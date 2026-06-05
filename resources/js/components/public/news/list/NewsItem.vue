@@ -1,23 +1,18 @@
 <template>
-    <div v-if="modeEdit">
-        <wrapper @close="modeEdit=false"
-                 :container-class="'w-100'">
-            <div class="container-fluid">
-                <news-item-edit :model-value="id"
-                                @updated="updatedItem()" />
-            </div>
-        </wrapper>
-    </div>
     <div :style="[articleStyle]"
-         class="position-relative">
-        <div class="custom-item news-item w-100" :ref="(el) => (newsElementRef = el)">
+         class="position-relative public-news-item__outer">
+        <div :class="newsCardClass"
+             ref="newsElementRef">
             <div class="title">
-                <a class="name" :href="news.url">
-                    <template v-if="news.isLock">
-                        <i class="fa fa-bolt text-warning"></i>&nbsp;
-                    </template>
-                    {{ news.title ? news.title : 'Без названия' }}
+                <a v-if="news.title && isList && news.url"
+                   class="name public-news-item__title public-news-item__title-link"
+                   :href="news.url">
+                    {{ news.title }}
                 </a>
+                <div v-else-if="news.title && isList"
+                     class="name public-news-item__title">
+                    {{ news.title }}
+                </div>
                 <div class="date">
                     <i class="fa fa-calendar"></i> {{ news.dossier.publishedAt }}
                 </div>
@@ -26,7 +21,7 @@
             <div class="body">
                 <div class="news-slider py-2" v-if="images && images.length && !showExpand">
                     <bs-slider :images="images"
-                               :id="sliderId"/>
+                               :id="sliderId" />
                 </div>
                 <div class="article py-2"
                      v-html="news.article"
@@ -35,6 +30,13 @@
             </div>
 
             <div class="footer">
+                <div v-if="isList && news.url"
+                     class="public-news-item__read-more">
+                    <a class="btn btn-outline-success btn-sm"
+                       :href="news.url">
+                        Читать новость
+                    </a>
+                </div>
                 <div v-if="news.files.length" class="mt-2">
                     <div class="fw-bold mb-2">Приложения:</div>
                     <template v-for="(file, index) in news.files">
@@ -50,17 +52,17 @@
                     </template>
                 </div>
 
-                <div class="btn-group btn-group-sm mt-2"
+                <div class="public-news-item__actions"
                      v-if="edit">
-                    <button class="btn btn-success"
-                            @click="modeEdit=1">
+                    <a class="btn btn-outline-success"
+                       :href="'/news/form/' + news.id">
                         <i class="fa fa-edit"></i>&nbsp;Редактировать
-                    </button>
-                    <button class="btn btn-info"
+                    </a>
+                    <button class="btn btn-outline-info"
                             @click="chooseFiles">
                         <i class="fa fa-paperclip "></i>&nbsp;Файлы
                     </button>
-                    <button class="btn btn-danger"
+                    <button class="btn btn-outline-danger"
                             @click="deleteNews">
                         <i class="fa fa-trash "></i>&nbsp;Удалить
                     </button>
@@ -74,10 +76,10 @@
                            @change="uploadFiles">
                 </div>
             </div>
-            <div class="news-item-wrapper"
+            <div class="news-item-wrapper public-news-item__wrapper"
                  v-if="showExpand"
                  @click="forceExpandArticle=true">
-                <button class="btn btn-link">
+                <button class="btn btn-outline-success btn-sm">
                     Показать ещё
                 </button>
             </div>
@@ -85,122 +87,105 @@
     </div>
 </template>
 
-<script>
-import Url          from '../../../../utils/Url.js';
-import Wrapper      from '../../../common/Wrapper.vue';
-import CustomInput  from '../../../common/form/CustomInput.vue';
-import NewsItemEdit from './NewsItemEdit.vue';
-import BsSlider     from '../../../common/BsSlider.vue';
-import FileItem     from '../FileItem.vue';
+<script setup>
+import {
+    computed,
+    ref,
+    watch,
+}                           from 'vue';
+import BsSlider             from '@common/BsSlider.vue';
+import FileItem             from '../FileItem.vue';
+import {
+    ApiNewsDelete,
+    ApiNewsFileUpload,
+}                           from '@api';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    emits     : ['updated'],
-    props     : [
-        'news',
-        'edit',
-        'isList',
-    ],
-    components: {
-        BsSlider,
-        FileItem,
-        CustomInput,
-        Wrapper,
-        NewsItemEdit,
+const props = defineProps({
+    news  : {
+        type    : Object,
+        required: true,
     },
-    data () {
-        return {
-            modeEdit          : false,
-            newsElementRef    : null,
-            forceExpandArticle: false,
-
-            id              : this.news.id,
-            maxArticleHeight: 200,
-        };
+    edit  : {
+        type   : Boolean,
+        default: false,
     },
-    methods : {
-        updatedItem (isDeleted = false) {
-            this.$emit('updated', isDeleted);
-            this.modeEdit = false;
-        },
-        deleteNews () {
-            if (!confirm('Удалить новость?')) {
-                return;
-            }
-
-            let uri = Url.Generator.makeUri(Url.Routes.newsDelete, {
-                id: this.id,
-            });
-
-            window.axios[Url.Routes.newsDelete.method](uri).then(response => {
-                this.updatedItem();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        chooseFiles () {
-            this.$refs.fileElem.click();
-        },
-        uploadFiles (event) {
-            let form = new FormData();
-            for (let i = 0; i < event.target.files.length; i++) {
-                form.append(event.target.files[i].name, event.target.files[i]);
-            }
-
-            let uri = Url.Generator.makeUri(Url.Routes.newsFileUpload, {
-                id: this.news.id,
-            });
-
-            window.axios[Url.Routes.newsFileUpload.method](
-                uri,
-                form,
-            ).then(response => {
-                if (response.data) {
-                    this.updatedItem();
-                }
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        onUpdatedFile () {
-            this.updatedItem();
-        },
+    isList: {
+        type   : Boolean,
+        default: false,
     },
-    watch   : {
-        news: {
-            handler (val) {
-                this.id = val.id;
-            },
-            deep: true,
-        },
+});
 
-    },
-    computed: {
-        images () {
-            let images = [];
-            if (this.news && this.news.files) {
-                this.news.files.forEach(function (file) {
-                    if (file.isImage) {
-                        images.push(file);
-                    }
-                });
-            }
-            return images;
-        },
-        sliderId () {
-            return 'newsSlider-' + this.id;
-        },
-        articleStyle () {
-            if (this.showExpand) {
-                return 'max-height:' + this.maxArticleHeight + 'px;overflow-y:hidden;';
-            }
-            return '';
-        },
-        showExpand () {
-            return this.isList && this.calculateHeight >= this.maxArticleHeight && !this.forceExpandArticle;
-        },
-        calculateHeight () {
-            return parseInt(this.newsElementRef?.clientHeight);
-        },
-    },
+const { parseResponseErrors } = useResponseError();
+
+const newsElementRef     = ref(null);
+const forceExpandArticle = ref(false);
+const fileElem           = ref(null);
+const id                 = ref(props.news?.id || null);
+const maxArticleHeight   = 200;
+
+const updatedItem = (isDeleted = false) => {
+    emit('updated', isDeleted);
 };
+
+const deleteNews = () => {
+    if ( ! confirm('Удалить новость?')) {
+        return;
+    }
+
+    ApiNewsDelete(id.value).then(() => {
+        updatedItem(true);
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+};
+
+const chooseFiles = () => {
+    fileElem.value?.click();
+};
+
+const uploadFiles = (event) => {
+    const form = new FormData();
+    for (const file of event.target.files) {
+        form.append(file.name, file);
+    }
+
+    ApiNewsFileUpload(props.news.id, {}, form).then(response => {
+        if (response.data) {
+            updatedItem();
+        }
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+};
+
+const onUpdatedFile = () => {
+    updatedItem();
+};
+
+const images = computed(() => {
+    const result = [];
+    if (props.news && props.news.files) {
+        props.news.files.forEach(file => {
+            if (file.isImage) {
+                result.push(file);
+            }
+        });
+    }
+    return result;
+});
+
+const sliderId        = computed(() => `newsSlider-${id.value}`);
+const calculateHeight = computed(() => parseInt(newsElementRef.value?.clientHeight));
+const showExpand      = computed(() => props.isList && calculateHeight.value >= maxArticleHeight && !forceExpandArticle.value);
+const articleStyle    = computed(() => showExpand.value ? `max-height:${maxArticleHeight}px;overflow:hidden;overflow-x:hidden;` : '');
+const newsCardClass   = computed(() => props.isList
+    ? 'custom-item news-item public-news-item w-100'
+    : 'public-news-show w-100');
+
+const emit = defineEmits(['updated']);
+
+watch(() => props.news, (val) => {
+    id.value = val?.id || null;
+}, { deep: true });
 </script>

@@ -3,49 +3,45 @@
 namespace App\Http\Controllers\Admin\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Payments\SaveRequest;
+use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Payments\PaymentResource;
 use App\Http\Resources\Admin\Payments\PaymentsListResource;
+use App\Support\HistoryChangesRoute;
 use App\Models\Billing\Payment;
 use Carbon\Carbon;
-use Core\Db\Searcher\SearcherInterface;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Claim\ClaimLocator;
-use Core\Domains\Billing\Claim\Models\ClaimSearcher;
-use Core\Domains\Billing\Claim\Services\ClaimService;
-use Core\Domains\Billing\Invoice\InvoiceLocator;
-use Core\Domains\Billing\Invoice\Models\InvoiceDTO;
-use Core\Domains\Billing\Invoice\Services\InvoiceService;
-use Core\Domains\Billing\Payment\Factories\PaymentFactory;
-use Core\Domains\Billing\Payment\Models\PaymentDTO;
-use Core\Domains\Billing\Payment\Models\PaymentSearcher;
-use Core\Domains\Billing\Payment\PaymentLocator;
-use Core\Domains\Billing\Payment\Services\FileService;
-use Core\Domains\Billing\Payment\Services\PaymentService;
-use Core\Domains\Billing\Period\PeriodLocator;
-use Core\Domains\Billing\Period\Services\PeriodService;
+use Core\Exceptions\ValidationException;
+use Core\Repositories\SearcherInterface;
+use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Billing\Claim\ClaimSearcher;
+use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Payment\PaymentEntity;
+use Core\Domains\Billing\Payment\PaymentFactory;
+use Core\Domains\Billing\Payment\PaymentSearcher;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\HistoryChanges\HistoryType;
+use Core\App\Billing\Payment\SaveInvoicePaymentCommand;
 use Illuminate\Http\JsonResponse;
 use lc;
 
 class PaymentController extends Controller
 {
-    private PaymentFactory $paymentFactory;
-    private PaymentService $paymentService;
-    private InvoiceService $invoiceService;
-    private FileService    $fileService;
-    private PeriodService  $periodService;
-    private ClaimService   $claimService;
 
-    public function __construct()
+    public function __construct(
+        private readonly PaymentFactory            $paymentFactory,
+        private readonly PaymentService            $paymentService,
+        private readonly InvoiceService            $invoiceService,
+        private readonly PeriodService             $periodService,
+        private readonly ClaimService              $claimService,
+        private readonly SaveInvoicePaymentCommand $saveInvoicePaymentCommand,
+    )
     {
-        $this->paymentService = PaymentLocator::PaymentService();
-        $this->paymentFactory = PaymentLocator::PaymentFactory();
-        $this->fileService    = PaymentLocator::FileService();
-        $this->invoiceService = InvoiceLocator::InvoiceService();
-        $this->periodService  = PeriodLocator::PeriodService();
-        $this->claimService   = ClaimLocator::ClaimService();
     }
 
+    // vue: resources/js/components/admin/payments/PaymentsBlock.vue
+    // vue: resources/js/components/admin/payments/payments-block/PaymentDialog.vue
     public function create(int $invoiceId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
@@ -107,6 +103,8 @@ class PaymentController extends Controller
 
     }
 
+    // vue: resources/js/components/admin/payments/PaymentsBlock.vue
+    // vue: resources/js/components/admin/payments/payments-block/PaymentDialog.vue
     public function get(int $invoiceId, int $paymentId): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
@@ -130,41 +128,29 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function save(int $invoiceId, SaveRequest $request): JsonResponse
+    /**
+     * @throws ValidationException
+     */
+    // vue: resources/js/components/admin/payments/PaymentsBlock.vue
+    // vue: resources/js/components/admin/payments/payments-block/PaymentDialog.vue
+    public function save(int $invoiceId, DefaultRequest $request): JsonResponse
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
 
-        $invoice = $this->invoiceService->getById($invoiceId);
-        if ( ! $invoice) {
-            abort(412);
-        }
+        $payment = $this->saveInvoicePaymentCommand->execute(
+            $invoiceId,
+            $request->getIntOrNull('id'),
+            $request->getFloat('cost'),
+            $request->getStringOrNull('name'),
+            $request->getStringOrNull('comment'),
+            $request->getStringOrNull('paidAt'),
+            $request->allFiles(),
+        );
 
-        $payment = $request->getId()
-            ? $this->paymentService->getById($request->getId())
-            : $this->paymentFactory->makeDefault()
-                ->setInvoiceId($invoiceId)
-                ->setAccountId($invoice->getAccountId())
-        ;
-
-        if ( ! $payment) {
+        if ($payment === null) {
             abort(404);
-        }
-
-        $payment
-            ->setModerated(true)
-            ->setVerified(true)
-            ->setCost($request->getCost())
-            ->setName($request->getName())
-            ->setComment($request->getComment())
-            ->setPaidAt($request->getPaidAt())
-        ;
-
-        $payment = $this->paymentService->save($payment);
-
-        foreach ($request->allFiles() as $file) {
-            $this->fileService->store($file, $payment->getId());
         }
 
         return response()->json([
@@ -172,9 +158,13 @@ class PaymentController extends Controller
         ]);
     }
 
+    // vue: resources/js/components/admin/payments/PaymentsBlock.vue
+    // vue: resources/js/components/admin/payments/payments-block/usePaymentsList.js
     public function list(int $invoiceId): JsonResponse
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+        $roleDecorator = lc::roleDecorator();
+
+        if ( ! $roleDecorator->can(PermissionEnum::PAYMENTS_VIEW)) {
             abort(403);
         }
 
@@ -192,13 +182,22 @@ class PaymentController extends Controller
         $payments = $this->paymentService->search($searcher);
 
         $invoice = $this->fetchInvoice($invoiceId);
-        $payments->setItems($payments->getItems()->map(function (PaymentDTO $paymentDTO) use ($invoice) {
-            return $paymentDTO->setInvoice($invoice);
+        $payments->setItems($payments->getItems()->map(function (PaymentEntity $payment) use ($invoice) {
+            return $payment->setInvoice($invoice);
         }));
 
-        return response()->json(new PaymentsListResource(
-            $payments->getItems(),
-        ));
+        return response()->json([
+            'payments'   => new PaymentsListResource($payments->getItems()),
+            'historyUrl' => HistoryChangesRoute::make(
+                type: HistoryType::INVOICE,
+                referenceType: HistoryType::PAYMENT,
+            ),
+            'actions'    => [
+                'view' => $roleDecorator->can(PermissionEnum::PAYMENTS_VIEW),
+                'edit' => $roleDecorator->can(PermissionEnum::PAYMENTS_EDIT),
+                'drop' => $roleDecorator->can(PermissionEnum::PAYMENTS_DROP),
+            ],
+        ]);
     }
 
     public function delete(int $invoiceId, int $id): bool
@@ -210,7 +209,7 @@ class PaymentController extends Controller
         return $this->paymentService->deleteById($id);
     }
 
-    private function fetchInvoice(int $invoiceId): ?InvoiceDTO
+    private function fetchInvoice(int $invoiceId): ?InvoiceEntity
     {
         $invoice = $this->invoiceService->getById($invoiceId);
         $period  = $invoice ? $this->periodService->getById($invoice->getPeriodId()) : null;

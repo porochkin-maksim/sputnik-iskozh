@@ -1,20 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\DefaultRequest;
+use App\Models\User;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\User\UserLocator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends AbstractAuthController
 {
-    use ThrottlesLogins,
-        AuthenticatesUsers;
+    use AuthenticatesUsers;
 
     public function __construct()
     {
@@ -23,14 +21,14 @@ class LoginController extends AbstractAuthController
 
     public function token(string $token)
     {
-        $pin = new DefaultRequest(request()->toArray())->getString('pin');
+        $pin = (new DefaultRequest(request()->toArray()))->getString('pin');
 
         $data = TokenFacade::find($token);
         if ($data && Hash::check($pin, $data['pin'])) {
             $uid = UidFacade::find($token);
 
             if ($uid) {
-                $user = UserLocator::UserRepository()->getById($uid->getReferenceId());
+                $user = User::find($uid->getReferenceId());
                 Auth::login($user, true);
             }
         }

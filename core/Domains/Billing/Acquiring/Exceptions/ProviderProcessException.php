@@ -2,7 +2,8 @@
 
 namespace Core\Domains\Billing\Acquiring\Exceptions;
 
-class ProviderProcessException extends \Exception
-{
+use RuntimeException;
 
+class ProviderProcessException extends RuntimeException
+{
 }

@@ -2,9 +2,8 @@
 
 namespace App\Models\Infra;
 
-use App\Models\Interfaces\CastsInterface;
+use App\Models\AbstractModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int     $id
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property ?string $data
  */
-class Lock extends Model implements CastsInterface
+class Lock extends AbstractModel
 {
     public const string TABLE = 'locks';
 

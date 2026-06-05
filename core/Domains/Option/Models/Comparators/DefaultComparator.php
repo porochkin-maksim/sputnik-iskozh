@@ -3,7 +3,7 @@
 namespace Core\Domains\Option\Models\Comparators;
 
 use Core\Domains\Infra\Comparator\DTO\AbstractComparatorDTO;
-use Core\Domains\Option\Models\OptionDTO;
+use Core\Domains\Option\OptionEntity;
 
 class DefaultComparator extends AbstractComparatorDTO
 {
@@ -13,7 +13,7 @@ class DefaultComparator extends AbstractComparatorDTO
         'data' => self::TITLE_DATA,
     ];
 
-    public function __construct(OptionDTO $entity)
+    public function __construct(OptionEntity $entity)
     {
         $this->initProperties($entity, $entity->getId());
 

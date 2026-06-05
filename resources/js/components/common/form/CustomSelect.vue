@@ -12,29 +12,28 @@
             :disabled="disabled"
             :name="name"
             class="form-control"
-            :class="{ 'form-error': errors }"
+            :class="{ 'is-invalid': resolvedErrors }"
             @change="onChange"
             v-bind="$attrs"
         >
             <option
-                v-for="option in normalizedOptions"
-                :key="option.value"
-                :value="option.value"
-            >
-                {{ option.label }}
-            </option>
-        </select>
+            v-for="option in normalizedOptions"
+            :key="option.value"
+            :value="option.value"
+        >
+            {{ option.label }}
+        </option>
+    </select>
     </element-wrapper>
-    <errors-list :errors="errors" />
+    <errors-list v-if="resolvedErrors" :errors="resolvedErrors" />
 </template>
 
 <script setup>
-import {
-    computed,
-    useId,
-}                     from 'vue';
-import ErrorsList     from './partial/ErrorsList.vue';
-import ElementWrapper from './partial/ElementWrapper.vue';
+import { computed }       from 'vue';
+import ErrorsList         from '@common/form/partial/ErrorsList.vue';
+import ElementWrapper     from '@common/form/partial/ElementWrapper.vue';
+import { useFormFieldId } from '@common/form/useFormFieldId';
+import { useFieldError }  from '@common/form/useFieldError';
 
 const props = defineProps({
     modelValue: [String, Number],
@@ -53,7 +52,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-const selectId = `select-${useId()}`;
+const selectId                                              = useFormFieldId('select');
+const { clearResolvedError, resolvedError: resolvedErrors } = useFieldError(props);
 
 // Нормализуем options к единому формату { value, label }
 const normalizedOptions = computed(() => {
@@ -72,5 +72,6 @@ const onChange = (event) => {
     const value = event.target.value;
     emit('update:modelValue', value);
     emit('change', value);
+    clearResolvedError();
 };
 </script>

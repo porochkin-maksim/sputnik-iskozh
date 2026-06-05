@@ -6,35 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\HelpDesk\CategoryListResource;
 use App\Http\Resources\Admin\HelpDesk\CategoryResource;
-use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\Factories\TicketCategoryFactory;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
-use Core\Domains\HelpDesk\Models\TicketCategoryDTO;
-use Core\Domains\HelpDesk\Searchers\TicketCategorySearcher;
+use Core\App\HelpDesk\Category\CreateCommand;
+use Core\App\HelpDesk\Category\DeleteCommand;
+use Core\App\HelpDesk\Category\GetListCommand;
+use Core\App\HelpDesk\Category\SaveCommand;
 use Core\Domains\HelpDesk\Services\TicketCategoryService;
-use Core\Domains\HelpDesk\UseCases\Category\CreateUseCase;
-use Core\Domains\HelpDesk\UseCases\Category\DeleteUseCase;
-use Core\Domains\HelpDesk\UseCases\Category\UpdateUseCase;
+use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class CategoryController extends Controller
 {
-    private readonly TicketCategoryService $ticketCategoryService;
-    private readonly TicketCategoryFactory $ticketCategoryFactory;
-
-    public function __construct()
+    public function __construct(
+        private readonly TicketCategoryService $ticketCategoryService,
+        private readonly GetListCommand        $getListCommand,
+        private readonly CreateCommand         $createCommand,
+        private readonly SaveCommand           $saveCommand,
+        private readonly DeleteCommand         $deleteCommand,
+    )
     {
-        $this->ticketCategoryService = HelpDeskServiceLocator::TicketCategoryService();
-        $this->ticketCategoryFactory = HelpDeskServiceLocator::TicketCategoryFactory();
     }
 
     public function list(): JsonResponse
     {
-        $categories = $this->ticketCategoryService->search(
-            new TicketCategorySearcher()
-                ->useOrderSort(),
-        )->getItems();
+        $categories = $this->getListCommand->execute();
 
         return response()->json([
             'categories' => new CategoryListResource($categories),
@@ -63,16 +58,7 @@ class CategoryController extends Controller
 
     public function create(int $type): JsonResponse
     {
-        $lastCategory = $this->ticketCategoryService->search(
-            new TicketCategorySearcher()
-                ->setType(TicketTypeEnum::tryFrom($type))
-                ->setSortOrderPropertyIdDesc()
-                ->setLimit(1),
-        )->getItems()->first();
-
-        $category = $this->ticketCategoryFactory->makeDefault()
-            ->setSortOrder((int) $lastCategory?->getSortOrder() + 10)
-        ;
+        $category = $this->createCommand->execute($type);
 
         return response()->json([
             'category' => new CategoryResource($category),
@@ -80,51 +66,32 @@ class CategoryController extends Controller
     }
 
     /**
-     * Создать новую категорию
+     * @throws ValidationException
      */
     public function save(DefaultRequest $request): JsonResponse
     {
-        if ($request->getInt('id')) {
-            $dto = $this->ticketCategoryService->getById($request->getInt('id'));
+        $isUpdate = $request->getIntOrNull('id') !== null;
+        $result   = $this->saveCommand->execute(
+            $request->getIntOrNull('id'),
+            $request->getInt('type'),
+            $request->getString('name'),
+            $request->getString('code'),
+            $request->getInt('sort_order', 0),
+            $request->getBool('is_active', true),
+        );
 
-            if ( ! $dto) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Категория не найдена',
-                ], 404);
-            }
-
-            $dto->setType(TicketTypeEnum::tryFrom($request->getInt('type')))
-                ->setName($request->getString('name'))
-                ->setCode($request->getString('code'))
-                ->setSortOrder($request->getInt('sort_order', 0))
-                ->setIsActive($request->getBool('is_active') ?? true)
-            ;
-
-            $result = new UpdateUseCase()->execute($dto);
-
+        if ($result === null) {
             return response()->json([
-                'success'  => true,
-                'category' => new CategoryResource($result),
-                'message'  => 'Категория успешно обновлена',
-            ]);
+                'success' => false,
+                'message' => 'Категория не найдена',
+            ], 404);
         }
-
-        $dto = new TicketCategoryDTO()
-            ->setType(TicketTypeEnum::tryFrom($request->getInt('type')))
-            ->setName($request->getString('name'))
-            ->setCode($request->getString('code'))
-            ->setSortOrder($request->getInt('sort_order', 0))
-            ->setIsActive($request->getBool('is_active') ?? true)
-        ;
-
-        $result = new CreateUseCase()->execute($dto);
 
         return response()->json([
             'success'  => true,
             'category' => new CategoryResource($result),
-            'message'  => 'Категория успешно создана',
-        ], 201);
+            'message'  => $isUpdate ? 'Категория успешно обновлена' : 'Категория успешно создана',
+        ], $isUpdate ? 200 : 201);
     }
 
     /**
@@ -141,7 +108,7 @@ class CategoryController extends Controller
             ], 404);
         }
         try {
-            new DeleteUseCase()->execute($category);
+            $this->deleteCommand->execute($category);
 
             return response()->json([
                 'success' => true,

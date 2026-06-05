@@ -3,29 +3,26 @@
 namespace Core\Domains\Infra\ExData\Services;
 
 use Core\Domains\Infra\ExData\Enums\ExDataTypeEnum;
+use Core\Domains\Infra\ExData\ExDataEntity;
 use Core\Domains\Infra\ExData\Factories\ExDataFactory;
-use Core\Domains\Infra\ExData\Models\ExDataDTO;
 use Core\Domains\Infra\ExData\Models\ExDataSearcher;
-use Core\Domains\Infra\ExData\Repositories\ExDataRepository;
+use Core\Domains\Infra\ExData\Repositories\ExDataRepositoryInterface;
 
 readonly class ExDataService
 {
     public function __construct(
-        private ExDataFactory    $factory,
-        private ExDataRepository $repository,
+        private ExDataFactory $factory,
+        private ExDataRepositoryInterface $repository,
     )
     {
     }
 
-    public function save(ExDataDTO $dto): ExDataDTO
+    public function save(ExDataEntity $dto): ExDataEntity
     {
-        $model = $this->repository->getById($dto->getId());
-        $model = $this->repository->save($this->factory->makeModelFromDto($dto, $model));
-
-        return $this->factory->makeDtoFromObject($model);
+        return $this->repository->save($dto);
     }
 
-    public function getByTypeAndReferenceId(ExDataTypeEnum $type, int $referenceId): ExDataDTO
+    public function getByTypeAndReferenceId(ExDataTypeEnum $type, int $referenceId): ExDataEntity
     {
         $searcher = new ExDataSearcher();
         $searcher
@@ -33,21 +30,18 @@ readonly class ExDataService
             ->setReferenceId($referenceId)
         ;
 
-        $model = $this->repository->search($searcher)->getItems()->first();
-        if ( ! $model) {
-            return $this->factory->makeByType($type, $referenceId);
-        }
+        $entity = $this->repository->search($searcher)->getItems()->first();
 
-        return $this->factory->makeDtoFromObject($model);
+        return $entity ? : $this->factory->makeByType($type, $referenceId);
     }
 
-    public function delete(ExDataDTO $dto): void
+    public function delete(ExDataEntity $dto): void
     {
         $this->repository->deleteById($dto->getId());
     }
 
-    public function makeDefault(ExDataTypeEnum $type): ExDataDTO
+    public function makeDefault(ExDataTypeEnum $type): ExDataEntity
     {
         return $this->factory->makeDefault($type);
     }
-} 
+}

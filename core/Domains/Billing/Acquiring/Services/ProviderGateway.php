@@ -2,27 +2,33 @@
 
 namespace Core\Domains\Billing\Acquiring\Services;
 
+use Core\Domains\Billing\Acquiring\AcquiringEntity;
 use Core\Domains\Billing\Acquiring\Exceptions\ProviderProcessException;
 use Core\Domains\Billing\Acquiring\Exceptions\UndefinedProviderException;
-use Core\Domains\Billing\Acquiring\Models\AcquiringDTO;
 
 readonly class ProviderGateway
 {
-    /**
-     * @throws ProviderProcessException
-     * @throws UndefinedProviderException
-     */
-    public function getQrLink(AcquiringDTO $acquiring): string
+    public function __construct(
+        private ProviderSelector $providerSelector,
+    )
     {
-        return ProviderSelector::getProviderService($acquiring->getProvider())->getQrLink($acquiring);
     }
 
     /**
      * @throws ProviderProcessException
      * @throws UndefinedProviderException
      */
-    public function getPaymentLink(AcquiringDTO $acquiring): string
+    public function getQrLink(AcquiringEntity $acquiring): string
     {
-        return ProviderSelector::getProviderService($acquiring->getProvider())->getPaymentLink($acquiring);
+        return $this->providerSelector->getProviderService($acquiring->getProvider())->getQrLink($acquiring);
+    }
+
+    /**
+     * @throws ProviderProcessException
+     * @throws UndefinedProviderException
+     */
+    public function getPaymentLink(AcquiringEntity $acquiring): string
+    {
+        return $this->providerSelector->getProviderService($acquiring->getProvider())->getPaymentLink($acquiring);
     }
 }

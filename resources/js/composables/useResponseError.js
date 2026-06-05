@@ -1,30 +1,27 @@
 // composables/useResponseError.js
-import { ref }      from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 
 export function useResponseError () {
     const store  = useStore();
-    const errors = ref({});
+    const errors = computed(() => store.getters['alerts/fieldErrors'] || {});
 
     const clearResponseErrors = () => {
-        errors.value = {};
-        store.dispatch('alerts/removeErrors').then(r => {
-            r ? console.log(r) : '';
-        });
+        store.dispatch('alerts/removeFieldErrors');
     };
 
     const clearError = (name) => {
-        delete errors.value[name];
+        store.dispatch('alerts/removeFieldError', name);
     };
 
     const parseResponseErrors = (error) => {
         clearResponseErrors();
-        if (error.response && error.response.data && error.response.data.message) {
-            showDanger(error.response.data.message)
+        if (error.response?.data?.message) {
+            showDanger(error.response.data.message);
         }
 
-        if (error.response && error.response.data && error.response.data.errors) {
-            errors.value = error.response.data.errors;
+        if (error.response?.data?.errors) {
+            store.dispatch('alerts/setFieldErrors', error.response.data.errors);
         }
         else if (error.response) {
             switch (error.response.status) {
@@ -43,8 +40,6 @@ export function useResponseError () {
             id  : new Date().getTime(),
             text,
             type: 'info',
-        }).then(r => {
-            r ? console.log(r) : '';
         });
     };
 
@@ -53,8 +48,6 @@ export function useResponseError () {
             id  : new Date().getTime(),
             text,
             type: 'success',
-        }).then(r => {
-            r ? console.log(r) : '';
         });
     };
 
@@ -63,8 +56,6 @@ export function useResponseError () {
             id  : new Date().getTime(),
             text,
             type: 'danger',
-        }).then(r => {
-            r ? console.log(r) : '';
         });
     };
 

@@ -1,10 +1,14 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers;
-use Core\Resources\RouteNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'news'], static function () {
+    Route::get('/form/{id?}', [Controllers\Public\News\NewsController::class, 'formPage'])
+        ->name(RouteNames::NEWS_FORM)
+        ->whereNumber('id')
+    ;
     Route::get('/', [Controllers\Public\News\NewsController::class, 'index'])->name(RouteNames::NEWS);
     Route::get('/{id}', [Controllers\Public\News\NewsController::class, 'show'])
         ->name(RouteNames::NEWS_SHOW)

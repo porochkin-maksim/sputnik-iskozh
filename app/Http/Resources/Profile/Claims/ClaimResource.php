@@ -3,12 +3,12 @@
 namespace App\Http\Resources\Profile\Claims;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
+use Core\Domains\Billing\Claim\ClaimEntity;
 
 readonly class ClaimResource extends AbstractResource
 {
     public function __construct(
-        private ClaimDTO $claim,
+        private ClaimEntity $claim,
     )
     {
     }

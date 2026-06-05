@@ -3,15 +3,14 @@
 use App\Http\Controllers;
 use App\Http\Controllers\Admin\System\SentEmailController;
 use App\Http\Middleware\Enums\MiddlewareNames;
-use Core\Resources\RouteNames;
-use Core\Resources\Views\ViewNames;
+use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], static function () {
     Route::group(['middleware' => MiddlewareNames::ADMIN], static function () {
         Route::get('/', static function () {
-            return view(ViewNames::ADMIN_PAGES_INDEX);
+            return view('pages.admin.index');
         })->name(RouteNames::ADMIN);
 
         // главная админки
@@ -25,6 +24,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], stati
         Route::group(['prefix' => 'json'], static function () {
             Route::group(['prefix' => 'selects'], static function () {
                 Route::get('/accounts', [Controllers\Admin\SelectCollectionsController::class, 'accounts'])->name(RouteNames::ADMIN_SELECTS_ACCOUNTS);
+                Route::get('/roles', [Controllers\Admin\SelectCollectionsController::class, 'roles'])->name(RouteNames::ADMIN_SELECTS_ROLES);
                 Route::get('/periods', [Controllers\Admin\SelectCollectionsController::class, 'periods'])->name(RouteNames::ADMIN_SELECTS_PERIODS);
                 Route::get('/services-types', [Controllers\Admin\SelectCollectionsController::class, 'servicesTypes'])->name(RouteNames::ADMIN_SELECTS_SERVICES_TYPES);
                 Route::get('/counters/{accountId?}', [Controllers\Admin\SelectCollectionsController::class, 'counters'])

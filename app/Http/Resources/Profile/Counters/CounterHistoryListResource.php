@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Profile\Counters;
 
 use App\Http\Resources\AbstractResource;
-use Core\Domains\Counter\Collections\CounterHistoryCollection;
+use Core\Domains\CounterHistory\CounterHistoryCollection;
 
 readonly class CounterHistoryListResource extends AbstractResource
 {

@@ -4,7 +4,7 @@ namespace App\Observers\Counter;
 
 use App\Models\Counter\Counter;
 use App\Observers\AbstractObserver;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 
 class CounterObserver extends AbstractObserver
 {

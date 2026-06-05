@@ -1,6 +1,7 @@
 form,
 .form {
-    .form-error {
+    .form-error,
+    .is-invalid {
         &:not(input) {
             color      : $color-danger;
             font-style : italic;
@@ -13,8 +14,12 @@ form,
             padding         : 0 0.5rem;
         }
 
-        &.form-control {
-            box-shadow : 0 0 2px $color-danger;
+        &.form-control,
+        &.form-select,
+        &.custom-calendar__input,
+        &.form-check-input {
+            border-color : $color-danger;
+            box-shadow   : 0 0 0 0.15rem rgba($color-danger, 0.15);
         }
     }
 
@@ -44,11 +49,77 @@ form,
     }
 }
 
+.form-floating {
+    > .form-control,
+    > .form-select,
+    > .form-check {
+        border-radius : 0;
+    }
+
+    > label {
+        color : $color-secondary;
+    }
+}
+
 .form-control,
 .form-floating {
     &:disabled {
         background-color : #f8f8f8;
     }
+}
+
+.dropdown-search {
+    position : relative;
+    width    : 100%;
+}
+
+.dropdown-search .clear-icon {
+    position  : absolute;
+    top       : 50%;
+    transform : translateY(-50%);
+    right     : 10px;
+    font-size : 20px;
+    color     : #aaa;
+    cursor    : pointer;
+    z-index   : 5;
+}
+
+.dropdown-search .clear-icon.with-label {
+    top : calc(50% + 6px);
+}
+
+.dropdown-search .dropdown-menu {
+    position      : absolute;
+    top           : 100%;
+    left          : 0;
+    right         : 0;
+    z-index       : 1000;
+    padding       : 0;
+    margin-top    : 2px;
+    max-height    : 10rem;
+    overflow-y    : auto;
+    border        : 1px solid rgba(0, 0, 0, .15);
+    border-radius : 0.25rem;
+    background    : #fff;
+    list-style    : none;
+}
+
+.dropdown-search .dropdown-menu li {
+    padding       : 0.25rem 0.75rem;
+    cursor        : pointer;
+    border-bottom : 1px solid #e0e0e0;
+    white-space   : nowrap;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+}
+
+.dropdown-search .dropdown-menu li:last-child {
+    border-bottom : none;
+}
+
+.dropdown-search .dropdown-menu li:hover,
+.dropdown-search .dropdown-menu li.active {
+    background-color : #f0f0f0;
 }
 
 .label-checkbox {

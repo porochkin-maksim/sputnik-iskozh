@@ -19,15 +19,20 @@
 <script setup>
 import { useSlots } from 'vue';
 
-const slots = useSlots();
-</script>
+defineProps({
+    layoutClass: {
+        type   : String,
+        default: '',
+    },
+    subClass   : {
+        type   : String,
+        default: '',
+    },
+    mainClass  : {
+        type   : String,
+        default: '',
+    },
+});
 
-<script>
-export default {
-    props: [
-        'layoutClass',
-        'subClass',
-        'mainClass',
-    ],
-};
+const slots = useSlots();
 </script>

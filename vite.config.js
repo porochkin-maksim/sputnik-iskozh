@@ -62,5 +62,8 @@ export default ({ mode }) => {
         optimizeDeps: {
             include: ['axios', 'jquery', 'bootstrap', 'vue', 'vuex'],
         },
+        build       : {
+            chunkSizeWarningLimit: 900,
+        },
     });
 };

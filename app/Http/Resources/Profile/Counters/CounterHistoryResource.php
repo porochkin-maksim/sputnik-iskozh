@@ -4,15 +4,15 @@ namespace App\Http\Resources\Profile\Counters;
 
 use App\Http\Resources\AbstractResource;
 use App\Http\Resources\Profile\Claims\ClaimResource;
+use App\Http\Resources\Shared\Files\FileResource;
 use Carbon\Carbon;
-use Core\Domains\Counter\Models\CounterHistoryDTO;
-use Core\Enums\DateTimeFormat;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\CounterHistory\CounterHistoryEntity;
+use Core\Shared\Helpers\DateTime\DateTimeFormat;
 
 readonly class CounterHistoryResource extends AbstractResource
 {
     public function __construct(
-        private CounterHistoryDTO $counterHistory,
+        private CounterHistoryEntity $counterHistory,
     )
     {
     }
@@ -34,9 +34,9 @@ readonly class CounterHistoryResource extends AbstractResource
             'delta'      => $previous ? ($this->counterHistory->getValue() - $previous->getValue()) : null,
             'date'       => $this->counterHistory->getDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'days'       => $previous ? abs((int) $this->counterHistory->getDate()?->diffInDays($previous->getDate())) : null,
-            'file'       => $this->counterHistory->getFile(),
+            'file'       => $this->counterHistory->getFile() ? new FileResource($this->counterHistory->getFile()) : null,
             'actions'    => [
-                ResponsesEnum::CREATE => $canCreateNew,
+                'create' => $canCreateNew,
             ],
             'claim'      => $claim ? new ClaimResource($claim) : null,
         ];

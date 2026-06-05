@@ -2,8 +2,8 @@
     <page-template>
         <template v-slot:main>
             <template v-if="edit">
-                <div class="d-flex justify-content-between mb-2">
-                    <button class="btn btn-success"
+                <div class="public-action-bar mb-2">
+                    <button class="btn btn-success public-action-bar__button"
                             v-on:click="showFormAction">Добавить объявление
                     </button>
                 </div>
@@ -20,46 +20,38 @@
             <announcements-list v-model:reloadList="reloadList"
                                 v-model:canEdit="edit"
                                 :showPagination="true"
+                                :current-page="currentPage"
                                 class="mt-3"
             />
         </template>
     </page-template>
 </template>
 
-<script>
-import ResponseError     from '../../../../mixin/ResponseError.js';
+<script setup>
+import { ref }           from 'vue';
 import NewsItemEdit      from '../list/NewsItemEdit.vue';
 import AnnouncementsList from './AnnouncementsList.vue';
-import Wrapper           from '../../../common/Wrapper.vue';
-import PageTemplate      from '../../pages/SingleColumnPage.vue';
+import Wrapper           from '@common/Wrapper.vue';
+import PageTemplate      from '@components/public/pages/SingleColumnPage.vue';
 
-export default {
-    name      : 'AnnouncementsBlock',
-    components: {
-        AnnouncementsList,
-        PageTemplate,
-        Wrapper,
-        NewsItemEdit,
+const props      = defineProps({
+    currentPage: {
+        type   : Number,
+        default: 1,
     },
-    mixins    : [
-        ResponseError,
-    ],
-    data () {
-        return {
-            showForm  : false,
-            reloadList: false,
-            edit      : false,
-            id        : null,
-        };
-    },
-    methods: {
-        showFormAction () {
-            this.showForm = !this.showForm;
-        },
-        createdItem () {
-            this.reloadList = true;
-            this.showForm   = false;
-        },
-    },
+});
+
+const showForm   = ref(false);
+const reloadList = ref(false);
+const edit       = ref(false);
+const id         = ref(null);
+
+const showFormAction = () => {
+    showForm.value = !showForm.value;
+};
+
+const createdItem = () => {
+    reloadList.value = true;
+    showForm.value   = false;
 };
 </script>

@@ -3,31 +3,47 @@
 namespace App\Http\Controllers\Public\HelpDesk;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DefaultRequest;
+use App\Http\Requests\Public\PublicConsentRequest;
+use App\Http\Resources\Profile\Accounts\AccountResource;
+use App\Http\Resources\Profile\Users\UserResource;
+use App\Resources\RouteNames;
+use Core\App\HelpDesk\Ticket\CreateCommand;
+use Core\App\HelpDesk\Ticket\CreateInput;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\HelpDesk\HelpDeskServiceLocator;
 use Core\Domains\HelpDesk\Services\TicketCategoryService;
-use Core\Domains\HelpDesk\Services\TicketServiceService;
-use Core\Domains\HelpDesk\UseCases\Ticket\CreateInputDTO;
-use Core\Domains\HelpDesk\UseCases\Ticket\CreateUseCase;
+use Core\Domains\HelpDesk\Services\TicketCatalogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
+use lc;
+use Throwable;
 
 class HelpDeskController extends Controller
 {
-    private TicketCategoryService $ticketCategoryService;
-    private TicketServiceService  $ticketServiceService;
-
-    public function __construct()
+    public function __construct(
+        private readonly TicketCategoryService $ticketCategoryService,
+        private readonly TicketCatalogService  $ticketServiceService,
+        private readonly CreateCommand         $createCommand,
+    )
     {
-        $this->ticketCategoryService = HelpDeskServiceLocator::TicketCategoryService();
-        $this->ticketServiceService  = HelpDeskServiceLocator::TicketServiceService();
     }
 
     public function index()
     {
-        return view('public.help-desk.index');
+        $items = [];
+        foreach (TicketTypeEnum::cases() as $ticketType) {
+            $categories = $this->ticketCategoryService->getByType($ticketType);
+            if ($categories->hasServices()) {
+                $items[] = [
+                    'href'  => route(RouteNames::HELP_DESK_TYPE, $ticketType->code()),
+                    'title' => $ticketType->name(),
+                    'icon'  => $ticketType->icon(),
+                    'color' => $ticketType->color(),
+                ];
+            }
+        }
+
+        return view('pages.public.help-desk.index', compact('items'));
     }
 
     public function type(string $typeCode)
@@ -37,7 +53,9 @@ class HelpDeskController extends Controller
             abort(404);
         }
 
-        return view('public.help-desk.type', compact('type'));
+        $categories = $this->ticketCategoryService->getByType($type);
+
+        return view('pages.public.help-desk.type', compact('type', 'categories'));
     }
 
     public function category(string $typeCode, string $categoryCode)
@@ -52,7 +70,9 @@ class HelpDeskController extends Controller
             abort(404);
         }
 
-        return view('public.help-desk.category', compact('type', 'category'));
+        $categories = $this->ticketCategoryService->getByType($type);
+
+        return view('pages.public.help-desk.category', compact('type', 'category', 'categories'));
     }
 
     public function form(string $typeCode, string $categoryCode, string $serviceCode)
@@ -72,12 +92,16 @@ class HelpDeskController extends Controller
             abort(404);
         }
 
-        return view('public.help-desk.service', compact('type', 'category', 'service'));
+        $categories      = $this->ticketCategoryService->getByType($type);
+        $userResource    = lc::user()->getId() ? new UserResource(lc::user()) : null;
+        $accountResource = lc::account()->getId() ? new AccountResource(lc::account()) : null;
+
+        return view('pages.public.help-desk.service', compact('type', 'category', 'service', 'categories', 'userResource', 'accountResource'));
     }
 
-    public function ticket(DefaultRequest $request, string $typeCode, string $categoryCode, string $serviceCode): JsonResponse
+    public function ticket(PublicConsentRequest $request, string $typeCode, string $categoryCode, string $serviceCode): JsonResponse
     {
-        $input = new CreateInputDTO(
+        $input = new CreateInput(
             typeCode    : $typeCode,
             categoryCode: $categoryCode,
             serviceCode : $serviceCode,
@@ -87,21 +111,18 @@ class HelpDeskController extends Controller
             contactPhone: $request->getStringOrNull('phone'),
             accountId   : $request->getIntOrNull('account_id'),
             userId      : Auth::id(),
-            files       : $request->file('files', []),
+            files       : $request->files('files', []),
         );
 
         try {
-            $ticket = new CreateUseCase()->execute($input);
+            $ticket = $this->createCommand->execute($input);
 
             return response()->json(['success' => true, 'message' => sprintf('Заявка %s успешно создана', $ticket->getId()), 'number' => $ticket->getId()]);
         }
-        catch (ValidationException $e) {
-            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
-        }
-        catch (\InvalidArgumentException $e) {
+        catch (InvalidArgumentException $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
         }
-        catch (\Throwable $e) {
+        catch (Throwable $e) {
             \Log::error($e);
 
             return response()->json(['success' => false, 'message' => 'Ошибка сервера'], 500);

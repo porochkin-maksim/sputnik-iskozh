@@ -4,8 +4,8 @@ namespace App\Exports\InvoicesExport;
 
 use App\Exports\InvoicesExport\Sheets\InvoicesMainSheet;
 use App\Exports\InvoicesExport\Sheets\InvoicesPlotSheet;
-use Core\Domains\Billing\Claim\Models\ClaimDTO;
-use Core\Domains\Billing\Invoice\Collections\InvoiceCollection;
+use Core\Domains\Billing\Claim\ClaimEntity;
+use Core\Domains\Billing\Invoice\InvoiceCollection;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class InvoicesExport implements WithMultipleSheets
@@ -97,7 +97,7 @@ class InvoicesExport implements WithMultipleSheets
         return $sheets;
     }
 
-    private function getClaimName(ClaimDTO $claim): ?string
+    private function getClaimName(ClaimEntity $claim): ?string
     {
         return $claim->getService()?->getName() ? : $claim->getService()?->getType()?->name();
     }

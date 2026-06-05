@@ -28,7 +28,7 @@ import {
     watch,
     onBeforeUnmount,
 }                        from 'vue';
-import HtmlEditorToolbar from './HtmlEditorToolbar.vue';
+import HtmlEditorToolbar from '@common/editors/HtmlEditorToolbar.vue';
 
 const props = defineProps({
     value: {
@@ -95,73 +95,3 @@ onBeforeUnmount(() => {
     editor.value?.destroy();
 });
 </script>
-
-<style scoped>
-.html-editor {
-    background : #fff;
-}
-
-.editor-container {
-    min-height : 200px;
-}
-
-:deep(.tiptap) {
-    outline : none;
-}
-
-:deep(.tiptap p) {
-    margin : 0.5em 0;
-}
-
-:deep(.tiptap h1) {
-    font-size : 2em;
-    margin    : 0.5em 0;
-}
-
-:deep(.tiptap h2) {
-    font-size : 1.5em;
-    margin    : 0.5em 0;
-}
-
-:deep(.tiptap h3) {
-    font-size : 1.17em;
-    margin    : 0.5em 0;
-}
-
-:deep(.tiptap ul),
-:deep(.tiptap ol) {
-    padding-left : 1.5em;
-    margin       : 0.5em 0;
-}
-
-:deep(.tiptap a) {
-    color           : #0d6efd;
-    text-decoration : underline;
-}
-
-:deep(.tiptap img) {
-    max-width : 100%;
-    height    : auto;
-}
-
-:deep(.tiptap blockquote) {
-    border-left  : 4px solid #dee2e6;
-    padding-left : 1rem;
-    margin-left  : 0;
-    color        : #6c757d;
-}
-
-:deep(.tiptap code) {
-    background-color : #f8f9fa;
-    padding          : 0.2em 0.4em;
-    border-radius    : 3px;
-    font-family      : monospace;
-}
-
-:deep(.tiptap pre) {
-    background-color : #f8f9fa;
-    padding          : 0.75rem;
-    border-radius    : 4px;
-    overflow-x       : auto;
-}
-</style>

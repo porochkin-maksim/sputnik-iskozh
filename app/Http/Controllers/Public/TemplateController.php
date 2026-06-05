@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use Core\Domains\Access\RoleLocator;
-use Core\Domains\Access\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -12,13 +10,6 @@ use Illuminate\Support\Str;
 
 class TemplateController extends Controller
 {
-    private RoleService $roleService;
-
-    public function __construct()
-    {
-        $this->roleService = RoleLocator::RoleService();
-    }
-
     public function get(Request $request): JsonResponse
     {
         if ( ! $this->canEdit()) {

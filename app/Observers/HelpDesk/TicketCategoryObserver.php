@@ -5,7 +5,7 @@ namespace App\Observers\HelpDesk;
 use App\Models\HelpDesk\TicketCategory;
 use App\Observers\AbstractObserver;
 use Core\Domains\HelpDesk\Enums\TicketTypeEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
+use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Database\Eloquent\Model;
 
 class TicketCategoryObserver extends AbstractObserver

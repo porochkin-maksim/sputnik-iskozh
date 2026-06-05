@@ -2,82 +2,23 @@
 
 namespace App\Http\Resources\Admin\Services;
 
-use App\Http\Resources\Admin\Periods\PeriodsListResource;
-use lc;
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Common\SelectResource;
-use Core\Domains\Access\Enums\PermissionEnum;
-use Core\Domains\Billing\Period\Collections\PeriodCollection;
-use Core\Domains\Billing\Service\Collections\ServiceCollection;
-use Core\Domains\Billing\Service\Enums\ServiceTypeEnum;
-use Core\Domains\Infra\HistoryChanges\Enums\HistoryType;
-use Core\Domains\Infra\HistoryChanges\HistoryChangesLocator;
-use Core\Responses\ResponsesEnum;
+use Core\Domains\Billing\Service\ServiceCollection;
 
 readonly class ServicesListResource extends AbstractResource
 {
     public function __construct(
         private ServiceCollection $serviceCollection,
-        private PeriodCollection  $periodCollection,
     )
     {
     }
 
     public function jsonSerialize(): array
     {
-        $access         = lc::roleDecorator();
-        $types          = array_filter(ServiceTypeEnum::array(), static fn(string $name) => $name !== ServiceTypeEnum::OTHER->name());
-        $availableTypes = [];
-
-        $result = [
-            'types'      => [
-                'all' => new SelectResource($types),
-            ],
-            'historyUrl' => HistoryChangesLocator::route(
-                type: HistoryType::SERVICE,
-            ),
-            'actions'    => [
-                ResponsesEnum::VIEW => $access->can(PermissionEnum::SERVICES_VIEW),
-                ResponsesEnum::EDIT => $access->can(PermissionEnum::SERVICES_EDIT),
-                ResponsesEnum::DROP => $access->can(PermissionEnum::SERVICES_DROP),
-            ],
-        ];
-
-        $periods = [];
-
-        foreach ($this->periodCollection as $period) {
-            if ($period->isClosed()) {
-                continue;
-            }
-            $periods[$period->getId()]        = $period->getName();
-            $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
-                ServiceTypeEnum::PERSONAL_FEE->name(),
-                ServiceTypeEnum::TARGET_FEE->name() => true,
-                default                             => false,
-            });
-        }
-
-        $result['periods']     = new SelectResource($periods);
-        $result['periodsInfo'] = new PeriodsListResource($this->periodCollection);
-
+        $result = [];
         foreach ($this->serviceCollection as $service) {
-            $result[ResponsesEnum::SERVICES][] = new ServiceResource($service);
-
-            $type      = $service->getType();
-            $available = match ($type) {
-                ServiceTypeEnum::PERSONAL_FEE,
-                ServiceTypeEnum::TARGET_FEE => true,
-                default                     => false,
-            };
-            if ( ! $available) {
-                unset($availableTypes[$service->getPeriodId()][$type?->value]);
-            }
+            $result[] = new ServiceResource($service);
         }
-
-        foreach ($availableTypes as $periodId => $types) {
-            $availableTypes[$periodId] = new SelectResource($types);
-        }
-        $result['types']['available'] = $availableTypes;
 
         return $result;
     }

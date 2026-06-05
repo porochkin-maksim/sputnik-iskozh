@@ -2,7 +2,8 @@
 
 namespace Core\Domains\Billing\Acquiring\Exceptions;
 
-class UndefinedProviderException extends \Exception
-{
+use RuntimeException;
 
+class UndefinedProviderException extends RuntimeException
+{
 }

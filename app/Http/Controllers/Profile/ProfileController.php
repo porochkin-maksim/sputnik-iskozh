@@ -4,35 +4,26 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
-use App\Http\Requests\Users\SaveProfilePasswordRequest;
-use Core\Domains\User\Services\UserService;
-use Core\Domains\User\UserLocator;
-use Core\Session\SessionNames;
-use Illuminate\Support\Facades\DB;
+use App\Session\SessionNames;
+use Core\App\User\SaveProfilePasswordCommand;
 use Illuminate\Support\Facades\Session;
 use lc;
 use Throwable;
 
 class ProfileController extends Controller
 {
-    private UserService $userService;
-
-    public function __construct()
+    public function __construct(
+        private readonly SaveProfilePasswordCommand $saveProfilePasswordCommand,
+    )
     {
-        $this->userService = UserLocator::UserService();
     }
 
     /**
      * @throws Throwable
      */
-    public function savePassword(SaveProfilePasswordRequest $request): void
+    public function savePassword(DefaultRequest $request): void
     {
-        DB::transaction(function () use ($request) {
-            $user = lc::user();
-            $user->setPassword($request->getPassword());
-
-            $this->userService->save($user);
-        });
+        $this->saveProfilePasswordCommand->execute(lc::user(), $request->getString('password'));
     }
 
     public function switchAccount(DefaultRequest $request): bool

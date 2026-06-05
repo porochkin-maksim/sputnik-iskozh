@@ -1,14 +1,16 @@
 <template>
-    <div class="file-item">
+    <div class="file-item public-file-card">
         <div class="body">
             <template v-if="modeEdit">
-                <div class="form input-group input-group-sm">
-                    <button class="btn btn-success" @click="save">
-                        <i class="fa fa-save"></i>
-                    </button>
-                    <button class="btn btn-light border" @click="toggleMode">
-                        <i class="fa fa-window-close"></i>
-                    </button>
+                <div class="public-file-card__edit">
+                    <div class="public-file-card__edit-actions">
+                        <button class="btn btn-success btn-sm" @click="save">
+                            <i class="fa fa-save"></i>
+                        </button>
+                        <button class="btn btn-light border btn-sm" @click="toggleMode">
+                            <i class="fa fa-window-close"></i>
+                        </button>
+                    </div>
                     <custom-input v-model="name"
                                   :errors="errors.name"
                                   :placeholder="'Название'"
@@ -18,9 +20,9 @@
                 </div>
             </template>
             <template v-else>
-                <div class="d-inline-flex align-items-center">
+                <div class="public-file-card__row">
                     <template v-if="edit">
-                        <div class="btn-group btn-group-sm">
+                        <div class="public-file-card__actions">
                             <button class="btn btn-success btn-sm"
                                     @click="toggleMode"
                             >
@@ -46,24 +48,23 @@
                                 <i class="fa fa-trash"></i>
                             </button>
                         </div>
-                        &nbsp;
                     </template>
 
-                    <a class="btn btn-success btn-sm me-2"
+                    <a class="btn btn-outline-success btn-sm public-file-card__download"
                        :href="file.url"
                        :download="file.name">
                         <i class="fa fa-download"></i>
                     </a>
                     <template v-if="file.isImage">
                         <a :href="file.url"
-                           class="name text-decoration-none"
+                           class="name public-file-card__name text-decoration-none"
                            :data-lightbox="file.name"
                            :data-title="file.name"
                            target="_blank">{{ file.name }}</a>
                     </template>
                     <template v-else>
                         <a :href="file.url"
-                           class="name text-decoration-none"
+                           class="name public-file-card__name text-decoration-none"
                            target="_blank">{{ file.name }}</a>
                     </template>
                 </div>
@@ -72,115 +73,97 @@
     </div>
 </template>
 
-<script>
-import CustomInput   from '../../common/form/CustomInput.vue';
-import Url           from '../../../utils/Url.js';
-import ResponseError from '../../../mixin/ResponseError.js';
+<script setup>
+import {
+    computed,
+    ref,
+    watch,
+}                           from 'vue';
+import CustomInput          from '@common/form/CustomInput.vue';
+import {
+    ApiFilesSave,
+    ApiFilesDelete,
+    ApiFilesUp,
+    ApiFilesDown,
+}                           from '@api';
+import { useResponseError } from '@composables/useResponseError';
 
-export default {
-    emits     : ['updated'],
-    props     : [
-        'file',
-        'edit',
-        'index',
-        'useUpSort',
-        'useDownSort',
-    ],
-    mixins    : [
-        ResponseError,
-    ],
-    components: {
-        CustomInput,
-    },
-    created () {
+const props = defineProps({
+    file       : Object,
+    edit       : Boolean,
+    index      : Number,
+    useUpSort  : Boolean,
+    useDownSort: Boolean,
+});
 
-    },
-    data () {
-        return {
-            modeEdit: false,
+const emit                    = defineEmits(['updated']);
+const { parseResponseErrors } = useResponseError();
 
-            id  : this.file.id,
-            name: this.getFileName(),
-        };
-    },
-    methods: {
-        getFileName () {
-            return this.file.name.replace('.' + this.file.ext, '');
-        },
-        updatedItem () {
-            this.$emit('updated', true);
-            this.modeEdit = false;
-        },
-        toggleMode () {
-            if (this.modeEdit) {
-                this.save();
-            }
-            else {
-                this.modeEdit = true;
-            }
-        },
-        save () {
-            window.axios[Url.Routes.filesSave.method](Url.Routes.filesSave.uri, {
-                id  : this.id,
-                name: this.name + '.' + this.file.ext,
-            }).then(response => {
-                this.updatedItem();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        deleteFile () {
-            if (!confirm('Удалить файл?')) {
-                return;
-            }
+const modeEdit = ref(false);
+const id       = ref(props.file.id);
+const name     = ref(getFileName());
 
-            let uri = Url.Generator.makeUri(Url.Routes.filesDelete, {
-                id: this.id,
-            });
+const showUpDownButtons = computed(() => props.useUpSort || props.useDownSort);
 
-            window.axios[Url.Routes.filesDelete.method](uri).then(response => {
-                this.updatedItem();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        sortUp(index) {
-            let uri = Url.Generator.makeUri(Url.Routes.filesUp, {
-                id: this.id,
-            });
+function getFileName () {
+    return props.file.name.replace('.' + props.file.ext, '');
+}
 
-            window.axios[Url.Routes.filesUp.method](uri, {index: index}).then(response => {
-                this.updatedItem();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-        sortDown(index) {
-            let uri = Url.Generator.makeUri(Url.Routes.filesDown, {
-                id: this.id,
-            });
+function updatedItem () {
+    emit('updated', true);
+    modeEdit.value = false;
+}
 
-            window.axios[Url.Routes.filesDown.method](uri, {index: index}).then(response => {
-                this.updatedItem();
-            }).catch(response => {
-                this.parseResponseErrors(response);
-            });
-        },
-    },
-    watch  : {
-        file: {
-            handler (val) {
-                this.id   = this.file.id;
-                this.name = this.file.name.replace('.' + this.file.ext, '');
-            },
-            deep: true,
-        },
+function toggleMode () {
+    if (modeEdit.value) {
+        save();
+    }
+    else {
+        modeEdit.value = true;
+    }
+}
 
-    },
-    computed: {
-        showUpDownButtons() {
-            return this.useUpSort || this.useDownSort;
-        },
-    },
-};
+function save () {
+    ApiFilesSave({}, {
+        id  : id.value,
+        name: name.value + '.' + props.file.ext,
+    }).then(() => {
+        updatedItem();
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+function deleteFile () {
+    if (!confirm('Удалить файл?')) {
+        return;
+    }
+
+    ApiFilesDelete(id.value).then(() => {
+        updatedItem();
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+function sortUp (index) {
+    ApiFilesUp(id.value, {}, { index }).then(() => {
+        updatedItem();
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+function sortDown (index) {
+    ApiFilesDown(id.value, {}, { index }).then(() => {
+        updatedItem();
+    }).catch(response => {
+        parseResponseErrors(response);
+    });
+}
+
+watch(() => props.file, () => {
+    id.value   = props.file.id;
+    name.value = props.file.name.replace('.' + props.file.ext, '');
+}, { deep: true });
 </script>

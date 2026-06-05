@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Access;
 
+use App\Models\AbstractModel;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,17 +17,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property ?string $name
  */
-class Role extends Model
+class Role extends AbstractModel
 {
-    public const TABLE = 'roles';
+    use HasFactory;
 
-    protected $table = self::TABLE;
+    public const string TABLE = 'roles';
 
-    public const ID   = 'id';
-    public const NAME = 'name';
+    public const string ID   = 'id';
+    public const string NAME = 'name';
 
-    public const USERS       = 'users';
-    public const PERMISSIONS = 'permissions';
+    public const string USERS       = 'users';
+    public const string PERMISSIONS = 'permissions';
+
+    public const string TITLE_NAME        = 'Название';
+    public const string TITLE_PERMISSIONS = 'Разрешения';
+
+    public const array PROPERTIES_TO_TITLES = [
+        self::NAME        => self::TITLE_NAME,
+        self::PERMISSIONS => self::TITLE_PERMISSIONS,
+    ];
 
     protected $with       = [self::PERMISSIONS];
     public    $timestamps = false;

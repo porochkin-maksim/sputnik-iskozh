@@ -2,10 +2,10 @@
 
 namespace App\Models\Billing;
 
+use App\Models\AbstractModel;
 use App\Models\Account\Account;
-use App\Models\Interfaces\CastsInterface;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property ?int    $period_id
  * @property ?int    $account_id
+ * @property ?int    $service_id
  * @property ?int    $type
  * @property ?float  $cost
  * @property ?float  $paid
@@ -24,8 +25,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?string $name
  * @property ?string $comment
  */
-class Invoice extends Model implements CastsInterface
+class Invoice extends AbstractModel
 {
+    use HasFactory;
+
     public const string TABLE = 'invoices';
 
     protected $table = self::TABLE;
@@ -33,6 +36,7 @@ class Invoice extends Model implements CastsInterface
     public const string ID         = 'id';
     public const string PERIOD_ID  = 'period_id';
     public const string ACCOUNT_ID = 'account_id';
+    public const string SERVICE_ID = 'service_id';
     public const string TYPE       = 'type';
     public const string COST       = 'cost';
     public const string PAID       = 'paid';
@@ -41,10 +45,11 @@ class Invoice extends Model implements CastsInterface
     public const string NAME       = 'name';
     public const string COMMENT    = 'comment';
 
-    public const string CLAIMS   = 'claims';
-    public const string PAYMENTS = 'payments';
-    public const string ACCOUNT  = 'account';
-    public const string PERIOD   = 'period';
+    public const string RELATION_CLAIMS   = 'claims';
+    public const string RELATION_PAYMENTS = 'payments';
+    public const string RELATION_ACCOUNT  = 'account';
+    public const string RELATION_PERIOD   = 'period';
+    public const string RELATION_SERVICE  = 'service';
 
     protected $guarded = [];
 
@@ -57,6 +62,7 @@ class Invoice extends Model implements CastsInterface
 
     public const string TITLE_PERIOD_ID  = 'Период';
     public const string TITLE_ACCOUNT_ID = 'Участок';
+    public const string TITLE_SERVICE_ID = 'Услуга';
     public const string TITLE_TYPE       = 'Тип';
     public const string TITLE_PAID       = 'Оплачено';
     public const string TITLE_COST       = 'Стоимость';
@@ -68,6 +74,7 @@ class Invoice extends Model implements CastsInterface
     public const array PROPERTIES_TO_TITLES = [
         self::PERIOD_ID  => self::TITLE_PERIOD_ID,
         self::ACCOUNT_ID => self::TITLE_ACCOUNT_ID,
+        self::SERVICE_ID => self::TITLE_SERVICE_ID,
         self::NAME       => self::TITLE_NAME,
         self::TYPE       => self::TITLE_TYPE,
         self::PAID       => self::TITLE_PAID,
@@ -79,7 +86,7 @@ class Invoice extends Model implements CastsInterface
 
     public function claims(): HasMany
     {
-        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::SERVICE);
+        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::RELATION_SERVICE);
     }
 
     public function payments(): HasMany
@@ -95,5 +102,10 @@ class Invoice extends Model implements CastsInterface
     public function period(): BelongsTo
     {
         return $this->belongsTo(Period::class, self::PERIOD_ID);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, self::SERVICE_ID);
     }
 }

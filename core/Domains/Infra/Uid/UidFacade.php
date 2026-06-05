@@ -3,7 +3,6 @@
 namespace Core\Domains\Infra\Uid;
 
 use App\Models\Infra\Uid;
-use Illuminate\Support\Str;
 
 abstract class UidFacade
 {
@@ -13,7 +12,7 @@ abstract class UidFacade
 
         if ( ! $uid) {
             $uid = Uid::make([
-                Uid::ID           => Str::uuid()->serialize(),
+                Uid::ID           => self::uuid(),
                 Uid::TYPE         => $type->value,
                 Uid::REFERENCE_ID => $referenceId,
             ]);
@@ -45,7 +44,25 @@ abstract class UidFacade
         if ( ! $result || $result->{Uid::TYPE} !== $type?->value) {
             return null;
         }
-        
+
         return $result->{Uid::REFERENCE_ID};
+    }
+
+    private static function uuid(): string
+    {
+        $bytes    = random_bytes(16);
+        $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
+        $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
+
+        $hex = bin2hex($bytes);
+
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12),
+        );
     }
 }

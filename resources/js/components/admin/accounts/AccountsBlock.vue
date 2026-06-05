@@ -10,123 +10,31 @@
         />
 
         <template v-else>
-            <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="d-flex">
-                    <button class="btn btn-success me-2"
-                            v-if="actions.edit"
-                            @click="makeAction">
-                        Добавить участок
-                    </button>
-                    <template v-if="allAccounts && allAccounts.length">
-                        <div class="d-flex">
-                            <div class="input-group input-group-sm">
-                                <button class="btn btn-light border"
-                                        @click="searchAction">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                                <input class="form-control"
-                                       v-model="search"
-                                       name="users_search"
-                                       placeholder="Поиск"
-                                       @keyup="searchAction"
-                                       ref="searchInput">
-                                <button class="btn btn-light border"
-                                        type="button"
-                                        @click="clearSearch">
-                                    <i class="fa fa-close"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-                <div class="d-flex">
-                    <div>
-                        <pagination :total="total"
-                                    :per-page="perPage"
-                                    :page="currentPage"
-                                    :prop-classes="'pagination-sm mb-0'"
-                                    @update="onPaginationUpdate" />
-                    </div>
-                    <div>
-                        <simple-select v-model="perPage"
-                                       :class="'d-inline-block form-select-sm w-auto ms-2'"
-                                       :options="[15, 25, 50, 100]"
-                                       @change="loadAccounts" />
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center mx-2">
-                        Всего: {{ total }}
-                    </div>
-                    <history-btn class="btn-link underline-none"
-                                 :url="historyUrl" />
-                </div>
-            </div>
+            <accounts-toolbar
+                :all-accounts="allAccounts"
+                :can-create="canCreate"
+                :current-page="currentPage"
+                :history-url="historyUrl"
+                :loading="loading"
+                :per-page="perPage"
+                :search="search"
+                :total="total"
+                @add-account="makeAction"
+                @clear-search="clearSearch"
+                @pagination-update="onPaginationUpdate"
+                @per-page-change="loadAccounts"
+                @search-change="searchAction"
+                @update:search="search = $event"
+                @update:per-page="perPage = $event"
+            />
 
-            <div class="table-responsive">
-                <table class="table table-sm table-striped table-bordered">
-                    <thead>
-                    <tr class="text-center">
-                        <th class="cursor-pointer text-end" @click="sort('id')">
-                            №
-                            <i v-if="sortField === 'id'"
-                               :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                            <i v-else class="fa fa-sort"></i>
-                        </th>
-                        <th class="cursor-pointer" @click="sort('sort_value')">
-                            Номер
-                            <i v-if="sortField === 'sort_value'"
-                               :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                            <i v-else class="fa fa-sort"></i>
-                        </th>
-                        <th class="cursor-pointer" @click="sort('size')">
-                            Площадь (м²)
-                            <i v-if="sortField === 'size'"
-                               :class="sortOrder === 'asc' ? 'fa fa-sort-asc' : 'fa fa-sort-desc'"></i>
-                            <i v-else class="fa fa-sort"></i>
-                        </th>
-                        <th>Кадастр</th>
-                        <th>Выставление счетов</th>
-                        <th>Пользователи</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="account in accounts" :key="account.id" class="align-middle">
-                        <td class="text-end">
-                            <a :href="account.viewUrl">
-                                {{ account.id }}
-                            </a>
-                        </td>
-                        <td class="text-end">{{ account.number }}</td>
-                        <td class="text-end">{{ account.size }}</td>
-                        <td class="text-center">{{ account.cadastreNumber }}</td>
-                        <td class="text-center">
-                            <i :class="account.isInvoicing ? 'fa fa-check text-success' : ''"></i>
-                        </td>
-                        <td class="text-end">
-                            <ol v-if="account.users && account.users.length" class="mb-0 ps-0">
-                                <li v-for="user in account.users" :key="user.id"
-                                    class="d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <a v-if="user?.viewUrl" :href="user.viewUrl">{{ user.fullName }}</a>
-                                            <span v-else>{{ user.fullName }}</span>
-                                        </span>
-                                    <span>
-                                            <i class="fa fa-user"
-                                               :class="[user.fractionPercent ? 'text-success' : 'text-light']"></i>
-                                            &nbsp;{{ user.fractionPercent }}
-                                        </span>
-                                </li>
-                            </ol>
-                        </td>
-                        <td>
-                            <history-btn :disabled="!account.historyUrl"
-                                         class="btn-link underline-none"
-                                         :url="account.historyUrl ? account.historyUrl : ''" />
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <accounts-table
+                :accounts="accounts"
+                :can-user-view="canUserView"
+                :sort-field="sortField"
+                :sort-order="sortOrder"
+                @sort="sort"
+            />
 
             <div v-if="!loading && accounts.length === 0" class="text-center text-muted py-3">
                 Нет участков для отображения
@@ -143,24 +51,24 @@ import {
     ref,
     computed,
     onMounted,
-    defineOptions,
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
-import HistoryBtn           from '../../common/HistoryBtn.vue';
-import Pagination           from '../../common/pagination/Pagination.vue';
-import AccountItemAdd       from './AccountItemAdd.vue';
-import SimpleSelect         from '../../common/form/SimpleSelect.vue';
+import { usePermissions }   from '@composables/usePermissions.js';
 import LoadingSpinner       from '@common/LoadingSpinner.vue';
+import AccountItemAdd       from './AccountItemAdd.vue';
+import AccountsToolbar      from './accounts-block/AccountsToolbar.vue';
+import AccountsTable        from './accounts-block/AccountsTable.vue';
 import {
     ApiAdminAccountCreate,
     ApiAdminAccountList,
 }                           from '@api';
 
-defineOptions({
-    name: 'AccountsBlock',
-});
+const { parseResponseErrors, clearResponseErrors } = useResponseError();
 
-const { parseResponseErrors } = useResponseError();
+const { has } = usePermissions();
+
+const canCreate   = computed(() => has('accounts', 'edit'));
+const canUserView = computed(() => has('users', 'view'));
 
 // Состояния
 const loading     = ref(false);
@@ -168,7 +76,6 @@ const account     = ref(null);
 const accounts    = ref([]);
 const allAccounts = ref([]);
 const historyUrl  = ref(null);
-const actions     = ref({});
 const total       = ref(null);
 const perPage     = ref(25);
 const skip        = ref(0);
@@ -218,7 +125,6 @@ const loadAccounts = async () => {
     try {
         const response    = await ApiAdminAccountList(getParams);
         accounts.value    = response.data.accounts || [];
-        actions.value     = response.data.actions;
         allAccounts.value = response.data.allAccounts;
         total.value       = response.data.total;
         historyUrl.value  = response.data.historyUrl;
@@ -234,6 +140,7 @@ const loadAccounts = async () => {
 // Добавление участка
 const makeAction = async () => {
     try {
+        clearResponseErrors();
         const response = await ApiAdminAccountCreate();
         account.value  = response.data;
     }
@@ -278,7 +185,12 @@ const sort = (field) => {
 };
 
 // Обновление после добавления/редактирования
-const onAccountUpdated = () => {
+const onAccountUpdated = (accountData) => {
+    if (accountData?.viewUrl) {
+        window.location.href = accountData.viewUrl;
+        return;
+    }
+
     loadAccounts();
     account.value = null;
 };

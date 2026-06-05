@@ -26,3 +26,127 @@
 .cursor-pointer {
     cursor : pointer;
 }
+
+.layout-background-image {
+    background-position : center center;
+    background-repeat   : no-repeat;
+    background-size     : cover;
+}
+
+.layout-logo-image {
+    background-position : center center;
+    background-repeat   : no-repeat;
+    background-size     : contain;
+}
+
+.development-strip {
+    background-color : red;
+    height           : 5px;
+    z-index          : 99999;
+}
+
+.rounded-circle-image {
+    border-radius : 50%;
+}
+
+.qr-image-200 {
+    width  : 200px;
+    height : 200px;
+}
+
+.table-thin-column {
+    width        : 1%;
+    white-space  : nowrap;
+    text-align   : right;
+}
+
+.public-social-strip {
+    display         : flex;
+    justify-content : center;
+}
+
+.public-social-strip-bordered {
+    border-bottom  : 1px solid var(--bs-border-color);
+    padding-bottom : 1rem;
+}
+
+.public-requests-section {
+    margin-top : 1rem;
+}
+
+.privacy-policy-page {
+    .privacy-policy-section {
+        margin-bottom : 1.5rem;
+    }
+}
+
+.footer-legal-links {
+    position              : relative;
+    display               : grid;
+    grid-template-columns : repeat(3, minmax(180px, 1fr));
+    gap                   : 0.45rem;
+    width                 : min(100%, 760px);
+    margin                : 0 auto;
+    justify-content       : center;
+    padding-top           : 0.85rem;
+    border-top            : 1px solid rgba($default-primary, 0.18);
+}
+
+.footer-legal-links-title {
+    grid-column      : 1 / -1;
+    text-align       : center;
+    font-size        : 0.72rem;
+    font-weight      : 700;
+    letter-spacing   : 0.08em;
+    text-transform   : uppercase;
+    color            : $default-primary;
+    opacity          : 0.82;
+}
+
+.footer-legal-link {
+    display          : flex;
+    justify-content  : center;
+    align-items      : center;
+    text-align       : center;
+    font-size        : 0.78rem;
+    line-height      : 1.2;
+    padding          : 0.45rem 0.65rem;
+    border           : 1px solid rgba($default-primary, 0.25);
+    border-radius    : 999px;
+    background-color : rgba($default-primary, 0.08);
+    color            : $default-primary;
+    text-decoration  : none;
+    transition       : background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    position         : relative;
+    padding-left     : 1rem;
+
+    &:hover {
+        background-color : rgba($default-primary, 0.16);
+        border-color     : rgba($default-primary, 0.5);
+        color            : $default-primary;
+        transform        : translateY(-1px);
+    }
+
+    &.is-active {
+        background-color : $default-primary;
+        border-color     : $default-primary;
+        color            : #fff;
+
+        &::before {
+            background-color : #fff;
+        }
+    }
+}
+
+@media (max-width : $lg) {
+    .footer-legal-links {
+        grid-template-columns : repeat(2, minmax(150px, 1fr));
+        width                 : 100%;
+    }
+}
+
+@media (max-width : $md) {
+    .footer-legal-links {
+        grid-template-columns : minmax(0, 1fr);
+    }
+}
