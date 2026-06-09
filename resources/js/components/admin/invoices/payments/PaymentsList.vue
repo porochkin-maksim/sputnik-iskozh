@@ -25,7 +25,8 @@
                 <tbody>
                 <tr v-for="(payment, index) in payments" :key="payment.id">
                     <td class="table-thin-column text-center">
-                        <span class="link-firm">
+                        <span class="link-firm"
+                              @click="editAction(payment.id)">
                             {{ payment.id }}
                         </span>
                     </td>
@@ -56,17 +57,6 @@
                                 :url="payment.historyUrl"
                                 aria-label="История изменений"
                             />
-
-                            <button
-                                v-if="canEdit"
-                                class="btn btn-sm btn-outline-success admin-action-btn"
-                                type="button"
-                                :disabled="dropLoading === payment.id"
-                                :aria-label="'Редактировать платёж ' + payment.id"
-                                @click="editAction(payment.id)"
-                            >
-                                <i class="fa fa-edit" aria-hidden="true"></i>
-                            </button>
 
                             <button
                                 v-if="canDrop"

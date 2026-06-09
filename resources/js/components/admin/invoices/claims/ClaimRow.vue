@@ -1,7 +1,10 @@
 <template>
     <tr :class="parseFloat(claim.delta) !== 0 ? 'table-warning' : ''">
         <td class="table-thin-column text-center">
-            <span class="link-firm">
+            <span
+                class="link-firm cursor-pointer"
+                @click="$emit('edit', claim.id)"
+            >
                 {{ claim.id }}
             </span>
         </td>
@@ -19,17 +22,6 @@
                     :url="claim.historyUrl"
                     aria-label="История изменений"
                 />
-
-                <button
-                    v-if="canEdit"
-                    class="btn btn-sm btn-outline-success admin-action-btn"
-                    type="button"
-                    :disabled="dropLoading === claim.id"
-                    :aria-label="'Редактировать услугу ' + claim.id"
-                    @click="$emit('edit', claim.id)"
-                >
-                    <i class="fa fa-edit" aria-hidden="true"></i>
-                </button>
 
                 <button
                     v-if="canDrop"

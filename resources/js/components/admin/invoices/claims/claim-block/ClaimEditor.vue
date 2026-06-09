@@ -40,7 +40,7 @@
                     type="number"
                     step="0.01"
                     :disabled="!canEdit || !claim.actions.edit || loading"
-                    @update:modelValue="$emit('tariff-changed')"
+                    @update:modelValue="onTariffChanged"
                 />
             </div>
 
@@ -53,6 +53,19 @@
                     step="0.01"
                     :disabled="!canEdit || !claim.actions.edit || loading"
                     @update:modelValue="$emit('cost-changed')"
+                />
+            </div>
+
+            <div class="mb-3">
+                <custom-input
+                    v-model="claim.quantity"
+                    :errors="errors?.quantity"
+                    label="Количество"
+                    type="number"
+                    step="1"
+                    min="1"
+                    :disabled="!canEdit || !claim.actions.edit || loading"
+                    @update:modelValue="onQuantityChanged"
                 />
             </div>
         </template>
@@ -80,10 +93,10 @@ import { usePermissions } from '@composables/usePermissions.js';
 import { computed }       from 'vue';
 
 const { has } = usePermissions();
-const canEdit = computed(() => has('claims', 'edit'));
-const canView = computed(() => has('claims', 'view'));
+const canEdit = computed(() => has('invoice_services', 'edit'));
+const canView = computed(() => has('invoice_services', 'view'));
 
-defineProps({
+const props = defineProps({
     claim         : { type: Object, default: null },
     canSave       : { type: Boolean, required: true },
     errors        : { type: Object, default: () => ({}) },
@@ -94,5 +107,22 @@ defineProps({
     showDialog    : { type: Boolean, required: true },
 });
 
-defineEmits(['clear-error', 'cost-changed', 'hidden', 'save', 'service-id-changed', 'tariff-changed']);
+const emit = defineEmits(['clear-error', 'cost-changed', 'hidden', 'save', 'service-id-changed', 'tariff-changed']);
+
+const recalcCost = () => {
+    const tariff   = parseFloat(props.claim?.tariff);
+    const quantity = parseInt(props.claim?.quantity);
+    if ( ! isNaN(tariff) && ! isNaN(quantity) && quantity >= 1) {
+        props.claim.cost = (tariff * quantity).toFixed(2);
+    }
+};
+
+const onTariffChanged = () => {
+    recalcCost();
+    emit('tariff-changed');
+};
+
+const onQuantityChanged = () => {
+    recalcCost();
+};
 </script>

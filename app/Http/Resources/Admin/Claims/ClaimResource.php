@@ -34,6 +34,7 @@ readonly class ClaimResource extends AbstractResource
             'tariff'     => $this->claim->getTariff(),
             'cost'       => $this->claim->getCost(),
             'paid'       => $this->claim->getPaid(),
+            'quantity'   => $this->claim->getQuantity(),
             'delta'      => $this->claim->getCost() - $this->claim->getPaid(),
             'serviceId'  => $this->claim->getServiceId(),
             'isAdvance'  => $claimServiceType?->isAdvance(),

@@ -98,14 +98,15 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
                 continue;
             }
 
-            $cost = null;
+            $cost   = null;
+            $tariff = MoneyService::parse($service->getCost());
             if ($service->getType() === ServiceTypeEnum::MEMBERSHIP_FEE) {
-                $tariff = MoneyService::parse($service->getCost());
-                $size   = (int) $this->accountService->getById($invoice->getAccountId())?->getSize();
-                $cost   = $tariff->multiply($size);
+                $size = (int) $this->accountService->getById($invoice->getAccountId())?->getSize();
+                $cost = $tariff->multiply($size);
             }
             else {
                 $cost = MoneyService::parse($service->getCost());
+                $size = MoneyService::toInt($cost->divide(MoneyService::toFloat($tariff)));
             }
 
             $claim = $this->claimFactory->makeDefault()
@@ -113,6 +114,7 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
                 ->setCost(MoneyService::toFloat($cost))
+                ->setQuantity($service->getType() === ServiceTypeEnum::MEMBERSHIP_FEE ? $size : null)
                 ->setPaid(0.00)
             ;
 

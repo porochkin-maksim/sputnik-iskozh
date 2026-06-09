@@ -27,9 +27,10 @@ readonly class SaveCommand
         ?float $tariff,
         ?float $cost,
         ?string $name,
+        ?int $quantity = null,
     ): ?ClaimEntity
     {
-        $this->validator->validate($invoiceId, $serviceId, $tariff, $cost, $name);
+        $this->validator->validate($invoiceId, $serviceId, $tariff, $cost, $name, $quantity);
 
         $claim = $id
             ? $this->claimService->getById($id)
@@ -44,7 +45,8 @@ readonly class SaveCommand
         $claim
             ->setName($name)
             ->setTariff($tariff ?: $cost)
-            ->setCost($cost);
+            ->setCost($cost)
+            ->setQuantity($quantity);
 
         return $this->claimService->save($claim);
     }

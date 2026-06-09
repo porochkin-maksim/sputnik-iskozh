@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float   $tariff
  * @property float   $cost
  * @property float   $paid
+ * @property ?int    $quantity
  */
 class Claim extends AbstractModel
 {
@@ -34,6 +35,7 @@ class Claim extends AbstractModel
     public const string TARIFF     = 'tariff';
     public const string COST       = 'cost';
     public const string PAID       = 'paid';
+    public const string QUANTITY   = 'quantity';
 
     public const string RELATION_INVOICE = 'invoice';
     public const string RELATION_SERVICE = 'service';
@@ -41,9 +43,10 @@ class Claim extends AbstractModel
     protected $guarded = [];
 
     protected $casts = [
-        self::TARIFF => self::CAST_FLOAT,
-        self::COST   => self::CAST_FLOAT,
-        self::PAID   => self::CAST_FLOAT,
+        self::TARIFF   => self::CAST_FLOAT,
+        self::COST     => self::CAST_FLOAT,
+        self::PAID     => self::CAST_FLOAT,
+        self::QUANTITY => self::CAST_INTEGER,
     ];
 
     public const string TITLE_NAME       = 'Название';
@@ -52,6 +55,7 @@ class Claim extends AbstractModel
     public const string TITLE_TARIFF     = 'Тариф';
     public const string TITLE_COST       = 'Стоимость';
     public const string TITLE_PAID       = 'Оплачено';
+    public const string TITLE_QUANTITY   = 'Количество';
 
     public const array PROPERTIES_TO_TITLES = [
         self::INVOICE_ID => self::TITLE_INVOICE_ID,
@@ -59,6 +63,7 @@ class Claim extends AbstractModel
         self::TARIFF     => self::TITLE_TARIFF,
         self::COST       => self::TITLE_COST,
         self::PAID       => self::TITLE_PAID,
+        self::QUANTITY   => self::TITLE_QUANTITY,
     ];
 
     public function invoice(): BelongsTo

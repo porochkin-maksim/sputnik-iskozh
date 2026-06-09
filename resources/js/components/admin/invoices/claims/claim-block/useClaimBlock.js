@@ -29,7 +29,11 @@ export function useClaimBlock (props, emit) {
     const loading        = ref(false);
 
     const canEdit = computed(() => has('invoice_services', 'edit'));
-    const canSave = computed(() => claim.value && claim.value.serviceId && parseFloat(claim.value.cost) >= 0);
+    const canSave = computed(() => !!(
+    claim.value
+    && claim.value.serviceId
+    && parseFloat(claim.value.cost) >= 0
+));
 
     const init = () => {
         claimCount.value = props.count || 0;
@@ -123,6 +127,7 @@ export function useClaimBlock (props, emit) {
             tariff    : parseFloat(claim.value.tariff),
             cost      : parseFloat(claim.value.cost),
             name      : claim.value.name,
+            quantity  : claim.value.quantity ? parseInt(claim.value.quantity) : null,
         };
 
         try {

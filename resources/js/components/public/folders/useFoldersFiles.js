@@ -1,6 +1,7 @@
 import {
     computed,
     ref,
+    watch,
 }                           from 'vue';
 import { Img }              from '@utils/Img.js';
 import {
@@ -49,6 +50,10 @@ export function useFoldersFiles (navigation) {
     const loadAllFiles = () => {
         loadFilesList();
     };
+
+    watch(() => navigation.parentId.value, () => {
+        loadFilesList();
+    });
 
     const getImgByFile = (selectedFile) => {
         if (selectedFile.isImage) {

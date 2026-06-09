@@ -18,6 +18,7 @@ class SaveValidator
         ?float $tariff,
         ?float $cost,
         ?string $name,
+        ?int $quantity = null,
     ): void
     {
         $errors = [];
@@ -52,6 +53,10 @@ class SaveValidator
 
         if ($name !== null && mb_strlen($name) > 255) {
             $errors['name'][] = sprintf('«%s» не должно превышать 255 символов', Claim::TITLE_NAME);
+        }
+
+        if ($quantity !== null && $quantity < 1) {
+            $errors['quantity'][] = sprintf('«%s» должно быть больше 0', Claim::TITLE_QUANTITY);
         }
 
         if ($errors !== []) {

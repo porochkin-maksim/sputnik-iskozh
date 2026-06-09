@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Service;
 
+use Carbon\Carbon;
 use Core\Domains\Billing\Service\ServiceEntity;
 use Core\Domains\Billing\Service\ServiceFactory;
 use Core\Domains\Billing\Service\ServiceCatalogService;
@@ -24,9 +25,11 @@ readonly class SaveCommand
         ?string          $name,
         ?float           $cost,
         bool             $isActive,
+        ?Carbon          $periodFrom = null,
+        ?Carbon          $periodTo = null,
     ): ?ServiceEntity
     {
-        $this->validator->validate($periodId, $type, $name, $cost);
+        $this->validator->validate($periodId, $type, $name, $cost, $periodFrom, $periodTo);
 
         $service = $id
             ? $this->serviceService->getById($id)
@@ -43,6 +46,8 @@ readonly class SaveCommand
             ->setName($name)
             ->setIsActive($isActive)
             ->setCost($cost)
+            ->setPeriodFrom($periodFrom)
+            ->setPeriodTo($periodTo)
         ;
 
         return $this->serviceService->save($service);

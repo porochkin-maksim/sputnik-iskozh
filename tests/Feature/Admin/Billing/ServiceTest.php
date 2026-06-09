@@ -42,26 +42,32 @@ class ServiceTest extends FeatureTestCase
     public function test_create_service(): void
     {
         $period = Period::factory()->create();
+        $periodFrom = '2026-01-01 00:00:00';
+        $periodTo   = '2026-12-31 23:59:59';
 
         \lc::reset();
         $response = $this->actingAs($this->admin)
             ->postJson('/admin/services/json/save', [
-                'period_id' => $period->id,
-                'type'      => ServiceTypeEnum::MEMBERSHIP_FEE->value,
-                'name'      => 'Test Service',
-                'cost'      => 1500.50,
-                'is_active' => true,
+                'period_id'   => $period->id,
+                'type'        => ServiceTypeEnum::MEMBERSHIP_FEE->value,
+                'name'        => 'Test Service',
+                'cost'        => 1500.50,
+                'is_active'   => true,
+                'period_from' => $periodFrom,
+                'period_to'   => $periodTo,
             ])
         ;
 
         $response->assertOk();
 
         $this->assertDatabaseHas('services', [
-            'period_id' => $period->id,
-            'type'      => ServiceTypeEnum::MEMBERSHIP_FEE->value,
-            'name'      => 'Test Service',
-            'cost'      => 1500.50,
-            'active'    => true,
+            'period_id'   => $period->id,
+            'type'        => ServiceTypeEnum::MEMBERSHIP_FEE->value,
+            'name'        => 'Test Service',
+            'cost'        => 1500.50,
+            'active'      => true,
+            'period_from' => $periodFrom,
+            'period_to'   => $periodTo,
         ]);
     }
 

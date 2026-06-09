@@ -29,6 +29,8 @@ readonly class ServiceResource extends AbstractResource
             'typeName'   => $this->service->getType()?->name(),
             'periodId'   => $this->service->getPeriodId(),
             'periodName' => $period?->getName(),
+            'periodFrom' => $this->service->getPeriodFrom()?->toDateString(),
+            'periodTo'   => $this->service->getPeriodTo()?->toDateString(),
             'name'       => $this->service->getName(),
             'cost'       => $this->service->getCost(),
             'active'     => $this->service->isActive(),

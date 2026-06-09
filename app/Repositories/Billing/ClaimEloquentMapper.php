@@ -28,6 +28,7 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
             Claim::TARIFF     => $entity->getTariff(),
             Claim::COST       => $entity->getCost(),
             Claim::PAID       => $entity->getPaid(),
+            Claim::QUANTITY   => $entity->getQuantity(),
         ]);
     }
 
@@ -43,6 +44,7 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
             ->setTariff($data->{Claim::TARIFF})
             ->setPaid($data->{Claim::PAID})
             ->setCost($data->{Claim::COST})
+            ->setQuantity($data->{Claim::QUANTITY})
             ->setCreatedAt($data->{Claim::CREATED_AT})
             ->setUpdatedAt($data->{Claim::UPDATED_AT})
         ;

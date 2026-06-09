@@ -73,14 +73,13 @@ class ServiceController extends Controller
             abort(403);
         }
 
-        $result = $this->getListCommand->execute();
+        $result   = $this->getListCommand->execute();
         $services = $result['services']->getItems();
-        $periods = $result['periods']->getItems();
-        $types = array_filter(
+        $periods  = $result['periods']->getItems();
+        $types    = array_filter(
             ServiceTypeEnum::array(),
             static fn(string $name) => $name !== ServiceTypeEnum::OTHER->name(),
         );
-        $availableTypes = [];
         $periodOptions = [];
         foreach ($periods as $period) {
             if ($period->isClosed()) {
@@ -88,39 +87,14 @@ class ServiceController extends Controller
             }
 
             $periodOptions[$period->getId()] = $period->getName();
-            $availableTypes[$period->getId()] = array_filter($types, static fn(string $type) => match ($type) {
-                ServiceTypeEnum::PERSONAL_FEE->name(),
-                ServiceTypeEnum::TARGET_FEE->name() => true,
-                default => false,
-            });
-        }
-
-        foreach ($services as $service) {
-            $type = $service->getType();
-            $isUniqueType = match ($type) {
-                ServiceTypeEnum::PERSONAL_FEE,
-                ServiceTypeEnum::TARGET_FEE => true,
-                default => false,
-            };
-
-            if (! $isUniqueType) {
-                unset($availableTypes[$service->getPeriodId()][$type?->value]);
-            }
-        }
-
-        foreach ($availableTypes as $periodId => $typesByPeriod) {
-            $availableTypes[$periodId] = new SelectResource($typesByPeriod);
         }
 
         return response()->json([
-            'services'   => new ServicesListResource($services),
-            'periods'    => new SelectResource($periodOptions),
-            'periodsInfo'=> new PeriodsListResource($periods),
-            'types'      => [
-                'all' => new SelectResource($types),
-                'available' => $availableTypes,
-            ],
-            'historyUrl' => HistoryChangesRoute::make(type: HistoryType::SERVICE),
+            'services'    => new ServicesListResource($services),
+            'periods'     => new SelectResource($periodOptions),
+            'periodsInfo' => new PeriodsListResource($periods),
+            'types'       => new SelectResource($types),
+            'historyUrl'  => HistoryChangesRoute::make(type: HistoryType::SERVICE),
         ]);
     }
 
@@ -131,12 +105,14 @@ class ServiceController extends Controller
         }
 
         $service = $this->saveCommand->execute(
-            id      : $request->getIntOrNull('id'),
-            periodId: $request->getIntOrNull('period_id'),
-            type    : ServiceTypeEnum::tryFrom($request->getInt('type')),
-            name    : $request->getStringOrNull('name'),
-            cost    : $request->getFloat('cost'),
-            isActive: $request->getBool('is_active'),
+            id        : $request->getIntOrNull('id'),
+            periodId  : $request->getIntOrNull('period_id'),
+            type      : ServiceTypeEnum::tryFrom($request->getInt('type')),
+            name      : $request->getStringOrNull('name'),
+            cost      : $request->getFloat('cost'),
+            isActive  : $request->getBool('is_active'),
+            periodFrom: $request->getDateOrNull('period_from'),
+            periodTo  : $request->getDateOrNull('period_to'),
         );
 
         if ($service === null) {

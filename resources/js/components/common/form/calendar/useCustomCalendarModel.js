@@ -73,14 +73,20 @@ export function useCustomCalendarModel (props, emit, selectedDate, goToDate, cal
         try {
             const { datePart, timePart } = splitModelValue(val);
 
-            if (!datePart || !/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+            let normalizedDate = datePart;
+            if (normalizedDate && /^\d{2}\.\d{2}\.\d{4}$/.test(normalizedDate)) {
+                const [d, m, y] = normalizedDate.split('.');
+                normalizedDate = `${y}-${m}-${d}`;
+            }
+
+            if (!normalizedDate || !/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
                 calendarSelectDate(null);
                 resetTime();
                 return;
             }
 
-            calendarSelectDate(datePart);
-            goToDate(datePart);
+            calendarSelectDate(normalizedDate);
+            goToDate(normalizedDate);
 
             if (timePart) {
                 setTimeFromParts(timePart.hour, timePart.minute);

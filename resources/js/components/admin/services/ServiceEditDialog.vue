@@ -53,10 +53,29 @@
                         v-model="type"
                         :errors="errors?.type"
                         label="Тип"
-                        :options="typeOptions"
+                        :options="props.types"
                         :required="true"
-                        :disabled="!actions?.type"
                         @update:modelValue="clearError('type')"
+                    />
+                </div>
+
+                <!-- Период действия с -->
+                <div class="mt-2">
+                    <custom-calendar
+                        v-model="periodFrom"
+                        :errors="errors?.period_from"
+                        label="Период действия с"
+                        :disabled="!actions?.period"
+                    />
+                </div>
+
+                <!-- Период действия по -->
+                <div class="mt-2">
+                    <custom-calendar
+                        v-model="periodTo"
+                        :errors="errors?.period_to"
+                        label="Период действия по"
+                        :disabled="!actions?.period"
                     />
                 </div>
 
@@ -94,6 +113,7 @@ import {
 import { useResponseError }    from '@composables/useResponseError';
 import ViewDialog              from '@common/ViewDialog.vue';
 import CustomInput             from '@common/form/CustomInput.vue';
+import CustomCalendar          from '@common/form/CustomCalendar.vue';
 import CustomCheckbox          from '@common/form/CustomCheckbox.vue';
 import { ApiAdminServiceSave } from '@api';
 import CustomSelect            from '@common/form/CustomSelect.vue';
@@ -108,7 +128,7 @@ const props = defineProps({
         default: false,
     },
     types     : {
-        type    : Object,
+        type    : Array,
         required: true,
     },
     periods   : {
@@ -125,6 +145,8 @@ const id         = ref(null);
 const name       = ref(null);
 const type       = ref(null);
 const periodId   = ref(null);
+const periodFrom = ref(null);
+const periodTo   = ref(null);
 const cost       = ref(null);
 const active     = ref(false);
 const actions    = ref(null);
@@ -135,16 +157,6 @@ const hideDialog = ref(false);
 const showDialog = computed({
     get: () => props.show,
     set: (value) => emit('update:show', value),
-});
-
-// Опции для типа (полное соответствие исходной логике)
-const typeOptions = computed(() => {
-    // Если actions.type === false - показываем все типы
-    if (actions.value?.type === false) {
-        return props.types.all || [];
-    }
-    // Иначе показываем доступные типы для выбранного периода
-    return (props.types.available && props.types.available[periodId.value]) || [];
 });
 
 // Валидация формы
@@ -161,6 +173,8 @@ const resetForm = () => {
     name.value     = null;
     type.value     = null;
     periodId.value = null;
+    periodFrom.value = null;
+    periodTo.value   = null;
     cost.value     = null;
     active.value   = false;
     actions.value  = null;
@@ -188,6 +202,8 @@ watch(
             name.value     = newValue.name;
             type.value     = newValue.type;
             periodId.value = newValue.periodId;
+            periodFrom.value = newValue.periodFrom || null;
+            periodTo.value   = newValue.periodTo || null;
             cost.value     = newValue.cost;
             active.value   = newValue.active;
             actions.value  = newValue.actions;
@@ -207,6 +223,8 @@ const saveAction = async () => {
         name     : name.value,
         type     : type.value,
         period_id: periodId.value,
+        period_from: periodFrom.value,
+        period_to  : periodTo.value,
         cost     : parseFloat(cost.value).toFixed(2),
         active   : active.value,
     };

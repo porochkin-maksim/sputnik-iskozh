@@ -18,9 +18,11 @@ $isIndexPage = $isIndexPage ?? false;
     <div class="logo layout-logo-image rounded-circle-image" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSntOrange()->getUrl() }}')"></div>
     <div>Беседка WhatsApp</div>
 </a>
-{{--<a class="social-link text-primary" target="_blank" href="https://t.me/SputnikIskozh">--}}
-{{--    <i class="fa fa-telegram me-2"></i> Телеграм--}}
-{{--</a>--}}
-{{--<a class="social-link text-primary" target="_blank" href="https://vk.com/sputnik.iskozh">--}}
-{{--    <i class="fa fa-vk me-2"></i> ВК--}}
-{{--</a>--}}
+<a class="social-link text-success" target="_blank" href="https://t.me/SputnikIskozh">
+    <div class="logo layout-logo-image rounded-circle-image" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
+    <div>Телеграм</div>
+</a>
+<a class="social-link text-success" target="_blank" href="https://vk.com/sputnik.iskozh">
+    <div class="logo layout-logo-image rounded-circle-image" style="background-image: url('{{ StaticFileLocator::StaticFileService()->logoSnt()->getUrl() }}')"></div>
+    <div>ВК</div>
+</a>

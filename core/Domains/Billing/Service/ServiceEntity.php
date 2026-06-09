@@ -2,20 +2,24 @@
 
 namespace Core\Domains\Billing\Service;
 
+use Carbon\Carbon;
 use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Common\Traits\TimestampsTrait;
+use Core\Shared\Helpers\DateTime\DateTimeHelper;
 
 class ServiceEntity
 {
     use TimestampsTrait;
 
-    private ?int $id = null;
-    private ?ServiceTypeEnum $type = null;
-    private ?int $periodId = null;
-    private ?string $name = null;
-    private ?float $cost = null;
-    private ?bool $active = null;
-    private ?PeriodEntity $period = null;
+    private ?int             $id         = null;
+    private ?ServiceTypeEnum $type       = null;
+    private ?int             $periodId   = null;
+    private ?string          $name       = null;
+    private ?float           $cost       = null;
+    private ?bool            $active     = null;
+    private ?Carbon          $periodFrom = null;
+    private ?Carbon          $periodTo   = null;
+    private ?PeriodEntity    $period     = null;
 
     public function getId(): ?int
     {
@@ -85,6 +89,30 @@ class ServiceEntity
     public function setIsActive(?bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getPeriodFrom(): ?Carbon
+    {
+        return $this->periodFrom;
+    }
+
+    public function setPeriodFrom(mixed $periodFrom): static
+    {
+        $this->periodFrom = DateTimeHelper::toCarbonOrNull($periodFrom);
+
+        return $this;
+    }
+
+    public function getPeriodTo(): ?Carbon
+    {
+        return $this->periodTo;
+    }
+
+    public function setPeriodTo(mixed $periodTo): static
+    {
+        $this->periodTo = DateTimeHelper::toCarbonOrNull($periodTo);
 
         return $this;
     }

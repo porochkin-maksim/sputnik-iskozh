@@ -74,7 +74,7 @@ export function useUserItemView (props, emit = null) {
                 params.accountId = accountId;
             }
 
-            const response = await ApiAdminUserGet(userId ? userId : '', params);
+            const response = await ApiAdminUserGet(userId ? userId : 0, params);
             const user     = response.data?.data || response.data;
 
             localUser.value  = { ...user };

@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Service;
 
+use Carbon\Carbon;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Core\Exceptions\ValidationException;
@@ -14,7 +15,7 @@ readonly class SaveValidator
     {
     }
 
-    public function validate(?int $periodId, ?ServiceTypeEnum $type, ?string $name, ?float $cost): void
+    public function validate(?int $periodId, ?ServiceTypeEnum $type, ?string $name, ?float $cost, ?Carbon $periodFrom = null, ?Carbon $periodTo = null): void
     {
         $errors = [];
 
@@ -34,6 +35,10 @@ readonly class SaveValidator
             $errors['cost'][] = 'Укажите стоимость';
         } elseif ($cost < 0) {
             $errors['cost'][] = 'Стоимость не может быть отрицательной';
+        }
+
+        if ($periodFrom !== null && $periodTo !== null && $periodFrom->greaterThan($periodTo)) {
+            $errors['period_from'][] = 'Дата начала периода не может быть позже даты окончания';
         }
 
         if ($errors !== []) {

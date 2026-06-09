@@ -25,6 +25,8 @@ readonly class ServiceEloquentMapper implements RepositoryDataMapperInterface
         return $result->fill([
             Service::TYPE => $entity->getType()?->value,
             Service::PERIOD_ID => $entity->getPeriodId(),
+            Service::PERIOD_FROM => $entity->getPeriodFrom(),
+            Service::PERIOD_TO => $entity->getPeriodTo(),
             Service::NAME => $entity->getName(),
             Service::COST => $entity->getCost(),
             Service::ACTIVE => $entity->isActive(),
@@ -33,10 +35,12 @@ readonly class ServiceEloquentMapper implements RepositoryDataMapperInterface
 
     public function makeEntityFromRepositoryData($data): object
     {
-        $service = (new ServiceEntity())
+        $service = new ServiceEntity()
             ->setId($data->{Service::ID})
             ->setType(ServiceTypeEnum::tryFrom($data->{Service::TYPE}))
             ->setPeriodId($data->{Service::PERIOD_ID})
+            ->setPeriodFrom($data->{Service::PERIOD_FROM})
+            ->setPeriodTo($data->{Service::PERIOD_TO})
             ->setName($data->{Service::NAME})
             ->setCost($data->{Service::COST})
             ->setIsActive($data->{Service::ACTIVE})

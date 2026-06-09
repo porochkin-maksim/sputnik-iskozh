@@ -3,9 +3,9 @@
 namespace Core\App\Billing\Claim;
 
 use App\Models\Billing\Invoice;
-use App\Models\Billing\Service;
 use App\Models\Counter\Counter;
 use App\Services\Money\MoneyService;
+use Carbon\Carbon;
 use Core\Domains\Account\AccountService;
 use Core\Domains\Billing\Claim\ClaimEntity;
 use Core\Domains\Billing\Claim\ClaimFactory;
@@ -100,7 +100,8 @@ readonly class CheckClaimForCounterChangeCommand
         $serviceSearcher = new ServiceSearcher();
         $serviceSearcher
             ->setPeriodId($period->getId())
-            ->addWhere(Service::TYPE, SearcherInterface::EQUALS, ServiceTypeEnum::ELECTRIC_TARIFF->value)
+            ->setActiveAt(Carbon::now())
+            ->setType(ServiceTypeEnum::ELECTRIC_TARIFF)
         ;
         $service = $this->serviceService->search($serviceSearcher)->getItems()->first();
 
@@ -140,11 +141,14 @@ readonly class CheckClaimForCounterChangeCommand
                 ->setInvoiceId($linkingInvoice->getId())
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
+                ->setQuantity((int) $delta)
                 ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()))
             ;
         }
         else {
-            $claim->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()));
+            $claim
+                ->setQuantity((int) $delta)
+                ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()));
         }
 
         $deltaMoney = MoneyService::parse($delta)->multiply($service->getCost());

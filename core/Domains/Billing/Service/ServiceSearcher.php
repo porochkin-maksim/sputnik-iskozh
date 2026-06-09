@@ -3,11 +3,14 @@
 namespace Core\Domains\Billing\Service;
 
 use App\Models\Billing\Service;
+use Carbon\Carbon;
 use Core\Repositories\BaseSearcher;
 use Core\Repositories\SearcherInterface;
 
 class ServiceSearcher extends BaseSearcher
 {
+    private ?Carbon $activeAtDate = null;
+
     public function setActive(bool $active): static
     {
         $this->addWhere(Service::ACTIVE, SearcherInterface::EQUALS, $active);
@@ -32,6 +35,16 @@ class ServiceSearcher extends BaseSearcher
     public function excludeType(ServiceTypeEnum $type): static
     {
         $this->addWhere(Service::TYPE, SearcherInterface::IS_NOT, $type->value);
+
+        return $this;
+    }
+
+    public function setActiveAt(Carbon $date): static
+    {
+        $this
+            ->addWhere(Service::PERIOD_FROM, SearcherInterface::LTE, $date)
+            ->addWhere(Service::PERIOD_TO, SearcherInterface::GTE, $date)
+        ;
 
         return $this;
     }

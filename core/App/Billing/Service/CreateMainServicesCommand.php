@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Service;
 
+use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Service\ServiceCatalogService;
 use Core\Domains\Billing\Service\ServiceFactory;
 use Core\Domains\Billing\Service\ServiceTypeEnum;
@@ -14,6 +15,7 @@ readonly class CreateMainServicesCommand
     public function __construct(
         private ServiceCatalogService $serviceService,
         private ServiceFactory        $serviceFactory,
+        private PeriodService         $periodService,
         private HistoryChangesService $historyChangesService,
     )
     {
@@ -21,6 +23,8 @@ readonly class CreateMainServicesCommand
 
     public function execute(int $periodId): void
     {
+        $period = $this->periodService->getById($periodId);
+
         $cases = [
             ServiceTypeEnum::MEMBERSHIP_FEE,
             ServiceTypeEnum::ELECTRIC_TARIFF,
@@ -40,6 +44,8 @@ readonly class CreateMainServicesCommand
                 ->setType($case)
                 ->setName($case->name())
                 ->setCost(0)
+                ->setPeriodFrom($period?->getStartAt())
+                ->setPeriodTo($period?->getEndAt())
             ;
 
             $service = $this->serviceService->save($service);
