@@ -18,7 +18,7 @@
                 :for="checkboxId"
                 class="form-check-label label-checkbox"
             >
-                {{ label }}
+                &nbsp;{{ label }}
             </label>
         </div>
         <errors-list v-if="resolvedErrors" :errors="resolvedErrors" />

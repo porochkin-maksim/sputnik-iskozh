@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\SetPasswordByToken;
 
-use Core\App\User\SetPasswordByTokenCommand;
-use Core\App\User\SetPasswordByTokenValidator;
+use Core\App\User\SetPasswordByToken\SetPasswordByTokenCommand;
+use Core\App\User\SetPasswordByToken\SetPasswordByTokenValidator;
 use Core\Domains\User\UserEntity;
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;

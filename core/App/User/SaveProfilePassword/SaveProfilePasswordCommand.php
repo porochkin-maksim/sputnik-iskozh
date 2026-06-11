@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\SaveProfilePassword;
 
+use Core\App\User\SaveProfilePassword\SaveProfilePasswordValidator;
 use Core\Domains\User\UserEntity;
 use Core\Domains\User\UserService;
 use Core\Contracts\DbServiceInterface;

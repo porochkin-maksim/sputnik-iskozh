@@ -1,10 +1,5 @@
-<?php declare(strict_types=1);
-$exception = $exception ?? null;
-$message   = $exception?->getMessage() ? : __('Not Found');
-?>
+@extends('errors.minimal')
 
-@extends('errors::minimal')
-
-@section('title', $message)
+@section('title', __('Not Found'))
 @section('code', '404')
-@section('message', $message)
+@section('message', __('Not Found'))

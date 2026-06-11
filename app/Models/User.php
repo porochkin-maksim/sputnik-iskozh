@@ -35,6 +35,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool    $remember_token
  * @property string  $email_verified_at
  * @property int     $telegram_id
+ * @property ?Carbon $logged_in_at
  *
  * @method null|static find($id)
  */
@@ -54,6 +55,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
     public const string REMEMBER_TOKEN    = 'remember_token';
     public const string EMAIL_VERIFIED_AT = 'email_verified_at';
     public const string TELEGRAM_ID       = 'telegram_id';
+    public const string LOGGED_IN_AT      = 'logged_in_at';
     public const string SOFT_DELETED      = 'deleted_at';
 
     public const string ACCOUNTS   = 'accounts';
@@ -99,6 +101,7 @@ class User extends Authenticatable implements CastsInterface, MustVerifyEmail
      */
     protected $casts = [
         self::EMAIL_VERIFIED_AT => self::CAST_DATETIME,
+        self::LOGGED_IN_AT      => self::CAST_DATETIME,
         self::PASSWORD          => self::CAST_HASHED,
     ];
 

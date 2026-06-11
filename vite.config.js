@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import {
     defineConfig,
     loadEnv,
@@ -64,6 +65,10 @@ export default ({ mode }) => {
         },
         build       : {
             chunkSizeWarningLimit: 900,
+        },
+        test: {
+            globals    : true,
+            environment: 'jsdom',
         },
     });
 };

@@ -351,12 +351,6 @@
     }
 }
 
-.public-news-item__read-more {
-    display         : flex;
-    justify-content : flex-start;
-    margin-top      : 0.5rem;
-}
-
 .public-news-item__actions {
     display    : flex;
     flex-wrap  : wrap;
@@ -387,10 +381,6 @@
     .body,
     .footer {
         padding : 0;
-    }
-
-    .public-news-item__read-more {
-        display : none;
     }
 }
 
@@ -721,11 +711,21 @@
         margin-top    : 0;
         margin-bottom : 0.55rem;
     }
-}
 
-.files-block {
-    .btn {
-        border-radius : 0.9rem;
+    .public-folder-item,
+    .public-file-card {
+        padding : 0.6rem 0.7rem;
+    }
+
+    .public-folder-item__body,
+    .public-file-card__row {
+        gap : 0.35rem;
+    }
+
+    .public-folder-item__download,
+    .public-file-card__download {
+        min-width  : 2rem;
+        min-height : 2rem;
     }
 }
 
@@ -825,9 +825,9 @@
     box-shadow    : 0 0.25rem 0.7rem rgba(0, 0, 0, 0.03);
 
     .name {
-        display         : inline-flex;
-        align-items     : center;
-        gap             : 0.45rem;
+        display         : inline-block;
+        max-width       : 100%;
+        min-width       : 0;
         color           : $default-primary;
         text-decoration : none;
         font-weight     : 600;
@@ -978,24 +978,6 @@
         min-width     : 2.05rem;
         min-height    : 2.05rem;
         padding       : 0.25rem 0.5rem;
-    }
-}
-
-.public-folders-block--readonly {
-    .public-folder-item,
-    .public-file-card {
-        padding : 0.6rem 0.7rem;
-    }
-
-    .public-folder-item__body,
-    .public-file-card__row {
-        gap : 0.35rem;
-    }
-
-    .public-folder-item__download,
-    .public-file-card__download {
-        min-width  : 2rem;
-        min-height : 2rem;
     }
 }
 

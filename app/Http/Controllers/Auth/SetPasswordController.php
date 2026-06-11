@@ -6,18 +6,16 @@ use App\Http\Requests\DefaultRequest;
 use App\Models\User;
 use App\Resources\RouteNames;
 use Carbon\Carbon;
-use Core\App\User\SetPasswordByTokenCommand;
+use Core\App\User\SetPasswordByToken\SetPasswordByTokenCommand;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\User\UserService;
 use Exception;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 
 class SetPasswordController extends AbstractAuthController
 {
-    use ResetsPasswords;
-
     public function __construct(
         private readonly UserService               $userService,
         private readonly SetPasswordByTokenCommand $setPasswordByTokenCommand,
@@ -43,9 +41,13 @@ class SetPasswordController extends AbstractAuthController
         }
     }
 
-    public function set(DefaultRequest $request)
+    public function set(DefaultRequest $request): JsonResponse
     {
         $email = $this->getEmail($request);
+
+        if ( ! $email) {
+            return $this->sendResetFailedResponse($request, Password::INVALID_TOKEN);
+        }
 
         $user = $this->userService->getByEmail($email);
 
@@ -60,17 +62,32 @@ class SetPasswordController extends AbstractAuthController
             $request->getString('token'),
         );
 
-        if ($result) {
-            Auth::login(User::findOrFail($user->getId()));
+        if ( ! $result) {
+            return $this->sendResetFailedResponse($request, Password::INVALID_TOKEN);
         }
 
-        return redirect()->route(RouteNames::HOME);
+        Auth::loginUsingId($user->getId());
+
+        $authenticatedUser = Auth::user();
+        $authenticatedUser?->forceFill([User::LOGGED_IN_AT => Carbon::now()])->save();
+
+        return response()->json(['redirect' => route(RouteNames::HOME)]);
+    }
+
+    private function sendResetFailedResponse(DefaultRequest $request, string $response): JsonResponse
+    {
+        return response()->json(['message' => __($response)], 422);
     }
 
     private function getEmail(DefaultRequest $request): ?string
     {
         $token = $request->getStringOrNull('token');
-        $data  = TokenFacade::find($token);
+
+        if ($token === null) {
+            return null;
+        }
+
+        $data = TokenFacade::find($token);
 
         if (empty($data)) {
             return null;

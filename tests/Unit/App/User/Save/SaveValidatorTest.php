@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\Save;
 
-use Core\App\User\SaveValidator;
+use Core\App\User\Save\SaveValidator;
 use Core\Domains\User\UserEntity;
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;

@@ -28,9 +28,10 @@ export function useUsersBlock () {
     const isLoading      = ref(false);
     const searchProgress = ref(null);
 
-    const isMember    = ref(null);
-    const isNotMember = ref(null);
-    const isDeleted   = ref(null);
+    const isMember        = ref(null);
+    const isNotMember     = ref(null);
+    const isDeleted       = ref(null);
+    const hasVerifiedEmail = ref(null);
 
     const canView     = computed(() => has('users', 'view'));
     const canCreate   = computed(() => has('users', 'edit'));
@@ -44,6 +45,7 @@ export function useUsersBlock () {
         search    : search.value || null,
         isMember  : isMember.value ? 'true' : isNotMember.value ? 'false' : null,
         isDeleted : isDeleted.value ? 'true' : null,
+        hasVerifiedEmail : hasVerifiedEmail.value ? 'true' : null,
     });
 
     const loadUsers = async () => {
@@ -126,7 +128,8 @@ export function useUsersBlock () {
         search.value      = urlParams.get('search') || '';
         isMember.value    = urlParams.get('isMember') === 'true' ? true : null;
         isNotMember.value = urlParams.get('isMember') === 'false' ? true : null;
-        isDeleted.value   = urlParams.get('isDeleted') === 'true' ? true : null;
+        isDeleted.value        = urlParams.get('isDeleted') === 'true' ? true : null;
+        hasVerifiedEmail.value = urlParams.get('hasVerifiedEmail') === 'true' ? true : null;
     };
 
     watch(isMember, (val) => {
@@ -150,6 +153,11 @@ export function useUsersBlock () {
         loadUsers();
     });
 
+    watch(hasVerifiedEmail, () => {
+        skip.value = 0;
+        loadUsers();
+    });
+
     onMounted(() => {
         initFromUrl();
         loadUsers();
@@ -169,6 +177,7 @@ export function useUsersBlock () {
         isLoading,
         isMember,
         isNotMember,
+        hasVerifiedEmail,
         loadUsers,
         onPaginationUpdate,
         onPerPageChange,

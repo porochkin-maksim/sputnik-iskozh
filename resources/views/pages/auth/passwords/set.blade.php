@@ -9,34 +9,6 @@ use App\Resources\Views\SectionNames;
 
 @section(SectionNames::CONTENT)
     <x-auth.form-card title="Установить пароль">
-        <form method="POST" action="{{ route(RouteNames::PASSWORD_SAVE) }}" class="auth-form-stack">
-            @csrf
-
-            <input type="hidden" name="token" value="{{ $token }}">
-            <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
-
-            <x-auth.form-row for="password"
-                             :label="__('Password')"
-                             :error="$errors->first('password')">
-                <input id="password"
-                       type="password"
-                       class="form-control @error('password') is-invalid @enderror"
-                       name="password"
-                       required
-                       autocomplete="new-password">
-            </x-auth.form-row>
-
-            <x-auth.form-row for="password-confirm"
-                             :label="__('Confirm Password')">
-                <input id="password-confirm"
-                       type="password"
-                       class="form-control"
-                       name="password_confirmation"
-                       required
-                       autocomplete="new-password">
-            </x-auth.form-row>
-
-            <x-auth.form-actions label="Установить пароль" />
-        </form>
+        <set-password token="{{ $token }}" email="{{ $email ?? '' }}"></set-password>
     </x-auth.form-card>
 @endsection

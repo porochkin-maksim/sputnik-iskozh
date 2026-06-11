@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Session\SessionNames;
-use Core\App\User\SaveProfilePasswordCommand;
+use Core\App\User\SaveProfilePassword\SaveProfilePasswordCommand;
 use Illuminate\Support\Facades\Session;
 use lc;
 use Throwable;

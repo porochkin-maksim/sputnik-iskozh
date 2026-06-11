@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\Save;
 
+use Core\App\User\Save\SaveValidator;
 use Core\Domains\Access\RoleService;
 use Core\Domains\Account\AccountCollection;
 use Core\Domains\Account\AccountService;

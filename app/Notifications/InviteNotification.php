@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Resources\RouteNames;
+use Carbon\Carbon;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Shared\Helpers\DateTime\DateTimeFormat;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -27,7 +28,7 @@ class InviteNotification extends Notification
             ->subject('Регистрация на сайте')
             ->line(sprintf('Вы получили это письмо, т.к. для вас была создана учётная запись %s на сайте', $notifiable->email))
             ->action('Установить пароль', $this->getUrl())
-            ->line(sprintf('Эта ссылка истекает %s.', now()->addWeek()->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT)))
+            ->line(sprintf('Эта ссылка истекает %s.', $this->getExpiresAt()->format(DateTimeFormat::DATE_TIME_VIEW_FORMAT)))
             ->line('Если вы не запрашивали такой доступ или он вам не интересен, просто проигнорируйте это письмо.')
         ;
     }
@@ -36,9 +37,14 @@ class InviteNotification extends Notification
     {
         $token = TokenFacade::save([
             'email'   => $this->email,
-            'expires' => now()->addWeek()->format(DateTimeFormat::DATE_TIME_DEFAULT),
+            'expires' => $this->getExpiresAt()->format(DateTimeFormat::DATE_TIME_DEFAULT),
         ]);
 
         return route(RouteNames::PASSWORD_SET, ['token' => $token]);
+    }
+
+    private function getExpiresAt(): Carbon
+    {
+        return now()->addWeeks(2);
     }
 }

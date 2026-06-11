@@ -6,19 +6,22 @@
                 <button class="btn btn-success"
                         @click="save"
                         :disabled="loading"
-                        title="Сохранить">
+                        title="Сохранить"
+                        aria-label="Сохранить">
                     <i class="fa fa-save"></i>
                 </button>
                 <button class="btn btn-success"
                         @click="triggerFileUpload"
                         :disabled="loading"
-                        title="Заменить файл">
+                        title="Заменить файл"
+                        aria-label="Заменить файл">
                     <i class="fa fa-upload"></i>
                 </button>
                 <button class="btn btn-light border"
                         @click="cancelEdit"
                         :disabled="loading"
-                        title="Отмена">
+                        title="Отмена"
+                        aria-label="Отмена">
                     <i class="fa fa-window-close"></i>
                 </button>
                 <custom-input
@@ -40,13 +43,14 @@
 
         <!-- Режим просмотра -->
         <template v-else>
-            <div class="d-inline-flex align-items-center">
+            <div class="d-flex align-items-center" style="min-width:0">
                 <!-- Кнопки управления (если есть права на редактирование) -->
                 <template v-if="edit">
                     <div class="btn-group btn-group-sm">
                         <button class="btn btn-success"
                                 @click="enterEdit"
-                                title="Редактировать">
+                                title="Редактировать"
+                                aria-label="Редактировать">
                             <i class="fa fa-edit"></i>
                         </button>
                         <template v-if="showUpDownButtons">
@@ -55,6 +59,7 @@
                                 :disabled="!useUpSort"
                                 @click="sortUp(index)"
                                 title="Переместить вверх"
+                                aria-label="Переместить вверх"
                             >
                                 <i class="fa fa-arrow-up"></i>
                             </button>
@@ -63,13 +68,15 @@
                                 :disabled="!useDownSort"
                                 @click="sortDown(index)"
                                 title="Переместить вниз"
+                                aria-label="Переместить вниз"
                             >
                                 <i class="fa fa-arrow-down"></i>
                             </button>
                         </template>
                         <button class="btn btn-danger"
                                 @click="deleteFile"
-                                title="Удалить">
+                                title="Удалить"
+                                aria-label="Удалить">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
@@ -81,20 +88,20 @@
                     :href="file.url"
                     :download="file.name"
                     title="Скачать"
+                    aria-label="Скачать"
                 >
-                    <i class="fa fa-download"></i>
+                    <i :class="['fa', fileIcon]"></i>
                 </a>
 
-                <!-- Ссылка на файл с иконкой типа -->
+                <!-- Ссылка на файл -->
                 <a
                     :href="file.url"
-                    class="name text-nowrap"
+                    class="name text-truncate"
                     :data-lightbox="file.isImage ? file.name : null"
                     :data-title="file.isImage ? file.name : null"
                     target="_blank"
                     :title="file.name"
                 >
-                    <i :class="['fa', fileIcon]"></i>
                     {{ file.name }}
                 </a>
             </div>

@@ -1,6 +1,6 @@
 export const state = {
-    messages   : [], // Массив сообщений
-    fieldErrors: {}, // Ошибки валидации по ключам полей
+    messages   : [],
+    fieldErrors: {},
 };
 
 export const mutations = {
@@ -8,15 +8,6 @@ export const mutations = {
         state.messages.push(value);
     },
     REMOVE_MESSAGE (state, id) {
-        const index = state.messages.findIndex(m => m.id === id);
-        if (index !== -1) {
-            state.messages.splice(index, 1);
-        }
-    },
-    ADD_ERROR (state, value) {
-        state.messages.push(value);
-    },
-    REMOVE_ERROR (state, id) {
         const index = state.messages.findIndex(m => m.id === id);
         if (index !== -1) {
             state.messages.splice(index, 1);
@@ -41,12 +32,6 @@ export const actions = {
     },
     removeMessage ({ commit }, id) {
         commit('REMOVE_MESSAGE', id);
-    },
-    addError ({ commit }, value) {
-        commit('ADD_ERROR', value);
-    },
-    removeError ({ commit }, id) {
-        commit('REMOVE_ERROR', id);
     },
     removeFieldErrors ({ commit }) {
         commit('REMOVE_FIELD_ERRORS');

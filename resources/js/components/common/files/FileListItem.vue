@@ -4,10 +4,10 @@
             <template v-if="modeEdit">
                 <div class="public-file-card__edit">
                     <div class="public-file-card__edit-actions">
-                        <button class="btn btn-success btn-sm" @click="save">
+                        <button class="btn btn-success btn-sm" @click="save" aria-label="Сохранить">
                             <i class="fa fa-save"></i>
                         </button>
-                        <button class="btn btn-light border btn-sm" @click="toggleMode">
+                        <button class="btn btn-light border btn-sm" @click="toggleMode" aria-label="Отмена">
                             <i class="fa fa-window-close"></i>
                         </button>
                     </div>
@@ -25,6 +25,7 @@
                         <div class="public-file-card__actions">
                             <button class="btn btn-success btn-sm"
                                     @click="toggleMode"
+                                    aria-label="Редактировать"
                             >
                                 <i class="fa fa-edit"></i>
                             </button>
@@ -32,18 +33,21 @@
                                 <button class="btn btn-secondary btn-sm"
                                         :disabled="!useUpSort"
                                         @click="sortUp(index)"
+                                        aria-label="Переместить вверх"
                                 >
                                     <i class="fa fa-arrow-up"></i>
                                 </button>
                                 <button class="btn btn-secondary btn-sm"
                                         :disabled="!useDownSort"
                                         @click="sortDown(index)"
+                                        aria-label="Переместить вниз"
                                 >
                                     <i class="fa fa-arrow-down"></i>
                                 </button>
                             </template>
                             <button class="btn btn-danger"
                                     @click="deleteFile"
+                                    aria-label="Удалить"
                             >
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -52,7 +56,8 @@
 
                     <a class="btn btn-outline-success btn-sm public-file-card__download"
                        :href="file.url"
-                       :download="file.name">
+                       :download="file.name"
+                       aria-label="Скачать">
                         <i class="fa fa-download"></i>
                     </a>
                     <template v-if="file.isImage">

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Repositories\Shared\Cache\CacheLocator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,5 +15,6 @@ abstract class FeatureTestCase extends TestCase
         parent::setUp();
 
         \lc::reset();
+        CacheLocator::LocalCache()->dropAll();
     }
 }

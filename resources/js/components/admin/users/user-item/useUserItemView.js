@@ -26,17 +26,18 @@ export function useUserItemView (props, emit = null) {
               getRoles,
           }                                             = getSelects();
 
-    const loading    = ref(false);
-    const localUser  = ref({});
-    const accountIds = ref([]);
-    const fractions  = ref([]);
-    const accounts   = ref([]);
-    const roles      = ref([]);
-    const historyUrl = ref(null);
-    const saving     = ref(false);
-    const routeState = ref(0);
-    const qrViewLink = ref(null);
-    const tokenLink  = ref(null);
+    const loading        = ref(false);
+    const localUser      = ref({});
+    const accountIds     = ref([]);
+    const fractions      = ref([]);
+    const accounts       = ref([]);
+    const roles          = ref([]);
+    const historyUrl     = ref(null);
+    const hasActiveToken = ref(false);
+    const saving         = ref(false);
+    const routeState     = ref(0);
+    const qrViewLink     = ref(null);
+    const tokenLink      = ref(null);
 
     const initFractions = (user = localUser.value) => {
         if (Array.isArray(user.accountIds)) {
@@ -77,8 +78,9 @@ export function useUserItemView (props, emit = null) {
             const response = await ApiAdminUserGet(userId ? userId : 0, params);
             const user     = response.data?.data || response.data;
 
-            localUser.value  = { ...user };
-            historyUrl.value = user.historyUrl;
+            localUser.value      = { ...user };
+            historyUrl.value     = user.historyUrl;
+            hasActiveToken.value = !!user.hasActiveToken;
             initFractions(user);
         }
         catch (error) {
@@ -318,6 +320,7 @@ export function useUserItemView (props, emit = null) {
         saving,
         qrViewLink,
         tokenLink,
+        hasActiveToken,
         canGenerateEmail,
         copyToClipboard,
         saveAction,

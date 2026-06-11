@@ -86,7 +86,8 @@
                     <div>
                         <template v-if="form.file">
                             <button class="btn btn-sm btn-danger"
-                                    @click="removeFile">
+                                    @click="removeFile"
+                                    aria-label="Удалить фото счётчика">
                                 <i class="fa fa-trash"></i>
                             </button>
                             &nbsp;
@@ -109,7 +110,8 @@
                     <div class="mt-2">
                         <template v-if="form.passportFile">
                             <button class="btn btn-sm btn-danger"
-                                    @click="removePassportFile">
+                                    @click="removePassportFile"
+                                    aria-label="Удалить паспорт счётчика">
                                 <i class="fa fa-trash"></i>
                             </button>
                             &nbsp;

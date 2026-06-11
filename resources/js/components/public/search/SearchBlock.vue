@@ -4,6 +4,7 @@
             <button class="btn btn-light border public-search-block__icon-btn"
                     type="submit"
                     @click="searchAction"
+                    aria-label="Поиск"
             >
                 <i class="fa fa-search"></i>
             </button>
@@ -16,7 +17,8 @@
                           @submit="searchAction" />
             <button class="btn btn-light border public-search-block__icon-btn"
                     type="button"
-                    @click="search = null">
+                    @click="search = null"
+                    aria-label="Очистить поиск">
                 <i class="fa fa-close"></i>
             </button>
         </div>

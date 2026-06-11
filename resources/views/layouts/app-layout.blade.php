@@ -66,6 +66,9 @@ $season = match (Carbon::now()->month) {
         @include('layouts.partial.public-subnav')
     </div>
     @yield(SectionNames::CONTENT)
+    <div class="d-flex justify-content-end mt-3">
+        <share-button></share-button>
+    </div>
 </main>
 <footer>
     <div class="d-flex justify-content-center py-3">

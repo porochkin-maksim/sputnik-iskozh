@@ -57,6 +57,7 @@
                             :user="localUser"
                             :qr-view-link="qrViewLink"
                             :token-link="tokenLink"
+                            :has-active-token="hasActiveToken"
                             :send-invite-password-email="sendInvitePasswordEmail"
                             :send-restore-password-email="sendRestorePasswordEmail"
                             :make-login-qr-code="makeLoginQrCode"
@@ -99,6 +100,7 @@ const {
           saving,
           qrViewLink,
           tokenLink,
+          hasActiveToken,
           canGenerateEmail,
           copyToClipboard,
           saveAction,

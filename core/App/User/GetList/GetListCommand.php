@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\GetList;
 
+use Core\App\User\GetList\ListValidator;
 use App\Models\Infra\UserInfo;
 use App\Models\User;
 use Core\Domains\User\UserSearchResponse;
@@ -31,6 +32,7 @@ readonly class GetListCommand
         bool    $isDeleted,
         mixed   $isMemberFlag,
         bool    $isMember,
+        bool    $hasVerifiedEmail = false,
     ): UserSearchResponse
     {
         $this->validator->validate($limit, $offset, $sortField, $sortOrder);
@@ -63,6 +65,10 @@ readonly class GetListCommand
                 $searcher->addWhere(User::SOFT_DELETED, SearcherInterface::IS_NOT_NULL);
                 $searcher->setWithDeleted();
             }
+        }
+
+        if ($hasVerifiedEmail) {
+            $searcher->addWhere(User::EMAIL_VERIFIED_AT, SearcherInterface::IS_NOT_NULL);
         }
 
         if ($sortField && $sortOrder) {

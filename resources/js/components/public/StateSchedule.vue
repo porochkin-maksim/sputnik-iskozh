@@ -1,8 +1,9 @@
 <template>
     <table class="table table-bordered mb-0 text-center table-striped">
+        <caption class="visually-hidden">График работы</caption>
         <tbody>
         <tr>
-            <th colspan="4">График работы</th>
+            <th colspan="4" scope="colgroup">График работы</th>
         </tr>
         <tr v-for="s in schedule">
             <td>{{ s.weekDaylable }}</td>

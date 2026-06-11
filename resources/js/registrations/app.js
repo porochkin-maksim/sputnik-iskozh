@@ -14,6 +14,10 @@ import CounterForm        from '@components/public/requests/CounterForm.vue';
 import PaymentForm        from '@components/public/requests/PaymentForm.vue';
 import HelpDeskForm       from '@components/public/requests/HelpDeskForm.vue';
 import SearchBlock        from '@components/public/search/SearchBlock.vue';
+import RestorePage        from '@components/public/auth/RestorePage.vue';
+import ShareButton        from '@components/public/ShareButton.vue';
+import ResetPassword      from '@components/public/auth/ResetPassword.vue';
+import SetPassword        from '@components/public/auth/SetPassword.vue';
 
 export function registerAppComponents (app) {
     app.component('alerts-block', AlertsBlock);
@@ -32,4 +36,8 @@ export function registerAppComponents (app) {
     app.component('payment-form', PaymentForm);
     app.component('help-desk-form', HelpDeskForm);
     app.component('search-block', SearchBlock);
+    app.component('restore-page', RestorePage);
+    app.component('reset-password', ResetPassword);
+    app.component('set-password', SetPassword);
+    app.component('share-button', ShareButton);
 }

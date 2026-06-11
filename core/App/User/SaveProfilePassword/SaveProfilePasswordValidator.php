@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\SaveProfilePassword;
+
+use Core\App\User\PasswordPolicy\PasswordPolicyValidator;
 
 class SaveProfilePasswordValidator
 {

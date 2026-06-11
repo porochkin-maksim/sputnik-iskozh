@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\Save;
 
-use Core\App\User\SaveCommand;
-use Core\App\User\SaveValidator;
+use Core\App\User\Save\SaveCommand;
+use Core\App\User\Save\SaveValidator;
 use Core\Contracts\StringServiceInterface;
 use Core\Domains\Access\RoleEntity;
 use Core\Domains\Access\RoleService;

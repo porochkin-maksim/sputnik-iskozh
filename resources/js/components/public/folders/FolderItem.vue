@@ -19,13 +19,15 @@
             <button
                 type="button"
                 class="btn btn-outline-success btn-sm public-folder-item__action"
-                @click="$emit('rename', folder)">
+                @click="$emit('rename', folder)"
+                aria-label="Переименовать">
                 <i class="fa fa-pencil"></i>
             </button>
             <button
                 type="button"
                 class="btn btn-outline-danger btn-sm public-folder-item__action"
-                @click="$emit('delete', folder.id)">
+                @click="$emit('delete', folder.id)"
+                aria-label="Удалить">
                 <i class="fa fa-trash"></i>
             </button>
         </div>

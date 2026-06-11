@@ -1,25 +1,48 @@
 .errors {
+    min-height : 60vh;
+    display    : flex;
     align-items : center;
+    justify-content : center;
 }
 
-.errors .error-code,
-.errors .error-message {
-    padding        : 0 1rem;
-    text-transform : uppercase;
+.errors .errors-inner {
+    text-align : center;
+    padding    : 2rem;
+}
+
+.errors .error-code {
+    font-size      : 15vw;
     font-weight    : 700;
+    line-height    : 1;
     color          : #f5f5f5;
     text-shadow    : 1px 1px 1px #919191, 1px 2px 1px #919191, 1px 3px 1px #919191, 1px 4px 1px #919191, 1px 5px 1px #919191, 1px 6px 1px #919191, 1px 7px 1px #919191, 1px 8px 1px #919191, 1px 9px 1px #919191, 1px 10px 1px #919191, 1px 18px 6px rgba(16, 16, 16, .4), 1px 22px 10px rgba(16, 16, 16, .2), 1px 25px 35px rgba(16, 16, 16, .2), 1px 30px 60px rgba(16, 16, 16, .4);
 }
 
-.errors .error-code {
-    font-size : 15vw;
+.errors .error-message {
+    font-size    : 3vw;
+    font-weight  : 700;
+    color        : rgba(16, 16, 16, .4);
+    text-shadow  : none;
+    margin-bottom: 1.5rem;
 }
 
-.errors .error-message {
-    text-align  : center;
-    font-size   : 3vw;
-    color       : rgba(16, 16, 16, .4);
-    text-shadow : none;
+.errors .error-back-link {
+    display        : inline-flex;
+    align-items    : center;
+    gap            : 0.5rem;
+    padding        : 0.6rem 1.5rem;
+    font-size      : 0.95rem;
+    font-weight    : 600;
+    color          : #fff;
+    background     : $default-primary;
+    border-radius  : 0.5rem;
+    text-decoration: none;
+    transition     : opacity 0.2s ease;
+}
+
+.errors .error-back-link:hover {
+    opacity : 0.85;
+    color   : #fff;
 }
 
 .error-container {
@@ -71,7 +94,7 @@
 
     .message {
         display     : flex;
-        align-items : stretch; // <-- ключевой момент: растягивает дочерние элементы по высоте
+        align-items : stretch;
         margin      : 0.5rem 0 0;
         padding     : 0;
         border      : 1px solid;
@@ -90,59 +113,9 @@
         }
 
         .message-text {
-            flex        : 1; // текст занимает всё оставшееся пространство
+            flex        : 1;
             padding     : 0.75rem;
             font-weight : bold;
         }
     }
-}
-
-.pagination-firm {
-    .page-link {
-        min-width        : 2.3rem;
-        border-radius    : 0.55rem;
-        border-color     : rgba($default-primary, 0.18);
-        color            : $default-primary;
-        background-color : #fff;
-        box-shadow       : none;
-        transition       : background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
-
-        &:hover {
-            background-color : rgba($default-primary, 0.08);
-            border-color     : rgba($default-primary, 0.35);
-        }
-
-        &:focus {
-            box-shadow : 0 0 0 0.15rem rgba($default-primary, 0.18);
-        }
-    }
-
-    .page-item.active .page-link,
-    .page-link.active {
-        background-color : $default-primary;
-        border-color     : $default-primary;
-        color            : #fff;
-    }
-
-    .page-link-ellipsis {
-        display         : inline-flex;
-        align-items     : center;
-        justify-content : center;
-        border          : 1px solid transparent;
-        background      : transparent;
-        color           : $color-gray;
-        cursor          : default;
-        min-width       : 2.3rem;
-    }
-}
-
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-    transition : all 0.3s ease;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    opacity   : 0;
-    transform : translateX(30px);
 }

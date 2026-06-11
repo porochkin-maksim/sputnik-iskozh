@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\PasswordPolicy;
 
-use Core\App\User\PasswordPolicyValidator;
+use Core\App\User\PasswordPolicy\PasswordPolicyValidator;
 use Core\Exceptions\ValidationException;
 use Tests\TestCase;
 

@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\SaveProfilePassword;
 
-use Core\App\User\PasswordPolicyValidator;
-use Core\App\User\SaveProfilePasswordValidator;
+use Core\App\User\PasswordPolicy\PasswordPolicyValidator;
+use Core\App\User\SaveProfilePassword\SaveProfilePasswordValidator;
 use Core\Exceptions\ValidationException;
 use Tests\TestCase;
 

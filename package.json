@@ -3,14 +3,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "test:unit": "vitest run"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^8.0.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "2.4.11",
+    "jsdom": "26.1.0",
     "laravel-vite-plugin": "^1.0.0",
     "sass": "^1.56.1",
-    "vite": "^6.2.1"
+    "vite": "^6.2.1",
+    "vitest": "3.1.2"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",

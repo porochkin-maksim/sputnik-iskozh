@@ -2,7 +2,8 @@
     <div class="custom-calendar__header d-flex align-items-center justify-content-between mb-2">
         <button class="custom-calendar__nav-button btn btn-sm btn-outline-secondary"
                 @click="$emit('prev')"
-                type="button">
+                type="button"
+                aria-label="Предыдущий месяц">
             &lt;
         </button>
         <span class="custom-calendar__month-name fw-medium"
@@ -15,7 +16,8 @@
         </span>
         <button class="custom-calendar__nav-button btn btn-sm btn-outline-secondary"
                 @click="$emit('next')"
-                type="button">
+                type="button"
+                aria-label="Следующий месяц">
             &gt;
         </button>
     </div>

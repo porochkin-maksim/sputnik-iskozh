@@ -104,7 +104,7 @@ class UserEloquentRepository implements UserRepositoryInterface
 
     protected function adaptFieldName(string $field): string
     {
-        if ($field === 'account_sort') {
+        if ($field === 'account_sort' || str_contains($field, '.')) {
             return $field;
         }
 

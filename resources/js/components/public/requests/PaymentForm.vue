@@ -67,7 +67,8 @@
                     <div>
                         <button class="btn btn-sm btn-danger"
                                 :disabled="loading"
-                                @click="removeFile(index)">
+                                @click="removeFile(index)"
+                                aria-label="Удалить файл">
                             <i class="fa fa-trash"></i>
                         </button>
                         &nbsp;
@@ -118,6 +119,15 @@
                     v-else>
                 <i class="fa fa-spinner fa-spin"></i> Отправка
             </button>
+            <div v-if="isUploading" class="progress mt-2" style="height:6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                     role="progressbar"
+                     :style="{ width: uploadProgress + '%' }"
+                     :aria-valuenow="uploadProgress"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -131,11 +141,13 @@ import {
 import CustomInput                   from '@common/form/CustomInput.vue';
 import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
 import CustomTextarea                from '@common/form/CustomTextarea.vue';
-import { ApiPaymentCreate }          from '@api';
 import { useResponseError }          from '@composables/useResponseError';
+import { useUploadProgress }         from '@composables/useUploadProgress';
 import { useRequestFormDefaults }    from './useRequestFormDefaults';
 import { useRequestFormPersistence } from './useRequestFormPersistence';
 import { routeUri }                  from '@utils/routeUri.js';
+import apiClient                     from '@api/client';
+import { makeQuery }                 from '@api/helpers';
 
 const props = defineProps({
     propAccount: {
@@ -153,6 +165,7 @@ const props = defineProps({
 });
 
 const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
+const { uploadProgress, isUploading, startUpload, onProgress, finishUpload }        = useUploadProgress();
 
 const loading  = ref(false);
 const account  = ref('');
@@ -204,6 +217,7 @@ useRequestFormPersistence({
 
 function sendForm () {
     loading.value = true;
+    startUpload();
     clearResponseErrors();
     const form = new FormData();
     form.append('email', email.value ? email.value : null);
@@ -219,17 +233,18 @@ function sendForm () {
         form.append('file' + index, file);
     });
 
-    ApiPaymentCreate({}, form).then(() => {
+    apiClient.post(makeQuery('/contacts/requests/payment', {}), form, {
+        onUploadProgress: onProgress,
+        headers         : { 'Content-Type': 'multipart/form-data' },
+    }).then(() => {
         localStorage.removeItem('requestPaymentText');
         success.value = true;
         showSuccess('Платёж принят');
-        setTimeout(() => {
-            location.reload();
-        }, 10000);
     }).catch(response => {
         parseResponseErrors(response);
     }).finally(() => {
         loading.value = false;
+        finishUpload();
     });
 }
 

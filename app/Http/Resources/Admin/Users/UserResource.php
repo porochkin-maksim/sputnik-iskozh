@@ -9,6 +9,9 @@ use App\Resources\RouteNames;
 use App\Support\HistoryChangesRoute;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Domains\User\UserEntity;
 use Core\Domains\User\UserIdEnum;
 use Core\Shared\Helpers\DateTime\DateTimeFormat;
@@ -25,11 +28,14 @@ readonly class UserResource extends AbstractResource
 
     public function jsonSerialize(): array
     {
-        $user   = $this->user;
-        $access = lc::roleDecorator();
+        $user    = $this->user;
+        $access  = lc::roleDecorator();
         $canEdit = $access->can(PermissionEnum::USERS_EDIT)
-            && (UserIdEnum::OWNER !== $user->getId() || lc::isSuperAdmin());
-        $exData = $user->getExData();
+                   && (UserIdEnum::OWNER !== $user->getId() || lc::isSuperAdmin());
+        $exData  = $user->getExData();
+
+        $uidDto         = UidFacade::findByReferenceId(UidTypeEnum::LOGIN, (int) $user->getId());
+        $hasActiveToken = $uidDto && TokenFacade::find($uidDto->getToken()) !== null;
 
         $curAccount = $user->getAccounts()?->getById((int) $user->getAccountId());
 
@@ -52,6 +58,7 @@ readonly class UserResource extends AbstractResource
             'emailVerifiedAt' => $user->getEmailVerifiedAt()?->format(DateTimeFormat::DATE_DEFAULT),
             'isRealEmail'     => $user->isRealEmail(),
             'isDeleted'       => $user->isDeleted(),
+            'hasActiveToken'  => $hasActiveToken,
 
             'membershipDate'     => $user->getMembershipDate()?->format(DateTimeFormat::DATE_DEFAULT),
             'membershipDutyInfo' => $user->getMembershipDutyInfo(),

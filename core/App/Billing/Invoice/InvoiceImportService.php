@@ -16,7 +16,6 @@ use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Infra\DbLock\Enum\LockNameEnum;
 use Core\Domains\Infra\DbLock\Service\LockService;
 use Core\Domains\Shared\ValueObjects\UploadedFile;
-use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 readonly class InvoiceImportService
@@ -43,20 +42,29 @@ readonly class InvoiceImportService
         $import    = new PaymentsImport($colAccrued, $colPaid, $colDebt, $spreadsheet->getSheetCount());
         $importOld = new PaymentsImport($colAccrued, $colPaid, $colDebt, $spreadsheet->getSheetCount());
 
-        Excel::import($import, $fileMain->getPath());
+        $sheets = $import->sheets();
+        foreach ($spreadsheet->getAllSheets() as $i => $worksheet) {
+            $sheets[$i]->array($worksheet->toArray());
+        }
 
         if ($filePrev) {
-            Excel::import($importOld, $filePrev->getPath());
+            $spreadsheetPrev = IOFactory::load($filePrev->getPath());
+            $sheetsPrev      = $importOld->sheets();
+            foreach ($spreadsheetPrev->getAllSheets() as $i => $worksheet) {
+                $sheetsPrev[$i]->array($worksheet->toArray());
+            }
         }
 
         $sheetsData     = $import->getSheetsData();
         $sheetsDataPrev = $importOld->getSheetsData();
 
-        $invoices = $this->invoiceService->search(
+        $invoices = [];
+
+        foreach ($this->invoiceService->search(
             new InvoiceSearcher()
                 ->setPeriodId($period->getId())
                 ->setWithAccount(),
-        )->getItems()->map(function (InvoiceEntity $invoice) {
+        )->getItems() as $invoice) {
             /** @var AccountEntity $account */
             $account = $invoice->getAccount();
 
@@ -64,20 +72,18 @@ readonly class InvoiceImportService
             $advanceCost = MoneyService::parse($invoice->getAdvance());
             $debtCost    = MoneyService::parse($invoice->getDebt());
 
-            return [
-                $account->getNumber() => [
-                    InvoiceImportItem::ACCOUNT_NUMBER  => $account->getNumber(),
-                    InvoiceImportItem::ACCOUNT_ID      => $account->getId(),
-                    InvoiceImportItem::INVOICE_ID      => $invoice->getId(),
-                    InvoiceImportItem::INVOICE_MAIN    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
-                    InvoiceImportItem::INVOICE_COST    => $invoice->getCost(),
-                    InvoiceImportItem::INVOICE_PAID    => $invoice->getPaid(),
-                    InvoiceImportItem::INVOICE_DELTA   => $invoice->getDelta(),
-                    InvoiceImportItem::INVOICE_ADVANCE => $invoice->getAdvance(),
-                    InvoiceImportItem::INVOICE_DEBT    => $invoice->getDebt(),
-                ],
+            $invoices[$account->getNumber()] = [
+                InvoiceImportItem::ACCOUNT_NUMBER  => $account->getNumber(),
+                InvoiceImportItem::ACCOUNT_ID      => $account->getId(),
+                InvoiceImportItem::INVOICE_ID      => $invoice->getId(),
+                InvoiceImportItem::INVOICE_MAIN    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
+                InvoiceImportItem::INVOICE_COST    => $invoice->getCost(),
+                InvoiceImportItem::INVOICE_PAID    => $invoice->getPaid(),
+                InvoiceImportItem::INVOICE_DELTA   => $invoice->getDelta(),
+                InvoiceImportItem::INVOICE_ADVANCE => $invoice->getAdvance(),
+                InvoiceImportItem::INVOICE_DEBT    => $invoice->getDebt(),
             ];
-        })->toArray();
+        }
 
         $result = [];
 

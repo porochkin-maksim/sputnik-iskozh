@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\DefaultRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\Infra\Uid\UidFacade;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,9 +21,16 @@ class LoginController extends AbstractAuthController
         $this->middleware('guest')->except('logout');
     }
 
+    protected function authenticated(Request $request, mixed $user): void
+    {
+        if ($user instanceof User) {
+            $user->forceFill([User::LOGGED_IN_AT => Carbon::now()])->save();
+        }
+    }
+
     public function token(string $token)
     {
-        $pin = (new DefaultRequest(request()->toArray()))->getString('pin');
+        $pin = new DefaultRequest(request()->toArray())->getString('pin');
 
         $data = TokenFacade::find($token);
         if ($data && Hash::check($pin, $data['pin'])) {
@@ -30,6 +39,8 @@ class LoginController extends AbstractAuthController
             if ($uid) {
                 $user = User::find($uid->getReferenceId());
                 Auth::login($user, true);
+
+                $user?->forceFill([User::LOGGED_IN_AT => Carbon::now()])->save();
             }
         }
 

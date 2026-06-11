@@ -17,6 +17,7 @@
                     class="btn btn-sm btn-outline-danger"
                     :disabled="!editable"
                     @click="$emit('remove', index)"
+                    aria-label="Удалить"
                 >
                     <i class="fa fa-trash"></i>
                 </button>

@@ -51,6 +51,7 @@ class UserEloquentMapper implements RepositoryDataMapperInterface
             User::FIRST_NAME     => $entity->getFirstName(),
             User::MIDDLE_NAME    => $entity->getMiddleName(),
             User::REMEMBER_TOKEN => $entity->getRememberToken(),
+            User::LOGGED_IN_AT   => $entity->getLoggedInAt(),
         ]);
     }
 
@@ -67,6 +68,7 @@ class UserEloquentMapper implements RepositoryDataMapperInterface
             ->setCreatedAt($data->{User::CREATED_AT})
             ->setUpdatedAt($data->{User::UPDATED_AT})
             ->setEmailVerifiedAt($data->{User::EMAIL_VERIFIED_AT})
+            ->setLoggedInAt($data->{User::LOGGED_IN_AT})
             ->setAccountId($data->{User::ACCOUNT_ID})
             ->setMembershipDate($data->{UserInfo::MEMBERSHIP_DATE})
             ->setMembershipDutyInfo($data->{UserInfo::MEMBERSHIP_DUTY_INFO})

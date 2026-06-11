@@ -15,6 +15,7 @@
                 <tr>
                     <th class="text-center table-thin-column">№</th>
                     <th class="text-center">Услуга</th>
+                    <th class="text-center">Кол-во</th>
                     <th class="text-center">Тариф</th>
                     <th class="text-center">Стоимость</th>
                     <th class="text-center">Оплачено</th>
@@ -36,7 +37,7 @@
                     @edit="editAction"
                 />
                 <tr v-if="!claims.length">
-                    <td colspan="8" class="text-center py-3 text-muted">
+                    <td colspan="9" class="text-center py-3 text-muted">
                         <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
                         Услуги не найдены
                     </td>

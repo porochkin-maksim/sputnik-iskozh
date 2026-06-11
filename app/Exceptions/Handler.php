@@ -6,6 +6,7 @@ use Core\Exceptions\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use lc;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -39,6 +40,28 @@ class Handler extends ExceptionHandler
             return redirect()->back()->withErrors($e->errors);
         });
 
+    }
+
+    public function render($request, Throwable $e): Response
+    {
+        if ($this->isHttpException($e)) {
+            $status = $e->getStatusCode();
+
+            if (view()->exists("errors.{$status}")) {
+                $layout = match (true) {
+                    str_starts_with($request->path(), 'admin')   => 'layouts.admin-layout',
+                    str_starts_with($request->path(), 'profile') => 'layouts.profile-layout',
+                    default                                      => 'layouts.app-layout',
+                };
+
+                return response()->view("errors.{$status}", [
+                    'exception' => $e,
+                    'layout'    => $layout,
+                ], $status);
+            }
+        }
+
+        return parent::render($request, $e);
     }
 
     protected function logError(Throwable $e): void

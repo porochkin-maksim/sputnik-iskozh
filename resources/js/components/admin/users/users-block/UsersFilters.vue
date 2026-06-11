@@ -21,6 +21,13 @@
                 class="ms-2"
                 :disabled="isLoading"
             />
+            <custom-checkbox
+                v-model="hasVerifiedEmailModel"
+                label="Подтверждённая почта"
+                switch-style
+                class="ms-2"
+                :disabled="isLoading"
+            />
         </div>
     </div>
 </template>
@@ -39,17 +46,21 @@ const props = defineProps({
         type   : null,
         default: null,
     },
-    isDeleted  : {
+    isDeleted        : {
         type   : null,
         default: null,
     },
-    isLoading  : {
+    hasVerifiedEmail : {
+        type   : null,
+        default: null,
+    },
+    isLoading        : {
         type    : Boolean,
         required: true,
     },
 });
 
-const emit = defineEmits(['update:isMember', 'update:isNotMember', 'update:isDeleted']);
+const emit = defineEmits(['update:isMember', 'update:isNotMember', 'update:isDeleted', 'update:hasVerifiedEmail']);
 
 const isMemberModel = computed({
     get: () => props.isMember,
@@ -64,5 +75,10 @@ const isNotMemberModel = computed({
 const isDeletedModel = computed({
     get: () => props.isDeleted,
     set: (value) => emit('update:isDeleted', value),
+});
+
+const hasVerifiedEmailModel = computed({
+    get: () => props.hasVerifiedEmail,
+    set: (value) => emit('update:hasVerifiedEmail', value),
 });
 </script>

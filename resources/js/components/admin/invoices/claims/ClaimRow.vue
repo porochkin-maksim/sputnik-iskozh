@@ -9,6 +9,7 @@
             </span>
         </td>
         <td>{{ claim.service }}</td>
+        <td class="text-end">{{ claim.quantity ?? '—' }}</td>
         <td class="text-end">{{ formatMoney(claim.tariff) }}</td>
         <td class="text-end">{{ formatMoney(claim.cost) }}</td>
         <td class="text-end">{{ formatMoney(claim.paid) }}</td>
@@ -20,7 +21,6 @@
                     v-if="claim.historyUrl"
                     class="btn-link underline-none p-0"
                     :url="claim.historyUrl"
-                    aria-label="История изменений"
                 />
 
                 <button

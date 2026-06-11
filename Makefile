@@ -61,6 +61,10 @@ artisan: ## запуск artisan
 tests: ## запуск тестов
 	@./vendor/bin/sail artisan test
 
+.PHONY: test-front
+test-front: ## запуск фронтенд тестов
+	@./vendor/bin/sail yarn test:unit
+
 .PHONY: architecture
 architecture: ## архитектурные проверки
 	@bash ./scripts/check-architecture.sh
@@ -109,7 +113,7 @@ yarn-build: ## собрать фронт
 	@./vendor/bin/sail yarn run build
 
 .PHONY: prod
-prod: architecture tests yarn-build ## pre-deploy проверки + production сборка фронта
+prod: architecture tests test-front yarn-build ## pre-deploy проверки + production сборка фронта
 	@echo "prod: OK"
 
 .PHONY: js-routes

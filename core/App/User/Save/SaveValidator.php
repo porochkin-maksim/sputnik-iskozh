@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\Save;
 
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;

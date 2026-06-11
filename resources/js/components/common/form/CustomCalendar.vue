@@ -29,6 +29,7 @@
                     class="fa fa-calendar custom-calendar__icon position-absolute end-0 me-3 text-secondary cursor-pointer"
                     :class="{ 'with-label': label }"
                     @click="toggleDropdown(disabled)"
+                    aria-label="Открыть календарь"
                 ></i>
             </div>
         </element-wrapper>

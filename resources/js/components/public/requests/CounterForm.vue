@@ -66,7 +66,8 @@
         <div class="public-form-field">
             <div v-if="file">
                 <button class="btn btn-sm btn-danger"
-                        @click="removeFile">
+                        @click="removeFile"
+                        aria-label="Удалить файл">
                     <i class="fa fa-trash"></i>
                 </button>
                 &nbsp;
@@ -107,6 +108,15 @@
             <button class="btn border-0" disabled v-else>
                 <i class="fa fa-spinner fa-spin"></i> Отправка
             </button>
+            <div v-if="isUploading" class="progress mt-2" style="height:6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                     role="progressbar"
+                     :style="{ width: uploadProgress + '%' }"
+                     :aria-valuenow="uploadProgress"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -120,11 +130,13 @@ import {
 import CustomInput                   from '@common/form/CustomInput.vue';
 import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
 import SimpleSelect                  from '@common/form/SimpleSelect.vue';
-import { ApiCounterCreate }          from '@api';
 import { useResponseError }          from '@composables/useResponseError';
+import { useUploadProgress }         from '@composables/useUploadProgress';
 import { useRequestFormDefaults }    from './useRequestFormDefaults';
 import { useRequestFormPersistence } from './useRequestFormPersistence';
 import { routeUri }                  from '@utils/routeUri.js';
+import apiClient                     from '@api/client';
+import { makeQuery }                 from '@api/helpers';
 
 const props = defineProps({
     propAccount : {
@@ -142,6 +154,7 @@ const props = defineProps({
 });
 
 const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
+const { uploadProgress, isUploading, startUpload, onProgress, finishUpload }        = useUploadProgress();
 
 const email    = ref('');
 const phone    = ref('');
@@ -192,6 +205,7 @@ useRequestFormPersistence({
 
 function sendForm () {
     pending.value = true;
+    startUpload();
     clearResponseErrors();
 
     const form = new FormData();
@@ -208,17 +222,17 @@ function sendForm () {
     form.append('file', file.value);
     form.append('consent', consent.value ? '1' : '');
 
-    ApiCounterCreate({}, form).then(() => {
+    apiClient.post(makeQuery('/contacts/requests/counter', {}), form, {
+        onUploadProgress: onProgress,
+        headers         : { 'Content-Type': 'multipart/form-data' },
+    }).then(() => {
         success.value = true;
         showSuccess('Показания приняты');
-
-        setTimeout(() => {
-            location.reload();
-        }, 10000);
     }).catch(response => {
         parseResponseErrors(response);
     }).finally(() => {
         pending.value = false;
+        finishUpload();
     });
 }
 

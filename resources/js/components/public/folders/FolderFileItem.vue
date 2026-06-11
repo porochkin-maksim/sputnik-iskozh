@@ -14,6 +14,7 @@
                         type="button"
                         class="btn btn-outline-success btn-sm public-folder-item__action"
                         @click="$emit('rename', file)"
+                        aria-label="Переименовать"
                     >
                         <i class="fa fa-pencil"></i>
                     </button>
@@ -21,6 +22,7 @@
                         type="button"
                         class="btn btn-outline-success btn-sm public-folder-item__action"
                         @click="$emit('copy', file.id)"
+                        aria-label="Копировать"
                     >
                         <i class="fa fa-copy"></i>
                     </button>
@@ -28,6 +30,7 @@
                         type="button"
                         class="btn btn-outline-success btn-sm public-folder-item__action"
                         @click="$emit('replace', file.id)"
+                        aria-label="Заменить"
                     >
                         <i class="fa fa-refresh"></i>
                     </button>
@@ -35,6 +38,7 @@
                         type="button"
                         class="btn btn-outline-success btn-sm public-folder-item__action"
                         @click="$emit('cut', file.id)"
+                        aria-label="Вырезать"
                     >
                         <i class="fa fa-cut"></i>
                     </button>
@@ -42,6 +46,7 @@
                         type="button"
                         class="btn btn-outline-danger btn-sm public-folder-item__action"
                         @click="$emit('delete', file.id)"
+                        aria-label="Удалить"
                     >
                         <i class="fa fa-trash"></i>
                     </button>
@@ -59,7 +64,8 @@
         </div>
         <a class="btn btn-outline-success btn-sm public-folder-item__download"
            :href="file.url"
-           :download="file.name">
+           :download="file.name"
+           aria-label="Скачать">
             <i class="fa fa-download"></i>
         </a>
     </div>

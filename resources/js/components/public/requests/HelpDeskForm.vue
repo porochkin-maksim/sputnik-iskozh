@@ -55,9 +55,9 @@
 
             <div class="public-form-field">
                 <div v-for="(file, idx) in files" :key="idx"
-                     class="d-flex justify-content-between align-items-center">
+                     class="d-flex justify-content-between align-items-center mb-2">
                     <span>{{ file.name }} ({{ (file.size / 1024).toFixed(0) }} КБ)</span>
-                    <button type="button" class="btn btn-sm btn-danger" @click="removeFile(idx)" :disabled="loading">
+                    <button type="button" class="btn btn-sm btn-danger" @click="removeFile(idx)" :disabled="loading" aria-label="Удалить файл">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -93,6 +93,15 @@
                     {{ loading ? 'Отправка...' : 'Отправить заявку' }}
                 </button>
             </div>
+            <div v-if="isUploading" class="progress" style="height:6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                     role="progressbar"
+                     :style="{ width: uploadProgress + '%' }"
+                     :aria-valuenow="uploadProgress"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
         </form>
     </div>
 </template>
@@ -104,14 +113,16 @@ import {
     computed,
 }                                    from 'vue';
 import { useResponseError }          from '@composables/useResponseError';
+import { useUploadProgress }         from '@composables/useUploadProgress';
 import CustomInput                   from '@common/form/CustomInput.vue';
 import CustomTextarea                from '@common/form/CustomTextarea.vue';
 import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
 import AccountSearchSelect           from '@components/shared/accounts/AccountSearchSelect.vue';
-import { ApiHelpDeskTicket }         from '@api';
 import { useRequestContactDefaults } from './useRequestContactDefaults';
 import { useRequestFormPersistence } from './useRequestFormPersistence';
 import { routeUri }                  from '@utils/routeUri.js';
+import apiClient                     from '@api/client';
+import { makeQuery }                 from '@api/helpers';
 
 const props = defineProps({
     type    : { type: String, required: true },
@@ -122,6 +133,7 @@ const props = defineProps({
 });
 
 const { errors, clearError, parseResponseErrors, showSuccess, showInfo } = useResponseError();
+const { uploadProgress, isUploading, startUpload, onProgress, finishUpload } = useUploadProgress();
 
 const loading      = ref(false);
 const success      = ref(false);
@@ -213,6 +225,7 @@ const submitForm = async () => {
     }
 
     loading.value = true;
+    startUpload();
     Object.keys(errors).forEach(key => delete errors[key]);
 
     const formData = new FormData();
@@ -236,20 +249,25 @@ const submitForm = async () => {
     });
 
     try {
-        const response     = await ApiHelpDeskTicket(props.type, props.category, props.service, {}, formData);
+        const response = await apiClient.post(
+            makeQuery('/contacts/requests/help-desk/' + props.type + '/' + props.category + '/' + props.service, {}),
+            formData,
+            {
+                onUploadProgress: onProgress,
+                headers: { 'Content-Type': 'multipart/form-data' },
+            }
+        );
         success.value      = response.data.success;
         ticketNumber.value = response.data.number;
         showSuccess(response.data.message);
         resetForm();
-        setTimeout(() => {
-            // можно редирект
-        }, 3000);
     }
     catch (error) {
         parseResponseErrors(error, errors);
     }
     finally {
         loading.value = false;
+        finishUpload();
     }
 };
 </script>

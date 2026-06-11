@@ -194,7 +194,11 @@ const onSuccessSubmit = () => {
     showDialog.value = false;
     hideDialog.value = true;
     file.value       = null;
-    location.reload();
+    showSuccess('Показания добавлены');
+    skip.value      = 0;
+    limit.value     = 0;
+    histories.value = [];
+    listAction();
 };
 
 const addHistoryValue = () => {

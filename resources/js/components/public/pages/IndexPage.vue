@@ -1,36 +1,15 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <template v-if="news.length > 0">
-                <div class="index-news public-news-grid news-list row w-100 ms-0">
-                    <template v-for="(item, index) in news" :key="index">
-                        <a class="col-md-6 col-12 text-decoration-none mb-2 px-0"
-                           :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
-                           :href="item.url"
-                        >
-                            <div class="custom-item news-item card h-100 hover-plate">
-                                <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
-                                    <div>
-                                        <span class="name">
-                                            {{ item.title ? item.title : 'Без названия' }}
-                                        </span>
-                                    </div>
-                                    <div class="date text-end mt-2">
-                                        <i class="fa fa-calendar"></i> {{ item.publishedAt }}
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </template>
-                </div>
-            </template>
+            <news-list :short="true" :limit="6" />
         </template>
         <template v-slot:sub>
             <form :action="searchUrl"
                   method="get">
                 <div class="input-group">
                     <button class="btn btn-light border"
-                            type="submit">
+                            type="submit"
+                            aria-label="Поиск">
                         <i class="fa fa-search"></i>
                     </button>
                     <inline-input v-model="search"
@@ -40,7 +19,8 @@
                                   :input-class="'flex-grow-1 rounded-0 border-0 shadow-none'" />
                     <button class="btn btn-light border"
                             type="button"
-                            @click="search = null">
+                            @click="search = null"
+                            aria-label="Очистить поиск">
                         <i class="fa fa-close"></i>
                     </button>
                 </div>
@@ -59,7 +39,7 @@
                                         {{ item.title ? item.title : 'Без названия' }}
                                     </span>
                                     <div class="date text-end mt-2">
-                                        <i class="fa fa-calendar"></i> {{ item.publishedAt }}
+                                        <i class="fa fa-calendar"></i> {{ item.dossier?.publishedAt || item.publishedAt }}
                                     </div>
                                 </div>
                             </div>
@@ -101,10 +81,8 @@ import {
 import InlineInput          from '@common/form/InlineInput.vue';
 import PageTemplate         from './TwoColumnsPage.vue';
 import StateSchedule        from '../StateSchedule.vue';
-import {
-    ApiNewsListIndex,
-    ApiNewsListLocked,
-}                           from '@api';
+import NewsList             from '../news/list/NewsList.vue';
+import { ApiNewsListLocked } from '@api';
 import {
     routeMeta,
     routeUri,
@@ -119,44 +97,13 @@ defineProps({
     },
 });
 
-const news                    = ref([]);
 const lockedNews              = ref([]);
 const search                  = ref(null);
 const { parseResponseErrors } = useResponseError();
-const normalizeList           = (value) => {
-    const toPlainItem = (item) => ({
-        id         : item?.id ?? null,
-        title      : typeof item?.title === 'string' ? item.title : '',
-        publishedAt: typeof item?.publishedAt === 'string' ? item.publishedAt : '',
-        url        : typeof item?.url === 'string' ? item.url : '#',
-    });
-
-    if (Array.isArray(value)) {
-        return value.map(toPlainItem);
-    }
-
-    if (Array.isArray(value?.items)) {
-        return value.items.map(toPlainItem);
-    }
-
-    if (Array.isArray(value?.data)) {
-        return value.data.map(toPlainItem);
-    }
-
-    return [];
-};
 
 function loadLockedNews () {
     ApiNewsListLocked().then(response => {
-        lockedNews.value = normalizeList(response.data.news);
-    }).catch(response => {
-        parseResponseErrors(response);
-    });
-}
-
-function loadNews () {
-    ApiNewsListIndex().then(response => {
-        news.value = normalizeList(response.data.news);
+        lockedNews.value = response.data.news || [];
     }).catch(response => {
         parseResponseErrors(response);
     });
@@ -168,6 +115,5 @@ const searchUrl     = computed(() => routeUri('search'));
 
 onMounted(() => {
     loadLockedNews();
-    loadNews();
 });
 </script>

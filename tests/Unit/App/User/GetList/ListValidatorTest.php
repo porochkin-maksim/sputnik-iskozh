@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\GetList;
 
-use Core\App\User\ListValidator;
+use Core\App\User\GetList\ListValidator;
 use Core\Exceptions\ValidationException;
 use Tests\TestCase;
 

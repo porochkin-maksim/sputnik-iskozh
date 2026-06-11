@@ -26,4 +26,8 @@ $color-gray             : #757575;
     --bs-success: #{$color-success};
     --bs-warning: #{$color-warning};
     --bs-secondary: #{$color-secondary};
+
+    --radius-card : 1.1rem;
+    --radius-pill : 999px;
+    --shadow-card : 0 0.55rem 1.15rem rgba(0, 0, 0, 0.04);
 }

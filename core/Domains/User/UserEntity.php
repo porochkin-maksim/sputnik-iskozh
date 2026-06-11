@@ -30,6 +30,7 @@ class UserEntity
     private ?AccountEntity     $account            = null;
     private ?RoleEntity        $role               = null;
     private ?Carbon            $emailVerifiedAt    = null;
+    private ?Carbon            $loggedInAt         = null;
     private ?UserExDataEntity  $exData             = null;
     private ?AccountCollection $accounts           = null;
 
@@ -168,6 +169,18 @@ class UserEntity
     public function getEmailVerifiedAt(): ?Carbon
     {
         return $this->emailVerifiedAt;
+    }
+
+    public function getLoggedInAt(): ?Carbon
+    {
+        return $this->loggedInAt;
+    }
+
+    public function setLoggedInAt(mixed $loggedInAt): static
+    {
+        $this->loggedInAt = DateTimeHelper::toCarbonOrNull($loggedInAt);
+
+        return $this;
     }
 
     public function getFraction(): ?float

@@ -4,7 +4,8 @@
             <a class="btn btn-success btn-sm me-2"
                v-if="showDownload"
                :href="file.url"
-               :download="fileName">
+               :download="fileName"
+               aria-label="Скачать">
                 <i class="fa fa-download"></i>
             </a>
             <template v-if="file.isImage">

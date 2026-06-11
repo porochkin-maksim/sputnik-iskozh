@@ -1,13 +1,13 @@
 <template>
     <div
-        v-if="messages.length"
+        v-if="visibleMessages.length"
         class="notification-container"
         role="status"
         aria-live="polite"
     >
         <transition-group name="slide-fade">
             <div
-                v-for="msg in messages"
+                v-for="msg in visibleMessages"
                 :key="msg.id"
                 class="message cursor-pointer alert"
                 :class="['border-' + msg.type, 'alert-' + msg.type]"
@@ -50,13 +50,22 @@ const iconByType = (type) => {
     return 'fa-info-circle';
 };
 
-const timeouts = new Map();
+const timeouts      = new Map();
+const maxMessages   = 4;
+const timeoutByType = {
+    success: 5000,
+    warning: 10000,
+    danger : 15000,
+    info   : 7000,
+};
 
-const messages = computed(() => allMessages.value.slice().reverse());
+const visibleMessages = computed(() => {
+    const all = allMessages.value.slice();
+    return all.slice(-maxMessages).reverse();
+});
 
 // Автоматическое скрытие
-watch(messages, (newMessages, oldMessages) => {
-    // Очистка таймеров для удалённых сообщений
+watch(visibleMessages, (newMessages, oldMessages) => {
     oldMessages.forEach(msg => {
         if (!newMessages.find(m => m.id === msg.id)) {
             const timeout = timeouts.get(msg.id);
@@ -67,13 +76,13 @@ watch(messages, (newMessages, oldMessages) => {
         }
     });
 
-    // Установка таймеров для новых сообщений
     newMessages.forEach(msg => {
         if (!timeouts.has(msg.id)) {
+            const ms      = timeoutByType[msg.type] || 7000;
             const timeout = setTimeout(() => {
                 removeMessage(msg.id);
                 timeouts.delete(msg.id);
-            }, 15000);
+            }, ms);
             timeouts.set(msg.id, timeout);
         }
     });

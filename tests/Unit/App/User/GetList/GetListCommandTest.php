@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\App\User;
+namespace Tests\Unit\App\User\GetList;
 
-use Core\App\User\GetListCommand;
-use Core\App\User\ListValidator;
+use Core\App\User\GetList\GetListCommand;
+use Core\App\User\GetList\ListValidator;
 use Core\Domains\User\UserSearchResponse;
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;

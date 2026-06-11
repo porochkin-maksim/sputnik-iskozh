@@ -11,8 +11,8 @@ use App\Support\HistoryChangesRoute;
 use App\Models\User;
 use App\Services\Users\Notificator;
 use Carbon\Carbon;
-use Core\App\User\GetListCommand;
-use Core\App\User\SaveCommand;
+use Core\App\User\GetList\GetListCommand;
+use Core\App\User\Save\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\Access\RoleService;
 use Core\Domains\Account\AccountCollection;
@@ -62,6 +62,10 @@ class UsersController extends Controller
 
         $user = $this->makeUserForView($id);
 
+        if ( ! $user) {
+            abort(404);
+        }
+
         return view('pages.admin.users.view', compact('user'));
     }
 
@@ -101,6 +105,7 @@ class UsersController extends Controller
             $request->getBool('isDeleted'),
             $request->input('isMember'),
             $request->getBool('isMember'),
+            $request->getBool('hasVerifiedEmail'),
         );
 
         return response()->json([

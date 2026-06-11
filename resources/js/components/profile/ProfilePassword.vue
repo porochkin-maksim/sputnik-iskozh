@@ -15,11 +15,13 @@
                     class="toggle fa"
                     :class="showPassword ? 'fa-eye' : 'fa-eye-slash'"
                     @click="togglePassword"
+                    :aria-label="showPassword ? 'Скрыть пароль' : 'Показать пароль'"
                 ></span>
                 <button class="profile-password-copy btn btn-sm btn-outline-success"
                         type="button"
                         :disabled="!password"
-                        @click="copyPassword">
+                        @click="copyPassword"
+                        aria-label="Скопировать пароль">
                     <i class="fa fa-copy"></i>
                 </button>
             </div>
@@ -49,15 +51,11 @@
 </template>
 
 <script setup>
-import {
-    ref,
-    computed,
-    defineProps,
-    defineEmits,
-}                                 from 'vue';
-import { useResponseError }       from '@composables/useResponseError';
-import CustomInput                from '@common/form/CustomInput.vue';
-import { ApiProfileSavePassword } from '@api';
+import { ref, defineProps, defineEmits } from 'vue';
+import { useResponseError }            from '@composables/useResponseError';
+import { usePasswordValidation }       from '@composables/usePasswordValidation';
+import CustomInput                     from '@common/form/CustomInput.vue';
+import { ApiProfileSavePassword }      from '@api';
 
 const props = defineProps({
     user: {
@@ -70,66 +68,16 @@ const emit = defineEmits(['update:password']);
 
 const { errors, clearError, parseResponseErrors, showSuccess } = useResponseError();
 
-const password        = ref(props.user.password || null);
-const passwordConfirm = ref(null);
-const showPassword    = ref(false);
-const loading         = ref(false);
+const loading = ref(false);
 
-const canSubmitPassword = computed(() => {
-    if (!password.value || !passwordConfirm.value) {
-        return false;
-    }
-
-    if (password.value !== passwordConfirm.value) {
-        return false;
-    }
-
-    if (password.value.length < 8) {
-        return false;
-    }
-
-    if (!/[a-z]/.test(password.value) || !/[A-Z]/.test(password.value)) {
-        return false;
-    }
-
-    if (!/\d/.test(password.value)) {
-        return false;
-    }
-
-    return true;
-});
-
-const passwordHint = computed(() => {
-    if (!password.value && !passwordConfirm.value) {
-        return 'Введите пароль и повторите его, чтобы сохранить изменения.';
-    }
-
-    if (!password.value || !passwordConfirm.value) {
-        return 'Заполните оба поля пароля.';
-    }
-
-    if (password.value !== passwordConfirm.value) {
-        return 'Пароли должны совпадать.';
-    }
-
-    if (password.value.length < 8) {
-        return 'Минимум 8 символов.';
-    }
-
-    if (!/[a-z]/.test(password.value) || !/[A-Z]/.test(password.value)) {
-        return 'Нужны строчные и заглавные буквы.';
-    }
-
-    if (!/\d/.test(password.value)) {
-        return 'Нужна хотя бы одна цифра.';
-    }
-
-    return 'Пароль готов к сохранению.';
-});
-
-const togglePassword = () => {
-    showPassword.value = !showPassword.value;
-};
+const {
+    showPassword,
+    password,
+    passwordConfirm,
+    canSubmitPassword,
+    passwordHint,
+    togglePassword,
+} = usePasswordValidation();
 
 const copyPassword = async () => {
     if (!password.value) {

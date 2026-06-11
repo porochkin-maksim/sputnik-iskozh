@@ -30,14 +30,7 @@
             </div>
 
             <div class="footer">
-                <div v-if="isList && news.url"
-                     class="public-news-item__read-more">
-                    <a class="btn btn-outline-success btn-sm"
-                       :href="news.url">
-                        Читать новость
-                    </a>
-                </div>
-                <div v-if="news.files.length" class="mt-2">
+                <div v-if="hasNonImageFiles" class="mt-2">
                     <div class="fw-bold mb-2">Приложения:</div>
                     <template v-for="(file, index) in news.files">
                         <file-item v-if="!file.isImage || edit"
@@ -173,6 +166,16 @@ const images = computed(() => {
         });
     }
     return result;
+});
+
+const hasNonImageFiles = computed(() => {
+    if (!props.news?.files?.length) {
+        return false;
+    }
+    if (props.edit) {
+        return true;
+    }
+    return props.news.files.some(file => !file.isImage);
 });
 
 const sliderId        = computed(() => `newsSlider-${id.value}`);

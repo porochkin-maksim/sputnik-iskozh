@@ -48,6 +48,23 @@ abstract class UidFacade
         return $result->{Uid::REFERENCE_ID};
     }
 
+    public static function findByReferenceId(UidTypeEnum $type, int $referenceId): ?UidDTO
+    {
+        $result = Uid::where(Uid::TYPE, $type->value)
+            ->where(Uid::REFERENCE_ID, $referenceId)
+            ->first();
+
+        if ($result) {
+            return new UidDTO(
+                $result->{Uid::ID},
+                $type,
+                $result->{Uid::REFERENCE_ID},
+            );
+        }
+
+        return null;
+    }
+
     private static function uuid(): string
     {
         $bytes    = random_bytes(16);

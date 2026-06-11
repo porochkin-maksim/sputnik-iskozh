@@ -23,14 +23,22 @@
 </template>
 
 <script setup>
-import { ref }                       from 'vue';
+import {
+    ref,
+    defineEmits,
+}                                    from 'vue';
+import { useStore }                  from 'vuex';
 import FileItem                      from '@common/files/FileItem.vue';
 import { ApiProfileCounterPassport } from '@api';
+
+const store = useStore();
 
 const props = defineProps({
     canEdit: { type: Boolean, required: true },
     counter: { type: Object, required: true },
 });
+
+const emit = defineEmits(['passport-updated']);
 
 const passportFileElem = ref(null);
 const passportFile     = ref(null);
@@ -53,7 +61,12 @@ const appendPassportFile = (event) => {
 
     ApiProfileCounterPassport({}, form)
         .then(() => {
-            location.reload();
+            store.dispatch('alerts/addMessage', {
+                id  : Date.now(),
+                text: 'Паспорт счётчика загружен',
+                type: 'success',
+            });
+            emit('passport-updated');
         })
         .finally(() => {
             passportLoading.value = false;

@@ -5,7 +5,7 @@
         <div class="toggle-parent">
             <custom-input v-model="password" @change="clearError('password')" :errors="errors.password"
                           :type="showPassword ? 'text' : 'password'" placeholder="Пароль" :required="true" :classes="'auth-form-field'" />
-            <span class="toggle fa" :class="showPassword ? 'fa-eye' : 'fa-eye-slash'" @click="togglePassword"></span>
+            <span class="toggle fa" :class="showPassword ? 'fa-eye' : 'fa-eye-slash'" @click="togglePassword" :aria-label="showPassword ? 'Скрыть пароль' : 'Показать пароль'"></span>
         </div>
         <div>
             <custom-input v-model="passwordConfirm" @change="clearError('password')"

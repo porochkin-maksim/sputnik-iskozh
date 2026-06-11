@@ -34,6 +34,17 @@ class Sheet implements ToArray, WithCalculatedFormulas
         return $this->sheetIndex;
     }
 
+    private function parseNumericValue(mixed $value): float
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        $clean = str_replace(',', '', (string) $value);
+
+        return is_numeric($clean) ? (float) $clean : 0;
+    }
+
     public function array(array $array): void
     {
         $processed = [];
@@ -59,10 +70,9 @@ class Sheet implements ToArray, WithCalculatedFormulas
                 continue;
             }
 
-            // Преобразуем значения в числа
-            $accrued = is_numeric($accrued) ? (float) $accrued : 0;
-            $paid    = is_numeric($paid) ? (float) $paid : 0;
-            $delta   = is_numeric($delta) ? (float) $delta : 0;
+            $accrued = $this->parseNumericValue($accrued);
+            $paid    = $this->parseNumericValue($paid);
+            $delta   = $this->parseNumericValue($delta);
 
             $processed[] = [
                 self::ACCOUNT_NUMBER => $accountNumber,

@@ -18,7 +18,7 @@
                 </div>
                 <div class="mt-2">
                     <div v-if="file">
-                        <button class="btn btn-sm btn-danger" @click="$emit('remove-file')">
+                        <button class="btn btn-sm btn-danger" @click="$emit('remove-file')" aria-label="Удалить файл">
                             <i class="fa fa-trash"></i>
                         </button>
                         &nbsp;

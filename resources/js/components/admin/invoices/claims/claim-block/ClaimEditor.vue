@@ -46,18 +46,6 @@
 
             <div class="mb-3">
                 <custom-input
-                    v-model="claim.cost"
-                    :errors="errors?.cost"
-                    label="Стоимость"
-                    type="number"
-                    step="0.01"
-                    :disabled="!canEdit || !claim.actions.edit || loading"
-                    @update:modelValue="$emit('cost-changed')"
-                />
-            </div>
-
-            <div class="mb-3">
-                <custom-input
                     v-model="claim.quantity"
                     :errors="errors?.quantity"
                     label="Количество"
@@ -66,6 +54,18 @@
                     min="1"
                     :disabled="!canEdit || !claim.actions.edit || loading"
                     @update:modelValue="onQuantityChanged"
+                />
+            </div>
+
+            <div class="mb-3">
+                <custom-input
+                    v-model="claim.cost"
+                    :errors="errors?.cost"
+                    label="Стоимость"
+                    type="number"
+                    step="0.01"
+                    :disabled="!canEdit || !claim.actions.edit || loading"
+                    @update:modelValue="$emit('cost-changed')"
                 />
             </div>
         </template>

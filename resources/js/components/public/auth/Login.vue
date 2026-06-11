@@ -27,6 +27,7 @@
                 class="toggle fa"
                 :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
                 @click="togglePassword"
+                :aria-label="showPassword ? 'Скрыть пароль' : 'Показать пароль'"
             ></span>
         </div>
         <div class="d-flex justify-content-between align-items-center">

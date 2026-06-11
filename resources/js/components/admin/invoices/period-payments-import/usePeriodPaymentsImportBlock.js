@@ -294,6 +294,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         fillStrategies,
         files,
         getKey,
+        importData,
         isColumnsValid,
         loading,
         loadingText,

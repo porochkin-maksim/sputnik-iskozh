@@ -22,10 +22,12 @@
             :is-member="isMember"
             :is-not-member="isNotMember"
             :is-deleted="isDeleted"
+            :has-verified-email="hasVerifiedEmail"
             :is-loading="isLoading"
             @update:is-member="isMember = $event"
             @update:is-not-member="isNotMember = $event"
             @update:is-deleted="isDeleted = $event"
+            @update:has-verified-email="hasVerifiedEmail = $event"
         />
 
         <loading-spinner
@@ -68,6 +70,7 @@ const {
           isLoading,
           isMember,
           isNotMember,
+          hasVerifiedEmail,
           onPaginationUpdate,
           onPerPageChange,
           perPage,

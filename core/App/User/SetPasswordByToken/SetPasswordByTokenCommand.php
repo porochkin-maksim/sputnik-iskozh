@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Core\App\User;
+namespace Core\App\User\SetPasswordByToken;
 
+use Core\App\User\SetPasswordByToken\SetPasswordByTokenValidator;
 use Core\Domains\Infra\Tokens\TokenFacade;
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;
