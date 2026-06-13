@@ -189,7 +189,7 @@ export function useInvoicesBlock () {
     const exportAction = () => {
         const url = routeUri('adminInvoiceExport', {}, {
             type       : type.value,
-            period_id  : periodId.value,
+            period     : periodId.value,
             account_id : accountId.value,
             account    : searchAccount.value,
             paid_status: paidStatus.value,

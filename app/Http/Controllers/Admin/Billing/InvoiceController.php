@@ -147,7 +147,7 @@ class InvoiceController extends Controller
             Invoice::ID,
             'asc',
             $request->getStringOrNull('status'),
-            $request->getStringOrNull('period'),
+            $request->getIntOrNull('period'),
             $request->getStringOrNull('account'),
             $request->getStringOrNull('type'),
             true,
