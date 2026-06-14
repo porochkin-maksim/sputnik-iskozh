@@ -9,6 +9,18 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 Route::group(['prefix' => 'accounts'], static function () {
     Route::get('/', [Controllers\Admin\Account\AccountsController::class, 'index'])->name(RouteNames::ADMIN_ACCOUNT_INDEX);
+    Route::get('/export', [Controllers\Admin\Account\AccountsController::class, 'export'])->name(RouteNames::ADMIN_ACCOUNT_EXPORT);
+
+    Route::group(['prefix' => 'import'], static function () {
+        Route::get('/', [Controllers\Admin\Account\AccountsImportController::class, 'index'])->name(RouteNames::ADMIN_ACCOUNT_IMPORT_INDEX);
+        Route::post('/parse-file', [Controllers\Admin\Account\AccountsImportController::class, 'parseFile'])->name(RouteNames::ADMIN_ACCOUNT_IMPORT_PARSE_FILE);
+        Route::post('/save', [Controllers\Admin\Account\AccountsImportController::class, 'save'])->name(RouteNames::ADMIN_ACCOUNT_IMPORT_SAVE);
+
+        Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_IMPORT_INDEX, static function (BreadcrumbTrail $trail) {
+            $trail->parent(RouteNames::ADMIN_ACCOUNT_INDEX);
+            $trail->push(RouteNames::name(RouteNames::ADMIN_ACCOUNT_IMPORT_INDEX), route(RouteNames::ADMIN_ACCOUNT_IMPORT_INDEX));
+        });
+    });
 
     Breadcrumbs::for(RouteNames::ADMIN_ACCOUNT_INDEX, static function (BreadcrumbTrail $trail) {
         $trail->push('Участки', route(RouteNames::ADMIN_ACCOUNT_INDEX));

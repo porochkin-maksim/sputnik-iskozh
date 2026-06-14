@@ -1,13 +1,13 @@
 <template>
     <div>
-        <users-import-controls
+        <accounts-import-controls
             :loading="loading"
             :submitting="submitting"
             :can-upload="canUpload"
             :can-submit="canSubmit"
             :file="file"
             @upload="uploadFiles"
-            @submit="submitUsers"
+            @submit="submitAccounts"
             @file-selected="file = $event"
         />
 
@@ -15,7 +15,7 @@
             {{ error }}
         </div>
 
-        <users-import-preview
+        <accounts-import-preview
             v-if="items.length"
             :items="items"
             :total="total"
@@ -25,23 +25,23 @@
         <div v-else-if="parsed && total > 0" class="alert alert-success mt-3 d-flex align-items-center gap-2">
             <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
             <div>
-                <p class="mb-0">Всего пользователей в файле: <strong>{{ total }}</strong>. Различий с текущими данными нет.</p>
+                <p class="mb-0">Всего участков в файле: <strong>{{ total }}</strong>. Различий с текущими данными нет.</p>
             </div>
         </div>
 
         <div v-if="submitted" class="alert alert-success mt-3 d-flex align-items-center gap-2">
             <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
             <div>
-                <p class="mb-0">Пользователи сохранены.</p>
+                <p class="mb-0">Участки сохранены.</p>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { useUsersImportBlock } from './users-import/useUsersImportBlock';
-import UsersImportControls     from './users-import/UsersImportControls.vue';
-import UsersImportPreview      from './users-import/UsersImportPreview.vue';
+import { useAccountsImportBlock } from './accounts-import/useAccountsImportBlock';
+import AccountsImportControls     from './accounts-import/AccountsImportControls.vue';
+import AccountsImportPreview      from './accounts-import/AccountsImportPreview.vue';
 
 const {
           canSubmit,
@@ -56,6 +56,6 @@ const {
           submitting,
           total,
           uploadFiles,
-          submitUsers,
-      } = useUsersImportBlock();
+          submitAccounts,
+      } = useAccountsImportBlock();
 </script>

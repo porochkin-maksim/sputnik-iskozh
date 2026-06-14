@@ -52,6 +52,25 @@
             <div class="d-flex align-items-center justify-content-center mx-2">
                 Всего: {{ total }}
             </div>
+            <div class="btn-group" role="group">
+                <a
+                    class="btn btn-outline-success"
+                    :href="importUrl"
+                    title="Импорт"
+                >
+                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Импорт</span>
+                </a>
+                <button
+                    class="btn btn-success"
+                    @click="$emit('export')"
+                    :disabled="loading"
+                    title="Экспорт"
+                >
+                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Экспорт</span>
+                </button>
+            </div>
             <history-btn class="btn-link underline-none" :url="historyUrl" />
         </div>
     </div>
@@ -68,6 +87,7 @@ defineProps({
     canCreate  : { type: Boolean, required: true },
     currentPage: { type: Number, required: true },
     historyUrl : { type: [String, null], default: null },
+    importUrl  : { type: String, default: null },
     loading    : { type: Boolean, required: true },
     perPage    : { type: Number, required: true },
     search     : { type: String, default: '' },
@@ -77,6 +97,8 @@ defineProps({
 defineEmits([
     'add-account',
     'clear-search',
+    'export',
+    'import',
     'pagination-update',
     'per-page-change',
     'search-change',

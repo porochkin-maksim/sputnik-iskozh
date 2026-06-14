@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Account;
 
+use App\Exports\AccountsExport\AccountsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\AccountResource;
@@ -12,13 +13,16 @@ use App\Support\HistoryChangesRoute;
 use Core\App\Account\GetListCommand;
 use Core\App\Account\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountEntity;
 use Core\Domains\Account\AccountFactory;
 use Core\Domains\Account\AccountSearcher;
 use Core\Domains\Account\AccountService;
 use Core\Domains\HistoryChanges\HistoryType;
 use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 use lc;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AccountsController extends Controller
 {
@@ -103,6 +107,27 @@ class AccountsController extends Controller
             'total'       => $result['accounts']->getTotal(),
             'historyUrl'  => HistoryChangesRoute::make(type: HistoryType::ACCOUNT),
         ]);
+    }
+
+    public function export(DefaultRequest $request)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::ACCOUNTS_VIEW)) {
+            abort(403);
+        }
+
+        $result = $this->getListCommand->execute(
+            null,
+            null,
+            $request->getSearch(),
+            null,
+            $request->getSortField(),
+            $request->getSortOrder(),
+        );
+
+        return Excel::download(
+            new AccountsExport($result['accounts']->getItems()->filter(fn(AccountEntity $entity) => ! $entity->isSnt())),
+            sprintf('Участки-%s.xlsx', Date::now()->format('Y-m-d-hi')),
+        );
     }
 
     /**

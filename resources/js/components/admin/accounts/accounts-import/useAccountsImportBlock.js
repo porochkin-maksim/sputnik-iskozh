@@ -4,11 +4,11 @@ import {
 }                           from 'vue';
 import { useResponseError } from '@composables/useResponseError';
 import {
-    ApiAdminUserImportParseFile,
-    ApiAdminUserImportSave,
+    ApiAdminAccountImportParseFile,
+    ApiAdminAccountImportSave,
 }                           from '@api';
 
-export function useUsersImportBlock () {
+export function useAccountsImportBlock () {
     const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
     const file       = ref(null);
@@ -42,7 +42,7 @@ export function useUsersImportBlock () {
         formData.append('file', file.value);
 
         try {
-            const response = await ApiAdminUserImportParseFile({}, formData);
+            const response = await ApiAdminAccountImportParseFile({}, formData);
             const data     = response.data;
             items.value    = data.items || [];
             total.value    = data.total || 0;
@@ -59,7 +59,7 @@ export function useUsersImportBlock () {
         }
     };
 
-    const submitUsers = async () => {
+    const submitAccounts = async () => {
         if (!canSubmit.value) {
             return;
         }
@@ -72,15 +72,15 @@ export function useUsersImportBlock () {
         error.value      = null;
 
         try {
-            await ApiAdminUserImportSave({}, { users: items.value });
-            showInfo('Пользователи сохранены');
+            await ApiAdminAccountImportSave({}, { accounts: items.value });
+            showInfo('Участки сохранены');
             submitted.value = true;
             items.value     = [];
             total.value     = 0;
             changes.value   = 0;
         }
         catch (err) {
-            const message = err.response?.data?.error || 'Ошибка при сохранении пользователей';
+            const message = err.response?.data?.error || 'Ошибка при сохранении участков';
             showDanger(message);
             parseResponseErrors(err);
         }
@@ -102,6 +102,6 @@ export function useUsersImportBlock () {
         canUpload,
         canSubmit,
         uploadFiles,
-        submitUsers,
+        submitAccounts,
     };
 }

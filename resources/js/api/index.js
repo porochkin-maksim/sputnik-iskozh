@@ -19,10 +19,34 @@ export function ApiAdminAccountDelete(id, getParams = {}, postData = null) {
     return apiClient.delete(makeQuery('/admin/accounts/json/'+id+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminAccountExport(getParams = {}, postData = null) {
+    // see admin.account.export
+    // controller: App\Http\Controllers\Admin\Account\AccountsController@export
+    return apiClient.get(makeQuery('/admin/accounts/export', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminAccountGet(accountId, getParams = {}, postData = null) {
     // see admin.account.get
     // controller: App\Http\Controllers\Admin\Account\AccountsController@get
     return apiClient.get(makeQuery('/admin/accounts/json/view/'+accountId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminAccountImportIndex(getParams = {}, postData = null) {
+    // see admin.account.import.index
+    // controller: App\Http\Controllers\Admin\Account\AccountsImportController@index
+    return apiClient.get(makeQuery('/admin/accounts/import', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminAccountImportParseFile(getParams = {}, postData = null) {
+    // see admin.account.import.parse-file
+    // controller: App\Http\Controllers\Admin\Account\AccountsImportController@parseFile
+    return apiClient.post(makeQuery('/admin/accounts/import/parse-file', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminAccountImportSave(getParams = {}, postData = null) {
+    // see admin.account.import.save
+    // controller: App\Http\Controllers\Admin\Account\AccountsImportController@save
+    return apiClient.post(makeQuery('/admin/accounts/import/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminAccountIndex(getParams = {}, postData = null) {

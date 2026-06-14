@@ -15,12 +15,14 @@
                 :can-create="canCreate"
                 :current-page="currentPage"
                 :history-url="historyUrl"
+                :import-url="importUrl"
                 :loading="loading"
                 :per-page="perPage"
                 :search="search"
                 :total="total"
                 @add-account="makeAction"
                 @clear-search="clearSearch"
+                @export="exportAction"
                 @pagination-update="onPaginationUpdate"
                 @per-page-change="loadAccounts"
                 @search-change="searchAction"
@@ -52,6 +54,7 @@ import {
     computed,
     onMounted,
 }                           from 'vue';
+import { routeUri }         from '@utils/routeUri.js';
 import { useResponseError } from '@composables/useResponseError';
 import { usePermissions }   from '@composables/usePermissions.js';
 import LoadingSpinner       from '@common/LoadingSpinner.vue';
@@ -182,6 +185,19 @@ const sort = (field) => {
     }
     sortField.value = field;
     loadAccounts();
+};
+
+// Экспорт
+const importUrl = routeUri('adminAccountImportIndex');
+
+const exportAction = () => {
+    const params = {
+        search    : search.value,
+        sort_field: sortField.value,
+        sort_order: sortOrder.value,
+    };
+    const url = routeUri('adminAccountExport', {}, params);
+    window.open(url, '_blank');
 };
 
 // Обновление после добавления/редактирования

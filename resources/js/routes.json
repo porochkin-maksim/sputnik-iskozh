@@ -25,6 +25,13 @@
             "id": "{id}"
         }
     },
+    "adminAccountExport": {
+        "name": "admin.account.export",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/accounts\/export",
+        "args": []
+    },
     "adminAccountGet": {
         "name": "admin.account.get",
         "displayName": "",
@@ -33,6 +40,27 @@
         "args": {
             "accountId": "{accountId}"
         }
+    },
+    "adminAccountImportIndex": {
+        "name": "admin.account.import.index",
+        "displayName": "\u0418\u043c\u043f\u043e\u0440\u0442 \u0443\u0447\u0430\u0441\u0442\u043a\u043e\u0432",
+        "method": "get",
+        "uri": "\/admin\/accounts\/import",
+        "args": []
+    },
+    "adminAccountImportParseFile": {
+        "name": "admin.account.import.parse-file",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/import\/parse-file",
+        "args": []
+    },
+    "adminAccountImportSave": {
+        "name": "admin.account.import.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/import\/save",
+        "args": []
     },
     "adminAccountIndex": {
         "name": "admin.account.index",

@@ -110,15 +110,15 @@ abstract class RouteNames
     public const string ADMIN_ROLE_LIST   = 'admin.role.list';
     public const string ADMIN_ROLE_DELETE = 'admin.role.delete';
 
-    public const string ADMIN_USER_INDEX          = 'admin.user.index';
-    public const string ADMIN_USER_GET            = 'admin.user.get';
-    public const string ADMIN_USER_VIEW           = 'admin.user.view';
-    public const string ADMIN_USER_SAVE           = 'admin.user.save';
-    public const string ADMIN_USER_GENERATE_EMAIL = 'admin.user.generate-email';
-    public const string ADMIN_USER_LIST           = 'admin.user.list';
-    public const string ADMIN_USER_DELETE         = 'admin.user.delete';
-    public const string ADMIN_USER_RESTORE        = 'admin.user.restore';
-    public const string ADMIN_USER_EXPORT         = 'admin.user.export';
+    public const string ADMIN_USER_INDEX             = 'admin.user.index';
+    public const string ADMIN_USER_GET               = 'admin.user.get';
+    public const string ADMIN_USER_VIEW              = 'admin.user.view';
+    public const string ADMIN_USER_SAVE              = 'admin.user.save';
+    public const string ADMIN_USER_GENERATE_EMAIL    = 'admin.user.generate-email';
+    public const string ADMIN_USER_LIST              = 'admin.user.list';
+    public const string ADMIN_USER_DELETE            = 'admin.user.delete';
+    public const string ADMIN_USER_RESTORE           = 'admin.user.restore';
+    public const string ADMIN_USER_EXPORT            = 'admin.user.export';
     public const string ADMIN_USER_IMPORT_INDEX      = 'admin.user.import.index';
     public const string ADMIN_USER_IMPORT_PARSE_FILE = 'admin.user.import.parse-file';
     public const string ADMIN_USER_IMPORT_SAVE       = 'admin.user.import.save';
@@ -149,6 +149,10 @@ abstract class RouteNames
     public const string ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
     public const string ADMIN_ACCOUNT_LIST   = 'admin.account.list';
     public const string ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
+    public const string ADMIN_ACCOUNT_EXPORT              = 'admin.account.export';
+    public const string ADMIN_ACCOUNT_IMPORT_INDEX         = 'admin.account.import.index';
+    public const string ADMIN_ACCOUNT_IMPORT_PARSE_FILE    = 'admin.account.import.parse-file';
+    public const string ADMIN_ACCOUNT_IMPORT_SAVE          = 'admin.account.import.save';
 
     public const string ADMIN_LOGIN_LINK = 'admin.login-link';
 
@@ -275,6 +279,7 @@ abstract class RouteNames
             self::ADMIN_SERVICE_INDEX                 => 'Услуги',
             self::ADMIN_PERIOD_INDEX                  => 'Периоды',
             self::ADMIN_ACCOUNT_INDEX                 => 'Участки',
+            self::ADMIN_ACCOUNT_IMPORT_INDEX          => 'Импорт участков',
             self::ADMIN_INVOICE_INDEX                 => 'Счета',
             self::ADMIN_NEW_PAYMENT_INDEX             => 'Новые платежи',
             self::ADMIN_REQUEST_COUNTER_HISTORY_INDEX => 'Счётчики',
