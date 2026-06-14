@@ -198,6 +198,13 @@
             "counterId": "{counterId}"
         }
     },
+    "adminDashboardCards": {
+        "name": "admin.dashboard.cards",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/cards",
+        "args": []
+    },
     "adminDocumentReceiptInvoice": {
         "name": "admin.document.receipt.invoice",
         "displayName": "",

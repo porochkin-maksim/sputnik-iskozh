@@ -145,6 +145,12 @@ export function ApiAdminCounterView(counterId, getParams = {}, postData = null) 
     return apiClient.get(makeQuery('/admin/accounts/counters/view/'+counterId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminDashboardCards(getParams = {}, postData = null) {
+    // see admin.dashboard.cards
+    // controller: App\Http\Controllers\Admin\AdminDashboardController@cards
+    return apiClient.get(makeQuery('/admin/cards', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminDocumentReceiptInvoice(id, getParams = {}, postData = null) {
     // see admin.document.receipt.invoice
     // controller: App\Http\Controllers\Common\Documents\ReceiptController@makeByInvoiceId
@@ -285,7 +291,7 @@ export function ApiAdminHelpDeskTicketsView(id, getParams = {}, postData = null)
 
 export function ApiAdminIndex(getParams = {}, postData = null) {
     // see admin.index
-    // controller: Closure
+    // controller: App\Http\Controllers\Admin\AdminDashboardController@index
     return apiClient.get(makeQuery('/admin', getParams), prepareRequestData(postData));
 }
 

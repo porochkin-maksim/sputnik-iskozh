@@ -9,9 +9,8 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 Route::group(['middleware' => MiddlewareNames::AUTH, 'prefix' => 'admin'], static function () {
     Route::group(['middleware' => MiddlewareNames::ADMIN], static function () {
-        Route::get('/', static function () {
-            return view('pages.admin.index');
-        })->name(RouteNames::ADMIN);
+        Route::get('/', [Controllers\Admin\AdminDashboardController::class, 'index'])->name(RouteNames::ADMIN);
+        Route::get('/cards', [Controllers\Admin\AdminDashboardController::class, 'cards'])->name(RouteNames::ADMIN_DASHBOARD_CARDS);
 
         // главная админки
         Breadcrumbs::for(RouteNames::ADMIN, static function (BreadcrumbTrail $trail) {

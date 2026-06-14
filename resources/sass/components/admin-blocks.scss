@@ -153,3 +153,49 @@
         cursor : pointer;
     }
 }
+
+// Dashboard
+.dash-card {
+    transition : box-shadow .2s ease, border-color .2s ease;
+    height     : 100%;
+    border-left: 4px solid transparent;
+    cursor     : pointer;
+
+    &:hover {
+        box-shadow   : 0 .25rem 1rem rgba(0, 0, 0, .1);
+        border-color : $default-primary !important;
+    }
+
+    .icon-wrap {
+        width          : 3rem;
+        height         : 3rem;
+        display        : flex;
+        align-items    : center;
+        justify-content: center;
+        border-radius  : .75rem;
+        flex-shrink    : 0;
+    }
+
+    .count {
+        font-size  : 2rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .title {
+        font-size  : 1rem;
+        font-weight: 600;
+    }
+
+    .desc {
+        font-size: .82rem;
+        color    : $color-secondary;
+    }
+}
+
+.badge-dash {
+    font-size    : .8rem;
+    font-weight  : 500;
+    padding      : .2rem .6rem;
+    border-radius: .25rem;
+}

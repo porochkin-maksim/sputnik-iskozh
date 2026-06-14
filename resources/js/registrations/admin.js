@@ -19,6 +19,7 @@ import TicketsBlock              from '@components/admin/help-desk/TicketsBlock.
 import TicketsView               from '@components/admin/help-desk/TicketsView.vue';
 import UsersImportBlock          from '@components/admin/users/UsersImportBlock.vue';
 import AccountsImportBlock       from '@components/admin/accounts/AccountsImportBlock.vue';
+import DashboardCards             from '@components/admin/DashboardCards.vue';
 
 export function registerAdminComponents (app) {
     app.component('alerts-block', AlertsBlock);
@@ -42,4 +43,5 @@ export function registerAdminComponents (app) {
     app.component('help-desk-ticket-view', TicketsView);
     app.component('users-import-block', UsersImportBlock);
     app.component('accounts-import-block', AccountsImportBlock);
+    app.component('dashboard-cards-block', DashboardCards);
 }

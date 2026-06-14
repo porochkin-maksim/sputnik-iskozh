@@ -103,6 +103,7 @@ abstract class RouteNames
     public const string ADMIN_DOCUMENT_RECEIPT_INVOICE = 'admin.document.receipt.invoice';
 
     public const string ADMIN = 'admin.index';
+    public const string ADMIN_DASHBOARD_CARDS = 'admin.dashboard.cards';
 
     public const string ADMIN_ROLE_INDEX  = 'admin.role.index';
     public const string ADMIN_ROLE_CREATE = 'admin.role.create';

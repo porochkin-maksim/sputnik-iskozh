@@ -56,8 +56,6 @@ const actions    = ref(null);
 const canActions = ref(false);
 const account    = ref(null);
 const user       = ref(null);
-const payments   = ref(0);
-
 // Загрузка данных
 const loadData = async () => {
     loading.value = true;
@@ -65,12 +63,7 @@ const loadData = async () => {
         const response   = await ApiAdminTopPanelIndex();
         actions.value    = response.data.actions;
         canActions.value = response.data.canActions;
-        payments.value   = response.data.payments;
 
-        const paymentsElement = document.getElementById('new-payments-count');
-        if (paymentsElement) {
-            paymentsElement.innerHTML = ' (' + payments.value + ')';
-        }
     }
     catch (error) {
         parseResponseErrors(error);
