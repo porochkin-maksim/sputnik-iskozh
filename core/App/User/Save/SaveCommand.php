@@ -40,7 +40,7 @@ readonly class SaveCommand
         ?string $lastName,
         ?string $email,
         ?string $phone,
-        int     $roleId,
+        ?int    $roleId,
         ?string $membershipDutyInfo,
         mixed   $membershipDate,
         array   $fractions,

@@ -65,6 +65,16 @@ class UserEloquentRepository implements UserRepositoryInterface
         return $this->search($this->getEmptySearcher()->setIds($ids));
     }
 
+    public function getByEmail(?string $email): ?UserEntity
+    {
+        return $email ?
+            $this->search(new UserSearcher()
+                ->setEmail($email)
+                ->setWithDeleted()
+            )->getItems()->first()
+            : null;
+    }
+
     public function save(UserEntity $user): UserEntity
     {
         /** @var User|null $model */

@@ -15,4 +15,6 @@ interface UserRepositoryInterface
     public function getByIds(array $ids): UserSearchResponse;
 
     public function deleteById(?int $id): bool;
+
+    public function getByEmail(?string $email);
 }

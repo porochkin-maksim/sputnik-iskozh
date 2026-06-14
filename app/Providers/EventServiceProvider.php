@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Listeners\Billing\DispatchImportPaymentsSaveListener;
 use App\Listeners\Billing\DispatchRegularPeriodInvoiceBatchListener;
+use App\Listeners\User\DispatchImportUsersSaveListener;
 use App\Listeners\CounterHistory\DispatchCounterHistoriesLinkedCheckClaimListener;
 use App\Listeners\CounterHistory\DispatchCheckClaimForCounterChangeListener;
 use App\Listeners\HelpDesk\SendTicketCreatedNotificationListener;
@@ -11,6 +12,7 @@ use App\Listeners\HistoryChanges\DispatchCreateHistoryJobListener;
 use App\Listeners\LogSentEmailListener;
 use Core\Domains\Billing\Events\ImportPaymentsSaveRequested;
 use Core\Domains\Billing\Events\RegularPeriodInvoiceBatchRequested;
+use Core\Domains\User\Events\ImportUsersSaveRequested;
 use Core\Domains\CounterHistory\Events\CounterHistoryConfirmed;
 use Core\Domains\CounterHistory\Events\CounterHistoriesLinked;
 use Core\Domains\HelpDesk\Events\TicketCreated;
@@ -53,6 +55,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         RegularPeriodInvoiceBatchRequested::class => [
             DispatchRegularPeriodInvoiceBatchListener::class,
+        ],
+        ImportUsersSaveRequested::class           => [
+            DispatchImportUsersSaveListener::class,
         ],
         HistoryChangesSaveRequested::class        => [
             DispatchCreateHistoryJobListener::class,

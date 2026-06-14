@@ -39,14 +39,23 @@
                 </div>
             </div>
 
-            <div class="ms-2">
+            <div class="btn-group" role="group">
+                <a
+                    class="btn btn-outline-success"
+                    :href="importUrl"
+                    title="Импор"
+                >
+                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Импорт</span>
+                </a>
                 <button
                     class="btn btn-success"
                     @click="$emit('export')"
                     :disabled="isLoading"
-                    title="Экспорт в Excel"
+                    title="Экспорт"
                 >
                     <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Экспорт</span>
                 </button>
             </div>
         </div>
@@ -99,6 +108,10 @@ const props = defineProps({
         required: true,
     },
     historyUrl : {
+        type   : String,
+        default: null,
+    },
+    importUrl  : {
         type   : String,
         default: null,
     },

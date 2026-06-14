@@ -908,6 +908,27 @@
             "id": "{id}"
         }
     },
+    "adminUserImportIndex": {
+        "name": "admin.user.import.index",
+        "displayName": "\u0418\u043c\u043f\u043e\u0440\u0442 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+        "method": "get",
+        "uri": "\/admin\/users\/import",
+        "args": []
+    },
+    "adminUserImportParseFile": {
+        "name": "admin.user.import.parse-file",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/import\/parse-file",
+        "args": []
+    },
+    "adminUserImportSave": {
+        "name": "admin.user.import.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/import\/save",
+        "args": []
+    },
     "adminUserIndex": {
         "name": "admin.user.index",
         "displayName": "\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",

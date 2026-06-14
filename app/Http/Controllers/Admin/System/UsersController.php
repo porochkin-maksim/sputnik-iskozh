@@ -126,19 +126,16 @@ class UsersController extends Controller
             abort(403);
         }
 
-        $requestData = $request->toArray();
-        unset($requestData['skip'], $requestData['limit']);
-
-        $newRequest = new DefaultRequest($requestData);
-        $users      = $this->getListCommand->execute(
-            $newRequest->getLimit(),
-            $newRequest->getOffset(),
-            $newRequest->getSortField(),
-            $newRequest->getSortOrder(),
-            $newRequest->getStringOrNull('search'),
-            $newRequest->getBool('isDeleted'),
-            $newRequest->input('isMember'),
-            $newRequest->getBool('isMember'),
+        $users = $this->getListCommand->execute(
+            null,
+            null,
+            $request->getSortField(),
+            $request->getSortOrder(),
+            $request->getStringOrNull('search'),
+            $request->getBool('isDeleted'),
+            $request->input('isMember'),
+            $request->getBool('isMember'),
+            $request->getBool('hasVerifiedEmail'),
         )->getItems();
 
         return Excel::download(new UsersExport($users), sprintf('Пользователи-%s.xlsx', now()->format('Y-m-d-hi')));

@@ -40,13 +40,12 @@ class LockedJob implements ShouldQueue
     public function failed(Throwable $exception): void
     {
         if (method_exists($this->jobClass, 'failed')) {
-            // Создаём экземпляр для вызова failed (если нужно передать контекст)
             $job = new $this->jobClass(...$this->jobArgs);
             if (method_exists($job, 'failed')) {
                 $job->failed($exception);
             }
         }
 
-        $lockService->release($this->lockName);
+        app(LockService::class)->release($this->lockName);
     }
 }

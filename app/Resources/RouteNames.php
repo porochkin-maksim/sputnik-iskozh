@@ -119,6 +119,9 @@ abstract class RouteNames
     public const string ADMIN_USER_DELETE         = 'admin.user.delete';
     public const string ADMIN_USER_RESTORE        = 'admin.user.restore';
     public const string ADMIN_USER_EXPORT         = 'admin.user.export';
+    public const string ADMIN_USER_IMPORT_INDEX      = 'admin.user.import.index';
+    public const string ADMIN_USER_IMPORT_PARSE_FILE = 'admin.user.import.parse-file';
+    public const string ADMIN_USER_IMPORT_SAVE       = 'admin.user.import.save';
 
     public const string ADMIN_OPTIONS_INDEX = 'admin.options.index';
     public const string ADMIN_OPTIONS_LIST  = 'admin.options.list';
@@ -266,6 +269,7 @@ abstract class RouteNames
             // админка
             self::ADMIN                               => 'О системе',
             self::ADMIN_USER_INDEX                    => 'Пользователи',
+            self::ADMIN_USER_IMPORT_INDEX             => 'Импорт пользователей',
             self::ADMIN_OPTIONS_INDEX                 => 'Опции',
             self::ADMIN_ROLE_INDEX                    => 'Роли',
             self::ADMIN_SERVICE_INDEX                 => 'Услуги',

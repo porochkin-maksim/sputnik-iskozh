@@ -109,7 +109,8 @@ export function useUsersBlock () {
         loadUsers();
     };
 
-    const getViewLink = (id) => routeUri('adminUserView', { id });
+    const getViewLink  = (id) => routeUri('adminUserView', { id });
+    const importUrl    = routeUri('adminUserImportIndex');
 
     const copyToClipboard = (text) => {
         navigator.clipboard?.writeText(text).then(() => {
@@ -173,6 +174,7 @@ export function useUsersBlock () {
         formatDate,
         getViewLink,
         historyUrl,
+        importUrl,
         isDeleted,
         isLoading,
         isMember,

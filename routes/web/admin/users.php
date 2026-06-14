@@ -33,6 +33,18 @@ Route::group(['prefix' => 'users'], static function () {
         ->whereNumber('id')
     ;
     Route::get('/export', [Controllers\Admin\System\UsersController::class, 'export'])->name(RouteNames::ADMIN_USER_EXPORT);
+
+    Route::group(['prefix' => 'import'], static function () {
+        Route::get('/', [Controllers\Admin\System\UsersImportController::class, 'index'])->name(RouteNames::ADMIN_USER_IMPORT_INDEX);
+        Route::post('/parse-file', [Controllers\Admin\System\UsersImportController::class, 'parseFile'])->name(RouteNames::ADMIN_USER_IMPORT_PARSE_FILE);
+        Route::post('/save', [Controllers\Admin\System\UsersImportController::class, 'save'])->name(RouteNames::ADMIN_USER_IMPORT_SAVE);
+
+        Breadcrumbs::for(RouteNames::ADMIN_USER_IMPORT_INDEX, static function (BreadcrumbTrail $trail) {
+            $trail->parent(RouteNames::ADMIN_USER_INDEX);
+            $trail->push(RouteNames::name(RouteNames::ADMIN_USER_IMPORT_INDEX), route(RouteNames::ADMIN_USER_IMPORT_INDEX));
+        });
+    });
+
     Route::group(['prefix' => 'json'], static function () {
         Route::get('/list', [Controllers\Admin\System\UsersController::class, 'list'])->name(RouteNames::ADMIN_USER_LIST);
         Route::post('/save', [Controllers\Admin\System\UsersController::class, 'save'])->name(RouteNames::ADMIN_USER_SAVE);

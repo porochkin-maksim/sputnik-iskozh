@@ -4,6 +4,7 @@ namespace Core\Domains\User;
 
 use App\Models\User;
 use Core\Repositories\BaseSearcher;
+use Core\Repositories\SearcherInterface;
 
 class UserSearcher extends BaseSearcher
 {
@@ -33,6 +34,13 @@ class UserSearcher extends BaseSearcher
     public function setWithAccounts(): static
     {
         $this->with[] = User::ACCOUNTS;
+
+        return $this;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->addWhere(User::EMAIL, SearcherInterface::EQUALS, $email);
 
         return $this;
     }

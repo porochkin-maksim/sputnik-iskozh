@@ -13,4 +13,5 @@ enum LockNameEnum: string
     case REWATCH_COUNTER_HISTORY_CHAIN_JOB                  = 'rewatch-counter-history-chain-job';
     case CHECK_CLAIM_FOR_COUNTER_CHANGE_JOB                 = 'check-claim-for-counter-change-job';
     case NOTIFY_ABOUT_NEW_UNVERIFIED_COUNTER_HISTORY_JOB    = 'notify-about-new-unverified-counter-history-job';
+    case SAVE_IMPORT_USERS_JOB                              = 'save-import-users-job';
 }

@@ -4,6 +4,7 @@
             :can-create="canCreate"
             :get-view-link="getViewLink"
             :history-url="historyUrl"
+            :import-url="importUrl"
             :is-loading="isLoading"
             :per-page="perPage"
             :current-page="currentPage"
@@ -66,6 +67,7 @@ const {
           formatDate,
           getViewLink,
           historyUrl,
+          importUrl,
           isDeleted,
           isLoading,
           isMember,

@@ -679,6 +679,24 @@ export function ApiAdminUserGet(id, getParams = {}, postData = null) {
     return apiClient.get(makeQuery('/admin/users/json/get/'+id+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminUserImportIndex(getParams = {}, postData = null) {
+    // see admin.user.import.index
+    // controller: App\Http\Controllers\Admin\System\UsersImportController@index
+    return apiClient.get(makeQuery('/admin/users/import', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminUserImportParseFile(getParams = {}, postData = null) {
+    // see admin.user.import.parse-file
+    // controller: App\Http\Controllers\Admin\System\UsersImportController@parseFile
+    return apiClient.post(makeQuery('/admin/users/import/parse-file', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminUserImportSave(getParams = {}, postData = null) {
+    // see admin.user.import.save
+    // controller: App\Http\Controllers\Admin\System\UsersImportController@save
+    return apiClient.post(makeQuery('/admin/users/import/save', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminUserIndex(getParams = {}, postData = null) {
     // see admin.user.index
     // controller: App\Http\Controllers\Admin\System\UsersController@index

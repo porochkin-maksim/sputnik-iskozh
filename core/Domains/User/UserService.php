@@ -35,9 +35,6 @@ readonly class UserService
 
     public function getByEmail(?string $email): ?UserEntity
     {
-        return $this->search(new UserSearcher()
-            ->addWhere(User::EMAIL, SearcherInterface::EQUALS, $email)
-            ->setLimit(1)
-        )->getItems()->first();
+        return $this->userRepository->getByEmail($email);
     }
 }

@@ -21,6 +21,7 @@ class UsersExport implements WithMultipleSheets
         $this->headers = [
             BaseSheet::ID              => 'ID',
             BaseSheet::ACCOUNT         => 'Участок',
+            BaseSheet::FRACTION        => 'Доля',
             BaseSheet::NAME            => 'ФИО',
             BaseSheet::EMAIL           => 'Почта',
             BaseSheet::PHONE           => 'Телефон',

@@ -40,7 +40,7 @@ readonly class RoleService
         return $this->roleRepository->search($searcher);
     }
 
-    public function getById(int $id): ?RoleEntity
+    public function getById(?int $id): ?RoleEntity
     {
         return $this->roleRepository->getById($id);
     }
