@@ -35,6 +35,10 @@ Route::group(['prefix' => 'home'], static function () {
             Route::group(['prefix' => 'invoices'], static function () {
                 Route::get('/', [Controllers\Profile\HomeController::class, 'invoices'])->name(RouteNames::PROFILE_INVOICES);
             });
+            Route::group(['prefix' => 'payments'], static function () {
+                Route::get('/', [Controllers\Profile\PaymentHistoryController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS_INDEX);
+                Route::get('/json/list', [Controllers\Profile\PaymentHistoryController::class, 'list'])->name(RouteNames::PROFILE_PAYMENTS_LIST);
+            });
         });
     });
 });

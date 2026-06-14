@@ -93,6 +93,9 @@ abstract class RouteNames
     public const string PROFILE_COUNTER_HISTORY   = 'profile.counter.history-list';
     public const string PROFILE_COUNTER_ADD_VALUE = 'profile.counter.add-value';
 
+    public const string PROFILE_PAYMENTS_INDEX = 'profile.payments.index';
+    public const string PROFILE_PAYMENTS_LIST  = 'profile.payments.list';
+
     public const string HISTORY_CHANGES = 'infra.history-changes';
 
     public const string SUMMARY           = 'common.summary';
@@ -266,6 +269,7 @@ abstract class RouteNames
 
             self::PROFILE_COUNTERS                    => 'Счётчики',
             self::PROFILE_INVOICES                    => 'Счета',
+            self::PROFILE_PAYMENTS_INDEX              => 'Платежи',
 
             self::FILES                               => 'Документы',
             self::NEWS                                => 'Новости',

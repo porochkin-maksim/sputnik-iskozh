@@ -44,6 +44,8 @@ class Payment extends AbstractModel
     public const string DATA       = 'data';
     public const string PAID_AT    = 'paid_at';
 
+    public const string CREATED_AT = 'created_at';
+
     public const string ACCOUNT = 'account';
     public const string INVOICE = 'invoice';
     public const string FILES   = 'files';

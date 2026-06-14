@@ -1219,6 +1219,18 @@ export function ApiProfileInvoicesIndex(getParams = {}, postData = null) {
     return apiClient.get(makeQuery('/home/invoices', getParams), prepareRequestData(postData));
 }
 
+export function ApiProfilePaymentsIndex(getParams = {}, postData = null) {
+    // see profile.payments.index
+    // controller: App\Http\Controllers\Profile\PaymentHistoryController@index
+    return apiClient.get(makeQuery('/home/payments', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfilePaymentsList(getParams = {}, postData = null) {
+    // see profile.payments.list
+    // controller: App\Http\Controllers\Profile\PaymentHistoryController@list
+    return apiClient.get(makeQuery('/home/payments/json/list', getParams), prepareRequestData(postData));
+}
+
 export function ApiProfileSavePassword(getParams = {}, postData = null) {
     // see profile.save.password
     // controller: App\Http\Controllers\Profile\ProfileController@savePassword

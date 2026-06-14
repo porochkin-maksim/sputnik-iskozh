@@ -5,7 +5,8 @@ import AccountBlock    from '@components/profile/account/AccountBlock.vue';
 import CounterItem     from '@components/profile/counters/CounterItem.vue';
 import CountersBlock   from '@components/profile/counters/CountersBlock.vue';
 import InvoicesBlock   from '@components/profile/invoices/InvoicesBlock.vue';
-import SummaryBlock    from '@components/shared/summary/SummaryBlock.vue';
+import SummaryBlock           from '@components/shared/summary/SummaryBlock.vue';
+import PaymentsHistoryBlock   from '@components/profile/payments/PaymentsHistoryBlock.vue';
 
 export function registerProfileComponents (app) {
     app.component('alerts-block', Alerts);
@@ -16,4 +17,5 @@ export function registerProfileComponents (app) {
     app.component('counters-block', CountersBlock);
     app.component('profile-invoices-block', InvoicesBlock);
     app.component('summary-block', SummaryBlock);
+    app.component('payments-history-block', PaymentsHistoryBlock);
 }

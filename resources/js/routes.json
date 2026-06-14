@@ -1595,6 +1595,20 @@
         "uri": "\/home\/invoices",
         "args": []
     },
+    "profilePaymentsIndex": {
+        "name": "profile.payments.index",
+        "displayName": "\u041f\u043b\u0430\u0442\u0435\u0436\u0438",
+        "method": "get",
+        "uri": "\/home\/payments",
+        "args": []
+    },
+    "profilePaymentsList": {
+        "name": "profile.payments.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/payments\/json\/list",
+        "args": []
+    },
     "profileSavePassword": {
         "name": "profile.save.password",
         "displayName": "",

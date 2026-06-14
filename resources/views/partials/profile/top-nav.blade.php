@@ -32,8 +32,14 @@ $hasAccount = (bool) lc::account()->getId();
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link @if(Route::is(RouteNames::PROFILE_PAYMENTS_INDEX)) active @endif"
+               href="{{ route(RouteNames::PROFILE_PAYMENTS_INDEX) }}">
+                <i class="fa fa-credit-card"></i> <span>Платежи</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> <span>Вернуться на главную</span>
+                <i class="fa fa-mail-reply"></i> <span>На главную</span>
             </a>
         </li>
         @endif
@@ -60,11 +66,17 @@ $hasAccount = (bool) lc::account()->getId();
                 <i class="fa fa-money"></i>  {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::PROFILE_PAYMENTS_INDEX) }}">
+                <i class="fa fa-credit-card"></i>  Платежи
+            </a>
+        </li>
         @endif
         <li class="nav-item">
             <a class="nav-link"
                href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> Вернуться на главную
+                <i class="fa fa-mail-reply"></i> На главную
             </a>
         </li>
     </ul>

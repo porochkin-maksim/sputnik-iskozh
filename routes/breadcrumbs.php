@@ -33,6 +33,10 @@ Breadcrumbs::for(RouteNames::PROFILE_COUNTER_VIEW, static function (BreadcrumbTr
     $trail->parent(RouteNames::PROFILE_COUNTERS);
     $trail->push('Счётчик ' . $counter->getNumber(), route(RouteNames::PROFILE_COUNTER_VIEW, [$counter->getUid()]));
 });
+Breadcrumbs::for(RouteNames::PROFILE_PAYMENTS_INDEX, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::HOME);
+    $trail->push('Платежи', route(RouteNames::PROFILE_PAYMENTS_INDEX));
+});
 
 // публичная часть
 Breadcrumbs::for(RouteNames::INDEX, static function (BreadcrumbTrail $trail) {

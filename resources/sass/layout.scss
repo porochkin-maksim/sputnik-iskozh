@@ -290,6 +290,14 @@
 
     .site-navbar--profile {
         background : linear-gradient(180deg, rgba($default-primary, 0.98) 0%, rgba(darken($default-primary, 8%), 0.96) 100%) !important;
+
+        .horizontal-menu .nav-link {
+            color : rgba(#fff, 0.92) !important;
+        }
+
+        .vertical-menu-light .nav-link {
+            color : rgba(#fff, 0.92);
+        }
     }
 
     .site-navbar--admin {
