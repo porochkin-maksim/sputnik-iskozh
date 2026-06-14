@@ -4,8 +4,8 @@ use App\Resources\RouteNames;
 use Illuminate\Support\Facades\Route;
 ?>
 
-<div class="horizontal-menu d-flex flex-column flex-lg-row justify-content-between w-100 align-items-start align-items-lg-center">
-    <ul class="navbar-nav me-lg-auto mb-0 site-menu__nav">
+<div class="horizontal-menu d-flex flex-column flex-lg-row justify-content-end w-100 align-items-start align-items-lg-center">
+    <ul class="navbar-nav d-lg-none mb-0 site-menu__nav">
         <li class="nav-item">
             <a class="nav-link @if(Route::is(RouteNames::CONTACTS)) active @endif"
                href="{{ route(RouteNames::CONTACTS) }}">
@@ -34,10 +34,7 @@ use Illuminate\Support\Facades\Route;
                 <span>{{ RouteNames::name(RouteNames::NEWS) }}</span>
             </a>
         </li>
-    </ul>
-
-    <ul class="navbar-nav d-lg-none mb-0 mt-1 site-menu__nav">
-        <li class="nav-item">
+        <li class="nav-item mt-1">
             <a class="nav-link @if(Route::is(RouteNames::GARBAGE)) active @endif"
                href="{{ route(RouteNames::GARBAGE) }}">
                 <i class="fa fa-trash"></i>
@@ -60,7 +57,7 @@ use Illuminate\Support\Facades\Route;
         </li>
     </ul>
 
-    <ul class="navbar-nav ms-lg-auto mb-0 site-menu__nav">
+    <ul class="navbar-nav mb-0 site-menu__nav">
         @guest
             <li class="nav-item">
                 <auth-block :has-modal="true"></auth-block>

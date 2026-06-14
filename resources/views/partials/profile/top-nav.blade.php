@@ -57,43 +57,8 @@ $hasAccount = (bool) lc::account()->getId();
         </li>
     </ul>
 </div>
-<div class="horizontal-menu d-none d-lg-flex justify-content-between w-100">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        @if ($hasAccount)
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
-                <i class="fa fa-bolt"></i>  {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE_INVOICES) }}">
-                <i class="fa fa-money"></i>  {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE_PAYMENTS_INDEX) }}">
-                <i class="fa fa-credit-card"></i>  Платежи
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::PROFILE_HELP_DESK_INDEX) }}">
-                <i class="fa fa-bullhorn"></i>  Заявки
-            </a>
-        </li>
-        @endif
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{{ route(RouteNames::INDEX) }}">
-                <i class="fa fa-mail-reply"></i> На главную
-            </a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
+<div class="horizontal-menu d-none d-lg-flex justify-content-end w-100">
+    <ul class="navbar-nav">
         <li class="nav-item">
             <a class="nav-link"
                href="{{ route(RouteNames::HOME) }}">

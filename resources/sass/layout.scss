@@ -464,6 +464,58 @@
         padding-bottom : 1.25rem;
     }
 
+    .profile-layout-inner {
+        display    : flex;
+        flex       : 1;
+        width      : 100%;
+        max-width  : 1200px;
+        margin     : 0 auto;
+
+        .profile-sidebar {
+            width            : 220px;
+            flex-shrink      : 0;
+            padding          : 1.25rem 0.75rem;
+            border-right     : 1px solid rgba($default-primary, 0.1);
+            background-color : #fff;
+
+            .side-menu {
+                position : sticky;
+                top      : 1rem;
+            }
+        }
+
+        .profile-main {
+            max-width : none;
+            margin    : 0;
+        }
+    }
+
+    .public-layout-inner {
+        display    : flex;
+        flex       : 1;
+        width      : 100%;
+        max-width  : 1200px;
+        margin     : 0 auto;
+
+        .public-sidebar {
+            width            : 220px;
+            flex-shrink      : 0;
+            padding          : 1.25rem 0.75rem;
+            border-right     : 1px solid rgba($default-primary, 0.1);
+            background-color : #fff;
+
+            .side-menu {
+                position : sticky;
+                top      : 1rem;
+            }
+        }
+
+        > main {
+            max-width : none;
+            margin    : 0;
+        }
+    }
+
     .admin-main {
         flex           : 1 1 auto;
         max-width      : 1600px;

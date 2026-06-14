@@ -108,7 +108,11 @@ export function useFoldersNavigation (props) {
     };
 
     const loadFolderPath = () => {
-        ApiFoldersInfo(selectedFolder.value?.id ? selectedFolder.value?.id : '0').then(response => {
+        const id = selectedFolder.value?.id;
+        if (!id) {
+            return;
+        }
+        ApiFoldersInfo(id).then(response => {
             setBreadcrumbHtml(response.data.breadcrumbs);
         }).catch(response => {
             parseResponseErrors(response);

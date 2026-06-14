@@ -63,9 +63,14 @@ $season = match (Carbon::now()->month) {
 @if(!App::isProduction())
     <div class="development-strip position-absolute w-100 top-0 left-0"></div>
 @endif
-<main class="profile-main px-3 py-2 page-shell">
-    @yield(SectionNames::CONTENT)
-</main>
+<div class="profile-layout-inner">
+    <aside class="profile-sidebar d-none d-lg-flex flex-column">
+        @include('partials.profile.side-nav')
+    </aside>
+    <main class="profile-main px-3 py-2 page-shell">
+        @yield(SectionNames::CONTENT)
+    </main>
+</div>
 <footer>
     <div class="d-flex justify-content-center py-3">
         <div class="social d-flex flex-column align-items-center">
