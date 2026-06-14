@@ -121,6 +121,7 @@ import FileUploader   from '@common/files/FileUploader.vue';
 defineProps({
     categoryOptions    : { type: Array, required: true },
     canDelete          : { type: Boolean, required: true },
+    createdAt          : { type: String, default: null },
     canEdit            : { type: Boolean, required: true },
     editForm           : { type: Object, required: true },
     errors             : { type: Object, required: true },

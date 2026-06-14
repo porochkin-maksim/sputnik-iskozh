@@ -30,9 +30,9 @@
             </template>
         </td>
         <td>{{ formatDate(ticket.created_at) }}</td>
-        <td v-if="canDelete" class="table-thin-column text-center">
+        <td class="table-thin-column text-center">
             <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-danger" title="Удалить" @click="$emit('delete', ticket.id)">
+                <button v-if="canDeleteRow" class="btn btn-outline-danger" title="Удалить" @click="$emit('delete', ticket.id)">
                     <i class="fa fa-trash"></i>
                 </button>
             </div>
@@ -41,9 +41,11 @@
 </template>
 
 <script setup>
-import { useFormat } from '@composables/useFormat';
+import { computed }         from 'vue';
+import { useFormat }        from '@composables/useFormat';
+import { TicketStatusEnum } from '@utils/enum.js';
 
-defineProps({
+const props = defineProps({
     canDelete: { type: Boolean, default: false },
     ticket   : { type: Object, required: true },
 });
@@ -51,4 +53,9 @@ defineProps({
 defineEmits(['delete']);
 
 const { formatDate } = useFormat();
+
+const canDeleteRow = computed(() =>
+    props.canDelete &&
+    ![TicketStatusEnum.CLOSED.value, TicketStatusEnum.REJECTED.value].includes(props.ticket.status),
+);
 </script>

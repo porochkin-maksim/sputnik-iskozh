@@ -30,8 +30,8 @@ readonly class SaveCommand
         ?string $contactName,
         ?string $contactPhone,
         ?string $contactEmail,
-        int     $userId,
-        int     $accountId,
+        ?int    $userId,
+        ?int    $accountId,
         array   $files,
         array   $resultFiles,
     ): ?TicketEntity

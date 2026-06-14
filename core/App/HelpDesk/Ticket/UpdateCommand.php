@@ -35,7 +35,7 @@ readonly class UpdateCommand
         $category = $this->categoryService->getById($input->categoryId);
         $service  = $this->serviceService->getById($input->serviceId);
 
-        $ticket = (new TicketEntity())
+        $ticket = new TicketEntity()
             ->setId($input->id)
             ->setType(TicketTypeEnum::tryFrom($input->type))
             ->setCategoryId($category?->getId())

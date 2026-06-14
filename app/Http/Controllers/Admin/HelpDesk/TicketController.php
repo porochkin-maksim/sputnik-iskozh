@@ -107,8 +107,8 @@ class TicketController extends Controller
             $request->getStringOrNull('contact_name'),
             $request->getStringOrNull('contact_phone'),
             $request->getStringOrNull('contact_email'),
-            $request->getInt('user_id'),
-            $request->getInt('account_id'),
+            $request->getIntOrNull('user_id'),
+            $request->getIntOrNull('account_id'),
             $request->files('files', []),
             $request->files('result_files', []),
         );

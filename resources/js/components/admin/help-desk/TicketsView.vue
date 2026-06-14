@@ -16,6 +16,7 @@
                     :saving="saving"
                     :service-options="serviceOptions"
                     :status-options="statusOptions"
+                    :created-at="ticketData.created_at"
                     :ticket-id="ticketData.id"
                     :type-options="typeOptions"
                     @category-change="onCategoryChange"

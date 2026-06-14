@@ -33,7 +33,10 @@ export function useTicketsView (props) {
         ![TicketStatusEnum.CLOSED.value, TicketStatusEnum.REJECTED.value].includes(ticketData.value?.status),
     );
 
-    const canDelete = computed(() => has('help_desk', 'drop'));
+    const canDelete = computed(() =>
+        has('help_desk', 'drop') &&
+        ![TicketStatusEnum.CLOSED.value, TicketStatusEnum.REJECTED.value].includes(ticketData.value?.status),
+    );
 
     const editForm = ref({
         description  : '',
