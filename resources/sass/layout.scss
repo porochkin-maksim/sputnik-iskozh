@@ -1241,6 +1241,189 @@
     }
 }
 
+.profile-payments-list {
+    display        : flex;
+    flex-direction : column;
+    gap            : 0.75rem;
+}
+
+.profile-payment-card {
+    &__header {
+        display         : flex;
+        justify-content : space-between;
+        align-items     : flex-start;
+        gap             : 1rem;
+        padding         : 0.85rem 1.1rem 0;
+    }
+
+    &__title {
+        display     : flex;
+        flex-direction : column;
+        gap         : 0.15rem;
+    }
+
+    &__label {
+        font-size    : 0.72rem;
+        font-weight  : 700;
+        text-transform : uppercase;
+        letter-spacing : 0.04em;
+        color        : $color-secondary;
+    }
+
+    &__value {
+        font-weight : 600;
+        color       : $default-primary;
+    }
+
+    &__amount {
+        font-size   : 1.1rem;
+        font-weight : 700;
+        color       : $default-primary;
+        white-space : nowrap;
+    }
+
+    &__meta {
+        display : flex;
+        flex-wrap : wrap;
+        gap     : 0.5rem;
+        padding : 0.6rem 1.1rem 0.85rem;
+    }
+}
+
+.profile-payment-chip {
+    display     : flex;
+    flex-direction : column;
+    gap         : 0.1rem;
+    min-width   : 0;
+    flex        : 1 1 8rem;
+
+    &__label {
+        font-size    : 0.68rem;
+        font-weight  : 600;
+        text-transform : uppercase;
+        letter-spacing : 0.04em;
+        color        : $color-secondary;
+    }
+
+    &__value {
+        font-size   : 0.88rem;
+        font-weight : 600;
+        color       : $default-primary;
+    }
+}
+
+.profile-tickets-list {
+    display        : flex;
+    flex-direction : column;
+    gap            : 0.75rem;
+}
+
+.profile-ticket-card {
+    &__header {
+        display         : flex;
+        justify-content : space-between;
+        align-items     : flex-start;
+        gap             : 1rem;
+        padding         : 0.85rem 1.1rem 0;
+    }
+
+    &__title {
+        display     : flex;
+        flex-direction : column;
+        gap         : 0.15rem;
+    }
+
+    &__label {
+        font-size    : 0.88rem;
+        font-weight  : 700;
+        color        : $default-primary;
+    }
+
+    &__value {
+        font-size   : 0.78rem;
+        color       : $color-secondary;
+    }
+
+    &__meta {
+        display : flex;
+        flex-wrap : wrap;
+        gap     : 0.5rem;
+        padding : 0.6rem 1.1rem 0.5rem;
+    }
+
+    &__action {
+        padding : 0 1.1rem 0.85rem;
+    }
+
+    .badge {
+        font-size    : 0.72rem;
+        font-weight  : 600;
+        padding      : 0.25em 0.5em;
+        border-radius : 0.3rem;
+
+        &-warning {
+            background-color : #fff3cd;
+            color            : #856404;
+        }
+        &-info {
+            background-color : #cce5ff;
+            color            : #004085;
+        }
+        &-primary {
+            background-color : #d4edda;
+            color            : #155724;
+        }
+        &-secondary {
+            background-color : #e2e3e5;
+            color            : #383d41;
+        }
+        &-danger {
+            background-color : #f8d7da;
+            color            : #721c24;
+        }
+    }
+}
+
+.profile-ticket-chip {
+    display     : flex;
+    flex-direction : column;
+    gap         : 0.1rem;
+    min-width   : 0;
+    flex        : 1 1 8rem;
+
+    &__label {
+        font-size    : 0.68rem;
+        font-weight  : 600;
+        text-transform : uppercase;
+        letter-spacing : 0.04em;
+        color        : $color-secondary;
+    }
+
+    &__value {
+        font-size   : 0.88rem;
+        font-weight : 600;
+        color       : $default-primary;
+    }
+}
+
+@media (max-width : $lg) {
+    .profile-payment-card__meta {
+        flex-direction : column;
+    }
+
+    .profile-payment-chip {
+        flex : 1 1 auto;
+    }
+
+    .profile-ticket-card__meta {
+        flex-direction : column;
+    }
+
+    .profile-ticket-chip {
+        flex : 1 1 auto;
+    }
+}
+
 .profile-summary-card {
     border-radius    : 1rem;
     border           : 1px solid rgba($default-primary, 0.12);

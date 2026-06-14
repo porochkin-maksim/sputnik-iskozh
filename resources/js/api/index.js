@@ -1213,6 +1213,24 @@ export function ApiProfileCountersView(counter, getParams = {}, postData = null)
     return apiClient.get(makeQuery('/home/counters/'+counter+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiProfileHelpDeskIndex(getParams = {}, postData = null) {
+    // see profile.help-desk.index
+    // controller: App\Http\Controllers\Profile\HelpDeskController@index
+    return apiClient.get(makeQuery('/home/help-desk', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileHelpDeskList(getParams = {}, postData = null) {
+    // see profile.help-desk.list
+    // controller: App\Http\Controllers\Profile\HelpDeskController@list
+    return apiClient.get(makeQuery('/home/help-desk/json/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileHelpDeskView(id, getParams = {}, postData = null) {
+    // see profile.help-desk.view
+    // controller: App\Http\Controllers\Profile\HelpDeskController@view
+    return apiClient.get(makeQuery('/home/help-desk/'+id+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiProfileInvoicesIndex(getParams = {}, postData = null) {
     // see profile.invoices.index
     // controller: App\Http\Controllers\Profile\HomeController@invoices

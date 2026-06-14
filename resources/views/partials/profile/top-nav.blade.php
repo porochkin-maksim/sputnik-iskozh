@@ -38,6 +38,12 @@ $hasAccount = (bool) lc::account()->getId();
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link @if(Route::is(RouteNames::PROFILE_HELP_DESK_INDEX)) active @endif"
+               href="{{ route(RouteNames::PROFILE_HELP_DESK_INDEX) }}">
+                <i class="fa fa-bullhorn"></i> <span>Заявки</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{{ route(RouteNames::INDEX) }}">
                 <i class="fa fa-mail-reply"></i> <span>На главную</span>
             </a>
@@ -70,6 +76,12 @@ $hasAccount = (bool) lc::account()->getId();
             <a class="nav-link"
                href="{{ route(RouteNames::PROFILE_PAYMENTS_INDEX) }}">
                 <i class="fa fa-credit-card"></i>  Платежи
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ route(RouteNames::PROFILE_HELP_DESK_INDEX) }}">
+                <i class="fa fa-bullhorn"></i>  Заявки
             </a>
         </li>
         @endif

@@ -96,6 +96,10 @@ abstract class RouteNames
     public const string PROFILE_PAYMENTS_INDEX = 'profile.payments.index';
     public const string PROFILE_PAYMENTS_LIST  = 'profile.payments.list';
 
+    public const string PROFILE_HELP_DESK_INDEX = 'profile.help-desk.index';
+    public const string PROFILE_HELP_DESK_LIST  = 'profile.help-desk.list';
+    public const string PROFILE_HELP_DESK_VIEW  = 'profile.help-desk.view';
+
     public const string HISTORY_CHANGES = 'infra.history-changes';
 
     public const string SUMMARY           = 'common.summary';
@@ -270,6 +274,7 @@ abstract class RouteNames
             self::PROFILE_COUNTERS                    => 'Счётчики',
             self::PROFILE_INVOICES                    => 'Счета',
             self::PROFILE_PAYMENTS_INDEX              => 'Платежи',
+            self::PROFILE_HELP_DESK_INDEX             => 'Заявки',
 
             self::FILES                               => 'Документы',
             self::NEWS                                => 'Новости',

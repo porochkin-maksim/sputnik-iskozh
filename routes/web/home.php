@@ -39,6 +39,12 @@ Route::group(['prefix' => 'home'], static function () {
                 Route::get('/', [Controllers\Profile\PaymentHistoryController::class, 'index'])->name(RouteNames::PROFILE_PAYMENTS_INDEX);
                 Route::get('/json/list', [Controllers\Profile\PaymentHistoryController::class, 'list'])->name(RouteNames::PROFILE_PAYMENTS_LIST);
             });
+            Route::group(['prefix' => 'help-desk'], static function () {
+                Route::get('/', [Controllers\Profile\HelpDeskController::class, 'index'])->name(RouteNames::PROFILE_HELP_DESK_INDEX);
+                Route::get('/json/list', [Controllers\Profile\HelpDeskController::class, 'list'])->name(RouteNames::PROFILE_HELP_DESK_LIST);
+
+                Route::get('/{id}', [Controllers\Profile\HelpDeskController::class, 'view'])->name(RouteNames::PROFILE_HELP_DESK_VIEW);
+            });
         });
     });
 });

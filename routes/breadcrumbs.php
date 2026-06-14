@@ -37,6 +37,14 @@ Breadcrumbs::for(RouteNames::PROFILE_PAYMENTS_INDEX, static function (Breadcrumb
     $trail->parent(RouteNames::HOME);
     $trail->push('Платежи', route(RouteNames::PROFILE_PAYMENTS_INDEX));
 });
+Breadcrumbs::for(RouteNames::PROFILE_HELP_DESK_INDEX, static function (BreadcrumbTrail $trail) {
+    $trail->parent(RouteNames::HOME);
+    $trail->push('Заявки', route(RouteNames::PROFILE_HELP_DESK_INDEX));
+});
+Breadcrumbs::for(RouteNames::PROFILE_HELP_DESK_VIEW, static function (BreadcrumbTrail $trail, \Core\Domains\HelpDesk\Models\TicketEntity $ticket) {
+    $trail->parent(RouteNames::PROFILE_HELP_DESK_INDEX);
+    $trail->push('Заявка №' . $ticket->getId());
+});
 
 // публичная часть
 Breadcrumbs::for(RouteNames::INDEX, static function (BreadcrumbTrail $trail) {

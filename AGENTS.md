@@ -42,6 +42,7 @@
 - `resources/js/api/index.js` is auto-generated — do not edit manually. **Никогда** не писать URL вручную, использовать только сгенерированные беком функции из `@api`.
 - Vite uses polling for HMR (Docker requirement)
 - `CustomSelect` ждёт `{value, label}`, `EnumCommonTrait::json()` отдаёт `{key, value}` — всегда нормализовать через computed
+- Табличная вёрстка (`<table>`) в личном кабинете (profile) **запрещена**. Пользователи в основном с телефонов. Только карточки (BEM-блоки `.profile-*-card`, `.page-card`). Исключение — только вынужденные случаи (например, админка).
 
 ## Редактирование файлов (Surgeon Rule)
 - `oldString` должен содержать **только целевую строку** (максимум ±1 токен для уникальности).

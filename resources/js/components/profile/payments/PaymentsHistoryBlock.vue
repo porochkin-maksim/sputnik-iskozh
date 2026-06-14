@@ -8,31 +8,36 @@
     />
 
     <template v-else>
-        <div v-if="payments.length === 0" class="text-center text-secondary py-4">
-            <i class="fa fa-credit-card fa-3x mb-3"></i>
-            <p class="mb-0">Платежей пока нет</p>
+        <div v-if="payments.length === 0" class="profile-empty-state">
+            <hr>
+            <h6 class="text-center text-secondary m-0"><i>платежей нет...</i></h6>
         </div>
 
         <template v-else>
-            <div class="table-responsive">
-                <table class="table table-hover admin-table-firm">
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Период</th>
-                            <th>Назначение</th>
-                            <th class="text-end">Сумма</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="payment in payments" :key="payment.id">
-                            <td class="text-nowrap">{{ payment.date }}</td>
-                            <td>{{ payment.periodName }}</td>
-                            <td>{{ payment.name || payment.invoiceName }}</td>
-                            <td class="text-end text-nowrap">{{ formatMoney(payment.cost) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="profile-payments-list">
+                <div v-for="payment in payments" :key="payment.id" class="page-card profile-payment-card">
+                    <div class="profile-payment-card__header">
+                        <div class="profile-payment-card__title">
+                            <span class="profile-payment-card__label">Дата</span>
+                            <span class="profile-payment-card__value">{{ payment.date }}</span>
+                        </div>
+                        <div class="profile-payment-card__amount">{{ formatMoney(payment.cost) }}</div>
+                    </div>
+                    <div class="profile-payment-card__meta">
+                        <div class="profile-payment-chip">
+                            <span class="profile-payment-chip__label">Период</span>
+                            <span class="profile-payment-chip__value">{{ payment.periodName }}</span>
+                        </div>
+                        <div class="profile-payment-chip">
+                            <span class="profile-payment-chip__label">Участок</span>
+                            <span class="profile-payment-chip__value">{{ payment.accountNumber }}</span>
+                        </div>
+                        <div class="profile-payment-chip">
+                            <span class="profile-payment-chip__label">Назначение</span>
+                            <span class="profile-payment-chip__value">{{ payment.name || payment.invoiceName }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div v-if="hasMore" class="text-center mt-3">

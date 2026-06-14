@@ -47,4 +47,11 @@ class TicketSearcher extends BaseSearcher
 
         return $this;
     }
+
+    public function setUserId(?int $id): static
+    {
+        $this->addWhere(Ticket::USER_ID, SearcherInterface::EQUALS, $id);
+
+        return $this;
+    }
 }

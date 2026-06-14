@@ -1588,6 +1588,29 @@
             "counter": "{counter}"
         }
     },
+    "profileHelpDeskIndex": {
+        "name": "profile.help-desk.index",
+        "displayName": "\u0417\u0430\u044f\u0432\u043a\u0438",
+        "method": "get",
+        "uri": "\/home\/help-desk",
+        "args": []
+    },
+    "profileHelpDeskList": {
+        "name": "profile.help-desk.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/help-desk\/json\/list",
+        "args": []
+    },
+    "profileHelpDeskView": {
+        "name": "profile.help-desk.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/help-desk\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "profileInvoicesIndex": {
         "name": "profile.invoices.index",
         "displayName": "\u0421\u0447\u0435\u0442\u0430",
