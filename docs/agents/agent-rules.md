@@ -95,6 +95,34 @@ PHP-код форматируется единообразно во всём п�
 - **Config в тестах**: `config()` возвращает реальные значения из `.env` даже в тестовом окружении. Учитывай это при подсчёте вызовов (например, `config('mail.emails.admin')`).
 - **AccountService::getById()** принимает 1 аргумент (`int|string|null $id`), но `UpdateValidator` вызывает с 2 (`getById($id, true)`). Это баг production-кода — при тестировании мок принимает любые аргументы, но production упадёт, если код дойдёт до этой ветки.
 
+## 11. Глобальная обработка ValidationException
+
+`Core\Exceptions\ValidationException` глобально обрабатывается в `app/Exceptions/Handler.php`:
+
+```php
+$this->renderable(function (ValidationException $e, $request) {
+    if ($request->expectsJson()) {
+        return response()->json(['errors' => $e->errors], 422);
+    }
+    return redirect()->back()->withErrors($e->errors);
+});
+```
+
+**Следствия для кода:**
+- Не оборачивать `ValidationException` в try/catch в контроллере — Handler сам вернёт корректный ответ.
+- В HTTP-тестах для JSON-эндпоинтов использовать `$this->postJson()` (или `->withHeaders(['Accept' => 'application/json'])`), чтобы `expectsJson()` возвращал `true`.
+- Если эндпоинт всегда возвращает JSON (тип `JsonResponse`), достаточно `$this->postJson()` в тестах — контроллер не проверяет `wantsJson()`, ответ всегда JSON.
+
+## 12. Страницы ошибок (HTTP exceptions)
+
+- **Всегда использовать `__()` для сообщений** в `resources/views/errors/*.blade.php`. Не выводить `$exception->getMessage()` — он может содержать английский текст от Symfony.
+- **Лейаут выбирается динамически** через `Handler::render()`:
+  - `/admin/*` → `layouts.admin-layout`
+  - `/profile/*` → `layouts.profile-layout`
+  - остальные → `layouts.app-layout`
+- **Namespace `errors::` не зарегистрирован** — использовать только dot-нотацию: `@extends('errors.minimal')`, а не `@extends('errors::minimal')`.
+- **Русские переводы** HTTP-сообщений лежат в `resources/lang/ru.json`. Вендорные переводы (Nova/Spark) — в `resources/lang/_ru.json`, их не редактировать.
+
 ## 10. Мета-правила агента
 
 1. **Фиксировать всё в документацию.** Любое новое знание о проекте, стиле, архитектуре — сразу в `docs/agents/`. Если пользователь поправил — обновить доку.
