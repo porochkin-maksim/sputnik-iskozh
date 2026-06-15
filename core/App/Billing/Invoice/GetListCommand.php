@@ -74,7 +74,7 @@ readonly class GetListCommand
 
         if ($account) {
             $accountIds = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$account}%"),
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "{$account}%"),
             )->getItems()->getIds();
             $searcher->setAccountIds($accountIds);
         }

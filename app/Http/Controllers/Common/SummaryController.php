@@ -37,7 +37,7 @@ class SummaryController extends Controller
         }
         elseif ($request->getSearch()) {
             $accountIds = $this->accountService->search(
-                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getSearch()}%"),
+                AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "{$request->getSearch()}%"),
             )->getItems()->getIds();
         }
 

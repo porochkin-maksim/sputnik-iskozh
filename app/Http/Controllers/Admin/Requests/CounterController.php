@@ -62,7 +62,7 @@ class CounterController extends Controller
             ;
             if ($request->getSearch()) {
                 $accountIds = $this->accountService->search(
-                    AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$request->getSearch()}%"),
+                    AccountSearcher::make()->addWhere(Account::NUMBER, SearcherInterface::LIKE, "{$request->getSearch()}%"),
                 )->getItems()->getIds();
 
                 $counterIds = $this->counterService->search(

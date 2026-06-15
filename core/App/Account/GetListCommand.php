@@ -40,7 +40,7 @@ readonly class GetListCommand
         ;
 
         if ($search) {
-            $searcher->addWhere(Account::NUMBER, SearcherInterface::LIKE, "%{$search}%");
+            $searcher->addWhere(Account::NUMBER, SearcherInterface::LIKE, "{$search}%");
         }
 
         if ($accountId) {
