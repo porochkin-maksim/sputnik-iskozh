@@ -89,10 +89,10 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $targetService = new ServiceEntity;
         $targetService->setType(ServiceTypeEnum::TARGET_FEE);
 
-        $claim1 = new ClaimEntity;
-        $claim1->setId(1)->setCost(50.0)->setService($membershipService);
-        $claim2 = new ClaimEntity;
-        $claim2->setId(2)->setCost(80.0)->setService($targetService);
+        $claim1 = (new ClaimEntity)
+            ->setId(1)->setCost(50.0)->setTariff(50.0)->setQuantity(1.0)->setService($membershipService);
+        $claim2 = (new ClaimEntity)
+            ->setId(2)->setCost(80.0)->setTariff(80.0)->setQuantity(1.0)->setService($targetService);
 
         $claimResponse = new ClaimSearchResponse;
         $claimResponse->setItems(new ClaimCollection([$claim1, $claim2]));
@@ -141,8 +141,8 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $membershipService = new ServiceEntity;
         $membershipService->setType(ServiceTypeEnum::MEMBERSHIP_FEE);
 
-        $claim1 = new ClaimEntity;
-        $claim1->setId(1)->setCost(50.0)->setService($membershipService);
+        $claim1 = (new ClaimEntity)
+            ->setId(1)->setCost(50.0)->setTariff(50.0)->setQuantity(1.0)->setService($membershipService);
 
         $claimResponse = new ClaimSearchResponse;
         $claimResponse->setItems(new ClaimCollection([$claim1]));
@@ -201,14 +201,14 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $advanceServiceType = new ServiceEntity;
         $advanceServiceType->setType(ServiceTypeEnum::ADVANCE_PAYMENT);
 
-        $advanceClaim = new ClaimEntity;
-        $advanceClaim->setId(3)->setCost(20.0)->setPaid(20.0)->setService($advanceServiceType);
+        $advanceClaim = (new ClaimEntity)
+            ->setId(3)->setCost(20.0)->setPaid(20.0)->setTariff(20.0)->setQuantity(1.0)->setService($advanceServiceType);
 
         $membershipService = new ServiceEntity;
         $membershipService->setType(ServiceTypeEnum::MEMBERSHIP_FEE);
 
-        $claim1 = new ClaimEntity;
-        $claim1->setId(1)->setCost(50.0)->setService($membershipService);
+        $claim1 = (new ClaimEntity)
+            ->setId(1)->setCost(50.0)->setTariff(50.0)->setQuantity(1.0)->setService($membershipService);
 
         $claimResponse = new ClaimSearchResponse;
         $claimResponse->setItems(new ClaimCollection([$advanceClaim, $claim1]));

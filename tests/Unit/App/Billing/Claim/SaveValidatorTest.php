@@ -48,7 +48,7 @@ class SaveValidatorTest extends TestCase
         $invoice = $this->createInvoice(['period_id' => $this->periodId, 'account_id' => $this->accountId, 'type' => 1, 'cost' => 0, 'paid' => 0]);
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
-        $this->validator->validate($invoice->id, $service->id, 100.0, 500.0, 'test');
+        $this->validator->validate($invoice->id, $service->id, 100.0, 500.0, 'test', 10.0);
 
         $this->expectNotToPerformAssertions();
     }
@@ -64,7 +64,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate(99999, $service->id, 100.0, 500.0, 'test');
+        $this->validator->validate(99999, $service->id, 100.0, 500.0, 'test', 10.0);
     }
 
     public function test_null_service_id_throws(): void
@@ -72,7 +72,7 @@ class SaveValidatorTest extends TestCase
         $invoice = $this->createInvoice(['period_id' => $this->periodId, 'account_id' => $this->accountId, 'type' => 1, 'cost' => 0, 'paid' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, null, 100.0, 500.0, 'test');
+        $this->validator->validate($invoice->id, null, 100.0, 500.0, 'test', 10.0);
     }
 
     public function test_service_not_found_throws(): void
@@ -89,7 +89,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, $service->id, null, 500.0, 'test');
+        $this->validator->validate($invoice->id, $service->id, null, 500.0, 'test', 10.0);
     }
 
     public function test_negative_tariff_throws(): void
@@ -98,7 +98,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, $service->id, -1.0, 500.0, 'test');
+        $this->validator->validate($invoice->id, $service->id, -1.0, 500.0, 'test', 10.0);
     }
 
     public function test_null_cost_throws(): void
@@ -107,7 +107,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, $service->id, 100.0, null, 'test');
+        $this->validator->validate($invoice->id, $service->id, 100.0, null, 'test', 10.0);
     }
 
     public function test_negative_cost_throws(): void
@@ -116,7 +116,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, $service->id, 100.0, -5.0, 'test');
+        $this->validator->validate($invoice->id, $service->id, 100.0, -5.0, 'test', 10.0);
     }
 
     public function test_name_too_long_throws(): void
@@ -125,7 +125,7 @@ class SaveValidatorTest extends TestCase
         $service = $this->createService(['period_id' => $this->periodId, 'type' => 1, 'name' => 'Test', 'cost' => 0]);
 
         $this->expectException(ValidationException::class);
-        $this->validator->validate($invoice->id, $service->id, 100.0, 500.0, str_repeat('x', 256));
+        $this->validator->validate($invoice->id, $service->id, 100.0, 500.0, str_repeat('x', 256), 10.0);
     }
 
     public function test_validation_returns_all_errors(): void

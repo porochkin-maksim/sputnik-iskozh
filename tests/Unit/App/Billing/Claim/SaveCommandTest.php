@@ -46,7 +46,7 @@ class SaveCommandTest extends TestCase
             ->willReturnCallback(fn(ClaimEntity $c) => $c->setId(10))
         ;
 
-        $result = $this->command->execute(null, 1, 2, 100.0, 500.0, 'test');
+        $result = $this->command->execute(null, 1, 2, 100.0, 500.0, 'test', 5.0);
 
         $this->assertSame(10, $result->getId());
     }
@@ -72,7 +72,7 @@ class SaveCommandTest extends TestCase
             ->willReturnCallback(fn(ClaimEntity $c) => $c)
         ;
 
-        $result = $this->command->execute(5, 1, 2, 200.0, 600.0, 'updated');
+        $result = $this->command->execute(5, 1, 2, 200.0, 600.0, 'updated', 3.0);
 
         $this->assertSame(5, $result->getId());
         $this->assertSame(600.0, $result->getCost());
@@ -90,7 +90,7 @@ class SaveCommandTest extends TestCase
 
         $this->claimService->expects($this->never())->method('save');
 
-        $result = $this->command->execute(999, 1, 2, 100.0, 500.0, 'test');
+        $result = $this->command->execute(999, 1, 2, 100.0, 500.0, 'test', 5.0);
 
         $this->assertNull($result);
     }
@@ -104,7 +104,7 @@ class SaveCommandTest extends TestCase
 
         $this->expectException(ValidationException::class);
 
-        $this->command->execute(null, 1, 2, 100.0, null, 'test');
+        $this->command->execute(null, 1, 2, 100.0, null, 'test', 5.0);
     }
 
     public function test_execute_sets_tariff_from_cost_when_tariff_null(): void
@@ -119,6 +119,6 @@ class SaveCommandTest extends TestCase
             ->willReturnCallback(fn(ClaimEntity $c) => $c->setId(1))
         ;
 
-        $this->command->execute(null, 1, 2, null, 500.0, 'test');
+        $this->command->execute(null, 1, 2, null, 500.0, 'test', 1.0);
     }
 }
