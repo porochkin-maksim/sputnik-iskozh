@@ -18,7 +18,6 @@ readonly class SaveImportedAccountsCommand
             $this->saveCommand->execute(
                 id             : $data->id,
                 number         : $data->number ?: null,
-                isInvoicing    : false,
                 size           : $data->size,
                 cadastreNumber : $data->cadastreNumber,
             );

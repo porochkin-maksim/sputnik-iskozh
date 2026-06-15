@@ -28,6 +28,15 @@
         </div>
 
         <div class="mb-3">
+            <custom-input
+                :model-value="importName"
+                label="Название импорта (необяз.)"
+                placeholder="Импортированный платёж"
+                @update:modelValue="$emit('update:importName', $event)"
+            />
+        </div>
+
+        <div class="mb-3">
             <div class="btn-group" role="group">
                 <button
                     type="button"
@@ -146,6 +155,10 @@ const props = defineProps({
         type    : Object,
         required: true,
     },
+    importName    : {
+        type   : String,
+        default: '',
+    },
     mode          : {
         type    : String,
         required: true,
@@ -180,7 +193,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['update:mode', 'file-selected', 'upload', 'submit']);
+const emit = defineEmits(['update:mode', 'file-selected', 'upload', 'submit', 'update:importName']);
 
 const mainFileInput = ref(null);
 const prevFileInput = ref(null);

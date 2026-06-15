@@ -122,7 +122,7 @@ readonly class InvoiceImportService
         return $result;
     }
 
-    public function savePayments(array $paymentsData): void
+    public function savePayments(array $paymentsData, ?string $name = null): void
     {
         $lockName = LockNameEnum::SAVE_IMPORT_PAYMENTS_JOB;
 
@@ -133,7 +133,7 @@ readonly class InvoiceImportService
         $this->lockService->lock($lockName);
 
         $normalizedPaymentsData = array_map(
-            static fn(array $paymentData): ImportPaymentData => ImportPaymentData::fromArray($paymentData),
+            static fn(array $paymentData): ImportPaymentData => ImportPaymentData::fromArray($paymentData + ['name' => $name]),
             $paymentsData,
         );
 

@@ -18,7 +18,7 @@ class SaveValidator
         ?float $tariff,
         ?float $cost,
         ?string $name,
-        ?int $quantity = null,
+        ?float $quantity = null,
     ): void
     {
         $errors = [];

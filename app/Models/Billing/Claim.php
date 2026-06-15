@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float   $tariff
  * @property float   $cost
  * @property float   $paid
- * @property ?int    $quantity
+ * @property ?float  $quantity
  */
 class Claim extends AbstractModel
 {
@@ -46,7 +46,7 @@ class Claim extends AbstractModel
         self::TARIFF   => self::CAST_FLOAT,
         self::COST     => self::CAST_FLOAT,
         self::PAID     => self::CAST_FLOAT,
-        self::QUANTITY => self::CAST_INTEGER,
+        self::QUANTITY => self::CAST_FLOAT,
     ];
 
     public const string TITLE_NAME       = 'Название';

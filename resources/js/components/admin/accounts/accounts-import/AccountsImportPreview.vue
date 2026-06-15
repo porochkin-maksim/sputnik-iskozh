@@ -15,8 +15,10 @@
                     <th>#</th>
                     <th>ID</th>
                     <th>Участок</th>
-                    <th>Площадь</th>
-                    <th>Кадастровый номер</th>
+                    <th><i class="fa fa-database"></i> Площадь</th>
+                    <th><i class="fa fa-file-excel-o"></i> Площадь</th>
+                    <th><i class="fa fa-database"></i> Кадастровый</th>
+                    <th><i class="fa fa-file-excel-o"></i> Кадастровый</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,11 +32,27 @@
             </table>
         </div>
 
-        <pagination
-            :total="items.length"
-            :per-page="perPage"
-            @update="onPaginationUpdate"
-        />
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 text-nowrap">Показывать по:</label>
+                <select
+                    class="form-select form-select-sm"
+                    style="width: auto;"
+                    v-model="perPage"
+                    @change="skip = 0"
+                >
+                    <option v-for="opt in perPageOptions" :key="opt" :value="opt">
+                        {{ opt === Infinity ? 'Все' : opt }}
+                    </option>
+                </select>
+            </div>
+
+            <pagination
+                :total="items.length"
+                :per-page="perPage"
+                @update="onPaginationUpdate"
+            />
+        </div>
     </div>
 </template>
 
@@ -53,11 +71,12 @@ const props = defineProps({
     changes: { type: Number, required: true },
 });
 
-const perPage = 20;
-const skip    = ref(0);
+const perPageOptions = [10, 20, 50, 100, Infinity];
+const perPage        = ref(20);
+const skip           = ref(0);
 
 const currentPageItems = computed(() =>
-    props.items.slice(skip.value, skip.value + perPage)
+    props.items.slice(skip.value, skip.value + perPage.value)
 );
 
 const onPaginationUpdate = (newSkip) => {
@@ -65,6 +84,10 @@ const onPaginationUpdate = (newSkip) => {
 };
 
 watch(() => props.items, () => {
+    skip.value = 0;
+});
+
+watch(perPage, () => {
     skip.value = 0;
 });
 </script>

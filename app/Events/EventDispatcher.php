@@ -15,6 +15,13 @@ readonly class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(object|array $events): void
     {
+        if (is_array($events)) {
+            foreach ($events as $event) {
+                $this->dispatcher->dispatch($event);
+            }
+            return;
+        }
+
         $this->dispatcher->dispatch($events);
     }
 }

@@ -13,11 +13,11 @@ return new class extends Migration
         }
 
         DB::statement('
-            UPDATE claims c
-            JOIN services s ON s.id = c.service_id
-            SET c.quantity = ROUND(c.cost / c.tariff)
-            WHERE c.tariff > 0
-              AND c.quantity IS NULL
+            UPDATE `claims` `c`
+            JOIN `services` `s` ON `s`.`id` = `c`.`service_id`
+            SET `c`.`quantity` = `c`.`cost` / `c`.`tariff`
+            WHERE `c`.`tariff` > 0
+              AND `c`.`quantity` IS NULL
         ');
     }
 

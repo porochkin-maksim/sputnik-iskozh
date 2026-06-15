@@ -32,7 +32,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
     const fillStrategies = [
         { value: 'manual', label: 'Ручной ввод' },
         { value: 'difference', label: 'Разница "оплачено"' },
-        { value: 'invoiceDelta', label: 'Остаток из базы' },
+        { value: 'invoiceDelta', label: 'Долг из базы' },
         { value: 'importDebt', label: 'Долг из импорта' },
         { value: 'maxDebt', label: 'Максимальный долг' },
         { value: 'minDebt', label: 'Минимальный долг' },
@@ -215,7 +215,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         }
     };
 
-    const submitPayments = async () => {
+    const submitPayments = async (name) => {
         if (!canSubmit.value) {
             return;
         }
@@ -226,7 +226,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
 
         submitting.value = true;
         startTimer(true);
-        const payload = { payments: [] };
+        const payload = { payments: [], name };
 
         for (const districtData of importData.value) {
             for (const item of districtData.items) {

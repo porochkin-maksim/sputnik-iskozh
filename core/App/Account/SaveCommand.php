@@ -26,12 +26,11 @@ readonly class SaveCommand
     public function execute(
         ?int    $id,
         ?string $number,
-        bool    $isInvoicing,
         ?int    $size,
         ?string $cadastreNumber,
     ): ?AccountEntity
     {
-        $this->validator->validate($id, $number, $size);
+        $this->validator->validate($id, $number, (int) $size);
 
         $account = $id
             ? $this->accountService->getById($id)
@@ -41,11 +40,10 @@ readonly class SaveCommand
             return null;
         }
 
-        $account->setIsVerified(true);
         $account
+            ->setIsVerified(true)
             ->setNumber($number)
-            ->setIsInvoicing($isInvoicing)
-            ->setSize($size)
+            ->setSize((int) $size)
         ;
 
         $account = $this->accountService->save($account);

@@ -50,7 +50,7 @@
                     :errors="errors?.quantity"
                     label="Количество"
                     type="number"
-                    step="1"
+                    step="0.1"
                     min="1"
                     :disabled="!canEdit || !claim.actions.edit || loading"
                     @update:modelValue="onQuantityChanged"
@@ -64,8 +64,7 @@
                     label="Стоимость"
                     type="number"
                     step="0.01"
-                    :disabled="!canEdit || !claim.actions.edit || loading"
-                    @update:modelValue="$emit('cost-changed')"
+                    disabled
                 />
             </div>
         </template>
@@ -111,7 +110,7 @@ const emit = defineEmits(['clear-error', 'cost-changed', 'hidden', 'save', 'serv
 
 const recalcCost = () => {
     const tariff   = parseFloat(props.claim?.tariff);
-    const quantity = parseInt(props.claim?.quantity);
+    const quantity = parseFloat(props.claim?.quantity);
     if ( ! isNaN(tariff) && ! isNaN(quantity) && quantity >= 1) {
         props.claim.cost = (tariff * quantity).toFixed(2);
     }

@@ -17,7 +17,7 @@ class ClaimEntity
     private ?float         $tariff    = null;
     private ?float         $cost      = null;
     private ?float         $paid      = null;
-    private ?int           $quantity  = null;
+    private ?float         $quantity  = null;
     private ?ServiceEntity $service   = null;
     private ?InvoiceEntity $invoice   = null;
 
@@ -105,12 +105,12 @@ class ClaimEntity
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getQuantity(): ?float
     {
         return $this->quantity;
     }
 
-    public function setQuantity(?int $quantity): static
+    public function setQuantity(?float $quantity): static
     {
         $this->quantity = $quantity;
 

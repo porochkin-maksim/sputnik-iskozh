@@ -7,6 +7,7 @@
                 v-if="item.accountUrl"
                 :href="item.accountUrl"
                 target="_blank"
+                class="link-firm"
             >
                 {{ item.accountNumber }}
             </a>
@@ -17,15 +18,13 @@
                 v-if="item.invoiceId"
                 :href="item.invoiceUrl"
                 target="_blank"
+                class="link-firm"
             >
                 №{{ item.invoiceId }}
             </a>
         </td>
         <td class="text-end" :class="item.invoiceAdvance ? 'fw-bold' : 'text-secondary'">
             {{ formatMoney(item.invoiceAdvance) }}
-        </td>
-        <td class="text-end" :class="item.invoiceDebt ? 'fw-bold' : 'text-secondary'">
-            {{ formatMoney(item.invoiceDebt) }}
         </td>
         <td
             class="text-end text-secondary"

@@ -88,7 +88,7 @@ class ClaimController extends Controller
             tariff   : $request->getFloat('tariff'),
             cost     : $request->getFloat('cost'),
             name     : $request->getStringOrNull('name'),
-            quantity : $request->getIntOrNull('quantity'),
+            quantity : $request->getFloat('quantity'),
         );
 
         if ($claim === null) {

@@ -58,6 +58,7 @@ readonly class RecalcClaimsPaidCommand
 
         foreach ($sortedClaims as $claim) {
             $claim->setPaid(0);
+            $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
         }
 
         $remaining = $totalPaid;

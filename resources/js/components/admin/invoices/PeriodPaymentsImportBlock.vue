@@ -3,6 +3,7 @@
         <period-payments-import-controls
             ref="controlsRef"
             v-model:mode="mode"
+            :import-name="importName"
             :columns="columns"
             :files="files"
             :loading="loading"
@@ -14,6 +15,7 @@
             @file-selected="onFileSelected"
             @upload="uploadFiles"
             @submit="submitPayments"
+            @update:import-name="importName = $event"
         />
 
         <period-payments-import-preview
@@ -50,26 +52,32 @@ const props = defineProps({
 
 const controlsRef = ref(null);
 const {
-              activeTab,
-              applyAutoFill,
-              autoFillStrategy,
-              canSubmit,
-              canUpload,
-              columns,
-              editedAmounts,
-              error,
-              fillStrategies,
-              files,
-              getKey,
-              importData,
-              isColumnsValid,
+          activeTab,
+          applyAutoFill,
+          autoFillStrategy,
+          canSubmit,
+          canUpload,
+          columns,
+          editedAmounts,
+          error,
+          fillStrategies,
+          files,
+          getKey,
+          importData,
+          isColumnsValid,
           loading,
           loadingText,
           mode,
           onFileSelected,
-          submitPayments,
+          submitPayments: submitPaymentsOriginal,
           submitting,
           uploadFiles,
           validateAmount,
       }           = usePeriodPaymentsImportBlock(props, controlsRef);
+
+const importName = ref('');
+
+const submitPayments = () => {
+    submitPaymentsOriginal(importName.value || undefined);
+};
 </script>

@@ -98,30 +98,11 @@ readonly class GetFormDataCommand
                 ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC),
         )->getItems()->sortByServiceTypes();
 
-        $existingServiceIds = array_map(
-            static fn(ClaimEntity $claim): ?int => $claim->getServiceId(),
-            $claims->toArray(),
-        );
-
-        $services = $this->serviceService->search(
+        return $this->serviceService->search(
             new ServiceSearcher()
                 ->setPeriodId($invoice->getPeriodId())
                 ->setSortOrderProperty(Service::TYPE, SearcherInterface::SORT_ORDER_ASC),
         )->getItems();
-
-        if ($invoice->getType() === InvoiceTypeEnum::REGULAR) {
-            return $services->filter(static function (ServiceEntity $service) use ($existingServiceIds) {
-                return ! in_array($service->getId(), $existingServiceIds, true)
-                       || in_array($service->getType(), [ServiceTypeEnum::ELECTRIC_TARIFF, ServiceTypeEnum::OTHER], true);
-            });
-        }
-
-        return $services->filter(static function (ServiceEntity $service) {
-            return in_array($service->getType(), [
-                ServiceTypeEnum::ELECTRIC_TARIFF,
-                ServiceTypeEnum::OTHER,
-            ], true);
-        });
     }
 
     /**

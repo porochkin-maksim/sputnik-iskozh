@@ -58,7 +58,10 @@ class InvoiceImportController extends Controller
 
     public function save(string $periodId, DefaultRequest $request): void
     {
-        $this->invoiceImportService->savePayments($request->getArray('payments'));
+        $this->invoiceImportService->savePayments(
+            $request->getArray('payments'),
+            $request->getStringOrNull('name'),
+        );
     }
 
     private function fetchPeriod(int $periodId): PeriodEntity

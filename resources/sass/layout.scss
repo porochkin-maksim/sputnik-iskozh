@@ -1,3 +1,7 @@
+.cursor-pointer {
+    cursor: pointer;
+}
+
 #app {
     background-attachment : fixed;
     background-repeat     : no-repeat;
@@ -480,7 +484,7 @@
 
             .side-menu {
                 position : sticky;
-                top      : 1rem;
+                top      : 4rem;
             }
         }
 
@@ -506,7 +510,7 @@
 
             .side-menu {
                 position : sticky;
-                top      : 1rem;
+                top      : 4rem;
             }
         }
 

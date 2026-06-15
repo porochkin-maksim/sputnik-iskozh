@@ -27,7 +27,7 @@ readonly class SaveCommand
         ?float $tariff,
         ?float $cost,
         ?string $name,
-        ?int $quantity = null,
+        ?float $quantity = null,
     ): ?ClaimEntity
     {
         $this->validator->validate($invoiceId, $serviceId, $tariff, $cost, $name, $quantity);

@@ -29,7 +29,7 @@ readonly class SaveImportPaymentsCommand
                 ->setCost($cost)
                 ->setVerified(true)
                 ->setModerated(true)
-                ->setName('Импортированный платёж')
+                ->setName($paymentData->name ?? 'Импортированный платёж')
             ;
 
             $this->paymentService->save($payment);

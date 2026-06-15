@@ -5,8 +5,9 @@ namespace Core\Domains\Billing\Events;
 readonly class ImportPaymentData
 {
     public function __construct(
-        public int   $invoiceId,
-        public float $amount,
+        public int     $invoiceId,
+        public float   $amount,
+        public ?string $name = null,
     )
     {
     }
@@ -16,6 +17,7 @@ readonly class ImportPaymentData
         return new self(
             invoiceId: (int) ($data['invoice_id'] ?? 0),
             amount   : (float) ($data['amount'] ?? 0),
+            name     : $data['name'] ?? null,
         );
     }
 }
