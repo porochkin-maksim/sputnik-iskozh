@@ -142,8 +142,8 @@ class AccountsController extends Controller
         $account = $this->saveCommand->execute(
             $request->getIntOrNull('id'),
             $request->getStringOrNull('number'),
-            $request->getBool('is_invoicing'),
             $request->getIntOrNull('size'),
+            $request->getBool('is_invoicing'),
             $request->getStringOrNull('cadastreNumber'),
         );
 

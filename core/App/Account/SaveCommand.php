@@ -27,7 +27,8 @@ readonly class SaveCommand
         ?int    $id,
         ?string $number,
         ?int    $size,
-        ?string $cadastreNumber,
+        ?bool   $isInvoicing = null,
+        ?string $cadastreNumber = null,
     ): ?AccountEntity
     {
         $this->validator->validate($id, $number, (int) $size);
@@ -45,6 +46,10 @@ readonly class SaveCommand
             ->setNumber($number)
             ->setSize((int) $size)
         ;
+
+        if ($isInvoicing !== null) {
+            $account->setIsInvoicing($isInvoicing);
+        }
 
         $account = $this->accountService->save($account);
 

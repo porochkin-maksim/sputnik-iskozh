@@ -45,8 +45,9 @@ readonly class SaveCommand
         $claim
             ->setName($name)
             ->setTariff($tariff ?: $cost)
-            ->setCost($cost)
             ->setQuantity($quantity);
+
+        $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
 
         return $this->claimService->save($claim);
     }

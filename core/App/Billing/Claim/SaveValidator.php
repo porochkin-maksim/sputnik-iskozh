@@ -55,7 +55,10 @@ class SaveValidator
             $errors['name'][] = sprintf('«%s» не должно превышать 255 символов', Claim::TITLE_NAME);
         }
 
-        if ($quantity !== null && $quantity < 1) {
+        if ($quantity === null) {
+            $errors['quantity'][] = sprintf('Укажите «%s»', Claim::TITLE_QUANTITY);
+        }
+        elseif ($quantity < 1) {
             $errors['quantity'][] = sprintf('«%s» должно быть больше 0', Claim::TITLE_QUANTITY);
         }
 
