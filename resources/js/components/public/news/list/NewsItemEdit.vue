@@ -21,7 +21,7 @@
                 <custom-select v-model="category"
                                :errors="errors.category"
                                label="Тип статьи"
-                               :options="normalizedCategories"
+                               :options="categories"
                                @change="clearError('category')"
                 />
             </div>
@@ -59,7 +59,6 @@
 
 <script setup>
 import {
-    computed,
     onMounted,
     ref,
 }                           from 'vue';
@@ -82,13 +81,6 @@ const props = defineProps({
         type   : Array,
         default: () => [],
     },
-});
-
-const normalizedCategories = computed(() => {
-    return props.categories.map(opt => ({
-        value: opt.key,
-        label: opt.value,
-    }));
 });
 
 const {

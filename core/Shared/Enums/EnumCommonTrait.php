@@ -36,8 +36,8 @@ trait EnumCommonTrait
     {
         $result = [];
 
-        foreach (self::array() as $key => $value) {
-            $result[] = ['key' => $key, 'value' => $value];
+        foreach (self::array() as $value => $label) {
+            $result[] = ['value' => $value, 'label' => $label];
         }
 
         return $result;

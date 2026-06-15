@@ -7,7 +7,7 @@ use App\Services\OpenGraph\OpenGraphLocator;
 
 /**
  * @var null|NewsResource                    $newsResource
- * @var list<array{key: int, value: string}> $categories
+ * @var list<array{value: int, label: string}> $categories
  */
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();
