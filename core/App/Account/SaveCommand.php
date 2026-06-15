@@ -31,7 +31,7 @@ readonly class SaveCommand
         ?string $cadastreNumber = null,
     ): ?AccountEntity
     {
-        $this->validator->validate($id, $number, (int) $size);
+        $this->validator->validate($id, $number, $size);
 
         $account = $id
             ? $this->accountService->getById($id)

@@ -141,13 +141,13 @@ readonly class CheckClaimForCounterChangeCommand
                 ->setInvoiceId($linkingInvoice->getId())
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
-                ->setQuantity((int) $delta)
+                ->setQuantity($delta)
                 ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()))
             ;
         }
         else {
             $claim
-                ->setQuantity((int) $delta)
+                ->setQuantity($delta)
                 ->setName(sprintf('Оплата %s кВт по счётчику "%s"', $delta, $counter->getNumber()));
         }
 
