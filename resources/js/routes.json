@@ -500,6 +500,15 @@
             "id": "{id}"
         }
     },
+    "adminInvoiceRecalcPeriod": {
+        "name": "admin.invoice.recalc-period",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/recalc-period\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
     "adminInvoiceSave": {
         "name": "admin.invoice.save",
         "displayName": "",

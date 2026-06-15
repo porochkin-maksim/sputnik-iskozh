@@ -50,6 +50,7 @@
                 @clear-search="clearSearchAction"
                 @export="exportAction"
                 @import="importAction"
+                @recalc="recalcAction"
                 @update:searchAccount="searchAccount = $event"
                 @update:periodId="periodId = $event"
                 @update:type="type = $event"
@@ -108,6 +109,7 @@ const {
           exportAction,
           historyUrl,
           importAction,
+          recalcAction,
           invoice,
           invoices,
           listAction,

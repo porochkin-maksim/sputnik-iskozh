@@ -68,6 +68,14 @@
                 <button
                     v-if="canEdit && periodId"
                     class="btn btn-outline-success"
+                    @click="$emit('recalc')"
+                >
+                    <i class="fa fa-calculator" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Пересчёт</span>
+                </button>
+                <button
+                    v-if="canEdit && periodId"
+                    class="btn btn-outline-success"
                     @click="$emit('import')"
                 >
                     <i class="fa fa-file-excel-o" aria-hidden="true"></i>
@@ -104,7 +112,7 @@ const props = defineProps({
     paidStatus        : { type: [String, null], default: null },
 });
 
-const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
+const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'recalc', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
 
 const periodIdModel = computed({
     get: () => props.periodId,

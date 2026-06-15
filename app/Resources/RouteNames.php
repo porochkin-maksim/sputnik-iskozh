@@ -109,7 +109,7 @@ abstract class RouteNames
     public const string DOCUMENT_RECEIPT_INVOICE       = 'document.receipt.invoice';
     public const string ADMIN_DOCUMENT_RECEIPT_INVOICE = 'admin.document.receipt.invoice';
 
-    public const string ADMIN = 'admin.index';
+    public const string ADMIN                 = 'admin.index';
     public const string ADMIN_DASHBOARD_CARDS = 'admin.dashboard.cards';
 
     public const string ADMIN_ROLE_INDEX  = 'admin.role.index';
@@ -150,17 +150,17 @@ abstract class RouteNames
     public const string ADMIN_PERIOD_LIST   = 'admin.period.list';
     public const string ADMIN_PERIOD_DELETE = 'admin.period.delete';
 
-    public const string ADMIN_ACCOUNT_INDEX  = 'admin.account.index';
-    public const string ADMIN_ACCOUNT_VIEW   = 'admin.account.view';
-    public const string ADMIN_ACCOUNT_GET    = 'admin.account.get';
-    public const string ADMIN_ACCOUNT_CREATE = 'admin.account.create';
-    public const string ADMIN_ACCOUNT_SAVE   = 'admin.account.save';
-    public const string ADMIN_ACCOUNT_LIST   = 'admin.account.list';
-    public const string ADMIN_ACCOUNT_DELETE = 'admin.account.delete';
-    public const string ADMIN_ACCOUNT_EXPORT              = 'admin.account.export';
-    public const string ADMIN_ACCOUNT_IMPORT_INDEX         = 'admin.account.import.index';
-    public const string ADMIN_ACCOUNT_IMPORT_PARSE_FILE    = 'admin.account.import.parse-file';
-    public const string ADMIN_ACCOUNT_IMPORT_SAVE          = 'admin.account.import.save';
+    public const string ADMIN_ACCOUNT_INDEX             = 'admin.account.index';
+    public const string ADMIN_ACCOUNT_VIEW              = 'admin.account.view';
+    public const string ADMIN_ACCOUNT_GET               = 'admin.account.get';
+    public const string ADMIN_ACCOUNT_CREATE            = 'admin.account.create';
+    public const string ADMIN_ACCOUNT_SAVE              = 'admin.account.save';
+    public const string ADMIN_ACCOUNT_LIST              = 'admin.account.list';
+    public const string ADMIN_ACCOUNT_DELETE            = 'admin.account.delete';
+    public const string ADMIN_ACCOUNT_EXPORT            = 'admin.account.export';
+    public const string ADMIN_ACCOUNT_IMPORT_INDEX      = 'admin.account.import.index';
+    public const string ADMIN_ACCOUNT_IMPORT_PARSE_FILE = 'admin.account.import.parse-file';
+    public const string ADMIN_ACCOUNT_IMPORT_SAVE       = 'admin.account.import.save';
 
     public const string ADMIN_LOGIN_LINK = 'admin.login-link';
 
@@ -190,6 +190,7 @@ abstract class RouteNames
 
     public const string ADMIN_INVOICE_GET_ACCOUNTS_COUNT_WITHOUT_REGULAR = 'admin.invoice.get-accounts-count-without-regular';
     public const string ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
+    public const string ADMIN_INVOICE_RECALC_PERIOD                      = 'admin.invoice.recalc-period';
 
     public const string ADMIN_CLAIM_VIEW   = 'admin.claim.view';
     public const string ADMIN_CLAIM_CREATE = 'admin.claim.create';

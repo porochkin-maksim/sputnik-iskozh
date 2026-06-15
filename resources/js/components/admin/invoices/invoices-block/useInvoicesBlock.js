@@ -11,6 +11,7 @@ import {
     ApiAdminInvoiceCreateRegularInvoices,
     ApiAdminInvoiceGetAccountsCountWithoutRegular,
     ApiAdminInvoiceList,
+    ApiAdminInvoiceRecalcPeriod,
 }                           from '@api';
 import { routeUri }         from '@utils/routeUri.js';
 
@@ -206,6 +207,22 @@ export function useInvoicesBlock () {
         window.open(url, '_blank');
     };
 
+    const recalcAction = async () => {
+        if (!periodId.value) {
+            return;
+        }
+        if (!confirm('Пересчитать все счета периода? Это может занять время.')) {
+            return;
+        }
+        try {
+            const response = await ApiAdminInvoiceRecalcPeriod(periodId.value, {}, {});
+            showSuccess(`Пересчёт запущен: ${response.data.sent} отправлено, ${response.data.blocked} уже в очереди`);
+        }
+        catch (err) {
+            parseResponseErrors(err);
+        }
+    };
+
     const onPaginationUpdate = (newSkip) => {
         skip.value = newSkip;
         listAction();
@@ -240,6 +257,7 @@ export function useInvoicesBlock () {
         exportAction,
         historyUrl,
         importAction,
+        recalcAction,
         invoice,
         invoices,
         listAction,

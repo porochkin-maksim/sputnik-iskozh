@@ -184,6 +184,30 @@ class InvoiceController extends Controller
         return response()->json($this->invoiceService->recalcInvoice($id, true));
     }
 
+    public function recalcPeriod(int $periodId): JsonResponse
+    {
+        $invoices = $this->invoiceService->search(
+            new InvoiceSearcher()->setPeriodId($periodId),
+        )->getItems();
+
+        $sent    = 0;
+        $blocked = 0;
+        foreach ($invoices as $invoice) {
+            $result = $this->invoiceService->recalcInvoice($invoice->getId());
+            if ($result === true) {
+                $sent++;
+            }
+            elseif ($result === false) {
+                $blocked++;
+            }
+        }
+
+        return response()->json([
+            'sent'    => $sent,
+            'blocked' => $blocked,
+        ]);
+    }
+
     public function delete(int $id): bool
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_DROP)) {
