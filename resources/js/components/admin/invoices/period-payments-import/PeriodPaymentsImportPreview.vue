@@ -30,22 +30,16 @@
                 :id="`district-${districtData.district}`"
                 role="tabpanel"
             >
-                <div class="d-flex justify-content-between align-items-center mb-2 mt-2 admin-toolbar">
+                <div class="d-flex mb-2 mt-2 admin-toolbar">
                     <div class="w-50">
                         <custom-select
                             v-model="autoFillStrategy[districtData.district]"
                             :options="fillStrategies"
                             label="Автозаполнение"
                             :disabled="submitting"
+                            @update:modelValue="$emit('apply-auto-fill-all')"
                         />
                     </div>
-                    <button
-                        class="btn btn-sm btn-outline-success"
-                        @click="$emit('apply-auto-fill', districtData.district)"
-                        :disabled="submitting"
-                    >
-                        Применить к участку
-                    </button>
                 </div>
 
                 <div class="table-responsive mt-3">
@@ -117,5 +111,5 @@ defineProps({
     },
 });
 
-defineEmits(['update:activeTab', 'apply-auto-fill', 'validate-amount']);
+defineEmits(['update:activeTab', 'apply-auto-fill', 'apply-auto-fill-all', 'validate-amount']);
 </script>

@@ -28,6 +28,7 @@
             :get-key="getKey"
             @update:activeTab="activeTab = $event"
             @apply-auto-fill="applyAutoFill"
+            @apply-auto-fill-all="applyAutoFillAll"
             @validate-amount="validateAmount"
         />
 
@@ -54,6 +55,7 @@ const controlsRef = ref(null);
 const {
           activeTab,
           applyAutoFill,
+          applyAutoFillAll,
           autoFillStrategy,
           canSubmit,
           canUpload,

@@ -32,6 +32,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
     const fillStrategies = [
         { value: 'manual', label: 'Ручной ввод' },
         { value: 'difference', label: 'Разница "оплачено"' },
+        { value: 'importPaid', label: 'Оплачено из импорта' },
         { value: 'invoiceDelta', label: 'Долг из базы' },
         { value: 'importDebt', label: 'Долг из импорта' },
         { value: 'maxDebt', label: 'Максимальный долг' },
@@ -99,19 +100,26 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         files.value[type] = file;
     };
 
-    const applyAutoFill = (district) => {
+    const applyAutoFill = (district, strategyOverride) => {
         const districtData = importData.value?.find(d => d.district === district);
         if (!districtData) {
             return;
         }
 
-        const strategy = autoFillStrategy.value[district] || 'manual';
+        const strategy = strategyOverride ?? autoFillStrategy.value[district] ?? 'manual';
+        if (strategy === 'manual') {
+            return;
+        }
+
         districtData.items.forEach(item => {
             const key     = getKey(district, item);
             let newAmount = 0;
             switch (strategy) {
                 case 'difference':
                     newAmount = Math.max(0, item.paid - item.invoicePaid);
+                    break;
+                case 'importPaid':
+                    newAmount = item.paid;
                     break;
                 case 'importDebt':
                     newAmount = item.debt;
@@ -136,6 +144,15 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
             }
             editedAmounts.value[key] = newAmount;
         });
+    };
+
+    const applyAutoFillAll = () => {
+        if (!importData.value) {
+            return;
+        }
+        for (const districtData of importData.value) {
+            applyAutoFill(districtData.district);
+        }
     };
 
     const validateAmount = (district, item) => {
@@ -286,6 +303,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         activeTab,
         autoFillStrategy,
         applyAutoFill,
+        applyAutoFillAll,
         canSubmit,
         canUpload,
         columns,
