@@ -10,16 +10,18 @@ class ClaimEntity
 {
     use TimestampsTrait;
 
-    private ?int           $id        = null;
-    private ?int           $invoiceId = null;
-    private ?int           $serviceId = null;
-    private ?string        $name      = null;
-    private ?float         $tariff    = null;
-    private ?float         $cost      = null;
-    private ?float         $paid      = null;
-    private ?float         $quantity  = null;
-    private ?ServiceEntity $service   = null;
-    private ?InvoiceEntity $invoice   = null;
+    private ?int           $id                = null;
+    private ?int           $invoiceId         = null;
+    private ?int           $serviceId         = null;
+    private ?int           $originalServiceId = null;
+    private ?string        $name              = null;
+    private ?float         $tariff            = null;
+    private ?float         $cost              = null;
+    private ?float         $paid              = null;
+    private ?float         $quantity          = null;
+    private ?ServiceEntity $service           = null;
+    private ?ServiceEntity $originalService   = null;
+    private ?InvoiceEntity $invoice           = null;
 
     public function getId(): ?int
     {
@@ -53,6 +55,18 @@ class ClaimEntity
     public function setServiceId(?int $serviceId): static
     {
         $this->serviceId = $serviceId;
+
+        return $this;
+    }
+
+    public function getOriginalServiceId(): ?int
+    {
+        return $this->originalServiceId;
+    }
+
+    public function setOriginalServiceId(?int $originalServiceId): static
+    {
+        $this->originalServiceId = $originalServiceId;
 
         return $this;
     }
@@ -134,6 +148,18 @@ class ClaimEntity
     public function setService(?ServiceEntity $service): static
     {
         $this->service = $service;
+
+        return $this;
+    }
+
+    public function getOriginalService(): ?ServiceEntity
+    {
+        return $this->originalService;
+    }
+
+    public function setOriginalService(?ServiceEntity $originalService): static
+    {
+        $this->originalService = $originalService;
 
         return $this;
     }

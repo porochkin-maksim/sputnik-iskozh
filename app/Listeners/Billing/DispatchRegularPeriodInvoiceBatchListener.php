@@ -9,6 +9,6 @@ class DispatchRegularPeriodInvoiceBatchListener
 {
     public function handle(RegularPeriodInvoiceBatchRequested $event): void
     {
-        dispatch(new CreateRegularPeriodInvoicesJob($event->periodId, $event->accountIds));
+        dispatch_sync(new CreateRegularPeriodInvoicesJob($event->periodId, $event->accountIds));
     }
 }

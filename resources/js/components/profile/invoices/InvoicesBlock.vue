@@ -37,7 +37,7 @@
                         </div>
                         <div class="profile-invoice-chip">
                             <span class="profile-invoice-chip__label">Долг</span>
-                            <span class="profile-invoice-chip__value" :class="invoice.isPaid ? 'paid' : 'debt'">{{ invoice.delta }}</span>
+                            <span class="profile-invoice-chip__value" :class="invoice.deltaNumeric > 0 ? 'debt' : 'paid'">{{ invoice.delta }}</span>
                         </div>
                     </div>
                 </summary>
@@ -64,7 +64,7 @@
                                     </span>
                                     <span class="profile-invoice-claim-item__chip">
                                         <span class="profile-invoice-claim-item__label">Долг</span>
-                                        <span class="profile-invoice-claim-item__value" :class="claim.isPaid ? 'paid' : 'debt'">{{ claim.delta }}</span>
+                                        <span class="profile-invoice-claim-item__value" :class="claim.deltaNumeric > 0 ? 'debt' : 'paid'">{{ claim.delta }}</span>
                                     </span>
                                 </div>
                             </div>

@@ -155,6 +155,16 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         }
     };
 
+    const setAutoFillForAll = (strategy) => {
+        if (!importData.value) {
+            return;
+        }
+        for (const districtData of importData.value) {
+            autoFillStrategy.value[districtData.district] = strategy;
+        }
+        applyAutoFillAll();
+    };
+
     const validateAmount = (district, item) => {
         const key  = getKey(district, item);
         let amount = editedAmounts.value[key];
@@ -252,6 +262,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
                 if (amount > 0) {
                     payload.payments.push({
                         invoice_id: item.invoiceId,
+                        account_id: item.accountId,
                         amount,
                     });
                 }
@@ -304,6 +315,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
         autoFillStrategy,
         applyAutoFill,
         applyAutoFillAll,
+        setAutoFillForAll,
         canSubmit,
         canUpload,
         columns,

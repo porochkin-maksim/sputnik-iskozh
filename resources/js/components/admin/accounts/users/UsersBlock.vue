@@ -1,7 +1,16 @@
 <template>
     <div class="card">
-        <div class="card-header bg-white">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="m-0">Пользователи</h5>
+
+            <div v-if="canEdit">
+                <a class="btn btn-success"
+                   :href="createUserPageLink"
+                   @click="onCreateUserClick"
+                >
+                    <i class="fa fa-plus"></i>&nbsp;Добавить пользователя
+                </a>
+            </div>
         </div>
 
         <div class="card-body">
@@ -59,18 +68,6 @@
                         Нет пользователей для отображения
                     </div>
                 </template>
-            </div>
-        </div>
-        <div class="card-footer bg-white" v-if="canEdit">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex">
-                    <a class="btn btn-success me-2"
-                       :href="createUserPageLink"
-                       @click="onCreateUserClick"
-                    >
-                        <i class="fa fa-plus"></i>&nbsp;Добавить пользователя
-                    </a>
-                </div>
             </div>
         </div>
     </div>

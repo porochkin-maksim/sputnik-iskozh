@@ -1,35 +1,36 @@
 <template>
-    <div>
-        <h5>Платежи</h5>
+    <div class="card">
+        <div v-if="showHeader" class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="m-0">Платежи</h5>
+                <span v-if="accountBalance !== null" class="badge bg-success fs-6 fw-normal">
+                    Баланс: {{ formatMoney(accountBalance) }}
+                </span>
+            </div>
 
-        <div class="d-flex mb-2">
-            <button
-                class="btn btn-success"
-                v-if="canEdit && invoice.actions.payments.edit"
-                :disabled="loading"
-                @click="makeAction"
-            >
-                <i class="fa fa-plus" aria-hidden="true"></i>
-                Добавить платёж
-            </button>
-
-            <button
-                class="btn btn-outline-success ms-2"
-                v-if="canEdit && invoice.actions.payments.edit && !invoice.isPaid && !forcePaid"
-                :disabled="loading"
-                @click="makePaid"
-            >
-                <i class="fa fa-credit-card" aria-hidden="true"></i>
-                Оплатить всё
-            </button>
+            <div class="d-flex gap-2">
+                <button
+                    class="btn btn-success"
+                    v-if="canEdit"
+                    :disabled="loading"
+                    @click="makeAction"
+                >
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    Добавить платёж
+                </button>
+            </div>
         </div>
 
-        <payments-list
-            :invoice-id="invoice.id"
+        <div class="card-body">
+
+        <payments-manage-list
+            :invoice-id="invoice?.id"
+            :account-id="accountId"
             v-model:selected-id="selectedId"
             v-model:reload="reloadList"
             v-model:count="paymentsCount"
             @update:count="onUpdatedCount"
+            @delete="deleteAction"
         />
 
         <view-dialog
@@ -43,7 +44,6 @@
             </template>
 
             <template #body>
-                <!-- Название платежа -->
                 <div class="mb-3">
                     <custom-input
                         v-model="payment.name"
@@ -55,7 +55,16 @@
                     />
                 </div>
 
-                <!-- Стоимость и дата -->
+                <div class="mb-3" v-if="(!payment.id || (canEdit && payment.actions.edit)) && !payment.isVerified">
+                    <search-select
+                        v-model="payment.accountId"
+                        :items="payment.accounts || []"
+                        :disabled="!canEdit || !payment.actions.edit || loading"
+                        label="Участок"
+                        placeholder="Выберите участок"
+                    />
+                </div>
+
                 <div class="row mb-3">
                     <div class="col-6">
                         <custom-input
@@ -79,7 +88,6 @@
                     </div>
                 </div>
 
-                <!-- Комментарий -->
                 <div class="mb-3">
                     <custom-textarea
                         v-model="payment.comment"
@@ -91,7 +99,6 @@
                     />
                 </div>
 
-                <!-- Существующие файлы -->
                 <template v-if="payment.files?.length">
                     <div class="mb-3">
                         <label class="form-label">Прикреплённые файлы</label>
@@ -109,7 +116,6 @@
                     </div>
                 </template>
 
-                <!-- Новые файлы -->
                 <template v-if="files.length">
                     <div class="mb-3">
                         <label class="form-label">Новые файлы</label>
@@ -141,7 +147,6 @@
                     </div>
                 </template>
 
-                <!-- Кнопка добавления файлов -->
                 <button
                     v-if="!fileCountExceed"
                     class="btn btn-outline-secondary w-100"
@@ -161,6 +166,32 @@
                     @change="appendFiles"
                     multiple
                 />
+
+                <template v-if="transactions.length">
+                    <table class="table table-sm table-bordered admin-table-firm my-3">
+                    <template v-for="group in groupedTransactions" :key="group.invoiceId ?? 'unallocated'">
+                            <tbody>
+                            <tr v-if="group.invoiceId" class="table-info">
+                                <th colspan="3" class="text-center">
+                                    <a :href="routeUri('adminInvoiceView', {id: group.invoiceId})" target="_blank" class="link-firm">
+                                        Счёт №{{ group.invoiceId }}
+                                    </a>
+                                </th>
+                            </tr>
+                            <tr class="table-success">
+                                <th>Услуга</th>
+                                <th class="text-end">Сумма</th>
+                                <th class="text-end">Дата</th>
+                            </tr>
+                            <tr v-for="t in group.transactions" :key="t.id">
+                                <td>{{ t.name }}</td>
+                                <td class="text-end">{{ formatMoney(t.cost) }}</td>
+                                <td class="text-end">{{ t.createdAt }}</td>
+                            </tr>
+                            </tbody>
+                    </template>
+                    </table>
+                </template>
             </template>
 
             <template #footer>
@@ -171,37 +202,60 @@
                         @click="saveAction"
                     >
                         <i class="fa" :class="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                        {{ payment.id ? 'Сохранить' : 'Создать' }}
+                        {{ payment.id ? 'Подтвердить' : 'Создать' }}
                     </button>
                 </div>
             </template>
         </view-dialog>
+
     </div>
+</div>
 </template>
 
 <script setup>
-import PaymentsList         from './PaymentsList.vue';
-import ViewDialog           from '@common/ViewDialog.vue';
-import FileItem             from '@common/files/FileItem.vue';
-import CustomInput          from '@common/form/CustomInput.vue';
-import CustomCalendar       from '@common/form/CustomCalendar.vue';
-import CustomTextarea       from '@common/form/CustomTextarea.vue';
-import { usePermissions }   from '@composables/usePermissions.js';
-import { usePaymentsBlock } from './usePaymentsBlock.js';
-import { computed }         from 'vue';
+import {
+    computed,
+    onMounted,
+    ref,
+    watch,
+} from 'vue';
+import ViewDialog              from '@common/ViewDialog.vue';
+import FileItem                from '@common/files/FileItem.vue';
+import CustomInput             from '@common/form/CustomInput.vue';
+import CustomCalendar          from '@common/form/CustomCalendar.vue';
+import CustomTextarea          from '@common/form/CustomTextarea.vue';
+import SearchSelect            from '@common/form/SearchSelect.vue';
+import PaymentsManageList      from './PaymentsManageList.vue';
+import { usePermissions }      from '@composables/usePermissions.js';
+import { usePaymentsManage }   from './usePaymentsManage.js';
+import { useResponseError }    from '@composables/useResponseError';
+import { routeUri }            from '@utils/routeUri.js';
+import {
+    ApiAdminPaymentManageAccountBalance,
+}                                from '@api';
+
+const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
 const props = defineProps({
-    invoice: {
-        type    : Object,
-        required: true,
+    invoice  : {
+        type   : Object,
+        default: null,
     },
-    reload : {
+    accountId: {
+        type   : Number,
+        default: null,
+    },
+    reload   : {
         type   : Boolean,
         default: false,
     },
-    count  : {
+    count    : {
         type   : Number,
         default: 0,
+    },
+    showHeader: {
+        type   : Boolean,
+        default: true,
     },
 });
 
@@ -215,18 +269,16 @@ const {
           clearError,
           closeAction,
           chooseFiles,
+          deleteAction,
           fileCountExceed,
           fileElem,
           fileSizeExceed,
           files,
           filesSize,
-          forcePaid,
           formatMoney,
-          getAction,
           hideDialog,
           loading,
           makeAction,
-          makePaid,
           onFileUpdated,
           onUpdatedCount,
           payment,
@@ -235,5 +287,47 @@ const {
           saveAction,
           selectedId,
           showDialog,
-      } = usePaymentsBlock(props, emit);
+          transactions,
+      } = usePaymentsManage(props, emit);
+
+const groupedTransactions = computed(() => {
+    const groups = {};
+    for (const t of transactions.value) {
+        const key = t.invoiceId ?? 'unallocated';
+        if ( ! groups[key]) {
+            groups[key] = { invoiceId: t.invoiceId, transactions: [] };
+        }
+        groups[key].transactions.push(t);
+    }
+    return Object.values(groups);
+});
+
+const accountBalance = ref(null);
+
+const loadBalance = async () => {
+    if ( ! props.accountId) {
+        accountBalance.value = null;
+        return;
+    }
+    try {
+        const response = await ApiAdminPaymentManageAccountBalance(props.accountId);
+        accountBalance.value = response.data?.balance ?? null;
+    }
+    catch {
+        accountBalance.value = null;
+    }
+};
+
+watch(() => props.reload, (val) => {
+    if (val) {
+        loadBalance();
+    }
+});
+
+watch(() => props.accountId, () => {
+    loadBalance();
+});
+
+onMounted(loadBalance);
+
 </script>

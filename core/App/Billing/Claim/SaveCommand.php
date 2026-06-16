@@ -5,14 +5,16 @@ namespace Core\App\Billing\Claim;
 use Core\Domains\Billing\Claim\ClaimEntity;
 use Core\Domains\Billing\Claim\ClaimFactory;
 use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Exceptions\ValidationException;
 
 readonly class SaveCommand
 {
     public function __construct(
-        private ClaimService $claimService,
-        private ClaimFactory $claimFactory,
-        private SaveValidator $validator,
+        private ClaimService   $claimService,
+        private ClaimFactory   $claimFactory,
+        private SaveValidator  $validator,
+        private InvoiceService $invoiceService,
     )
     {
     }
@@ -32,11 +34,13 @@ readonly class SaveCommand
     {
         $this->validator->validate($invoiceId, $serviceId, $tariff, $cost, $name, $quantity);
 
-        $claim = $id
-            ? $this->claimService->getById($id)
-            : $this->claimFactory->makeDefault()
+        $isNew = $id === null;
+
+        $claim = $isNew
+            ? $this->claimFactory->makeDefault()
                 ->setInvoiceId($invoiceId)
-                ->setServiceId($serviceId);
+                ->setServiceId($serviceId)
+            : $this->claimService->getById($id);
 
         if ($claim === null) {
             return null;
@@ -49,6 +53,12 @@ readonly class SaveCommand
 
         $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
 
-        return $this->claimService->save($claim);
+        $saved = $this->claimService->save($claim);
+
+        if ($saved->getInvoiceId()) {
+            $this->invoiceService->recalcInvoice($saved->getInvoiceId(), true);
+        }
+
+        return $saved;
     }
 }

@@ -10,7 +10,7 @@
         />
 
         <template v-else>
-            <table class="table table-sm table-bordered admin-table-firm">
+            <table class="table table-sm table-bordered admin-table-firm mb-0">
                 <thead>
                 <tr>
                     <th class="text-center table-thin-column">№</th>
@@ -20,6 +20,7 @@
                     <th class="text-center">Стоимость</th>
                     <th class="text-center">Оплачено</th>
                     <th class="text-center">Долг</th>
+                    <th v-if="hasUnpaidClaims" class="text-center table-thin-column">Оплатить</th>
                     <th class="text-center">Создана</th>
                     <th class="text-center table-thin-column">Действия</th>
                 </tr>
@@ -33,11 +34,13 @@
                     :claim="claim"
                     :drop-loading="dropLoading"
                     :format-money="formatMoney"
+                    :show-pay-column="hasUnpaidClaims"
                     @drop="dropAction"
                     @edit="editAction"
+                    @pay="$emit('pay', $event)"
                 />
                 <tr v-if="!claims.length">
-                    <td colspan="9" class="text-center py-3 text-muted">
+                    <td :colspan="hasUnpaidClaims ? 10 : 9" class="text-center py-3 text-muted">
                         <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
                         Услуги не найдены
                     </td>
@@ -86,19 +89,21 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count']);
+const emit = defineEmits(['update:reload', 'update:selectedId', 'update:count', 'pay']);
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 const { formatMoney }                               = useFormat();
 const { has }                                       = usePermissions();
 
-const canEdit = computed(() => has('invoice_services', 'edit'));
-const canDrop = computed(() => has('invoice_services', 'drop'));
+const canEdit = computed(() => has('invoice_services', 'edit') && actions.value.edit);
+const canDrop = computed(() => has('invoice_services', 'drop') && actions.value.drop);
 
 const claims      = ref([]);
 const actions     = ref({});
 const isLoading   = ref(false);
 const dropLoading = ref(null); // ID удаляемой услуги
+
+const hasUnpaidClaims = computed(() => canEdit.value && claims.value.some(c => parseFloat(c.delta) > 0));
 
 // Проверка наличия действий у claim
 // Загрузка списка

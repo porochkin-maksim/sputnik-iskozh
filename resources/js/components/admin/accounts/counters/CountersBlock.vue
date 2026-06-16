@@ -1,7 +1,17 @@
 <template>
     <div class="card">
-        <div class="card-header bg-white">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="m-0">Счётчики</h5>
+
+            <div>
+                <button
+                    v-if="canCreate"
+                    class="btn btn-success"
+                    @click="addCounterAction"
+                >
+                    <i class="fa fa-plus"></i>&nbsp;Добавить счётчик
+                </button>
+            </div>
         </div>
 
         <div class="card-body">
@@ -30,20 +40,6 @@
                     Нет счётчиков для отображения
                 </div>
             </template>
-        </div>
-
-        <div class="card-footer bg-white">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex">
-                    <button
-                        v-if="canCreate"
-                        class="btn btn-success me-2"
-                        @click="addCounterAction"
-                    >
-                        <i class="fa fa-plus"></i>&nbsp;Добавить счётчик
-                    </button>
-                </div>
-            </div>
         </div>
 
         <counter-item

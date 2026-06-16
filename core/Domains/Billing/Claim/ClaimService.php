@@ -2,10 +2,15 @@
 
 namespace Core\Domains\Billing\Claim;
 
+use App\Models\Billing\Claim;
+use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Repositories\SearcherInterface;
+
 readonly class ClaimService
 {
     public function __construct(
         private ClaimRepositoryInterface $claimRepository,
+        private InvoiceService           $invoiceService,
     )
     {
     }
@@ -27,7 +32,14 @@ readonly class ClaimService
 
     public function deleteById(?int $id): bool
     {
-        return $this->claimRepository->deleteById($id);
+        $invoiceId = $this->getById($id)?->getInvoiceId();
+        $result    = $this->claimRepository->deleteById($id);
+
+        if ($result && $invoiceId) {
+            $this->invoiceService->recalcInvoice($invoiceId, true);
+        }
+
+        return $result;
     }
 
     public function saveCollection(ClaimCollection $claims): ClaimCollection
@@ -44,8 +56,21 @@ readonly class ClaimService
     {
         $searcher = new ClaimSearcher()
             ->setInvoiceId($invoiceId)
-            ->setWithService();
+            ->setWithService()
+            ->setWithOriginalService()
+        ;
 
-        return $this->search($searcher)->getItems();
+        return $this->getByInvoiceIds([$invoiceId]);
+    }
+
+    /**
+     * @param int[] $invoiceIds
+     */
+    public function getByInvoiceIds(array $invoiceIds): ClaimCollection
+    {
+        return $this->search(new ClaimSearcher()
+            ->setWithService()
+            ->addWhere(Claim::INVOICE_ID, SearcherInterface::IN, $invoiceIds),
+        )->getItems();
     }
 }

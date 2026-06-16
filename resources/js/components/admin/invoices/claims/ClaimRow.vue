@@ -14,12 +14,22 @@
         <td class="text-end">{{ formatMoney(claim.cost) }}</td>
         <td class="text-end">{{ formatMoney(claim.paid) }}</td>
         <td class="text-end">{{ formatMoney(claim.delta) }}</td>
+        <td v-if="showPayColumn" class="table-thin-column text-center">
+            <button
+                v-if="parseFloat(claim.delta) > 0 && canEdit"
+                class="btn btn-sm btn-success"
+                type="button"
+                @click="$emit('pay', claim)"
+            >
+                <i class="fa fa-credit-card" aria-hidden="true"></i> Оплатить
+            </button>
+        </td>
         <td class="text-center">{{ claim.created }}</td>
         <td class="table-thin-column text-center">
             <div class="d-flex justify-content-center gap-1 flex-nowrap">
                 <history-btn
                     v-if="claim.historyUrl"
-                    class="btn-link underline-none p-0"
+                    class="btn-link"
                     :url="claim.historyUrl"
                 />
 
@@ -71,7 +81,11 @@ defineProps({
         type    : Function,
         required: true,
     },
+    showPayColumn: {
+        type   : Boolean,
+        default: true,
+    },
 });
 
-defineEmits(['edit', 'drop']);
+defineEmits(['edit', 'drop', 'pay']);
 </script>

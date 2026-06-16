@@ -46,4 +46,11 @@ readonly class InvoiceService
             ? RecalcClaimsPaidJob::dispatchSyncIfNeeded($invoiceId)
             : RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId);
     }
+
+    public function getByAccountId(int $accountId): InvoiceCollection
+    {
+        return $this->search(new InvoiceSearcher()
+            ->setAccountId($accountId),
+        )->getItems();
+    }
 }

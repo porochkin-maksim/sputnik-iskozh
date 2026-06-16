@@ -7,31 +7,31 @@ use Core\App\Billing\Payment\SaveImportPaymentsInput;
 use Core\Domains\Billing\Events\ImportPaymentData;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Payment\PaymentTransactionService;
 use Tests\TestCase;
 
 class SaveImportPaymentsCommandTest extends TestCase
 {
     private PaymentFactory            $paymentFactory;
-    private PaymentService            $paymentService;
+    private PaymentTransactionService $paymentTransactionService;
     private SaveImportPaymentsCommand $command;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->paymentFactory = new PaymentFactory;
-        $this->paymentService = $this->createMock(PaymentService::class);
+        $this->paymentFactory            = new PaymentFactory;
+        $this->paymentTransactionService = $this->createMock(PaymentTransactionService::class);
 
         $this->command = new SaveImportPaymentsCommand(
             $this->paymentFactory,
-            $this->paymentService,
+            $this->paymentTransactionService,
         );
     }
 
     public function test_execute_saves_valid_payments(): void
     {
-        $this->paymentService->expects($this->exactly(2))
-            ->method('save')
+        $this->paymentTransactionService->expects($this->exactly(2))
+            ->method('saveWithTransaction')
             ->with($this->callback(fn(PaymentEntity $p) => $p->isVerified() === true
                                                            && $p->isModerated() === true
                                                            && $p->getName() === 'Импортированный платёж'
@@ -49,8 +49,8 @@ class SaveImportPaymentsCommandTest extends TestCase
 
     public function test_execute_skips_invalid_data(): void
     {
-        $this->paymentService->expects($this->exactly(2))
-            ->method('save')
+        $this->paymentTransactionService->expects($this->exactly(2))
+            ->method('saveWithTransaction')
         ;
 
         $input = new SaveImportPaymentsInput([
@@ -67,7 +67,7 @@ class SaveImportPaymentsCommandTest extends TestCase
 
     public function test_execute_skips_all_invalid_data(): void
     {
-        $this->paymentService->expects($this->never())->method('save');
+        $this->paymentTransactionService->expects($this->never())->method('saveWithTransaction');
 
         $input = new SaveImportPaymentsInput([
             new ImportPaymentData(0, 1000.0),
@@ -79,7 +79,7 @@ class SaveImportPaymentsCommandTest extends TestCase
 
     public function test_execute_with_empty_input(): void
     {
-        $this->paymentService->expects($this->never())->method('save');
+        $this->paymentTransactionService->expects($this->never())->method('saveWithTransaction');
 
         $input = new SaveImportPaymentsInput([]);
 

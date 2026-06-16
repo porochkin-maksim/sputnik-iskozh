@@ -12,6 +12,7 @@ use Core\Domains\Billing\Claim\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimSearchResponse;
 use Core\Repositories\RepositoryConfig;
 use Core\Repositories\SearcherInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class ClaimEloquentRepository implements ClaimRepositoryInterface
 {
@@ -66,5 +67,10 @@ class ClaimEloquentRepository implements ClaimRepositoryInterface
         $model->save();
 
         return $this->mapper->makeEntityFromRepositoryData($model);
+    }
+
+    protected function getQuery(Builder $query): Builder
+    {
+        return $query->select(Claim::TABLE . '.*');
     }
 }

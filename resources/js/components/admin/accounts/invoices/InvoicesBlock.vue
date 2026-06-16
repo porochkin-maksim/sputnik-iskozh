@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <div class="card-header bg-white">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="m-0">Счета</h5>
         </div>
 

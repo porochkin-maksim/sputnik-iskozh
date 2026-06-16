@@ -22,13 +22,14 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
         $result = $data ? : Claim::make();
 
         return $result->fill([
-            Claim::INVOICE_ID => $entity->getInvoiceId(),
-            Claim::SERVICE_ID => $entity->getServiceId(),
-            Claim::NAME       => $entity->getName(),
-            Claim::TARIFF     => $entity->getTariff(),
-            Claim::COST       => $entity->getCost(),
-            Claim::PAID       => $entity->getPaid(),
-            Claim::QUANTITY   => $entity->getQuantity(),
+            Claim::INVOICE_ID          => $entity->getInvoiceId(),
+            Claim::SERVICE_ID          => $entity->getServiceId(),
+            Claim::ORIGINAL_SERVICE_ID => $entity->getOriginalServiceId(),
+            Claim::NAME                => $entity->getName(),
+            Claim::TARIFF              => $entity->getTariff(),
+            Claim::COST                => $entity->getCost(),
+            Claim::PAID                => $entity->getPaid() ?? 0,
+            Claim::QUANTITY            => $entity->getQuantity(),
         ]);
     }
 
@@ -40,9 +41,10 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
             ->setId($data->{Claim::ID})
             ->setInvoiceId($data->{Claim::INVOICE_ID})
             ->setServiceId($data->{Claim::SERVICE_ID})
+            ->setOriginalServiceId($data->{Claim::ORIGINAL_SERVICE_ID})
             ->setName($data->{Claim::NAME})
             ->setTariff($data->{Claim::TARIFF})
-            ->setPaid($data->{Claim::PAID})
+            ->setPaid((float) ($data->{Claim::PAID} ?? 0))
             ->setCost($data->{Claim::COST})
             ->setQuantity($data->{Claim::QUANTITY})
             ->setCreatedAt($data->{Claim::CREATED_AT})
@@ -51,6 +53,10 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
 
         if (isset($data->getRelations()[Claim::RELATION_SERVICE])) {
             $result->setService($this->serviceEloquentMapper->makeEntityFromRepositoryData($data->getRelation(Claim::RELATION_SERVICE)));
+        }
+
+        if (isset($data->getRelations()[Claim::RELATION_ORIGINAL_SERVICE])) {
+            $result->setOriginalService($this->serviceEloquentMapper->makeEntityFromRepositoryData($data->getRelation(Claim::RELATION_ORIGINAL_SERVICE)));
         }
 
         return $result;

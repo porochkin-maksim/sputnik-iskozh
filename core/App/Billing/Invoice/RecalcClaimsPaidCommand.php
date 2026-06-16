@@ -3,128 +3,276 @@
 namespace Core\App\Billing\Invoice;
 
 use App\Models\Billing\Claim;
-use App\Services\Money\MoneyService;
-use Core\Domains\Billing\Claim\ClaimFactory;
+use Core\Domains\Account\AccountIdEnum;
+use Core\Domains\Billing\Claim\ClaimCollection;
+use Core\Domains\Billing\Claim\ClaimEntity;
 use Core\Domains\Billing\Claim\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
-use Core\Domains\Billing\Payment\PaymentCollection;
-use Core\Domains\Billing\Service\ServiceCatalogService;
-use Core\Domains\Billing\Service\ServiceSearcher;
-use Core\Domains\Billing\Service\ServiceTypeEnum;
+use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Transaction\TransactionCollection;
+use Core\Domains\Billing\Transaction\TransactionEntity;
+use Core\Domains\Billing\Transaction\TransactionFactory;
+use Core\Domains\Billing\Transaction\TransactionSearcher;
+use Core\Domains\Billing\Transaction\TransactionService;
 use Core\Repositories\SearcherInterface;
 
 readonly class RecalcClaimsPaidCommand
 {
     public function __construct(
-        private InvoiceService        $invoiceService,
-        private ClaimService          $claimService,
-        private ServiceCatalogService $serviceService,
-        private ClaimFactory          $claimFactory,
+        private InvoiceService     $invoiceService,
+        private ClaimService       $claimService,
+        private TransactionService $transactionService,
+        private PaymentService     $paymentService,
     )
     {
     }
 
     public function execute(int $invoiceId): void
     {
-        $searcher = new InvoiceSearcher();
-        $searcher
-            ->setId($invoiceId)
-            ->setWithClaims()
-            ->setWithPayments()
-        ;
-
-        $invoice = $this->invoiceService->search($searcher)->getItems()->first();
+        $invoice = $this->invoiceService->search(
+            (new InvoiceSearcher())->setId($invoiceId)->setWithClaims(),
+        )->getItems()->first();
 
         if ($invoice === null) {
             return;
         }
 
-        $totalPaid = ($invoice->getPayments() ? : new PaymentCollection())
-            ->getVerified()
-            ->getTotalCostMoney()
-        ;
-
-        $sortedClaims = $this->claimService->search(new ClaimSearcher()
-            ->setInvoiceId($invoice->getId())
+        $claims = $this->claimService->search(new ClaimSearcher()
+            ->setInvoiceId($invoiceId)
             ->setWithService()
-            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC))
-            ->getItems()
-            ->sortByServiceTypes()
-        ;
+            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC),
+        )->getItems()->sortByServiceTypes();
 
-        $advanceClaim = $sortedClaims->getAdvancePayment();
+        // удаляем advance-claims, их транзакции отпускаем в unallocated
+        $advanceClaimIds = [];
+        foreach ($claims as $claim) {
+            if ($claim->getService()?->getType()?->isAdvance()) {
+                $advanceClaimIds[] = $claim->getId();
+                $this->claimService->deleteById($claim->getId());
+            }
+        }
+        if ($advanceClaimIds !== []) {
+            $this->releaseClaimTransactions($advanceClaimIds);
+        }
 
-        foreach ($sortedClaims as $claim) {
-            $claim->setPaid(0);
-            $claim->setQuantity($claim->getQuantity() ?: 1.00);
+        $claims = $claims->filter(
+            fn(ClaimEntity $c) => ! $c->getService()?->getType()?->isAdvance(),
+        );
+
+        if ($claims->isEmpty()) {
+            $this->recalcInvoice($invoice, new ClaimCollection());
+
+            return;
+        }
+
+        // пересчитываем cost из tariff × quantity
+        foreach ($claims as $claim) {
+            $claim->setQuantity($claim->getQuantity() ? : 1.00);
             $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
         }
 
-        $remaining = $totalPaid;
-        foreach ($sortedClaims as $claim) {
-            if ($claim->getId() === $advanceClaim?->getId()) {
+        // существующая оплата из уже распределённых транзакций
+        $claimIds    = array_values(array_filter(
+            $claims->map(fn(ClaimEntity $c) => $c->getId())->toArray(),
+        ));
+        $allocatedTx = $this->transactionService->search(
+            new TransactionSearcher()->setClaimIds($claimIds),
+        )->getItems();
+
+        $paidByClaim = [];
+        foreach ($allocatedTx as $tx) {
+            $cid               = $tx->getClaimId();
+            $paidByClaim[$cid] = ($paidByClaim[$cid] ?? 0.0) + (float) $tx->getCost();
+        }
+
+        // если стоимость уменьшилась — избыток отпускаем в unallocated
+        foreach ($claims as $claim) {
+            $existingTotal = $paidByClaim[$claim->getId()] ?? 0.0;
+            $excess        = (float) $existingTotal - (float) $claim->getCost();
+
+            if ($excess <= 0) {
+                $claim->setPaid($existingTotal);
                 continue;
             }
 
-            $claimCost = MoneyService::parse($claim->getCost());
-            $claimPaid = $remaining->subtract($claimCost)->isPositive() ? $claimCost : $remaining;
+            $claimTx = $this->transactionService->search(new TransactionSearcher()
+                ->setClaimIds([$claim->getId()])
+                ->setSortOrderPropertyIdDesc(),
+            )->getItems();
 
-            $remaining = $remaining->subtract($claimPaid);
-            $claim->setPaid(MoneyService::toFloat($claimPaid));
+            foreach ($claimTx as $tx) {
+                if ($excess <= 0) {
+                    break;
+                }
 
-            if ($remaining->isZero()) {
-                break;
+                $released      = $this->releaseFromClaim($tx, $excess);
+                $excess        -= $released;
+                $existingTotal -= $released;
+            }
+
+            $claim->setPaid($existingTotal);
+        }
+
+        // распределяем нераспределённые транзакции участка
+        $paymentIds  = $this->paymentService->getVerifiedByAccount($invoice->getAccountId())->getIds();
+        $unallocated = $paymentIds !== []
+            ? $this->transactionService->getUnallocatedBypaymentIds($paymentIds)
+            : new TransactionCollection();
+
+        if ( ! $unallocated->isEmpty()) {
+            $transactionFactory = new TransactionFactory();
+
+            foreach ($claims as $claim) {
+                $remaining = (float) $claim->getCost() - (float) $claim->getPaid();
+                if ($remaining <= 0) {
+                    continue;
+                }
+
+                foreach ($unallocated as $tx) {
+                    if ($remaining <= 0) {
+                        break;
+                    }
+                    if ($tx->getClaimId() !== null || (float) $tx->getCost() <= 0) {
+                        continue;
+                    }
+
+                    $txCost = (float) $tx->getCost();
+                    $toPay  = min($remaining, $txCost);
+
+                    if ($toPay >= $txCost) {
+                        $tx->setClaimId($claim->getId());
+                        $this->transactionService->save($tx);
+                    }
+                    else {
+                        $tx->setCost($txCost - $toPay);
+                        $this->transactionService->save($tx);
+
+                        $newTx = $transactionFactory->makeDefault()
+                            ->setPaymentId($tx->getPaymentId())
+                            ->setClaimId($claim->getId())
+                            ->setCost($toPay)
+                        ;
+                        $this->transactionService->save($newTx);
+                    }
+
+                    $remaining -= $toPay;
+                    $claim->setPaid(($claim->getPaid() ?? 0.0) + $toPay);
+                }
             }
         }
 
-        if ($remaining->isPositive()) {
-            $service = $this->serviceService->search(
-                ServiceSearcher::make()
-                    ->setPeriodId($invoice->getPeriodId())
-                    ->setType(ServiceTypeEnum::ADVANCE_PAYMENT),
-            )->getItems()->first();
+        $this->claimService->saveCollection($claims);
+        $this->recalcInvoice($invoice, $claims);
+    }
 
-            if ($service !== null) {
-                if ($advanceClaim !== null) {
-                    $advanceClaim
-                        ->setTariff(MoneyService::toFloat($remaining))
-                        ->setCost(MoneyService::toFloat($remaining))
-                        ->setPaid(MoneyService::toFloat($remaining))
-                        ->setName('Аванс')
-                    ;
-                }
-                else {
-                    $advanceClaim = $this->claimFactory->makeDefault()
-                        ->setInvoiceId($invoice->getId())
-                        ->setServiceId($service->getId())
-                        ->setCost(MoneyService::toFloat($remaining))
-                        ->setPaid(MoneyService::toFloat($remaining))
-                        ->setName('Аванс')
-                    ;
-                    $sortedClaims->push($advanceClaim);
-                }
+    /**
+     * Отпускает сумму из распределённой транзакции обратно в unallocated.
+     * Если у того же платежа уже есть нераспределённая транзакция — сливает в неё,
+     * вместо создания новой orphan-транзакции.
+     */
+    private function releaseFromClaim(TransactionEntity $tx, float $amount): float
+    {
+        $paymentId = $tx->getPaymentId();
+        $txCost    = (float) $tx->getCost();
+        $released  = min($amount, $txCost);
+
+        if ($released <= 0) {
+            return 0.0;
+        }
+
+        $existing = $this->transactionService->search(new TransactionSearcher()
+            ->setPaymentId($paymentId)
+            ->setClaimId(null),
+        )->getItems()->first();
+
+        if ($existing) {
+            $existing->setCost((float) $existing->getCost() + $released);
+            $this->transactionService->save($existing);
+
+            if ($released >= $txCost) {
+                $this->transactionService->deleteById($tx->getId());
+            }
+            else {
+                $tx->setCost($txCost - $released);
+                $this->transactionService->save($tx);
             }
         }
-        elseif ($advanceClaim !== null && $advanceClaim->getPaid() > 0) {
-            $sortedClaims->removeById($advanceClaim->getId());
-            $this->claimService->deleteById($advanceClaim->getId());
+        else {
+            if ($released >= $txCost) {
+                $tx->setClaimId(null);
+                $this->transactionService->save($tx);
+            }
+            else {
+                $tx->setCost($txCost - $released);
+                $this->transactionService->save($tx);
+
+                $newTx = new TransactionFactory()->makeDefault()
+                    ->setPaymentId($paymentId)
+                    ->setClaimId(null)
+                    ->setCost($released)
+                ;
+                $this->transactionService->save($newTx);
+            }
         }
 
-        $savedClaims = $this->claimService->saveCollection($sortedClaims);
+        return $released;
+    }
 
-        $totalCost    = MoneyService::parse(0);
-        $totalPaidSum = MoneyService::parse(0);
-        foreach ($savedClaims as $claim) {
-            $totalCost    = $totalCost->add(MoneyService::parse($claim->getCost()));
-            $totalPaidSum = $totalPaidSum->add(MoneyService::parse($claim->getPaid()));
+    private function releaseClaimTransactions(array $claimIds): void
+    {
+        foreach ($claimIds as $claimId) {
+            $txs = $this->transactionService->search(new TransactionSearcher()
+                ->setClaimId($claimId),
+            )->getItems();
+
+            foreach ($txs as $tx) {
+                $this->releaseFromClaim($tx, (float) $tx->getCost());
+            }
+        }
+    }
+
+    private function recalcInvoice(InvoiceEntity $invoice, ClaimCollection $claims): void
+    {
+        $totalCost  = 0.0;
+        $totalPaid  = 0.0;
+        $debtAmount = 0.0;
+        foreach ($claims as $claim) {
+            $totalCost += (float) $claim->getCost();
+            $totalPaid += (float) $claim->getPaid();
+            if ($claim->getService()?->getType()?->isDebt()) {
+                $debtAmount += (float) $claim->getCost();
+            }
         }
 
-        $invoice->setCost(MoneyService::toFloat($totalCost));
-        $invoice->setPaid(MoneyService::toFloat($totalPaidSum));
-        $invoice->setAdvance((float) $advanceClaim?->getCost());
-        $invoice->setDebt((float) $sortedClaims->getDebts()?->getCost());
+        if ($invoice->getAccountId() === AccountIdEnum::SNT->value) {
+            $rounding    = 0.0;
+            $invoiceCost = round($totalCost, 2);
+        }
+        else {
+            $cents = $totalCost - (float) (int) $totalCost;
+            if ($cents >= 0.50) {
+                $rounding    = 1.0 - $cents;
+                $invoiceCost = (float) ((int) $totalCost + 1);
+            }
+            else {
+                $rounding    = -$cents;
+                $invoiceCost = (float) (int) $totalCost;
+            }
+        }
+
+        // debt пропорционально округлённой стоимости
+        $adjustedDebt = $totalCost > 0
+            ? round($debtAmount / $totalCost * $invoiceCost, 2)
+            : 0.0;
+
+        $invoice->setCost($invoiceCost);
+        $invoice->setPaid($totalPaid);
+        $invoice->setAdvance(0);
+        $invoice->setDebt($adjustedDebt);
+        $invoice->setRounding($rounding);
 
         $this->invoiceService->save($invoice);
     }

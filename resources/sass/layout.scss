@@ -1,5 +1,5 @@
 .cursor-pointer {
-    cursor: pointer;
+    cursor : pointer;
 }
 
 #app {
@@ -469,11 +469,11 @@
     }
 
     .profile-layout-inner {
-        display    : flex;
-        flex       : 1;
-        width      : 100%;
-        max-width  : 1200px;
-        margin     : 0 auto;
+        display   : flex;
+        flex      : 1;
+        width     : 100%;
+        max-width : 1200px;
+        margin    : 0 auto;
 
         .profile-sidebar {
             width            : 220px;
@@ -495,11 +495,11 @@
     }
 
     .public-layout-inner {
-        display    : flex;
-        flex       : 1;
-        width      : 100%;
-        max-width  : 1200px;
-        margin     : 0 auto;
+        display   : flex;
+        flex      : 1;
+        width     : 100%;
+        max-width : 1200px;
+        margin    : 0 auto;
 
         .public-sidebar {
             width            : 220px;
@@ -1297,6 +1297,28 @@
     }
 }
 
+.profile-balance-card {
+    padding      : 0.85rem 1.1rem;
+    display      : flex;
+    align-items  : center;
+    justify-content : space-between;
+    gap          : 1rem;
+
+    &__label {
+        font-size      : 1rem;
+        font-weight    : 700;
+        text-transform : uppercase;
+        letter-spacing : 0.04em;
+        color          : $color-secondary;
+    }
+
+    &__value {
+        font-size   : 1.3rem;
+        font-weight : 700;
+        white-space : nowrap;
+    }
+}
+
 .profile-payments-list {
     display        : flex;
     flex-direction : column;
@@ -1313,17 +1335,17 @@
     }
 
     &__title {
-        display     : flex;
+        display        : flex;
         flex-direction : column;
-        gap         : 0.15rem;
+        gap            : 0.15rem;
     }
 
     &__label {
-        font-size    : 0.72rem;
-        font-weight  : 700;
+        font-size      : 0.72rem;
+        font-weight    : 700;
         text-transform : uppercase;
         letter-spacing : 0.04em;
-        color        : $color-secondary;
+        color          : $color-secondary;
     }
 
     &__value {
@@ -1339,26 +1361,26 @@
     }
 
     &__meta {
-        display : flex;
+        display   : flex;
         flex-wrap : wrap;
-        gap     : 0.5rem;
-        padding : 0.6rem 1.1rem 0.85rem;
+        gap       : 0.5rem;
+        padding   : 0.6rem 1.1rem 0.85rem;
     }
 }
 
 .profile-payment-chip {
-    display     : flex;
+    display        : flex;
     flex-direction : column;
-    gap         : 0.1rem;
-    min-width   : 0;
-    flex        : 1 1 8rem;
+    gap            : 0.1rem;
+    min-width      : 0;
+    flex           : 1 1 8rem;
 
     &__label {
-        font-size    : 0.68rem;
-        font-weight  : 600;
+        font-size      : 0.68rem;
+        font-weight    : 600;
         text-transform : uppercase;
         letter-spacing : 0.04em;
-        color        : $color-secondary;
+        color          : $color-secondary;
     }
 
     &__value {
@@ -1384,27 +1406,27 @@
     }
 
     &__title {
-        display     : flex;
+        display        : flex;
         flex-direction : column;
-        gap         : 0.15rem;
+        gap            : 0.15rem;
     }
 
     &__label {
-        font-size    : 0.88rem;
-        font-weight  : 700;
-        color        : $default-primary;
+        font-size   : 0.88rem;
+        font-weight : 700;
+        color       : $default-primary;
     }
 
     &__value {
-        font-size   : 0.78rem;
-        color       : $color-secondary;
+        font-size : 0.78rem;
+        color     : $color-secondary;
     }
 
     &__meta {
-        display : flex;
+        display   : flex;
         flex-wrap : wrap;
-        gap     : 0.5rem;
-        padding : 0.6rem 1.1rem 0.5rem;
+        gap       : 0.5rem;
+        padding   : 0.6rem 1.1rem 0.5rem;
     }
 
     &__action {
@@ -1412,27 +1434,31 @@
     }
 
     .badge {
-        font-size    : 0.72rem;
-        font-weight  : 600;
-        padding      : 0.25em 0.5em;
+        font-size     : 0.72rem;
+        font-weight   : 600;
+        padding       : 0.25em 0.5em;
         border-radius : 0.3rem;
 
         &-warning {
             background-color : #fff3cd;
             color            : #856404;
         }
+
         &-info {
             background-color : #cce5ff;
             color            : #004085;
         }
+
         &-primary {
             background-color : #d4edda;
             color            : #155724;
         }
+
         &-secondary {
             background-color : #e2e3e5;
             color            : #383d41;
         }
+
         &-danger {
             background-color : #f8d7da;
             color            : #721c24;
@@ -1441,18 +1467,18 @@
 }
 
 .profile-ticket-chip {
-    display     : flex;
+    display        : flex;
     flex-direction : column;
-    gap         : 0.1rem;
-    min-width   : 0;
-    flex        : 1 1 8rem;
+    gap            : 0.1rem;
+    min-width      : 0;
+    flex           : 1 1 8rem;
 
     &__label {
-        font-size    : 0.68rem;
-        font-weight  : 600;
+        font-size      : 0.68rem;
+        font-weight    : 600;
         text-transform : uppercase;
         letter-spacing : 0.04em;
-        color        : $color-secondary;
+        color          : $color-secondary;
     }
 
     &__value {
@@ -1596,4 +1622,19 @@ body {
     overflow-y : visible;
     width      : 100%;
     position   : relative;
+}
+
+.payments-files-column {
+    .file {
+        max-width : 100%;
+        overflow  : hidden;
+
+        .name {
+            max-width     : 200px;
+            width         : 200px;
+            white-space   : nowrap;
+            overflow      : hidden;
+            text-overflow : ellipsis;
+        }
+    }
 }

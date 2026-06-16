@@ -29,6 +29,7 @@
             @update:activeTab="activeTab = $event"
             @apply-auto-fill="applyAutoFill"
             @apply-auto-fill-all="applyAutoFillAll"
+            @set-auto-fill-all="setAutoFillForAll"
             @validate-amount="validateAmount"
         />
 
@@ -56,6 +57,7 @@ const {
           activeTab,
           applyAutoFill,
           applyAutoFillAll,
+          setAutoFillForAll,
           autoFillStrategy,
           canSubmit,
           canUpload,

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Payments;
 
 use App\Http\Resources\AbstractResource;
+use App\Http\Resources\Admin\AccountResource;
 use App\Http\Resources\Admin\Invoices\InvoiceResource;
 use App\Http\Resources\Shared\Files\FileResource;
 use App\Http\Resources\Shared\ResourseList;
@@ -33,11 +34,12 @@ readonly class PaymentResource extends AbstractResource
         if ($this->payment->getId()) {
             $hasAcquiring = app(AcquiringService::class)
                 ->search(new AcquiringSearcher()
-                        ->setPaymentId($this->payment->getId())
-                        ->setStatus(StatusEnum::PAID)
+                    ->setPaymentId($this->payment->getId())
+                    ->setStatus(StatusEnum::PAID),
                 )
                 ->getItems()
-                ->first()?->getId();
+                ->first()?->getId()
+            ;
         }
 
         return [
@@ -45,18 +47,22 @@ readonly class PaymentResource extends AbstractResource
             'name'          => $this->payment->getName(),
             'cost'          => $this->payment->getCost(),
             'comment'       => $this->payment->getComment(),
+            'isVerified'    => $this->payment->isVerified(),
             'files'         => $this->payment->getFiles() ? new ResourseList($this->payment->getFiles(), FileResource::class) : [],
             'created'       => $this->formatDateTimeForRender($this->payment->getCreatedAt()),
             'paid'          => $this->formatDateForRender($this->payment->getPaidAt()),
             'invoiceId'     => $this->payment->getInvoiceId(),
             'accountNumber' => $this->payment->getAccountNumber(),
             'accountId'     => $this->payment->getAccountId(),
+            'account'       => $this->payment->getAccount() ? new AccountResource($this->payment->getAccount()) : null,
             'invoice'       => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'       => [
                 'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
                 'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring,
                 'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring,
             ],
+            'allocated'     => $this->payment->getAllocatedSum(),
+            'unallocated'   => $this->payment->getUnallocatedSum(),
             'historyUrl'    => $this->payment->getId()
                 ? HistoryChangesRoute::make(
                     referenceType: HistoryType::PAYMENT,

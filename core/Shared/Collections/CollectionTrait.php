@@ -42,6 +42,15 @@ trait CollectionTrait
 
     public function removeById(?int $id): ?object
     {
-        return $this->reject(fn($item) => $item->getId() === $id);
+        $removed = null;
+        foreach ($this->items as $key => $item) {
+            if ($item->getId() === $id) {
+                $removed = $item;
+                unset($this->items[$key]);
+                break;
+            }
+        }
+
+        return $removed;
     }
 }

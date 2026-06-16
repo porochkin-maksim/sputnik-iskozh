@@ -8,6 +8,13 @@
     />
 
     <template v-else>
+        <div class="page-card profile-balance-card mb-3">
+            <div class="profile-balance-card__label">Баланс</div>
+            <div class="profile-balance-card__value" :class="balance > 0 ? 'text-success' : 'text-secondary'">
+                {{ formatMoney(balance) }}
+            </div>
+        </div>
+
         <div v-if="payments.length === 0" class="profile-empty-state">
             <hr>
             <h6 class="text-center text-secondary m-0"><i>платежей нет...</i></h6>
@@ -66,6 +73,7 @@ const loading     = ref(true);
 const loadingMore = ref(false);
 const payments    = ref([]);
 const total       = ref(0);
+const balance     = ref(0);
 const limit       = ref(20);
 const offset      = ref(0);
 
@@ -89,6 +97,7 @@ async function loadData() {
         });
         payments.value = response.data.payments;
         total.value    = response.data.total;
+        balance.value  = response.data.balance || 0;
         limit.value    = response.data.limit || 20;
         offset.value   = payments.value.length;
     }

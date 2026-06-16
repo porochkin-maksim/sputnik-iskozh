@@ -9,7 +9,6 @@ use Core\Contracts\EventDispatcherInterface;
 use Core\Domains\Account\AccountEntity;
 use Core\Domains\Billing\Events\ImportPaymentData;
 use Core\Domains\Billing\Events\ImportPaymentsSaveRequested;
-use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Period\PeriodEntity;
@@ -69,19 +68,17 @@ readonly class InvoiceImportService
             $account = $invoice->getAccount();
 
             $invoiceCost = MoneyService::parse($invoice->getCost());
-            $advanceCost = MoneyService::parse($invoice->getAdvance());
             $debtCost    = MoneyService::parse($invoice->getDebt());
 
             $invoices[$account->getNumber()] = [
-                InvoiceImportItem::ACCOUNT_NUMBER  => $account->getNumber(),
-                InvoiceImportItem::ACCOUNT_ID      => $account->getId(),
-                InvoiceImportItem::INVOICE_ID      => $invoice->getId(),
-                InvoiceImportItem::INVOICE_MAIN    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
-                InvoiceImportItem::INVOICE_COST    => $invoice->getCost(),
-                InvoiceImportItem::INVOICE_PAID    => $invoice->getPaid(),
-                InvoiceImportItem::INVOICE_DELTA   => $invoice->getDelta(),
-                InvoiceImportItem::INVOICE_ADVANCE => $invoice->getAdvance(),
-                InvoiceImportItem::INVOICE_DEBT    => $invoice->getDebt(),
+                InvoiceImportItem::ACCOUNT_NUMBER => $account->getNumber(),
+                InvoiceImportItem::ACCOUNT_ID     => $account->getId(),
+                InvoiceImportItem::INVOICE_ID     => $invoice->getId(),
+                InvoiceImportItem::INVOICE_MAIN   => MoneyService::toFloat($invoiceCost->subtract($debtCost)),
+                InvoiceImportItem::INVOICE_COST   => $invoice->getCost(),
+                InvoiceImportItem::INVOICE_PAID   => $invoice->getPaid(),
+                InvoiceImportItem::INVOICE_DELTA  => $invoice->getDelta(),
+                InvoiceImportItem::INVOICE_DEBT   => $invoice->getDebt(),
             ];
         }
 
@@ -99,18 +96,17 @@ readonly class InvoiceImportService
                 $invoice       = $invoices[$accountNumber] ?? null;
 
                 $dto = InvoiceImportItem::fromArray([
-                    InvoiceImportItem::ACCOUNT_NUMBER  => $accountNumber,
-                    InvoiceImportItem::INVOICE_ID      => $invoice[InvoiceImportItem::INVOICE_ID] ?? null,
-                    InvoiceImportItem::ACCOUNT_ID      => $invoice[InvoiceImportItem::ACCOUNT_ID] ?? null,
-                    InvoiceImportItem::INVOICE_MAIN    => $invoice[InvoiceImportItem::INVOICE_MAIN] ?? null,
-                    InvoiceImportItem::INVOICE_COST    => $invoice[InvoiceImportItem::INVOICE_COST] ?? null,
-                    InvoiceImportItem::INVOICE_PAID    => $invoice[InvoiceImportItem::INVOICE_PAID] ?? null,
-                    InvoiceImportItem::INVOICE_DELTA   => $invoice[InvoiceImportItem::INVOICE_DELTA] ?? null,
-                    InvoiceImportItem::INVOICE_ADVANCE => $invoice[InvoiceImportItem::INVOICE_ADVANCE] ?? null,
-                    InvoiceImportItem::INVOICE_DEBT    => $invoice[InvoiceImportItem::INVOICE_DEBT] ?? null,
-                    InvoiceImportItem::COST            => $row[Sheet::COST] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::COST] ?? 0),
-                    InvoiceImportItem::PAID            => $row[Sheet::PAID] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::PAID] ?? 0),
-                    InvoiceImportItem::DEBT            => $row[Sheet::DEBT] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::DEBT] ?? 0),
+                    InvoiceImportItem::ACCOUNT_NUMBER => $accountNumber,
+                    InvoiceImportItem::INVOICE_ID     => $invoice[InvoiceImportItem::INVOICE_ID] ?? null,
+                    InvoiceImportItem::ACCOUNT_ID     => $invoice[InvoiceImportItem::ACCOUNT_ID] ?? null,
+                    InvoiceImportItem::INVOICE_MAIN   => $invoice[InvoiceImportItem::INVOICE_MAIN] ?? null,
+                    InvoiceImportItem::INVOICE_COST   => $invoice[InvoiceImportItem::INVOICE_COST] ?? null,
+                    InvoiceImportItem::INVOICE_PAID   => $invoice[InvoiceImportItem::INVOICE_PAID] ?? null,
+                    InvoiceImportItem::INVOICE_DELTA  => $invoice[InvoiceImportItem::INVOICE_DELTA] ?? null,
+                    InvoiceImportItem::INVOICE_DEBT   => $invoice[InvoiceImportItem::INVOICE_DEBT] ?? null,
+                    InvoiceImportItem::COST           => $row[Sheet::COST] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::COST] ?? 0),
+                    InvoiceImportItem::PAID           => $row[Sheet::PAID] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::PAID] ?? 0),
+                    InvoiceImportItem::DEBT           => $row[Sheet::DEBT] - ($sheetsDataPrev[$sheetIndex][$rowIndex][Sheet::DEBT] ?? 0),
                 ]);
 
                 $sheetResult['items'][] = $dto;

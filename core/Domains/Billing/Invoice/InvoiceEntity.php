@@ -22,6 +22,7 @@ class InvoiceEntity
     private ?float             $paid      = null;
     private ?float             $advance   = null;
     private ?float             $debt      = null;
+    private ?float             $rounding  = null;
     private ?string            $comment   = null;
     private ?string            $name      = null;
     private ?ClaimCollection   $claims    = null;
@@ -90,9 +91,9 @@ class InvoiceEntity
         return $this;
     }
 
-    public function getCost(): ?float
+    public function getCost(): float
     {
-        return $this->cost;
+        return (float) $this->cost;
     }
 
     public function setCost(?float $cost): static
@@ -102,9 +103,9 @@ class InvoiceEntity
         return $this;
     }
 
-    public function getPaid(): ?float
+    public function getPaid(): float
     {
-        return $this->paid;
+        return (float) $this->paid;
     }
 
     public function setPaid(?float $paid): static
@@ -114,9 +115,9 @@ class InvoiceEntity
         return $this;
     }
 
-    public function getAdvance(): ?float
+    public function getAdvance(): float
     {
-        return $this->advance;
+        return (float) $this->advance;
     }
 
     public function setAdvance(?float $advance): static
@@ -126,14 +127,26 @@ class InvoiceEntity
         return $this;
     }
 
-    public function getDebt(): ?float
+    public function getDebt(): float
     {
-        return $this->debt;
+        return (float) $this->debt;
     }
 
     public function setDebt(?float $debt): static
     {
         $this->debt = $debt;
+
+        return $this;
+    }
+
+    public function getRounding(): float
+    {
+        return (float) $this->rounding;
+    }
+
+    public function setRounding(?float $rounding): static
+    {
+        $this->rounding = $rounding;
 
         return $this;
     }
@@ -164,11 +177,7 @@ class InvoiceEntity
 
     public function getDelta(): ?float
     {
-        if ($this->getCost() === null || $this->getPaid() === null) {
-            return null;
-        }
-
-        return $this->getCost() - $this->getPaid();
+        return $this->getCost() - $this->getRounding() - $this->getPaid();
     }
 
     public function getClaims(): ?ClaimCollection
@@ -233,6 +242,6 @@ class InvoiceEntity
 
     public function isPaid(): bool
     {
-        return $this->getCost() === $this->getPaid();
+        return $this->getCost() - $this->getRounding() === $this->getPaid();
     }
 }

@@ -4,14 +4,18 @@ namespace Core\App\Billing\Payment;
 
 use Core\App\Billing\Payment\Validator\LinkPaymentValidator;
 use Core\Domains\Billing\Payment\PaymentEntity;
+use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Payment\PaymentTransactionService;
 use Core\Exceptions\ValidationException;
 
 readonly class LinkPaymentCommand
 {
     public function __construct(
-        private PaymentService       $paymentService,
-        private LinkPaymentValidator $validator,
+        private PaymentService            $paymentService,
+        private PaymentFactory            $paymentFactory,
+        private PaymentTransactionService $paymentTransactionService,
+        private LinkPaymentValidator      $validator,
     )
     {
     }
@@ -25,12 +29,11 @@ readonly class LinkPaymentCommand
         ?float  $cost,
         ?string $comment,
         ?int    $accountId,
-        ?int    $invoiceId,
     ): ?PaymentEntity
     {
         $this->validator->validate($cost, $accountId);
 
-        $payment = $id ? $this->paymentService->getById($id) : null;
+        $payment = $id ? $this->paymentService->getById($id) : $this->paymentFactory->makeDefault();
         if ($payment === null) {
             return null;
         }
@@ -42,9 +45,9 @@ readonly class LinkPaymentCommand
             ->setCost($cost)
             ->setComment($comment)
             ->setAccountId($accountId)
-            ->setInvoiceId($invoiceId)
+            ->setInvoiceId(null)
         ;
 
-        return $this->paymentService->save($payment);
+        return $this->paymentTransactionService->saveWithTransaction($payment);
     }
 }

@@ -79,4 +79,14 @@ class ClaimCollection extends Collection
 
         return $result;
     }
+
+    public function getPaidSum(): float
+    {
+        $result = 0.0;
+        foreach ($this as $claim) {
+            $result += (float) $claim->getPaid();
+        }
+
+        return $result;
+    }
 }

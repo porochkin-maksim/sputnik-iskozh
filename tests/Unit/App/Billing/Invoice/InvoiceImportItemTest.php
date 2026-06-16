@@ -16,9 +16,8 @@ class InvoiceImportItemTest extends TestCase
             InvoiceImportItem::INVOICE_MAIN    => 100.0,
             InvoiceImportItem::INVOICE_COST    => 500.0,
             InvoiceImportItem::INVOICE_PAID    => 200.0,
-            InvoiceImportItem::INVOICE_DELTA   => 50.0,
-            InvoiceImportItem::INVOICE_ADVANCE => 0.0,
-            InvoiceImportItem::INVOICE_DEBT    => 50.0,
+            InvoiceImportItem::INVOICE_DELTA  => 50.0,
+            InvoiceImportItem::INVOICE_DEBT   => 50.0,
             InvoiceImportItem::COST            => 550.0,
             InvoiceImportItem::PAID            => 250.0,
             InvoiceImportItem::DEBT            => 30.0,
@@ -35,7 +34,6 @@ class InvoiceImportItemTest extends TestCase
         $this->assertSame(500.0, $serialized[InvoiceImportItem::INVOICE_COST]);
         $this->assertSame(200.0, $serialized[InvoiceImportItem::INVOICE_PAID]);
         $this->assertSame(50.0, $serialized[InvoiceImportItem::INVOICE_DELTA]);
-        $this->assertSame(0.0, $serialized[InvoiceImportItem::INVOICE_ADVANCE]);
         $this->assertSame(50.0, $serialized[InvoiceImportItem::INVOICE_DEBT]);
         $this->assertSame(550.0, $serialized[InvoiceImportItem::COST]);
         $this->assertSame(250.0, $serialized[InvoiceImportItem::PAID]);

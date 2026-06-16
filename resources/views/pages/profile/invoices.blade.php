@@ -38,13 +38,14 @@ foreach ($invoices as $invoice) {
     $claims = [];
     foreach ($invoice->getClaims()->sortByServiceTypes() as $claim) {
         $claims[] = [
-            'id'      => $claim->getId(),
-            'name'    => $claim->getName() ? : $claim->getService()?->getName() ? : $services->getById($claim->getServiceId())->getName(),
-            'tariff'  => $formatMoney($claim->getTariff()),
-            'cost'    => $formatMoney($claim->getCost()),
-            'paid'    => $formatMoney($claim->getPaid()),
-            'delta'   => $formatMoney($claim->getDelta()),
-            'isPayed' => $claim->isPaid(),
+            'id'           => $claim->getId(),
+            'name'         => $claim->getName() ? : $claim->getService()?->getName() ? : $services->getById($claim->getServiceId())->getName(),
+            'tariff'       => $formatMoney($claim->getTariff()),
+            'cost'         => $formatMoney($claim->getCost()),
+            'paid'         => $formatMoney($claim->getPaid()),
+            'delta'        => $formatMoney($claim->getDelta()),
+            'deltaNumeric' => (float) $claim->getDelta(),
+            'isPaid'       => $claim->isPaid(),
         ];
     }
 
@@ -77,17 +78,18 @@ foreach ($invoices as $invoice) {
     ];
 
     $invoiceItems[] = [
-        'id'         => $invoice->getId(),
-        'title'      => $invoice->getName(),
-        'cost'       => $formatMoney($invoice->getCost()),
-        'paid'       => $formatMoney($invoice->getPaid()),
-        'delta'      => $formatMoney($invoice->getDelta()),
-        'isPaid'     => $invoice->isPaid(),
-        'claims'     => $claims,
-        'payments'   => $paymentsItems,
-        'acquiring'  => $acquiringAmounts,
-        'paymentUrl' => route(RouteNames::REQUESTS_PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]),
-        'receiptUrl' => route(RouteNames::DOCUMENT_RECEIPT_INVOICE, ['uid' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]),
+        'id'           => $invoice->getId(),
+        'title'        => $invoice->getName(),
+        'cost'         => $formatMoney($invoice->getCost()),
+        'paid'         => $formatMoney($invoice->getPaid()),
+        'delta'        => $formatMoney($invoice->getDelta()),
+        'deltaNumeric' => (float) $invoice->getDelta(),
+        'isPaid'       => $invoice->isPaid(),
+        'claims'       => $claims,
+        'payments'     => $paymentsItems,
+        'acquiring'    => $acquiringAmounts,
+        'paymentUrl'   => route(RouteNames::REQUESTS_PAYMENT, ['invoice' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]),
+        'receiptUrl'   => route(RouteNames::DOCUMENT_RECEIPT_INVOICE, ['uid' => UidFacade::getUid(UidTypeEnum::INVOICE, $invoice->getId())]),
     ];
 }
 
@@ -108,21 +110,14 @@ foreach ($invoices as $invoice) {
                 Просмотр начислений, оплат и квитанций по выбранному периоду.
             </div>
         </div>
-        @if($invoices->count())
-            <profile-invoices-block
-                    :periods='@json($periodOptions)'
-                    :selected-period-id='{{ $period ? $period->getId() : 'null' }}'
-                    period-route='{{ route(RouteNames::PROFILE_INVOICES) }}'
-                    :invoices='@json($invoiceItems)'
-                    :acquiring-available='{{ $acquiringAvailable ? 'true' : 'false' }}'
-                    csrf-token='{{ csrf_token() }}'
-            ></profile-invoices-block>
-        @else
-            <hr>
-            <h6 class="text-center text-secondary m-0">
-                <i>счетов нет...</i>
-            </h6>
-        @endif
+        <profile-invoices-block
+                :periods='@json($periodOptions)'
+                :selected-period-id='{{ $period ? $period->getId() : 'null' }}'
+                period-route='{{ route(RouteNames::PROFILE_INVOICES) }}'
+                :invoices='@json($invoiceItems)'
+                :acquiring-available='{{ $acquiringAvailable ? 'true' : 'false' }}'
+                csrf-token='{{ csrf_token() }}'
+        ></profile-invoices-block>
         <div>
             <hr>
         </div>

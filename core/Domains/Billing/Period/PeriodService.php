@@ -33,6 +33,15 @@ readonly class PeriodService
         return $this->periodRepository->deleteById($id);
     }
 
+    public function getOpenPeriods(): PeriodCollection
+    {
+        return $this->search(
+            new PeriodSearcher()
+                ->setIsClosed(false)
+                ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_DESC),
+        )->getItems();
+    }
+
     public function getActive(): ?PeriodEntity
     {
         return $this->search(

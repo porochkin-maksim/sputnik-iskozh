@@ -5,6 +5,7 @@ namespace App\Console\Commands\Billing;
 use App\Models\Billing\Claim;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
+use App\Models\Billing\Transaction;
 use App\Models\Billing\Period;
 use App\Models\Files\FileModel;
 use App\Models\Infra\HistoryChanges;
@@ -81,6 +82,7 @@ class PeriodDataTruncate extends Command
         try {
             $this->performDeletion($data);
             DB::commit();
+            $this->resetAutoIncrementIfNeeded($data['tables'] ?? []);
             $this->info('Очистка успешно завершена.');
         }
         catch (\Throwable $e) {
@@ -181,7 +183,9 @@ class PeriodDataTruncate extends Command
                     }
                 });
             }
-            $data['payments'] = $paymentQuery->pluck('id')->toArray();
+            $data['payments']     = $paymentQuery->pluck('id')->toArray();
+            $tables[]             = Transaction::TABLE;
+            $data['transactions'] = Transaction::whereIn('payment_id', $data['payments'])->count();
         }
 
         // Файлы, привязанные к платежам (если удаляем платежи)
@@ -194,7 +198,7 @@ class PeriodDataTruncate extends Command
             ;
         }
 
-        $this->resetAutoIncrementIfNeeded($tables);
+        $data['tables'] = $tables;
 
         return $data;
     }
@@ -212,6 +216,7 @@ class PeriodDataTruncate extends Command
         $this->line(" - Записей истории счетов: " . count($data['invoices']));
         $this->line(" - Записей истории услуг: " . count($data['claims']));
         $this->line(" - Записей истории платежей: " . count($data['payments']));
+        $this->line(" - Транзакций платежей (cascade): " . ($data['transactions'] ?? 0));
     }
 
     /**

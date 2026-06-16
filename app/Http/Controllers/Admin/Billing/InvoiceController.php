@@ -232,7 +232,7 @@ class InvoiceController extends Controller
             abort(403);
         }
 
-        return CreateRegularPeriodInvoicesJob::dispatchIfNeeded($periodId);
+        return CreateRegularPeriodInvoicesJob::dispatchSyncIfNeeded($periodId);
     }
 
     private function getViewInvoice(int $id): ?InvoiceEntity
@@ -240,7 +240,7 @@ class InvoiceController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
             abort(403);
         }
-        $invoice = $this->invoiceService->search((new InvoiceSearcher())
+        $invoice = $this->invoiceService->search(new InvoiceSearcher()
             ->setId($id)
             ->setWithClaims()
             ->setWithAccount()

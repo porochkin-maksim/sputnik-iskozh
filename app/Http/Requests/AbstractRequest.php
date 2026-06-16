@@ -119,9 +119,9 @@ abstract class AbstractRequest extends FormRequest
         return trim((string) $default) ? : null;
     }
 
-    public function getFloat(string $key, mixed $default = null): ?float
+    public function getFloat(string $key, mixed $default = null): float
     {
-        return is_numeric($this->input($key, $default)) ? (float) $this->input($key, $default) : null;
+        return is_numeric($this->input($key, $default)) ? (float) $this->input($key, $default) : 0.0;
     }
 
     public function getDateOrNull(string $key, ?string $fromFormat = null): ?Carbon

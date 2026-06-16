@@ -20,30 +20,30 @@
                 :url="historyUrl" />
         </div>
         <div>
-            <div v-for="period in periodsInfo" :key="period.id">
-                <div class="mb-2">
-                    <b>Период «{{ period.name }}»</b> <span
-                    class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
-                </div>
-                <table class="table table-sm admin-table-firm">
-                    <thead>
-                    <tr>
+            <table class="table table-sm admin-table-firm">
+                <tbody>
+                <template v-for="period in periodsInfo" :key="period.id">
+                    <tr class="text-center text-success table-success">
+                        <th colspan="5">
+                            <b>Период «{{ period.name }}»</b> <span
+                            class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
+                        </th>
+                    </tr>
+                    <tr class="text-end">
                         <th class="table-thin-column">ID</th>
-                        <th>Название</th>
-                        <th>Тариф</th>
                         <th>Тип</th>
+                        <th>Название</th>
+                        <th class="pe-3">Тариф</th>
                         <th class="text-center table-thin-column">Действия</th>
                     </tr>
-                    </thead>
-                    <tbody>
                     <tr v-for="service in services.filter(s => s.periodId && period.id && parseInt(s.periodId) === parseInt(period.id))"
                         :key="service.id">
-                        <td class="table-thin-column text-center">{{ service.id }}</td>
-                        <td>{{ service.name }}</td>
-                        <td>{{ formatMoney(service.cost) }}</td>
-                        <td>{{ service.typeName }}</td>
+                        <td class="table-thin-column text-end">{{ service.id }}</td>
+                        <td class="text-end">{{ service.typeName }}</td>
+                        <td class="text-end">{{ service.name }}</td>
+                        <td class="text-end pe-3">{{ formatMoney(service.cost) }}</td>
                         <td class="table-thin-column">
-                            <div class="d-flex justify-content-center gap-1 flex-nowrap">
+                            <div class="d-flex justify-content-end gap-1 flex-nowrap">
                                 <button
                                     v-if="canEdit && service.actions?.edit"
                                     class="btn btn-sm btn-outline-success admin-action-btn"
@@ -64,9 +64,9 @@
                             </div>
                         </td>
                     </tr>
-                    </tbody>
-                </table>
-            </div>
+                </template>
+                </tbody>
+            </table>
         </div>
     </div>
 

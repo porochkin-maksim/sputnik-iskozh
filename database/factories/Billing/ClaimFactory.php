@@ -19,7 +19,6 @@ class ClaimFactory extends Factory
             Claim::NAME => fake()->word(),
             Claim::TARIFF => fake()->randomFloat(2, 10, 500),
             Claim::COST => fake()->randomFloat(2, 100, 10000),
-            Claim::PAID => 0,
             Claim::QUANTITY => fake()->numberBetween(1, 100),
         ];
     }

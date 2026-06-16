@@ -28,10 +28,10 @@ class SummaryRepository
                 COUNT(CASE WHEN type = {$income} THEN 1 ELSE NULL END)   AS incomeCount,
                 COUNT(CASE WHEN type = {$outcome} THEN 1 ELSE NULL END) AS outcomeCount,
                 
-                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE cost END)  AS incomeCost,
-                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE paid END) AS incomePaid,
-                SUM(CASE WHEN type = {$outcome} THEN cost ELSE 0 END)  AS outcomeCost,
-                SUM(CASE WHEN type = {$outcome} THEN paid ELSE 0 END) AS outcomePaid
+                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE cost - rounding END)  AS incomeCost,
+                SUM(CASE WHEN type = {$outcome} THEN 0 ELSE paid END)           AS incomePaid,
+                SUM(CASE WHEN type = {$outcome} THEN cost - rounding ELSE 0 END) AS outcomeCost,
+                SUM(CASE WHEN type = {$outcome} THEN paid ELSE 0 END)           AS outcomePaid
             "),
         )->when($periodId, function ($query) use ($periodId) {
             $query->where(Invoice::PERIOD_ID, SearcherInterface::EQUALS, $periodId);

@@ -1,5 +1,5 @@
 <template>
-    <button class="btn py-0"
+    <button class="btn underline-none p-0"
             @click="open">
         <span :style="url ? '' : 'opacity: 0.2'" class="text-nowrap">
             <i class="fa fa-file-text text-warning"></i>&nbsp;История

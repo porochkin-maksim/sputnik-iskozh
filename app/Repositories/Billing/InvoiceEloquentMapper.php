@@ -36,6 +36,7 @@ readonly class InvoiceEloquentMapper implements RepositoryDataMapperInterface
             Invoice::COST       => (float) $entity->getCost(),
             Invoice::ADVANCE    => (float) $entity->getAdvance(),
             Invoice::DEBT       => (float) $entity->getDebt(),
+            Invoice::ROUNDING   => (float) $entity->getRounding(),
             Invoice::NAME       => $entity->getName(),
             Invoice::COMMENT    => $entity->getComment(),
         ]);

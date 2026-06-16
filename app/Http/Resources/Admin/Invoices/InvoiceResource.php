@@ -35,18 +35,14 @@ readonly class InvoiceResource extends AbstractResource
 
         $detailCost = null;
         if ($claims) {
-            $advance = $claims?->getAdvancePayment();
-            $debts   = $claims?->getDebts();
-
-            $advanceCost = MoneyService::parse((float) $advance?->getCost());
-            $debtCost    = MoneyService::parse((float) $debts?->getCost());
-            $invoiceCost = MoneyService::parse((float) $this->invoice?->getCost());
+            $debtCost    = $this->invoice->getDebt();
+            $invoiceCost = MoneyService::parse($this->invoice->getCost() - $this->invoice->getRounding());
 
             $detailCost = [
-                'total'   => MoneyService::toFloat($invoiceCost),
-                'advance' => MoneyService::toFloat($advanceCost),
-                'debt'    => MoneyService::toFloat($debtCost),
-                'main'    => MoneyService::toFloat($invoiceCost->subtract($advanceCost)->subtract($debtCost)),
+                'total'    => MoneyService::toFloat($invoiceCost),
+                'debt'     => $debtCost,
+                'main'     => MoneyService::toFloat($invoiceCost->subtract(MoneyService::parse($debtCost))),
+                'rounding' => $this->invoice->getRounding(),
             ];
         }
 
@@ -63,10 +59,10 @@ readonly class InvoiceResource extends AbstractResource
             'typeName'      => $this->invoice->getType()?->name(),
             'name'          => $this->invoice->getName(),
             'displayName'   => $this->invoice->getName() ? sprintf('%s (%s)', $this->invoice->getName(), $this->invoice->getType()?->name()) : $this->invoice->getType()?->name(),
-            'cost'          => $this->invoice->getCost(),
+            'cost'          => $this->invoice->getCost() - $this->invoice->getRounding(),
             'paid'          => $this->invoice->getPaid(),
-            'delta'         => $this->invoice->getCost() - $this->invoice->getPaid(),
-            'advance'       => (float) $claims?->getAdvancePayment()?->getPaid(),
+            'delta'         => $this->invoice->getCost() - ($this->invoice->getPaid() + $this->invoice->getRounding()),
+            'rounding'      => $this->invoice->getRounding(),
             'detailCost'    => $detailCost,
             'isPaid'        => $this->invoice->isPaid(),
             'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),

@@ -93,7 +93,6 @@
                 :class="[
                         invoice.isPaid ? 'table-success' : '',
                         invoice.cost === 0 ? 'table-warning' : '',
-                        invoice.advance ? 'fw-bold' : ''
                     ]"
             >
                 <td class="table-thin-column text-center">
@@ -117,7 +116,7 @@
                 </td>
 
                 <td class="text-end fw-medium">
-                    {{ formatMoney(invoice.advance ? invoice.cost - invoice.advance : invoice.cost) }}
+                    {{ formatMoney(invoice.cost) }}
                 </td>
 
                 <td class="text-end fw-medium">
@@ -127,11 +126,10 @@
                 <td
                     class="text-end fw-medium"
                     :class="[
-                            invoice.advance ? 'text-success' : '',
                             invoice.delta ? 'text-danger' : ''
                         ]"
                 >
-                    {{ invoice.advance ? formatMoney(-invoice.advance) : formatMoney(invoice.delta) }}
+                    {{ formatMoney(invoice.delta) }}
                 </td>
 
                 <td class="text-end text-muted small">

@@ -12,6 +12,7 @@
 
         <invoice-summary-panel
             :actions="actions"
+            :balance="balance"
             :delta-class="deltaClass"
             :format-money="formatMoney"
             :local-invoice="localInvoice"
@@ -22,10 +23,8 @@
             :actions="actions"
             :claims-count="claimsCount"
             :invoice="props.invoice"
-            :payments-count="paymentsCount"
             :reload="reload"
             @update:claimsCount="claimsCount = $event"
-            @update:paymentsCount="paymentsCount = $event"
             @update:reload="reload = $event"
         />
     </div>
@@ -50,6 +49,7 @@ const props = defineProps({
 
 const {
           actions,
+          balance,
           canAccountView,
           canDelete,
           canEdit,
@@ -62,6 +62,5 @@ const {
           recalcAction,
           reload,
           statusAlertClass,
-          paymentsCount,
       } = useInvoiceItemView(props);
 </script>

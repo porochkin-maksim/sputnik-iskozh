@@ -42,6 +42,7 @@ class Invoice extends AbstractModel
     public const string PAID       = 'paid';
     public const string ADVANCE    = 'advance';
     public const string DEBT       = 'debt';
+    public const string ROUNDING   = 'rounding';
     public const string NAME       = 'name';
     public const string COMMENT    = 'comment';
 
@@ -58,6 +59,7 @@ class Invoice extends AbstractModel
         self::PAID    => self::CAST_FLOAT,
         self::ADVANCE => self::CAST_FLOAT,
         self::DEBT    => self::CAST_FLOAT,
+        self::ROUNDING => self::CAST_FLOAT,
     ];
 
     public const string TITLE_PERIOD_ID  = 'Период';
@@ -68,6 +70,7 @@ class Invoice extends AbstractModel
     public const string TITLE_COST       = 'Стоимость';
     public const string TITLE_ADVANCE    = 'Аванс';
     public const string TITLE_DEBT       = 'Долг';
+    public const string TITLE_ROUNDING   = 'Округление';
     public const string TITLE_COMMENT    = 'Комментарий';
     public const string TITLE_NAME       = 'Название';
 
@@ -81,12 +84,14 @@ class Invoice extends AbstractModel
         self::COST       => self::TITLE_COST,
         self::ADVANCE    => self::TITLE_ADVANCE,
         self::DEBT       => self::TITLE_DEBT,
+        self::ROUNDING   => self::TITLE_ROUNDING,
         self::COMMENT    => self::TITLE_COMMENT,
     ];
 
     public function claims(): HasMany
     {
-        return $this->hasMany(Claim::class, Claim::INVOICE_ID)->with(Claim::RELATION_SERVICE);
+        return $this->hasMany(Claim::class, Claim::INVOICE_ID)
+            ->with(Claim::RELATION_SERVICE);
     }
 
     public function payments(): HasMany

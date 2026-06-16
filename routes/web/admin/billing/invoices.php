@@ -95,23 +95,20 @@ Route::group(['prefix' => 'invoices'], static function () {
                 ;
             });
             Route::group(['prefix' => 'payments'], static function () {
-                Route::get('/create', [Controllers\Admin\Billing\PaymentController::class, 'create'])
+                Route::get('/create', [Controllers\Admin\Billing\PaymentManageController::class, 'create'])
                     ->name(RouteNames::ADMIN_PAYMENT_CREATE)
                 ;
-                Route::get('/auto-create', [Controllers\Admin\Billing\PaymentController::class, 'autoCreate'])
-                    ->name(RouteNames::ADMIN_PAYMENT_AUTO_CREATE)
-                ;
-                Route::get('/list', [Controllers\Admin\Billing\PaymentController::class, 'list'])
+                Route::get('/list', [Controllers\Admin\Billing\PaymentManageController::class, 'list'])
                     ->name(RouteNames::ADMIN_PAYMENT_LIST)
                 ;
-                Route::post('/save', [Controllers\Admin\Billing\PaymentController::class, 'save'])
+                Route::post('/save', [Controllers\Admin\Billing\PaymentManageController::class, 'save'])
                     ->name(RouteNames::ADMIN_PAYMENT_SAVE)
                 ;
-                Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentController::class, 'delete'])
+                Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentManageController::class, 'delete'])
                     ->name(RouteNames::ADMIN_PAYMENT_DELETE)
                     ->whereNumber('id')
                 ;
-                Route::get('/get/{paymentId}', [Controllers\Admin\Billing\PaymentController::class, 'get'])
+                Route::get('/get/{paymentId}', [Controllers\Admin\Billing\PaymentManageController::class, 'get'])
                     ->name(RouteNames::ADMIN_PAYMENT_VIEW)
                     ->whereNumber('paymentId')
                 ;
@@ -123,20 +120,61 @@ Route::group(['prefix' => 'invoices'], static function () {
     Route::group(['prefix' => 'payments'], static function () {
         Route::get('/', [Controllers\Admin\Requests\NewPaymentController::class, 'index'])->name(RouteNames::ADMIN_NEW_PAYMENT_INDEX);
         Route::group(['prefix' => 'json'], static function () {
-            Route::get('/list', [Controllers\Admin\Requests\NewPaymentController::class, 'list'])->name(RouteNames::ADMIN_NEW_PAYMENT_LIST);
-            Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\Requests\NewPaymentController::class, 'getInvoices'])
+            Route::get('/list', [Controllers\Admin\Billing\PaymentManageController::class, 'list'])->name(RouteNames::ADMIN_NEW_PAYMENT_LIST);
+            Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\Billing\PaymentManageController::class, 'getInvoices'])
                 ->name(RouteNames::ADMIN_NEW_PAYMENT_INVOICES)
                 ->whereNumber('accountId')
                 ->whereNumber('periodId')
             ;
-            Route::post('/save', [Controllers\Admin\Requests\NewPaymentController::class, 'save'])->name(RouteNames::ADMIN_NEW_PAYMENT_SAVE);
-            Route::delete('/delete/{id}', [Controllers\Admin\Requests\NewPaymentController::class, 'delete'])
+            Route::post('/save', [Controllers\Admin\Billing\PaymentManageController::class, 'save'])->name(RouteNames::ADMIN_NEW_PAYMENT_SAVE);
+            Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentManageController::class, 'delete'])
                 ->name(RouteNames::ADMIN_NEW_PAYMENT_DELETE)
                 ->whereNumber('id')
             ;
-            Route::get('/get/{paymentId}', [Controllers\Admin\Requests\NewPaymentController::class, 'get'])
+            Route::get('/get/{paymentId}', [Controllers\Admin\Billing\PaymentManageController::class, 'get'])
                 ->name(RouteNames::ADMIN_NEW_PAYMENT_VIEW)
                 ->whereNumber('paymentId')
+            ;
+        });
+    });
+
+    // универсальное управление платежами
+    Route::group(['prefix' => 'payments/manage'], static function () {
+        Route::group(['prefix' => 'json'], static function () {
+            Route::get('/list', [Controllers\Admin\Billing\PaymentManageController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_MANAGE_LIST);
+            Route::get('/create', [Controllers\Admin\Billing\PaymentManageController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_MANAGE_CREATE);
+            Route::get('/get/{paymentId}', [Controllers\Admin\Billing\PaymentManageController::class, 'get'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_VIEW)
+                ->whereNumber('paymentId')
+            ;
+            Route::post('/save', [Controllers\Admin\Billing\PaymentManageController::class, 'save'])->name(RouteNames::ADMIN_PAYMENT_MANAGE_SAVE);
+            Route::delete('/delete/{id}', [Controllers\Admin\Billing\PaymentManageController::class, 'delete'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_DELETE)
+                ->whereNumber('id')
+            ;
+            Route::get('/get-invoices/{accountId}/{periodId}', [Controllers\Admin\Billing\PaymentManageController::class, 'getInvoices'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_INVOICES)
+                ->whereNumber('accountId')
+                ->whereNumber('periodId')
+            ;
+            Route::get('/can-pay-all/{invoiceId}', [Controllers\Admin\Billing\PaymentManageController::class, 'canPayAll'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_CAN_PAY_ALL)
+                ->whereNumber('invoiceId')
+            ;
+            Route::post('/pay-all/{invoiceId}', [Controllers\Admin\Billing\PaymentManageController::class, 'payAll'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_PAY_ALL)
+                ->whereNumber('invoiceId')
+            ;
+            Route::get('/unallocated-transactions/{accountId}', [Controllers\Admin\Billing\PaymentManageController::class, 'unallocatedTransactions'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_UNALLOCATED_TRANSACTIONS)
+                ->whereNumber('accountId')
+            ;
+            Route::get('/account-balance/{accountId}', [Controllers\Admin\Billing\PaymentManageController::class, 'accountBalance'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_ACCOUNT_BALANCE)
+                ->whereNumber('accountId')
+            ;
+            Route::post('/pay-claim', [Controllers\Admin\Billing\PaymentManageController::class, 'payClaim'])
+                ->name(RouteNames::ADMIN_PAYMENT_MANAGE_PAY_CLAIM)
             ;
         });
     });

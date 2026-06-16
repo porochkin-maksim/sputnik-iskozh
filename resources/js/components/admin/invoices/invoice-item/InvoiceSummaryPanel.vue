@@ -6,8 +6,12 @@
             <td>{{ formatMoney(localInvoice.detailCost.main) }}</td>
             <th>Долг:</th>
             <td>{{ formatMoney(localInvoice.detailCost.debt) }}</td>
-            <th>Аванс:</th>
-            <td>{{ formatMoney(localInvoice.detailCost.advance) }}</td>
+            <th v-if="localInvoice.detailCost.rounding">Округление:</th>
+            <td v-if="localInvoice.detailCost.rounding" class="text-muted">
+                {{ formatMoney(localInvoice.detailCost.rounding) }}
+            </td>
+            <th>Итого:</th>
+            <td>{{ formatMoney(localInvoice.cost) }}</td>
         </tr>
         </tbody>
     </table>
@@ -26,10 +30,34 @@
             <div>
                 <strong>Оплачено:</strong>
                 {{ formatMoney(localInvoice.paid || 0) }} / {{ formatMoney(localInvoice.cost || 0) }}
-                <span v-if="localInvoice.delta !== 0" class="ms-2" :class="deltaClass">
-                    (Долг {{ formatMoney(Math.abs(localInvoice.delta)) }})
+                <span v-if="localInvoice.delta > 0" class="ms-2 text-danger fw-bold">
+                    (Долг {{ formatMoney(localInvoice.delta) }})
+                </span>
+                <span v-else-if="localInvoice.delta < 0" class="ms-2 text-success">
+                    (Переплата {{ formatMoney(Math.abs(localInvoice.delta)) }})
                 </span>
             </div>
+        </div>
+    </div>
+
+    <div
+        v-if="localInvoice.detailCost?.rounding"
+        class="mt-2 text-muted small"
+    >
+        <i class="fa fa-calculator me-1" aria-hidden="true"></i>
+        Округление: {{ formatMoney(localInvoice.detailCost.rounding) }}
+    </div>
+
+    <div
+        v-if="balance !== null"
+        class="mt-3 p-3 bg-light rounded border"
+    >
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-balance-scale text-info" aria-hidden="true"></i>
+            <strong>Баланс участка:</strong>
+            <span class="fw-bold" :class="balance >= 0 ? 'text-success' : 'text-danger'">
+                {{ formatMoney(balance) }}
+            </span>
         </div>
     </div>
 </template>
@@ -43,6 +71,7 @@ const canView = computed(() => has('invoices', 'view'));
 
 defineProps({
     actions         : { type: Object, required: true },
+    balance         : { type: Number, default: null },
     deltaClass      : { type: String, required: true },
     formatMoney     : { type: Function, required: true },
     localInvoice    : { type: Object, required: true },

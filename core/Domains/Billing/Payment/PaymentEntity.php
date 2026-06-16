@@ -13,20 +13,22 @@ class PaymentEntity
 {
     use TimestampsTrait;
 
-    private ?int $id = null;
-    private ?int $invoiceId = null;
-    private ?int $accountId = null;
-    private ?float $cost = null;
-    private ?bool $moderated = null;
-    private ?bool $verified = null;
-    private ?string $comment = null;
-    private ?string $name = null;
-    private ?array $data = null;
-    private ?Carbon $paidAt = null;
-    private ?string $accountNumber = null;
-    private ?InvoiceEntity $invoice = null;
-    private ?AccountEntity $account = null;
-    private ?FileCollection $files = null;
+    private ?int            $id             = null;
+    private ?int            $invoiceId      = null;
+    private ?int            $accountId      = null;
+    private ?float          $cost           = null;
+    private ?bool           $moderated      = null;
+    private ?bool           $verified       = null;
+    private ?string         $comment        = null;
+    private ?string         $name           = null;
+    private ?array          $data           = null;
+    private ?Carbon         $paidAt         = null;
+    private ?string         $accountNumber  = null;
+    private ?InvoiceEntity  $invoice        = null;
+    private ?AccountEntity  $account        = null;
+    private ?FileCollection $files          = null;
+    private ?float          $allocatedSum   = null;
+    private ?float          $unallocatedSum = null;
 
     public function getId(): ?int
     {
@@ -186,12 +188,36 @@ class PaymentEntity
 
     public function getFiles(): FileCollection
     {
-        return $this->files ?: new FileCollection();
+        return $this->files ? : new FileCollection();
     }
 
     public function setFiles(FileCollection $files): static
     {
         $this->files = $files;
+
+        return $this;
+    }
+
+    public function getAllocatedSum(): ?float
+    {
+        return $this->allocatedSum;
+    }
+
+    public function setAllocatedSum(?float $allocatedSum): static
+    {
+        $this->allocatedSum = $allocatedSum;
+
+        return $this;
+    }
+
+    public function getUnallocatedSum(): ?float
+    {
+        return $this->unallocatedSum;
+    }
+
+    public function setUnallocatedSum(?float $unallocatedSum): static
+    {
+        $this->unallocatedSum = $unallocatedSum;
 
         return $this;
     }

@@ -14,6 +14,8 @@ use Core\App\Billing\Claim\GetListCommand;
 use Core\App\Billing\Claim\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -26,6 +28,7 @@ class ClaimController extends Controller
         private readonly GetFormDataCommand $getFormDataCommand,
         private readonly GetListCommand     $getListCommand,
         private readonly SaveCommand        $saveCommand,
+        private readonly InvoiceService     $invoiceService,
     )
     {
     }
@@ -115,6 +118,11 @@ class ClaimController extends Controller
             abort(412);
         }
 
+        $invoice = $this->invoiceService->search(
+            new InvoiceSearcher()->setId($invoiceId)->setWithPeriod(),
+        )->getItems()->first();
+        $periodClosed = $invoice && $invoice->getPeriod() && $invoice->getPeriod()->isClosed();
+
         return response()->json([
             'claims'     => new ClaimsListResource($claims),
             'historyUrl' => HistoryChangesRoute::make(
@@ -123,8 +131,8 @@ class ClaimController extends Controller
             ),
             'actions'    => [
                 'view' => $roleDecorator->can(PermissionEnum::CLAIMS_VIEW),
-                'edit' => $roleDecorator->can(PermissionEnum::CLAIMS_EDIT),
-                'drop' => $roleDecorator->can(PermissionEnum::CLAIMS_DROP),
+                'edit' => $roleDecorator->can(PermissionEnum::CLAIMS_EDIT) && ! $periodClosed,
+                'drop' => $roleDecorator->can(PermissionEnum::CLAIMS_DROP) && ! $periodClosed,
             ],
         ]);
     }

@@ -2,6 +2,9 @@
 
 namespace Core\Domains\Billing\Payment;
 
+use App\Models\Billing\Payment;
+use Core\Repositories\SearcherInterface;
+
 readonly class PaymentService
 {
     public function __construct(
@@ -28,5 +31,13 @@ readonly class PaymentService
     public function deleteById(?int $id): bool
     {
         return $this->paymentRepository->deleteById($id);
+    }
+
+    public function getVerifiedByAccount(?int $accountId): PaymentCollection
+    {
+        return $this->search(new PaymentSearcher()
+            ->setAccountId($accountId)
+            ->addWhere(Payment::VERIFIED, SearcherInterface::EQUALS, true),
+        )->getItems();
     }
 }

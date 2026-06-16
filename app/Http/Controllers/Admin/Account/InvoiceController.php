@@ -38,7 +38,7 @@ class InvoiceController extends Controller
 
         $invoices = $this->invoiceService->search($searcher)->getItems();
         $invoices = $invoices->sort(function (InvoiceEntity $a, InvoiceEntity $b) {
-            return $a->getPeriodId() < $b->getPeriodId();
+            return (int) $a->getPeriodId() < (int) $b->getPeriodId();
         });
 
         return response()->json([

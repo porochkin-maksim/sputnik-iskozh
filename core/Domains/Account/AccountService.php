@@ -2,6 +2,8 @@
 
 namespace Core\Domains\Account;
 
+use Core\Repositories\SearcherInterface;
+
 readonly class AccountService
 {
     public function __construct(
@@ -29,12 +31,20 @@ readonly class AccountService
     {
         $searcher = new AccountSearcher();
         $searcher->setNumber($number);
+
         return $this->search($searcher)->getItems()->first();
     }
 
     public function search(?AccountSearcher $searcher = null): AccountSearchResponse
     {
-        return $this->accountRepository->search($searcher ?: new AccountSearcher());
+        return $this->accountRepository->search($searcher ? : new AccountSearcher());
+    }
+
+    public function getAllSorted(): AccountCollection
+    {
+        return $this->search(new AccountSearcher()
+            ->setSortOrderProperty('sort_value', SearcherInterface::SORT_ORDER_ASC),
+        )->getItems();
     }
 
     public function getById(int|string|null $id): ?AccountEntity

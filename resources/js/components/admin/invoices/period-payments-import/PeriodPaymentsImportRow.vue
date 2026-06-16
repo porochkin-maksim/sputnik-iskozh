@@ -23,8 +23,8 @@
                 №{{ item.invoiceId }}
             </a>
         </td>
-        <td class="text-end" :class="item.invoiceAdvance ? 'fw-bold' : 'text-secondary'">
-            {{ formatMoney(item.invoiceAdvance) }}
+        <td class="text-end" :class="item.invoiceDebt ? 'fw-bold' : 'text-secondary'">
+            {{ formatMoney(item.invoiceDebt) }}
         </td>
         <td
             class="text-end text-secondary"
@@ -43,6 +43,12 @@
             :class="[item.changeInCost ? 'table-danger text-danger fw-bold' : '']"
         >
             {{ formatMoney(item.cost) }}
+        </td>
+        <td
+            class="text-end text-secondary"
+            :class="[item.changeInCost ? 'table-danger text-danger fw-bold' : '']"
+        >
+            {{ formatMoney(item.invoiceMain - item.cost) }}
         </td>
         <td
             class="text-end"

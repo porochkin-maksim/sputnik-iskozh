@@ -3,13 +3,13 @@
 namespace Core\App\Billing\Payment;
 
 use Core\Domains\Billing\Payment\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Payment\PaymentTransactionService;
 
 readonly class SaveImportPaymentsCommand
 {
     public function __construct(
-        private PaymentFactory $paymentFactory,
-        private PaymentService $paymentService,
+        private PaymentFactory            $paymentFactory,
+        private PaymentTransactionService $paymentTransactionService,
     )
     {
     }
@@ -26,13 +26,14 @@ readonly class SaveImportPaymentsCommand
 
             $payment = $this->paymentFactory->makeDefault()
                 ->setInvoiceId($invoiceId)
+                ->setAccountId($paymentData->accountId)
                 ->setCost($cost)
                 ->setVerified(true)
                 ->setModerated(true)
                 ->setName($paymentData->name ?? 'Импортированный платёж')
             ;
 
-            $this->paymentService->save($payment);
+            $this->paymentTransactionService->saveWithTransaction($payment);
         }
     }
 }

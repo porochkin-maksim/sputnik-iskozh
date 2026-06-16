@@ -15,8 +15,6 @@ use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
-use Core\Domains\Billing\Payment\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentService;
 use Core\Domains\Billing\Period\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Service\ServiceCatalogService;
@@ -29,14 +27,13 @@ use RuntimeException;
 readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
 {
     public function __construct(
-        private InvoiceService        $invoiceService,
-        private ClaimService          $claimService,
-        private ClaimFactory          $claimFactory,
-        private AccountService        $accountService,
-        private ServiceCatalogService $serviceService,
-        private PaymentFactory        $paymentFactory,
-        private PaymentService        $paymentService,
-        private PeriodService         $periodService,
+        private InvoiceService          $invoiceService,
+        private ClaimService            $claimService,
+        private ClaimFactory            $claimFactory,
+        private AccountService          $accountService,
+        private ServiceCatalogService   $serviceService,
+        private PeriodService           $periodService,
+        private RecalcClaimsPaidCommand $claimsPaidCommand,
     )
     {
     }
@@ -56,9 +53,7 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
             return;
         }
 
-        $oldClaims  = $this->getMigratingClaimsToNewPeriod($invoice);
-        $oldAdvance = $oldClaims->getAdvancePayment();
-        $oldDebts   = $oldClaims->filter(fn(ClaimEntity $claim) => ! $claim->getService()?->getType()?->isAdvance());
+        $oldDebts = $this->getMigratingClaimsToNewPeriod($invoice)->filter(fn(ClaimEntity $claim) => ! $claim->getService()?->getType()?->isAdvance());
 
         $newPeriodServices = $this->serviceService->search(new ServiceSearcher()
             ->setPeriodId($invoice->getPeriodId())
@@ -78,12 +73,13 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
                 );
 
             $claim = $this->claimFactory->makeDefault()
+                ->setQuantity($oldDebtClaim->getDelta() / $oldDebtClaim->getTariff())
                 ->setInvoiceId($invoice->getId())
                 ->setServiceId($newDebtService->getId())
+                ->setOriginalServiceId($oldDebtClaim->getServiceId())
                 ->setTariff($oldDebtClaim->getTariff())
                 ->setCost($oldDebtClaim->getDelta())
                 ->setName($newServiceName)
-                ->setPaid(0.00)
             ;
 
             $newClaims->add($this->claimService->save($claim));
@@ -114,26 +110,13 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
                 ->setServiceId($service->getId())
                 ->setTariff($service->getCost())
                 ->setCost(MoneyService::toFloat($cost))
-                ->setQuantity($service->getType() === ServiceTypeEnum::MEMBERSHIP_FEE ? $size : null)
-                ->setPaid(0.00)
+                ->setQuantity($service->getType() === ServiceTypeEnum::MEMBERSHIP_FEE ? $size : 1)
             ;
 
             $newClaims->add($this->claimService->save($claim));
         }
 
-        if ($oldAdvance?->getPaid()) {
-            $payment = $this->paymentFactory->makeDefault()
-                ->setAccountId($invoice->getAccountId())
-                ->setInvoiceId($invoice->getId())
-                ->setCost($oldAdvance->getPaid())
-                ->setModerated(true)
-                ->setVerified(true)
-                ->setName('Аванс с предыдущего периода')
-                ->setComment('Автоматический платёж из переплаты с предыдущего периода')
-            ;
-
-            $this->paymentService->save($payment);
-        }
+        $this->claimsPaidCommand->execute($invoice->getId());
     }
 
     private function getMigratingClaimsToNewPeriod(InvoiceEntity $invoice): ClaimCollection

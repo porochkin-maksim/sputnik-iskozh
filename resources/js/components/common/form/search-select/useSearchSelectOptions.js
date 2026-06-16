@@ -42,7 +42,7 @@ export function useSearchSelectOptions (props, isOpen, searchQuery) {
 
     const filteredItems = computed(() => {
         const query  = searchQuery.value.toLowerCase();
-        let filtered = normalizedItems.value.filter(item => item.value.toLowerCase().includes(query));
+        let filtered = normalizedItems.value.filter(item => (item.value ?? '').toString().toLowerCase().includes(query));
 
         if (selectedKeys.value.length) {
             filtered = filtered.slice().sort((firstItem, secondItem) => {

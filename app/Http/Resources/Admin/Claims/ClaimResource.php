@@ -33,7 +33,7 @@ readonly class ClaimResource extends AbstractResource
             'id'         => $this->claim->getId(),
             'tariff'     => $this->claim->getTariff(),
             'cost'       => $this->claim->getCost(),
-            'paid'       => $this->claim->getPaid(),
+            'paid'       => (float) ($this->claim->getPaid() ?? 0),
             'quantity'   => $this->claim->getQuantity(),
             'delta'      => $this->claim->getCost() - $this->claim->getPaid(),
             'serviceId'  => $this->claim->getServiceId(),

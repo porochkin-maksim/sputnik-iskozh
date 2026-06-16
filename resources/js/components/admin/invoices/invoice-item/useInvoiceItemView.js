@@ -12,6 +12,7 @@ import {
     ApiAdminInvoiceGet,
     ApiAdminInvoiceDelete,
     ApiAdminInvoiceRecalc,
+    ApiAdminPaymentManageAccountBalance,
 }                           from '@api';
 import { routeUri }         from '@utils/routeUri.js';
 
@@ -27,9 +28,10 @@ export function useInvoiceItemView (props) {
     const paymentsCount   = ref(0);
     const isLoading       = ref(true);
     const isRecalculating = ref(false);
+    const balance         = ref(null);
 
     const canView        = computed(() => has('invoices', 'view'));
-    const canEdit        = computed(() => has('invoices', 'edit'));
+    const canEdit        = computed(() => has('invoices', 'edit') && actions.value.edit);
     const canDrop        = computed(() => has('invoices', 'drop'));
     const canAccountView = computed(() => has('accounts', 'view'));
 
@@ -54,12 +56,28 @@ export function useInvoiceItemView (props) {
             const response     = await ApiAdminInvoiceGet(props.invoice.id);
             localInvoice.value = response.data;
             actions.value      = response.data.actions || {};
+            await loadBalance();
         }
         catch (error) {
             parseResponseErrors(error);
         }
         finally {
             isLoading.value = false;
+        }
+    };
+
+    const loadBalance = async () => {
+        const accountId = localInvoice.value.accountId;
+        if ( ! accountId) {
+            balance.value = null;
+            return;
+        }
+        try {
+            const response = await ApiAdminPaymentManageAccountBalance(accountId);
+            balance.value = response.data?.balance ?? null;
+        }
+        catch {
+            balance.value = null;
         }
     };
 
@@ -122,6 +140,7 @@ export function useInvoiceItemView (props) {
 
     return {
         actions,
+        balance,
         canAccountView,
         canDelete,
         canEdit,

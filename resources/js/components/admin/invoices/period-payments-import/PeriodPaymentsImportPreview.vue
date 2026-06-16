@@ -33,11 +33,11 @@
                 <div class="d-flex mb-2 mt-2 admin-toolbar">
                     <div class="w-50">
                         <custom-select
-                            v-model="autoFillStrategy[districtData.district]"
+                            :model-value="autoFillStrategy[districtData.district]"
                             :options="fillStrategies"
                             label="Автозаполнение"
                             :disabled="submitting"
-                            @update:modelValue="$emit('apply-auto-fill-all')"
+                            @update:modelValue="$emit('set-auto-fill-all', $event)"
                         />
                     </div>
                 </div>
@@ -48,10 +48,11 @@
                         <tr class="text-center">
                             <th class="text-end">Участок</th>
                             <th>Счёт</th>
-                            <th><i class="fa fa-database"></i> Аванс</th>
+                            <th><i class="fa fa-database"></i> Долг</th>
                             <th><i class="fa fa-database"></i> Основа</th>
                             <th><i class="fa fa-database"></i> К оплате</th>
                             <th class="text-success"><i class="fa fa-file-excel-o"></i> К оплате</th>
+                            <th><i class="fa fa-money"></i> Разница</th>
                             <th><i class="fa fa-database"></i> Оплачено</th>
                             <th class="text-success"><i class="fa fa-file-excel-o"></i> Оплачено</th>
                             <th><i class="fa fa-database"></i> Долг</th>

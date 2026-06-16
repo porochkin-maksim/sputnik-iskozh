@@ -20,6 +20,13 @@ class PaymentSearcher extends BaseSearcher
         return $this;
     }
 
+    public function setWithAccount(): static
+    {
+        $this->with[] = Payment::ACCOUNT;
+
+        return $this;
+    }
+
     public function setWithFiles(): static
     {
         $this->with[] = Payment::FILES;
@@ -30,6 +37,18 @@ class PaymentSearcher extends BaseSearcher
     public function withAccount(): static
     {
         $this->with[] = Payment::ACCOUNT;
+
+        return $this;
+    }
+
+    public function setAccountId(?int $id): static
+    {
+        if ($id === null) {
+            $this->addWhere(Payment::ACCOUNT_ID, SearcherInterface::IS_NULL);
+        }
+        else {
+            $this->addWhere(Payment::ACCOUNT_ID, SearcherInterface::EQUALS, $id);
+        }
 
         return $this;
     }

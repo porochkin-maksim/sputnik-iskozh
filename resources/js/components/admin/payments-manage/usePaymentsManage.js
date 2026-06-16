@@ -7,13 +7,13 @@ import {
 import { useResponseError } from '@composables/useResponseError';
 import { useFormat }        from '@composables/useFormat';
 import {
-    ApiAdminPaymentAutoCreate,
-    ApiAdminPaymentCreate,
-    ApiAdminPaymentView,
-    ApiAdminPaymentSave,
+    ApiAdminPaymentManageCreate,
+    ApiAdminPaymentManageView,
+    ApiAdminPaymentManageSave,
+    ApiAdminPaymentManageDelete,
 }                           from '@api';
 
-export function usePaymentsBlock (props, emit) {
+export function usePaymentsManage (props, emit) {
     const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useResponseError();
     const { formatMoney }                                                   = useFormat();
 
@@ -25,7 +25,6 @@ export function usePaymentsBlock (props, emit) {
     const loading       = ref(false);
     const showDialog    = ref(false);
     const hideDialog    = ref(false);
-    const forcePaid     = ref(false);
     const fileElem      = ref(null);
 
     const canSave         = computed(() => payment.value && payment.value.cost >= 0);
@@ -36,34 +35,30 @@ export function usePaymentsBlock (props, emit) {
     const fileSizeExceed  = computed(() => parseFloat(filesSize.value) > 20);
     const fileCountExceed = computed(() => files.value.length > 4);
 
+    const listParams = computed(() => {
+        const params = {};
+        if (props.invoiceId) {
+            params.invoice_id = props.invoiceId;
+        }
+        if (props.accountId) {
+            params.account_id = props.accountId;
+        }
+        return params;
+    });
+
     const init = () => {
         paymentsCount.value = props.count || 0;
     };
 
-    const makePaid = async () => {
-        if (!confirm('Создать платежи для каждой неоплаченной услуги?')) {
-            return;
-        }
-
-        loading.value = true;
-        try {
-            await ApiAdminPaymentAutoCreate(props.invoice.id);
-            forcePaid.value = true;
-            showInfo('Счёт оплачен');
-            onSaved();
-        }
-        catch (error) {
-            parseResponseErrors(error);
-        }
-        finally {
-            loading.value = false;
-        }
-    };
-
     const makeAction = async () => {
         try {
-            const response   = await ApiAdminPaymentCreate(props.invoice.id);
-            payment.value    = response.data.payment;
+            const response         = await ApiAdminPaymentManageCreate(listParams.value);
+            payment.value          = response.data.payment;
+            payment.value.accounts = response.data.accounts || [];
+            payment.value.periods  = response.data.periods || [];
+            if (!payment.value.accountId && props.accountId) {
+                payment.value.accountId = props.accountId;
+            }
             showDialog.value = true;
         }
         catch (error) {
@@ -71,13 +66,18 @@ export function usePaymentsBlock (props, emit) {
         }
     };
 
+    const transactions = ref([]);
+
     const getAction = async () => {
         try {
-            const response        = await ApiAdminPaymentView(props.invoice.id, selectedId.value);
-            payment.value         = response.data.payment;
-            payment.value.cost    = parseFloat(payment.value.cost).toFixed(2);
-            payment.value.comment = payment.value.comment ? String(payment.value.comment) : null;
-            showDialog.value      = true;
+            const response         = await ApiAdminPaymentManageView(selectedId.value);
+            payment.value          = response.data.payment;
+            payment.value.accounts = response.data.accounts || [];
+            payment.value.periods  = response.data.periods || [];
+            payment.value.cost     = parseFloat(payment.value.cost).toFixed(2);
+            payment.value.comment  = payment.value.comment ? String(payment.value.comment) : null;
+            transactions.value     = response.data.transactions || [];
+            showDialog.value       = true;
         }
         catch (error) {
             parseResponseErrors(error);
@@ -88,19 +88,21 @@ export function usePaymentsBlock (props, emit) {
         loading.value = true;
 
         const formData = new FormData();
-        formData.append('id', payment.value.id);
-        formData.append('cost', parseFloat(payment.value.cost));
+        formData.append('id', payment.value.id || '');
         formData.append('name', payment.value.name || '');
-        formData.append('comment', payment.value.comment ? String(payment.value.comment) : '');
-        formData.append('paidAt', payment.value.paid);
+        formData.append('cost', parseFloat(payment.value.cost));
+        formData.append('comment', payment.value.comment || '');
+        formData.append('account_id', payment.value.accountId || '');
+        formData.append('invoice_id', payment.value.invoiceId || '');
+        formData.append('paidAt', payment.value.paid || '');
 
         files.value.forEach((file, index) => {
             formData.append(`file${index}`, file);
         });
 
         try {
-            const response = await ApiAdminPaymentSave(props.invoice.id, {}, formData);
-            const message  = payment.value.id ? 'Платёж обновлён' : `Платёж ${response.data.payment.id} создан`;
+            await ApiAdminPaymentManageSave({}, formData);
+            const message = payment.value.id ? 'Платёж обновлён' : 'Платёж создан';
             showInfo(message);
             payment.value = null;
             onSaved();
@@ -116,6 +118,26 @@ export function usePaymentsBlock (props, emit) {
             loading.value    = false;
             selectedId.value = null;
             files.value      = [];
+        }
+    };
+
+    const deleteAction = async (id) => {
+        if (!confirm('Удалить платёж?')) {
+            return;
+        }
+
+        try {
+            const response = await ApiAdminPaymentManageDelete(id);
+            if (response.data) {
+                reloadList.value = true;
+                showInfo('Платёж удалён');
+            }
+            else {
+                showDanger('Платеж не удалён');
+            }
+        }
+        catch (error) {
+            parseResponseErrors(error);
         }
     };
 
@@ -190,21 +212,21 @@ export function usePaymentsBlock (props, emit) {
 
     return {
         canSave,
+        transactions,
         clearError,
         closeAction,
         chooseFiles,
+        deleteAction,
         fileCountExceed,
         fileElem,
         fileSizeExceed,
         files,
         filesSize,
-        forcePaid,
         formatMoney,
         getAction,
         hideDialog,
         loading,
         makeAction,
-        makePaid,
         onFileUpdated,
         onUpdatedCount,
         payment,
@@ -213,5 +235,6 @@ export function usePaymentsBlock (props, emit) {
         saveAction,
         selectedId,
         showDialog,
+        listParams,
     };
 }

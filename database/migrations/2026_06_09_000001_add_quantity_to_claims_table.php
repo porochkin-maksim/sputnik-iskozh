@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if ( ! Schema::hasColumn('claims', 'quantity')) {
             Schema::table('claims', static function (Blueprint $table) {
-                $table->integer('quantity')->nullable()->after('paid');
+                $table->decimal('quantity', 20, 2)->nullable()->after('paid');
             });
         }
     }

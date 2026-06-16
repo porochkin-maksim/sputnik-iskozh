@@ -605,15 +605,6 @@
         "uri": "\/admin\/options\/json\/save",
         "args": []
     },
-    "adminPaymentAutoCreate": {
-        "name": "admin.payment.auto-create",
-        "displayName": "",
-        "method": "get",
-        "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/auto-create",
-        "args": {
-            "invoiceId": "{invoiceId}"
-        }
-    },
     "adminPaymentCreate": {
         "name": "admin.payment.create",
         "displayName": "",
@@ -640,6 +631,98 @@
         "uri": "\/admin\/invoices\/json\/{invoiceId}\/payments\/list",
         "args": {
             "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentManageAccountBalance": {
+        "name": "admin.payment.manage.account-balance",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/account-balance\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminPaymentManageCanPayAll": {
+        "name": "admin.payment.manage.can-pay-all",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/can-pay-all\/{invoiceId}",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentManageCreate": {
+        "name": "admin.payment.manage.create",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/create",
+        "args": []
+    },
+    "adminPaymentManageDelete": {
+        "name": "admin.payment.manage.delete",
+        "displayName": "",
+        "method": "delete",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/delete\/{id}",
+        "args": {
+            "id": "{id}"
+        }
+    },
+    "adminPaymentManageGetInvoices": {
+        "name": "admin.payment.manage.get-invoices",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/get-invoices\/{accountId}\/{periodId}",
+        "args": {
+            "accountId": "{accountId}",
+            "periodId": "{periodId}"
+        }
+    },
+    "adminPaymentManageList": {
+        "name": "admin.payment.manage.list",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/list",
+        "args": []
+    },
+    "adminPaymentManagePayAll": {
+        "name": "admin.payment.manage.pay-all",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/pay-all\/{invoiceId}",
+        "args": {
+            "invoiceId": "{invoiceId}"
+        }
+    },
+    "adminPaymentManagePayClaim": {
+        "name": "admin.payment.manage.pay-claim",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/pay-claim",
+        "args": []
+    },
+    "adminPaymentManageSave": {
+        "name": "admin.payment.manage.save",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/save",
+        "args": []
+    },
+    "adminPaymentManageUnallocatedTransactions": {
+        "name": "admin.payment.manage.unallocated-transactions",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/unallocated-transactions\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "adminPaymentManageView": {
+        "name": "admin.payment.manage.view",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/json\/get\/{paymentId}",
+        "args": {
+            "paymentId": "{paymentId}"
         }
     },
     "adminPaymentSave": {

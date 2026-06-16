@@ -10,6 +10,7 @@ class InvoiceFactory
             ->setCost(0.0)
             ->setPaid(0.0)
             ->setAdvance(0.0)
-            ->setDebt(0.0);
+            ->setDebt(0.0)
+            ->setRounding(0.0);
     }
 }

@@ -8,6 +8,11 @@ use Core\Repositories\SearcherInterface;
 
 class ClaimSearcher extends BaseSearcher
 {
+    public function __construct()
+    {
+        $this->setWithOriginalService();
+    }
+
     public function setInvoiceId(?int $id): static
     {
         $this->addWhere(Claim::INVOICE_ID, SearcherInterface::EQUALS, $id);
@@ -18,6 +23,13 @@ class ClaimSearcher extends BaseSearcher
     public function setWithService(): static
     {
         $this->with[] = Claim::RELATION_SERVICE;
+
+        return $this;
+    }
+
+    public function setWithOriginalService(): static
+    {
+        $this->with[] = Claim::RELATION_ORIGINAL_SERVICE;
 
         return $this;
     }

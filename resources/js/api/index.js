@@ -393,13 +393,13 @@ export function ApiAdminLoginLink(userId,pin, getParams = {}, postData = null) {
 
 export function ApiAdminNewPaymentDelete(id, getParams = {}, postData = null) {
     // see admin.new-payment.delete
-    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@delete
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@delete
     return apiClient.delete(makeQuery('/admin/invoices/payments/json/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentGetInvoices(accountId,periodId, getParams = {}, postData = null) {
     // see admin.new-payment.get-invoices
-    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@getInvoices
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@getInvoices
     return apiClient.get(makeQuery('/admin/invoices/payments/json/get-invoices/'+accountId+'/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
@@ -411,19 +411,19 @@ export function ApiAdminNewPaymentIndex(getParams = {}, postData = null) {
 
 export function ApiAdminNewPaymentList(getParams = {}, postData = null) {
     // see admin.new-payment.list
-    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@list
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@list
     return apiClient.get(makeQuery('/admin/invoices/payments/json/list', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentSave(getParams = {}, postData = null) {
     // see admin.new-payment.save
-    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@save
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@save
     return apiClient.post(makeQuery('/admin/invoices/payments/json/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminNewPaymentView(paymentId, getParams = {}, postData = null) {
     // see admin.new-payment.view
-    // controller: App\Http\Controllers\Admin\Requests\NewPaymentController@get
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@get
     return apiClient.get(makeQuery('/admin/invoices/payments/json/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 
@@ -445,39 +445,99 @@ export function ApiAdminOptionsSave(getParams = {}, postData = null) {
     return apiClient.post(makeQuery('/admin/options/json/save', getParams), prepareRequestData(postData));
 }
 
-export function ApiAdminPaymentAutoCreate(invoiceId, getParams = {}, postData = null) {
-    // see admin.payment.auto-create
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@autoCreate
-    return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/auto-create', getParams), prepareRequestData(postData));
-}
-
 export function ApiAdminPaymentCreate(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.create
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@create
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@create
     return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/create', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentDelete(invoiceId,id, getParams = {}, postData = null) {
     // see admin.payment.delete
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@delete
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@delete
     return apiClient.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentList(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.list
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@list
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@list
     return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageAccountBalance(accountId, getParams = {}, postData = null) {
+    // see admin.payment.manage.account-balance
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@accountBalance
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/account-balance/'+accountId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageCanPayAll(invoiceId, getParams = {}, postData = null) {
+    // see admin.payment.manage.can-pay-all
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@canPayAll
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/can-pay-all/'+invoiceId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageCreate(getParams = {}, postData = null) {
+    // see admin.payment.manage.create
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@create
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/create', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageDelete(id, getParams = {}, postData = null) {
+    // see admin.payment.manage.delete
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@delete
+    return apiClient.delete(makeQuery('/admin/invoices/payments/manage/json/delete/'+id+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageGetInvoices(accountId,periodId, getParams = {}, postData = null) {
+    // see admin.payment.manage.get-invoices
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@getInvoices
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/get-invoices/'+accountId+'/'+periodId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageList(getParams = {}, postData = null) {
+    // see admin.payment.manage.list
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@list
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/list', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManagePayAll(invoiceId, getParams = {}, postData = null) {
+    // see admin.payment.manage.pay-all
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@payAll
+    return apiClient.post(makeQuery('/admin/invoices/payments/manage/json/pay-all/'+invoiceId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManagePayClaim(getParams = {}, postData = null) {
+    // see admin.payment.manage.pay-claim
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@payClaim
+    return apiClient.post(makeQuery('/admin/invoices/payments/manage/json/pay-claim', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageSave(getParams = {}, postData = null) {
+    // see admin.payment.manage.save
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@save
+    return apiClient.post(makeQuery('/admin/invoices/payments/manage/json/save', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageUnallocatedTransactions(accountId, getParams = {}, postData = null) {
+    // see admin.payment.manage.unallocated-transactions
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@unallocatedTransactions
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/unallocated-transactions/'+accountId+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiAdminPaymentManageView(paymentId, getParams = {}, postData = null) {
+    // see admin.payment.manage.view
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@get
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/json/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentSave(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.save
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@save
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@save
     return apiClient.post(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/save', getParams), prepareRequestData(postData));
 }
 
 export function ApiAdminPaymentView(invoiceId,paymentId, getParams = {}, postData = null) {
     // see admin.payment.view
-    // controller: App\Http\Controllers\Admin\Billing\PaymentController@get
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@get
     return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 

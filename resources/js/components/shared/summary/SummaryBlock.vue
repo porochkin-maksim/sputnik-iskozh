@@ -57,7 +57,7 @@
                 <tr class="profile-summary__row profile-summary__row--section">
                     <td class="profile-summary__cell profile-summary__cell--label profile-summary__cell--toggle"
                         @click="summaryOutcome ? summaryOutcome = null : showDetailsOutcome()">
-                        <span class="profile-summary__toggle-icon" :style="summary.deltaOutcome ? '' : 'opacity:0;'">
+                        <span class="profile-summary__toggle-icon" :style="summary.outcomePaid ? '' : 'opacity:0;'">
                             <i class="fa" :class="summaryOutcome ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                         </span>
                         <span>Расход</span>
@@ -195,7 +195,7 @@ const showDetailsIncome = async () => {
 };
 
 const showDetailsOutcome = async () => {
-    if (detailsLoading.value || !summary.deltaOutcome) {
+    if (detailsLoading.value) {
         return;
     }
 
