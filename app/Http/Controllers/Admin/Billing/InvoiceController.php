@@ -188,6 +188,8 @@ class InvoiceController extends Controller
 
     public function recalcPeriod(int $periodId): JsonResponse
     {
+        $this->assertPeriodNotClosed($periodId);
+
         $invoices = $this->invoiceService->search(
             new InvoiceSearcher()->setPeriodId($periodId),
         )->getItems();
@@ -216,6 +218,8 @@ class InvoiceController extends Controller
             abort(403);
         }
 
+        $this->assertPeriodNotClosed($periodId);
+
         return response()->json($this->resetPeriodPaymentsCommand->execute($periodId));
     }
 
@@ -239,11 +243,21 @@ class InvoiceController extends Controller
 
     public function createRegularInvoices(int $periodId): bool
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_VIEW)) {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
             abort(403);
         }
 
+        $this->assertPeriodNotClosed($periodId);
+
         return CreateRegularPeriodInvoicesJob::dispatchSyncIfNeeded($periodId);
+    }
+
+    private function assertPeriodNotClosed(int $periodId): void
+    {
+        $period = $this->periodService->getById($periodId);
+        if ($period && $period->isClosed()) {
+            abort(403, 'Период закрыт');
+        }
     }
 
     private function getViewInvoice(int $id): ?InvoiceEntity

@@ -3,7 +3,7 @@
         <div class="d-flex flex-wrap gap-2">
             <div class="btn-group" role="group">
                 <button
-                    v-if="canEdit"
+                    v-if="canEdit && !periodClosed"
                     class="btn btn-success"
                     @click="$emit('add')"
                 >
@@ -11,7 +11,7 @@
                     Добавить счёт
                 </button>
                 <button
-                    v-if="canEdit && periodId"
+                    v-if="canEdit && periodId && !periodClosed"
                     class="btn btn-success"
                     @click="$emit('regular')"
                 >
@@ -59,12 +59,13 @@ import Pagination   from '@common/pagination/Pagination.vue';
 import SimpleSelect from '@common/form/SimpleSelect.vue';
 
 const props = defineProps({
-    canEdit    : { type: Boolean, required: true },
-    currentPage: { type: Number, required: true },
-    historyUrl : { type: [String, null], default: null },
-    perPage    : { type: Number, required: true },
-    periodId   : { type: [Number, String, null], default: null },
-    total      : { type: Number, required: true },
+    canEdit      : { type: Boolean, required: true },
+    currentPage  : { type: Number, required: true },
+    historyUrl   : { type: [String, null], default: null },
+    perPage      : { type: Number, required: true },
+    periodId     : { type: [Number, String, null], default: null },
+    periodClosed : { type: Boolean, default: false },
+    total        : { type: Number, required: true },
 });
 
 const emit = defineEmits(['add', 'regular', 'pagination-update', 'per-page-change', 'update:perPage']);

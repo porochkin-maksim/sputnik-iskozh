@@ -57,6 +57,14 @@ export function useInvoicesBlock () {
         ...accounts.value,
     ]);
 
+    const currentPeriod = computed(() => {
+        return periods.value.find(p => p.value === String(periodId.value));
+    });
+
+    const periodClosed = computed(() => {
+        return currentPeriod.value?.isClosed ?? false;
+    });
+
     const computedPaidStatus = computed(() => [
         { value: 'all', label: 'Все статусы' },
         { value: 'paid', label: 'Оплаченные' },
@@ -275,6 +283,7 @@ export function useInvoicesBlock () {
         exportAction,
         historyUrl,
         importAction,
+        periodClosed,
         recalcAction,
         resetPaymentsAction,
         invoice,

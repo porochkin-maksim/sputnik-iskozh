@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Admin\Periods;
 
 use App\Http\Resources\AbstractResource;
-use App\Http\Resources\Common\SelectOptionResource;
 use Core\Domains\Billing\Period\PeriodCollection;
 
 readonly class PeriodsSelectResource extends AbstractResource
@@ -19,7 +18,11 @@ readonly class PeriodsSelectResource extends AbstractResource
         $result = [];
 
         foreach ($this->periodCollection as $period) {
-            $result[] = new SelectOptionResource($period->getId(), $period->getName());
+            $result[] = [
+                'value'    => (string) $period->getId(),
+                'label'    => (string) $period->getName(),
+                'isClosed' => $period->isClosed(),
+            ];
         }
 
         return $result;

@@ -56,8 +56,10 @@ class InvoiceImportController extends Controller
         return response()->json($result);
     }
 
-    public function save(string $periodId, DefaultRequest $request): void
+    public function save(int $periodId, DefaultRequest $request): void
     {
+        $this->fetchPeriod($periodId);
+
         $this->invoiceImportService->savePayments(
             $request->getArray('payments'),
             $request->getStringOrNull('name'),

@@ -66,7 +66,7 @@
         <div class="d-flex flex-wrap gap-2">
             <div class="btn-group" role="group">
                 <button
-                    v-if="canEdit && periodId"
+                    v-if="canEdit && periodId && !periodClosed"
                     class="btn btn-outline-success"
                     @click="$emit('recalc')"
                 >
@@ -74,7 +74,7 @@
                     <span class="d-none d-sm-inline ms-1">Пересчёт</span>
                 </button>
                 <button
-                    v-if="canEdit && periodId"
+                    v-if="canEdit && periodId && !periodClosed"
                     class="btn btn-outline-danger"
                     @click="$emit('reset-payments')"
                 >
@@ -82,7 +82,7 @@
                     <span class="d-none d-sm-inline ms-1">Сброс оплат</span>
                 </button>
                 <button
-                    v-if="canEdit && periodId"
+                    v-if="canEdit && periodId && !periodClosed"
                     class="btn btn-outline-success"
                     @click="$emit('import')"
                 >
@@ -115,6 +115,7 @@ const props = defineProps({
     computedPeriods   : { type: Array, required: true },
     computedTypes     : { type: Array, required: true },
     periodId          : { type: [Number, String, null], default: null },
+    periodClosed      : { type: Boolean, default: false },
     searchAccount     : { type: [String, null], default: null },
     type              : { type: [Number, String, null], default: null },
     paidStatus        : { type: [String, null], default: null },

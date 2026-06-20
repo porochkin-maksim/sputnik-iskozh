@@ -27,6 +27,7 @@
                 :history-url="historyUrl"
                 :per-page="perPage"
                 :period-id="periodId"
+                :period-closed="periodClosed"
                 :total="total"
                 @add="makeAction"
                 @regular="makeRegularAction"
@@ -42,6 +43,7 @@
                 :computed-periods="computedPeriods"
                 :computed-types="computedTypes"
                 :period-id="periodId"
+                :period-closed="periodClosed"
                 :search-account="searchAccount"
                 :type="type"
                 :paid-status="paidStatus"
@@ -110,6 +112,7 @@ const {
           exportAction,
           historyUrl,
           importAction,
+          periodClosed,
           recalcAction,
           resetPaymentsAction,
           invoice,
