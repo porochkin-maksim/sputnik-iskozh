@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use Core\App\Billing\Invoice\InvoiceImportService;
 use Core\Domains\Billing\Period\PeriodEntity;
+use Core\Domains\Billing\Period\PeriodGate;
 use Core\Domains\Billing\Period\PeriodService;
 use Illuminate\Http\JsonResponse;
 
@@ -13,6 +14,7 @@ class InvoiceImportController extends Controller
 {
     public function __construct(
         private readonly PeriodService        $periodService,
+        private readonly PeriodGate           $periodGate,
         private readonly InvoiceImportService $invoiceImportService,
     )
     {
@@ -58,7 +60,7 @@ class InvoiceImportController extends Controller
 
     public function save(int $periodId, DefaultRequest $request): void
     {
-        $this->fetchPeriod($periodId);
+        $this->periodGate->assertCanEditInvoices($periodId);
 
         $this->invoiceImportService->savePayments(
             $request->getArray('payments'),
@@ -68,13 +70,11 @@ class InvoiceImportController extends Controller
 
     private function fetchPeriod(int $periodId): PeriodEntity
     {
+        $this->periodGate->assertNotClosed($periodId);
+
         $period = $this->periodService->getById($periodId);
         if ( ! $period) {
             abort(404, 'Период не найден');
-        }
-
-        if ($period->isClosed()) {
-            abort(403, 'Период закрыт');
         }
 
         return $period;

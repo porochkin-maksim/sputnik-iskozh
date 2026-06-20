@@ -14,6 +14,7 @@ use Core\Domains\User\UserFactory;
 use Core\Domains\User\UserService;
 use Core\Domains\User\UserViewer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 abstract class lc
@@ -98,11 +99,13 @@ abstract class lc
     public static function role(): RoleEntity
     {
         if ( ! isset(self::$role)) {
-            $role = app(RoleService::class)->getByUserId(Auth::id());
-            if ( ! $role) {
-                $role = new RoleEntity;
-            }
-            self::$role = $role;
+            $userId = Auth::id();
+
+            self::$role = $userId
+                ? Cache::remember("user_role_{$userId}", 300, function () use ($userId) {
+                    return app(RoleService::class)->getByUserId($userId) ?? new RoleEntity;
+                })
+                : new RoleEntity;
         }
 
         return self::$role;

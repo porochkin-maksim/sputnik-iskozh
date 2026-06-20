@@ -47,53 +47,55 @@ readonly class InvoiceResource extends AbstractResource
         }
 
         return [
-            'id'            => $this->invoice->getId(),
-            'periodId'      => $this->invoice->getPeriodId(),
-            'periodName'    => $period?->getName(),
-            'accountId'     => $this->invoice->getAccountId(),
-            'accountNumber' => $this->invoice->getAccount()?->getNumber(),
-            'serviceId'     => $this->invoice->getServiceId(),
-            'serviceName'   => $this->invoice->getService()?->getName(),
-            'service'       => $this->invoice->getService() ? new ServiceResource($this->invoice->getService()) : null,
-            'type'          => $this->invoice->getType()?->value,
-            'typeName'      => $this->invoice->getType()?->name(),
-            'name'          => $this->invoice->getName(),
-            'displayName'   => $this->invoice->getName() ? sprintf('%s (%s)', $this->invoice->getName(), $this->invoice->getType()?->name()) : $this->invoice->getType()?->name(),
-            'cost'          => $this->invoice->getCost() - $this->invoice->getRounding(),
-            'paid'          => $this->invoice->getPaid(),
-            'delta'         => $this->invoice->getCost() - ($this->invoice->getPaid() + $this->invoice->getRounding()),
-            'rounding'      => $this->invoice->getRounding(),
-            'detailCost'    => $detailCost,
-            'isPaid'        => $this->invoice->isPaid(),
-            'created'       => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
-            'updated'       => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
-            'actions'       => [
-                'view' => $access->can(PermissionEnum::INVOICES_VIEW),
-                'edit' => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),
-                'drop' => $access->can(PermissionEnum::INVOICES_DROP) && ( ! $period || ! $period->isClosed()),
-                'claims'            => [
+            'id'             => $this->invoice->getId(),
+            'periodId'       => $this->invoice->getPeriodId(),
+            'periodName'     => $period?->getName(),
+
+            'accountId'      => $this->invoice->getAccountId(),
+            'accountNumber'  => $this->invoice->getAccount()?->getNumber(),
+            'serviceId'      => $this->invoice->getServiceId(),
+            'serviceName'    => $this->invoice->getService()?->getName(),
+            'service'        => $this->invoice->getService() ? new ServiceResource($this->invoice->getService()) : null,
+            'type'           => $this->invoice->getType()?->value,
+            'typeName'       => $this->invoice->getType()?->name(),
+            'name'           => $this->invoice->getName(),
+            'displayName'    => $this->invoice->getName() ? sprintf('%s (%s)', $this->invoice->getName(), $this->invoice->getType()?->name()) : $this->invoice->getType()?->name(),
+            'cost'           => $this->invoice->getCost() - $this->invoice->getRounding(),
+            'paid'           => $this->invoice->getPaid(),
+            'delta'          => $this->invoice->getCost() - ($this->invoice->getPaid() + $this->invoice->getRounding()),
+            'rounding'       => $this->invoice->getRounding(),
+            'detailCost'     => $detailCost,
+            'isPaid'         => $this->invoice->isPaid(),
+            'created'        => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
+            'updated'        => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
+            'actions'        => [
+                'periodClosed' => $period?->isClosed() ?? true,
+                'view'         => $access->can(PermissionEnum::INVOICES_VIEW),
+                'edit'     => $access->can(PermissionEnum::INVOICES_EDIT) && ( ! $period || ! $period->isClosed()),
+                'drop'     => $access->can(PermissionEnum::INVOICES_DROP) && ( ! $period || ! $period->isClosed()),
+                'claims'   => [
                     'view' => $access->can(PermissionEnum::CLAIMS_VIEW),
                     'edit' => $access->can(PermissionEnum::CLAIMS_EDIT) && ( ! $period || ! $period->isClosed()),
                     'drop' => $access->can(PermissionEnum::CLAIMS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
-                'payments'          => [
+                'payments' => [
                     'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
                     'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ( ! $period || ! $period->isClosed()),
                     'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ( ! $period || ! $period->isClosed()),
                 ],
             ],
-            'viewUrl'       => $this->invoice->getId() ? route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $this->invoice->getId()]) : null,
-            'historyUrl'    => $this->invoice->getId() ? route(RouteNames::HISTORY_CHANGES, [
+            'viewUrl'        => $this->invoice->getId() ? route(RouteNames::ADMIN_INVOICE_VIEW, ['id' => $this->invoice->getId()]) : null,
+            'historyUrl'     => $this->invoice->getId() ? route(RouteNames::HISTORY_CHANGES, [
                 'type'      => HistoryType::INVOICE,
                 'primaryId' => $this->invoice->getId(),
             ]) : null,
-            'accountUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
+            'accountUrl'     => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_ACCOUNT_VIEW, ['accountId' => $this->invoice?->getAccountId()])
                 : null,
-            'receiptUrl'    => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
+            'receiptUrl'     => $this->invoice->getAccountId() && $access->can(PermissionEnum::ACCOUNTS_VIEW)
                 ? route(RouteNames::ADMIN_DOCUMENT_RECEIPT_INVOICE, ['id' => $this->invoice?->getId()])
                 : null,
-            'account'       => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
+            'account'        => $this->invoice->getAccount() ? new AccountResource($this->invoice->getAccount()) : null,
         ];
     }
 }

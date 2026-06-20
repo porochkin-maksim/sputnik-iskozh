@@ -35,17 +35,7 @@ class RoleDecorator
 
     public function canAccessAdmin(): bool
     {
-        return $this->canAny(
-            PermissionEnum::ROLES_VIEW,
-            PermissionEnum::USERS_VIEW,
-            PermissionEnum::OPTIONS_VIEW,
-            PermissionEnum::ACCOUNTS_VIEW,
-            PermissionEnum::PERIODS_VIEW,
-            PermissionEnum::SERVICES_VIEW,
-            PermissionEnum::INVOICES_VIEW,
-            PermissionEnum::PAYMENTS_VIEW,
-            PermissionEnum::COUNTERS_VIEW,
-        );
+        return $this->can(PermissionEnum::ADMIN_ACCESS);
     }
 
     public function can(PermissionEnum ...$permissions): bool

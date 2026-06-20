@@ -24,25 +24,27 @@ readonly class ServiceResource extends AbstractResource
         $canEdit = $access->can(PermissionEnum::SERVICES_EDIT) && ( ! $period || ! $period->isClosed());
 
         return [
-            'id'         => $this->service->getId(),
-            'type'       => $this->service->getType()?->value,
-            'typeName'   => $this->service->getType()?->name(),
-            'periodId'   => $this->service->getPeriodId(),
-            'periodName' => $period?->getName(),
-            'periodFrom' => $this->service->getPeriodFrom()?->toDateString(),
-            'periodTo'   => $this->service->getPeriodTo()?->toDateString(),
-            'name'       => $this->service->getName(),
-            'cost'       => $this->service->getCost(),
-            'active'     => $this->service->isActive(),
-            'actions'    => [
-                'view'   => $access->can(PermissionEnum::SERVICES_VIEW),
+            'id'             => $this->service->getId(),
+            'type'           => $this->service->getType()?->value,
+            'typeName'       => $this->service->getType()?->name(),
+            'periodId'       => $this->service->getPeriodId(),
+            'periodName'     => $period?->getName(),
+
+            'periodFrom'     => $this->service->getPeriodFrom()?->toDateString(),
+            'periodTo'       => $this->service->getPeriodTo()?->toDateString(),
+            'name'           => $this->service->getName(),
+            'cost'           => $this->service->getCost(),
+            'active'         => $this->service->isActive(),
+            'actions'        => [
+                'periodClosed' => $period?->isClosed() ?? true,
+                'view'         => $access->can(PermissionEnum::SERVICES_VIEW),
                 'edit'   => $canEdit,
                 'drop'   => $access->can(PermissionEnum::SERVICES_DROP) && ( ! $period || ! $period->isClosed()),
                 'active' => $canEdit,
                 'period' => $canEdit,
                 'type'   => $canEdit,
             ],
-            'historyUrl' => $this->service->getId()
+            'historyUrl'     => $this->service->getId()
                 ? HistoryChangesRoute::make(
                     type     : HistoryType::SERVICE,
                     primaryId: $this->service->getId(),

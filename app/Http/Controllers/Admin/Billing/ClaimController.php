@@ -16,6 +16,7 @@ use Core\Domains\Access\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Period\PeriodGate;
 use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -29,6 +30,7 @@ class ClaimController extends Controller
         private readonly GetListCommand     $getListCommand,
         private readonly SaveCommand        $saveCommand,
         private readonly InvoiceService     $invoiceService,
+        private readonly PeriodGate         $periodGate,
     )
     {
     }
@@ -40,6 +42,7 @@ class ClaimController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
             abort(403);
         }
+        $this->assertNotClosedByInvoiceId($invoiceId);
 
         $formData = $this->getFormDataCommand->create($invoiceId);
         if ($formData === null) {
@@ -83,6 +86,7 @@ class ClaimController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
             abort(403);
         }
+        $this->assertNotClosedByInvoiceId($invoiceId);
 
         $claim = $this->saveCommand->execute(
             id       : $request->getIntOrNull('id'),
@@ -118,15 +122,16 @@ class ClaimController extends Controller
             abort(412);
         }
 
-        $invoice = $this->invoiceService->search(
+        $invoice      = $this->invoiceService->search(
             new InvoiceSearcher()->setId($invoiceId)->setWithPeriod(),
         )->getItems()->first();
-        $periodClosed = $invoice && $invoice->getPeriod() && $invoice->getPeriod()->isClosed();
+        $period       = $invoice?->getPeriod();
+        $periodClosed = $period && $period->isClosed();
 
         return response()->json([
             'claims'     => new ClaimsListResource($claims),
             'historyUrl' => HistoryChangesRoute::make(
-                type: HistoryType::INVOICE,
+                type         : HistoryType::INVOICE,
                 referenceType: HistoryType::CLAIM,
             ),
             'actions'    => [
@@ -143,6 +148,19 @@ class ClaimController extends Controller
             abort(403);
         }
 
+        $this->assertNotClosedByInvoiceId($invoiceId);
+
         return $this->claimService->deleteById($id);
+    }
+
+    private function assertNotClosedByInvoiceId(int $invoiceId): void
+    {
+        $invoice = $this->invoiceService->search(
+            new InvoiceSearcher()->setId($invoiceId)->setWithPeriod(),
+        )->getItems()->first();
+        $period  = $invoice?->getPeriod();
+        if ($period) {
+            $this->periodGate->assertNotClosed($period->getId());
+        }
     }
 }

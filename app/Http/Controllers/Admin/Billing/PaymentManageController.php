@@ -27,6 +27,7 @@ use Core\Domains\Billing\Payment\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentService;
 use Core\Domains\Billing\Payment\PaymentTransactionService;
 use Core\Domains\Billing\Transaction\TransactionService;
+use Core\Domains\Billing\Period\PeriodGate;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\HistoryChanges\HistoryType;
 use Core\Exceptions\ValidationException;
@@ -43,6 +44,7 @@ class PaymentManageController extends Controller
         private readonly InvoiceService            $invoiceService,
         private readonly AccountService            $accountService,
         private readonly PeriodService             $periodService,
+        private readonly PeriodGate                $periodGate,
         private readonly LinkPaymentCommand        $linkPaymentCommand,
         private readonly TransactionService        $transactionService,
         private readonly PayCommand                $payCommand,
@@ -271,6 +273,11 @@ class PaymentManageController extends Controller
     {
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
+        }
+
+        $periodId = $this->fetchInvoice($invoiceId)?->getPeriodId();
+        if ($periodId) {
+            $this->periodGate->assertNotClosed($periodId);
         }
 
         $this->payCommand->payAll($invoiceId);

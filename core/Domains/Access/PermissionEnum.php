@@ -10,57 +10,70 @@ enum PermissionEnum: int
 
     public function sectionName(): string
     {
-        return match ($this->getSectionCode()) {
-            10  => 'Роли',
-            20  => 'Пользователи',
-            30  => 'Новости',
-            40  => 'Объявления',
-            50  => 'Каталоги',
-            60  => 'Файлы',
-            70  => 'Участки',
-            80  => 'Периоды',
-            90  => 'Услуги',
-            100 => 'Счета',
-            110 => 'Услуги счетов',
-            120 => 'Платежи',
-            130 => 'Счётчики',
-            140 => 'Опции',
-            150 => 'Заявки',
+        return match (true) {
+            $this === self::ADMIN_ACCESS => 'Доступ в админку',
+            default => match ($this->getSectionCode()) {
+                10  => 'Роли',
+                20  => 'Пользователи',
+                30  => 'Новости',
+                40  => 'Объявления',
+                50  => 'Каталоги',
+                60  => 'Файлы',
+                70  => 'Участки',
+                80  => 'Периоды',
+                90  => 'Услуги',
+                100 => 'Счета',
+                110 => 'Услуги счетов',
+                120 => 'Платежи',
+                130 => 'Счётчики',
+                140 => 'Опции',
+                150 => 'Заявки',
+            },
         };
     }
 
     public function sectionKey(): string
     {
-        return match ($this->getSectionCode()) {
-            10  => 'roles',
-            20  => 'users',
-            30  => 'news',
-            40  => 'announcements',
-            50  => 'catalogs',
-            60  => 'files',
-            70  => 'accounts',
-            80  => 'periods',
-            90  => 'services',
-            100 => 'invoices',
-            110 => 'invoice_services',
-            120 => 'payments',
-            130 => 'counters',
-            140 => 'options',
-            150 => 'help_desk',
+        return match (true) {
+            $this === self::ADMIN_ACCESS => 'admin',
+            default => match ($this->getSectionCode()) {
+                10  => 'roles',
+                20  => 'users',
+                30  => 'news',
+                40  => 'announcements',
+                50  => 'catalogs',
+                60  => 'files',
+                70  => 'accounts',
+                80  => 'periods',
+                90  => 'services',
+                100 => 'invoices',
+                110 => 'invoice_services',
+                120 => 'payments',
+                130 => 'counters',
+                140 => 'options',
+                150 => 'help_desk',
+            },
         };
     }
 
     public function actionKey(): string
     {
-        return match ($this->value % 10) {
-            1 => 'view',
-            2 => 'edit',
-            3 => 'drop',
+        return match (true) {
+            $this === self::ADMIN_ACCESS => 'access',
+            default => match ($this->value % 10) {
+                1 => 'view',
+                2 => 'edit',
+                3 => 'drop',
+            },
         };
     }
 
     public function name(): string
     {
+        if ($this === self::ADMIN_ACCESS) {
+            return 'Доступ в админку';
+        }
+
         $code   = (string) $this->value;
         $result = (int) $code[strlen($code) - 1];
 
@@ -73,15 +86,16 @@ enum PermissionEnum: int
 
     private function getSectionCode(): int
     {
-        $code = (string) $this->value;
-        if (strlen($code) === 2) {
-            $result = (int) $code[0];
-        }
-        else {
-            $result = (int) ($code[0] . $code[1]);
+        if ($this === self::ADMIN_ACCESS) {
+            return 0;
         }
 
-        return $result * 10;
+        $code = (string) $this->value;
+        if (strlen($code) === 2) {
+            return (int) $code[0] * 10;
+        }
+
+        return (int) ($code[0] . $code[1]) * 10;
     }
 
     public static function getCases(): array
@@ -102,6 +116,8 @@ enum PermissionEnum: int
         return $result;
     }
 
+    case ADMIN_ACCESS = 0;
+
     case ROLES_VIEW = 11;
     case ROLES_EDIT = 12;
     case ROLES_DROP = 13;
@@ -114,9 +130,9 @@ enum PermissionEnum: int
     case NEWS_EDIT = 32;
     case NEWS_DROP = 33;
 
-    case ANNOUNCEMENTS_VIE = 41;
-    case ANNOUNCEMENTS_EDI = 42;
-    case ANNOUNCEMENTS_DRO = 43;
+    case ANNOUNCEMENTS_VIEW = 41;
+    case ANNOUNCEMENTS_EDIT = 42;
+    case ANNOUNCEMENTS_DROP = 43;
 
     case FOLDERS_VIEW = 51;
     case FOLDERS_EDIT = 52;

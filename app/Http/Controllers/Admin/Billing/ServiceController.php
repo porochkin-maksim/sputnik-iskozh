@@ -13,6 +13,7 @@ use Core\App\Billing\Service\GetListCommand;
 use Core\App\Billing\Service\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\HistoryChanges\HistoryType;
+use Core\Domains\Billing\Period\PeriodGate;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Service\ServiceFactory;
 use Core\Domains\Billing\Service\ServiceCatalogService;
@@ -27,6 +28,7 @@ class ServiceController extends Controller
         private readonly ServiceFactory        $serviceFactory,
         private readonly ServiceCatalogService $serviceService,
         private readonly PeriodService         $periodService,
+        private readonly PeriodGate            $periodGate,
         private readonly GetListCommand        $getListCommand,
         private readonly SaveCommand           $saveCommand,
     )
@@ -100,9 +102,8 @@ class ServiceController extends Controller
 
     public function save(DefaultRequest $request): JsonResponse
     {
-        if ( ! lc::roleDecorator()->can(PermissionEnum::SERVICES_EDIT)) {
-            abort(403);
-        }
+        $periodId = $request->getIntOrNull('period_id');
+        $this->periodGate->assertCanEditServices($periodId ?? 0);
 
         $service = $this->saveCommand->execute(
             id        : $request->getIntOrNull('id'),
