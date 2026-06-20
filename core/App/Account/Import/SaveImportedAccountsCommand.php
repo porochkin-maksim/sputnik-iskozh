@@ -18,7 +18,7 @@ readonly class SaveImportedAccountsCommand
             $this->saveCommand->execute(
                 id             : $data->id,
                 number         : $data->number ?: null,
-                size           : $data->size,
+                size           : $data->size ?: 0,
                 cadastreNumber : $data->cadastreNumber,
             );
         }
