@@ -53,4 +53,11 @@ readonly class InvoiceService
             ->setAccountId($accountId),
         )->getItems();
     }
+
+    public function getByPeriodId(int $periodId): InvoiceCollection
+    {
+        return $this->search(new InvoiceSearcher()
+            ->setPeriodId($periodId),
+        )->getItems();
+    }
 }

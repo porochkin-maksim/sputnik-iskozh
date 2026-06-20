@@ -51,6 +51,7 @@
                 @export="exportAction"
                 @import="importAction"
                 @recalc="recalcAction"
+                @reset-payments="resetPaymentsAction"
                 @update:searchAccount="searchAccount = $event"
                 @update:periodId="periodId = $event"
                 @update:type="type = $event"
@@ -110,6 +111,7 @@ const {
           historyUrl,
           importAction,
           recalcAction,
+          resetPaymentsAction,
           invoice,
           invoices,
           listAction,

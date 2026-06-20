@@ -373,6 +373,12 @@ export function ApiAdminInvoiceRecalcPeriod(periodId, getParams = {}, postData =
     return apiClient.post(makeQuery('/admin/invoices/json/recalc-period/'+periodId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminInvoiceResetPaymentsPeriod(periodId, getParams = {}, postData = null) {
+    // see admin.invoice.reset-payments-period
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@resetPaymentsPeriod
+    return apiClient.post(makeQuery('/admin/invoices/json/reset-payments-period/'+periodId+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminInvoiceSave(getParams = {}, postData = null) {
     // see admin.invoice.save
     // controller: App\Http\Controllers\Admin\Billing\InvoiceController@save

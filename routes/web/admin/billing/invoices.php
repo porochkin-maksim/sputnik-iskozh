@@ -65,6 +65,10 @@ Route::group(['prefix' => 'invoices'], static function () {
             ->name(RouteNames::ADMIN_INVOICE_RECALC_PERIOD)
             ->whereNumber('periodId')
         ;
+        Route::post('/reset-payments-period/{periodId}', [Controllers\Admin\Billing\InvoiceController::class, 'resetPaymentsPeriod'])
+            ->name(RouteNames::ADMIN_INVOICE_RESET_PAYMENTS_PERIOD)
+            ->whereNumber('periodId')
+        ;
         Route::delete('/delete/{id}', [Controllers\Admin\Billing\InvoiceController::class, 'delete'])
             ->name(RouteNames::ADMIN_INVOICE_DELETE)
             ->whereNumber('id')

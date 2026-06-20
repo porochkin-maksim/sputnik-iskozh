@@ -54,12 +54,6 @@ readonly class ClaimService
 
     public function getByInvoiceId(?int $invoiceId): ClaimCollection
     {
-        $searcher = new ClaimSearcher()
-            ->setInvoiceId($invoiceId)
-            ->setWithService()
-            ->setWithOriginalService()
-        ;
-
         return $this->getByInvoiceIds([$invoiceId]);
     }
 

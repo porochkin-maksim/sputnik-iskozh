@@ -67,6 +67,11 @@ readonly class TransactionService
         )->getItems();
     }
 
+    public function getUnallocatedBypaymentId(int $paymentId): TransactionCollection
+    {
+        return $this->getUnallocatedBypaymentIds([$paymentId]);
+    }
+
     /**
      * @param int[] $paymentIds
      */
@@ -89,5 +94,12 @@ readonly class TransactionService
         }
 
         return $this->getUnallocatedBypaymentIds($paymentIds)->getTotalCost();
+    }
+
+    public function getByClaimsIds(array $claimIds): TransactionCollection
+    {
+        return $this->search(new TransactionSearcher()
+                ->setClaimIds($claimIds)
+        )->getItems();
     }
 }

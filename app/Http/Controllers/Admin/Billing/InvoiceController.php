@@ -13,6 +13,7 @@ use App\Http\Resources\Common\SelectResource;
 use App\Support\HistoryChangesRoute;
 use Core\App\Billing\Invoice\GetListCommand;
 use Core\App\Billing\Invoice\SaveCommand;
+use Core\App\Billing\Payment\ResetPeriodPaymentsCommand;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Period;
@@ -38,12 +39,13 @@ class InvoiceController extends Controller
 {
 
     public function __construct(
-        private readonly InvoiceFactory $invoiceFactory,
-        private readonly InvoiceService $invoiceService,
-        private readonly PeriodService  $periodService,
-        private readonly AccountService $accountService,
-        private readonly GetListCommand $getListCommand,
-        private readonly SaveCommand    $saveCommand,
+        private readonly InvoiceFactory             $invoiceFactory,
+        private readonly InvoiceService             $invoiceService,
+        private readonly PeriodService              $periodService,
+        private readonly AccountService             $accountService,
+        private readonly GetListCommand             $getListCommand,
+        private readonly SaveCommand                $saveCommand,
+        private readonly ResetPeriodPaymentsCommand $resetPeriodPaymentsCommand,
     )
     {
     }
@@ -206,6 +208,15 @@ class InvoiceController extends Controller
             'sent'    => $sent,
             'blocked' => $blocked,
         ]);
+    }
+
+    public function resetPaymentsPeriod(int $periodId): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::INVOICES_EDIT)) {
+            abort(403);
+        }
+
+        return response()->json($this->resetPeriodPaymentsCommand->execute($periodId));
     }
 
     public function delete(int $id): bool

@@ -75,6 +75,14 @@
                 </button>
                 <button
                     v-if="canEdit && periodId"
+                    class="btn btn-outline-danger"
+                    @click="$emit('reset-payments')"
+                >
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Сброс оплат</span>
+                </button>
+                <button
+                    v-if="canEdit && periodId"
                     class="btn btn-outline-success"
                     @click="$emit('import')"
                 >
@@ -112,7 +120,7 @@ const props = defineProps({
     paidStatus        : { type: [String, null], default: null },
 });
 
-const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'recalc', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
+const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'recalc', 'reset-payments', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
 
 const periodIdModel = computed({
     get: () => props.periodId,

@@ -509,6 +509,15 @@
             "periodId": "{periodId}"
         }
     },
+    "adminInvoiceResetPaymentsPeriod": {
+        "name": "admin.invoice.reset-payments-period",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/reset-payments-period\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
     "adminInvoiceSave": {
         "name": "admin.invoice.save",
         "displayName": "",

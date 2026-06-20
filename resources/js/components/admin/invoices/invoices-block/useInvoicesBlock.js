@@ -12,6 +12,7 @@ import {
     ApiAdminInvoiceGetAccountsCountWithoutRegular,
     ApiAdminInvoiceList,
     ApiAdminInvoiceRecalcPeriod,
+    ApiAdminInvoiceResetPaymentsPeriod,
 }                           from '@api';
 import { routeUri }         from '@utils/routeUri.js';
 
@@ -223,6 +224,23 @@ export function useInvoicesBlock () {
         }
     };
 
+    const resetPaymentsAction = async () => {
+        if (!periodId.value) {
+            return;
+        }
+        if (!confirm('Сбросить все оплаты за период?')) {
+            return;
+        }
+        try {
+            await ApiAdminInvoiceResetPaymentsPeriod(periodId.value);
+            showSuccess('Оплаты сброшены');
+            await listAction();
+        }
+        catch (err) {
+            parseResponseErrors(err);
+        }
+    };
+
     const onPaginationUpdate = (newSkip) => {
         skip.value = newSkip;
         listAction();
@@ -258,6 +276,7 @@ export function useInvoicesBlock () {
         historyUrl,
         importAction,
         recalcAction,
+        resetPaymentsAction,
         invoice,
         invoices,
         listAction,
