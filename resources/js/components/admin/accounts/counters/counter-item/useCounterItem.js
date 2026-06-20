@@ -105,7 +105,8 @@ export function useCounterItem (props, emit) {
     };
 
     const saveAction = async () => {
-        if (!props.account?.id) {
+        const accountId = props.account?.id ?? localCounter.accountId;
+        if (!accountId) {
             return;
         }
 
@@ -113,7 +114,7 @@ export function useCounterItem (props, emit) {
         clearResponseErrors();
 
         const form = new FormData();
-        form.append('accountId', props.account.id);
+        form.append('accountId', accountId);
         form.append('id', localCounter.id);
         form.append('number', localCounter.number);
         form.append('isInvoicing', localCounter.isInvoicing);

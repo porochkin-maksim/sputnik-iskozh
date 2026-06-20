@@ -33,7 +33,7 @@ readonly class FileService
      */
     public function storeAndSave(
         array|UploadedFile $file,
-        ?int $parentId = null,
+        ?int $relatedId = null,
         ?FileTypeEnum $type = null,
         ?string $directory = null,
     ): void
@@ -49,7 +49,7 @@ readonly class FileService
                     $config->defaultPublic,
                 )
                     ->setType($type ?? $config->baseType)
-                    ->setParentId($parentId),
+                    ->setRelatedId($relatedId),
             );
         }
     }

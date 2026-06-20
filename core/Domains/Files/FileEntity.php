@@ -11,7 +11,6 @@ class FileEntity
     private ?int          $id        = null;
     private ?FileTypeEnum $type      = null;
     private ?int          $relatedId = null;
-    private ?int          $parentId  = null;
     private ?int          $order     = null;
     private ?string       $ext       = null;
     private ?string       $name      = null;
@@ -49,18 +48,6 @@ class FileEntity
     public function setRelatedId(?int $relatedId): static
     {
         $this->relatedId = $relatedId;
-
-        return $this;
-    }
-
-    public function getParentId(): ?int
-    {
-        return $this->parentId;
-    }
-
-    public function setParentId(?int $parentId): static
-    {
-        $this->parentId = $parentId;
 
         return $this;
     }

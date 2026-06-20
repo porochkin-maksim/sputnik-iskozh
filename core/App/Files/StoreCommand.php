@@ -25,17 +25,17 @@ readonly class StoreCommand
     public function execute(
         array         $files,
         string        $directory,
-        ?int          $parentId = null,
+        ?int          $relatedId = null,
         ?FileTypeEnum $type = null,
     ): bool
     {
         $this->validator->validate($files);
 
-        if ($parentId !== null && $type === null && ! $this->folderService->getById($parentId)) {
-            throw new ValidationException(['parent_id' => ['Указанный каталог не существует']]);
+        if ($relatedId !== null && $type === null && ! $this->folderService->getById($relatedId)) {
+            throw new ValidationException(['related_id' => ['Указанный каталог не существует']]);
         }
 
-        $this->fileTransferService->storeAndSave($files, $parentId, $directory, $type);
+        $this->fileTransferService->storeAndSave($files, $relatedId, $directory, $type);
 
         return true;
     }

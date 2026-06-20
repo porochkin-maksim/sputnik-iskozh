@@ -139,6 +139,10 @@ import ViewDialog         from '@common/ViewDialog.vue';
 import { useCounterItem } from './useCounterItem';
 
 const props = defineProps({
+    account : {
+        type   : Object,
+        default: null,
+    },
     counter : {
         type   : Object,
         default: null,

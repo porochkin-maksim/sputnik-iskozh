@@ -158,8 +158,8 @@ class FileTransferServiceTest extends TestCase
 
         $this->service->storeAndSave(
             [$file1, $file2],
-            parentId: 10,
-            type    : FileTypeEnum::NEWS,
+            relatedId: 10,
+            type     : FileTypeEnum::NEWS,
         );
     }
 }

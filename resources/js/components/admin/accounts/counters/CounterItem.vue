@@ -1,5 +1,6 @@
 <template>
     <counter-editor-dialog
+        :account="account"
         :counter="counter"
         :show-form="showForm"
         @counter-updated="$emit('counterUpdated')"

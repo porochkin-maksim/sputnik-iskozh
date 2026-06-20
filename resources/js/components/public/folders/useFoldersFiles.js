@@ -38,8 +38,8 @@ export function useFoldersFiles (navigation) {
 
     const loadFilesList = () => {
         ApiFilesList({
-            parent_id: navigation.parentId.value ? navigation.parentId.value : '',
-            sort_by  : 'name',
+            related_id: navigation.parentId.value ? navigation.parentId.value : '',
+            sort_by   : 'name',
         }).then(response => {
             files.value = response.data.files;
         }).catch(response => {
@@ -84,7 +84,7 @@ export function useFoldersFiles (navigation) {
         for (const uploadedFile of event.target.files) {
             form.append(uploadedFile.name, uploadedFile);
         }
-        form.append('parent_id', navigation.parentId.value);
+        form.append('related_id', navigation.parentId.value);
 
         ApiFilesStore({}, form).then(() => {
             loadFilesList();

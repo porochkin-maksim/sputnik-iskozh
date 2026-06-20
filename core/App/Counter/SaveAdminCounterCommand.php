@@ -65,6 +65,7 @@ readonly class SaveAdminCounterCommand
             $counter = $this->counterService->save($counter);
 
             if ($passportFile !== null) {
+                $this->fileService->deleteRelatedFileForCounterPassport($counter->getId());
                 $this->fileService->storePassportFile($passportFile, $counter->getId());
             }
         });

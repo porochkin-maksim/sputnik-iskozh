@@ -30,7 +30,6 @@ class FileEloquentMapper implements RepositoryDataMapperInterface
         return $result->fill([
             FileModel::TYPE       => $entity->getType()?->value,
             FileModel::RELATED_ID => $entity->getRelatedId(),
-            FileModel::PARENT_ID  => $entity->getParentId(),
             FileModel::ORDER      => $entity->getOrder(),
             FileModel::EXT        => $entity->getExt(),
             FileModel::NAME       => $entity->getName(),
@@ -49,7 +48,6 @@ class FileEloquentMapper implements RepositoryDataMapperInterface
             ->setId($data->{$data::ID})
             ->setType($data->{$data::TYPE} ? FileTypeEnum::tryFrom($data->{$data::TYPE}) : null)
             ->setRelatedId($data->{$data::RELATED_ID})
-            ->setParentId($data->{$data::PARENT_ID})
             ->setOrder($data->{$data::ORDER})
             ->setExt($data->{$data::EXT})
             ->setName($data->{$data::NAME})

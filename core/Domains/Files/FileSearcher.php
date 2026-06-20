@@ -41,15 +41,4 @@ class FileSearcher extends BaseSearcher
         return $this;
     }
 
-    public function setParentId(?int $parentId): static
-    {
-        if ($parentId) {
-            $this->addWhere(FileModel::PARENT_ID, SearcherInterface::EQUALS, $parentId);
-        }
-        else {
-            $this->addWhere(FileModel::PARENT_ID, SearcherInterface::IS_NULL);
-        }
-
-        return $this;
-    }
 }

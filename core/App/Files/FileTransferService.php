@@ -87,7 +87,7 @@ readonly class FileTransferService
      */
     public function storeAndSave(
         array         $files,
-        ?int          $parentId = null,
+        ?int          $relatedId = null,
         ?string       $directory = null,
         ?FileTypeEnum $type = null,
     ): void
@@ -96,7 +96,7 @@ readonly class FileTransferService
             $this->fileService->save(
                 $this->store($file, $directory ?? '', true)
                     ->setType($type)
-                    ->setParentId($parentId),
+                    ->setRelatedId($relatedId),
             );
         }
     }

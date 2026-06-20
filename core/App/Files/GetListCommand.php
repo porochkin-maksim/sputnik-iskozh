@@ -23,7 +23,7 @@ readonly class GetListCommand
      */
     public function execute(
         ?int    $limit,
-        ?int    $parentId,
+        ?int    $relatedId,
         ?string $sortField,
         bool    $sortDesc,
     ): FileSearchResponse
@@ -35,11 +35,11 @@ readonly class GetListCommand
             ->setLimit($limit ? : 100)
         ;
 
-        if ($parentId !== null) {
-            $searcher->addWhere(FileModel::PARENT_ID, SearcherInterface::EQUALS, $parentId);
+        if ($relatedId !== null) {
+            $searcher->addWhere(FileModel::RELATED_ID, SearcherInterface::EQUALS, $relatedId);
         }
         else {
-            $searcher->addWhere(FileModel::PARENT_ID, SearcherInterface::IS_NULL);
+            $searcher->addWhere(FileModel::RELATED_ID, SearcherInterface::IS_NULL);
         }
 
         if ($sortField) {

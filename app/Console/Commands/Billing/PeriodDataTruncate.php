@@ -191,7 +191,7 @@ class PeriodDataTruncate extends Command
         // Файлы, привязанные к платежам (если удаляем платежи)
         if ( ! empty($data['payments'])) {
             $tables[]      = FileModel::TABLE;
-            $data['files'] = FileModel::whereIn('parent_id', $data['payments'])
+            $data['files'] = FileModel::whereIn('related_id', $data['payments'])
                 ->where('type', FileTypeEnum::PAYMENT->value)
                 ->pluck('id')
                 ->toArray()

@@ -12,7 +12,6 @@ use Carbon\Carbon;
  *
  * @property int     $type
  * @property int     $related_id
- * @property ?int    $parent_id
  * @property int     $order
  * @property ?string $ext
  * @property ?string $name
@@ -27,7 +26,6 @@ class FileModel extends AbstractModel
     public const string ID         = 'id';
     public const string TYPE       = 'type';
     public const string RELATED_ID = 'related_id';
-    public const string PARENT_ID  = 'parent_id';
     public const string ORDER      = 'order';
     public const string EXT        = 'ext';
     public const string NAME       = 'name';

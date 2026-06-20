@@ -41,7 +41,7 @@ class MoveCommandTest extends TestCase
 
         $this->fileService->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(FileEntity $f) => $f->getParentId() === 5))
+            ->with($this->callback(fn(FileEntity $f) => $f->getRelatedId() === 5))
         ;
 
         $result = $this->command->execute(1, 5, false);
@@ -66,7 +66,7 @@ class MoveCommandTest extends TestCase
 
         $this->fileService->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(FileEntity $f) => $f->getParentId() === 5 && $f->getId() === null))
+            ->with($this->callback(fn(FileEntity $f) => $f->getRelatedId() === 5 && $f->getId() === null))
         ;
 
         $result = $this->command->execute(1, 5, true);

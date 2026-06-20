@@ -45,7 +45,7 @@ readonly class MoveCommand
             $file = $this->fileTransferService->copy($file);
         }
 
-        $file->setParentId($folderId);
+        $file->setRelatedId($folderId);
         $this->fileService->save($file);
 
         return true;

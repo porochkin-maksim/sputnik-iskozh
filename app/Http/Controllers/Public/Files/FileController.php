@@ -49,7 +49,7 @@ class FileController extends Controller
     {
         $searchResult = $this->getListCommand->execute(
             $request->getIntOrNull('limit'),
-            $request->getIntOrNull('parent_id'),
+            $request->getIntOrNull('related_id'),
             $request->getStringOrNull('sort_by'),
             $request->getBool('sort_desc'),
         );
@@ -69,7 +69,7 @@ class FileController extends Controller
         return response()->json($this->storeCommand->execute(
             $request->allFiles(),
             self::DIRECORY,
-            $request->getIntOrNull('parent_id'),
+            $request->getIntOrNull('related_id'),
         ));
     }
 
