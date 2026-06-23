@@ -33,7 +33,7 @@ readonly class RecalcClaimsPaidCommand
     public function execute(int $invoiceId): void
     {
         $invoice = $this->invoiceService->search(
-            (new InvoiceSearcher())->setId($invoiceId)->setWithClaims(),
+            new InvoiceSearcher()->setId($invoiceId)->setWithClaims(),
         )->getItems()->first();
 
         if ($invoice === null) {

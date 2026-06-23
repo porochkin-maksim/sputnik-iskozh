@@ -23,6 +23,7 @@ use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentFileService;
+use Core\Domains\Billing\Payment\PaymentGate;
 use Core\Domains\Billing\Payment\PaymentSearcher;
 use Core\Domains\Billing\Payment\PaymentService;
 use Core\Domains\Billing\Payment\PaymentTransactionService;
@@ -41,6 +42,7 @@ class PaymentManageController extends Controller
         private readonly PaymentFactory            $paymentFactory,
         private readonly PaymentService            $paymentService,
         private readonly PaymentFileService        $fileService,
+        private readonly PaymentGate               $paymentGate,
         private readonly InvoiceService            $invoiceService,
         private readonly AccountService            $accountService,
         private readonly PeriodService             $periodService,
@@ -198,6 +200,8 @@ class PaymentManageController extends Controller
         if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_EDIT)) {
             abort(403);
         }
+
+        $this->paymentGate->assertCanEdit($request->getIntOrNull('id'));
 
         $payment = $this->linkPaymentCommand->execute(
             $request->getIntOrNull('id'),

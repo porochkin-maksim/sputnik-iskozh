@@ -39,6 +39,13 @@ class TransactionSearcher extends BaseSearcher
         return $this;
     }
 
+    public function setClaimIdNotNull(): static
+    {
+        $this->addWhere(Transaction::CLAIM_ID, SearcherInterface::IS_NOT_NULL);
+
+        return $this;
+    }
+
     public function setClaimIds(array $ids): static
     {
         $this->addWhere(Transaction::CLAIM_ID, SearcherInterface::IN, $ids);

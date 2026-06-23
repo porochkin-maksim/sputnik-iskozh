@@ -42,6 +42,11 @@ readonly class PaymentTransactionService
         return $payment;
     }
 
+    public function hasAllocatedTransactions(int $paymentId): bool
+    {
+        return $this->transactionService->getAllocatedByPaymentId($paymentId)->count() > 0;
+    }
+
     public function delete(int $paymentId): bool
     {
         $invoiceId = $this->paymentService->getById($paymentId)?->getInvoiceId();
