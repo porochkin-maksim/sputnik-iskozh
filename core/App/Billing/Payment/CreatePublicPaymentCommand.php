@@ -3,6 +3,7 @@
 namespace Core\App\Billing\Payment;
 
 use Core\App\Billing\Payment\Validator\CreatePublicPaymentValidator;
+use App\Jobs\Billing\NotifyAboutNewUnverifiedPaymentJob;
 use Core\Contracts\DbServiceInterface;
 use Core\Domains\Account\AccountService;
 use Core\Domains\Billing\Invoice\InvoiceService;
@@ -73,9 +74,12 @@ readonly class CreatePublicPaymentCommand
             }
 
             $payment->setCost($cost);
+
             $payment = $this->paymentService->save($payment);
 
             $this->fileService->storePaymentFiles($files, $payment->getId());
+
+            dispatch(new NotifyAboutNewUnverifiedPaymentJob($payment->getId()))->afterCommit();
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace Core\App\Billing\Payment;
 
 use Core\App\Billing\Payment\Validator\LinkPaymentValidator;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentService;
@@ -15,6 +16,7 @@ readonly class LinkPaymentCommand
         private PaymentService            $paymentService,
         private PaymentFactory            $paymentFactory,
         private PaymentTransactionService $paymentTransactionService,
+        private InvoiceService            $invoiceService,
         private LinkPaymentValidator      $validator,
     )
     {
@@ -33,6 +35,8 @@ readonly class LinkPaymentCommand
     {
         $this->validator->validate($cost, $accountId);
 
+        $oldCost = $id ? $this->paymentService->getById($id)?->getCost() : null;
+
         $payment = $id ? $this->paymentService->getById($id) : $this->paymentFactory->makeDefault();
         if ($payment === null) {
             return null;
@@ -48,6 +52,15 @@ readonly class LinkPaymentCommand
             ->setInvoiceId(null)
         ;
 
-        return $this->paymentTransactionService->saveWithTransaction($payment);
+        $payment = $this->paymentTransactionService->saveWithTransaction($payment);
+
+        if ($id === null && $payment->getInvoiceId()) {
+            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true);
+        }
+        elseif ($id !== null && $oldCost !== null && $oldCost !== $cost && $payment->getInvoiceId()) {
+            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true);
+        }
+
+        return $payment;
     }
 }

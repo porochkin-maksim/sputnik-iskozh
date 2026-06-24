@@ -3,6 +3,7 @@
 namespace Core\App\Billing\Period;
 
 use Carbon\Carbon;
+use App\Jobs\Billing\CreateMainServicesJob;
 use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Billing\Period\PeriodFactory;
 use Core\Domains\Billing\Period\PeriodService;
@@ -41,6 +42,12 @@ readonly class SaveCommand
             ->setEndAt($endAt)
             ->setIsClosed($isClosed);
 
-        return $this->periodService->save($period);
+        $period = $this->periodService->save($period);
+
+        if ($id === null) {
+            CreateMainServicesJob::dispatchSync($period->getId());
+        }
+
+        return $period;
     }
 }

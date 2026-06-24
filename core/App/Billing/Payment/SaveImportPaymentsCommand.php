@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Payment;
 
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentTransactionService;
 
@@ -10,12 +11,15 @@ readonly class SaveImportPaymentsCommand
     public function __construct(
         private PaymentFactory            $paymentFactory,
         private PaymentTransactionService $paymentTransactionService,
+        private InvoiceService            $invoiceService,
     )
     {
     }
 
     public function execute(SaveImportPaymentsInput $input): void
     {
+        $recalcInvoiceIds = [];
+
         foreach ($input->paymentsData as $paymentData) {
             $invoiceId = $paymentData->invoiceId;
             $cost      = $paymentData->amount;
@@ -34,6 +38,12 @@ readonly class SaveImportPaymentsCommand
             ;
 
             $this->paymentTransactionService->saveWithTransaction($payment);
+
+            $recalcInvoiceIds[$invoiceId] = $invoiceId;
+        }
+
+        foreach ($recalcInvoiceIds as $invoiceId) {
+            $this->invoiceService->recalcInvoice($invoiceId, true);
         }
     }
 }

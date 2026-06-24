@@ -2,6 +2,8 @@
 
 namespace Core\App\CounterHistory;
 
+use App\Jobs\CounterHistory\NotifyAboutNewUnverifiedCounterHistoryJob;
+use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 use Core\Domains\Counter\FileService;
 use Core\Domains\CounterHistory\CounterHistoryFactory;
 use Core\Domains\CounterHistory\CounterHistoryService;
@@ -40,7 +42,9 @@ readonly class AddProfileCounterHistoryCommand
             abort(403);
         }
 
-        $this->dbService->transaction(function () use ($counter, $value, $file) {
+        $history = null;
+
+        $this->dbService->transaction(function () use ($counter, $value, $file, &$history) {
             $lastHistory = $this->counterHistoryService->getLastByCounterId($counter->getId());
 
             $history = $this->counterHistoryFactory->makeDefault()
@@ -53,6 +57,11 @@ readonly class AddProfileCounterHistoryCommand
             $history = $this->counterHistoryService->save($history);
             $this->fileService->storeHistoryFile($file, $history->getId());
         });
+
+        if ($history) {
+            NotifyAboutNewUnverifiedCounterHistoryJob::dispatchIfNeeded($history->getId());
+        }
+        RewatchCounterHistoryChainJob::dispatchIfNeeded($counterId);
 
         return true;
     }

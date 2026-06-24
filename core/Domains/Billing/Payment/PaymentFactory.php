@@ -2,6 +2,8 @@
 
 namespace Core\Domains\Billing\Payment;
 
+use Carbon\Carbon;
+
 readonly class PaymentFactory
 {
     public function makeDefault(): PaymentEntity
@@ -9,6 +11,7 @@ readonly class PaymentFactory
         return (new PaymentEntity())
             ->setModerated(false)
             ->setVerified(false)
-            ->setCost(0.00);
+            ->setCost(0.00)
+            ->setPaidAt(Carbon::now());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Core\App\CounterHistory;
 
+use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 use Carbon\Carbon;
 use Core\Domains\Counter\CounterService;
 use Core\Domains\Counter\FileService;
@@ -69,5 +70,7 @@ readonly class AddAdminCounterHistoryCommand
                 $this->fileService->storeHistoryFile($file, $history->getId());
             }
         });
+
+        RewatchCounterHistoryChainJob::dispatchIfNeeded($counterId);
     }
 }

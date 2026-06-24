@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Invoice;
 
+use App\Jobs\Billing\CreateClaimsAndPaymentsForRegularInvoiceJob;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceFactory;
 use Core\Domains\Billing\Invoice\InvoiceService;
@@ -39,6 +40,12 @@ readonly class SaveCommand
 
         $invoice->setName($name);
 
-        return $this->invoiceService->save($invoice);
+        $invoice = $this->invoiceService->save($invoice);
+
+        if ($id === null) {
+            CreateClaimsAndPaymentsForRegularInvoiceJob::dispatchIfNeeded($invoice->getId());
+        }
+
+        return $invoice;
     }
 }

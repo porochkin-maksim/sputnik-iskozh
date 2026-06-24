@@ -61,6 +61,10 @@ readonly class SaveCommand
             return null;
         }
 
+        if ($id && $email !== $user->getEmail()) {
+            $user->setEmailVerifiedAt(null);
+        }
+
         $user->setFirstName($firstName)
             ->setMiddleName($middleName)
             ->setLastName($lastName)

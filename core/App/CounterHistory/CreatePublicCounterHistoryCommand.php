@@ -2,6 +2,8 @@
 
 namespace Core\App\CounterHistory;
 
+use App\Jobs\CounterHistory\NotifyAboutNewUnverifiedCounterHistoryJob;
+use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 use Core\Domains\Account\AccountService;
 use Core\Domains\Counter\CounterEntity;
 use Core\Domains\Counter\CounterService;
@@ -51,6 +53,8 @@ readonly class CreatePublicCounterHistoryCommand
             throw new ValidationException(['file' => ['Не передана фотография счётчика']]);
         }
 
+        $history = null;
+
         $this->dbService->transaction(function () use (
             $accountNumber,
             $counterId,
@@ -58,6 +62,7 @@ readonly class CreatePublicCounterHistoryCommand
             $value,
             $file,
             $fullText,
+            &$history,
         ) {
             $history = $this->counterHistoryFactory->makeDefault()->setValue($value);
 
@@ -95,5 +100,10 @@ readonly class CreatePublicCounterHistoryCommand
 
             $this->historyChangesService->save($historyChanges);
         });
+
+        if ($history) {
+            NotifyAboutNewUnverifiedCounterHistoryJob::dispatchIfNeeded($history->getId());
+            RewatchCounterHistoryChainJob::dispatchIfNeeded($history->getCounterId());
+        }
     }
 }
