@@ -20,10 +20,9 @@ class InvoicesSheet extends BaseExportSheet
         foreach ($this->invoices as $invoice) {
             $cost = $invoice->getCost() ?? 0;
             $paid = $invoice->getPaid() ?? 0;
-            $advance = $invoice->getAdvance();
             $delta = $cost - $paid;
-            $displayCost = $advance ? $cost - $advance : $cost;
-            $displayDebt = $advance ? -$advance : $delta;
+            $displayCost = $cost;
+            $displayDebt = $delta;
             $type = $invoice->getType();
             $name = $invoice->getName();
             $displayName = $name ? $type?->name() . ' / ' . $name : ($type?->name() ?? '');

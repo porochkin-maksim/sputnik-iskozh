@@ -23,7 +23,6 @@ class ClaimCollection extends Collection
         ServiceTypeEnum::PERSONAL_FEE,
         ServiceTypeEnum::ELECTRIC_TARIFF,
         ServiceTypeEnum::OTHER,
-        ServiceTypeEnum::ADVANCE_PAYMENT,
     ]): static {
         return $this->sort(function (ClaimEntity $claim1, ClaimEntity $claim2) use ($orderedTypes) {
             foreach ($orderedTypes as $type) {
@@ -58,11 +57,6 @@ class ClaimCollection extends Collection
         }
 
         return $result;
-    }
-
-    public function getAdvancePayment(): ?ClaimEntity
-    {
-        return $this->findByServiceType(ServiceTypeEnum::ADVANCE_PAYMENT);
     }
 
     public function getDebts(): static

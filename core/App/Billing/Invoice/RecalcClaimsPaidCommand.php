@@ -46,22 +46,6 @@ readonly class RecalcClaimsPaidCommand
             ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC),
         )->getItems()->sortByServiceTypes();
 
-        // удаляем advance-claims, их транзакции отпускаем в unallocated
-        $advanceClaimIds = [];
-        foreach ($claims as $claim) {
-            if ($claim->getService()?->getType()?->isAdvance()) {
-                $advanceClaimIds[] = $claim->getId();
-                $this->claimService->deleteById($claim->getId());
-            }
-        }
-        if ($advanceClaimIds !== []) {
-            $this->releaseClaimTransactions($advanceClaimIds);
-        }
-
-        $claims = $claims->filter(
-            fn(ClaimEntity $c) => ! $c->getService()?->getType()?->isAdvance(),
-        );
-
         if ($claims->isEmpty()) {
             $this->recalcInvoice($invoice, new ClaimCollection());
 
@@ -221,19 +205,6 @@ readonly class RecalcClaimsPaidCommand
         return $released;
     }
 
-    private function releaseClaimTransactions(array $claimIds): void
-    {
-        foreach ($claimIds as $claimId) {
-            $txs = $this->transactionService->search(new TransactionSearcher()
-                ->setClaimId($claimId),
-            )->getItems();
-
-            foreach ($txs as $tx) {
-                $this->releaseFromClaim($tx, (float) $tx->getCost());
-            }
-        }
-    }
-
     private function recalcInvoice(InvoiceEntity $invoice, ClaimCollection $claims): void
     {
         $totalCost  = 0.0;
@@ -270,7 +241,6 @@ readonly class RecalcClaimsPaidCommand
 
         $invoice->setCost($invoiceCost);
         $invoice->setPaid($totalPaid);
-        $invoice->setAdvance(0);
         $invoice->setDebt($adjustedDebt);
         $invoice->setRounding($rounding);
 

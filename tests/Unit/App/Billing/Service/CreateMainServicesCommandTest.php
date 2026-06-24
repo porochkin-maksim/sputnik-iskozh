@@ -118,7 +118,6 @@ class CreateMainServicesCommandTest extends TestCase
             'ELECTRIC_TARIFF' => 'new',
             'OTHER'           => 'existing',
             'DEBT'            => 'new',
-            'ADVANCE_PAYMENT' => 'existing',
         ];
 
         $this->periodService->expects($this->once())

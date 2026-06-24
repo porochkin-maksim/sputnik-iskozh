@@ -41,7 +41,6 @@ class ServiceCollection extends Collection
         ServiceTypeEnum::PERSONAL_FEE,
         ServiceTypeEnum::ELECTRIC_TARIFF,
         ServiceTypeEnum::OTHER,
-        ServiceTypeEnum::ADVANCE_PAYMENT,
     ]): static {
         return $this->sort(function (ServiceEntity $a, ServiceEntity $b) use ($orderedTypes) {
             foreach ($orderedTypes as $type) {

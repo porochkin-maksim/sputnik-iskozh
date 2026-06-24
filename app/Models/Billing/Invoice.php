@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?int    $type
  * @property ?float  $cost
  * @property ?float  $paid
- * @property ?float  $advance
  * @property ?float  $debt
  * @property ?string $name
  * @property ?string $comment
@@ -40,7 +39,6 @@ class Invoice extends AbstractModel
     public const string TYPE       = 'type';
     public const string COST       = 'cost';
     public const string PAID       = 'paid';
-    public const string ADVANCE    = 'advance';
     public const string DEBT       = 'debt';
     public const string ROUNDING   = 'rounding';
     public const string NAME       = 'name';
@@ -57,7 +55,6 @@ class Invoice extends AbstractModel
     protected $casts = [
         self::COST    => self::CAST_FLOAT,
         self::PAID    => self::CAST_FLOAT,
-        self::ADVANCE => self::CAST_FLOAT,
         self::DEBT    => self::CAST_FLOAT,
         self::ROUNDING => self::CAST_FLOAT,
     ];
@@ -68,7 +65,6 @@ class Invoice extends AbstractModel
     public const string TITLE_TYPE       = 'Тип';
     public const string TITLE_PAID       = 'Оплачено';
     public const string TITLE_COST       = 'Стоимость';
-    public const string TITLE_ADVANCE    = 'Аванс';
     public const string TITLE_DEBT       = 'Долг';
     public const string TITLE_ROUNDING   = 'Округление';
     public const string TITLE_COMMENT    = 'Комментарий';
@@ -82,7 +78,6 @@ class Invoice extends AbstractModel
         self::TYPE       => self::TITLE_TYPE,
         self::PAID       => self::TITLE_PAID,
         self::COST       => self::TITLE_COST,
-        self::ADVANCE    => self::TITLE_ADVANCE,
         self::DEBT       => self::TITLE_DEBT,
         self::ROUNDING   => self::TITLE_ROUNDING,
         self::COMMENT    => self::TITLE_COMMENT,

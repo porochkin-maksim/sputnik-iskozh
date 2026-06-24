@@ -13,7 +13,6 @@ enum ServiceTypeEnum: int
     case TARGET_FEE      = 3;
     case OTHER           = 4;
     case DEBT            = 5;
-    case ADVANCE_PAYMENT = 6;
     case PERSONAL_FEE    = 7;
 
     public function name(): string
@@ -24,14 +23,8 @@ enum ServiceTypeEnum: int
             self::TARGET_FEE      => 'Целевой сбор',
             self::OTHER           => 'Прочее',
             self::DEBT            => 'Долг',
-            self::ADVANCE_PAYMENT => 'Аванс',
             self::PERSONAL_FEE    => 'Персональный взнос',
         };
-    }
-
-    public function isAdvance(): bool
-    {
-        return $this === self::ADVANCE_PAYMENT;
     }
 
     public function isDebt(): bool

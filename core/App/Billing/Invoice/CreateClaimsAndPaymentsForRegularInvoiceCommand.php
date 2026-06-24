@@ -53,7 +53,7 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
             return;
         }
 
-        $oldDebts = $this->getMigratingClaimsToNewPeriod($invoice)->filter(fn(ClaimEntity $claim) => ! $claim->getService()?->getType()?->isAdvance());
+        $oldDebts = $this->getMigratingClaimsToNewPeriod($invoice);
 
         $newPeriodServices = $this->serviceService->search(new ServiceSearcher()
             ->setPeriodId($invoice->getPeriodId())
@@ -154,7 +154,7 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
                 ->setInvoiceId($previousInvoice->getId()),
         )->getItems()
             ->map(static fn(ClaimEntity $claim) => $claim->setInvoice($previousInvoice))
-            ->filter(static fn(ClaimEntity $claim) => $claim->getDelta() || $claim->getService()?->getType()?->isAdvance())
+            ->filter(static fn(ClaimEntity $claim) => $claim->getDelta())
         ;
     }
 }

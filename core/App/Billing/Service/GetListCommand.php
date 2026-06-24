@@ -32,7 +32,6 @@ readonly class GetListCommand
                 new ServiceSearcher()
                     ->excludeType(ServiceTypeEnum::OTHER)
                     ->excludeType(ServiceTypeEnum::DEBT)
-                    ->excludeType(ServiceTypeEnum::ADVANCE_PAYMENT)
                     ->withPeriods()
                     ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
                     ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)

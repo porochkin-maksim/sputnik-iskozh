@@ -30,7 +30,7 @@
                     <tbody>
                     <tr v-for="invoice in invoices" :key="invoice.id"
                         class="text-center align-middle"
-                        :class="[invoice.isPaid ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '', invoice.advance ? 'fw-bold' : '']">
+                        :class="[invoice.isPaid ? 'table-success' : '', invoice.cost === 0 ? 'table-warning' : '']">
                         <td class="text-end">
                             <a :href="invoice.viewUrl" class="link-firm">
                                 {{ invoice.id }}
@@ -38,11 +38,11 @@
                         </td>
                         <td>{{ invoice.displayName }}</td>
                         <td>{{ invoice.periodName }}</td>
-                        <td class="text-end">{{ formatMoney(invoice.advance ? invoice.cost - invoice.advance : invoice.cost) }}</td>
+                        <td class="text-end">{{ formatMoney(invoice.cost) }}</td>
                         <td class="text-end">{{ formatMoney(invoice.paid) }}</td>
                         <td class="text-end"
-                            :class="[invoice.advance ? 'text-success' : '', invoice.delta ? 'text-danger' : '']">
-                            {{ invoice.advance ? formatMoney(-invoice.advance) : formatMoney(invoice.delta) }}
+                            :class="invoice.delta ? 'text-danger' : ''">
+                            {{ formatMoney(invoice.delta) }}
                         </td>
                         <td class="table-thin-column">{{ invoice.updated }}</td>
                     </tr>

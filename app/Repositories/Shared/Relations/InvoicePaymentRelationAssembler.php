@@ -30,7 +30,6 @@ readonly class InvoicePaymentRelationAssembler
             ->setServiceId($data->{InvoiceModel::SERVICE_ID})
             ->setPaid($data->{InvoiceModel::PAID})
             ->setCost($data->{InvoiceModel::COST})
-            ->setAdvance($data->{InvoiceModel::ADVANCE})
             ->setDebt($data->{InvoiceModel::DEBT})
             ->setRounding($data->{InvoiceModel::ROUNDING})
             ->setType(InvoiceTypeEnum::tryFrom($data->{InvoiceModel::TYPE}))

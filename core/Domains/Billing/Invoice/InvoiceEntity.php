@@ -20,7 +20,6 @@ class InvoiceEntity
     private ?InvoiceTypeEnum   $type      = null;
     private ?float             $cost      = null;
     private ?float             $paid      = null;
-    private ?float             $advance   = null;
     private ?float             $debt      = null;
     private ?float             $rounding  = null;
     private ?string            $comment   = null;
@@ -111,18 +110,6 @@ class InvoiceEntity
     public function setPaid(?float $paid): static
     {
         $this->paid = $paid;
-
-        return $this;
-    }
-
-    public function getAdvance(): float
-    {
-        return (float) $this->advance;
-    }
-
-    public function setAdvance(?float $advance): static
-    {
-        $this->advance = $advance;
 
         return $this;
     }

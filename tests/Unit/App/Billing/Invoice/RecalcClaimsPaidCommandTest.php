@@ -146,51 +146,6 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $this->assertEqualsWithDelta(0.44, $savedInvoice->getRounding(), 0.0001);
     }
 
-    public function test_execute_deletes_advance_claims_and_keeps_others(): void
-    {
-        $invoice = (new InvoiceEntity)->setId(1)->setAccountId(10);
-
-        $advance    = (new ServiceEntity)->setType(ServiceTypeEnum::ADVANCE_PAYMENT);
-        $membership = (new ServiceEntity)->setType(ServiceTypeEnum::MEMBERSHIP_FEE);
-
-        $advanceClaim  = (new ClaimEntity)->setId(100)->setServiceId(1)->setService($advance)->setTariff(500.0)->setQuantity(1);
-        $memberClaim   = (new ClaimEntity)->setId(101)->setServiceId(2)->setService($membership)->setTariff(300.0)->setQuantity(1);
-
-        $this->invoiceService->expects($this->once())
-            ->method('search')
-            ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
-
-        $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$advanceClaim, $memberClaim])));
-
-        $this->claimService->expects($this->once())
-            ->method('deleteById')
-            ->with(100);
-
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
-
-        $this->paymentService->expects($this->any())
-            ->method('getVerifiedByAccount')
-            ->willReturn(new PaymentCollection);
-
-        $this->claimService->expects($this->once())
-            ->method('saveCollection')
-            ->willReturnArgument(0);
-
-        $this->invoiceService->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(function (InvoiceEntity $i) {
-                $this->assertSame(300.0, $i->getCost());
-                $this->assertSame(0.0, $i->getDebt());
-                return $i;
-            });
-
-        $this->command->execute(1);
-    }
-
     public function test_execute_preserves_existing_allocated_transactions(): void
     {
         $invoice = (new InvoiceEntity)->setId(1)->setAccountId(10);
@@ -490,66 +445,6 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $this->assertNotNull($savedClaims);
         $this->assertSame(1.0, $savedClaims->first()->getQuantity());
         $this->assertSame(2500.0, $savedClaims->first()->getCost());
-    }
-
-    public function test_execute_advance_claims_release_transactions_to_unallocated(): void
-    {
-        $invoice = (new InvoiceEntity)->setId(1)->setAccountId(10);
-
-        $advanceSvc = (new ServiceEntity)->setType(ServiceTypeEnum::ADVANCE_PAYMENT);
-        $otherSvc   = (new ServiceEntity)->setType(ServiceTypeEnum::OTHER);
-
-        $advanceClaim = (new ClaimEntity)->setId(100)->setServiceId(1)->setService($advanceSvc)->setTariff(500.0)->setQuantity(1);
-        $otherClaim   = (new ClaimEntity)->setId(101)->setServiceId(2)->setService($otherSvc)->setTariff(300.0)->setQuantity(1);
-
-        $tx = (new TransactionEntity)->setId(1)->setPaymentId(50)->setClaimId(100)->setCost(500.0);
-
-        $this->invoiceService->expects($this->once())
-            ->method('search')
-            ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
-
-        $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$advanceClaim, $otherClaim])));
-
-        $this->claimService->expects($this->once())
-            ->method('deleteById')
-            ->with(100);
-
-        // search: releaseClaimTransactions → tx for claimId=100
-        // search: releaseFromClaim → unallocated with paymentId=50, claimId=null → empty
-        // search: main flow → allocated txns for claimIds=[101] → empty
-        $searchCalls = 0;
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturnCallback(function () use ($tx, &$searchCalls) {
-                $searchCalls++;
-                if ($searchCalls === 1) {
-                    return (new TransactionSearchResponse)->setItems(new TransactionCollection([$tx]));
-                }
-                return (new TransactionSearchResponse)->setItems(new TransactionCollection);
-            });
-
-        $this->transactionService->expects($this->any())
-            ->method('save');
-
-        $this->paymentService->expects($this->any())
-            ->method('getVerifiedByAccount')
-            ->willReturn(new PaymentCollection);
-
-        $this->claimService->expects($this->once())
-            ->method('saveCollection')
-            ->willReturnArgument(0);
-
-        $this->invoiceService->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(function (InvoiceEntity $i) {
-                $this->assertSame(300.0, $i->getCost());
-                $this->assertSame(0.0, $i->getDebt());
-                return $i;
-            });
-
-        $this->command->execute(1);
     }
 
     public function test_execute_skips_rounding_for_account_id_1(): void

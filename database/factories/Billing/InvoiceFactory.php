@@ -22,7 +22,6 @@ class InvoiceFactory extends Factory
             Invoice::TYPE       => InvoiceTypeEnum::REGULAR->value,
             Invoice::COST       => fake()->randomFloat(2, 500, 50000),
             Invoice::PAID       => 0,
-            Invoice::ADVANCE    => 0,
             Invoice::DEBT       => 0,
         ];
     }

@@ -30,7 +30,6 @@ readonly class CreateMainServicesCommand
             ServiceTypeEnum::ELECTRIC_TARIFF,
             ServiceTypeEnum::OTHER,
             ServiceTypeEnum::DEBT,
-            ServiceTypeEnum::ADVANCE_PAYMENT,
         ];
 
         foreach ($cases as $case) {
