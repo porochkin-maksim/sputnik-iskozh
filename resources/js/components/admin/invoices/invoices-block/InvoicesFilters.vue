@@ -90,6 +90,14 @@
                     <span class="d-none d-sm-inline ms-1">Импорт</span>
                 </button>
                 <button
+                    v-if="canEdit && periodId && !periodClosed"
+                    class="btn btn-outline-primary"
+                    @click="$emit('sync-services')"
+                >
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline ms-1">Синхр. услуги</span>
+                </button>
+                <button
                     class="btn btn-success"
                     @click="$emit('export')"
                     aria-label="Экспорт в Excel"
@@ -121,7 +129,7 @@ const props = defineProps({
     paidStatus        : { type: [String, null], default: null },
 });
 
-const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'recalc', 'reset-payments', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
+const emit = defineEmits(['change', 'search', 'clear-search', 'export', 'import', 'recalc', 'reset-payments', 'sync-services', 'update:searchAccount', 'update:periodId', 'update:type', 'update:paidStatus']);
 
 const periodIdModel = computed({
     get: () => props.periodId,

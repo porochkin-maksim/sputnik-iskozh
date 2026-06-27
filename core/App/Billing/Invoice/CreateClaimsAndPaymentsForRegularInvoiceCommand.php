@@ -81,11 +81,7 @@ readonly class CreateClaimsAndPaymentsForRegularInvoiceCommand
         }
 
         foreach ($newPeriodServices as $service) {
-            if ( ! in_array($service->getType(), [
-                ServiceTypeEnum::MEMBERSHIP_FEE,
-                ServiceTypeEnum::TARGET_FEE,
-                ServiceTypeEnum::PERSONAL_FEE,
-            ], true)) {
+            if ( ! in_array($service->getType(), ServiceTypeEnum::claimableForInvoice(), true)) {
                 continue;
             }
 

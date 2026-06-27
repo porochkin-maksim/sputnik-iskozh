@@ -525,6 +525,15 @@
         "uri": "\/admin\/invoices\/json\/save",
         "args": []
     },
+    "adminInvoiceSyncServices": {
+        "name": "admin.invoice.sync-services",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/sync-services\/{periodId}",
+        "args": {
+            "periodId": "{periodId}"
+        }
+    },
     "adminInvoiceView": {
         "name": "admin.invoice.view",
         "displayName": "",

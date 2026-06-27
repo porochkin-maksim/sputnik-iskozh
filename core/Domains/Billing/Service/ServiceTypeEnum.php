@@ -31,4 +31,16 @@ enum ServiceTypeEnum: int
     {
         return $this === self::DEBT;
     }
+
+    /**
+     * @return self[]
+     */
+    public static function claimableForInvoice(): array
+    {
+        return [
+            self::MEMBERSHIP_FEE,
+            self::TARGET_FEE,
+            self::PERSONAL_FEE,
+        ];
+    }
 }

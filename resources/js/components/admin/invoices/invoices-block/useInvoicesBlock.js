@@ -13,6 +13,7 @@ import {
     ApiAdminInvoiceList,
     ApiAdminInvoiceRecalcPeriod,
     ApiAdminInvoiceResetPaymentsPeriod,
+    ApiAdminInvoiceSyncServices,
 }                           from '@api';
 import { routeUri }         from '@utils/routeUri.js';
 
@@ -249,6 +250,23 @@ export function useInvoicesBlock () {
         }
     };
 
+    const syncServicesAction = async () => {
+        if (!periodId.value) {
+            return;
+        }
+        if (!confirm('Синхронизировать услуги периода со счетами? Будут добавлены только недостающие услуги.')) {
+            return;
+        }
+        try {
+            const response = await ApiAdminInvoiceSyncServices(periodId.value);
+            showSuccess(`Синхронизация завершена: добавлено ${response.data.added} услуг, обработано ${response.data.processed} счетов`);
+            await listAction();
+        }
+        catch (err) {
+            parseResponseErrors(err);
+        }
+    };
+
     const onPaginationUpdate = (newSkip) => {
         skip.value = newSkip;
         listAction();
@@ -304,6 +322,7 @@ export function useInvoicesBlock () {
         sortField,
         sortOrder,
         skip,
+        syncServicesAction,
         total,
         type,
     };

@@ -385,6 +385,12 @@ export function ApiAdminInvoiceSave(getParams = {}, postData = null) {
     return apiClient.post(makeQuery('/admin/invoices/json/save', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminInvoiceSyncServices(periodId, getParams = {}, postData = null) {
+    // see admin.invoice.sync-services
+    // controller: App\Http\Controllers\Admin\Billing\InvoiceController@syncServices
+    return apiClient.post(makeQuery('/admin/invoices/json/sync-services/'+periodId+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminInvoiceView(id, getParams = {}, postData = null) {
     // see admin.invoice.view
     // controller: App\Http\Controllers\Admin\Billing\InvoiceController@view

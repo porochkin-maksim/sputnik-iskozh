@@ -193,6 +193,7 @@ abstract class RouteNames
     public const string ADMIN_INVOICE_CREATE_REGULAR_INVOICES            = 'admin.invoice.create-regular-invoices';
     public const string ADMIN_INVOICE_RECALC_PERIOD                      = 'admin.invoice.recalc-period';
     public const string ADMIN_INVOICE_RESET_PAYMENTS_PERIOD              = 'admin.invoice.reset-payments-period';
+    public const string ADMIN_INVOICE_SYNC_SERVICES                      = 'admin.invoice.sync-services';
 
     public const string ADMIN_CLAIM_VIEW   = 'admin.claim.view';
     public const string ADMIN_CLAIM_CREATE = 'admin.claim.create';

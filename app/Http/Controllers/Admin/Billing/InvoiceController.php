@@ -13,6 +13,7 @@ use App\Http\Resources\Common\SelectResource;
 use App\Support\HistoryChangesRoute;
 use Core\App\Billing\Invoice\GetListCommand;
 use Core\App\Billing\Invoice\SaveCommand;
+use Core\App\Billing\Invoice\SyncPeriodServicesCommand;
 use Core\App\Billing\Payment\ResetPeriodPaymentsCommand;
 use App\Models\Account\Account;
 use App\Models\Billing\Invoice;
@@ -47,6 +48,7 @@ class InvoiceController extends Controller
         private readonly GetListCommand             $getListCommand,
         private readonly SaveCommand                $saveCommand,
         private readonly ResetPeriodPaymentsCommand $resetPeriodPaymentsCommand,
+        private readonly SyncPeriodServicesCommand  $syncPeriodServicesCommand,
     )
     {
     }
@@ -248,6 +250,15 @@ class InvoiceController extends Controller
         $this->periodGate->assertCanEditInvoices($periodId);
 
         return CreateRegularPeriodInvoicesJob::dispatchSyncIfNeeded($periodId);
+    }
+
+    public function syncServices(int $periodId): JsonResponse
+    {
+        $this->periodGate->assertCanEditInvoices($periodId);
+
+        $result = $this->syncPeriodServicesCommand->execute($periodId);
+
+        return response()->json($result);
     }
 
     private function getViewInvoice(int $id): ?InvoiceEntity

@@ -54,6 +54,7 @@
                 @import="importAction"
                 @recalc="recalcAction"
                 @reset-payments="resetPaymentsAction"
+                @sync-services="syncServicesAction"
                 @update:searchAccount="searchAccount = $event"
                 @update:periodId="periodId = $event"
                 @update:type="type = $event"
@@ -115,6 +116,7 @@ const {
           periodClosed,
           recalcAction,
           resetPaymentsAction,
+          syncServicesAction,
           invoice,
           invoices,
           listAction,
