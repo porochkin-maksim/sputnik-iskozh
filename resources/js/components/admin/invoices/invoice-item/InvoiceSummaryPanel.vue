@@ -44,13 +44,20 @@
         v-if="localInvoice.detailCost?.rounding"
         class="mt-2 text-muted small"
     >
-        <i class="fa fa-calculator me-1" aria-hidden="true"></i>
-        Округление: {{ formatMoney(localInvoice.detailCost.rounding) }}
+        <button v-if="canEdit" class="btn btn-sm btn-outline-secondary" @click="$emit('edit-rounding')">
+
+            <i class="fa fa-calculator me-1"
+               aria-hidden="true"></i>Округление: {{ formatMoney(localInvoice.detailCost.rounding) }}
+        </button>
+        <template v-else>
+            <i class="fa fa-calculator me-1" aria-hidden="true"></i>
+            <span>Округление: {{ formatMoney(localInvoice.detailCost.rounding) }}</span>
+        </template>
     </div>
 
     <div
         v-if="balance !== null"
-        class="mt-3 p-3 bg-light rounded border"
+        class="my-3 p-3 bg-light rounded border"
     >
         <div class="d-flex align-items-center gap-2">
             <i class="fa fa-balance-scale text-info" aria-hidden="true"></i>
@@ -72,9 +79,12 @@ const canView = computed(() => has('invoices', 'view'));
 defineProps({
     actions         : { type: Object, required: true },
     balance         : { type: Number, default: null },
+    canEdit         : { type: Boolean, default: false },
     deltaClass      : { type: String, required: true },
     formatMoney     : { type: Function, required: true },
     localInvoice    : { type: Object, required: true },
     statusAlertClass: { type: String, required: true },
 });
+
+defineEmits(['edit-rounding']);
 </script>

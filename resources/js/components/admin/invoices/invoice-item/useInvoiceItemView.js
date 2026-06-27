@@ -12,6 +12,7 @@ import {
     ApiAdminInvoiceGet,
     ApiAdminInvoiceDelete,
     ApiAdminInvoiceRecalc,
+    ApiAdminInvoiceSave,
     ApiAdminPaymentManageAccountBalance,
 }                           from '@api';
 import { routeUri }         from '@utils/routeUri.js';
@@ -27,8 +28,10 @@ export function useInvoiceItemView (props) {
     const claimsCount     = ref(0);
     const paymentsCount   = ref(0);
     const isLoading       = ref(true);
-    const isRecalculating = ref(false);
-    const balance         = ref(null);
+    const isRecalculating   = ref(false);
+    const balance           = ref(null);
+    const showRoundingModal = ref(false);
+    const roundingValue     = ref(0);
 
     const canView        = computed(() => has('invoices', 'view'));
     const canEdit        = computed(() => has('invoices', 'edit') && actions.value.edit);
@@ -103,6 +106,31 @@ export function useInvoiceItemView (props) {
         }
     };
 
+    const openRoundingEdit = () => {
+        roundingValue.value = localInvoice.value.detailCost?.rounding ?? 0;
+        showRoundingModal.value = true;
+    };
+
+    const updateRoundingAction = async () => {
+        try {
+            const inv = localInvoice.value;
+            await ApiAdminInvoiceSave({
+                id        : inv.id,
+                period_id : inv.periodId,
+                account_id: inv.accountId,
+                type      : inv.type,
+                name      : inv.name,
+                rounding  : roundingValue.value,
+            });
+            showRoundingModal.value = false;
+            await loadInvoice();
+            showInfo('Округление сохранено');
+        }
+        catch (error) {
+            parseResponseErrors(error);
+        }
+    };
+
     const recalcAction = async () => {
         isRecalculating.value = true;
         try {
@@ -156,6 +184,10 @@ export function useInvoiceItemView (props) {
         paymentsCount,
         recalcAction,
         reload,
+        roundingValue,
+        showRoundingModal,
+        openRoundingEdit,
+        updateRoundingAction,
         statusAlertClass,
     };
 }

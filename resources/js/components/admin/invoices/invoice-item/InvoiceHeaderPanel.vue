@@ -11,7 +11,7 @@
         <div class="d-flex flex-wrap align-items-center gap-2">
             <a
                 v-if="localInvoice.account?.viewUrl && canAccountView"
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-success"
                 :href="localInvoice.account.viewUrl"
             >
                 <i class="fa fa-home me-1" aria-hidden="true"></i>

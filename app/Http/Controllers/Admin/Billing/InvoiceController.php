@@ -178,6 +178,7 @@ class InvoiceController extends Controller
             $request->getInt('account_id'),
             $request->getIntOrNull('type'),
             $request->getStringOrNull('name'),
+            $request->getFloat('rounding'),
         );
 
         if ( ! $invoice) {

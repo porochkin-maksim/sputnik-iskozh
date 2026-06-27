@@ -24,6 +24,7 @@ readonly class SaveCommand
         int $accountId,
         ?int $type,
         ?string $name,
+        ?float $rounding = null,
     ): ?InvoiceEntity {
         $this->validator->validate($periodId, $accountId, $type, $name);
 
@@ -39,6 +40,10 @@ readonly class SaveCommand
         }
 
         $invoice->setName($name);
+
+        if ($rounding !== null) {
+            $invoice->setRounding($rounding);
+        }
 
         $invoice = $this->invoiceService->save($invoice);
 
