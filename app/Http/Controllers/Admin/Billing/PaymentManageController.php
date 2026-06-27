@@ -14,6 +14,7 @@ use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
 use App\Support\HistoryChangesRoute;
 use Carbon\Carbon;
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\App\Billing\Payment\LinkPaymentCommand;
 use Core\App\Billing\Payment\PayCommand;
 use Core\Domains\Access\PermissionEnum;
@@ -50,6 +51,7 @@ class PaymentManageController extends Controller
         private readonly LinkPaymentCommand        $linkPaymentCommand,
         private readonly TransactionService        $transactionService,
         private readonly PayCommand                $payCommand,
+        private readonly RecalcClaimsPaidCommand   $recalcClaimsPaidCommand,
         private readonly PaymentTransactionService $paymentTransactionService,
     )
     {
@@ -222,6 +224,10 @@ class PaymentManageController extends Controller
 
         if ($request->allFiles()) {
             $this->fileService->storePaymentFiles($request->allFiles(), $payment->getId());
+        }
+
+        if ($payment->getAccountId()) {
+            $this->recalcClaimsPaidCommand->executeForAccount($payment->getAccountId());
         }
 
         return response()->json([

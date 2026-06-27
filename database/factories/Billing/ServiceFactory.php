@@ -20,7 +20,6 @@ class ServiceFactory extends Factory
             Service::TYPE        => ServiceTypeEnum::MEMBERSHIP_FEE->value,
             Service::NAME        => fake()->word(),
             Service::COST        => fake()->randomFloat(2, 100, 10000),
-            Service::ACTIVE      => true,
             Service::PERIOD_FROM => $startAt,
             Service::PERIOD_TO   => (clone $startAt)->modify('+1 month'),
         ];

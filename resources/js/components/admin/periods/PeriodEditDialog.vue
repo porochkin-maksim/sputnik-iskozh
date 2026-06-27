@@ -49,15 +49,17 @@
                     />
                 </div>
 
-                <!-- Чекбокс закрытия периода -->
+                <!-- Статус периода (информация) -->
                 <div class="mt-2">
-                    <custom-checkbox
-                        v-model="isClosed"
-                        :errors="errors?.is_closed"
-                        label="Закрыть период"
-                        :disabled="!props.modelValue?.id"
-                        @update:modelValue="clearError('is_closed')"
-                    />
+                    <div class="form-label">Статус</div>
+                    <div v-if="props.modelValue?.isClosed" class="text-primary fw-bold">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Период закрыт
+                    </div>
+                    <div v-else class="text-success fw-bold">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        Период активен
+                    </div>
                 </div>
             </div>
         </template>
@@ -85,7 +87,6 @@ import {
 import { useResponseError }   from '@composables/useResponseError';
 import ViewDialog             from '@common/ViewDialog.vue';
 import CustomInput            from '@common/form/CustomInput.vue';
-import CustomCheckbox         from '@common/form/CustomCheckbox.vue';
 import CustomCalendar         from '@common/form/CustomCalendar.vue';
 import { ApiAdminPeriodSave } from '@api';
 
@@ -107,7 +108,6 @@ const { errors, clearError, parseResponseErrors, showInfo, showDanger } = useRes
 const name       = ref(null);
 const startAt    = ref(null);
 const endAt      = ref(null);
-const isClosed   = ref(false);
 const loading    = ref(false);
 const hideDialog = ref(false);
 
@@ -122,10 +122,9 @@ const canSave = computed(() => name.value && startAt.value && endAt.value);
 
 // Сброс формы
 const resetForm = () => {
-    name.value     = null;
-    startAt.value  = null;
-    endAt.value    = null;
-    isClosed.value = false;
+    name.value    = null;
+    startAt.value = null;
+    endAt.value   = null;
 };
 
 // Закрытие диалога
@@ -138,10 +137,9 @@ watch(
     () => props.modelValue,
     (newValue) => {
         if (newValue) {
-            name.value     = newValue.name;
-            startAt.value  = newValue.startAt;
-            endAt.value    = newValue.endAt;
-            isClosed.value = newValue.isClosed;
+            name.value    = newValue.name;
+            startAt.value = newValue.startAt;
+            endAt.value   = newValue.endAt;
         }
         else {
             resetForm();
@@ -152,19 +150,13 @@ watch(
 
 // Сохранение
 const saveAction = async () => {
-    if (isClosed.value) {
-        if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
-            return;
-        }
-    }
-
     loading.value = true;
     const data    = {
         id       : props.modelValue?.id,
         name     : name.value,
         start_at : startAt.value,
         end_at   : endAt.value,
-        is_closed: isClosed.value,
+        is_closed: props.modelValue?.isClosed ?? false,
     };
 
     try {

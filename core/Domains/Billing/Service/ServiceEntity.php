@@ -16,7 +16,6 @@ class ServiceEntity
     private ?int             $periodId   = null;
     private ?string          $name       = null;
     private ?float           $cost       = null;
-    private ?bool            $active     = null;
     private ?Carbon          $periodFrom = null;
     private ?Carbon          $periodTo   = null;
     private ?PeriodEntity    $period     = null;
@@ -77,18 +76,6 @@ class ServiceEntity
     public function setCost(?float $cost): static
     {
         $this->cost = $cost;
-
-        return $this;
-    }
-
-    public function isActive(): ?bool
-    {
-        return $this->active;
-    }
-
-    public function setIsActive(?bool $active): static
-    {
-        $this->active = $active;
 
         return $this;
     }

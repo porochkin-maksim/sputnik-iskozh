@@ -221,4 +221,13 @@ class PaymentEntity
 
         return $this;
     }
+
+    public function isLocked(): bool
+    {
+        if (($this->allocatedSum ?? 0) > 0) {
+            return true;
+        }
+
+        return $this->invoice?->getPeriod()?->isClosed() ?? false;
+    }
 }

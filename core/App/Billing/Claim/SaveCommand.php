@@ -5,6 +5,7 @@ namespace Core\App\Billing\Claim;
 use Core\Domains\Billing\Claim\ClaimEntity;
 use Core\Domains\Billing\Claim\ClaimFactory;
 use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Exceptions\ValidationException;
 
@@ -23,16 +24,18 @@ readonly class SaveCommand
      * @throws ValidationException
      */
     public function execute(
-        ?int $id,
-        ?int $invoiceId,
-        ?int $serviceId,
-        ?float $tariff,
-        ?float $cost,
+        ?int    $id,
+        ?int    $invoiceId,
+        ?int    $serviceId,
+        ?float  $tariff,
+        ?float  $cost,
         ?string $name,
-        ?float $quantity = null,
+        ?float  $quantity = null,
     ): ?ClaimEntity
     {
         $this->validator->validate($invoiceId, $serviceId, $tariff, $cost, $name, $quantity);
+
+        $this->assertPeriodNotClosed($invoiceId);
 
         $isNew = $id === null;
 
@@ -48,8 +51,9 @@ readonly class SaveCommand
 
         $claim
             ->setName($name)
-            ->setTariff($tariff ?: $cost)
-            ->setQuantity($quantity);
+            ->setTariff($tariff ? : $cost)
+            ->setQuantity($quantity)
+        ;
 
         $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
 
@@ -60,5 +64,30 @@ readonly class SaveCommand
         }
 
         return $saved;
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function assertPeriodNotClosed(?int $invoiceId): void
+    {
+        if ($invoiceId === null) {
+            return;
+        }
+
+        $invoice = $this->invoiceService->search(
+            InvoiceSearcher::make()
+                ->setId($invoiceId)
+                ->setWithPeriod()
+                ->setLimit(1),
+        )->getItems()->first();
+
+        if ($invoice === null) {
+            return;
+        }
+
+        if ($invoice->isLocked()) {
+            throw new ValidationException([], 'Период закрыт, редактирование невозможно');
+        }
     }
 }

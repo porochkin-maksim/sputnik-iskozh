@@ -14,5 +14,9 @@ Route::group(['prefix' => 'periods'], static function () {
             ->name(RouteNames::ADMIN_PERIOD_DELETE)
             ->whereNumber('id')
         ;
+        Route::post('/{id}/close', [Controllers\Admin\Billing\PeriodController::class, 'close'])
+            ->name(RouteNames::ADMIN_PERIOD_CLOSE)
+            ->whereNumber('id')
+        ;
     });
 });

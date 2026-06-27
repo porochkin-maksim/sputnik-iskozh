@@ -4,6 +4,7 @@ namespace Tests\Unit\App\Billing\Payment;
 
 use Core\App\Billing\Payment\LinkPaymentCommand;
 use Core\App\Billing\Payment\Validator\LinkPaymentValidator;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentService;
@@ -16,6 +17,7 @@ class LinkPaymentCommandTest extends TestCase
     private PaymentService            $paymentService;
     private PaymentFactory            $paymentFactory;
     private PaymentTransactionService $paymentTransactionService;
+    private InvoiceService            $invoiceService;
     private LinkPaymentValidator      $validator;
     private LinkPaymentCommand        $command;
 
@@ -25,12 +27,14 @@ class LinkPaymentCommandTest extends TestCase
         $this->paymentService            = $this->createMock(PaymentService::class);
         $this->paymentFactory            = $this->createMock(PaymentFactory::class);
         $this->paymentTransactionService = $this->createMock(PaymentTransactionService::class);
+        $this->invoiceService            = $this->createMock(InvoiceService::class);
         $this->validator                 = $this->createMock(LinkPaymentValidator::class);
 
         $this->command = new LinkPaymentCommand(
             $this->paymentService,
             $this->paymentFactory,
             $this->paymentTransactionService,
+            $this->invoiceService,
             $this->validator,
         );
     }
@@ -48,9 +52,9 @@ class LinkPaymentCommandTest extends TestCase
         $this->validator->expects($this->once())->method('validate');
 
         $payment = new PaymentEntity;
-        $payment->setId(1);
+        $payment->setId(1)->setCost(1000.0);
 
-        $this->paymentService->expects($this->once())
+        $this->paymentService->expects($this->exactly(2))
             ->method('getById')
             ->with(1)
             ->willReturn($payment)
@@ -109,7 +113,7 @@ class LinkPaymentCommandTest extends TestCase
     {
         $this->validator->expects($this->once())->method('validate');
 
-        $this->paymentService->expects($this->once())
+        $this->paymentService->expects($this->exactly(2))
             ->method('getById')
             ->with(999)
             ->willReturn(null)

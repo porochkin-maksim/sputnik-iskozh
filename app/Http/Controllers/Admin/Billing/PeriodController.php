@@ -7,12 +7,14 @@ use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
 use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use App\Support\HistoryChangesRoute;
+use Core\App\Billing\Period\ClosePeriodCommand;
 use Core\App\Billing\Period\GetListCommand;
 use Core\App\Billing\Period\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\HistoryChanges\HistoryType;
 use Core\Domains\Billing\Period\PeriodFactory;
 use Core\Domains\Billing\Period\PeriodService;
+use Core\Exceptions\ValidationException;
 use Illuminate\Http\JsonResponse;
 use lc;
 
@@ -20,10 +22,11 @@ class PeriodController extends Controller
 {
 
     public function __construct(
-        private readonly PeriodFactory  $periodFactory,
-        private readonly PeriodService  $periodService,
-        private readonly GetListCommand $getListCommand,
-        private readonly SaveCommand    $saveCommand,
+        private readonly PeriodFactory      $periodFactory,
+        private readonly PeriodService      $periodService,
+        private readonly GetListCommand     $getListCommand,
+        private readonly SaveCommand        $saveCommand,
+        private readonly ClosePeriodCommand $closePeriodCommand,
     )
     {
     }
@@ -90,6 +93,20 @@ class PeriodController extends Controller
         return response()->json([
             'period' => new PeriodResource($period),
         ]);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function close(int $id): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PERIODS_EDIT)) {
+            abort(403);
+        }
+
+        $this->closePeriodCommand->execute($id, (int) lc::user()->getId());
+
+        return response()->json(['success' => true]);
     }
 
     public function delete(int $id): bool

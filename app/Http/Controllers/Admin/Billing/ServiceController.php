@@ -111,7 +111,6 @@ class ServiceController extends Controller
             type      : ServiceTypeEnum::tryFrom($request->getInt('type')),
             name      : $request->getStringOrNull('name'),
             cost      : $request->getFloat('cost'),
-            isActive  : $request->getBool('is_active'),
             periodFrom: $request->getDateOrNull('period_from'),
             periodTo  : $request->getDateOrNull('period_to'),
         );

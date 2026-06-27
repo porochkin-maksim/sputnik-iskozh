@@ -7,27 +7,31 @@ use Core\App\Billing\Claim\SaveValidator;
 use Core\Domains\Billing\Claim\ClaimEntity;
 use Core\Domains\Billing\Claim\ClaimFactory;
 use Core\Domains\Billing\Claim\ClaimService;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Exceptions\ValidationException;
 use Tests\TestCase;
 
 class SaveCommandTest extends TestCase
 {
-    private ClaimService  $claimService;
-    private ClaimFactory  $claimFactory;
-    private SaveValidator $validator;
-    private SaveCommand   $command;
+    private ClaimService    $claimService;
+    private ClaimFactory    $claimFactory;
+    private SaveValidator   $validator;
+    private InvoiceService  $invoiceService;
+    private SaveCommand     $command;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->claimService = $this->createMock(ClaimService::class);
-        $this->claimFactory = new ClaimFactory;
-        $this->validator    = $this->createMock(SaveValidator::class);
+        $this->claimService    = $this->createMock(ClaimService::class);
+        $this->claimFactory    = new ClaimFactory;
+        $this->validator       = $this->createMock(SaveValidator::class);
+        $this->invoiceService  = $this->createMock(InvoiceService::class);
 
         $this->command = new SaveCommand(
             $this->claimService,
             $this->claimFactory,
             $this->validator,
+            $this->invoiceService,
         );
     }
 

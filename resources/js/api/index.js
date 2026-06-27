@@ -547,6 +547,12 @@ export function ApiAdminPaymentView(invoiceId,paymentId, getParams = {}, postDat
     return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/get/'+paymentId+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminPeriodClose(id, getParams = {}, postData = null) {
+    // see admin.period.close
+    // controller: App\Http\Controllers\Admin\Billing\PeriodController@close
+    return apiClient.post(makeQuery('/admin/periods/json/'+id+'/close', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminPeriodCreate(getParams = {}, postData = null) {
     // see admin.period.create
     // controller: App\Http\Controllers\Admin\Billing\PeriodController@create

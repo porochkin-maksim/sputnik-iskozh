@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Invoice;
 
+use App\Jobs\Billing\CreateClaimsAndPaymentsForRegularInvoiceJob;
 use Core\Contracts\EventDispatcherInterface;
 use Core\Domains\Billing\Events\RegularPeriodInvoiceBatchRequested;
 use Core\Domains\Billing\Invoice\InvoiceFactory;
@@ -42,7 +43,9 @@ readonly class CreateRegularPeriodInvoicesCommand
                 ->setAccountId($accountId)
             ;
 
-            $this->invoiceService->save($invoice);
+            $invoice = $this->invoiceService->save($invoice);
+
+            CreateClaimsAndPaymentsForRegularInvoiceJob::dispatchIfNeeded($invoice->getId());
         }
     }
 

@@ -76,7 +76,7 @@
             />
 
             <invoice-item-edit
-                v-if="invoice && canEdit"
+                v-if="invoice && canEdit && !periodClosed"
                 :model-value="invoice"
                 :accounts="accounts"
                 :periods="activePeriods"

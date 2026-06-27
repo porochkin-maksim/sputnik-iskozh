@@ -25,6 +25,7 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
             Claim::INVOICE_ID          => $entity->getInvoiceId(),
             Claim::SERVICE_ID          => $entity->getServiceId(),
             Claim::ORIGINAL_SERVICE_ID => $entity->getOriginalServiceId(),
+            Claim::ORIGINAL_CLAIM_ID   => $entity->getOriginalClaimId(),
             Claim::NAME                => $entity->getName(),
             Claim::TARIFF              => $entity->getTariff(),
             Claim::COST                => $entity->getCost(),
@@ -42,6 +43,7 @@ readonly class ClaimEloquentMapper implements RepositoryDataMapperInterface
             ->setInvoiceId($data->{Claim::INVOICE_ID})
             ->setServiceId($data->{Claim::SERVICE_ID})
             ->setOriginalServiceId($data->{Claim::ORIGINAL_SERVICE_ID})
+            ->setOriginalClaimId($data->{Claim::ORIGINAL_CLAIM_ID})
             ->setName($data->{Claim::NAME})
             ->setTariff($data->{Claim::TARIFF})
             ->setPaid((float) ($data->{Claim::PAID} ?? 0))

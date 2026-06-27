@@ -9,6 +9,7 @@ use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Billing\Period\PeriodFactory;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Exceptions\ValidationException;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class SaveCommandTest extends TestCase
@@ -34,6 +35,7 @@ class SaveCommandTest extends TestCase
 
     public function test_execute_creates_new_period(): void
     {
+        Bus::fake();
         $name    = '2025';
         $startAt = Carbon::parse('2025-01-01');
         $endAt   = Carbon::parse('2025-12-31');

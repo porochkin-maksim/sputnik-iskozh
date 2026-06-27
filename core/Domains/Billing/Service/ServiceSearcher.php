@@ -11,13 +11,6 @@ class ServiceSearcher extends BaseSearcher
 {
     private ?Carbon $activeAtDate = null;
 
-    public function setActive(bool $active): static
-    {
-        $this->addWhere(Service::ACTIVE, SearcherInterface::EQUALS, $active);
-
-        return $this;
-    }
-
     public function setPeriodId(?int $periodId): static
     {
         $this->addWhere(Service::PERIOD_ID, SearcherInterface::EQUALS, $periodId);

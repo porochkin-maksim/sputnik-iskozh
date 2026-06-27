@@ -46,30 +46,49 @@ class HomeController extends Controller
         $periodId = $request->getInt('period', null);
         $period   = $this->periodService->getById($periodId) ? : $periods->first();
 
-        $invoices = new InvoiceCollection();
-        $payments = new PaymentCollection();
-        $services = null;
+        $invoices  = new InvoiceCollection();
+        $payments  = new PaymentCollection();
+        $services  = null;
+        $totalDebt = 0.0;
 
-        if (lc::account()->getId() && $period) {
+        $accountId = lc::account()->getId();
+
+        if ($accountId && $period) {
             $services = $this->serviceCatalogService->search(
-                (new ServiceSearcher())->setPeriodId($period->getId()),
+                new ServiceSearcher()->setPeriodId($period->getId()),
             )->getItems();
 
             $invoices = $this->invoiceService->search(
-                (new InvoiceSearcher())
+                new InvoiceSearcher()
                     ->setWithPayments()
                     ->setWithClaims()
                     ->setPeriodId($period->getId())
-                    ->setAccountId(lc::account()->getId()),
+                    ->setAccountId($accountId),
             )->getItems();
 
             $payments = $this->paymentService->search(
-                (new PaymentSearcher())->setInvoiceIds($invoices->getIds()),
+                new PaymentSearcher()->setInvoiceIds($invoices->getIds()),
             )->getItems();
+
+            $openPeriods = $this->periodService->search(
+                PeriodSearcher::make()->setIsClosed(false),
+            )->getItems();
+
+            foreach ($openPeriods as $openPeriod) {
+                $openInvoices = $this->invoiceService->search(
+                    new InvoiceSearcher()
+                        ->setPeriodId($openPeriod->getId())
+                        ->setAccountId($accountId),
+                )->getItems();
+
+                foreach ($openInvoices as $inv) {
+                    $totalDebt += $inv->getDelta();
+                }
+            }
         }
 
         $acquiringAvailable = $this->acquiringService->isAvailable();
-        $account = lc::account();
+        $account            = lc::account();
 
         return view('pages.profile.invoices', compact(
             'periods',
@@ -79,6 +98,7 @@ class HomeController extends Controller
             'payments',
             'acquiringAvailable',
             'account',
+            'totalDebt',
         ));
     }
 }

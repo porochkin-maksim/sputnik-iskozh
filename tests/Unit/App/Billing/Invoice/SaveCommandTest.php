@@ -7,7 +7,9 @@ use Core\App\Billing\Invoice\SaveValidator;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceFactory;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Infra\DbLock\Service\LockService;
 use Core\Exceptions\ValidationException;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class SaveCommandTest extends TestCase
@@ -24,6 +26,8 @@ class SaveCommandTest extends TestCase
         $this->invoiceService = $this->createMock(InvoiceService::class);
         $this->validator      = $this->createMock(SaveValidator::class);
 
+        $this->instance(LockService::class, $this->createMock(LockService::class));
+
         $this->command = new SaveCommand(
             $this->invoiceFactory,
             $this->invoiceService,
@@ -33,6 +37,7 @@ class SaveCommandTest extends TestCase
 
     public function test_execute_creates_new_invoice(): void
     {
+        Bus::fake();
         $this->validator->expects($this->once())->method('validate');
 
         $this->invoiceService->expects($this->once())

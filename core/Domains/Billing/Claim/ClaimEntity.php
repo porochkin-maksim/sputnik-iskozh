@@ -14,6 +14,7 @@ class ClaimEntity
     private ?int           $invoiceId         = null;
     private ?int           $serviceId         = null;
     private ?int           $originalServiceId = null;
+    private ?int           $originalClaimId   = null;
     private ?string        $name              = null;
     private ?float         $tariff            = null;
     private ?float         $cost              = null;
@@ -67,6 +68,18 @@ class ClaimEntity
     public function setOriginalServiceId(?int $originalServiceId): static
     {
         $this->originalServiceId = $originalServiceId;
+
+        return $this;
+    }
+
+    public function getOriginalClaimId(): ?int
+    {
+        return $this->originalClaimId;
+    }
+
+    public function setOriginalClaimId(?int $originalClaimId): static
+    {
+        $this->originalClaimId = $originalClaimId;
 
         return $this;
     }
@@ -179,5 +192,10 @@ class ClaimEntity
     public function isPaid(): bool
     {
         return $this->getCost() === $this->getPaid();
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->invoice?->getPeriod()?->isClosed() ?? false;
     }
 }

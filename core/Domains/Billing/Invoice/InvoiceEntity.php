@@ -231,4 +231,9 @@ class InvoiceEntity
     {
         return $this->getCost() - $this->getRounding() === $this->getPaid();
     }
+
+    public function isLocked(): bool
+    {
+        return $this->period?->isClosed() ?? false;
+    }
 }

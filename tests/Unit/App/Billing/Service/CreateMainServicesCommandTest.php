@@ -49,7 +49,7 @@ class CreateMainServicesCommandTest extends TestCase
             ->willReturn((new PeriodEntity())->setStartAt(Carbon::now())->setEndAt(Carbon::now()))
         ;
 
-        $this->serviceService->expects($this->exactly(5))
+        $this->serviceService->expects($this->exactly(4))
             ->method('getByPeriodIdAndType')
             ->willReturn(new ServiceEntity)
         ;
@@ -76,22 +76,22 @@ class CreateMainServicesCommandTest extends TestCase
             ->willReturn($period)
         ;
 
-        $this->serviceService->expects($this->exactly(5))
+        $this->serviceService->expects($this->exactly(4))
             ->method('getByPeriodIdAndType')
             ->willReturn(null)
         ;
 
-        $this->serviceFactory->expects($this->exactly(5))
+        $this->serviceFactory->expects($this->exactly(4))
             ->method('makeDefault')
             ->willReturn($default)
         ;
 
-        $this->serviceService->expects($this->exactly(5))
+        $this->serviceService->expects($this->exactly(4))
             ->method('save')
             ->willReturn($saved)
         ;
 
-        $this->historyChangesService->expects($this->exactly(5))
+        $this->historyChangesService->expects($this->exactly(4))
             ->method('writeToHistory')
             ->with(
                 Event::CREATE,
@@ -126,7 +126,7 @@ class CreateMainServicesCommandTest extends TestCase
             ->willReturn($period)
         ;
 
-        $this->serviceService->expects($this->exactly(5))
+        $this->serviceService->expects($this->exactly(4))
             ->method('getByPeriodIdAndType')
             ->willReturnCallback(fn(int $pid, ServiceTypeEnum $type) => match ($caseCounts[$type->name]) {
                 'existing' => new ServiceEntity,

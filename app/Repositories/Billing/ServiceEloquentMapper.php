@@ -29,7 +29,6 @@ readonly class ServiceEloquentMapper implements RepositoryDataMapperInterface
             Service::PERIOD_TO => $entity->getPeriodTo(),
             Service::NAME => $entity->getName(),
             Service::COST => $entity->getCost(),
-            Service::ACTIVE => $entity->isActive(),
         ]);
     }
 
@@ -43,7 +42,6 @@ readonly class ServiceEloquentMapper implements RepositoryDataMapperInterface
             ->setPeriodTo($data->{Service::PERIOD_TO})
             ->setName($data->{Service::NAME})
             ->setCost($data->{Service::COST})
-            ->setIsActive($data->{Service::ACTIVE})
             ->setCreatedAt($data->{Service::CREATED_AT})
             ->setUpdatedAt($data->{Service::UPDATED_AT});
 

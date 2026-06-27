@@ -5,8 +5,6 @@ namespace Tests\Unit\App\Billing\Invoice;
 use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\Domains\Billing\Claim\ClaimCollection;
 use Core\Domains\Billing\Claim\ClaimEntity;
-use Core\Domains\Billing\Claim\ClaimSearcher;
-use Core\Domains\Billing\Claim\ClaimSearchResponse;
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceCollection;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
@@ -16,11 +14,12 @@ use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentCollection;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodCollection;
+use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Service\ServiceEntity;
 use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Core\Domains\Billing\Transaction\TransactionCollection;
 use Core\Domains\Billing\Transaction\TransactionEntity;
-use Core\Domains\Billing\Transaction\TransactionSearcher;
 use Core\Domains\Billing\Transaction\TransactionSearchResponse;
 use Core\Domains\Billing\Transaction\TransactionService;
 use Tests\TestCase;
@@ -31,6 +30,7 @@ class RecalcClaimsPaidCommandTest extends TestCase
     private ClaimService            $claimService;
     private TransactionService      $transactionService;
     private PaymentService          $paymentService;
+    private PeriodService           $periodService;
     private RecalcClaimsPaidCommand $command;
 
     protected function setUp(): void
@@ -40,12 +40,14 @@ class RecalcClaimsPaidCommandTest extends TestCase
         $this->claimService       = $this->createMock(ClaimService::class);
         $this->transactionService = $this->createMock(TransactionService::class);
         $this->paymentService     = $this->createMock(PaymentService::class);
+        $this->periodService      = $this->createMock(PeriodService::class);
 
         $this->command = new RecalcClaimsPaidCommand(
             $this->invoiceService,
             $this->claimService,
             $this->transactionService,
             $this->paymentService,
+            $this->periodService,
         );
     }
 
@@ -60,7 +62,7 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn($response)
         ;
 
-        $this->claimService->expects($this->never())->method('search');
+        $this->claimService->expects($this->never())->method('getByInvoiceIdSorted');
         $this->invoiceService->expects($this->never())->method('save');
 
         $this->command->execute(999);
@@ -80,13 +82,10 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn($invoiceResponse)
         ;
 
-        $claimResponse = new ClaimSearchResponse;
-        $claimResponse->setItems(new ClaimCollection);
-
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->with($this->isInstanceOf(ClaimSearcher::class))
-            ->willReturn($claimResponse)
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection)
         ;
 
         $this->invoiceService->expects($this->once())
@@ -110,12 +109,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -159,12 +158,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection([$existingTx])));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection([$existingTx]));
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -199,22 +198,21 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        // Первый search: поиск распределённых транзакций (claimIds=[100])
-        // Второй search: поиск транзакций claim для releaseFromClaim (claimIds=[100])
-        // Третий search: поиск unallocated для releaseFromClaim (paymentId=50, claimId=null) → пусто
-        $searchCalls = 0;
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturnCallback(function () use ($existingTx, &$searchCalls) {
-                $searchCalls++;
-                if ($searchCalls <= 2) {
-                    return (new TransactionSearchResponse)->setItems(new TransactionCollection([$existingTx]));
-                }
-                return (new TransactionSearchResponse)->setItems(new TransactionCollection);
-            });
+        // getByClaimsIds для поиска распределённых транзакций
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection([$existingTx]));
+
+        // getByClaimsIdsSorted для releaseFromClaim
+        $this->transactionService->method('getByClaimsIdsSorted')
+            ->willReturn(new TransactionCollection([$existingTx]));
+
+        // search для поиска unallocated в releaseFromClaim — пусто
+        $this->transactionService->method('search')
+            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -254,12 +252,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -270,7 +268,6 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->method('getUnallocatedBypaymentIds')
             ->willReturn(new TransactionCollection([$unallocatedTx]));
 
-        // 1 save: $unallocatedTx->setClaimId(100) + save (toPay >= txCost, full consume)
         $this->transactionService->expects($this->exactly(1))
             ->method('save');
 
@@ -306,12 +303,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$debtClaim, $otherClaim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$debtClaim, $otherClaim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -344,12 +341,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -381,12 +378,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -418,12 +415,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')
@@ -460,12 +457,12 @@ class RecalcClaimsPaidCommandTest extends TestCase
             ->willReturn((new InvoiceSearchResponse)->setItems(new InvoiceCollection([$invoice])));
 
         $this->claimService->expects($this->once())
-            ->method('search')
-            ->willReturn((new ClaimSearchResponse)->setItems(new ClaimCollection([$claim])));
+            ->method('getByInvoiceIdSorted')
+            ->with(1)
+            ->willReturn(new ClaimCollection([$claim]));
 
-        $this->transactionService->expects($this->any())
-            ->method('search')
-            ->willReturn((new TransactionSearchResponse)->setItems(new TransactionCollection));
+        $this->transactionService->method('getByClaimsIds')
+            ->willReturn(new TransactionCollection);
 
         $this->paymentService->expects($this->any())
             ->method('getVerifiedByAccount')

@@ -149,6 +149,7 @@ abstract class RouteNames
     public const string ADMIN_PERIOD_SAVE   = 'admin.period.save';
     public const string ADMIN_PERIOD_LIST   = 'admin.period.list';
     public const string ADMIN_PERIOD_DELETE = 'admin.period.delete';
+    public const string ADMIN_PERIOD_CLOSE  = 'admin.period.close';
 
     public const string ADMIN_ACCOUNT_INDEX             = 'admin.account.index';
     public const string ADMIN_ACCOUNT_VIEW              = 'admin.account.view';

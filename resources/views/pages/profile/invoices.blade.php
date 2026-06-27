@@ -20,6 +20,7 @@ use Core\Domains\Infra\Uid\UidTypeEnum;
  * @var null|TicketServiceCollection $services
  * @var AccountEntity                $account
  * @var bool                         $acquiringAvailable
+ * @var float                        $totalDebt
  */
 $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_INVOICES, $period);
 $formatMoney = static fn(mixed $amount): string => number_format((float) $amount, 2, ',', ' ') . ' ₽';
@@ -79,6 +80,8 @@ foreach ($invoices as $invoice) {
 
     $invoiceItems[] = [
         'id'           => $invoice->getId(),
+        'periodId'     => $invoice->getPeriodId(),
+        'periodName'   => $invoice->getPeriod()?->getName(),
         'title'        => $invoice->getName(),
         'cost'         => $formatMoney($invoice->getCost()),
         'paid'         => $formatMoney($invoice->getPaid()),
@@ -115,6 +118,7 @@ foreach ($invoices as $invoice) {
                 :selected-period-id='{{ $period ? $period->getId() : 'null' }}'
                 period-route='{{ route(RouteNames::PROFILE_INVOICES) }}'
                 :invoices='@json($invoiceItems)'
+                :total-debt='{{ $totalDebt }}'
                 :acquiring-available='{{ $acquiringAvailable ? 'true' : 'false' }}'
                 csrf-token='{{ csrf_token() }}'
         ></profile-invoices-block>

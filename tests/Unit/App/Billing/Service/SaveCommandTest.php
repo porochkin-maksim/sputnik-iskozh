@@ -58,7 +58,7 @@ class SaveCommandTest extends TestCase
             ->willReturn($saved)
         ;
 
-        $result = $this->command->execute(null, $periodId, $type, $name, $cost, true);
+        $result = $this->command->execute(null, $periodId, $type, $name, $cost);
 
         $this->assertSame($saved, $result);
     }
@@ -91,7 +91,7 @@ class SaveCommandTest extends TestCase
             ->willReturn($saved)
         ;
 
-        $result = $this->command->execute($id, $periodId, $type, $name, $cost, false);
+        $result = $this->command->execute($id, $periodId, $type, $name, $cost);
 
         $this->assertSame($saved, $result);
     }
@@ -106,7 +106,7 @@ class SaveCommandTest extends TestCase
             ->willReturn(null)
         ;
 
-        $result = $this->command->execute(999, 1, ServiceTypeEnum::OTHER, 'test', 100.0, false);
+        $result = $this->command->execute(999, 1, ServiceTypeEnum::OTHER, 'test', 100.0);
 
         $this->assertNull($result);
     }
@@ -119,6 +119,6 @@ class SaveCommandTest extends TestCase
         ;
 
         $this->expectException(ValidationException::class);
-        $this->command->execute(null, null, null, null, null, false);
+        $this->command->execute(null, null, null, null, null);
     }
 }

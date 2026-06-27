@@ -24,7 +24,6 @@ readonly class SaveCommand
         ?ServiceTypeEnum $type,
         ?string          $name,
         ?float           $cost,
-        bool             $isActive,
         ?Carbon          $periodFrom = null,
         ?Carbon          $periodTo = null,
     ): ?ServiceEntity
@@ -35,7 +34,6 @@ readonly class SaveCommand
             ? $this->serviceService->getById($id)
             : $this->serviceFactory->makeDefault()
                 ->setPeriodId($periodId)
-                ->setType($type)
         ;
 
         if ($service === null) {
@@ -44,7 +42,7 @@ readonly class SaveCommand
 
         $service
             ->setName($name)
-            ->setIsActive($isActive)
+            ->setType($type)
             ->setCost($cost)
             ->setPeriodFrom($periodFrom)
             ->setPeriodTo($periodTo)

@@ -57,6 +57,15 @@ readonly class ClaimService
         return $this->getByInvoiceIds([$invoiceId]);
     }
 
+    public function getByInvoiceIdSorted(int $invoiceId): ClaimCollection
+    {
+        return $this->search(new ClaimSearcher()
+            ->setInvoiceId($invoiceId)
+            ->setWithService()
+            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC),
+        )->getItems();
+    }
+
     /**
      * @param int[] $invoiceIds
      */

@@ -21,7 +21,6 @@ readonly class CreateOtherServiceCommand
         $service = $this->serviceService->search(
             ServiceSearcher::make()
                 ->setPeriodId($periodId)
-                ->setActive(true)
                 ->setType(ServiceTypeEnum::OTHER),
         )->getItems()->first();
 

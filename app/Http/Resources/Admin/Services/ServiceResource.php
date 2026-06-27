@@ -34,13 +34,11 @@ readonly class ServiceResource extends AbstractResource
             'periodTo'       => $this->service->getPeriodTo()?->toDateString(),
             'name'           => $this->service->getName(),
             'cost'           => $this->service->getCost(),
-            'active'         => $this->service->isActive(),
             'actions'        => [
                 'periodClosed' => $period?->isClosed() ?? true,
                 'view'         => $access->can(PermissionEnum::SERVICES_VIEW),
                 'edit'   => $canEdit,
                 'drop'   => $access->can(PermissionEnum::SERVICES_DROP) && ( ! $period || ! $period->isClosed()),
-                'active' => $canEdit,
                 'period' => $canEdit,
                 'type'   => $canEdit,
             ],

@@ -17,6 +17,16 @@
             </form>
         </div>
 
+        <div v-if="totalDebt > 0" class="page-card profile-debt-card">
+            <div class="profile-debt-card__label">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                Общий долг по участку
+            </div>
+            <div class="profile-debt-card__value">
+                {{ formatMoney(totalDebt) }}
+            </div>
+        </div>
+
         <div v-if="invoices.length" class="profile-invoices-list">
             <details v-for="invoice in invoices"
                      :key="invoice.id"
@@ -25,6 +35,10 @@
                     <div class="profile-invoice-card__title">
                         <span class="profile-invoice-card__label">Счёт</span>
                         <span class="profile-invoice-card__value">{{ invoice.title }}</span>
+                    </div>
+                    <div v-if="invoice.periodName" class="profile-invoice-card__period">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        {{ invoice.periodName }}
                     </div>
                     <div class="profile-invoice-card__meta">
                         <div class="profile-invoice-chip">
@@ -83,7 +97,7 @@
                         </div>
                     </div>
 
-                        <div class="profile-invoice-actions">
+                    <div class="profile-invoice-actions">
                         <template v-if="acquiringAvailable && invoice.acquiring.length">
                             <form v-for="amount in invoice.acquiring"
                                   :key="`${invoice.id}-${amount.label}`"
@@ -123,6 +137,8 @@
 </template>
 
 <script setup>
+import { useFormat } from '@composables/useFormat';
+
 const props = defineProps({
     periods           : {
         type   : Array,
@@ -140,6 +156,10 @@ const props = defineProps({
         type   : Array,
         default: () => [],
     },
+    totalDebt         : {
+        type   : Number,
+        default: 0,
+    },
     acquiringAvailable: {
         type   : Boolean,
         default: false,
@@ -149,6 +169,8 @@ const props = defineProps({
         default: '',
     },
 });
+
+const { formatMoney } = useFormat();
 
 const submitPeriod = (event) => {
     event.target.form?.submit();

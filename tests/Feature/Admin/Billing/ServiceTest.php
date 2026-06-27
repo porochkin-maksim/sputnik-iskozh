@@ -45,14 +45,13 @@ class ServiceTest extends FeatureTestCase
         $periodFrom = '2026-01-01 00:00:00';
         $periodTo   = '2026-12-31 23:59:59';
 
+        $this->actingAs($this->admin);
         \lc::reset();
-        $response = $this->actingAs($this->admin)
-            ->postJson('/admin/services/json/save', [
+        $response = $this->postJson('/admin/services/json/save', [
                 'period_id'   => $period->id,
                 'type'        => ServiceTypeEnum::MEMBERSHIP_FEE->value,
                 'name'        => 'Test Service',
                 'cost'        => 1500.50,
-                'is_active'   => true,
                 'period_from' => $periodFrom,
                 'period_to'   => $periodTo,
             ])
@@ -65,7 +64,6 @@ class ServiceTest extends FeatureTestCase
             'type'        => ServiceTypeEnum::MEMBERSHIP_FEE->value,
             'name'        => 'Test Service',
             'cost'        => 1500.50,
-            'active'      => true,
             'period_from' => $periodFrom,
             'period_to'   => $periodTo,
         ]);
@@ -73,9 +71,9 @@ class ServiceTest extends FeatureTestCase
 
     public function test_delete_service(): void
     {
+        $this->actingAs($this->admin);
         \lc::reset();
-        $response = $this->actingAs($this->admin)
-            ->deleteJson("/admin/services/json/{$this->service->id}")
+        $response = $this->deleteJson("/admin/services/json/{$this->service->id}")
         ;
 
         $response->assertOk();

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int     $invoice_id
  * @property int     $service_id
  * @property int     $original_service_id
+ * @property ?int    $original_claim_id
  * @property string  $name
  * @property float   $tariff
  * @property float   $cost
@@ -34,6 +35,7 @@ class Claim extends AbstractModel
     public const string INVOICE_ID         = 'invoice_id';
     public const string SERVICE_ID         = 'service_id';
     public const string ORIGINAL_SERVICE_ID = 'original_service_id';
+    public const string ORIGINAL_CLAIM_ID   = 'original_claim_id';
     public const string NAME               = 'name';
     public const string TARIFF             = 'tariff';
     public const string COST               = 'cost';
@@ -52,12 +54,14 @@ class Claim extends AbstractModel
         self::PAID                => self::CAST_FLOAT,
         self::QUANTITY            => self::CAST_FLOAT,
         self::ORIGINAL_SERVICE_ID => 'integer',
+        self::ORIGINAL_CLAIM_ID   => 'integer',
     ];
 
     public const string TITLE_NAME                 = 'Название';
     public const string TITLE_INVOICE_ID           = 'Счёт';
     public const string TITLE_SERVICE_ID           = 'Услуга';
     public const string TITLE_ORIGINAL_SERVICE_ID  = 'Исходная услуга';
+    public const string TITLE_ORIGINAL_CLAIM_ID    = 'Исходная услуга (claim)';
     public const string TITLE_TARIFF               = 'Тариф';
     public const string TITLE_COST                 = 'Стоимость';
     public const string TITLE_PAID                 = 'Оплачено';
@@ -67,6 +71,7 @@ class Claim extends AbstractModel
         self::INVOICE_ID           => self::TITLE_INVOICE_ID,
         self::SERVICE_ID           => self::TITLE_SERVICE_ID,
         self::ORIGINAL_SERVICE_ID  => self::TITLE_ORIGINAL_SERVICE_ID,
+        self::ORIGINAL_CLAIM_ID    => self::TITLE_ORIGINAL_CLAIM_ID,
         self::TARIFF               => self::TITLE_TARIFF,
         self::COST                 => self::TITLE_COST,
         self::PAID                 => self::TITLE_PAID,

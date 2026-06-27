@@ -964,6 +964,41 @@
     }
 }
 
+.profile-debt-card {
+    display         : flex;
+    align-items     : center;
+    justify-content : space-between;
+    padding         : 1rem 1.15rem;
+    border-radius   : 1rem;
+    border          : 1px solid rgba($color-danger, 0.25);
+    background      : rgba($color-danger, 0.04);
+    box-shadow      : 0 0.35rem 0.85rem rgba(0, 0, 0, 0.04);
+}
+
+.profile-debt-card__label {
+    font-size   : 0.85rem;
+    font-weight : 700;
+    color       : $color-danger;
+    display     : flex;
+    align-items : center;
+    gap         : 0.4rem;
+}
+
+.profile-debt-card__value {
+    font-size   : 1.3rem;
+    font-weight : 800;
+    color       : $color-danger;
+}
+
+.profile-invoice-card__period {
+    font-size   : 0.8rem;
+    color       : $color-secondary;
+    margin-top  : 0.15rem;
+    display     : flex;
+    align-items : center;
+    gap         : 0.3rem;
+}
+
 .profile-invoices-view {
     display        : flex;
     flex-direction : column;

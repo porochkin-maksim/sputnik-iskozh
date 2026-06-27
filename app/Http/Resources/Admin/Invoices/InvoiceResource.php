@@ -66,6 +66,7 @@ readonly class InvoiceResource extends AbstractResource
             'rounding'       => $this->invoice->getRounding(),
             'detailCost'     => $detailCost,
             'isPaid'         => $this->invoice->isPaid(),
+            'isLocked'       => $this->invoice->isLocked(),
             'created'        => $this->formatDateTimeForRender($this->invoice->getCreatedAt()),
             'updated'        => $this->formatDateTimeForRender($this->invoice->getUpdatedAt()),
             'actions'        => [

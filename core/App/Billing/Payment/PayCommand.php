@@ -2,8 +2,6 @@
 
 namespace Core\App\Billing\Payment;
 
-use App\Models\Billing\Claim;
-use Core\Domains\Billing\Claim\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentService;
@@ -11,7 +9,6 @@ use Core\Domains\Billing\Transaction\TransactionCollection;
 use Core\Domains\Billing\Transaction\TransactionFactory;
 use Core\Domains\Billing\Transaction\TransactionService;
 use Core\Exceptions\ValidationException;
-use Core\Repositories\SearcherInterface;
 
 readonly class PayCommand
 {
@@ -88,11 +85,7 @@ readonly class PayCommand
             return;
         }
 
-        $claims = $this->claimService->search(new ClaimSearcher()
-            ->setInvoiceId($invoiceId)
-            ->setWithService()
-            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC))
-            ->getItems()
+        $claims = $this->claimService->getByInvoiceIdSorted($invoiceId)
             ->sortByServiceTypes()
         ;
 

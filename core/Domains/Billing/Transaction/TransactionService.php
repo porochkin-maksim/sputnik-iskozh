@@ -111,4 +111,12 @@ readonly class TransactionService
             ->setClaimIds($claimIds),
         )->getItems();
     }
+
+    public function getByClaimsIdsSorted(array $claimIds): TransactionCollection
+    {
+        return $this->search(new TransactionSearcher()
+            ->setClaimIds($claimIds)
+            ->setSortOrderPropertyIdDesc(),
+        )->getItems();
+    }
 }

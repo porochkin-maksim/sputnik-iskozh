@@ -2,23 +2,21 @@
 
 namespace Core\App\Billing\Invoice;
 
-use App\Models\Billing\Claim;
 use Core\Domains\Account\AccountIdEnum;
 use Core\Domains\Billing\Claim\ClaimCollection;
 use Core\Domains\Billing\Claim\ClaimEntity;
-use Core\Domains\Billing\Claim\ClaimSearcher;
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Transaction\TransactionCollection;
 use Core\Domains\Billing\Transaction\TransactionEntity;
 use Core\Domains\Billing\Transaction\TransactionFactory;
 use Core\Domains\Billing\Transaction\TransactionSearcher;
 use Core\Domains\Billing\Transaction\TransactionService;
-use Core\Repositories\SearcherInterface;
-
 readonly class RecalcClaimsPaidCommand
 {
     public function __construct(
@@ -26,8 +24,35 @@ readonly class RecalcClaimsPaidCommand
         private ClaimService       $claimService,
         private TransactionService $transactionService,
         private PaymentService     $paymentService,
+        private PeriodService      $periodService,
     )
     {
+    }
+
+    /**
+     * Распределяет нераспределённые транзакции по счетам account,
+     * проходя по всем открытым периодам от самого старого к новому.
+     * Старый долг гасится первым.
+     */
+    public function executeForAccount(int $accountId): void
+    {
+        $periods = $this->periodService->getOpenPeriodsAsc();
+
+        foreach ($periods as $period) {
+            $invoice = $this->invoiceService->search(
+                InvoiceSearcher::make()
+                    ->setAccountId($accountId)
+                    ->setPeriodId($period->getId())
+                    ->setType(InvoiceTypeEnum::REGULAR)
+                    ->setLimit(1),
+            )->getItems()->first();
+
+            if ($invoice === null) {
+                continue;
+            }
+
+            $this->execute($invoice->getId());
+        }
     }
 
     public function execute(int $invoiceId): void
@@ -40,11 +65,7 @@ readonly class RecalcClaimsPaidCommand
             return;
         }
 
-        $claims = $this->claimService->search(new ClaimSearcher()
-            ->setInvoiceId($invoiceId)
-            ->setWithService()
-            ->setSortOrderProperty(Claim::SERVICE_ID, SearcherInterface::SORT_ORDER_ASC),
-        )->getItems()->sortByServiceTypes();
+        $claims = $this->claimService->getByInvoiceIdSorted($invoiceId)->sortByServiceTypes();
 
         if ($claims->isEmpty()) {
             $this->recalcInvoice($invoice, new ClaimCollection());
@@ -62,9 +83,7 @@ readonly class RecalcClaimsPaidCommand
         $claimIds    = array_values(array_filter(
             $claims->map(fn(ClaimEntity $c) => $c->getId())->toArray(),
         ));
-        $allocatedTx = $this->transactionService->search(
-            new TransactionSearcher()->setClaimIds($claimIds),
-        )->getItems();
+        $allocatedTx = $this->transactionService->getByClaimsIds($claimIds);
 
         $paidByClaim = [];
         foreach ($allocatedTx as $tx) {
@@ -82,10 +101,7 @@ readonly class RecalcClaimsPaidCommand
                 continue;
             }
 
-            $claimTx = $this->transactionService->search(new TransactionSearcher()
-                ->setClaimIds([$claim->getId()])
-                ->setSortOrderPropertyIdDesc(),
-            )->getItems();
+            $claimTx = $this->transactionService->getByClaimsIdsSorted([$claim->getId()]);
 
             foreach ($claimTx as $tx) {
                 if ($excess <= 0) {

@@ -79,14 +79,6 @@
                     />
                 </div>
 
-                <!-- Активность (скрыто, но оставлено для совместимости) -->
-                <div class="form-check d-none">
-                    <custom-checkbox
-                        v-model="active"
-                        label="Активна"
-                        :disabled="!actions?.active"
-                    />
-                </div>
             </div>
         </template>
         <template #footer>
@@ -148,7 +140,6 @@ const periodId   = ref(null);
 const periodFrom = ref(null);
 const periodTo   = ref(null);
 const cost       = ref(null);
-const active     = ref(false);
 const actions    = ref(null);
 const loading    = ref(false);
 const hideDialog = ref(false);
@@ -169,15 +160,14 @@ const canSave = computed(() =>
 
 // Сброс формы
 const resetForm = () => {
-    id.value       = null;
-    name.value     = null;
-    type.value     = null;
-    periodId.value = null;
+    id.value         = null;
+    name.value       = null;
+    type.value       = null;
+    periodId.value   = null;
     periodFrom.value = null;
     periodTo.value   = null;
-    cost.value     = null;
-    active.value   = false;
-    actions.value  = null;
+    cost.value       = null;
+    actions.value    = null;
 };
 
 // Закрытие диалога
@@ -198,15 +188,14 @@ watch(
     () => props.modelValue,
     (newValue) => {
         if (newValue) {
-            id.value       = newValue.id;
-            name.value     = newValue.name;
-            type.value     = newValue.type;
-            periodId.value = newValue.periodId;
+            id.value         = newValue.id;
+            name.value       = newValue.name;
+            type.value       = newValue.type;
+            periodId.value   = newValue.periodId;
             periodFrom.value = newValue.periodFrom || null;
             periodTo.value   = newValue.periodTo || null;
-            cost.value     = newValue.cost;
-            active.value   = newValue.active;
-            actions.value  = newValue.actions;
+            cost.value       = newValue.cost;
+            actions.value    = newValue.actions;
         }
         else {
             resetForm();
@@ -219,14 +208,13 @@ watch(
 const saveAction = async () => {
     loading.value = true;
     const data    = {
-        id       : props.modelValue?.id,
-        name     : name.value,
-        type     : type.value,
-        period_id: periodId.value,
+        id         : props.modelValue?.id,
+        name       : name.value,
+        type       : type.value,
+        period_id  : periodId.value,
         period_from: periodFrom.value,
         period_to  : periodTo.value,
-        cost     : parseFloat(cost.value).toFixed(2),
-        active   : active.value,
+        cost       : parseFloat(cost.value).toFixed(2),
     };
 
     try {

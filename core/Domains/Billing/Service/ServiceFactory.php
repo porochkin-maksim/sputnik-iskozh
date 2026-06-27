@@ -9,7 +9,6 @@ readonly class ServiceFactory
         return $this->makeEmpty()
             ->setType(ServiceTypeEnum::OTHER)
             ->setName('')
-            ->setIsActive(true)
             ->setCost(0);
     }
 

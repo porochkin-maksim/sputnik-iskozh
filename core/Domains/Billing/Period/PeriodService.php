@@ -42,6 +42,15 @@ readonly class PeriodService
         )->getItems();
     }
 
+    public function getOpenPeriodsAsc(): PeriodCollection
+    {
+        return $this->search(
+            new PeriodSearcher()
+                ->setIsClosed(false)
+                ->setSortOrderProperty(Period::START_AT, SearcherInterface::SORT_ORDER_ASC),
+        )->getItems();
+    }
+
     public function getActive(): ?PeriodEntity
     {
         return $this->search(

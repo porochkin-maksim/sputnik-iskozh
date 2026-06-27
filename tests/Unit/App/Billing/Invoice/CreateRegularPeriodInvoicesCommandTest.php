@@ -13,6 +13,8 @@ use Core\Domains\Billing\Invoice\InvoiceFactory;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Infra\DbLock\Service\LockService;
+use Illuminate\Support\Facades\Bus;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -31,6 +33,8 @@ class CreateRegularPeriodInvoicesCommandTest extends TestCase
         $this->invoiceService  = $this->createMock(InvoiceService::class);
         $this->invoiceFactory  = new InvoiceFactory;
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->instance(LockService::class, $this->createMock(LockService::class));
 
         $this->command = new CreateRegularPeriodInvoicesCommand(
             $this->periodService,
@@ -52,16 +56,22 @@ class CreateRegularPeriodInvoicesCommandTest extends TestCase
 
     public function test_execute_creates_invoices_for_given_accounts(): void
     {
+        Bus::fake();
+
         $period = new PeriodEntity;
         $period->setId(1);
 
         $this->periodService->method('getById')->with(1)->willReturn($period);
+
+        $savedInvoice = new InvoiceEntity;
+        $savedInvoice->setId(1);
 
         $this->invoiceService->expects($this->exactly(2))
             ->method('save')
             ->with($this->callback(fn(InvoiceEntity $i) => $i->getPeriodId() === 1
                                                            && in_array($i->getAccountId(), [10, 20], true),
             ))
+            ->willReturn($savedInvoice)
         ;
 
         $this->eventDispatcher->expects($this->never())->method('dispatch');

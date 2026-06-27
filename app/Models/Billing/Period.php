@@ -31,6 +31,8 @@ class Period extends AbstractModel
     public const string START_AT  = 'start_at';
     public const string END_AT    = 'end_at';
     public const string IS_CLOSED = 'is_closed';
+    public const string CLOSED_AT = 'closed_at';
+    public const string CLOSED_BY = 'closed_by';
 
     protected $guarded = [];
 

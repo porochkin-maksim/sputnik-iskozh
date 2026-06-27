@@ -20,8 +20,12 @@ readonly class SaveValidator
     {
         $errors = [];
 
-        if ($periodId === null || $this->periodService->getById($periodId) === null) {
+        $period = $periodId ? $this->periodService->getById($periodId) : null;
+        if ($period === null) {
             $errors['period_id'][] = 'Указанный «Период» не существует';
+        }
+        elseif ($period->isClosed()) {
+            $errors['period_id'][] = 'Период закрыт, редактирование невозможно';
         }
 
         if ($accountId === null || $this->accountService->getById($accountId) === null) {

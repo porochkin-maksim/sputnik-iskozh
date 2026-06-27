@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\App\Billing\Payment;
 
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\App\Billing\Payment\SaveImportPaymentsCommand;
 use Core\App\Billing\Payment\SaveImportPaymentsInput;
 use Core\Domains\Billing\Events\ImportPaymentData;
+use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentTransactionService;
@@ -14,6 +16,8 @@ class SaveImportPaymentsCommandTest extends TestCase
 {
     private PaymentFactory            $paymentFactory;
     private PaymentTransactionService $paymentTransactionService;
+    private InvoiceService            $invoiceService;
+    private RecalcClaimsPaidCommand   $recalcClaimsPaidCommand;
     private SaveImportPaymentsCommand $command;
 
     protected function setUp(): void
@@ -21,10 +25,14 @@ class SaveImportPaymentsCommandTest extends TestCase
         parent::setUp();
         $this->paymentFactory            = new PaymentFactory;
         $this->paymentTransactionService = $this->createMock(PaymentTransactionService::class);
+        $this->invoiceService            = $this->createMock(InvoiceService::class);
+        $this->recalcClaimsPaidCommand   = $this->createMock(RecalcClaimsPaidCommand::class);
 
         $this->command = new SaveImportPaymentsCommand(
             $this->paymentFactory,
             $this->paymentTransactionService,
+            $this->invoiceService,
+            $this->recalcClaimsPaidCommand,
         );
     }
 

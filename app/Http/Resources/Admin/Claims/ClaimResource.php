@@ -38,6 +38,7 @@ readonly class ClaimResource extends AbstractResource
             'delta'      => $this->claim->getCost() - $this->claim->getPaid(),
             'serviceId'  => $this->claim->getServiceId(),
             'isDebt'     => $claimServiceType?->isDebt(),
+            'isLocked'   => $this->claim->isLocked(),
             'service'    => $name,
             'name'       => $this->claim->getName(),
             'created'    => $this->formatDateTimeForRender($this->claim->getCreatedAt()),

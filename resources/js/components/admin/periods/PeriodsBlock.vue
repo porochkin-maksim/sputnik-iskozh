@@ -72,6 +72,15 @@
                                     <i class="fa fa-edit" aria-hidden="true"></i>
                                 </button>
                                 <button
+                                    v-if="canEdit && !period.isClosed"
+                                    class="btn btn-sm btn-outline-primary admin-action-btn"
+                                    type="button"
+                                    @click="closeAction(period)"
+                                    title="Закрыть период"
+                                >
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                </button>
+                                <button
                                     v-if="canDrop && !period.isClosed"
                                     class="btn btn-sm btn-outline-danger admin-action-btn"
                                     type="button"
@@ -127,6 +136,7 @@ import {
     ApiAdminPeriodList,
     ApiAdminPeriodCreate,
     ApiAdminPeriodDelete,
+    ApiAdminPeriodClose,
 }                           from '@api';
 import { useFormat }        from '@composables/useFormat.js';
 import PeriodEditDialog     from './PeriodEditDialog.vue';
@@ -178,8 +188,18 @@ const showEditDialog = (period) => {
     showDialog.value     = true;
 };
 
-const onPeriodUpdated = () => {
-    listAction();
+const closeAction = async (period) => {
+    if (!confirm('Вы уверены что хотите закрыть период? Это необратимое действие!')) {
+        return;
+    }
+    try {
+        await ApiAdminPeriodClose(period.id);
+        showInfo('Период закрыт');
+        await listAction();
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
 };
 
 const deleteAction = async (period) => {

@@ -42,12 +42,16 @@ readonly class PaymentResource extends AbstractResource
             ;
         }
 
+        $allocated = $this->payment->getAllocatedSum();
+        $isLocked  = $this->payment->isLocked();
+
         return [
             'id'            => $this->payment->getId(),
             'name'          => $this->payment->getName(),
             'cost'          => $this->payment->getCost(),
             'comment'       => $this->payment->getComment(),
             'isVerified'    => $this->payment->isVerified(),
+            'isLocked'      => $isLocked,
             'files'         => $this->payment->getFiles() ? new ResourseList($this->payment->getFiles(), FileResource::class) : [],
             'created'       => $this->formatDateTimeForRender($this->payment->getCreatedAt()),
             'paid'          => $this->formatDateForRender($this->payment->getPaidAt()),
@@ -58,10 +62,10 @@ readonly class PaymentResource extends AbstractResource
             'invoice'       => $this->payment->getInvoice() ? new InvoiceResource($this->payment->getInvoice()) : null,
             'actions'       => [
                 'view' => $access->can(PermissionEnum::PAYMENTS_VIEW),
-                'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring,
-                'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring,
+                'edit' => $access->can(PermissionEnum::PAYMENTS_EDIT) && ! $period?->isClosed() && ! $hasAcquiring && ! $isLocked,
+                'drop' => $access->can(PermissionEnum::PAYMENTS_DROP) && ! $period?->isClosed() && ! $hasAcquiring && ! $isLocked,
             ],
-            'allocated'     => $this->payment->getAllocatedSum(),
+            'allocated'     => $allocated,
             'unallocated'   => $this->payment->getUnallocatedSum(),
             'historyUrl'    => $this->payment->getId()
                 ? HistoryChangesRoute::make(

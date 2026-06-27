@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $period_from
  * @property ?Carbon $period_to
  * @property float   $cost
- * @property bool    $active
  */
 class Service extends AbstractModel
 {
@@ -37,7 +36,6 @@ class Service extends AbstractModel
     public const string PERIOD_TO   = 'period_to';
     public const string NAME        = 'name';
     public const string COST        = 'cost';
-    public const string ACTIVE      = 'active';
 
     public const string RELATION_PERIOD = 'period';
 
@@ -45,7 +43,6 @@ class Service extends AbstractModel
 
     protected $casts = [
         self::COST        => self::CAST_FLOAT,
-        self::ACTIVE      => self::CAST_BOOLEAN,
         self::PERIOD_FROM => self::CAST_DATETIME,
         self::PERIOD_TO   => self::CAST_DATETIME,
     ];
@@ -56,7 +53,6 @@ class Service extends AbstractModel
     public const string TITLE_PERIOD_TO   = 'Период действия по';
     public const string TITLE_NAME        = 'Название';
     public const string TITLE_COST        = 'Стоимость';
-    public const string TITLE_ACTIVE      = 'Активен';
 
     public const array PROPERTIES_TO_TITLES = [
         Service::TYPE        => self::TITLE_TYPE,
@@ -65,7 +61,6 @@ class Service extends AbstractModel
         Service::PERIOD_TO   => self::TITLE_PERIOD_TO,
         Service::NAME        => self::TITLE_NAME,
         Service::COST        => self::TITLE_COST,
-        Service::ACTIVE      => self::TITLE_ACTIVE,
     ];
 
     public function period(): BelongsTo

@@ -21,7 +21,7 @@ return new class extends Migration
         echo Artisan::output();
 
         echo "→ billing:invoices:recalc --period=1\n";
-        Artisan::call('billing:invoices:recalc', ['--period' => '1', '--force' => true]);
+        Artisan::call('billing:invoices:recalc', ['--period' => '1']);
         echo Artisan::output();
     }
 

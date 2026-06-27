@@ -2,6 +2,7 @@
 
 namespace Core\App\Billing\Payment;
 
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentTransactionService;
@@ -12,6 +13,7 @@ readonly class SaveImportPaymentsCommand
         private PaymentFactory            $paymentFactory,
         private PaymentTransactionService $paymentTransactionService,
         private InvoiceService            $invoiceService,
+        private RecalcClaimsPaidCommand   $recalcClaimsPaidCommand,
     )
     {
     }
@@ -19,6 +21,7 @@ readonly class SaveImportPaymentsCommand
     public function execute(SaveImportPaymentsInput $input): void
     {
         $recalcInvoiceIds = [];
+        $processedAccount = [];
 
         foreach ($input->paymentsData as $paymentData) {
             $invoiceId = $paymentData->invoiceId;
@@ -43,7 +46,16 @@ readonly class SaveImportPaymentsCommand
         }
 
         foreach ($recalcInvoiceIds as $invoiceId) {
+            $invoice = $this->invoiceService->getById($invoiceId);
+            if ($invoice && ! isset($processedAccount[$invoice->getAccountId()])) {
+                $processedAccount[$invoice->getAccountId()] = true;
+            }
+
             $this->invoiceService->recalcInvoice($invoiceId, true);
+        }
+
+        foreach ($processedAccount as $accountId => $_) {
+            $this->recalcClaimsPaidCommand->executeForAccount((int) $accountId);
         }
     }
 }

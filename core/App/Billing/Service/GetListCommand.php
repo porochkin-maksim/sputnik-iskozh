@@ -34,7 +34,6 @@ readonly class GetListCommand
                     ->excludeType(ServiceTypeEnum::DEBT)
                     ->withPeriods()
                     ->setSortOrderProperty(Service::PERIOD_ID, SearcherInterface::SORT_ORDER_DESC)
-                    ->setSortOrderProperty(Service::ACTIVE, SearcherInterface::SORT_ORDER_DESC)
                     ->setSortOrderProperty(Service::ID, SearcherInterface::SORT_ORDER_ASC),
             ),
             'periods'  => $this->periodService->search(

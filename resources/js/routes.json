@@ -753,6 +753,15 @@
             "paymentId": "{paymentId}"
         }
     },
+    "adminPeriodClose": {
+        "name": "admin.period.close",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/periods\/json\/{id}\/close",
+        "args": {
+            "id": "{id}"
+        }
+    },
     "adminPeriodCreate": {
         "name": "admin.period.create",
         "displayName": "",

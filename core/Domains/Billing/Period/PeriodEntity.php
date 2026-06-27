@@ -10,11 +10,13 @@ class PeriodEntity
 {
     use TimestampsTrait;
 
-    private ?int $id = null;
-    private ?string $name = null;
-    private ?Carbon $startAt = null;
-    private ?Carbon $endAt = null;
-    private bool $isClosed = false;
+    private ?int    $id       = null;
+    private ?string $name     = null;
+    private ?Carbon $startAt  = null;
+    private ?Carbon $endAt    = null;
+    private bool    $isClosed = false;
+    private ?Carbon $closedAt = null;
+    private ?int    $closedBy = null;
 
     public function getId(): ?int
     {
@@ -83,5 +85,29 @@ class PeriodEntity
         }
 
         return Carbon::now()->between($this->startAt, $this->endAt);
+    }
+
+    public function getClosedAt(): ?Carbon
+    {
+        return $this->closedAt;
+    }
+
+    public function setClosedAt(mixed $closedAt): static
+    {
+        $this->closedAt = DateTimeHelper::toCarbonOrNull($closedAt);
+
+        return $this;
+    }
+
+    public function getClosedBy(): ?int
+    {
+        return $this->closedBy;
+    }
+
+    public function setClosedBy(?int $closedBy): static
+    {
+        $this->closedBy = $closedBy;
+
+        return $this;
     }
 }
