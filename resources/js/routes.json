@@ -1649,6 +1649,13 @@
         "uri": "\/home\/profile\/switch-account",
         "args": []
     },
+    "profileAccountsSearch": {
+        "name": "profile.accounts.search",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/accounts\/search",
+        "args": []
+    },
     "profileCounterAddValue": {
         "name": "profile.counter.add-value",
         "displayName": "",
@@ -1735,6 +1742,13 @@
         "displayName": "\u0421\u0447\u0435\u0442\u0430",
         "method": "get",
         "uri": "\/home\/invoices",
+        "args": []
+    },
+    "profileInvoicesJson": {
+        "name": "profile.invoices.json",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/invoices\/json",
         "args": []
     },
     "profilePaymentsIndex": {

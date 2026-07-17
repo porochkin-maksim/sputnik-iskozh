@@ -29,6 +29,13 @@ class AccountSearcher extends BaseSearcher
         return $this;
     }
 
+    public function setNumberLike(string $query): static
+    {
+        $this->addWhere(Account::NUMBER, SearcherInterface::LIKE, '%' . $query . '%');
+
+        return $this;
+    }
+
     public function setWithoutSntAccount(): static
     {
         $this->addWhere(Account::ID, SearcherInterface::IS_NOT, AccountIdEnum::SNT->value);

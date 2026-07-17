@@ -1249,6 +1249,12 @@ export function ApiProfileAccountSwitch(getParams = {}, postData = null) {
     return apiClient.post(makeQuery('/home/profile/switch-account', getParams), prepareRequestData(postData));
 }
 
+export function ApiProfileAccountsSearch(getParams = {}, postData = null) {
+    // see profile.accounts.search
+    // controller: App\Http\Controllers\Profile\AccountsController@search
+    return apiClient.get(makeQuery('/home/accounts/search', getParams), prepareRequestData(postData));
+}
+
 export function ApiProfileCounterAddValue(getParams = {}, postData = null) {
     // see profile.counter.add-value
     // controller: App\Http\Controllers\Profile\CounterController@addValue
@@ -1319,6 +1325,12 @@ export function ApiProfileInvoicesIndex(getParams = {}, postData = null) {
     // see profile.invoices.index
     // controller: App\Http\Controllers\Profile\HomeController@invoices
     return apiClient.get(makeQuery('/home/invoices', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileInvoicesJson(getParams = {}, postData = null) {
+    // see profile.invoices.json
+    // controller: App\Http\Controllers\Profile\HomeController@invoicesJson
+    return apiClient.get(makeQuery('/home/invoices/json', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfilePaymentsIndex(getParams = {}, postData = null) {

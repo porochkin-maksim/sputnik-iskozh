@@ -548,8 +548,7 @@
     }
 
     .page-hero {
-        margin-bottom : 1rem;
-        padding       : 1rem 1.25rem;
+        padding : 1rem 1.25rem;
         @include card(
             $border-color  : rgba($default-primary, 0.12),
             $border-radius : 1rem,
@@ -918,6 +917,17 @@
     margin-top : 1rem;
 }
 
+.profile-filters {
+    display        : flex;
+    flex-direction : row;
+    gap            : 1rem;
+    flex-wrap      : wrap;
+}
+
+.profile-filters > .page-card {
+    flex : 1 1 16rem;
+}
+
 .profile-period-card {
     display         : flex;
     align-items     : flex-start;
@@ -932,6 +942,7 @@
     margin-left     : 0;
     margin-right    : auto;
     align-self      : flex-start;
+    overflow        : visible !important;
 }
 
 .profile-period-card__label {
@@ -988,6 +999,63 @@
     font-size   : 1.3rem;
     font-weight : 800;
     color       : $color-danger;
+}
+
+.profile-summary-card {
+    display         : flex;
+    align-items     : stretch;
+    padding         : 0;
+    overflow        : hidden;
+
+    &__col {
+        flex            : 1;
+        display         : flex;
+        flex-direction  : column;
+        align-items     : center;
+        justify-content : center;
+        padding         : 1rem 1.15rem;
+        transition      : background 0.2s;
+
+        &:first-child {
+            border-right : 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        &--danger {
+            background : rgba($color-danger, 0.06);
+        }
+
+        &--success {
+            background : rgba($color-success, 0.06);
+        }
+    }
+
+    &__label {
+        display     : flex;
+        align-items : center;
+        gap         : 0.4rem;
+        font-size   : 0.85rem;
+        font-weight : 700;
+        color       : $color-danger;
+        margin-bottom : 0.15rem;
+
+        &--neutral {
+            color : $color-secondary;
+        }
+    }
+
+    &__value {
+        font-size   : 1.3rem;
+        font-weight : 800;
+        color       : $color-danger;
+
+        &--success {
+            color : $color-success;
+        }
+
+        &--neutral {
+            color : $color-secondary;
+        }
+    }
 }
 
 .profile-invoice-card__period {
@@ -1333,11 +1401,11 @@
 }
 
 .profile-balance-card {
-    padding      : 0.85rem 1.1rem;
-    display      : flex;
-    align-items  : center;
+    padding         : 0.85rem 1.1rem;
+    display         : flex;
+    align-items     : center;
     justify-content : space-between;
-    gap          : 1rem;
+    gap             : 1rem;
 
     &__label {
         font-size      : 1rem;

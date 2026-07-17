@@ -86,6 +86,8 @@ abstract class RouteNames
     public const string PROFILE_COUNTER_VIEW      = 'profile.counters.view';
     public const string PROFILE_COUNTER_INCREMENT = 'profile.counters.increment-save';
     public const string PROFILE_INVOICES          = 'profile.invoices.index';
+    public const string PROFILE_ACCOUNTS_SEARCH    = 'profile.accounts.search';
+    public const string PROFILE_INVOICES_JSON      = 'profile.invoices.json';
 
     public const string PROFILE_COUNTERS_LIST     = 'profile.counter.list';
     public const string PROFILE_COUNTER_CREATE    = 'profile.counter.create';
