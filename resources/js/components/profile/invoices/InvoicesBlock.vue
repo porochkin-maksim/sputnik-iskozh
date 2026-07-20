@@ -117,6 +117,10 @@
                                         <span class="profile-invoice-claim-item__label">Тариф</span>
                                         <span class="profile-invoice-claim-item__value">{{ claim.tariff }}</span>
                                     </span>
+                                    <span v-if="claim.quantity !== null" class="profile-invoice-claim-item__chip">
+                                        <span class="profile-invoice-claim-item__label">Кол-во</span>
+                                        <span class="profile-invoice-claim-item__value">{{ claim.quantity }}</span>
+                                    </span>
                                     <span class="profile-invoice-claim-item__chip">
                                         <span class="profile-invoice-claim-item__label">Стоимость</span>
                                         <span class="profile-invoice-claim-item__value">{{ claim.cost }}</span>

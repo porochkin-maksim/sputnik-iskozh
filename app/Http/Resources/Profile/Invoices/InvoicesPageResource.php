@@ -55,6 +55,7 @@ readonly class InvoicesPageResource extends AbstractResource
                     'id'           => $claim->getId(),
                     'name'         => $claim->getName() ? : $claim->getService()?->getName() ? : $this->services?->getById($claim->getServiceId())?->getName(),
                     'tariff'       => $formatMoney($claim->getTariff()),
+                    'quantity'     => $claim->getQuantity(),
                     'cost'         => $formatMoney($claim->getCost()),
                     'paid'         => $formatMoney($claim->getPaid()),
                     'delta'        => $formatMoney($claim->getDelta()),

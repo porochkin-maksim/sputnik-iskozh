@@ -44,10 +44,17 @@ class UserViewer
     public function getShortName(): string
     {
         $lastName   = $this->getLastName();
-        $firstName  = $this->getFirstName() ? mb_substr($this->getFirstName(), 0, 1) . '.' : '';
-        $middleName = $this->getMiddleName() ? mb_substr($this->getMiddleName(), 0, 1) . '.' : '';
+        $firstName  = $this->getFirstName();
+        $middleName = $this->getMiddleName();
 
-        return trim(sprintf('%s %s%s', $lastName, $firstName, $middleName));
+        if ($lastName) {
+            $firstName  = $firstName ? mb_substr($firstName, 0, 1) . '.' : '';
+            $middleName = $middleName ? mb_substr($middleName, 0, 1) . '.' : '';
+
+            return trim(sprintf('%s %s%s', $lastName, $firstName, $middleName));
+        }
+
+        return trim(sprintf('%s %s', $firstName, $middleName));
     }
 
     public function getDisplayName(bool $short = true): string

@@ -116,6 +116,7 @@ $blank = '_________';
         <tr>
             <th></th>
             <th>Тариф</th>
+            <th>Кол-во</th>
             <th>Стоимость</th>
             <th>Оплачено</th>
             <th>Долг</th>
@@ -127,6 +128,7 @@ $blank = '_________';
                 <tr>
                     <td>{{ $claim->getName() ?: $claim->getService()?->getName() }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getTariff(), 2) }}</td>
+                    <td class="text-end text-nowrap">{{ $claim->getQuantity() !== null ? $claim->getQuantity() : '' }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getCost(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getPaid(), 2) }}</td>
                     <td class="text-end text-nowrap">{{ number_format($claim->getDelta(), 2) }}</td>
@@ -140,19 +142,20 @@ $blank = '_________';
                     <td class="text-end text-nowrap"></td>
                     <td class="text-end text-nowrap"></td>
                     <td class="text-end text-nowrap"></td>
+                    <td class="text-end text-nowrap"></td>
                 </tr>
             @endforeach
         @endif
         @if($invoice)
             <tr>
-                <th class="text-end" colspan="2">Итого</th>
+                <th class="text-end" colspan="3">Итого</th>
                 <td class="text-end text-nowrap">{{ number_format($invoice->getCost(), 2) }}</td>
                 <td class="text-end text-nowrap">{{ number_format($invoice->getPaid(), 2) }}</td>
                 <td class="text-end text-nowrap">{{ number_format($invoice->getDelta(), 2) }}</td>
             </tr>
         @else
             <tr>
-                <th class="text-end" colspan="2">Итого</th>
+                <th class="text-end" colspan="3">Итого</th>
                 <td class="text-end text-nowrap"></td>
                 <td class="text-end text-nowrap"></td>
                 <td class="text-end text-nowrap"></td>
