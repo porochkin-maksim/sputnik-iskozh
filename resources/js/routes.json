@@ -1143,6 +1143,15 @@
         "uri": "\/ajax\/selects\/accounts",
         "args": []
     },
+    "ajaxSelectsCounters": {
+        "name": "ajax.selects.counters",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/ajax\/selects\/counters\/{accountId}",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
     "announcementsIndex": {
         "name": "announcements.index",
         "displayName": "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f",

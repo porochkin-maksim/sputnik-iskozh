@@ -19,6 +19,7 @@ Route::group(['middleware' => MiddlewareNames::AUTH], static function () {
 Route::prefix('ajax')->name('ajax.')->group(function () {
     Route::prefix('selects')->name('selects.')->group(function () {
         Route::get('/accounts', [Controllers\Public\SelectsController::class, 'accounts'])->name('accounts');
+        Route::get('/counters/{accountId}', [Controllers\Public\SelectsController::class, 'counters'])->name('counters');
     });
 });
 

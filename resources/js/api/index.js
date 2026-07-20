@@ -859,6 +859,12 @@ export function ApiAjaxSelectsAccounts(getParams = {}, postData = null) {
     return apiClient.get(makeQuery('/ajax/selects/accounts', getParams), prepareRequestData(postData));
 }
 
+export function ApiAjaxSelectsCounters(accountId, getParams = {}, postData = null) {
+    // see ajax.selects.counters
+    // controller: App\Http\Controllers\Public\SelectsController@counters
+    return apiClient.get(makeQuery('/ajax/selects/counters/'+accountId+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAnnouncementsIndex(getParams = {}, postData = null) {
     // see announcements.index
     // controller: App\Http\Controllers\Public\News\AnnouncementController@index

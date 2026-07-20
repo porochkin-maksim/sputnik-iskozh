@@ -16,7 +16,7 @@ use App\Resources\Views\SectionNames;
             <div class="page-hero">
                 <h3 class="page-hero__title text-dark">{{ lc::userDecorator()->getFullName() }}</h3>
                 <div class="page-hero__lead">
-                    Личный кабинет, счёт и быстрый доступ к основным разделам.
+                    Личный кабинет
                 </div>
             </div>
             @if(lc::account()->getId())

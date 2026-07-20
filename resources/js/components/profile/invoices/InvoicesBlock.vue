@@ -44,28 +44,28 @@
         </div>
 
         <div v-if="totalDebt > 0 || accountBalance !== null"
-             class="page-card profile-summary-card">
-            <div class="profile-summary-card__col"
-                 :class="totalDebt > 0 ? 'profile-summary-card__col--danger' : ''">
-                <div class="profile-summary-card__label">
+             class="page-card profile-invoice-balance">
+            <div class="profile-invoice-balance__col"
+                 :class="totalDebt > 0 ? 'profile-invoice-balance__col--danger' : ''">
+                <div class="profile-invoice-balance__label">
                     <i v-if="totalDebt > 0" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                     Общий долг по участку
                 </div>
-                <div class="profile-summary-card__value"
-                     :class="totalDebt > 0 ? '' : 'profile-summary-card__value--neutral'">
+                <div class="profile-invoice-balance__value"
+                     :class="totalDebt > 0 ? '' : 'profile-invoice-balance__value--neutral'">
                     {{ formatMoney(totalDebt) }}
                 </div>
             </div>
-            <div class="profile-summary-card__col"
-                 :class="accountBalance > 0 ? 'profile-summary-card__col--success' : accountBalance < 0 ? 'profile-summary-card__col--danger' : ''">
-                <div class="profile-summary-card__label"
-                     :class="accountBalance > 0 ? '' : accountBalance < 0 ? '' : 'profile-summary-card__label--neutral'">
+            <div class="profile-invoice-balance__col"
+                 :class="accountBalance > 0 ? 'profile-invoice-balance__col--success' : accountBalance < 0 ? 'profile-invoice-balance__col--danger' : ''">
+                <div class="profile-invoice-balance__label"
+                     :class="accountBalance > 0 ? '' : accountBalance < 0 ? '' : 'profile-invoice-balance__label--neutral'">
                     <i v-if="accountBalance > 0" class="fa fa-plus-circle" aria-hidden="true"></i>
                     <i v-else-if="accountBalance < 0" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                     Баланс
                 </div>
-                <div class="profile-summary-card__value"
-                     :class="accountBalance > 0 ? 'profile-summary-card__value--success' : accountBalance < 0 ? '' : 'profile-summary-card__value--neutral'">
+                <div class="profile-invoice-balance__value"
+                     :class="accountBalance > 0 ? 'profile-invoice-balance__value--success' : accountBalance < 0 ? '' : 'profile-invoice-balance__value--neutral'">
                     {{ formatMoney(accountBalance) }}
                 </div>
             </div>

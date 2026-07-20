@@ -2,6 +2,7 @@
 ^resources/js/components/common/form/CustomCalendar.vue:410:
 ^resources/js/components/profile/counters/CounterItem.vue:368:
 ^resources/js/components/admin/payments-manage/PaymentsBlock.vue:
+^resources/js/components/public/requests/CounterForm.vue:324:
 
 # Existing direct axios/window.axios in Vue components. Migrate to @api/api client.
 

@@ -5,14 +5,11 @@
     </div>
     <div class="public-form-card"
          v-if="!success">
-        <custom-input v-model="account"
-                      :classes="'public-form-field'"
-                      @change="clearError('account')"
-                      :required="true"
-                      :errors="errors.account"
-                      :label="'Номер дачи и номер участка (например: 999/1 )'"
-                      :disabled="propAccount?.number"
-                      @submit="sendForm"
+        <account-search-select v-model="selectedAccountId"
+                               classes="public-form-field"
+                               :required="true"
+                               :error="errors.account"
+                               @select="onAccountSelect"
         />
         <custom-input v-model="value"
                       :classes="'public-form-field'"
@@ -127,6 +124,7 @@ import {
     ref,
     watch,
 }                                    from 'vue';
+import AccountSearchSelect           from '@components/shared/accounts/AccountSearchSelect.vue';
 import CustomInput                   from '@common/form/CustomInput.vue';
 import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
 import SimpleSelect                  from '@common/form/SimpleSelect.vue';
@@ -156,22 +154,25 @@ const props = defineProps({
 const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
 const { uploadProgress, isUploading, startUpload, onProgress, finishUpload }        = useUploadProgress();
 
-const email    = ref('');
-const phone    = ref('');
-const name     = ref('');
-const account  = ref('');
-const counter  = ref('');
-const value    = ref('');
-const file     = ref(null);
-const success  = ref(null);
-const pending  = ref(false);
-const fileElem = ref(null);
-const consent  = ref(false);
+const email                 = ref('');
+const phone                 = ref('');
+const name                  = ref('');
+const selectedAccountId     = ref(null);
+const selectedAccountNumber = ref('');
+const counter               = ref('');
+const value                 = ref('');
+const file                  = ref(null);
+const success               = ref(null);
+const pending               = ref(false);
+const fileElem              = ref(null);
+const consent               = ref(false);
+const counters              = ref([]);
+const countersLoading       = ref(false);
 
 const { propUserName, storedRequestValue, resolveContactValue } = useRequestFormDefaults(props);
 
-const hasCounters   = computed(() => props.propCounters.length > 0);
-const disableSubmit = computed(() => !account.value || !value.value || !file.value || !consent.value || pending.value);
+const hasCounters   = computed(() => counters.value.length > 0);
+const disableSubmit = computed(() => !selectedAccountNumber.value || !value.value || !file.value || !consent.value || pending.value);
 const privacyUrl    = routeUri('privacy');
 const consentUrl    = routeUri('personalDataConsent');
 
@@ -180,27 +181,88 @@ const computedCounters = computed(() => {
         return [];
     }
 
-    return props.propCounters.map(item => ({
-        value: item.id,
-        label: item.number,
-    }));
+    return counters.value.map(item => {
+        if ('value' in item && 'label' in item) {
+            return item;
+        }
+        return {
+            value: item.id,
+            label: item.number,
+        };
+    });
 });
 
-account.value = resolveContactValue(props.propAccount?.number, 'requestAccount');
-email.value   = resolveContactValue(props.propUser?.email, 'requestEmail');
-phone.value   = resolveContactValue(props.propUser?.phone, 'requestPhone');
-name.value    = propUserName.value ?? storedRequestValue('requestName');
+const loadCounters = (accountId) => {
+    if (!accountId) {
+        counters.value = [];
+        return;
+    }
 
-if (hasCounters.value) {
-    counter.value = props.propCounters[0]?.id ?? '';
-    value.value   = props.propCounters[0]?.value ?? '';
+    countersLoading.value = true;
+    apiClient.get(makeQuery('/ajax/selects/counters/' + accountId, {}))
+        .then(response => {
+            counters.value = response.data ?? [];
+            if (counters.value.length) {
+                counter.value = counters.value[0]?.id ?? counters.value[0]?.value ?? '';
+            } else {
+                counter.value = '';
+                value.value   = '';
+            }
+        })
+        .catch(() => {
+            counters.value = [];
+        })
+        .finally(() => {
+            countersLoading.value = false;
+        });
+};
+
+if (props.propAccount?.number) {
+    selectedAccountNumber.value = props.propAccount.number;
+    selectedAccountId.value     = props.propAccount.id ?? null;
+    counters.value              = props.propCounters ?? [];
+    if (counters.value.length) {
+        counter.value = counters.value[0]?.id ?? counters.value[0]?.value ?? '';
+        value.value   = counters.value[0]?.value ?? '';
+    }
 }
+else {
+    const savedId     = storedRequestValue('requestAccountId');
+    const savedNumber = storedRequestValue('requestAccountNumber');
+    if (savedId) {
+        selectedAccountId.value     = parseInt(savedId);
+        selectedAccountNumber.value = savedNumber;
+        loadCounters(selectedAccountId.value);
+    }
+}
+email.value = resolveContactValue(props.propUser?.email, 'requestEmail');
+phone.value = resolveContactValue(props.propUser?.phone, 'requestPhone');
+name.value  = propUserName.value ?? storedRequestValue('requestName');
 
 useRequestFormPersistence({
-    requestAccount: account,
-    requestEmail  : email,
-    requestPhone  : phone,
-    requestName   : name,
+    requestAccountId    : selectedAccountId,
+    requestAccountNumber: selectedAccountNumber,
+    requestEmail        : email,
+    requestPhone        : phone,
+    requestName         : name,
+});
+
+const onAccountSelect = (item) => {
+    if (item) {
+        selectedAccountId.value     = item.key;
+        selectedAccountNumber.value = item.value;
+    }
+    else {
+        selectedAccountId.value     = null;
+        selectedAccountNumber.value = '';
+    }
+    clearError('account');
+};
+
+watch(selectedAccountId, (newId) => {
+    if (newId && (!props.propAccount || newId !== props.propAccount.id)) {
+        loadCounters(newId);
+    }
 });
 
 function sendForm () {
@@ -212,11 +274,14 @@ function sendForm () {
     form.append('email', email.value ? email.value : null);
     form.append('phone', phone.value ? phone.value : null);
     form.append('name', name.value ? name.value : null);
-    form.append('account', account.value ? account.value : null);
+    form.append('account', selectedAccountNumber.value ? selectedAccountNumber.value : null);
     form.append('counter', counter.value ? counter.value : null);
     form.append('value', value.value ? value.value : null);
     if (hasCounters.value) {
         form.append('counter_id', counter.value ? counter.value : null);
+    }
+    else {
+        form.append('counter_id', '');
     }
 
     form.append('file', file.value);
@@ -249,9 +314,10 @@ function removeFile () {
 }
 
 function onCounterChange () {
-    props.propCounters.forEach(item => {
-        if (parseInt(item.id) === parseInt(counter.value)) {
-            value.value = item.value;
+    counters.value.forEach(item => {
+        const itemId = item.id ?? item.value;
+        if (parseInt(itemId) === parseInt(counter.value)) {
+            value.value = item.value ?? '';
         }
     });
 }

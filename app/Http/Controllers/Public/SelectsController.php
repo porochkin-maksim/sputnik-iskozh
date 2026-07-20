@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Common\AccountsSelectResource;
+use App\Http\Resources\Common\SelectOptionResource;
 use App\Models\Account\Account;
 use Core\Domains\Account\AccountSearcher;
 use Core\Domains\Account\AccountService;
+use Core\Domains\Counter\CounterService;
 use Core\Repositories\SearcherInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -14,6 +16,7 @@ class SelectsController extends Controller
 {
     public function __construct(
         private readonly AccountService $accountService,
+        private readonly CounterService $counterService,
     )
     {
     }
@@ -30,5 +33,17 @@ class SelectsController extends Controller
             $items->getItems(),
             false,
         ));
+    }
+
+    public function counters(int $accountId): JsonResponse
+    {
+        $counters = $this->counterService->getByAccountId($accountId);
+
+        $result = [];
+        foreach ($counters as $counter) {
+            $result[] = new SelectOptionResource($counter->getId(), $counter->getNumber());
+        }
+
+        return response()->json($result);
     }
 }

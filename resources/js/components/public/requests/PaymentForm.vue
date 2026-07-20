@@ -5,14 +5,12 @@
     </div>
     <div class="public-form-card"
          v-if="!success">
-        <custom-input v-model="account"
-                      :classes="'public-form-field'"
-                      @change="clearError('account')"
-                      :required="true"
-                      :errors="errors.account"
-                      :label="'Номер дачи и номер участка (например: 999/1 )'"
-                      :disabled="loading || propAccount?.number || propInvoice?.id"
-                      @submit="sendForm"
+        <account-search-select v-model="selectedAccountId"
+                               classes="public-form-field"
+                               :required="true"
+                               :error="errors.account"
+                               :disabled="loading || !!propInvoice?.id"
+                               @select="onAccountSelect"
         />
         <custom-input v-model="cost"
                       :classes="'public-form-field'"
@@ -136,8 +134,8 @@
 import {
     computed,
     ref,
-    watch,
 }                                    from 'vue';
+import AccountSearchSelect           from '@components/shared/accounts/AccountSearchSelect.vue';
 import CustomInput                   from '@common/form/CustomInput.vue';
 import CustomCheckbox                from '@common/form/CustomCheckbox.vue';
 import CustomTextarea                from '@common/form/CustomTextarea.vue';
@@ -167,17 +165,18 @@ const props = defineProps({
 const { errors, clearError, parseResponseErrors, clearResponseErrors, showSuccess } = useResponseError();
 const { uploadProgress, isUploading, startUpload, onProgress, finishUpload }        = useUploadProgress();
 
-const loading  = ref(false);
-const account  = ref('');
-const email    = ref('');
-const phone    = ref('');
-const name     = ref('');
-const text     = ref('');
-const cost     = ref('');
-const files    = ref([]);
-const success  = ref(null);
-const fileElem = ref(null);
-const consent  = ref(false);
+const loading               = ref(false);
+const selectedAccountId     = ref(null);
+const selectedAccountNumber = ref('');
+const email                 = ref('');
+const phone                 = ref('');
+const name                  = ref('');
+const text                  = ref('');
+const cost                  = ref('');
+const files                 = ref([]);
+const success               = ref(null);
+const fileElem              = ref(null);
+const consent               = ref(false);
 
 const { propUserName, storedRequestValue, resolveContactValue } = useRequestFormDefaults(props);
 
@@ -191,29 +190,55 @@ const filesSize = computed(() => {
 
 const fileSizeExceed  = computed(() => filesSize.value > 20);
 const fileCountExceed = computed(() => files.value.length > 4);
-const isSubmitDisable = computed(() => !files.value.length || !account.value || !cost.value || !text.value || !consent.value || loading.value || fileSizeExceed.value);
+const isSubmitDisable = computed(() => !files.value.length || !selectedAccountNumber.value || !cost.value || !text.value || !consent.value || loading.value || fileSizeExceed.value);
 const privacyUrl      = routeUri('privacy');
 const consentUrl      = routeUri('personalDataConsent');
 
-account.value = props.propInvoice?.id
-    ? props.propInvoice?.account?.number ?? ''
-    : resolveContactValue(props.propAccount?.number, 'requestAccount');
-email.value   = resolveContactValue(props.propUser?.email, 'requestEmail');
-phone.value   = resolveContactValue(props.propUser?.phone, 'requestPhone');
-name.value    = propUserName.value ?? storedRequestValue('requestName');
-cost.value    = props.propInvoice?.delta ?? storedRequestValue('requestCost');
-text.value    = props.propInvoice?.id
+if (props.propInvoice?.id) {
+    selectedAccountId.value     = props.propInvoice.account?.id ?? null;
+    selectedAccountNumber.value = props.propInvoice.account?.number ?? '';
+}
+else if (props.propAccount?.number) {
+    selectedAccountNumber.value = props.propAccount.number;
+    selectedAccountId.value     = props.propAccount.id ?? null;
+}
+else {
+    const savedId     = storedRequestValue('requestAccountId');
+    const savedNumber = storedRequestValue('requestAccountNumber');
+    if (savedId) {
+        selectedAccountId.value     = parseInt(savedId);
+        selectedAccountNumber.value = savedNumber;
+    }
+}
+email.value = resolveContactValue(props.propUser?.email, 'requestEmail');
+phone.value = resolveContactValue(props.propUser?.phone, 'requestPhone');
+name.value  = propUserName.value ?? storedRequestValue('requestName');
+cost.value  = props.propInvoice?.delta ?? storedRequestValue('requestCost');
+text.value  = props.propInvoice?.id
     ? 'Оплата по счёту №' + props.propInvoice.id + ' за период "' + (props.propInvoice.period?.name ?? '') + '" за участок ' + (props.propInvoice.account?.number ?? '')
     : storedRequestValue('requestPaymentText');
 
 useRequestFormPersistence({
-    requestAccount    : account,
-    requestEmail      : email,
-    requestPhone      : phone,
-    requestName       : name,
-    requestPaymentText: text,
-    requestCost       : cost,
+    requestAccountId    : selectedAccountId,
+    requestAccountNumber: selectedAccountNumber,
+    requestEmail        : email,
+    requestPhone        : phone,
+    requestName         : name,
+    requestPaymentText  : text,
+    requestCost         : cost,
 });
+
+const onAccountSelect = (item) => {
+    if (item) {
+        selectedAccountId.value     = item.key;
+        selectedAccountNumber.value = item.value;
+    }
+    else {
+        selectedAccountId.value     = null;
+        selectedAccountNumber.value = '';
+    }
+    clearError('account');
+};
 
 function sendForm () {
     loading.value = true;
@@ -223,7 +248,7 @@ function sendForm () {
     form.append('email', email.value ? email.value : null);
     form.append('phone', phone.value ? phone.value : null);
     form.append('name', name.value ? name.value : null);
-    form.append('account', account.value ? account.value : null);
+    form.append('account', selectedAccountNumber.value ? selectedAccountNumber.value : null);
     form.append('text', text.value ? text.value : null);
     form.append('cost', cost.value ? cost.value : null);
     form.append('invoice', props.propInvoice?.id ? props.propInvoice?.id : null);
