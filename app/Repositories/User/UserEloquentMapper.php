@@ -39,9 +39,7 @@ class UserEloquentMapper implements RepositoryDataMapperInterface
             $result->setAttribute(User::PASSWORD, Hash::make($entity->getPassword()));
         }
 
-        if ($entity->getEmailVerifiedAt()) {
-            $result->forceFill([User::EMAIL_VERIFIED_AT => $entity->getEmailVerifiedAt()]);
-        }
+        $result->forceFill([User::EMAIL_VERIFIED_AT => $entity->getEmailVerifiedAt()]);
 
         return $result->fill([
             User::ID             => $entity->getId(),

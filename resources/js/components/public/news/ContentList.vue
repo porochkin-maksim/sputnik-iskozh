@@ -9,10 +9,13 @@
                    :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
                    :href="item.url"
                 >
-                    <div class="custom-item news-item card h-100 hover-plate">
+                    <div class="custom-item news-item card h-100 hover-plate"
+                         :class="[item.category === 1 ? 'news-item--announcement' : '']">
                         <div class="title card-body h-100 d-flex flex-column justify-content-between pb-2">
                             <div>
                                 <span class="name">
+                                    <i v-if="item.category === 1" class="fa fa-bullhorn text-warning me-1"></i>
+                                    <i v-else class="fa fa-rss me-1"></i>
                                     {{ item.title ? item.title : 'Без названия' }}
                                 </span>
                             </div>
@@ -25,7 +28,8 @@
             </template>
         </div>
         <template v-else v-for="(item, index) in items">
-            <div class="public-news-list__item">
+            <div class="public-news-list__item"
+                 :class="[variant === 'announcement' ? 'public-news-list__item--announcement' : '']">
                 <news-list-item :news="item"
                                 :edit="edit"
                                 :is-list="true"
@@ -67,6 +71,11 @@ const props = defineProps({
     short         : {
         type   : Boolean,
         default: false,
+    },
+    variant       : {
+        type   : String,
+        default: 'news',
+        validator: (value) => ['news', 'announcement'].includes(value),
     },
     canEdit       : {
         type   : Boolean,

@@ -1,7 +1,7 @@
 <template>
     <page-template>
         <template v-slot:main>
-            <news-list :short="true" :limit="6" />
+            <news-index-list :short="true" :limit="6" />
         </template>
         <template v-slot:sub>
             <form :action="searchUrl"
@@ -26,7 +26,7 @@
                 </div>
             </form>
             <template v-if="lockedNews && lockedNews.length">
-                <div class="side-news public-news-grid news-list row w-100 ms-0 mt-2">
+                <div class="side-news side-news--locked public-news-grid news-list row w-100 ms-0 mt-2">
                     <template v-for="(item, index) in lockedNews" :key="index">
                         <a class="col-md-6 col-lg-12 col-12 text-decoration-none pe-lg-0 mb-2 px-0"
                            :class="[index%2===0 ? 'pe-md-2' : 'pe-md-0']"
@@ -34,8 +34,10 @@
                         >
                             <div class="custom-item news-item card h-100 hover-plate">
                                 <div class="title card-body h-100 d-flex flex-column justify-content-between p-2 pb-1">
+                                    <div class="side-news__badge">
+                                        <i class="fa fa-bolt"></i>&nbsp;Важное
+                                    </div>
                                     <span class="name">
-                                        <i class="fa fa-bolt text-warning"></i>&nbsp;
                                         {{ item.title ? item.title : 'Без названия' }}
                                     </span>
                                     <div class="date text-end mt-2">
@@ -81,7 +83,7 @@ import {
 import InlineInput          from '@common/form/InlineInput.vue';
 import PageTemplate         from './TwoColumnsPage.vue';
 import StateSchedule        from '../StateSchedule.vue';
-import NewsList             from '../news/list/NewsList.vue';
+import NewsIndexList        from '../news/list/NewsIndexList.vue';
 import { ApiNewsListLocked } from '@api';
 import {
     routeMeta,

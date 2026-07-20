@@ -247,6 +247,44 @@
             text-align : right;
         }
     }
+
+    .news-item--announcement {
+        position      : relative;
+        border-color  : rgba($color-warning, 0.15);
+
+        &::before {
+            content       : '';
+            position      : absolute;
+            top           : 0;
+            left          : 0;
+            width         : 4px;
+            height        : 100%;
+            background    : $color-warning;
+            border-radius : 0.95rem 0 0 0.95rem;
+        }
+
+        &:hover {
+            border-color : rgba($color-warning, 0.3);
+            box-shadow   : 0 0.75rem 1.35rem rgba($color-warning, 0.12);
+        }
+    }
+}
+
+.public-news-list__item--announcement {
+    .news-item {
+        position      : relative;
+
+        &::before {
+            content       : '';
+            position      : absolute;
+            top           : 0;
+            left          : 0;
+            width         : 4px;
+            height        : 100%;
+            background    : $color-warning;
+            border-radius : 0.95rem 0 0 0.95rem;
+        }
+    }
 }
 
 .public-news-list {

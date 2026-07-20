@@ -14,8 +14,8 @@
 </template>
 
 <script setup>
-import { ApiNewsList } from '@api';
-import ContentList     from '../ContentList.vue';
+import { ApiNewsListIndex } from '@api';
+import ContentList          from '../ContentList.vue';
 
 const props = defineProps({
     short         : { type: Boolean, default: false },
@@ -27,7 +27,7 @@ const props = defineProps({
     currentPage   : { type: Number, default: 1 },
 });
 
-const fetchFn = ApiNewsList;
-
 const emit = defineEmits(['update:canEdit', 'update:itemsCount', 'update:reloadList']);
+
+const fetchFn = ApiNewsListIndex;
 </script>

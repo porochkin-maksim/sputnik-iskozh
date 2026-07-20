@@ -33,7 +33,7 @@ readonly class NewsResource extends AbstractResource
             'title'       => $this->entity->getTitle(),
             'description' => $this->entity->getDescription(),
             'article'     => $this->entity->getArticle(),
-            'category'    => $this->entity->getCategory()->value,
+            'category'    => $this->entity->getCategory()?->value,
             'files'       => new ResourseList($this->entity->getFiles(), FileResource::class),
             'isLock'      => $this->entity->isLock(),
             'publishedAt' => $this->entity->getPublishedAt()?->format(DateTimeFormat::DATE_TIME_MAIN),

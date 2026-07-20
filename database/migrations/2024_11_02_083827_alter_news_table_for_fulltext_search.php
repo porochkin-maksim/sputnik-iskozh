@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('news', function (Blueprint $table) {
-            $table->tinyText('description')->nullable()->after('title');
+            $table->text('description')->nullable()->after('title');
             $table->fullText(['title', 'description', 'article']);
         });
     }

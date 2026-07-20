@@ -25,8 +25,8 @@ class SaveValidator
             $errors['title'][] = 'Название не должно превышать 255 символов';
         }
 
-        if ($description !== null && mb_strlen($description) > 255) {
-            $errors['description'][] = 'Описание не должно превышать 255 символов';
+        if ($description !== null && mb_strlen($description) > 500) {
+            $errors['description'][] = 'Описание не должно превышать 500 символов';
         }
 
         if ($category === null) {

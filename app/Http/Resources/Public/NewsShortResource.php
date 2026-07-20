@@ -20,6 +20,7 @@ readonly class NewsShortResource implements JsonSerializable
         return [
             'id'          => $this->entity->getId(),
             'title'       => $this->entity->getTitle(),
+            'category'    => $this->entity->getCategory()?->value,
             'publishedAt' => $this->entity->getPublishedAt()?->format(DateTimeFormat::DATE_VIEW_FORMAT),
             'url'         => NewsLocator::UrlFactory()->makeUrl($this->entity),
         ];

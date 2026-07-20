@@ -1,5 +1,6 @@
 <template>
     <content-list :fetch-fn="fetchFn"
+                  variant="announcement"
                   :short="short"
                   :reload-list="reloadList"
                   :can-edit="canEdit"

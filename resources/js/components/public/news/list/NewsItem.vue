@@ -14,7 +14,7 @@
                     {{ news.title }}
                 </div>
                 <div class="date">
-                    <i class="fa fa-calendar"></i> {{ news.dossier.publishedAt }}
+                    <i class="fa fa-calendar"></i> {{ news.dossier?.publishedAt }}
                 </div>
             </div>
 
