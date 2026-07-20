@@ -142,5 +142,13 @@ const saveAction = () => {
 
 onMounted(() => {
     mapFromProps(props.modelValue);
+
+    if (!props.modelValue) {
+        const params = new URLSearchParams(window.location.search);
+        const cat = params.get('category');
+        if (cat) {
+            category.value = parseInt(cat);
+        }
+    }
 });
 </script>
