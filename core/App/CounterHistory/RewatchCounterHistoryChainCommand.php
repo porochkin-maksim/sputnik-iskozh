@@ -28,18 +28,26 @@ readonly class RewatchCounterHistoryChainCommand
 
         $events   = [];
         $previous = null;
+        $dirty    = false;
         foreach ($histories as $history) {
-            if ( ! $previous) {
-                $history->setPreviousId(null);
-                $history->setPreviousValue(null);
-            }
-            else {
-                $history->setPreviousId($previous->getId());
-                $history->setPreviousValue($previous->getValue());
+            $expectedPreviousId    = $previous?->getId();
+            $expectedPreviousValue = $previous?->getValue();
+
+            if ($history->getPreviousId() !== $expectedPreviousId || $history->getPreviousValue() !== $expectedPreviousValue) {
+                $dirty = true;
             }
 
-            $history  = $this->counterHistoryService->save($history);
-            $events[] = new CounterHistoryConfirmed($history->getId());
+            if ($dirty) {
+                if ($expectedPreviousId === $history->getId()) {
+                    $expectedPreviousId = null;
+                }
+
+                $history->setPreviousId($expectedPreviousId);
+                $history->setPreviousValue($expectedPreviousValue);
+                $history  = $this->counterHistoryService->save($history);
+                $events[] = new CounterHistoryConfirmed($history->getId());
+            }
+
             $previous = $history;
         }
 

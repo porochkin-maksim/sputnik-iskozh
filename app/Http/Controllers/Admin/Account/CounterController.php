@@ -19,6 +19,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use lc;
 use Throwable;
+use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 
 class CounterController extends Controller
 {
@@ -130,6 +131,17 @@ class CounterController extends Controller
         }
 
         return $this->createCounterClaimCommand->execute($counterHistoryId);
+    }
+
+    public function rewatch(int $counterId): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::COUNTERS_EDIT)) {
+            abort(403);
+        }
+
+        RewatchCounterHistoryChainJob::dispatchIfNeeded($counterId);
+
+        return response()->json(['success' => true]);
     }
 
     public function delete(int $accountId, int $counterId, DefaultRequest $request): bool

@@ -27,6 +27,14 @@
                 <i class="fa fa-refresh" :class="loading ? 'fa-spin' : ''"></i>
                 {{ loading ? 'Обновление...' : 'Обновить' }}
             </button>
+            <button
+                v-if="canEdit"
+                class="btn btn-sm btn-outline-warning admin-action-btn ms-2"
+                :disabled="loading"
+                @click="rewatchAction"
+            >
+                <i class="fa fa-repeat"></i>&nbsp;Пересчитать
+            </button>
             <history-btn
                 class="btn-link underline-none ms-2"
                 :url="counter?.historyUrl"
@@ -112,5 +120,6 @@ const {
           onCounterUpdated,
           editCounterAction,
           confirmAction,
+          rewatchAction,
       } = useCounterItemView(props, emit);
 </script>

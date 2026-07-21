@@ -36,6 +36,7 @@ class CounterHistoryController extends Controller
             ->setCounterId($counterId)
             ->setWithClaim()
             ->setWithPrevious()
+            ->setWithFile()
             ->descSort()
             ->setOffset($request->getOffset())
             ->setLimit($request->getLimit())

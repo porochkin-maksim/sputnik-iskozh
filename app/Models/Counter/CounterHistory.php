@@ -43,7 +43,7 @@ class CounterHistory extends AbstractModel
     public const string RELATION_CLAIM    = 'claim';
 
     protected $guarded = [];
-    protected $with    = [self::RELATION_FILE, self::RELATION_PREVIOUS];
+    protected $with    = [self::RELATION_FILE];
 
     protected $casts = [
         self::COUNTER_ID     => self::CAST_INTEGER,

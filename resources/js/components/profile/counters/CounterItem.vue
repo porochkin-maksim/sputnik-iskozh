@@ -50,7 +50,7 @@
     </div>
     <div class="row mt-2" v-if="histories && histories.length > 1">
         <div class="col-12">
-            <h5 class="text-center">График показаний</h5>
+            <h5 class="text-center">График потребления</h5>
             <counter-item-chart-block :histories="histories"></counter-item-chart-block>
         </div>
     </div>

@@ -13,18 +13,28 @@ class CounterHistorySearcher implements SearcherInterface
     public function setVerified(bool $verified): static
     {
         $this->addWhere(CounterHistory::IS_VERIFIED, SearcherInterface::EQUALS, $verified);
+
         return $this;
     }
 
     public function setWithCounter(): static
     {
         $this->with[] = CounterHistory::RELATION_COUNTER;
+
         return $this;
     }
 
     public function setWithPrevious(): static
     {
         $this->with[] = CounterHistory::RELATION_PREVIOUS;
+
+        return $this;
+    }
+
+    public function setWithFile(): static
+    {
+        $this->with[] = CounterHistory::RELATION_FILE;
+
         return $this;
     }
 
@@ -50,24 +60,28 @@ class CounterHistorySearcher implements SearcherInterface
         if ($counterId !== null) {
             $this->addWhere(CounterHistory::COUNTER_ID, SearcherInterface::EQUALS, $counterId);
         }
+
         return $this;
     }
 
     public function setCounterIds(array $counterIds): static
     {
         $this->addWhere(CounterHistory::COUNTER_ID, SearcherInterface::IN, $counterIds);
+
         return $this;
     }
 
     public function setPreviousId(int $counterHistoryId): static
     {
         $this->addWhere(CounterHistory::PREVIOUS_ID, SearcherInterface::EQUALS, $counterHistoryId);
+
         return $this;
     }
 
     public function setWithClaim(): static
     {
         $this->with[] = CounterHistory::RELATION_CLAIM;
+
         return $this;
     }
 }

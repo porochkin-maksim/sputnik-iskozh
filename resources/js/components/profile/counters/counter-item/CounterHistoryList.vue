@@ -24,6 +24,7 @@
                 <file-item
                     v-if="history.file"
                     :file="history.file"
+                    :name="'Показания'"
                     :edit="false"
                 />
             </div>

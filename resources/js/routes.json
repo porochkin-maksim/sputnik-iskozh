@@ -182,6 +182,15 @@
             "accountId": "{accountId}"
         }
     },
+    "adminCounterRewatch": {
+        "name": "admin.counter.rewatch",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/accounts\/counters\/json\/rewatch\/{counterId}",
+        "args": {
+            "counterId": "{counterId}"
+        }
+    },
     "adminCounterSave": {
         "name": "admin.counter.save",
         "displayName": "",

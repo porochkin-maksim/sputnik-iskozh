@@ -52,6 +52,7 @@
                         <template v-if="history.file">
                             <file-item
                                 :file="history.file"
+                                :name="'Показания'"
                                 :edit="false"
                             />
                         </template>

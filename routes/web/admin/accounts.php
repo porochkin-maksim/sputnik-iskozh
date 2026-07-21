@@ -79,6 +79,10 @@ Route::group(['prefix' => 'accounts'], static function () {
                 ->whereNumber('counterId')
             ;
             Route::post('/add-value', [Controllers\Admin\Account\CounterController::class, 'addValue'])->name(RouteNames::ADMIN_COUNTER_ADD_VALUE);
+            Route::post('/rewatch/{counterId}', [Controllers\Admin\Account\CounterController::class, 'rewatch'])
+                ->name(RouteNames::ADMIN_COUNTER_REWATCH)
+                ->whereNumber('counterId')
+            ;
         });
     });
 });

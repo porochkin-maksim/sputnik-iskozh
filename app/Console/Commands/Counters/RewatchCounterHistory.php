@@ -24,7 +24,7 @@ class RewatchCounterHistory extends Command
 
         foreach ($counters as $counter) {
             $this->info("Переобход счетчика {$counter->getId()}");
-            dispatch_sync(new RewatchCounterHistoryChainJob($counter->getId()));
+            RewatchCounterHistoryChainJob::dispatchSyncIfNeeded($counter->getId());
         }
 
         return 0;

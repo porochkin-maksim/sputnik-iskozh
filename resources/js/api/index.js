@@ -133,6 +133,12 @@ export function ApiAdminCounterList(accountId, getParams = {}, postData = null) 
     return apiClient.get(makeQuery('/admin/accounts/view/'+accountId+'/counters/json/list', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminCounterRewatch(counterId, getParams = {}, postData = null) {
+    // see admin.counter.rewatch
+    // controller: App\Http\Controllers\Admin\Account\CounterController@rewatch
+    return apiClient.post(makeQuery('/admin/accounts/counters/json/rewatch/'+counterId+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminCounterSave(getParams = {}, postData = null) {
     // see admin.counter.save
     // controller: App\Http\Controllers\Admin\Account\CounterController@save

@@ -103,7 +103,9 @@ readonly class CreatePublicCounterHistoryCommand
 
         if ($history) {
             NotifyAboutNewUnverifiedCounterHistoryJob::dispatchIfNeeded($history->getId());
-            RewatchCounterHistoryChainJob::dispatchIfNeeded($history->getCounterId());
+            if ($history->getCounterId()) {
+                RewatchCounterHistoryChainJob::dispatchIfNeeded($history->getCounterId());
+            }
         }
     }
 }

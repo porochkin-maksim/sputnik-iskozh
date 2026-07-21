@@ -9,6 +9,7 @@ import { usePermissions }   from '@composables/usePermissions.js';
 import { useResponseError } from '@composables/useResponseError';
 import {
     ApiAdminCounterHistoryList,
+    ApiAdminCounterRewatch,
     ApiAdminRequestsCounterHistoryDelete,
     ApiAdminRequestsCounterHistoryCreateClaim,
 }                           from '@api';
@@ -137,6 +138,20 @@ export function useCounterItemView (props) {
         showCounterForm.value = true;
     };
 
+    const rewatchAction = async () => {
+        if ( ! confirm('Запустить пересчёт цепочки показаний?')) {
+            return;
+        }
+
+        try {
+            await ApiAdminCounterRewatch(counter.value.id);
+            showInfo('Пересчёт цепочки запущен');
+        }
+        catch (error) {
+            parseResponseErrors(error);
+        }
+    };
+
     onMounted(init);
 
     return {
@@ -160,5 +175,6 @@ export function useCounterItemView (props) {
         showCounterForm,
         onCounterUpdated,
         editCounterAction,
+        rewatchAction,
     };
 }

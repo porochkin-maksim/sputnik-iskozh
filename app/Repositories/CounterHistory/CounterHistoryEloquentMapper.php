@@ -25,6 +25,9 @@ class CounterHistoryEloquentMapper implements RepositoryDataMapperInterface
 
     public function makeRepositoryDataFromEntity($entity, $data = null): object
     {
+        if ($entity->getPreviousId() === $entity->getId()) {
+            $entity->setPreviousId(null);
+        }
         $result = $data ? : CounterHistory::make();
         $result->forceFill(['id' => $entity->getId()]);
 

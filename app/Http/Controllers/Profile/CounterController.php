@@ -162,6 +162,8 @@ class CounterController extends Controller
             ->setLimit($limit)
             ->setOffset($request->getOffset())
             ->setWithClaim()
+            ->setWithPrevious()
+            ->setWithFile()
             ->descSort()
         ;
 
