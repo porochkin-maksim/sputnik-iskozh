@@ -14,6 +14,7 @@ import {
     ApiAdminUserRestore,
     ApiAdminUserGenerateEmail,
     ApiAdminLoginLink,
+    ApiAdminLoginLinkSend,
     ApiAdminUserSendRestorePassword,
     ApiAdminUserSendInviteWithPassword,
 }                           from '@api';
@@ -283,6 +284,21 @@ export function useUserItemView (props, emit = null) {
         }
     };
 
+    const sendLoginLinkEmail = async () => {
+        if (!confirm('Создать постоянную ссылку и отправить её на email пользователя?')) {
+            return;
+        }
+
+        try {
+            await ApiAdminLoginLinkSend(localUser.value.id);
+            showInfo('Ссылка отправлена на email');
+        }
+        catch (error) {
+            showDanger('Не получилось отправить ссылку');
+            parseResponseErrors(error);
+        }
+    };
+
     const getAccountNumberById = (accountId) => {
         const account = accounts.value.find(a => String(a.value) === String(accountId));
         return account?.label || '';
@@ -330,6 +346,7 @@ export function useUserItemView (props, emit = null) {
         makeLoginQrCode,
         sendRestorePasswordEmail,
         sendInvitePasswordEmail,
+        sendLoginLinkEmail,
         renderAccountLink,
         loadUser,
         initSelects,

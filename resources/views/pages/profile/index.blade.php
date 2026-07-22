@@ -47,20 +47,9 @@ use App\Resources\Views\SectionNames;
                     ></password-block>
                 </div>
             @endif
-            @if(lc::account()->getId())
-                <a class="card mt-2 page-card text-decoration-none profile-quick-link"
-                   href="{{ route(RouteNames::PROFILE_COUNTERS) }}">
-                    <div class="card-body">
-                        {{ RouteNames::name(RouteNames::PROFILE_COUNTERS) }}
-                    </div>
-                </a>
-                <a class="card mt-2 page-card text-decoration-none profile-quick-link"
-                   href="{{ route(RouteNames::PROFILE_INVOICES) }}">
-                    <div class="card-body">
-                        {{ RouteNames::name(RouteNames::PROFILE_INVOICES) }}
-                    </div>
-                </a>
-            @endif
+            <div class="page-section profile-password-wrapper">
+                <login-link-block :user='@json(new UserResource(lc::user()))'></login-link-block>
+            </div>
         </div>
     </div>
 @endsection

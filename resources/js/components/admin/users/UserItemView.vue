@@ -60,6 +60,7 @@
                             :has-active-token="hasActiveToken"
                             :send-invite-password-email="sendInvitePasswordEmail"
                             :send-restore-password-email="sendRestorePasswordEmail"
+                            :send-login-link-email="sendLoginLinkEmail"
                             :make-login-qr-code="makeLoginQrCode"
                             :copy-to-clipboard="copyToClipboard"
                         />
@@ -110,6 +111,7 @@ const {
           makeLoginQrCode,
           sendRestorePasswordEmail,
           sendInvitePasswordEmail,
+          sendLoginLinkEmail,
           renderAccountLink,
           loadUser,
           initSelects,

@@ -12,6 +12,8 @@ Route::group(['prefix' => 'home'], static function () {
         Route::group(['prefix' => 'profile'], static function () {
             Route::post('/password', [Controllers\Profile\ProfileController::class, 'savePassword'])->name(RouteNames::PROFILE_SAVE_PASSWORD);
             Route::post('/switch-account', [Controllers\Profile\ProfileController::class, 'switchAccount'])->name(RouteNames::PROFILE_SWITCH_ACCOUNT);
+            Route::post('/login-link', [Controllers\Profile\ProfileController::class, 'makeLoginLink'])->name(RouteNames::PROFILE_LOGIN_LINK);
+            Route::get('/login-link', [Controllers\Profile\ProfileController::class, 'getLoginLink'])->name(RouteNames::PROFILE_LOGIN_LINK_GET);
         });
 
         Route::group(['middleware' => MiddlewareNames::AUTH], static function () {

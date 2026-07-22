@@ -63,5 +63,9 @@ Route::group(['prefix' => 'users'], static function () {
             ->name(RouteNames::ADMIN_LOGIN_LINK)
             ->whereNumber('userId')
         ;
+        Route::post('/qr/send-login-link/{userId}', [Controllers\Admin\System\QrCodeController::class, 'makeLoginLinkAndSendEmail'])
+            ->name(RouteNames::ADMIN_LOGIN_LINK_SEND)
+            ->whereNumber('userId')
+        ;
     });
 });

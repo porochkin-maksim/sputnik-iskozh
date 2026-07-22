@@ -80,14 +80,16 @@ abstract class RouteNames
 
     public const string PROFILE                = 'profile.show';
     public const string PROFILE_SAVE_PASSWORD  = 'profile.save.password';
+    public const string PROFILE_LOGIN_LINK_GET = 'profile.login-link.get';
+    public const string PROFILE_LOGIN_LINK     = 'profile.login-link';
     public const string PROFILE_SWITCH_ACCOUNT = 'profile.account.switch';
 
     public const string PROFILE_COUNTERS          = 'profile.counters.index';
     public const string PROFILE_COUNTER_VIEW      = 'profile.counters.view';
     public const string PROFILE_COUNTER_INCREMENT = 'profile.counters.increment-save';
     public const string PROFILE_INVOICES          = 'profile.invoices.index';
-    public const string PROFILE_ACCOUNTS_SEARCH    = 'profile.accounts.search';
-    public const string PROFILE_INVOICES_JSON      = 'profile.invoices.json';
+    public const string PROFILE_ACCOUNTS_SEARCH   = 'profile.accounts.search';
+    public const string PROFILE_INVOICES_JSON     = 'profile.invoices.json';
 
     public const string PROFILE_COUNTERS_LIST     = 'profile.counter.list';
     public const string PROFILE_COUNTER_CREATE    = 'profile.counter.create';
@@ -165,7 +167,8 @@ abstract class RouteNames
     public const string ADMIN_ACCOUNT_IMPORT_PARSE_FILE = 'admin.account.import.parse-file';
     public const string ADMIN_ACCOUNT_IMPORT_SAVE       = 'admin.account.import.save';
 
-    public const string ADMIN_LOGIN_LINK = 'admin.login-link';
+    public const string ADMIN_LOGIN_LINK      = 'admin.login-link';
+    public const string ADMIN_LOGIN_LINK_SEND = 'admin.login-link.send';
 
     public const string ADMIN_QR_VIEW = 'admin.qr.view';
 
@@ -176,7 +179,7 @@ abstract class RouteNames
     public const string ADMIN_COUNTER_LIST      = 'admin.counter.list';
     public const string ADMIN_COUNTER_DELETE    = 'admin.counter.delete';
     public const string ADMIN_COUNTER_ADD_VALUE = 'admin.counter.add-value';
-    public const string ADMIN_COUNTER_REWATCH  = 'admin.counter.rewatch';
+    public const string ADMIN_COUNTER_REWATCH   = 'admin.counter.rewatch';
 
     public const string ADMIN_INVOICE_INDEX  = 'admin.invoice.index';
     public const string ADMIN_INVOICE_CREATE = 'admin.invoice.create';
@@ -217,19 +220,19 @@ abstract class RouteNames
     public const string ADMIN_NEW_PAYMENT_INVOICES = 'admin.new-payment.get-invoices';
     public const string ADMIN_NEW_PAYMENT_DELETE   = 'admin.new-payment.delete';
 
-    public const string ADMIN_PAYMENT_MANAGE_LIST     = 'admin.payment.manage.list';
-    public const string ADMIN_PAYMENT_MANAGE_CREATE   = 'admin.payment.manage.create';
-    public const string ADMIN_PAYMENT_MANAGE_VIEW     = 'admin.payment.manage.view';
-    public const string ADMIN_PAYMENT_MANAGE_SAVE     = 'admin.payment.manage.save';
-    public const string ADMIN_PAYMENT_MANAGE_DELETE   = 'admin.payment.manage.delete';
-    public const string ADMIN_PAYMENT_MANAGE_INVOICES = 'admin.payment.manage.get-invoices';
-    public const string ADMIN_PAYMENT_MANAGE_ALLOCATE   = 'admin.payment.manage.allocate';
-    public const string ADMIN_PAYMENT_MANAGE_CLAIMS     = 'admin.payment.manage.claims';
-    public const string ADMIN_PAYMENT_MANAGE_CAN_PAY_ALL = 'admin.payment.manage.can-pay-all';
-    public const string ADMIN_PAYMENT_MANAGE_PAY_ALL    = 'admin.payment.manage.pay-all';
+    public const string ADMIN_PAYMENT_MANAGE_LIST                     = 'admin.payment.manage.list';
+    public const string ADMIN_PAYMENT_MANAGE_CREATE                   = 'admin.payment.manage.create';
+    public const string ADMIN_PAYMENT_MANAGE_VIEW                     = 'admin.payment.manage.view';
+    public const string ADMIN_PAYMENT_MANAGE_SAVE                     = 'admin.payment.manage.save';
+    public const string ADMIN_PAYMENT_MANAGE_DELETE                   = 'admin.payment.manage.delete';
+    public const string ADMIN_PAYMENT_MANAGE_INVOICES                 = 'admin.payment.manage.get-invoices';
+    public const string ADMIN_PAYMENT_MANAGE_ALLOCATE                 = 'admin.payment.manage.allocate';
+    public const string ADMIN_PAYMENT_MANAGE_CLAIMS                   = 'admin.payment.manage.claims';
+    public const string ADMIN_PAYMENT_MANAGE_CAN_PAY_ALL              = 'admin.payment.manage.can-pay-all';
+    public const string ADMIN_PAYMENT_MANAGE_PAY_ALL                  = 'admin.payment.manage.pay-all';
     public const string ADMIN_PAYMENT_MANAGE_UNALLOCATED_TRANSACTIONS = 'admin.payment.manage.unallocated-transactions';
-    public const string ADMIN_PAYMENT_MANAGE_PAY_CLAIM               = 'admin.payment.manage.pay-claim';
-    public const string ADMIN_PAYMENT_MANAGE_ACCOUNT_BALANCE         = 'admin.payment.manage.account-balance';
+    public const string ADMIN_PAYMENT_MANAGE_PAY_CLAIM                = 'admin.payment.manage.pay-claim';
+    public const string ADMIN_PAYMENT_MANAGE_ACCOUNT_BALANCE          = 'admin.payment.manage.account-balance';
 
     public const string ADMIN_COUNTER_HISTORY_LIST = 'admin.counter.history.list';
 

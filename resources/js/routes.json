@@ -562,6 +562,15 @@
             "pin": "{pin}"
         }
     },
+    "adminLoginLinkSend": {
+        "name": "admin.login-link.send",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/users\/json\/qr\/send-login-link\/{userId}",
+        "args": {
+            "userId": "{userId}"
+        }
+    },
     "adminNewPaymentDelete": {
         "name": "admin.new-payment.delete",
         "displayName": "",
@@ -1767,6 +1776,20 @@
         "displayName": "",
         "method": "get",
         "uri": "\/home\/invoices\/json",
+        "args": []
+    },
+    "profileLoginLink": {
+        "name": "profile.login-link",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/profile\/login-link",
+        "args": []
+    },
+    "profileLoginLinkGet": {
+        "name": "profile.login-link.get",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/home\/profile\/login-link",
         "args": []
     },
     "profilePaymentsIndex": {

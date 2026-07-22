@@ -1,14 +1,15 @@
-import Alerts          from '@common/Alerts.vue';
-import PasswordBlock   from '@components/profile/PasswordBlock.vue';
-import AccountSwitcher from '@components/profile/account/AccountSwitcher.vue';
-import AccountSearch   from '@components/profile/account/AccountSearch.vue';
-import AccountBlock    from '@components/profile/account/AccountBlock.vue';
-import CounterItem     from '@components/profile/counters/CounterItem.vue';
-import CountersBlock   from '@components/profile/counters/CountersBlock.vue';
-import InvoicesBlock   from '@components/profile/invoices/InvoicesBlock.vue';
-import SummaryBlock           from '@components/shared/summary/SummaryBlock.vue';
-import PaymentsHistoryBlock   from '@components/profile/payments/PaymentsHistoryBlock.vue';
-import HelpDeskTicketsBlock   from '@components/profile/help-desk/TicketsBlock.vue';
+import Alerts               from '@common/Alerts.vue';
+import PasswordBlock        from '@components/profile/PasswordBlock.vue';
+import AccountSwitcher      from '@components/profile/account/AccountSwitcher.vue';
+import AccountSearch        from '@components/profile/account/AccountSearch.vue';
+import AccountBlock         from '@components/profile/account/AccountBlock.vue';
+import CounterItem          from '@components/profile/counters/CounterItem.vue';
+import CountersBlock        from '@components/profile/counters/CountersBlock.vue';
+import InvoicesBlock        from '@components/profile/invoices/InvoicesBlock.vue';
+import SummaryBlock         from '@components/shared/summary/SummaryBlock.vue';
+import PaymentsHistoryBlock from '@components/profile/payments/PaymentsHistoryBlock.vue';
+import HelpDeskTicketsBlock from '@components/profile/help-desk/TicketsBlock.vue';
+import LoginLinkBlock from '@components/profile/LoginLinkBlock.vue';
 
 export function registerProfileComponents (app) {
     app.component('alerts-block', Alerts);
@@ -22,4 +23,5 @@ export function registerProfileComponents (app) {
     app.component('summary-block', SummaryBlock);
     app.component('payments-history-block', PaymentsHistoryBlock);
     app.component('help-desk-tickets-block', HelpDeskTicketsBlock);
+    app.component('login-link-block', LoginLinkBlock);
 }

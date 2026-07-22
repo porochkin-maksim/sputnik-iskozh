@@ -409,6 +409,12 @@ export function ApiAdminLoginLink(userId,pin, getParams = {}, postData = null) {
     return apiClient.post(makeQuery('/admin/users/json/qr/login/'+userId+'/'+pin+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminLoginLinkSend(userId, getParams = {}, postData = null) {
+    // see admin.login-link.send
+    // controller: App\Http\Controllers\Admin\System\QrCodeController@makeLoginLinkAndSendEmail
+    return apiClient.post(makeQuery('/admin/users/json/qr/send-login-link/'+userId+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminNewPaymentDelete(id, getParams = {}, postData = null) {
     // see admin.new-payment.delete
     // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@delete
@@ -1343,6 +1349,18 @@ export function ApiProfileInvoicesJson(getParams = {}, postData = null) {
     // see profile.invoices.json
     // controller: App\Http\Controllers\Profile\HomeController@invoicesJson
     return apiClient.get(makeQuery('/home/invoices/json', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileLoginLink(getParams = {}, postData = null) {
+    // see profile.login-link
+    // controller: App\Http\Controllers\Profile\ProfileController@makeLoginLink
+    return apiClient.post(makeQuery('/home/profile/login-link', getParams), prepareRequestData(postData));
+}
+
+export function ApiProfileLoginLinkGet(getParams = {}, postData = null) {
+    // see profile.login-link.get
+    // controller: App\Http\Controllers\Profile\ProfileController@getLoginLink
+    return apiClient.get(makeQuery('/home/profile/login-link', getParams), prepareRequestData(postData));
 }
 
 export function ApiProfilePaymentsIndex(getParams = {}, postData = null) {

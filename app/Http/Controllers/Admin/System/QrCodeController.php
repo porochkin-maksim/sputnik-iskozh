@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Admin\System;
 
 use App\Http\Controllers\Controller;
-use App\Resources\RouteNames;
 use App\Services\Users\Notificator;
-use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\App\User\MakeLoginLink\MakeLoginLinkCommand;
+use Core\App\User\MakeLoginLink\MakeLoginLinkInput;
 use Core\Domains\Infra\Uid\UidFacade;
-use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Domains\User\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 
 class QrCodeController extends Controller
 {
     public function __construct(
-        private readonly UserService  $userService,
-        private readonly Notificator  $notificator,
+        private readonly MakeLoginLinkCommand $makeLoginLinkCommand,
+        private readonly UserService          $userService,
+        private readonly Notificator          $notificator,
     )
     {
     }
@@ -34,21 +33,28 @@ class QrCodeController extends Controller
 
     public function makeLoginLink(int $userId, string $pin): JsonResponse
     {
-        $uid = UidFacade::getUid(UidTypeEnum::LOGIN, $userId);
-        TokenFacade::save(['pin' => Hash::make($pin)], $uid);
-
-        $qrLink = route(RouteNames::ADMIN_QR_VIEW, $uid);
-
-        $tokenLink = route(RouteNames::TOKEN, $uid);
+        $result = $this->makeLoginLinkCommand->execute(new MakeLoginLinkInput($userId, $pin));
 
         $user = $this->userService->getById($userId);
         if ($user && $user->isRealEmail()) {
-            $this->notificator->sendLoginLinkNotification($user, $tokenLink, $pin);
+            $this->notificator->sendLoginLinkNotification($user, $result->tokenLink, $result->pin);
         }
 
         return response()->json([
-            'qrLink'    => $qrLink,
-            'tokenLink' => $tokenLink,
+            'qrLink'    => $result->qrLink,
+            'tokenLink' => $result->tokenLink,
         ]);
+    }
+
+    public function makeLoginLinkAndSendEmail(int $userId): JsonResponse
+    {
+        $result = $this->makeLoginLinkCommand->execute(new MakeLoginLinkInput($userId));
+
+        $user = $this->userService->getById($userId);
+        if ($user && $user->isRealEmail()) {
+            $this->notificator->sendLoginLinkNotification($user, $result->tokenLink, $result->pin);
+        }
+
+        return response()->json(['sent' => true]);
     }
 }

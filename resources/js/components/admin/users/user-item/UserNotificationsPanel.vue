@@ -1,21 +1,26 @@
 <template>
     <div class="card mb-2" v-if="user?.id">
         <div class="card-body">
-            <h5>Уведомления</h5>
+            <h5>Уведомления {{ user.isRealEmail ? '(Почта подтверждена)' : '' }}</h5>
             <ul class="list-group" v-if="user.actions?.edit">
                 <li
                     class="list-group-item list-group-item-action cursor-pointer border-0"
                     @click="sendInvitePasswordEmail"
-                    v-if="!user.isRealEmail"
                 >
                     <i class="fa fa-envelope-o"></i>&nbsp;Выслать пригласительную ссылку для установки пароля
                 </li>
                 <li
                     class="list-group-item list-group-item-action cursor-pointer border-0"
                     @click="sendRestorePasswordEmail"
-                    v-if="user.isRealEmail"
                 >
                     <i class="fa fa-key"></i>&nbsp;Выслать ссылку на восстановление пароля
+                </li>
+                <li
+                    v-if="user.isRealEmail"
+                    class="list-group-item list-group-item-action cursor-pointer border-0"
+                    @click="sendLoginLinkEmail"
+                >
+                    <i class="fa fa-send"></i>&nbsp;Создать и отправить ссылку для входа на почту
                 </li>
                 <template v-if="qrViewLink">
                     <li class="list-group-item list-group-item-action border-0">
@@ -45,12 +50,12 @@
                     </li>
                 </template>
                 <li
-                    v-else
+                    v-else-if="!user.isRealEmail"
                     class="list-group-item list-group-item-action cursor-pointer border-0"
                     @click="makeLoginQrCode"
                 >
                     <span v-if="hasActiveToken" class="text-success">
-                        <i class="fa fa-warning"></i>&nbsp;Перевыслать постоянную ссылку для входа (QR-код)
+                        <i class="fa fa-warning"></i>&nbsp;Переделать постоянную ссылку для входа (QR-код)
                     </span>
                     <span v-else>
                         <i class="fa fa-external-link"></i>&nbsp;Получить постоянную ссылку для входа (QR-код)
@@ -80,6 +85,10 @@ defineProps({
         default: false,
     },
     sendInvitePasswordEmail : {
+        type    : Function,
+        required: true,
+    },
+    sendLoginLinkEmail      : {
         type    : Function,
         required: true,
     },

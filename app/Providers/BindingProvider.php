@@ -19,6 +19,8 @@ use App\Repositories\Counter\CounterEloquentRepository;
 use App\Repositories\CounterHistory\CounterHistoryEloquentRepository;
 use App\Repositories\Files\FileEloquentRepository;
 use App\Repositories\Infra\ExDataRepository;
+use App\Repositories\Infra\Token\TokenEloquentRepository;
+use App\Repositories\Infra\Uid\UidEloquentRepository;
 use App\Repositories\Folders\FolderEloquentRepository;
 use App\Repositories\HelpDesk\TicketCategoryEloquentRepository;
 use App\Repositories\HelpDesk\TicketCommentEloquentRepository;
@@ -47,6 +49,8 @@ use Core\Domains\Billing\Transaction\TransactionRepositoryInterface;
 use Core\Domains\Counter\CounterRepositoryInterface;
 use Core\Domains\CounterHistory\CounterHistoryRepositoryInterface;
 use Core\Domains\Infra\ExData\Repositories\ExDataRepositoryInterface;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
+use Core\Domains\Infra\Uid\UidRepositoryInterface;
 use Core\Domains\Files\FileRepositoryInterface;
 use Core\Domains\Folders\FolderRepositoryInterface;
 use Core\Domains\HelpDesk\TicketCategoryRepositoryInterface;
@@ -94,6 +98,8 @@ class BindingProvider extends ServiceProvider
         $this->app->bind(OptionRepositoryInterface::class, OptionEloquentRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class, PaymentEloquentRepository::class);
         $this->app->bind(ExDataRepositoryInterface::class, ExDataRepository::class);
+        $this->app->bind(TokenRepositoryInterface::class, TokenEloquentRepository::class);
+        $this->app->bind(UidRepositoryInterface::class, UidEloquentRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleEloquentRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserEloquentRepository::class);
     }
