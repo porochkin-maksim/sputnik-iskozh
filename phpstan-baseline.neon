@@ -6499,18 +6499,6 @@ parameters:
 			path: core/Domains/Infra/ExData/Models/ExDataSearcher.php
 
 		-
-			message: '#^Method Core\\Domains\\Infra\\Tokens\\TokenFacade\:\:find\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: core/Domains/Infra/Tokens/TokenFacade.php
-
-		-
-			message: '#^Method Core\\Domains\\Infra\\Tokens\\TokenFacade\:\:save\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: core/Domains/Infra/Tokens/TokenFacade.php
-
-		-
 			message: '#^Called ''Model\:\:make\(\)'' which performs unnecessary work, use ''new Model\(\)''\.$#'
 			identifier: larastan.noModelMake
 			count: 1

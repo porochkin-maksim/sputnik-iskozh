@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Resources\RouteNames;
 use Carbon\Carbon;
 use Core\App\User\SetPasswordByToken\SetPasswordByTokenCommand;
-use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
 use Core\Domains\User\UserService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +19,7 @@ class SetPasswordController extends AbstractAuthController
     public function __construct(
         private readonly UserService               $userService,
         private readonly SetPasswordByTokenCommand $setPasswordByTokenCommand,
+        private readonly TokenRepositoryInterface  $tokenRepository,
     )
     {
     }
@@ -87,7 +88,7 @@ class SetPasswordController extends AbstractAuthController
             return null;
         }
 
-        $data = TokenFacade::find($token);
+        $data = $this->tokenRepository->find($token);
 
         if (empty($data)) {
             return null;

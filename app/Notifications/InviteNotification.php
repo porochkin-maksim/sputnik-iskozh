@@ -4,8 +4,9 @@ namespace App\Notifications;
 
 use App\Resources\RouteNames;
 use Carbon\Carbon;
-use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
 use Core\Shared\Helpers\DateTime\DateTimeFormat;
+use Illuminate\Support\Facades\App;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -35,7 +36,7 @@ class InviteNotification extends Notification
 
     private function getUrl(): string
     {
-        $token = TokenFacade::save([
+        $token = App::make(TokenRepositoryInterface::class)->save([
             'email'   => $this->email,
             'expires' => $this->getExpiresAt()->format(DateTimeFormat::DATE_TIME_DEFAULT),
         ]);

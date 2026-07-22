@@ -9,8 +9,9 @@ use App\Resources\RouteNames;
 use App\Support\HistoryChangesRoute;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\HistoryChanges\HistoryType;
-use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
 use Core\Domains\Infra\Uid\UidFacade;
+use Illuminate\Support\Facades\App;
 use Core\Domains\Infra\Uid\UidTypeEnum;
 use Core\Domains\User\UserEntity;
 use Core\Domains\User\UserIdEnum;
@@ -35,7 +36,7 @@ readonly class UserResource extends AbstractResource
         $exData  = $user->getExData();
 
         $uidDto         = UidFacade::findByReferenceId(UidTypeEnum::LOGIN, (int) $user->getId());
-        $hasActiveToken = $uidDto && TokenFacade::find($uidDto->getToken()) !== null;
+        $hasActiveToken = $uidDto && App::make(TokenRepositoryInterface::class)->find($uidDto->getToken()) !== null;
 
         $curAccount = $user->getAccounts()?->getById((int) $user->getAccountId());
 

@@ -2,8 +2,7 @@
 
 namespace Core\App\User\SetPasswordByToken;
 
-use Core\App\User\SetPasswordByToken\SetPasswordByTokenValidator;
-use Core\Domains\Infra\Tokens\TokenFacade;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
 use Core\Domains\User\UserService;
 use Core\Exceptions\ValidationException;
 
@@ -12,6 +11,7 @@ readonly class SetPasswordByTokenCommand
     public function __construct(
         private UserService                 $userService,
         private SetPasswordByTokenValidator $validator,
+        private TokenRepositoryInterface    $tokenRepository,
     )
     {
     }
@@ -32,7 +32,7 @@ readonly class SetPasswordByTokenCommand
         $user->setPassword($password);
         $this->userService->save($user);
 
-        TokenFacade::drop($token);
+        $this->tokenRepository->drop($token);
 
         return true;
     }

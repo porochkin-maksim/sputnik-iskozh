@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\DefaultRequest;
 use App\Models\User;
 use Carbon\Carbon;
-use Core\Domains\Infra\Tokens\TokenFacade;
-use Core\Domains\Infra\Uid\UidFacade;
+use Core\Domains\Infra\Tokens\TokenRepositoryInterface;
+use Core\Domains\Infra\Uid\UidRepositoryInterface;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,10 @@ class LoginController extends AbstractAuthController
 {
     use AuthenticatesUsers;
 
-    public function __construct()
+    public function __construct(
+        private readonly TokenRepositoryInterface $tokenRepository,
+        private readonly UidRepositoryInterface   $uidRepository,
+    )
     {
         $this->middleware('guest')->except('logout');
     }
@@ -32,9 +35,9 @@ class LoginController extends AbstractAuthController
     {
         $pin = new DefaultRequest(request()->toArray())->getString('pin');
 
-        $data = TokenFacade::find($token);
+        $data = $this->tokenRepository->find($token);
         if ($data && Hash::check($pin, $data['pin'])) {
-            $uid = UidFacade::find($token);
+            $uid = $this->uidRepository->find($token);
 
             if ($uid) {
                 $user = User::find($uid->getReferenceId());
