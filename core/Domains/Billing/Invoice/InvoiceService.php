@@ -55,7 +55,7 @@ readonly class InvoiceService
         )->getItems();
     }
 
-    public function getChargesByAccountIdAndPeriodId(int $accountId, ?int $periodId = null): InvoiceCollection
+    public function getChargesByAccountIdAndPeriodId(int $accountId, array $periodIds = []): InvoiceCollection
     {
         $searcher = new InvoiceSearcher()
             ->setAccountId($accountId)
@@ -64,8 +64,8 @@ readonly class InvoiceService
             ->setSortOrderProperty('period_id', SearcherInterface::SORT_ORDER_DESC)
         ;
 
-        if ($periodId) {
-            $searcher->setPeriodId($periodId);
+        if ($periodIds) {
+            $searcher->setPeriodIds($periodIds);
         }
 
         return $this->search($searcher)->getItems();

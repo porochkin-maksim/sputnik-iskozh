@@ -15,4 +15,5 @@ enum LockNameEnum: string
     case NOTIFY_ABOUT_NEW_UNVERIFIED_COUNTER_HISTORY_JOB    = 'notify-about-new-unverified-counter-history-job';
     case SAVE_IMPORT_USERS_JOB                              = 'save-import-users-job';
     case SAVE_IMPORT_ACCOUNTS_JOB                           = 'save-import-accounts-job';
+    case CLOSE_PERIOD_JOB                                   = 'close-period-job';
 }

@@ -12,6 +12,7 @@ use Core\Domains\Account\AccountSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Period\PeriodEntity;
 use Core\Domains\Billing\Period\PeriodService;
 use Core\Domains\Billing\Transaction\TransactionFactory;
 use Core\Domains\Billing\Transaction\TransactionService;
@@ -76,8 +77,10 @@ class TreasuryController extends Controller
 
     public function charges(int $accountId): JsonResponse
     {
-        $period   = $this->periodService->getOpenPeriods()->first();
-        $invoices = $this->invoiceService->getChargesByAccountIdAndPeriodId($accountId, $period->getId());
+        $periodIds = $this->periodService->getOpenPeriods()
+            ->map(static fn(PeriodEntity $p) => $p->getId())
+            ->toArray();
+        $invoices  = $this->invoiceService->getChargesByAccountIdAndPeriodId($accountId, $periodIds);
 
         $result = [];
         foreach ($invoices as $invoice) {
@@ -112,7 +115,7 @@ class TreasuryController extends Controller
 
             $result[] = [
                 'id'         => $invoice->getId(),
-                'periodName' => ($invoice->getPeriod()?->getName() . ' ' . ($invoice->getType()?->isRegular() ? 'Основной' : $invoice->getName())),
+                'periodName' => ($invoice->getPeriod()?->getName() . ' ' . ($invoice?->getName() ?: $invoice->getType()?->name())),
                 'cost'       => $cost,
                 'paid'       => $paid,
                 'delta'      => $invoice->getDelta(),

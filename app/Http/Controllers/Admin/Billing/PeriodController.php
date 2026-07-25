@@ -7,7 +7,7 @@ use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Periods\PeriodResource;
 use App\Http\Resources\Admin\Periods\PeriodsListResource;
 use App\Support\HistoryChangesRoute;
-use Core\App\Billing\Period\ClosePeriodCommand;
+use App\Jobs\Billing\ClosePeriodJob;
 use Core\App\Billing\Period\GetListCommand;
 use Core\App\Billing\Period\SaveCommand;
 use Core\Domains\Access\PermissionEnum;
@@ -26,7 +26,6 @@ class PeriodController extends Controller
         private readonly PeriodService      $periodService,
         private readonly GetListCommand     $getListCommand,
         private readonly SaveCommand        $saveCommand,
-        private readonly ClosePeriodCommand $closePeriodCommand,
     )
     {
     }
@@ -104,7 +103,7 @@ class PeriodController extends Controller
             abort(403);
         }
 
-        $this->closePeriodCommand->execute($id, (int) lc::user()->getId());
+        ClosePeriodJob::dispatchIfNeeded($id, (int) lc::user()->getId());
 
         return response()->json(['success' => true]);
     }

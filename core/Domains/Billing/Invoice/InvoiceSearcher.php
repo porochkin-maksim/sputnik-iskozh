@@ -29,6 +29,13 @@ class InvoiceSearcher extends BaseSearcher
         return $this;
     }
 
+    public function setPeriodIds(array $periodIds): static
+    {
+        $this->addWhereIn(Invoice::PERIOD_ID, $periodIds);
+
+        return $this;
+    }
+
     public function setAccountId(?int $accountId): static
     {
         $this->addWhere(Invoice::ACCOUNT_ID, SearcherInterface::EQUALS, $accountId);

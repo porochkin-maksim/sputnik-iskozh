@@ -24,7 +24,7 @@
                 <tbody>
                 <template v-for="period in periodsInfo" :key="period.id">
                     <tr class="text-center text-success table-success">
-                        <th colspan="5">
+                        <th colspan="7">
                             <b>Период «{{ period.name }}»</b> <span
                             class="text-muted small">{{ formatDate(period.startAt) }} - {{ formatDate(period.endAt) }}</span>
                         </th>
@@ -33,6 +33,8 @@
                         <th class="table-thin-column">ID</th>
                         <th>Тип</th>
                         <th>Название</th>
+                        <th>Начало</th>
+                        <th>Окончание</th>
                         <th class="pe-3">Тариф</th>
                         <th class="text-center table-thin-column">Действия</th>
                     </tr>
@@ -41,6 +43,8 @@
                         <td class="table-thin-column text-end">{{ service.id }}</td>
                         <td class="text-end">{{ service.typeName }}</td>
                         <td class="text-end">{{ service.name }}</td>
+                        <td class="text-end">{{ service.periodFrom ? formatDate(service.periodFrom) : '-' }}</td>
+                        <td class="text-end">{{ service.periodTo ? formatDate(service.periodTo) : '-' }}</td>
                         <td class="text-end pe-3">{{ formatMoney(service.cost) }}</td>
                         <td class="table-thin-column">
                             <div class="d-flex justify-content-end gap-1 flex-nowrap">

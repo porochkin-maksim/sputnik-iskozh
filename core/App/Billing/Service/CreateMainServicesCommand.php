@@ -43,8 +43,7 @@ readonly class CreateMainServicesCommand
                 ->setType($case)
                 ->setName($case->name())
                 ->setCost(0)
-                ->setPeriodFrom($period?->getStartAt())
-                ->setPeriodTo($period?->getEndAt())
+                ->setPeriodFrom($case->isElectric() ? $period?->getStartAt() : null)
             ;
 
             $service = $this->serviceService->save($service);

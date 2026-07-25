@@ -32,6 +32,11 @@ enum ServiceTypeEnum: int
         return $this === self::DEBT;
     }
 
+    public function isElectric(): bool
+    {
+        return $this === self::ELECTRIC_TARIFF;
+    }
+
     /**
      * @return self[]
      */
