@@ -670,6 +670,13 @@
             "id": "{id}"
         }
     },
+    "adminPaymentExport": {
+        "name": "admin.payment.export",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/admin\/invoices\/payments\/manage\/export",
+        "args": []
+    },
     "adminPaymentList": {
         "name": "admin.payment.list",
         "displayName": "",

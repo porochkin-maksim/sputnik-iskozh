@@ -8,7 +8,22 @@
                 </span>
             </div>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 align-items-center">
+                <div class="d-flex align-items-center gap-1">
+                    <custom-calendar
+                        v-model="exportDate"
+                        placeholder="дд.мм.гггг"
+                        classes="w-auto"
+                    />
+                    <button
+                        class="btn btn-sm btn-outline-primary"
+                        :disabled="!exportDate"
+                        @click="downloadExport"
+                        title="Скачать Excel"
+                    >
+                        <i class="fa fa-download"></i>
+                    </button>
+                </div>
                 <button
                     class="btn btn-success"
                     v-if="canEdit"
@@ -219,21 +234,19 @@ import {
     onMounted,
     ref,
     watch,
-}                            from 'vue';
-import ViewDialog            from '@common/ViewDialog.vue';
-import FileItem              from '@common/files/FileItem.vue';
-import CustomInput           from '@common/form/CustomInput.vue';
-import CustomCalendar        from '@common/form/CustomCalendar.vue';
-import CustomTextarea        from '@common/form/CustomTextarea.vue';
-import SearchSelect          from '@common/form/SearchSelect.vue';
-import PaymentsManageList    from './PaymentsManageList.vue';
-import { usePermissions }    from '@composables/usePermissions.js';
-import { usePaymentsManage } from './usePaymentsManage.js';
-import { useResponseError }  from '@composables/useResponseError';
-import { routeUri }          from '@utils/routeUri.js';
-import {
-    ApiAdminPaymentManageAccountBalance,
-}                            from '@api';
+}                                              from 'vue';
+import ViewDialog                              from '@common/ViewDialog.vue';
+import FileItem                                from '@common/files/FileItem.vue';
+import CustomInput                             from '@common/form/CustomInput.vue';
+import CustomCalendar                          from '@common/form/CustomCalendar.vue';
+import CustomTextarea                          from '@common/form/CustomTextarea.vue';
+import SearchSelect                            from '@common/form/SearchSelect.vue';
+import PaymentsManageList                      from './PaymentsManageList.vue';
+import { usePermissions }                      from '@composables/usePermissions.js';
+import { usePaymentsManage }                   from './usePaymentsManage.js';
+import { useResponseError }                    from '@composables/useResponseError';
+import { routeUri }                            from '@utils/routeUri.js';
+import { ApiAdminPaymentManageAccountBalance } from '@api';
 
 const { parseResponseErrors, showInfo, showDanger } = useResponseError();
 
@@ -302,6 +315,16 @@ const groupedTransactions = computed(() => {
     }
     return Object.values(groups);
 });
+
+const exportDate = ref('');
+
+const downloadExport = () => {
+    if (!exportDate.value) {
+        return;
+    }
+    const url = routeUri('adminPaymentExport', {}, { date: exportDate.value });
+    window.open(url, '_blank');
+};
 
 const accountBalance = ref(null);
 

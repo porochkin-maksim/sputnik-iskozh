@@ -152,6 +152,8 @@ Route::group(['prefix' => 'invoices'], static function () {
 
     // универсальное управление платежами
     Route::group(['prefix' => 'payments/manage'], static function () {
+        Route::get('/export', [Controllers\Admin\Billing\PaymentManageController::class, 'export'])->name(RouteNames::ADMIN_PAYMENT_EXPORT);
+
         Route::group(['prefix' => 'json'], static function () {
             Route::get('/list', [Controllers\Admin\Billing\PaymentManageController::class, 'list'])->name(RouteNames::ADMIN_PAYMENT_MANAGE_LIST);
             Route::get('/create', [Controllers\Admin\Billing\PaymentManageController::class, 'create'])->name(RouteNames::ADMIN_PAYMENT_MANAGE_CREATE);

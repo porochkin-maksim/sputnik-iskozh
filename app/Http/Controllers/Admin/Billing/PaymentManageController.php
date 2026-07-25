@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Billing;
 
+use App\Exports\PaymentsExport\PaymentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DefaultRequest;
 use App\Http\Resources\Admin\Invoices\InvoicesSelectResource;
@@ -22,6 +23,7 @@ use Core\Domains\Account\AccountService;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentFileService;
 use Core\Domains\Billing\Payment\PaymentGate;
@@ -36,6 +38,7 @@ use Core\Exceptions\ValidationException;
 use Core\Repositories\SearcherInterface;
 use Illuminate\Http\JsonResponse;
 use lc;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PaymentManageController extends Controller
 {
@@ -145,6 +148,39 @@ class PaymentManageController extends Controller
                 'drop' => lc::roleDecorator()->can(PermissionEnum::PAYMENTS_DROP),
             ],
         ]);
+    }
+
+    public function export(DefaultRequest $request)
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::PAYMENTS_VIEW)) {
+            abort(403);
+        }
+
+        $date = $request->getStringOrNull('date');
+        if ( ! $date) {
+            abort(422, 'Укажите дату');
+        }
+
+        $searcher = new PaymentSearcher()
+            ->setWithAccount()
+            ->addWhere(Payment::PAID_AT, SearcherInterface::EQUALS, $date)
+            ->setSortOrderProperty(Payment::PAID_AT, SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        $payments = $this->paymentService->search($searcher)->getItems();
+
+        $data = $payments->map(fn(PaymentEntity $p) => [
+            'id'             => $p->getId(),
+            'account_number' => $p->getAccountNumber(),
+            'cost'           => $p->getCost(),
+            'paid_at'        => $p->getPaidAt()?->format('d.m.Y'),
+            'created_at'     => $p->getCreatedAt()?->format('d.m.Y H:i'),
+            'verified'       => $p->isVerified(),
+            'moderated'      => $p->isModerated(),
+            'comment'        => $p->getComment(),
+        ])->toArray();
+
+        return Excel::download(new PaymentsExport($data), sprintf('платежи-%s.xlsx', $date));
     }
 
     public function create(DefaultRequest $request, ?int $invoiceId = null): JsonResponse

@@ -234,6 +234,7 @@ abstract class RouteNames
     public const string ADMIN_PAYMENT_MANAGE_UNALLOCATED_TRANSACTIONS = 'admin.payment.manage.unallocated-transactions';
     public const string ADMIN_PAYMENT_MANAGE_PAY_CLAIM                = 'admin.payment.manage.pay-claim';
     public const string ADMIN_PAYMENT_MANAGE_ACCOUNT_BALANCE          = 'admin.payment.manage.account-balance';
+    public const string ADMIN_PAYMENT_EXPORT                          = 'admin.payment.export';
 
     public const string ADMIN_COUNTER_HISTORY_LIST = 'admin.counter.history.list';
 

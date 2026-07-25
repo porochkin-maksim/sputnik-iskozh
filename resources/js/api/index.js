@@ -487,6 +487,12 @@ export function ApiAdminPaymentDelete(invoiceId,id, getParams = {}, postData = n
     return apiClient.delete(makeQuery('/admin/invoices/json/'+invoiceId+'/payments/delete/'+id+'', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminPaymentExport(getParams = {}, postData = null) {
+    // see admin.payment.export
+    // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@export
+    return apiClient.get(makeQuery('/admin/invoices/payments/manage/export', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminPaymentList(invoiceId, getParams = {}, postData = null) {
     // see admin.payment.list
     // controller: App\Http\Controllers\Admin\Billing\PaymentManageController@list
