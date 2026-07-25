@@ -190,9 +190,9 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function recalc(int $id): JsonResponse
+    public function recalc(int $invoiceId): JsonResponse
     {
-        return response()->json($this->invoiceService->recalcInvoice($id, true));
+        return response()->json($this->invoiceService->recalcInvoice($invoiceId, true, false));
     }
 
     public function recalcPeriod(int $periodId): JsonResponse

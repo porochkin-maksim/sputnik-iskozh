@@ -4,6 +4,7 @@ namespace Core\Domains\Billing\Invoice;
 
 use Core\Domains\Account\AccountCollection;
 use Core\Domains\Account\AccountService;
+use Core\Repositories\SearcherInterface;
 use App\Jobs\Billing\RecalcClaimsPaidJob;
 
 readonly class InvoiceService
@@ -40,11 +41,11 @@ readonly class InvoiceService
         return $this->accountService->getByIds($this->invoiceRepository->getAccountIdsWithoutRegularInvoice($periodId));
     }
 
-    public function recalcInvoice(int $invoiceId, bool $sync = false): bool
+    public function recalcInvoice(int $invoiceId, bool $sync = false, bool $redistribute = true): bool
     {
         return $sync
-            ? RecalcClaimsPaidJob::dispatchSyncIfNeeded($invoiceId)
-            : RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId);
+            ? RecalcClaimsPaidJob::dispatchSyncIfNeeded($invoiceId, $redistribute)
+            : RecalcClaimsPaidJob::dispatchIfNeeded($invoiceId, $redistribute);
     }
 
     public function getByAccountId(int $accountId): InvoiceCollection
@@ -52,6 +53,22 @@ readonly class InvoiceService
         return $this->search(new InvoiceSearcher()
             ->setAccountId($accountId),
         )->getItems();
+    }
+
+    public function getChargesByAccountIdAndPeriodId(int $accountId, ?int $periodId = null): InvoiceCollection
+    {
+        $searcher = new InvoiceSearcher()
+            ->setAccountId($accountId)
+            ->setWithPeriod()
+            ->setWithClaims()
+            ->setSortOrderProperty('period_id', SearcherInterface::SORT_ORDER_DESC)
+        ;
+
+        if ($periodId) {
+            $searcher->setPeriodId($periodId);
+        }
+
+        return $this->search($searcher)->getItems();
     }
 
     public function getByPeriodId(int $periodId): InvoiceCollection

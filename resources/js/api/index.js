@@ -97,6 +97,12 @@ export function ApiAdminClaimList(invoiceId, getParams = {}, postData = null) {
     return apiClient.get(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/list', getParams), prepareRequestData(postData));
 }
 
+export function ApiAdminClaimResetPaid(invoiceId,id, getParams = {}, postData = null) {
+    // see admin.claim.reset-paid
+    // controller: App\Http\Controllers\Admin\Billing\ClaimController@resetPaid
+    return apiClient.post(makeQuery('/admin/invoices/json/'+invoiceId+'/claims/reset-paid/'+id+'', getParams), prepareRequestData(postData));
+}
+
 export function ApiAdminClaimSave(invoiceId, getParams = {}, postData = null) {
     // see admin.claim.save
     // controller: App\Http\Controllers\Admin\Billing\ClaimController@save
@@ -1439,6 +1445,54 @@ export function ApiToken(token, getParams = {}, postData = null) {
     // see token
     // controller: App\Http\Controllers\TokenController@token
     return apiClient.get(makeQuery('/token/'+token+'', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryCharges(accountId, getParams = {}, postData = null) {
+    // see treasury.charges
+    // controller: App\Http\Controllers\Treasury\TreasuryController@charges
+    return apiClient.get(makeQuery('/treasury/accounts/'+accountId+'/charges', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryCounterAddValue(getParams = {}, postData = null) {
+    // see treasury.counter.add-value
+    // controller: App\Http\Controllers\Treasury\TreasuryController@addCounterValue
+    return apiClient.post(makeQuery('/treasury/counter/add-value', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryCounterCreate(getParams = {}, postData = null) {
+    // see treasury.counter.create
+    // controller: App\Http\Controllers\Treasury\TreasuryController@createCounter
+    return apiClient.post(makeQuery('/treasury/counter/create', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryCounterUpdate(getParams = {}, postData = null) {
+    // see treasury.counter.update
+    // controller: App\Http\Controllers\Treasury\TreasuryController@updateCounter
+    return apiClient.post(makeQuery('/treasury/counter/update', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryCounters(accountId, getParams = {}, postData = null) {
+    // see treasury.counters
+    // controller: App\Http\Controllers\Treasury\TreasuryController@counters
+    return apiClient.get(makeQuery('/treasury/accounts/'+accountId+'/counters', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryIndex(getParams = {}, postData = null) {
+    // see treasury.index
+    // controller: App\Http\Controllers\Treasury\TreasuryController@index
+    return apiClient.get(makeQuery('/treasury', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasuryPay(getParams = {}, postData = null) {
+    // see treasury.pay
+    // controller: App\Http\Controllers\Treasury\TreasuryController@pay
+    return apiClient.post(makeQuery('/treasury/pay', getParams), prepareRequestData(postData));
+}
+
+export function ApiTreasurySearch(getParams = {}, postData = null) {
+    // see treasury.search
+    // controller: App\Http\Controllers\Treasury\TreasuryController@search
+    return apiClient.post(makeQuery('/treasury/search', getParams), prepareRequestData(postData));
 }
 
 export function ApiVerificationNotice(getParams = {}, postData = null) {

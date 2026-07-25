@@ -101,6 +101,10 @@ Route::group(['prefix' => 'invoices'], static function () {
                     ->name(RouteNames::ADMIN_CLAIM_VIEW)
                     ->whereNumber('claimId')
                 ;
+                Route::post('/reset-paid/{id}', [Controllers\Admin\Billing\ClaimController::class, 'resetPaid'])
+                    ->name(RouteNames::ADMIN_CLAIM_RESET_PAID)
+                    ->whereNumber('id')
+                ;
             });
             Route::group(['prefix' => 'payments'], static function () {
                 Route::get('/create', [Controllers\Admin\Billing\PaymentManageController::class, 'create'])

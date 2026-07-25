@@ -33,7 +33,10 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (ValidationException $e, $request) {
             if ($request->expectsJson()) {
-                return response()->json(['errors' => $e->errors], 422);
+                return response()->json([
+                    'message' => $e->getMessage() ?: 'Ошибка валидации',
+                    'errors'  => $e->errors,
+                ], 422);
             }
 
             // Для обычных запросов можно редиректить назад с ошибками, как делает Laravel

@@ -90,7 +90,7 @@
                     </div>
                     <div class="profile-invoice-card__meta">
                         <div class="profile-invoice-chip">
-                            <span class="profile-invoice-chip__label">Тариф</span>
+                            <span class="profile-invoice-chip__label">Стоимость</span>
                             <span class="profile-invoice-chip__value">{{ invoice.cost }}</span>
                         </div>
                         <div class="profile-invoice-chip">

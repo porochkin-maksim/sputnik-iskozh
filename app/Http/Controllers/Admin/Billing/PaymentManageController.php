@@ -76,6 +76,7 @@ class PaymentManageController extends Controller
             ->setWithAccount()
             ->setWithFiles()
             ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->setLimit(50)
         ;
 
         $invoiceId ??= $request->getIntOrNull('invoice_id');

@@ -14,14 +14,24 @@
         <td class="text-end">{{ formatMoney(claim.cost) }}</td>
         <td class="text-end">{{ formatMoney(claim.paid) }}</td>
         <td class="text-end">{{ formatMoney(claim.delta) }}</td>
-        <td v-if="showPayColumn" class="table-thin-column text-center">
+        <td class="table-thin-column text-center" v-if="canEdit">
             <button
-                v-if="parseFloat(claim.delta) > 0 && canEdit"
-                class="btn btn-sm btn-success"
+                v-if="parseFloat(claim.delta) > 0"
+                class="btn btn-sm btn-success w-100"
                 type="button"
                 @click="$emit('pay', claim)"
             >
                 <i class="fa fa-credit-card" aria-hidden="true"></i> Оплатить
+            </button>
+            <button
+                v-if=" parseFloat(claim.paid) > 0"
+                class="btn btn-sm btn-warning admin-action-btn w-100"
+                type="button"
+                :aria-label="'Снять оплату с услуги ' + claim.id"
+                title="Снять оплату"
+                @click="$emit('unpay', claim.id)"
+            >
+                <i class="fa fa-undo" aria-hidden="true"></i> Снять оплату
             </button>
         </td>
         <td class="text-center">{{ claim.created }}</td>
@@ -61,23 +71,23 @@
 import HistoryBtn from '@common/HistoryBtn.vue';
 
 defineProps({
-    claim      : {
+    claim        : {
         type    : Object,
         required: true,
     },
-    canEdit    : {
+    canEdit      : {
         type    : Boolean,
         required: true,
     },
-    canDrop    : {
+    canDrop      : {
         type    : Boolean,
         required: true,
     },
-    dropLoading: {
+    dropLoading  : {
         type   : [Number, null],
         default: null,
     },
-    formatMoney: {
+    formatMoney  : {
         type    : Function,
         required: true,
     },
@@ -87,5 +97,5 @@ defineProps({
     },
 });
 
-defineEmits(['edit', 'drop', 'pay']);
+defineEmits(['edit', 'drop', 'pay', 'unpay']);
 </script>

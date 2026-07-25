@@ -55,10 +55,10 @@ readonly class LinkPaymentCommand
         $payment = $this->paymentTransactionService->saveWithTransaction($payment);
 
         if ($id === null && $payment->getInvoiceId()) {
-            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true);
+            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true, false);
         }
         elseif ($id !== null && $oldCost !== null && $oldCost !== $cost && $payment->getInvoiceId()) {
-            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true);
+            $this->invoiceService->recalcInvoice($payment->getInvoiceId(), true, false);
         }
 
         return $payment;

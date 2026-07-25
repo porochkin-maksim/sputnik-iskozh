@@ -20,4 +20,9 @@ enum InvoiceTypeEnum: int
             self::OUTCOME => 'Расход',
         };
     }
+
+    public function isRegular(): bool
+    {
+        return $this === self::REGULAR;
+    }
 }

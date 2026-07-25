@@ -213,7 +213,7 @@ else {
 email.value = resolveContactValue(props.propUser?.email, 'requestEmail');
 phone.value = resolveContactValue(props.propUser?.phone, 'requestPhone');
 name.value  = propUserName.value ?? storedRequestValue('requestName');
-cost.value  = props.propInvoice?.delta ?? storedRequestValue('requestCost');
+cost.value  = parseFloat(props.propInvoice?.delta ?? storedRequestValue('requestCost')).toFixed(2);
 text.value  = props.propInvoice?.id
     ? 'Оплата по счёту №' + props.propInvoice.id + ' за период "' + (props.propInvoice.period?.name ?? '') + '" за участок ' + (props.propInvoice.account?.number ?? '')
     : storedRequestValue('requestPaymentText');

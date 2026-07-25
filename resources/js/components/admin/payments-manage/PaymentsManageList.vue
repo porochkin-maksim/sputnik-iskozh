@@ -34,7 +34,7 @@
                     </td>
                     <td v-if="accountId !== null">{{ payment.name }}</td>
                     <td class="text-center" v-if="accountId === null">
-                        <a :href="payment.account.viewUrl" v-if="payment.account.viewUrl" class="link-firm">
+                        <a :href="payment.account.viewUrl" v-if="payment.account.viewUrl && canViewAccounts" class="link-firm">
                             {{ payment.accountNumber }}
                         </a>
                         <span v-else>
@@ -151,6 +151,8 @@ const listParams  = computed(() => {
     if (props.accountId) params.account_id = props.accountId;
     return params;
 });
+
+const canViewAccounts = computed(() => has('accounts', 'view'));
 
 const payments    = ref([]);
 const isLoading   = ref(false);

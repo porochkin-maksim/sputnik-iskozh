@@ -20,7 +20,7 @@
                     <th class="text-center">Стоимость</th>
                     <th class="text-center">Оплачено</th>
                     <th class="text-center">Долг</th>
-                    <th v-if="hasUnpaidClaims" class="text-center table-thin-column">Оплатить</th>
+                    <th v-if="canEdit" class="text-center table-thin-column">Действия</th>
                     <th class="text-center">Создана</th>
                     <th class="text-center table-thin-column">Действия</th>
                 </tr>
@@ -38,6 +38,7 @@
                     @drop="dropAction"
                     @edit="editAction"
                     @pay="$emit('pay', $event)"
+                    @unpay="unpayAction"
                 />
                 <tr v-if="!claims.length">
                     <td :colspan="hasUnpaidClaims ? 10 : 9" class="text-center py-3 text-muted">
@@ -127,6 +128,23 @@ const loadList = async () => {
 // Редактирование/просмотр
 const editAction = (id) => {
     emit('update:selectedId', id);
+};
+
+// Снятие оплаты
+const unpayAction = async (id) => {
+    if (!confirm('Снять оплату с услуги?')) {
+        return;
+    }
+
+    try {
+        const { ApiAdminClaimResetPaid } = await import('@api');
+        await ApiAdminClaimResetPaid(props.invoiceId, id);
+        await loadList();
+        showInfo('Оплата снята');
+    }
+    catch (error) {
+        parseResponseErrors(error);
+    }
 };
 
 // Удаление

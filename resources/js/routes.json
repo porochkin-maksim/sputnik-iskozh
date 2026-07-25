@@ -129,6 +129,16 @@
             "invoiceId": "{invoiceId}"
         }
     },
+    "adminClaimResetPaid": {
+        "name": "admin.claim.reset-paid",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/admin\/invoices\/json\/{invoiceId}\/claims\/reset-paid\/{id}",
+        "args": {
+            "invoiceId": "{invoiceId}",
+            "id": "{id}"
+        }
+    },
     "adminClaimSave": {
         "name": "admin.claim.save",
         "displayName": "",
@@ -1884,6 +1894,66 @@
         "args": {
             "token": "{token}"
         }
+    },
+    "treasuryCharges": {
+        "name": "treasury.charges",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/treasury\/accounts\/{accountId}\/charges",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "treasuryCounterAddValue": {
+        "name": "treasury.counter.add-value",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/treasury\/counter\/add-value",
+        "args": []
+    },
+    "treasuryCounterCreate": {
+        "name": "treasury.counter.create",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/treasury\/counter\/create",
+        "args": []
+    },
+    "treasuryCounterUpdate": {
+        "name": "treasury.counter.update",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/treasury\/counter\/update",
+        "args": []
+    },
+    "treasuryCounters": {
+        "name": "treasury.counters",
+        "displayName": "",
+        "method": "get",
+        "uri": "\/treasury\/accounts\/{accountId}\/counters",
+        "args": {
+            "accountId": "{accountId}"
+        }
+    },
+    "treasuryIndex": {
+        "name": "treasury.index",
+        "displayName": "\u041a\u0430\u0441\u0441\u0430",
+        "method": "get",
+        "uri": "\/treasury",
+        "args": []
+    },
+    "treasuryPay": {
+        "name": "treasury.pay",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/treasury\/pay",
+        "args": []
+    },
+    "treasurySearch": {
+        "name": "treasury.search",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/treasury\/search",
+        "args": []
     },
     "verificationNotice": {
         "name": "verification.notice",

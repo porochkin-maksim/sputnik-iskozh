@@ -201,11 +201,12 @@ abstract class RouteNames
     public const string ADMIN_INVOICE_RESET_PAYMENTS_PERIOD              = 'admin.invoice.reset-payments-period';
     public const string ADMIN_INVOICE_SYNC_SERVICES                      = 'admin.invoice.sync-services';
 
-    public const string ADMIN_CLAIM_VIEW   = 'admin.claim.view';
-    public const string ADMIN_CLAIM_CREATE = 'admin.claim.create';
-    public const string ADMIN_CLAIM_SAVE   = 'admin.claim.save';
-    public const string ADMIN_CLAIM_LIST   = 'admin.claim.list';
-    public const string ADMIN_CLAIM_DELETE = 'admin.claim.delete';
+    public const string ADMIN_CLAIM_VIEW       = 'admin.claim.view';
+    public const string ADMIN_CLAIM_CREATE     = 'admin.claim.create';
+    public const string ADMIN_CLAIM_SAVE       = 'admin.claim.save';
+    public const string ADMIN_CLAIM_LIST       = 'admin.claim.list';
+    public const string ADMIN_CLAIM_DELETE     = 'admin.claim.delete';
+    public const string ADMIN_CLAIM_RESET_PAID = 'admin.claim.reset-paid';
 
     public const string ADMIN_PAYMENT_VIEW   = 'admin.payment.view';
     public const string ADMIN_PAYMENT_CREATE = 'admin.payment.create';
@@ -270,6 +271,15 @@ abstract class RouteNames
     public const string WEBHOOK_ACQURING_SUBMIT = 'webhook.acquring.submit';
     public const string WEBHOOK_ACQURING_FAILED = 'webhook.acquring.failed';
 
+    public const string TREASURY_INDEX             = 'treasury.index';
+    public const string TREASURY_SEARCH            = 'treasury.search';
+    public const string TREASURY_CHARGES           = 'treasury.charges';
+    public const string TREASURY_PAY               = 'treasury.pay';
+    public const string TREASURY_COUNTERS          = 'treasury.counters';
+    public const string TREASURY_COUNTER_CREATE    = 'treasury.counter.create';
+    public const string TREASURY_COUNTER_ADD_VALUE = 'treasury.counter.add-value';
+    public const string TREASURY_COUNTER_UPDATE    = 'treasury.counter.update';
+
     public static function name(mixed $key, string $default = ''): string
     {
         return match ($key) {
@@ -322,6 +332,8 @@ abstract class RouteNames
             self::HISTORY_CHANGES                     => 'История изменений',
             self::ADMIN_HELP_DESK                     => 'Учёт заявок',
             self::ADMIN_HELP_DESK_SETTINGS            => 'Настройки',
+
+            self::TREASURY_INDEX                      => 'Касса',
 
             default                                   => $default,
         };

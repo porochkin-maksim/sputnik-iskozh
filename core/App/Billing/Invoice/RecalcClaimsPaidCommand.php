@@ -55,7 +55,7 @@ readonly class RecalcClaimsPaidCommand
         }
     }
 
-    public function execute(int $invoiceId): void
+    public function execute(int $invoiceId, bool $redistribute = true): void
     {
         $invoice = $this->invoiceService->search(
             new InvoiceSearcher()->setId($invoiceId)->setWithClaims(),
@@ -116,50 +116,52 @@ readonly class RecalcClaimsPaidCommand
             $claim->setPaid($existingTotal);
         }
 
-        // распределяем нераспределённые транзакции участка
-        $paymentIds  = $this->paymentService->getVerifiedByAccount($invoice->getAccountId())->getIds();
-        $unallocated = $paymentIds !== []
-            ? $this->transactionService->getUnallocatedBypaymentIds($paymentIds)
-            : new TransactionCollection();
+        if ($redistribute) {
+            // распределяем нераспределённые транзакции участка
+            $paymentIds  = $this->paymentService->getVerifiedByAccount($invoice->getAccountId())->getIds();
+            $unallocated = $paymentIds !== []
+                ? $this->transactionService->getUnallocatedBypaymentIds($paymentIds)
+                : new TransactionCollection();
 
-        if ( ! $unallocated->isEmpty()) {
-            $transactionFactory = new TransactionFactory();
+            if ( ! $unallocated->isEmpty()) {
+                $transactionFactory = new TransactionFactory();
 
-            foreach ($claims as $claim) {
-                $remaining = (float) $claim->getCost() - (float) $claim->getPaid();
-                if ($remaining <= 0) {
-                    continue;
-                }
-
-                foreach ($unallocated as $tx) {
+                foreach ($claims as $claim) {
+                    $remaining = (float) $claim->getCost() - (float) $claim->getPaid();
                     if ($remaining <= 0) {
-                        break;
-                    }
-                    if ($tx->getClaimId() !== null || (float) $tx->getCost() <= 0) {
                         continue;
                     }
 
-                    $txCost = (float) $tx->getCost();
-                    $toPay  = min($remaining, $txCost);
+                    foreach ($unallocated as $tx) {
+                        if ($remaining <= 0) {
+                            break;
+                        }
+                        if ($tx->getClaimId() !== null || (float) $tx->getCost() <= 0) {
+                            continue;
+                        }
 
-                    if ($toPay >= $txCost) {
-                        $tx->setClaimId($claim->getId());
-                        $this->transactionService->save($tx);
+                        $txCost = (float) $tx->getCost();
+                        $toPay  = min($remaining, $txCost);
+
+                        if ($toPay >= $txCost) {
+                            $tx->setClaimId($claim->getId());
+                            $this->transactionService->save($tx);
+                        }
+                        else {
+                            $tx->setCost($txCost - $toPay);
+                            $this->transactionService->save($tx);
+
+                            $newTx = $transactionFactory->makeDefault()
+                                ->setPaymentId($tx->getPaymentId())
+                                ->setClaimId($claim->getId())
+                                ->setCost($toPay)
+                            ;
+                            $this->transactionService->save($newTx);
+                        }
+
+                        $remaining -= $toPay;
+                        $claim->setPaid(($claim->getPaid() ?? 0.0) + $toPay);
                     }
-                    else {
-                        $tx->setCost($txCost - $toPay);
-                        $this->transactionService->save($tx);
-
-                        $newTx = $transactionFactory->makeDefault()
-                            ->setPaymentId($tx->getPaymentId())
-                            ->setClaimId($claim->getId())
-                            ->setCost($toPay)
-                        ;
-                        $this->transactionService->save($newTx);
-                    }
-
-                    $remaining -= $toPay;
-                    $claim->setPaid(($claim->getPaid() ?? 0.0) + $toPay);
                 }
             }
         }

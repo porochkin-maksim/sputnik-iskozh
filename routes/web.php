@@ -9,6 +9,7 @@ include 'web/session.php';
 include 'web/common.php';
 include 'web/home.php';
 include 'web/admin.php';
+include 'web/treasury.php';
 include 'web/public.php';
 
 Route::group(['prefix' => 'pages'], static function () {

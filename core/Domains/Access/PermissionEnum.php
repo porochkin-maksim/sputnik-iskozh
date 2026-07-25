@@ -25,6 +25,7 @@ enum PermissionEnum: int
                 100 => 'Счета',
                 110 => 'Услуги счетов',
                 120 => 'Платежи',
+                160 => 'Касса',
                 130 => 'Счётчики',
                 140 => 'Опции',
                 150 => 'Заявки',
@@ -50,6 +51,7 @@ enum PermissionEnum: int
                 110 => 'invoice_services',
                 120 => 'payments',
                 130 => 'counters',
+                160 => 'treasury',
                 140 => 'options',
                 150 => 'help_desk',
             },
@@ -177,4 +179,6 @@ enum PermissionEnum: int
     case HELP_DESK_VIEW = 151;
     case HELP_DESK_EDIT = 152;
     case HELP_DESK_DROP = 153;
+
+    case TREASURY_ACCESS = 161;
 }

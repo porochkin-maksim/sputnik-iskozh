@@ -75,6 +75,11 @@ class RoleDecorator
         return $this->can(...$actions);
     }
 
+    public function canAccessTreasury(): bool
+    {
+        return $this->can(PermissionEnum::TREASURY_ACCESS);
+    }
+
     public function canFiles(): bool
     {
         $actions = [

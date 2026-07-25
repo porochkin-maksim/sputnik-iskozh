@@ -25,7 +25,7 @@ readonly class CreateCounterClaimCommand
     {
         $this->dbService->transaction(function () use ($counterHistoryId) {
             $history = $this->counterHistoryService->getById($counterHistoryId);
-            if ($history !== null && ! $history->isVerified()) {
+            if ($history !== null) {
                 $history->setIsVerified(true);
                 $this->counterHistoryService->save($history);
             }

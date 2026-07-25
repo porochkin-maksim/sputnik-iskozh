@@ -97,18 +97,22 @@ readonly class CheckClaimForCounterChangeCommand
             return;
         }
 
-        $serviceSearcher = new ServiceSearcher();
-        $serviceSearcher
-            ->setPeriodId($period->getId())
-            ->setActiveAt(Carbon::now())
+        $service = $this->serviceService->search(new ServiceSearcher()
+            ->setActiveAt($history->getDate() ?: Carbon::now())
             ->setType(ServiceTypeEnum::ELECTRIC_TARIFF)
-        ;
-        $service = $this->serviceService->search($serviceSearcher)->getItems()->first();
+        )->getItems()->first();
 
         if ( ! $service || ! $service->getCost()) {
-            $this->deleteClaim($claim);
+            $service = $this->serviceService->search(new ServiceSearcher()
+                ->setType(ServiceTypeEnum::ELECTRIC_TARIFF)
+                ->setSortOrderProperty('id', 'desc')
+            )->getItems()->first();
 
-            return;
+            if ( ! $service || ! $service->getCost()) {
+                $this->deleteClaim($claim);
+
+                return;
+            }
         }
 
         $account = $this->accountService->getById($counter->getAccountId());
@@ -156,7 +160,7 @@ readonly class CheckClaimForCounterChangeCommand
         $claim->setCost(MoneyService::toFloat($deltaMoney));
         $claim = $this->claimService->save($claim);
 
-        $this->invoiceService->recalcInvoice($linkingInvoice->getId(), true);
+        $this->invoiceService->recalcInvoice($linkingInvoice->getId(), true, false);
 
         if ($hasChanges) {
             $message = sprintf(
@@ -189,7 +193,7 @@ readonly class CheckClaimForCounterChangeCommand
             $invoiceId = $claim->getInvoiceId();
             $this->claimService->deleteById($claim->getId());
             if ($invoiceId) {
-                $this->invoiceService->recalcInvoice($invoiceId, true);
+                $this->invoiceService->recalcInvoice($invoiceId, true, false);
             }
         }
     }

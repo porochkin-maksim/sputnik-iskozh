@@ -36,7 +36,7 @@ readonly class ClaimService
         $result    = $this->claimRepository->deleteById($id);
 
         if ($result && $invoiceId) {
-            $this->invoiceService->recalcInvoice($invoiceId, true);
+            $this->invoiceService->recalcInvoice($invoiceId, true, false);
         }
 
         return $result;

@@ -60,7 +60,7 @@ readonly class SaveCommand
         $saved = $this->claimService->save($claim);
 
         if ($saved->getInvoiceId()) {
-            $this->invoiceService->recalcInvoice($saved->getInvoiceId(), true);
+            $this->invoiceService->recalcInvoice($saved->getInvoiceId(), true, false);
         }
 
         return $saved;

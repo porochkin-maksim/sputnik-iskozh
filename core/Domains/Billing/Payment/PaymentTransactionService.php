@@ -6,6 +6,7 @@ use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Transaction\TransactionFactory;
 use Core\Domains\Billing\Transaction\TransactionSearcher;
 use Core\Domains\Billing\Transaction\TransactionService;
+use Core\Exceptions\ValidationException;
 
 readonly class PaymentTransactionService
 {
@@ -34,7 +35,8 @@ readonly class PaymentTransactionService
             $transaction = $this->transactionFactory->makeDefault()
                 ->setPaymentId($payment->getId())
                 ->setClaimId(null)
-                ->setCost($payment->getCost());
+                ->setCost($payment->getCost())
+            ;
         }
 
         $this->transactionService->save($transaction);
@@ -47,14 +49,21 @@ readonly class PaymentTransactionService
         return $this->transactionService->getAllocatedByPaymentId($paymentId)->count() > 0;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function delete(int $paymentId): bool
     {
+        if ($this->hasAllocatedTransactions($paymentId)) {
+            throw new ValidationException([], 'Нельзя удалить платёж - по нему есть распределение по услугам');
+        }
+
         $invoiceId = $this->paymentService->getById($paymentId)?->getInvoiceId();
 
         $result = $this->paymentService->deleteById($paymentId);
 
         if ($result && $invoiceId) {
-            $this->invoiceService->recalcInvoice($invoiceId, sync: true);
+            $this->invoiceService->recalcInvoice($invoiceId, true, false);
         }
 
         return $result;

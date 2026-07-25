@@ -25,9 +25,9 @@
                     <th>Дельта</th>
                     <th>Статус</th>
                     <th class="table-thin-column">Файл</th>
-                    <th>Оплачено</th>
-                    <th>Стоимость</th>
                     <th>Тариф</th>
+                    <th>Стоимость</th>
+                    <th>Оплачено</th>
                     <th class="table-thin-column"></th>
                 </tr>
                 </thead>

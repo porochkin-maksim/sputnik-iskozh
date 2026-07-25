@@ -38,6 +38,11 @@ readonly class TransactionService
         $this->transactionRepository->deleteByPaymentIds($paymentIds);
     }
 
+    public function deleteByClaimIds(array $claimIds): void
+    {
+        $this->transactionRepository->deleteByClaimIds($claimIds);
+    }
+
     public function getAllocatedByPaymentId(int $paymentId): TransactionCollection
     {
         return $this->search(new TransactionSearcher()

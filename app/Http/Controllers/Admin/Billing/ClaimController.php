@@ -12,11 +12,13 @@ use App\Support\HistoryChangesRoute;
 use Core\App\Billing\Claim\GetFormDataCommand;
 use Core\App\Billing\Claim\GetListCommand;
 use Core\App\Billing\Claim\SaveCommand;
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\Domains\Access\PermissionEnum;
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Period\PeriodGate;
+use Core\Domains\Billing\Transaction\TransactionService;
 use Core\Domains\HistoryChanges\HistoryType;
 use Illuminate\Http\JsonResponse;
 use lc;
@@ -25,12 +27,14 @@ class ClaimController extends Controller
 {
 
     public function __construct(
-        private readonly ClaimService       $claimService,
-        private readonly GetFormDataCommand $getFormDataCommand,
-        private readonly GetListCommand     $getListCommand,
-        private readonly SaveCommand        $saveCommand,
-        private readonly InvoiceService     $invoiceService,
-        private readonly PeriodGate         $periodGate,
+        private readonly ClaimService            $claimService,
+        private readonly GetFormDataCommand      $getFormDataCommand,
+        private readonly GetListCommand          $getListCommand,
+        private readonly SaveCommand             $saveCommand,
+        private readonly InvoiceService          $invoiceService,
+        private readonly TransactionService      $transactionService,
+        private readonly RecalcClaimsPaidCommand $recalcClaimsPaidCommand,
+        private readonly PeriodGate              $periodGate,
     )
     {
     }
@@ -151,6 +155,28 @@ class ClaimController extends Controller
         $this->assertNotClosedByInvoiceId($invoiceId);
 
         return $this->claimService->deleteById($id);
+    }
+
+    public function resetPaid(int $invoiceId, int $id): JsonResponse
+    {
+        if ( ! lc::roleDecorator()->can(PermissionEnum::CLAIMS_EDIT)) {
+            abort(403);
+        }
+        $this->assertNotClosedByInvoiceId($invoiceId);
+
+        $claim = $this->claimService->getById($id);
+        if ( ! $claim || $claim->getInvoiceId() !== $invoiceId) {
+            return response()->json(['message' => 'Услуга не найдена'], 404);
+        }
+
+        $this->transactionService->deleteByClaimIds([$id]);
+
+        $claim->setPaid(0.0);
+        $this->claimService->save($claim);
+
+        $this->recalcClaimsPaidCommand->execute($invoiceId, redistribute: false);
+
+        return response()->json(['success' => true]);
     }
 
     private function assertNotClosedByInvoiceId(int $invoiceId): void

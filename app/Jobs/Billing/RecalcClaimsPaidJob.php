@@ -26,7 +26,8 @@ class RecalcClaimsPaidJob implements ShouldQueue
     public int $backoff = 10;
 
     public function __construct(
-        private readonly int $invoiceId,
+        private readonly int  $invoiceId,
+        private readonly bool $redistribute = true,
     )
     {
         $this->onQueue(QueueEnum::DEFAULT->value);
@@ -44,6 +45,6 @@ class RecalcClaimsPaidJob implements ShouldQueue
 
     protected function process(RecalcClaimsPaidCommand $command): void
     {
-        $command->execute($this->invoiceId);
+        $command->execute($this->invoiceId, $this->redistribute);
     }
 }

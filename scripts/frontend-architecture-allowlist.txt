@@ -3,6 +3,7 @@
 ^resources/js/components/profile/counters/CounterItem.vue:368:
 ^resources/js/components/admin/payments-manage/PaymentsBlock.vue:
 ^resources/js/components/public/requests/CounterForm.vue:324:
+^resources/js/components/treasury/TreasuryPaymentModal.vue:
 
 # Existing direct axios/window.axios in Vue components. Migrate to @api/api client.
 

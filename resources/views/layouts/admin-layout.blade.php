@@ -78,6 +78,14 @@ $cutRouteNameFn = static function (string $routeName) {
                     <span>{{ RouteNames::name(RouteNames::ADMIN) }}</span>
                 </a>
 
+                @if($authRole->can(PermissionEnum::TREASURY_ACCESS))
+                    <a class="@if(Route::is('admin.treasury.*')) active-link @endif"
+                       href="{{ route(RouteNames::TREASURY_INDEX) }}">
+                        <i class="fa fa-dollar me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::TREASURY_INDEX) }}</span>
+                    </a>
+                @endif
+
                 @if($authRole->can(PermissionEnum::ROLES_VIEW))
                     <a class="@if(Route::is('admin.role.*')) active-link @endif"
                        href="{{ route(RouteNames::ADMIN_ROLE_INDEX) }}">
@@ -94,7 +102,7 @@ $cutRouteNameFn = static function (string $routeName) {
                     </a>
                 @endif
 
-                @if($authRole->canAccessAdmin())
+                @if($authRole->can(PermissionEnum::HELP_DESK_VIEW))
                     <a class="@if(Route::is('admin.help-desk.*')) active-link @endif"
                        href="{{ route(RouteNames::ADMIN_HELP_DESK_INDEX) }}">
                         <i class="fa fa-bullhorn me-2"></i>
@@ -174,11 +182,13 @@ $cutRouteNameFn = static function (string $routeName) {
                     </a>
                 @endif
 
-                <a class="@if(Route::is(RouteNames::HISTORY_CHANGES)) active-link @endif"
-                   href="{{ route(RouteNames::HISTORY_CHANGES) }}" target="_blank">
-                    <i class="fa fa-book me-2"></i>
-                    <span>{{ RouteNames::name(RouteNames::HISTORY_CHANGES) }}</span>
-                </a>
+                @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
+                    <a class="@if(Route::is(RouteNames::HISTORY_CHANGES)) active-link @endif"
+                       href="{{ route(RouteNames::HISTORY_CHANGES) }}" target="_blank">
+                        <i class="fa fa-book me-2"></i>
+                        <span>{{ RouteNames::name(RouteNames::HISTORY_CHANGES) }}</span>
+                    </a>
+                @endif
             </div>
         </div>
         <div class="col-10 pe-4">

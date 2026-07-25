@@ -96,7 +96,7 @@ readonly class InvoicesPageResource extends AbstractResource
                 'id'           => $invoice->getId(),
                 'periodId'     => $invoice->getPeriodId(),
                 'periodName'   => $invoice->getPeriod()?->getName(),
-                'title'        => $invoice->getName(),
+                'title'        => $invoice->getName() ?: ($invoice->getType()?->isRegular() ? 'Основной' : null),
                 'cost'         => $formatMoney($invoice->getCost()),
                 'paid'         => $formatMoney($invoice->getPaid()),
                 'delta'        => $formatMoney($invoice->getDelta()),

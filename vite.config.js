@@ -26,6 +26,8 @@ export default ({ mode }) => {
                     'resources/js/app.js',
                     'resources/js/admin.js',
                     'resources/js/profile.js',
+                    'resources/sass/treasury/app.scss',
+                    'resources/js/treasury.js',
                 ],
                 refresh: true,
             }),
