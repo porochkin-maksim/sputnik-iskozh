@@ -101,11 +101,7 @@ abstract class lc
         if ( ! isset(self::$role)) {
             $userId = Auth::id();
 
-            self::$role = $userId
-                ? Cache::remember("user_role_{$userId}", 300, function () use ($userId) {
-                    return app(RoleService::class)->getByUserId($userId) ?? new RoleEntity;
-                })
-                : new RoleEntity;
+            self::$role = $userId ? app(RoleService::class)->getByUserId($userId) : new RoleEntity();
         }
 
         return self::$role;

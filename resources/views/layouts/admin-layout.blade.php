@@ -166,7 +166,7 @@ $cutRouteNameFn = static function (string $routeName) {
                     </a>
                 @endif
 
-                @if($authRole->can(PermissionEnum::OPTIONS_VIEW))
+                @if($authRole->can(PermissionEnum::USERS_EDIT))
                     <a class="@if(Route::is('admin.emails.*')) active-link @endif"
                        href="{{ route(RouteNames::ADMIN_EMAILS) }}">
                         <i class="fa fa-envelope me-2"></i>
