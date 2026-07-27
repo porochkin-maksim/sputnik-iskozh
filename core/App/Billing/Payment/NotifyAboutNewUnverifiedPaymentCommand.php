@@ -29,7 +29,10 @@ readonly class NotifyAboutNewUnverifiedPaymentCommand
             return;
         }
 
-        $emails = $this->roleService->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT);
+        $emails = array_merge(
+            $this->roleService->getEmailsByPermissions(PermissionEnum::PAYMENTS_EDIT),
+            $this->roleService->getEmailsByPermissions(PermissionEnum::TREASURY_ACCESS),
+        );
         $emails = array_unique(array_merge($emails, [config('mail.emails.admin')]));
 
         foreach ($emails as $email) {
