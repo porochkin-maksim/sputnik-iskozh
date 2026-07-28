@@ -225,7 +225,7 @@ export function usePeriodPaymentsImportBlock (props, controlsRef) {
             for (const districtData of importData.value) {
                 const district = districtData.district;
                 if (!autoFillStrategy.value[district]) {
-                    autoFillStrategy.value[district] = 'difference';
+                    autoFillStrategy.value[district] = 'importPaid';
                 }
                 applyAutoFill(district);
             }

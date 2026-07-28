@@ -51,7 +51,7 @@ readonly class SaveImportPaymentsCommand
                 $processedAccount[$invoice->getAccountId()] = true;
             }
 
-            $this->invoiceService->recalcInvoice($invoiceId, true);
+            $this->recalcClaimsPaidCommand->execute($invoiceId);
         }
 
         foreach ($processedAccount as $accountId => $_) {
