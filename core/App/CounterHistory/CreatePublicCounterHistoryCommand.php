@@ -6,6 +6,7 @@ use App\Jobs\CounterHistory\NotifyAboutNewUnverifiedCounterHistoryJob;
 use App\Jobs\CounterHistory\RewatchCounterHistoryChainJob;
 use Core\Domains\Account\AccountService;
 use Core\Domains\Counter\CounterEntity;
+use Core\Domains\Counter\CounterFactory;
 use Core\Domains\Counter\CounterService;
 use Core\Domains\Counter\FileService;
 use Core\Domains\CounterHistory\CounterHistoryFactory;
@@ -24,6 +25,7 @@ readonly class CreatePublicCounterHistoryCommand
     public function __construct(
         private DbServiceInterface                  $dbService,
         private CounterService                      $counterService,
+        private CounterFactory                      $counterFactory,
         private CounterHistoryService               $counterHistoryService,
         private CounterHistoryFactory               $counterHistoryFactory,
         private FileService                         $fileService,
@@ -81,11 +83,18 @@ readonly class CreatePublicCounterHistoryCommand
                     })->first();
                 }
 
-                $counter = $counter ?? $counters->getInvoicing()->first();
+                $counter = $counter ?? $counters->getInvoicing()->first() ?? $counters->first();
 
-                if ($counter !== null) {
-                    $history->setCounterId($counter->getId());
+                if ($counter === null) {
+                    $counter = $this->counterFactory->makeDefault()
+                        ->setAccountId($account->getId())
+                        ->setNumber($counterNumber ?? $account->getNumber())
+                    ;
+
+                    $counter = $this->counterService->save($counter);
                 }
+
+                $history->setCounterId($counter->getId());
             }
 
             $history = $this->counterHistoryService->save($history);
