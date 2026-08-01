@@ -10,6 +10,7 @@ use Core\Domains\Access\PermissionEnum;
 use Core\Domains\Account\AccountRepositoryInterface;
 use Core\Domains\Account\AccountSearcher;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Payment\PaymentFactory;
 use Core\Domains\Billing\Payment\PaymentService;
 use Core\Domains\Billing\Period\PeriodEntity;
@@ -84,6 +85,9 @@ class TreasuryController extends Controller
 
         $result = [];
         foreach ($invoices as $invoice) {
+            if ($invoice->getType() === InvoiceTypeEnum::OUTCOME) {
+                continue;
+            }
             $claims = [];
             foreach ($invoice->getClaims() ?? [] as $claim) {
                 $serviceName = $claim->getService()?->getName() ?? '';

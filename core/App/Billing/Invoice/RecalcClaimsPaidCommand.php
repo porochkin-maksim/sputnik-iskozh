@@ -79,6 +79,26 @@ readonly class RecalcClaimsPaidCommand
             $claim->setCost((float) $claim->getTariff() * (float) $claim->getQuantity());
         }
 
+        // расходные счета (OUTCOME) не требуют оплаты — сразу полностью оплачены
+        if ($invoice->getType() === InvoiceTypeEnum::OUTCOME) {
+            $totalCost = 0.0;
+            foreach ($claims as $claim) {
+                $claim->setPaid($claim->getCost());
+                $totalCost += (float) $claim->getCost();
+            }
+            $this->claimService->saveCollection($claims);
+
+            $invoice
+                ->setCost(round($totalCost, 2))
+                ->setPaid(round($totalCost, 2))
+                ->setDebt(0.0)
+                ->setRounding(0.0)
+            ;
+            $this->invoiceService->save($invoice);
+
+            return;
+        }
+
         // существующая оплата из уже распределённых транзакций
         $claimIds    = array_values(array_filter(
             $claims->map(fn(ClaimEntity $c) => $c->getId())->toArray(),

@@ -13,7 +13,7 @@
                     Добавить услугу
                 </button>
                 <button
-                    v-if="invoice.actions.claims.edit"
+                    v-if="invoice.actions.claims.edit && invoice.type !== 3"
                     class="btn btn-warning"
                     @click="showPayAllDialog = true"
                 >

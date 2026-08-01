@@ -4,6 +4,7 @@ namespace Core\App\Billing\Payment;
 
 use Core\Domains\Billing\Claim\ClaimService;
 use Core\Domains\Billing\Invoice\InvoiceService;
+use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Payment\PaymentService;
 use Core\Domains\Billing\Transaction\TransactionCollection;
 use Core\Domains\Billing\Transaction\TransactionFactory;
@@ -75,6 +76,9 @@ readonly class PayCommand
             throw new ValidationException([], 'Счёт не найден');
         }
 
+        if ($invoice->getType() === InvoiceTypeEnum::OUTCOME) {
+            return;
+        }
         $paymentIds = $this->paymentService->getVerifiedByAccount($invoice->getAccountId())->getIds();
         if ($paymentIds === []) {
             return;
