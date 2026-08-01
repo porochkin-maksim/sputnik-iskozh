@@ -19,6 +19,7 @@ use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\App\Billing\Payment\LinkPaymentCommand;
 use Core\App\Billing\Payment\PayCommand;
 use Core\Domains\Access\PermissionEnum;
+use Core\Domains\Account\AccountIdEnum;
 use Core\Domains\Account\AccountService;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceSearcher;
@@ -79,6 +80,7 @@ class PaymentManageController extends Controller
             ->setWithAccount()
             ->setWithFiles()
             ->setSortOrderProperty(Payment::ID, SearcherInterface::SORT_ORDER_DESC)
+            ->addWhere(Payment::ACCOUNT_ID, SearcherInterface::IS_NOT, AccountIdEnum::SNT->value)
             ->setLimit(50)
         ;
 
@@ -92,11 +94,7 @@ class PaymentManageController extends Controller
             $searcher->setAccountId($accountId);
         }
         else {
-            $searcher
-                ->addOrWhere(Payment::VERIFIED, SearcherInterface::EQUALS, false)
-                ->addOrWhere(Payment::MODERATED, SearcherInterface::EQUALS, false)
-                ->addOrWhere(Payment::INVOICE_ID, SearcherInterface::EQUALS, null)
-            ;
+            $searcher->setNewPayments();
         }
 
         $payments = $this->paymentService->search($searcher);
@@ -212,7 +210,12 @@ class PaymentManageController extends Controller
             abort(412);
         }
 
-        $payment = $this->paymentService->getById($paymentId);
+        $payment = $this->paymentService->search(
+            new PaymentSearcher()
+                ->setId($paymentId)
+                ->setWithAccount()
+                ->setWithFiles(),
+        )->getItems()->first();
         if ( ! $payment) {
             abort(412);
         }

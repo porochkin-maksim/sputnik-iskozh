@@ -59,4 +59,14 @@ class PaymentSearcher extends BaseSearcher
 
         return $this;
     }
+
+    public function setNewPayments(): static
+    {
+        $this
+            ->setInvoiceId(null)
+            ->addWhere(Payment::VERIFIED, SearcherInterface::EQUALS, false)
+        ;
+
+        return $this;
+    }
 }
