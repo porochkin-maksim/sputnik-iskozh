@@ -21,7 +21,7 @@ use Core\Shared\Helpers\DateTime\DateTimeFormat;
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
     <title>История изменений</title>
-    @vite(['resources/sass/app.scss'])
+    @vite(['resources/sass/app.scss', 'resources/js/history.js'])
     <style>
         body {
             font-size : 14px;
@@ -103,6 +103,14 @@ use Core\Shared\Helpers\DateTime\DateTimeFormat;
                         <option value="100" {{ $limit === 100 ? 'selected' : '' }}>100 записей</option>
                         <option value="1000" {{ $limit === 1000 ? 'selected' : '' }}>1000 записей</option>
                     </select>
+                </div>
+
+                <div id="user-filter-app"
+                     data-action="{{ route(RouteNames::HISTORY_CHANGES) }}"
+                     data-users="{{ json_encode($userOptions) }}"
+                     data-user-id="{{ $userId }}"
+                     data-exclude="{{ $isExclude ? '1' : '0' }}"
+                     data-params="{{ json_encode(request()->query()) }}">
                 </div>
 
                 <nav aria-label="Page navigation">

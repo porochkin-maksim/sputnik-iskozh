@@ -28,6 +28,7 @@ export default ({ mode }) => {
                     'resources/js/profile.js',
                     'resources/sass/treasury/app.scss',
                     'resources/js/treasury.js',
+                    'resources/js/history.js',
                 ],
                 refresh: true,
             }),

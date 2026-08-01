@@ -19,7 +19,8 @@ import TicketsBlock              from '@components/admin/help-desk/TicketsBlock.
 import TicketsView               from '@components/admin/help-desk/TicketsView.vue';
 import UsersImportBlock          from '@components/admin/users/UsersImportBlock.vue';
 import AccountsImportBlock       from '@components/admin/accounts/AccountsImportBlock.vue';
-import DashboardCards             from '@components/admin/DashboardCards.vue';
+import DashboardCards            from '@components/admin/DashboardCards.vue';
+import UserFilter                from '@components/admin/history/UserFilter.vue';
 
 export function registerAdminComponents (app) {
     app.component('alerts-block', AlertsBlock);
@@ -44,4 +45,5 @@ export function registerAdminComponents (app) {
     app.component('users-import-block', UsersImportBlock);
     app.component('accounts-import-block', AccountsImportBlock);
     app.component('dashboard-cards-block', DashboardCards);
+    app.component('user-filter', UserFilter);
 }

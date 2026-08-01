@@ -28,6 +28,13 @@ class HistoryChangesSearcher implements SearcherInterface
         return $this;
     }
 
+    public function setPrimaryIdIsNull(): static
+    {
+        $this->addWhere(HistoryChanges::PRIMARY_ID, SearcherInterface::IS_NULL);
+
+        return $this;
+    }
+
     public function setReferenceType(?int $referenceType): static
     {
         if ($referenceType) {
@@ -42,6 +49,20 @@ class HistoryChangesSearcher implements SearcherInterface
         if ($referenceId) {
             $this->addWhere(HistoryChanges::REFERENCE_ID, SearcherInterface::EQUALS, $referenceId);
         }
+
+        return $this;
+    }
+
+    public function setUserId(int $userId): static
+    {
+        $this->addWhere(HistoryChanges::USER_ID, SearcherInterface::EQUALS, $userId);
+
+        return $this;
+    }
+
+    public function setExcludeUserId(int $userId): static
+    {
+        $this->addWhere(HistoryChanges::USER_ID, SearcherInterface::IS_NOT, $userId);
 
         return $this;
     }

@@ -70,6 +70,13 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/locks-cleanup.log'))
         ;
+
+        $schedule->command('history:sync-primary-ids')
+            ->mondays()
+            ->name('history.sync-primary-ids')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/history-sync.log'))
+        ;
     }
 
     /**
