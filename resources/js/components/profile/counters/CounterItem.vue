@@ -12,12 +12,11 @@
                         </div>
                         <counter-passport-uploader
                             class="mt-2"
-                            :can-edit="canEdit"
                             :counter="counter"
                         />
                     </div>
                     <div class="d-flex flex-md-row flex-column gap-2 counter-item-hero__actions">
-                        <button v-if="canEdit && canAddNewHistory"
+                        <button v-if="canAddNewHistory"
                                 class="btn btn-sm btn-success"
                                 @click="addHistoryValue"
                         >Добавить показания
@@ -29,7 +28,7 @@
                                 data-bs-placement="bottom"
                         >Добавить показания
                         </button>
-                        <button v-if="canEdit" class="btn btn-sm btn-outline-success"
+                        <button class="btn btn-sm btn-outline-success"
                                 @click="editIncrement"
                         >Автопоказания
                         </button>
@@ -126,7 +125,6 @@ const skip                = ref(0);
 const total               = ref(null);
 const limit               = ref(0);
 const increment           = ref(props.counter.increment || 0);
-const canEdit             = computed(() => has('counters', 'edit'));
 
 onMounted(() => {
     listAction();
