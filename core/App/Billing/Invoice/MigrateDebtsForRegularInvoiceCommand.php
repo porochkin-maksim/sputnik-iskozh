@@ -10,7 +10,6 @@ use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Service\ServiceCatalogService;
 use Core\Domains\Billing\Service\ServiceTypeEnum;
-use Illuminate\Support\Str;
 use RuntimeException;
 
 readonly class MigrateDebtsForRegularInvoiceCommand
@@ -50,15 +49,7 @@ readonly class MigrateDebtsForRegularInvoiceCommand
         }
 
         foreach ($oldDebts as $oldDebtClaim) {
-            $oldService     = $oldDebtClaim->getService();
-            $newServiceName = Str::contains($oldService?->getName(), '(долг за период')
-                ? $oldService?->getName()
-                : sprintf(
-                    '%s (долг за период %s)',
-                    $oldService?->getName() ? : $oldService?->getType()?->name(),
-                    $oldDebtClaim->getInvoice()?->getPeriod()?->getName(),
-                );
-
+            $newServiceName = $this->debtMigrationService->resolveDebtClaimName($oldDebtClaim);
             $claim = $this->claimFactory->makeDefault()
                 ->setQuantity($oldDebtClaim->getDelta() / $oldDebtClaim->getTariff())
                 ->setInvoiceId($invoice->getId())

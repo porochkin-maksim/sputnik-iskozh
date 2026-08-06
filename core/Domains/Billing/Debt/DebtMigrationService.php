@@ -15,6 +15,7 @@ use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Invoice\InvoiceTypeEnum;
 use Core\Domains\Billing\Period\PeriodSearcher;
 use Core\Domains\Billing\Period\PeriodService;
+use Core\Domains\Billing\Service\ServiceTypeEnum;
 use Core\Repositories\SearcherInterface;
 
 readonly class DebtMigrationService
@@ -68,8 +69,7 @@ readonly class DebtMigrationService
                 ->setInvoiceId($previousInvoice->getId()),
         )->getItems()
             ->map(static fn(ClaimEntity $claim) => $claim->setInvoice($previousInvoice))
-            ->filter(static fn(ClaimEntity $claim) => $claim->getDelta())
-        ;
+            ->filter(static fn(ClaimEntity $claim) => $claim->getDelta());
 
         if ($oldDebts->isEmpty()) {
             return $result;
@@ -100,8 +100,7 @@ readonly class DebtMigrationService
                     ->addWhere(Claim::ORIGINAL_SERVICE_ID, SearcherInterface::IS_NOT_NULL),
             )->getItems()
                 ->map(static fn(ClaimEntity $c) => $c->getOriginalClaimId())
-                ->toArray()
-            ;
+                ->toArray();
 
             return $oldDebts->filter(
                 static fn(ClaimEntity $c) => ! in_array($c->getId(), $alreadyMigrated, true),
@@ -109,5 +108,66 @@ readonly class DebtMigrationService
         }
 
         return $oldDebts;
+    }
+
+    public function resolveDebtClaimName(ClaimEntity $claim, ?string $periodName = null): string
+    {
+        $name = $claim->getName();
+        if ($this->isUsableName($name)) {
+            return $name;
+        }
+
+        $resolved = $this->findNameInOriginalChain($claim);
+        if ($resolved !== null) {
+            return $resolved;
+        }
+
+        $service = $claim->getOriginalService() ? : $claim->getService();
+        $base    = $service?->getName()
+            ? : $service?->getType()?->name()
+            ? : ServiceTypeEnum::DEBT->name();
+
+        $periodName ??= $claim->getInvoice()?->getPeriod()?->getName();
+
+        return $periodName !== null
+            ? sprintf('%s (долг за период %s)', $base, $periodName)
+            : $base;
+    }
+
+    private function findNameInOriginalChain(ClaimEntity $claim, int $depth = 0): ?string
+    {
+        if ($depth >= 10) {
+            return null;
+        }
+
+        $originalClaimId = $claim->getOriginalClaimId();
+        if ($originalClaimId === null) {
+            return null;
+        }
+
+        $original = $this->claimService->search(
+            ClaimSearcher::make()
+                ->setWithService()
+                ->setWithOriginalService()
+                ->setId($originalClaimId),
+        )->getItems()->first();
+
+        if ($original === null) {
+            return null;
+        }
+
+        $name = $original->getName();
+        if ($this->isUsableName($name)) {
+            return $name;
+        }
+
+        return $this->findNameInOriginalChain($original, $depth + 1);
+    }
+
+    private function isUsableName(?string $name): bool
+    {
+        return $name !== null
+            && trim($name) !== ''
+            && ! str_starts_with(trim($name), ServiceTypeEnum::DEBT->name());
     }
 }
