@@ -6,18 +6,21 @@ use Core\App\Billing\Acquiring\HandleFailedWebhookCommand;
 use Core\Domains\Billing\Acquiring\AcquiringEntity;
 use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
 use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Acquiring\Services\ProviderGateway;
 use Tests\TestCase;
 
 class HandleFailedWebhookCommandTest extends TestCase
 {
     private AcquiringService           $acquiringService;
+    private ProviderGateway            $providerGateway;
     private HandleFailedWebhookCommand $command;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->acquiringService = $this->createMock(AcquiringService::class);
-        $this->command          = new HandleFailedWebhookCommand($this->acquiringService);
+        $this->providerGateway  = $this->createMock(ProviderGateway::class);
+        $this->command          = new HandleFailedWebhookCommand($this->acquiringService, $this->providerGateway);
     }
 
     public function test_execute_cancels_acquiring(): void
@@ -25,7 +28,6 @@ class HandleFailedWebhookCommandTest extends TestCase
         $acquiring = new AcquiringEntity;
         $acquiring->setId(1)->setInvoiceId(10)->setUserId(42)->setAmount(1000.0);
         $acquiring->setStatus(StatusEnum::PROCESS);
-        $expectedHash = $acquiring->makeHash();
 
         $this->acquiringService->expects($this->once())
             ->method('getById')
@@ -33,12 +35,18 @@ class HandleFailedWebhookCommandTest extends TestCase
             ->willReturn($acquiring)
         ;
 
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('hash')
+        ;
+
         $this->acquiringService->expects($this->once())
             ->method('save')
             ->with($this->callback(fn(AcquiringEntity $e) => $e->getStatus() === StatusEnum::CANCELED))
         ;
 
-        $result = $this->command->execute(1, $expectedHash);
+        $result = $this->command->execute(1, 'hash');
 
         $this->assertTrue($result);
     }
@@ -68,6 +76,11 @@ class HandleFailedWebhookCommandTest extends TestCase
             ->willReturn($acquiring)
         ;
 
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->willReturn('correct-hash')
+        ;
+
         $this->acquiringService->expects($this->never())->method('save');
 
         $result = $this->command->execute(1, 'wrong-hash');
@@ -87,9 +100,15 @@ class HandleFailedWebhookCommandTest extends TestCase
             ->willReturn($acquiring)
         ;
 
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('hash')
+        ;
+
         $this->acquiringService->expects($this->never())->method('save');
 
-        $result = $this->command->execute(1, $acquiring->makeHash());
+        $result = $this->command->execute(1, 'hash');
 
         $this->assertFalse($result);
     }

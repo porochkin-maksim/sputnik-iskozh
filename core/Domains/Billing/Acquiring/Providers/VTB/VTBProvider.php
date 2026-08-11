@@ -4,6 +4,7 @@ namespace Core\Domains\Billing\Acquiring\Providers\VTB;
 
 use App\Resources\RouteNames;
 use App\Services\VTB\Api;
+use App\Services\VTB\Enums\QrStatus;
 use App\Services\VTB\Exceptions\ErrorResponseException;
 use App\Services\Money\MoneyService;
 use Carbon\Carbon;
@@ -49,8 +50,8 @@ readonly class VTBProvider implements ProviderInterface
                 $registerDoResponse = $this->api->registerDo(
                     $this->stringService->uuid(),
                     (int) MoneyService::parse($acquiring->getAmount())->getAmount(),
-                    route(RouteNames::WEBHOOK_ACQURING_SUBMIT, [$acquiring->getId(), $acquiring->makeHash()]),
-                    route(RouteNames::WEBHOOK_ACQURING_FAILED, [$acquiring->getId(), $acquiring->makeHash()]),
+                    route(RouteNames::WEBHOOK_ACQURING_SUBMIT, [$acquiring->getId(), $this->makeHash($acquiring)]),
+                    route(RouteNames::WEBHOOK_ACQURING_FAILED, [$acquiring->getId(), $this->makeHash($acquiring)]),
                 );
 
                 $data->setRegisterDoResponse($registerDoResponse);
@@ -96,8 +97,8 @@ readonly class VTBProvider implements ProviderInterface
                 $registerDoResponse = $this->api->registerDo(
                     $this->stringService->uuid(),
                     (int) MoneyService::parse($acquiring->getAmount())->getAmount(),
-                    route(RouteNames::WEBHOOK_ACQURING_SUBMIT, [$acquiring->getId(), $acquiring->makeHash()]),
-                    route(RouteNames::WEBHOOK_ACQURING_FAILED, [$acquiring->getId(), $acquiring->makeHash()]),
+                    route(RouteNames::WEBHOOK_ACQURING_SUBMIT, [$acquiring->getId(), $this->makeHash($acquiring)]),
+                    route(RouteNames::WEBHOOK_ACQURING_FAILED, [$acquiring->getId(), $this->makeHash($acquiring)]),
                 );
 
                 $data->setRegisterDoResponse($registerDoResponse);
@@ -109,6 +110,33 @@ readonly class VTBProvider implements ProviderInterface
         }
         catch (ConnectionException|ErrorResponseException $e) {
             throw new ProviderProcessException($e->getMessage());
+        }
+    }
+
+    public function makeHash(AcquiringEntity $acquiring): string
+    {
+        return $acquiring->makeHash($this->api->getConfig()->getWebhookSecret());
+    }
+
+    public function isPaid(AcquiringEntity $acquiring): bool
+    {
+        $data = new VTBData($acquiring->getData());
+        $registerDoResponse = $data->getRegisterDoResponse();
+
+        if ($registerDoResponse === null) {
+            return false;
+        }
+
+        try {
+            $status = $this->api->getSbpStatus(
+                $registerDoResponse->getOrderId(),
+                $data->getGetSbpResponse()?->getQrId(),
+            );
+
+            return QrStatus::tryFrom($status->getQrStatus()) === QrStatus::ACCEPTED;
+        }
+        catch (ConnectionException|ErrorResponseException $e) {
+            return false;
         }
     }
 }

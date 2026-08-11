@@ -130,8 +130,13 @@ class AcquiringEntity
         return $this;
     }
 
-    public function makeHash(): string
+    public function makeHash(?string $secret = ''): string
     {
-        return md5($this->getId() . $this->getInvoiceId() . $this->getUserId() . $this->getAmount());
+        return hash_hmac('sha256', implode('|', [
+            $this->getId(),
+            $this->getInvoiceId(),
+            $this->getUserId(),
+            $this->getAmount(),
+        ]), (string) $secret);
     }
 }

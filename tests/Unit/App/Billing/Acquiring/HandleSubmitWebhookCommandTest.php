@@ -3,44 +3,52 @@
 namespace Tests\Unit\App\Billing\Acquiring;
 
 use Core\App\Billing\Acquiring\HandleSubmitWebhookCommand;
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\Contracts\DbServiceInterface;
 use Core\Domains\Billing\Acquiring\AcquiringEntity;
 use Core\Domains\Billing\Acquiring\Enums\ProviderEnum;
 use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
 use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Acquiring\Services\ProviderGateway;
 use Core\Domains\Billing\Invoice\InvoiceEntity;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentEntity;
 use Core\Domains\Billing\Payment\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Payment\PaymentTransactionService;
 use Core\Domains\HistoryChanges\HistoryChangesService;
 use Tests\TestCase;
 
 class HandleSubmitWebhookCommandTest extends TestCase
 {
-    private DbServiceInterface         $dbService;
-    private AcquiringService           $acquiringService;
-    private PaymentService             $paymentService;
-    private InvoiceService             $invoiceService;
-    private HistoryChangesService      $historyChangesService;
-    private HandleSubmitWebhookCommand $command;
+    private DbServiceInterface            $dbService;
+    private AcquiringService              $acquiringService;
+    private ProviderGateway               $providerGateway;
+    private PaymentTransactionService     $paymentTransactionService;
+    private RecalcClaimsPaidCommand       $recalcClaimsPaidCommand;
+    private InvoiceService                $invoiceService;
+    private HistoryChangesService         $historyChangesService;
+    private HandleSubmitWebhookCommand    $command;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->dbService             = $this->createMock(DbServiceInterface::class);
-        $this->acquiringService      = $this->createMock(AcquiringService::class);
-        $this->paymentService        = $this->createMock(PaymentService::class);
-        $paymentFactory              = new PaymentFactory;
-        $this->invoiceService        = $this->createMock(InvoiceService::class);
-        $this->historyChangesService = $this->createMock(HistoryChangesService::class);
+        $this->dbService                = $this->createMock(DbServiceInterface::class);
+        $this->acquiringService         = $this->createMock(AcquiringService::class);
+        $this->providerGateway          = $this->createMock(ProviderGateway::class);
+        $this->paymentTransactionService = $this->createMock(PaymentTransactionService::class);
+        $this->recalcClaimsPaidCommand  = $this->createMock(RecalcClaimsPaidCommand::class);
+        $paymentFactory                 = new PaymentFactory;
+        $this->invoiceService           = $this->createMock(InvoiceService::class);
+        $this->historyChangesService    = $this->createMock(HistoryChangesService::class);
 
         $this->command = new HandleSubmitWebhookCommand(
             $this->dbService,
             $this->acquiringService,
-            $this->paymentService,
+            $this->providerGateway,
+            $this->paymentTransactionService,
             $paymentFactory,
             $this->invoiceService,
+            $this->recalcClaimsPaidCommand,
             $this->historyChangesService,
         );
     }
@@ -51,7 +59,6 @@ class HandleSubmitWebhookCommandTest extends TestCase
         $acquiring->setId(1)->setInvoiceId(10)->setUserId(42)->setAmount(5000.0);
         $acquiring->setStatus(StatusEnum::PROCESS);
         $acquiring->setProvider(ProviderEnum::VTB);
-        $expectedHash = $acquiring->makeHash();
 
         $invoice = new InvoiceEntity;
         $invoice->setId(10)->setAccountId(100);
@@ -60,6 +67,18 @@ class HandleSubmitWebhookCommandTest extends TestCase
             ->method('getById')
             ->with(1)
             ->willReturn($acquiring)
+        ;
+
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('valid-hash')
+        ;
+
+        $this->providerGateway->expects($this->once())
+            ->method('isPaid')
+            ->with($acquiring)
+            ->willReturn(true)
         ;
 
         $this->invoiceService->expects($this->once())
@@ -73,8 +92,8 @@ class HandleSubmitWebhookCommandTest extends TestCase
         $savedPayment = new PaymentEntity;
         $savedPayment->setId(77);
 
-        $this->paymentService->expects($this->once())
-            ->method('save')
+        $this->paymentTransactionService->expects($this->once())
+            ->method('saveWithTransaction')
             ->willReturn($savedPayment)
         ;
 
@@ -87,9 +106,14 @@ class HandleSubmitWebhookCommandTest extends TestCase
             ->with($this->callback(fn(AcquiringEntity $e) => $e->getStatus() === StatusEnum::PAID && $e->getPaymentId() === 77))
         ;
 
+        $this->recalcClaimsPaidCommand->expects($this->once())
+            ->method('execute')
+            ->with(10)
+        ;
+
         $this->dbService->expects($this->once())->method('commit');
 
-        $result = $this->command->execute(1, $expectedHash);
+        $result = $this->command->execute(1, 'valid-hash');
 
         $this->assertTrue($result);
     }
@@ -119,6 +143,12 @@ class HandleSubmitWebhookCommandTest extends TestCase
             ->willReturn($acquiring)
         ;
 
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('correct-hash')
+        ;
+
         $this->dbService->expects($this->never())->method('beginTransaction');
 
         $result = $this->command->execute(1, 'wrong-hash');
@@ -138,9 +168,46 @@ class HandleSubmitWebhookCommandTest extends TestCase
             ->willReturn($acquiring)
         ;
 
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('hash')
+        ;
+
         $this->dbService->expects($this->never())->method('beginTransaction');
 
-        $result = $this->command->execute(1, $acquiring->makeHash());
+        $result = $this->command->execute(1, 'hash');
+
+        $this->assertFalse($result);
+    }
+
+    public function test_execute_returns_false_when_not_paid(): void
+    {
+        $acquiring = new AcquiringEntity;
+        $acquiring->setId(1)->setInvoiceId(10)->setUserId(42)->setAmount(5000.0);
+        $acquiring->setStatus(StatusEnum::PROCESS);
+
+        $this->acquiringService->expects($this->once())
+            ->method('getById')
+            ->with(1)
+            ->willReturn($acquiring)
+        ;
+
+        $this->providerGateway->expects($this->once())
+            ->method('makeHash')
+            ->with($acquiring)
+            ->willReturn('hash')
+        ;
+
+        $this->providerGateway->expects($this->once())
+            ->method('isPaid')
+            ->with($acquiring)
+            ->willReturn(false)
+        ;
+
+        $this->dbService->expects($this->never())->method('beginTransaction');
+
+        $result = $this->command->execute(1, 'hash');
 
         $this->assertFalse($result);
     }

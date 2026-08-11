@@ -4,11 +4,13 @@ namespace Core\App\Billing\Acquiring;
 
 use App\Services\Money\MoneyService;
 use Carbon\Carbon;
+use Core\App\Billing\Invoice\RecalcClaimsPaidCommand;
 use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
 use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Acquiring\Services\ProviderGateway;
 use Core\Domains\Billing\Invoice\InvoiceService;
 use Core\Domains\Billing\Payment\PaymentFactory;
-use Core\Domains\Billing\Payment\PaymentService;
+use Core\Domains\Billing\Payment\PaymentTransactionService;
 use Core\Domains\HistoryChanges\Event;
 use Core\Domains\HistoryChanges\HistoryChangesService;
 use Core\Domains\HistoryChanges\HistoryType;
@@ -18,12 +20,14 @@ use Throwable;
 readonly class HandleSubmitWebhookCommand
 {
     public function __construct(
-        private DbServiceInterface    $dbService,
-        private AcquiringService      $acquiringService,
-        private PaymentService        $paymentService,
-        private PaymentFactory        $paymentFactory,
-        private InvoiceService        $invoiceService,
-        private HistoryChangesService $historyChangesService,
+        private DbServiceInterface         $dbService,
+        private AcquiringService           $acquiringService,
+        private ProviderGateway            $providerGateway,
+        private PaymentTransactionService  $paymentTransactionService,
+        private PaymentFactory             $paymentFactory,
+        private InvoiceService             $invoiceService,
+        private RecalcClaimsPaidCommand    $recalcClaimsPaidCommand,
+        private HistoryChangesService      $historyChangesService,
     )
     {
     }
@@ -32,7 +36,11 @@ readonly class HandleSubmitWebhookCommand
     {
         $acquiring = $this->acquiringService->getById($acquiringId);
 
-        if ($acquiring === null || $acquiring->makeHash() !== $hash || ! $acquiring->getStatus()?->isProcess()) {
+        if ($acquiring === null || $this->providerGateway->makeHash($acquiring) !== $hash || ! $acquiring->getStatus()?->isProcess()) {
+            return false;
+        }
+
+        if ( ! $this->providerGateway->isPaid($acquiring)) {
             return false;
         }
 
@@ -55,7 +63,7 @@ readonly class HandleSubmitWebhookCommand
                 ))
             ;
 
-            $payment = $this->paymentService->save($payment);
+            $payment = $this->paymentTransactionService->saveWithTransaction($payment);
 
             $this->historyChangesService->writeToHistory(
                 Event::COMMON,
@@ -77,6 +85,7 @@ readonly class HandleSubmitWebhookCommand
             ;
 
             $this->acquiringService->save($acquiring);
+            $this->recalcClaimsPaidCommand->execute($acquiring->getInvoiceId());
             $this->dbService->commit();
 
             return true;

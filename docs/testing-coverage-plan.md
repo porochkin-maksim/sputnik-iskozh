@@ -47,6 +47,8 @@
 - `CreateClaimsAndPaymentsForRegularInvoiceCommand`
 - `CreateRegularPeriodInvoicesCommand`
 - `CreateRegularPeriodInvoicesInput`
+- `MigrateDebtsForRegularInvoiceCommand` ✅
+- `SyncPeriodServicesCommand` ✅
 
 ### Этап 5 — Billing/Claim (core)
 - `SaveCommand`
@@ -55,6 +57,7 @@
 - `GetFormDataCommand`
 - `CheckClaimForCounterChangeCommand`
 - `CheckClaimForCounterChangeInput`
+- `CheckDebtClaimNamesCommand` ✅
 
 ### Этап 6 — HelpDesk/Ticket (public) ✅
 - `CreateCommand` ✅
@@ -124,7 +127,7 @@
 
 ## Дальнейшие шаги
 
-1. **Новые домены** — Billing/Invoice, Billing/Payment, Billing/Acquiring (расширить покрытие)
+1. **Новые домены** — Billing/Acquiring (команды `CreatePaymentLinkCommand`, `HandleSubmitWebhookCommand`, `HandleFailedWebhookCommand` — покрыты ✅)
 2. **Feature/Integration тесты** — сквозные HTTP-сценарии
 3. **Баги production-кода** (п. 2, 4) — согласовать и исправить
 4. **PHPStan/larastan** — повысить уровень статического анализа

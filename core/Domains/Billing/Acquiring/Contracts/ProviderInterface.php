@@ -18,4 +18,8 @@ interface ProviderInterface
      * @throws ProviderProcessException
      */
     public function getPaymentLink(AcquiringEntity $acquiring): string;
+
+    public function makeHash(AcquiringEntity $acquiring): string;
+
+    public function isPaid(AcquiringEntity $acquiring): bool;
 }

@@ -31,4 +31,20 @@ readonly class ProviderGateway
     {
         return $this->providerSelector->getProviderService($acquiring->getProvider())->getPaymentLink($acquiring);
     }
+
+    /**
+     * @throws UndefinedProviderException
+     */
+    public function makeHash(AcquiringEntity $acquiring): string
+    {
+        return $this->providerSelector->getProviderService($acquiring->getProvider())->makeHash($acquiring);
+    }
+
+    /**
+     * @throws UndefinedProviderException
+     */
+    public function isPaid(AcquiringEntity $acquiring): bool
+    {
+        return $this->providerSelector->getProviderService($acquiring->getProvider())->isPaid($acquiring);
+    }
 }

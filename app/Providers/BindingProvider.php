@@ -64,6 +64,7 @@ use Core\Domains\User\UserRepositoryInterface;
 use Illuminate\Contracts\Events\Dispatcher as LaravelDispatcher;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Db\DbService;
+use App\Services\VTB\ApiConfig;
 
 class BindingProvider extends ServiceProvider
 {
@@ -75,6 +76,18 @@ class BindingProvider extends ServiceProvider
         $this->app->bind(MailSenderInterface::class, MailSender::class);
         $this->app->bind(DbServiceInterface::class, DbService::class);
         $this->app->bind(StringServiceInterface::class, StringService::class);
+
+        $this->app->bind(ApiConfig::class, static function (): ApiConfig {
+            $config = config('external.api.providers.VTB');
+
+            return new ApiConfig(
+                url          : $config['address'] ?? null,
+                userName     : $config['username'] ?? null,
+                password     : $config['password'] ?? null,
+                token        : $config['token'] ?? null,
+                webhookSecret: $config['webhook_secret'] ?? null,
+            );
+        });
         $this->app->bind(FileStorageInterface::class, FileStorage::class);
 
         $this->app->bind(FileRepositoryInterface::class, FileEloquentRepository::class);

@@ -6,11 +6,12 @@ use Core\Domains\Billing\Acquiring\Contracts\ProviderInterface;
 use Core\Domains\Billing\Acquiring\Enums\ProviderEnum;
 use Core\Domains\Billing\Acquiring\Exceptions\UndefinedProviderException;
 use Core\Domains\Billing\Acquiring\Providers\VTB\VTBProvider;
+use Random\RandomException;
 
 class ProviderSelector
 {
     private const array PROBABILITIES = [
-        // ProviderEnum::VTB->value => 100,
+        ProviderEnum::VTB->value => 100,
     ];
 
     public function __construct(
@@ -30,19 +31,22 @@ class ProviderSelector
         };
     }
 
+    /**
+     * @throws RandomException
+     */
     public function random(): ?ProviderEnum
     {
         $probabilities = self::PROBABILITIES;
 
-        while (! empty($probabilities)) {
-            $random = random_int(1, 100);
+        while ( ! empty($probabilities)) {
+            $random                = random_int(1, 100);
             $cumulativeProbability = 0;
 
             foreach ($probabilities as $provider => $probability) {
                 $cumulativeProbability += $probability;
 
                 if ($random <= $cumulativeProbability) {
-                    $providerEnum = ProviderEnum::tryFrom($provider);
+                    $providerEnum    = ProviderEnum::tryFrom($provider);
                     $providerService = $this->getProviderService($providerEnum);
 
                     if ($providerService->hasFullConfig()) {

@@ -9,6 +9,7 @@ readonly class ApiConfig
         private ?string $userName = null,
         private ?string $password = null,
         private ?string $token = null,
+        private ?string $webhookSecret = null,
     )
     {
     }
@@ -31,6 +32,11 @@ readonly class ApiConfig
     public function getToken(): ?string
     {
         return $this->token;
+    }
+
+    public function getWebhookSecret(): ?string
+    {
+        return $this->webhookSecret;
     }
 
     public function isFilled(): bool

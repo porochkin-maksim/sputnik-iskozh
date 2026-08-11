@@ -13,7 +13,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'webhook/acquring/*',
     ];
 
     protected function tokensMatch($request): bool

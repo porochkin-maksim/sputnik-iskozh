@@ -4,11 +4,13 @@ namespace Core\App\Billing\Acquiring;
 
 use Core\Domains\Billing\Acquiring\Enums\StatusEnum;
 use Core\Domains\Billing\Acquiring\Services\AcquiringService;
+use Core\Domains\Billing\Acquiring\Services\ProviderGateway;
 
 readonly class HandleFailedWebhookCommand
 {
     public function __construct(
         private AcquiringService $acquiringService,
+        private ProviderGateway  $providerGateway,
     )
     {
     }
@@ -17,7 +19,7 @@ readonly class HandleFailedWebhookCommand
     {
         $acquiring = $this->acquiringService->getById($acquiringId);
 
-        if ($acquiring === null || $acquiring->makeHash() !== $hash || ! $acquiring->getStatus()?->isProcess()) {
+        if ($acquiring === null || $this->providerGateway->makeHash($acquiring) !== $hash || ! $acquiring->getStatus()?->isProcess()) {
             return false;
         }
 
