@@ -28,13 +28,20 @@ readonly class SyncPeriodServicesCommand
 
     public function execute(int $periodId): array
     {
-        $periodServices = $this->serviceService->getByPeriodId($periodId)
-            ->filter(static fn($s) => in_array($s->getType(), ServiceTypeEnum::claimableForInvoice(), true))
+        $allPeriodServices = $this->serviceService->getByPeriodId($periodId);
+
+        if ($allPeriodServices->isEmpty()) {
+            return ['added' => 0, 'removed' => 0, 'skipped' => 0, 'processed' => 0];
+        }
+
+        $allPeriodServiceIds = $allPeriodServices
+            ->map(static fn($service) => $service->getId())
+            ->toArray()
         ;
 
-        if ($periodServices->isEmpty()) {
-            return ['added' => 0, 'processed' => 0];
-        }
+        $periodServices = $allPeriodServices->filter(
+            static fn($service) => in_array($service->getType(), ServiceTypeEnum::claimableForInvoice(), true),
+        );
 
         $invoices = $this->invoiceService->search(
             InvoiceSearcher::make()
@@ -43,6 +50,8 @@ readonly class SyncPeriodServicesCommand
         )->getItems();
 
         $added     = 0;
+        $removed   = 0;
+        $skipped   = 0;
         $processed = 0;
 
         foreach ($invoices as $invoice) {
@@ -51,8 +60,29 @@ readonly class SyncPeriodServicesCommand
             }
 
             $processed++;
-            $existingServiceIds = $this->claimService->getByInvoiceIdSorted($invoice->getId())
-                ->map(static fn($c) => $c->getServiceId())
+
+            $claims = $this->claimService->getByInvoiceIdSorted($invoice->getId());
+
+            foreach ($claims as $claim) {
+                if ($claim->getOriginalClaimId() !== null) {
+                    continue;
+                }
+
+                if (in_array($claim->getServiceId(), $allPeriodServiceIds, true)) {
+                    continue;
+                }
+
+                if ((float) $claim->getPaid() > 0) {
+                    $skipped++;
+                    continue;
+                }
+
+                $this->claimService->deleteById($claim->getId());
+                $removed++;
+            }
+
+            $existingServiceIds = $claims
+                ->map(static fn($claim) => $claim->getServiceId())
                 ->toArray()
             ;
 
@@ -87,7 +117,12 @@ readonly class SyncPeriodServicesCommand
             }
         }
 
-        return ['added' => $added, 'processed' => $processed];
+        return [
+            'added'     => $added,
+            'removed'   => $removed,
+            'skipped'   => $skipped,
+            'processed' => $processed,
+        ];
     }
 
     private function calculateClaimCost($service, $invoice): array

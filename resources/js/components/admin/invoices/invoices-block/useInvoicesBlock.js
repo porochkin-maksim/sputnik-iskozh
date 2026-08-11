@@ -254,12 +254,12 @@ export function useInvoicesBlock () {
         if (!periodId.value) {
             return;
         }
-        if (!confirm('Синхронизировать услуги периода со счетами? Будут добавлены только недостающие услуги.')) {
+        if (!confirm('Синхронизировать услуги периода со счетами? Недостающие будут добавлены, осиротевшие удалены (долги и оплаченные не трогаем).')) {
             return;
         }
         try {
             const response = await ApiAdminInvoiceSyncServices(periodId.value);
-            showSuccess(`Синхронизация завершена: добавлено ${response.data.added} услуг, обработано ${response.data.processed} счетов`);
+            showSuccess(`Синхронизация завершена: добавлено ${response.data.added}, удалено ${response.data.removed}, пропущено оплаченных ${response.data.skipped}, обработано счетов ${response.data.processed}`);
             await listAction();
         }
         catch (err) {

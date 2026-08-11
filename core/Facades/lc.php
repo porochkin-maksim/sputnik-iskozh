@@ -64,7 +64,7 @@ abstract class lc
             $accountService = app(AccountService::class);
             $accountFactory = app(AccountFactory::class);
             $accounts       = Auth::id() ? $accountService->getByUserId(Auth::id()) : null;
-            if ($accountId && $accounts !== null && in_array($accountId, $accounts->getIds())) {
+            if ($accountId && $accounts !== null && in_array($accountId, $accounts->getIds(), true)) {
                 $account = $accountService->getById($accountId);
             }
             else {
@@ -104,7 +104,7 @@ abstract class lc
             self::$role = $userId ? app(RoleService::class)->getByUserId($userId) : new RoleEntity();
         }
 
-        return self::$role;
+        return self::$role ? : new RoleEntity();
     }
 
     public static function roleDecorator(): RoleDecorator
