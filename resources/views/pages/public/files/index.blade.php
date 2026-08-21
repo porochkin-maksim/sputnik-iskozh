@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-use Core\Domains\Folders\Models\FolderDTO;
+use App\Http\Resources\Shared\Files\FolderResource;
 use App\Resources\RouteNames;
 use App\Resources\Views\SectionNames;
 use App\Services\OpenGraph\OpenGraphLocator;
 
 /**
- * @var ?FolderDTO $folder
+ * @var ?FolderResource $folder
  */
 
 $openGraph = OpenGraphLocator::OpenGraphFactory()->default();

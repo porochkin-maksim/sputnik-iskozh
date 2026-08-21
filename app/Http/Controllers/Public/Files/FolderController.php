@@ -34,7 +34,7 @@ class FolderController extends Controller
             $folder = $this->folderService->getByUid($folderUid);
         }
 
-        return view('pages.public.files.index', compact('folder'));
+        return view('pages.public.files.index', ['folder' => $folder ? new FolderResource($folder) : null]);
     }
 
     /**
