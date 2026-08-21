@@ -7,6 +7,7 @@
         <form @submit.prevent="submitForm" class="public-form-stack">
             <custom-textarea
                 v-model="form.description"
+                name="description"
                 :classes="'public-form-field'"
                 :errors="errors.description"
                 label="Текст заявки"
@@ -17,17 +18,19 @@
 
             <!-- Блок выбора участка -->
             <account-search-select
-                v-model="form.accountId"
+                v-model="selectedAccountId"
                 :label="'Участок'"
                 :placeholder="'Начните вводить и выберите номер...'"
                 :error="errors.accountId"
                 :disabled="loading"
                 :required="true"
                 class="public-form-field"
+                @select="onAccountSelect"
             />
 
             <custom-input
                 v-model="form.name"
+                name="name"
                 :classes="'public-form-field'"
                 :errors="errors.name"
                 label="Ваше имя"
@@ -37,6 +40,7 @@
             />
             <custom-input
                 v-model="form.email"
+                name="email"
                 :classes="'public-form-field'"
                 :errors="errors.email"
                 label="Эл. почта"
@@ -46,6 +50,7 @@
             />
             <custom-input
                 v-model="form.phone"
+                name="phone"
                 :classes="'public-form-field'"
                 :errors="errors.phone"
                 label="Телефон"
@@ -132,7 +137,7 @@ const props = defineProps({
     account : { type: Object, default: null },
 });
 
-const { errors, clearError, parseResponseErrors, showSuccess, showInfo } = useResponseError();
+const { errors, clearError, clearResponseErrors, parseResponseErrors, showSuccess, showInfo } = useResponseError();
 const { uploadProgress, isUploading, startUpload, onProgress, finishUpload } = useUploadProgress();
 
 const loading      = ref(false);
@@ -143,9 +148,11 @@ const fileInput    = ref(null);
 
 const { userName, storedRequestValue } = useRequestContactDefaults(props.user);
 
+const selectedAccountId     = ref(null);
+const selectedAccountNumber = ref('');
+
 const form = reactive({
     description: '',
-    accountId  : null,
     name       : '',
     email      : '',
     phone      : '',
@@ -158,22 +165,42 @@ form.name  = userName.value ?? storedRequestValue('requestName');
 form.email = props.user?.email ?? storedRequestValue('requestEmail');
 form.phone = props.user?.phone ?? storedRequestValue('requestPhone');
 
+const savedId     = storedRequestValue('requestAccountId');
+const savedNumber = storedRequestValue('requestAccountNumber');
+if (savedId) {
+    selectedAccountId.value     = parseInt(savedId);
+    selectedAccountNumber.value = savedNumber;
+}
+else if (props.account?.id) {
+    selectedAccountId.value     = props.account.id;
+    selectedAccountNumber.value = props.account.number;
+}
+
 useRequestFormPersistence({
-    requestName : () => form.name,
-    requestEmail: () => form.email,
-    requestPhone: () => form.phone,
+    requestName         : () => form.name,
+    requestEmail        : () => form.email,
+    requestPhone        : () => form.phone,
+    requestAccountId    : selectedAccountId,
+    requestAccountNumber: selectedAccountNumber,
 });
 
-// Установка предварительного значения участка из пропа
-if (props.account?.id) {
-    form.accountId = props.account.id;
-}
+const onAccountSelect = (item) => {
+    if (item) {
+        selectedAccountId.value     = item.key;
+        selectedAccountNumber.value = item.value;
+    }
+    else {
+        selectedAccountId.value     = null;
+        selectedAccountNumber.value = '';
+    }
+    clearError('accountId');
+};
 
 const totalFileSize = computed(() => files.value.reduce((sum, f) => sum + f.size, 0));
 
 const canSubmit = computed(() => {
     return form.description.trim() !== '' &&
-        form.name && form.accountId &&
+        form.name && selectedAccountId.value &&
         (form.email || form.phone) &&
         form.consent &&
         totalFileSize.value <= 20 * 1024 * 1024 &&
@@ -210,13 +237,14 @@ const removeFile = (index) => {
 
 const resetForm = () => {
     form.description = '';
-    form.accountId   = props.account?.id || null;
+    selectedAccountId.value     = props.account?.id || null;
+    selectedAccountNumber.value = props.account?.number || '';
     form.name        = userName.value ?? storedRequestValue('requestName');
     form.email       = props.user?.email ?? storedRequestValue('requestEmail');
     form.phone       = props.user?.phone ?? storedRequestValue('requestPhone');
     form.consent     = false;
     files.value      = [];
-    Object.keys(errors).forEach(key => delete errors[key]);
+    clearResponseErrors();
 };
 
 const submitForm = async () => {
@@ -226,7 +254,7 @@ const submitForm = async () => {
 
     loading.value = true;
     startUpload();
-    Object.keys(errors).forEach(key => delete errors[key]);
+    clearResponseErrors();
 
     const formData = new FormData();
     formData.append('description', form.description);
@@ -239,8 +267,8 @@ const submitForm = async () => {
     if (form.phone) {
         formData.append('phone', form.phone);
     }
-    if (form.accountId) {
-        formData.append('account_id', form.accountId);
+    if (selectedAccountId.value) {
+        formData.append('account_id', selectedAccountId.value);
     }
     formData.append('consent', form.consent ? '1' : '');
 

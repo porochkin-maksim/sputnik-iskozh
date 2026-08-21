@@ -198,16 +198,16 @@ if (props.propInvoice?.id) {
     selectedAccountId.value     = props.propInvoice.account?.id ?? null;
     selectedAccountNumber.value = props.propInvoice.account?.number ?? '';
 }
-else if (props.propAccount?.number) {
-    selectedAccountNumber.value = props.propAccount.number;
-    selectedAccountId.value     = props.propAccount.id ?? null;
-}
 else {
     const savedId     = storedRequestValue('requestAccountId');
     const savedNumber = storedRequestValue('requestAccountNumber');
     if (savedId) {
         selectedAccountId.value     = parseInt(savedId);
         selectedAccountNumber.value = savedNumber;
+    }
+    else if (props.propAccount?.number) {
+        selectedAccountNumber.value = props.propAccount.number;
+        selectedAccountId.value     = props.propAccount.id ?? null;
     }
 }
 email.value = resolveContactValue(props.propUser?.email, 'requestEmail');

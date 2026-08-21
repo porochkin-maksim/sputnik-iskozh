@@ -217,22 +217,20 @@ const loadCounters = (accountId) => {
         });
 };
 
-if (props.propAccount?.number) {
+const savedId     = storedRequestValue('requestAccountId');
+const savedNumber = storedRequestValue('requestAccountNumber');
+if (savedId) {
+    selectedAccountId.value     = parseInt(savedId);
+    selectedAccountNumber.value = savedNumber;
+    loadCounters(selectedAccountId.value);
+}
+else if (props.propAccount?.number) {
     selectedAccountNumber.value = props.propAccount.number;
     selectedAccountId.value     = props.propAccount.id ?? null;
     counters.value              = props.propCounters ?? [];
     if (counters.value.length) {
         counter.value = counters.value[0]?.id ?? counters.value[0]?.value ?? '';
         value.value   = counters.value[0]?.value ?? '';
-    }
-}
-else {
-    const savedId     = storedRequestValue('requestAccountId');
-    const savedNumber = storedRequestValue('requestAccountNumber');
-    if (savedId) {
-        selectedAccountId.value     = parseInt(savedId);
-        selectedAccountNumber.value = savedNumber;
-        loadCounters(selectedAccountId.value);
     }
 }
 email.value = resolveContactValue(props.propUser?.email, 'requestEmail');

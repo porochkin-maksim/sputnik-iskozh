@@ -15,6 +15,7 @@ use Core\Domains\HelpDesk\Services\TicketCatalogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
+use Core\Exceptions\ValidationException;
 use lc;
 use Throwable;
 
@@ -99,6 +100,9 @@ class HelpDeskController extends Controller
         return view('pages.public.help-desk.service', compact('type', 'category', 'service', 'categories', 'userResource', 'accountResource'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function ticket(PublicConsentRequest $request, string $typeCode, string $categoryCode, string $serviceCode): JsonResponse
     {
         $input = new CreateInput(
@@ -122,6 +126,10 @@ class HelpDeskController extends Controller
         catch (InvalidArgumentException $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
         }
+        catch (ValidationException $e) {
+            throw $e;
+        }
+
         catch (Throwable $e) {
             \Log::error($e);
 
