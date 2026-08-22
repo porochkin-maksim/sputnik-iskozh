@@ -1387,6 +1387,12 @@ export function ApiProfilePaymentsList(getParams = {}, postData = null) {
     return apiClient.get(makeQuery('/home/payments/json/list', getParams), prepareRequestData(postData));
 }
 
+export function ApiProfilePaymentsSend(getParams = {}, postData = null) {
+    // see profile.payments.send
+    // controller: App\Http\Controllers\Profile\PaymentController@send
+    return apiClient.post(makeQuery('/home/payments/json/send', getParams), prepareRequestData(postData));
+}
+
 export function ApiProfileSavePassword(getParams = {}, postData = null) {
     // see profile.save.password
     // controller: App\Http\Controllers\Profile\ProfileController@savePassword

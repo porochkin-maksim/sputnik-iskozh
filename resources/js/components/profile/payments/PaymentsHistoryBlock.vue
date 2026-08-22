@@ -28,20 +28,21 @@
                             <span class="profile-payment-card__label">Дата</span>
                             <span class="profile-payment-card__value">{{ payment.date }}</span>
                         </div>
-                        <div class="profile-payment-card__amount">{{ formatMoney(payment.cost) }}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="profile-payment-card__amount">{{ formatMoney(payment.cost) }}</div>
+                        </div>
                     </div>
                     <div class="profile-payment-card__meta">
                         <div class="profile-payment-chip">
-                            <span class="profile-payment-chip__label">Период</span>
+                            <span class="profile-payment-chip__label" v-if="payment.periodName">Период</span>
                             <span class="profile-payment-chip__value">{{ payment.periodName }}</span>
                         </div>
                         <div class="profile-payment-chip">
-                            <span class="profile-payment-chip__label">Участок</span>
-                            <span class="profile-payment-chip__value">{{ payment.accountNumber }}</span>
+                            <span class="profile-payment-chip__label" v-if="payment.name || payment.invoiceName">Назначение</span>
+                            <span class="profile-payment-chip__value">{{ payment.name || payment.invoiceName }}</span>
                         </div>
                         <div class="profile-payment-chip">
-                            <span class="profile-payment-chip__label">Назначение</span>
-                            <span class="profile-payment-chip__value">{{ payment.name || payment.invoiceName }}</span>
+                            <span v-if="!payment.verified" class="badge bg-warning text-dark">На проверке</span>
                         </div>
                     </div>
                 </div>

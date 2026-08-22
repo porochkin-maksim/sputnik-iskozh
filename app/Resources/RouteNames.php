@@ -99,6 +99,7 @@ abstract class RouteNames
 
     public const string PROFILE_PAYMENTS_INDEX = 'profile.payments.index';
     public const string PROFILE_PAYMENTS_LIST  = 'profile.payments.list';
+    public const string PROFILE_PAYMENTS_SEND  = 'profile.payments.send';
 
     public const string PROFILE_HELP_DESK_INDEX = 'profile.help-desk.index';
     public const string PROFILE_HELP_DESK_LIST  = 'profile.help-desk.list';

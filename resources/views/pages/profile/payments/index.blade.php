@@ -19,8 +19,12 @@ $breadcrumbs = Breadcrumbs::generate(RouteNames::PROFILE_PAYMENTS_INDEX);
                 История платежей
             </h3>
             <div class="page-hero__lead">
-                Все платежи по всем участкам и периодам.
+                Все ваши платежи по участку {{ lc::account()->getNumber() }}
             </div>
+        </div>
+
+        <div class="page-card p-3 p-lg-4 mb-3">
+            <profile-payment-form />
         </div>
 
         <payments-history-block />

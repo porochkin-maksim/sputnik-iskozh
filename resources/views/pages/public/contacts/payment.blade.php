@@ -34,14 +34,28 @@ $openGraph->setUrl(route(RouteNames::REQUESTS_PAYMENT));
     <div class="row">
         <div class="col-lg-6 col-md-7 col-12">
             <div class="page-section page-card p-3 p-lg-4">
-                <div class="alert alert-info">
-                    <div>Здесь вы можете сообщить об оплате членских взносов или электричества без посещения Правления.</div>
-                    <div>Отметку об оплате в членской книжке можно будет проставить потом.</div>
-                </div>
-                <payment-form :prop-account='@json(new AccountResource(lc::account()))'
-                              :prop-user='@json(new UserResource(lc::user()))'
-                              :prop-invoice='@json($invoice ? new InvoiceResource($invoice) : null)'
-                ></payment-form>
+                @php
+                    $hasProfileAccount = lc::account()->getId();
+                @endphp
+
+                @if ($hasProfileAccount)
+                    <div class="alert alert-success mb-0">
+                        <div>У вас уже есть личный кабинет.</div>
+                        <div>Сообщить об оплате можно в разделе
+                            <a href="{{ route(RouteNames::PROFILE_PAYMENTS_INDEX) }}">«Платежи»</a>
+                            вашего личного кабинета.
+                        </div>
+                    </div>
+                @else
+                    <div class="alert alert-info mb-0">
+                        <div>Здесь вы можете сообщить об оплате членских взносов или электричества без посещения Правления.</div>
+                        <div>Отметку об оплате в членской книжке можно будет проставить потом.</div>
+                    </div>
+                    <payment-form :prop-account='@json(new AccountResource(lc::account()))'
+                                  :prop-user='@json(new UserResource(lc::user()))'
+                                  :prop-invoice='@json($invoice ? new InvoiceResource($invoice) : null)'
+                    ></payment-form>
+                @endif
             </div>
         </div>
     </div>

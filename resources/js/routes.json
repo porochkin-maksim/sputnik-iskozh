@@ -1823,6 +1823,13 @@
         "uri": "\/home\/payments\/json\/list",
         "args": []
     },
+    "profilePaymentsSend": {
+        "name": "profile.payments.send",
+        "displayName": "",
+        "method": "post",
+        "uri": "\/home\/payments\/json\/send",
+        "args": []
+    },
     "profileSavePassword": {
         "name": "profile.save.password",
         "displayName": "",

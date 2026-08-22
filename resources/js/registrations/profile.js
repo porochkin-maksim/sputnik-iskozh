@@ -9,6 +9,7 @@ import InvoicesBlock        from '@components/profile/invoices/InvoicesBlock.vue
 import SummaryBlock         from '@components/shared/summary/SummaryBlock.vue';
 import PaymentsHistoryBlock from '@components/profile/payments/PaymentsHistoryBlock.vue';
 import HelpDeskTicketsBlock from '@components/profile/help-desk/TicketsBlock.vue';
+import ProfilePaymentForm from '@components/profile/payments/ProfilePaymentForm.vue';
 import LoginLinkBlock from '@components/profile/LoginLinkBlock.vue';
 
 export function registerProfileComponents (app) {
@@ -23,5 +24,6 @@ export function registerProfileComponents (app) {
     app.component('summary-block', SummaryBlock);
     app.component('payments-history-block', PaymentsHistoryBlock);
     app.component('help-desk-tickets-block', HelpDeskTicketsBlock);
+    app.component('profile-payment-form', ProfilePaymentForm);
     app.component('login-link-block', LoginLinkBlock);
 }
